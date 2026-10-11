@@ -55,7 +55,7 @@ Nada se implementa sin un plan aceptado. ¿Conforme con este orden de entrega?"
     ALERTAS=""
     case $rc in 0) ;; 3) ALERTAS="⚠️ Cumple con exenciones";; *) ALERTAS="⛔ La puerta de calidad no se cumple (código $rc): solo se puede rechazar";; esac
     EDIT=$(git log --format= --name-only "$(git describe --tags --abbrev=0 --match 'fase-*' 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD" -- 'tests/*' 'test/*' 2>/dev/null | sort -u | wc -l | tr -d ' ')
-    VIDEO=$(ls evidencias/FASE-"$FASE"/*.mp4 2>/dev/null | head -1 || true)
+    VIDEO=$(ls evidencias/FASE-"$FASE"/*.mp4 evidencias/FASE-"$FASE"/*.webm evidencias/FASE-"$FASE"/*.mov 2>/dev/null | head -1 || true)
     TEXTO="${ALERTAS:-✅ Sin alertas}
 $(echo "$GATE_MD" | grep -E '^\|' | head -12)
 Ficheros de test tocados en esta FASE: $EDIT

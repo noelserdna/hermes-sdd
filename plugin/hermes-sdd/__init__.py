@@ -197,10 +197,13 @@ async def _enviar_demo(bot, chat_id: int, puerta: dict) -> None:
     if not carpeta.is_dir():
         await bot.send_message(chat_id=chat_id, text="Esta FASE no tiene capturas ni vídeo en evidencias/.")
         return
-    videos = sorted(carpeta.glob("*.mp4"))
+    videos = sorted([*carpeta.glob("*.mp4"), *carpeta.glob("*.webm"), *carpeta.glob("*.mov")])
     if videos and videos[0].stat().st_size < 49_000_000:
-        with videos[0].open("rb") as f:
-            await bot.send_video(chat_id=chat_id, video=f, caption=f"Demo FASE-{puerta.get('fase')}")
+        with videos[0].open("rb") as f:   # Telegram reproduce mp4; el resto llega como documento
+            if videos[0].suffix == ".mp4":
+                await bot.send_video(chat_id=chat_id, video=f, caption=f"Demo FASE-{puerta.get('fase')}")
+            else:
+                await bot.send_document(chat_id=chat_id, document=f, caption=f"Demo FASE-{puerta.get('fase')} ({videos[0].name})")
     fotos = sorted(carpeta.glob("*.png"))[:10]
     if len(fotos) >= 2:
         abiertos = [p.open("rb") for p in fotos]

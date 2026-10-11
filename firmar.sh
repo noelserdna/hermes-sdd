@@ -87,6 +87,43 @@ commit_si_hay() {  # commit_si_hay <mensaje> <rutas...> — solo las que existen
   git diff --cached --quiet || git commit -q -m "$msg" --trailer "Gate-Id: $GATE"
 }
 
+# ── 2a. preguntas abiertas (clase C) que la puerta mostró ────────────────────────────────────────────────────────
+# «Q1: A, Q2: B» en el texto → esas letras; aceptar o dar conformidad sin texto → la opción recomendada.
+if ! hecho preguntas; then
+  MODO=""
+  if printf '%s' "$TEXTO" | grep -qiE 'q[a-z]?[[:space:]]*[0-9]'; then MODO=elegidas
+  elif [ "$VERBO" = acepto ] || [ "$VERBO" = conforme ]; then MODO=recomendada; fi
+  if [ -n "$MODO" ]; then
+    python3 - "$MODO" "$NOMBRE ($ROL)" "$HOY" "$TEXTO" .sdd/questions-*.md <<'PY'
+import re, sys
+modo, quien, hoy, texto, *ficheros = sys.argv[1:]
+elegidas = {int(n): l.upper() for n, l in re.findall(r"[Qq][A-Za-z]?\s*(\d+)\W{0,3}\s*([A-Ca-c])\b", texto)}
+n = 0
+for p in sorted(ficheros):
+    try:
+        t = open(p).read()
+    except OSError:
+        continue
+    def contestar(m):
+        global n
+        n += 1
+        b = m.group(0)
+        if modo == "elegidas":
+            if n not in elegidas:
+                return b
+            letra, como = elegidas[n], "elegida por"
+        else:
+            rec = re.search(r"^\s+([A-Z])\).*\(recommended\)", b, re.M)
+            letra, como = (rec.group(1) if rec else "?"), "opción recomendada, aceptada por"
+        b = b.replace("[OPEN]", "[ANSWERED]", 1)
+        return re.sub(r"^Answer:\s*$", f"Answer: {letra} — {como} {quien} ({hoy})", b, count=1, flags=re.M)
+    t = re.sub(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", contestar, t, flags=re.M | re.S)
+    open(p, "w").write(t)
+PY
+  fi
+  marcar preguntas
+fi
+
 # ── 2. aplicar según el tipo de puerta ────────────────────────────────────────────────────────────────────────────
 case "$TIPO:$VERBO" in
   requisitos:acepto)
@@ -135,23 +172,6 @@ Kanban-Task: $BOARD/$TASK"
 
   plan:conforme)
     if ! hecho registrado; then
-      # Las preguntas abiertas (clase C) quedan contestadas con la opción recomendada, a nombre de quien dio conformidad
-      for q in .sdd/questions-*.md; do
-        [ -f "$q" ] || continue
-        python3 - "$q" "$NOMBRE ($ROL)" "$HOY" <<'PY'
-import re, sys
-p, quien, hoy = sys.argv[1:4]
-t = open(p).read()
-def contestar(m):
-    bloque = m.group(0)
-    rec = re.search(r"^\s+([A-Z])\).*\(recommended\)", bloque, re.M)
-    letra = rec.group(1) if rec else "?"
-    bloque = bloque.replace("[OPEN]", "[ANSWERED]", 1)
-    return re.sub(r"^Answer:\s*$", f"Answer: {letra} — opción recomendada, conformidad de {quien} ({hoy})", bloque, count=1, flags=re.M)
-t = re.sub(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", contestar, t, flags=re.M | re.S)
-open(p, "w").write(t)
-PY
-      done
       node "$SDD" journal add --stage plan-architect --kind gate --text "$NOMBRE dio conformidad al plan" \
         --by "$NOMBRE ($ROL)" >/dev/null
       marcar registrado
@@ -205,30 +225,6 @@ Kanban-Task: $BOARD/$TASK"
 
   requisitos:cambios|plan:cambios|ruta:rechazo)
     mkdir -p .sdd/hermes/feedback; printf '%s\n' "$TEXTO" > ".sdd/hermes/feedback/$TIPO.txt"
-    # Respuestas a preguntas abiertas escritas como «Q1: A, Q2: B» (en el orden en que la puerta las mostró)
-    if ! hecho preguntas && printf '%s' "$TEXTO" | grep -qiE 'q[a-z]?[[:space:]]*[0-9]'; then
-      python3 - "$NOMBRE ($ROL)" "$HOY" "$TEXTO" .sdd/questions-*.md <<'PY'
-import re, sys
-quien, hoy, texto, *ficheros = sys.argv[1:]
-elegidas = {int(n): l.upper() for n, l in re.findall(r"[Qq][A-Za-z]?\s*(\d+)\W{0,3}\s*([A-Ca-c])\b", texto)}
-n = 0
-for p in ficheros:
-    try:
-        t = open(p).read()
-    except OSError:
-        continue
-    def contestar(m):
-        global n
-        n += 1
-        if n not in elegidas:
-            return m.group(0)
-        b = m.group(0).replace("[OPEN]", "[ANSWERED]", 1)
-        return re.sub(r"^Answer:\s*$", f"Answer: {elegidas[n]} — elegida por {quien} ({hoy})", b, count=1, flags=re.M)
-    t = re.sub(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", contestar, t, flags=re.M | re.S)
-    open(p, "w").write(t)
-PY
-      marcar preguntas
-    fi
     if ! hecho registrado; then
       node "$SDD" journal add --stage "$TIPO" --kind feedback --text "$TEXTO" --by "$NOMBRE ($ROL)" >/dev/null 2>&1 || true
       marcar registrado
