@@ -62,5 +62,9 @@ case "$CMD" in
       *) echo "Sin tramo siguiente para $TIPO:$RESULTADO" ;;
     esac ;;
 
-  *) echo "uso: lanzar.sh iniciar <repo> | siguiente <repo> <puerta> <resultado>" >&2; exit 2 ;;
+  reintentar)   # una etapa fallida se repite con una tarjeta NUEVA (nunca se desbloquea la vieja)
+    ETAPA=$3; FASE=${4:-}
+    tarjeta "Reintento: $ETAPA${FASE:+ FASE-$FASE}" - 120m "$ETAPA" $FASE ;;
+
+  *) echo "uso: lanzar.sh iniciar <repo> | siguiente <repo> <puerta> <resultado> | reintentar <repo> <etapa> [fase]" >&2; exit 2 ;;
 esac

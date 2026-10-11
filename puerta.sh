@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
-# Abre una PUERTA: crea la tarjeta bloqueada (sin assignee: ningún agente la toma) y deja la pregunta en la
-# bandeja de salida para que la publique el canal (Telegram, local…). No decide ni avisa por sí mismo.
+# Abre una PUERTA: deja la pregunta en disco para que el canal la publique y el orquestador del gateway cree su
+# tarjeta bloqueada (sin assignee: ningún agente la toma). No decide ni avisa por sí mismo.
+# No crea la tarjeta él mismo: lo lanza un worker del kanban, y Hermes no deja que los procesos de un worker
+# modifiquen el tablero (frontera de seguridad que respetamos).
 #
 #   puerta.sh <repo> <tipo> [fase]        tipo: requisitos | ruta | plan | fase
 #
 # Escribe <repo>/.sdd/hermes/puertas/<id>.json (lo lee el notario) y $HERMES_SDD_HOME/puertas/<id>.json (índice
-# global que leen los canales). Imprime el id de la puerta (= id de la tarjeta).
+# global que leen los canales). Imprime el id de la puerta.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 SDD="$ROOT/metodo/scripts/sdd.mjs"
@@ -60,19 +62,14 @@ Revisa la demo antes de decidir."
   *) echo "tipo de puerta desconocido: $TIPO" >&2; exit 2 ;;
 esac
 
-# ── Tarjeta: bloqueada y sin assignee ─────────────────────────────────────────────────────────────────────────────
 SHA=$(git rev-parse HEAD)
-ID=$(hermes kanban --board "$BOARD" create "PUERTA ${TITULO}" --initial-status blocked \
-  --body "GATE: $TIPO${FASE:+
-FASE: $FASE}
-HEAD: $SHA
-Decide una persona autorizada desde su canal; firma el notario. Ningún agente toma esta tarjeta." --json | jq -r .id)
+ID="g$(date +%s)$(openssl rand -hex 2)"
 
 AHORA=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 mkdir -p .sdd/hermes/puertas "$HOME_SDD/puertas"
 jq -n --arg id "$ID" --arg t "$TIPO" --arg f "$FASE" --arg b "$BOARD" --arg s "$SHA" --arg c "$AHORA" \
   --arg r "$REPO" --arg ti "$TITULO" --arg tx "$TEXTO" --argjson o "$OPCIONES" --arg v "${VIDEO:-}" \
-  '{id:$id, tipo:$t, fase:$f, tablero:$b, tarjeta:$id, sha:$s, creada:$c, repo:$r, titulo:$ti, texto:$tx,
+  '{id:$id, tipo:$t, fase:$f, tablero:$b, tarjeta:"", sha:$s, creada:$c, repo:$r, titulo:$ti, texto:$tx,
     opciones:$o, demo:$v, estado:"abierta"}' > ".sdd/hermes/puertas/$ID.json"
 cp ".sdd/hermes/puertas/$ID.json" "$HOME_SDD/puertas/$ID.json"   # índice global para los canales
 echo "$ID"

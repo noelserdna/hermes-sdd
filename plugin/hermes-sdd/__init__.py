@@ -267,6 +267,22 @@ async def _avisar_fallos(bot) -> None:
         _escribir(HOME / "avisos.json", sorted(avisados | set(nuevos)))
 
 
+async def _crear_tarjeta(puerta: dict) -> str:
+    """La tarjeta de la puerta: bloqueada y sin assignee (ningún agente la toma). La crea el gateway porque los
+    procesos de un worker del kanban no pueden modificar el tablero."""
+    cuerpo = (f"GATE: {puerta['tipo']}\n" + (f"FASE: {puerta['fase']}\n" if puerta.get("fase") else "")
+              + f"HEAD: {puerta.get('sha', '')}\nPUERTA: {puerta['id']}\n"
+              "Decide una persona autorizada desde su canal; firma el notario. Ningún agente toma esta tarjeta.")
+    proc = await asyncio.create_subprocess_exec(
+        "hermes", "kanban", "--board", puerta["tablero"], "create", f"PUERTA {puerta.get('titulo', '')}",
+        "--initial-status", "blocked", "--body", cuerpo, "--json",
+        stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, env={**os.environ, "PATH": PATH_CMDS})
+    out, err = await proc.communicate()
+    if proc.returncode != 0:
+        raise RuntimeError(err.decode()[-300:])
+    return json.loads(out)["id"]
+
+
 async def _bucle() -> None:
     ciclo = 0
     while True:
@@ -277,6 +293,18 @@ async def _bucle() -> None:
                 p = _leer(idx)
                 if not p:
                     continue
+                if p.get("estado") == "abierta" and not p.get("tarjeta") and p.get("tablero"):
+                    tarjeta = await _crear_tarjeta(p)
+                    async with _lock:
+                        actual = _leer(idx) or p
+                        actual["tarjeta"] = tarjeta
+                        _escribir(idx, actual)
+                        local = Path(actual["repo"]) / ".sdd" / "hermes" / "puertas" / f"{actual['id']}.json"
+                        loc = _leer(local)
+                        if loc is not None:
+                            loc["tarjeta"] = tarjeta
+                            _escribir(local, loc)
+                    p = actual
                 if p.get("estado") == "abierta" and not p.get("telegram"):
                     await _publicar(bot, p)
                     async with _lock:
