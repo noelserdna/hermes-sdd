@@ -3,6 +3,14 @@ name: sdd-plan-architect
 description: "Generates implementation plans from specs: FASEs, architecture, per-FASE plans, clarification of gaps. Uses design/ and ux/ if present. Outputs to plan/. Does NOT modify specs. Triggers: 'create plan', 'generate FASEs', 'implementation plan', 'architecture plan', 'plan from specs', 'generar plan', 'planificar implementacion', 'crear fases'."
 ---
 
+> **Modo arnés (hermes-sdd).** Esta skill corre sin persona en la sesión. Antes de nada lee
+> `${CLAUDE_PLUGIN_ROOT}/references/modo-arnes.md` y sigue sus reglas: no preguntes nunca (clases R/C/H), no firmes
+> ni registres decisiones humanas, deja la etapa en `done` y termina con el resumen de una línea `stage=… status=…`.
+>
+> En este arnés trabaja siempre como con `--skip-clarify`: las aclaraciones de clase R se deciden con la opción
+> recomendada (y se anotan en `plan/CLARIFY-LOG.md`); las de clase C van a `.sdd/questions-plan-architect.md`.
+> La conformidad con las FASEs la da una persona en la **puerta de plan** después de `sdd-task-generator`.
+
 # SDD Plan Architect Skill
 
 > Specs are the source of truth (WHAT). A FASE is the order of work (WHEN). The plan is how it gets built (HOW).

@@ -3,6 +3,16 @@ name: sdd-task-implementer
 description: "Codes task/ docs: test-first, one atomic commit per task with Refs:/Task: trailers, Stream worktrees (--stream) and their merge (--integrate). Implements or resumes a FASE, task or Stream. Triggers: 'implement tasks', 'implement FASE', 'start coding', 'integrate fase', 'implementar tareas', 'implementar fase', 'integrar fase', 'empezar a programar', 'programar las tareas', 'ponte a programar'."
 ---
 
+> **Modo arnés (hermes-sdd).** Esta skill corre sin persona en la sesión. Antes de nada lee
+> `${CLAUDE_PLUGIN_ROOT}/references/modo-arnes.md` y sigue sus reglas: no preguntes nunca (clases R/C/H), no firmes
+> ni registres decisiones humanas, deja la etapa en `done` y termina con el resumen de una línea `stage=… status=…`.
+>
+> En este arnés un **PAUSE** no espera a nadie: escribe la pregunta (clase C) en
+> `.sdd/questions-task-implementer.md`, sigue con las tareas que no dependan de ella y, si ninguna puede avanzar,
+> termina con `status=blocked`. No hagas `git push` ni crees tags de aceptación (sí los de verificación
+> `fase-N-foundation`/`fase-N-verified` que define esta skill). Editar un test que ya existía es clase H: no lo
+> hagas; anótalo como pregunta.
+
 # SDD Task Implementer Skill
 
 Code is derived from the specifications: every line traces to a requirement, every commit is atomic and reversible. The implementer does not invent; it turns contracts, invariants and acceptance criteria into verifiable code, one task of `task/TASK-FASE-{N}.md` at a time, test-first, one commit per task. It can also implement one Stream of a FASE in its own worktree (`--stream X`) and merge the Stream branches back (`--integrate --fase N`), and it records bench events for `scripts/sdd-bench.sh`.

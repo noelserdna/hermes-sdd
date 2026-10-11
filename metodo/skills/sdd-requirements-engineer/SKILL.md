@@ -3,6 +3,16 @@ name: sdd-requirements-engineer
 description: "Requirements: capture customer needs verbatim, write EARS requirements with reviewed examples, verification and priority, review and audit requirement quality (vague, untestable), approve with a git tag. Triggers: 'gather requirements', 'customer needs', 'review requirements', 'audit requirements', 'acceptance criteria', 'approve requirements', 'revisar requisitos', 'necesidades del cliente'."
 ---
 
+> **Modo arnés (hermes-sdd).** Esta skill corre sin persona en la sesión. Antes de nada lee
+> `${CLAUDE_PLUGIN_ROOT}/references/modo-arnes.md` y sigue sus reglas: no preguntes nunca (clases R/C/H), no firmes
+> ni registres decisiones humanas, deja la etapa en `done` y termina con el resumen de una línea `stage=… status=…`.
+>
+> En este arnés **no leas de vuelta las necesidades ni pidas la aprobación** (pasos de `AskUserQuestion` y
+> `references/approval.md` §6): escribe o completa `requirements/` con la petición literal, deja
+> `REQUIREMENTS.md` en `Status: Review`, anota en `.sdd/questions-requirements-engineer.md` lo que necesite al
+> cliente (clase C) y termina. La lectura de vuelta y la aprobación son la **puerta de requisitos**: la persona
+> decide desde su canal y el notario hace el commit de aprobación y el tag `requirements-vN`.
+
 # Requirements Engineer (SWEBOK v4)
 
 Requirements engineering based on SWEBOK v4 Chapter 1. First stage of the SDD pipeline: its outputs, `requirements/CUSTOMER-NEEDS.md` and `requirements/REQUIREMENTS.md`, are the input of `sdd-specifications-engineer`.

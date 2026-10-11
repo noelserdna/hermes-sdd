@@ -172,6 +172,7 @@ Kanban-Task: $BOARD/$TASK"
     RESULTADO="$VERBO"; RESUMEN="FASE-$FASE aceptada${TEXTO:+ con observaciones} por $NOMBRE ($ROL) — tag fase-$FASE-accepted" ;;
 
   fase:rechazo)
+    mkdir -p .sdd/hermes/feedback; printf '%s\n' "$TEXTO" > ".sdd/hermes/feedback/implementar-$FASE.txt"
     if ! hecho registrado; then
       grep -qF "${BOARD}/${TASK}" acceptance/decisions.jsonl 2>/dev/null ||
         node "$SDD" accept record fase-acceptance --fase "$FASE" --result rejected \
@@ -183,6 +184,7 @@ Kanban-Task: $BOARD/$TASK"
     RESULTADO="rechazo"; RESUMEN="FASE-$FASE rechazada por $NOMBRE ($ROL): $TEXTO" ;;
 
   requisitos:cambios|plan:cambios|ruta:rechazo)
+    mkdir -p .sdd/hermes/feedback; printf '%s\n' "$TEXTO" > ".sdd/hermes/feedback/$TIPO.txt"
     if ! hecho registrado; then
       node "$SDD" journal add --stage "$TIPO" --kind feedback --text "$TEXTO" --by "$NOMBRE ($ROL)" >/dev/null 2>&1 || true
       marcar registrado

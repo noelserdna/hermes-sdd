@@ -1,0 +1,7 @@
+{
+  "canales": ["telegram"],
+  "modelos": {
+    "defecto": "",
+    "ruta": "haiku"
+  }
+}

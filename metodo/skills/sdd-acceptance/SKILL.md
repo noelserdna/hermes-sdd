@@ -8,6 +8,16 @@ hooks:
       once: true
 ---
 
+> **Modo arnés (hermes-sdd).** Esta skill corre sin persona en la sesión. Antes de nada lee
+> `${CLAUDE_PLUGIN_ROOT}/references/modo-arnes.md` y sigue sus reglas: no preguntes nunca (clases R/C/H), no firmes
+> ni registres decisiones humanas, deja la etapa en `done` y termina con el resumen de una línea `stage=… status=…`.
+>
+> En este arnés **no existen `--sign-off` ni `--publish`**: calcula los veredictos con su evidencia, prepara la
+> demo (capturas y vídeo en `evidencias/FASE-N/`) y termina. La aceptación es la **puerta de FASE**: la persona
+> ve la demo y decide desde su canal; el notario registra `accept record`, el commit y el tag `fase-N-accepted`.
+> En `--loop`, los Must que necesitan a una persona (demo, inspección, edición de tests, exención) no se preguntan:
+> se listan en el resumen como clase H.
+
 # SDD Acceptance
 
 This skill answers the question the rest of the pipeline cannot: **is each requirement satisfied, and with what
