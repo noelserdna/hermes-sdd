@@ -12,7 +12,8 @@ CMD=$(printf '%s' "$IN" | jq -r '.tool_input.command // ""')
 [ -n "$CMD" ] || exit 0
 
 motivo=""
-check() { [ -z "$motivo" ] && printf '%s' "$CMD" | grep -qE "$1" && motivo=$2; }
+CMD_SIN_ARNES=${CMD//.hermes\/hermes-sdd\//}   # las rutas del propio arnés (plugin, CLI) sí están permitidas
+check() { [ -z "$motivo" ] && printf '%s' "$CMD_SIN_ARNES" | grep -qE "$1" && motivo=$2; }
 check 'accept[[:space:]]+record'                                  "registrar una decisión humana (accept record) es del notario"
 check 'git[[:space:]].*(tag|update-ref).*(fase-[0-9]+-accepted|requirements-v|refs/tags)' "crear o mover tags de aceptación es del notario"
 check 'route[[:space:]].*--write'                                 "confirmar la ruta es una decisión humana"

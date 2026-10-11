@@ -23,6 +23,8 @@ allow 'npx vitest run'
 allow 'git commit -m "feat(api): add task" --trailer "Task: TASK-F0-001"'
 allow 'node .claude/sdd/sdd.mjs gate --fase 0 --md'
 allow 'git tag -l'
+allow 'node "/Users/x/.hermes/hermes-sdd/0.1.0/metodo/scripts/sdd.mjs" gate --fase 0'
+deny  'cat ~/.hermes/.env'
 # Fuera del arnés (sin SDD_EXECUTOR) no interviene
 o=$(jq -nc '{hook_event_name:"PreToolUse",tool_name:"Bash",tool_input:{command:"git tag fase-0-accepted"}}' | bash "$G")
 [ -z "$o" ] && echo "ok   fuera del arnés no interviene" || { echo "FAIL fuera del arnés: $o"; fail=1; }

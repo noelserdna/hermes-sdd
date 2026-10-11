@@ -1,0 +1,5 @@
+name: hermes-sdd
+version: 0.1.0
+description: "Puertas del método SDD en Telegram: la persona decide con botones, con ventana para deshacer, y el notario del arnés firma. Avisa una vez cuando una etapa falla."
+author: "Andres Leon"
+provides_hooks: []
