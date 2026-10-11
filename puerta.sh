@@ -56,11 +56,12 @@ Nada se implementa sin un plan aceptado. ¿Conforme con este orden de entrega?"
     case $rc in 0) ;; 3) ALERTAS="⚠️ Cumple con exenciones";; *) ALERTAS="⛔ La puerta de calidad no se cumple (código $rc): solo se puede rechazar";; esac
     # Tests que YA existían y se modificaron desde la última aceptación (art. 12: se arregla el código, no el test)
     BASE=$(git describe --tags --abbrev=0 --match 'fase-*-accepted' 2>/dev/null || git describe --tags --abbrev=0 --match 'requirements-v*' 2>/dev/null || git rev-list --max-parents=0 HEAD)
-    EDIT=$(git diff --diff-filter=MD --name-only "$BASE..HEAD" -- tests test 2>/dev/null | wc -l | tr -d ' ')
+    # Solo cuentan ficheros con líneas borradas o cambiadas: añadir tests nuevos a un fichero existente no debilita nada
+    EDIT=$(git diff --numstat --diff-filter=MD "$BASE..HEAD" -- tests test 2>/dev/null | awk '$2 > 0' | wc -l | tr -d ' ')
     VIDEO=$(ls evidencias/FASE-"$FASE"/*.mp4 evidencias/FASE-"$FASE"/*.webm evidencias/FASE-"$FASE"/*.mov 2>/dev/null | head -1 || true)
     TEXTO="${ALERTAS:-✅ Sin alertas}
 $(echo "$GATE_MD" | grep -E '^\|' | head -12)
-Tests que ya existían y se han modificado o borrado: $EDIT
+Tests existentes con líneas borradas o cambiadas: $EDIT
 ${VIDEO:+🎬 Hay vídeo de la demo}
 
 Revisa la demo antes de decidir."
