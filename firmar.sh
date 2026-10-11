@@ -135,6 +135,23 @@ Kanban-Task: $BOARD/$TASK"
 
   plan:conforme)
     if ! hecho registrado; then
+      # Las preguntas abiertas (clase C) quedan contestadas con la opción recomendada, a nombre de quien dio conformidad
+      for q in .sdd/questions-*.md; do
+        [ -f "$q" ] || continue
+        python3 - "$q" "$NOMBRE ($ROL)" "$HOY" <<'PY'
+import re, sys
+p, quien, hoy = sys.argv[1:4]
+t = open(p).read()
+def contestar(m):
+    bloque = m.group(0)
+    rec = re.search(r"^\s+([A-Z])\).*\(recommended\)", bloque, re.M)
+    letra = rec.group(1) if rec else "?"
+    bloque = bloque.replace("[OPEN]", "[ANSWERED]", 1)
+    return re.sub(r"^Answer:\s*$", f"Answer: {letra} — opción recomendada, conformidad de {quien} ({hoy})", bloque, count=1, flags=re.M)
+t = re.sub(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", contestar, t, flags=re.M | re.S)
+open(p, "w").write(t)
+PY
+      done
       node "$SDD" journal add --stage plan-architect --kind gate --text "$NOMBRE dio conformidad al plan" \
         --by "$NOMBRE ($ROL)" >/dev/null
       marcar registrado
