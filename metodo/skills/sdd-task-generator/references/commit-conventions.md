@@ -1,0 +1,243 @@
+# Commit Conventions & Reversibility Patterns
+
+> Reference for conventional commit types and scopes, and for revert strategy design.
+> Each task produces exactly one commit. Each commit must be independently revertible.
+> Trailers (`Task`, `Refs`, `Change`), branches, merges and tags live in the plugin-root `references/git-conventions.md`.
+
+---
+
+## Conventional Commit Format
+
+The task's **Commit** field is the subject; the implementer adds the body (optional) and the trailers with `--trailer`,
+which always yields a block git can parse:
+
+```bash
+git commit -m "{type}({scope}): {description}" [-m "{body}"] \
+  --trailer "Task: {TASK-ID}" --trailer "Refs: {FASE-N}, {UC-XXX}, {ADR-XXX}, {INV-XXX-XXX}"
+```
+
+### Types
+
+| Type | When to Use | Example |
+|------|-------------|---------|
+| `feat` | New feature, endpoint, entity, service | `feat(extraction): add PDF upload endpoint` |
+| `fix` | Bug fix discovered during implementation | `fix(auth): correct token expiry calculation` |
+| `refactor` | Code restructure, no behavior change | `refactor(domain): extract base entity class` |
+| `test` | Test files only | `test(matching): add property tests for score calculation` |
+| `chore` | Build, deps, config, tooling | `chore(bootstrap): pin runtime and dependency versions` |
+| `docs` | Documentation only | `docs(api): add OpenAPI annotations` |
+| `ci` | CI/CD pipeline changes | `ci(deploy): add staging workflow` |
+| `perf` | Performance optimization | `perf(extraction): cache model responses` |
+| `style` | Formatting, whitespace (no logic) | `style(contracts): fix linting errors` |
+
+### Scopes (Derived from FASE Bounded Contexts)
+
+Scopes are **not hardcoded** — they are derived dynamically from each project's FASE plan. Use the bounded context name of the FASE as the scope.
+
+**Derivation algorithm:**
+
+1. Read `plan/fases/FASE-{N}.md` and extract its `Bounded Context` or title.
+2. Convert the bounded context name to a short, lowercase, kebab-case slug (e.g., "Payment Processing" becomes `payment`; "User Authentication & Authorization" becomes `auth`).
+3. If the commit touches cross-cutting infrastructure not owned by a single FASE, use one of the generic scopes listed below.
+
+**Generic scopes (always available, regardless of project):**
+
+| Scope | When to Use |
+|-------|-------------|
+| `bootstrap` | Project scaffolding, initial setup (typically FASE-0) |
+| `domain` | Domain model changes (entities, VOs) not tied to one FASE |
+| `events` | Event bus, domain event infrastructure |
+| `security` | Security infrastructure (cross-cutting) |
+| `audit` | Audit logging (cross-cutting) |
+| `db` | Database migrations |
+| `api` | API infrastructure (versioning, middleware, error handling) |
+
+**Project-specific scopes** are derived from the FASE plan at task generation time. For example, if a project has:
+- FASE-1 titled "PDF Extraction" --> scope: `extraction`
+- FASE-2 titled "Data Analysis" --> scope: `data-analysis`
+- FASE-3 titled "User Management" --> scope: `user-mgmt`
+
+The task generator should include a project-specific scope table in each `TASK-FASE-*.md` file so that committers know the correct scope for that FASE.
+
+### Description Rules
+
+1. **Imperative mood**: "add", "create", "implement", "configure" (not "added", "creates")
+2. **Lowercase**: No capital letter at start
+3. **No period**: No trailing period
+4. **Max 72 chars**: Subject line fits in git log
+5. **Specific**: Include the entity/endpoint/service name
+
+### Body Rules (Optional)
+
+Use body for:
+- Complex changes needing context
+- Breaking changes: prefix with `BREAKING CHANGE:`
+- Multi-file changes: list affected files
+
+```bash
+git commit -m "feat(auth): add rate limiting middleware" \
+  -m "Implement token bucket algorithm backed by the cache store (ADR-007). Burst: 100 req/min/session, sustained: 1000 req/h/user. Returns 429 with Retry-After per RN-289." \
+  --trailer "Task: TASK-F0-012" --trailer "Refs: FASE-0, ADR-007, INV-SEC-003"
+```
+
+---
+
+## SHA Capture & Traceability
+
+After each atomic commit, `sdd-task-implementer` captures the commit SHA and maintains a mapping for the full traceability chain:
+
+```
+TASK-F{N}-{SEQ} → {SHA} (captured via `git rev-parse --short HEAD`)
+```
+
+### How SHA is Used
+
+| Consumer | Purpose |
+|----------|---------|
+| **task-implementer Phase 8** | Progress report includes SHA per completed task |
+| **task-implementer Phase 9** | Completion report includes full commit log table |
+| **CHECK-C03 verification** | Validates commit exists and file scope matches task |
+| **sdd-graph.py** | Populates `commitRefs[]` in `traceability-graph.json` (reads `sdd.mjs trace commits`) |
+| **sdd-acceptance --check** | Verifies the TASK → COMMIT link and the per-requirement evidence (`sdd tasks status`, `sdd accept`) |
+| **req-change Phase 2** | Commit impact analysis identifies code blast radius per affected artifact |
+
+### Extended Traceability Chain
+
+With SHA capture, the full SDD traceability chain extends beyond specifications into implementation:
+
+```
+REQ → UC → WF → API → BDD → INV → ADR → TASK → COMMIT → CODE → TEST
+```
+
+The `Refs:` and `Task:` trailers in commit messages provide the backward links from COMMIT to TASK and to upstream specification artifacts (UC, ADR, INV, etc.).
+
+---
+
+## Revert Strategy Design
+
+### Revert Safety Categories
+
+| Category | Symbol | Meaning | Git Command |
+|----------|--------|---------|-------------|
+| `SAFE` | `SAFE` | Revert independently, no side effects | `git revert <sha>` |
+| `COUPLED` | `COUPLED` | Must revert with related tasks | Revert in reverse commit order |
+| `MIGRATION` | `MIGRATION` | Has database schema change | Run down migration, then revert |
+| `CONFIG` | `CONFIG` | Changes runtime configuration | Redeploy after revert |
+
+### Determining Revert Category
+
+```
+IF task creates a new file that nothing else imports yet:
+  → SAFE
+
+IF task modifies an existing interface used by other tasks:
+  → COUPLED (list the dependent tasks)
+
+IF task creates or modifies database schema:
+  → MIGRATION
+
+IF task modifies env vars or runtime/deploy config (see the per-stack table below):
+  → CONFIG
+
+IF task adds an entity that later tasks reference:
+  → COUPLED if later tasks are committed
+  → SAFE if later tasks are NOT yet committed
+```
+
+### Per-stack examples
+
+Stack-agnostic rules above; the commands come from the Stack Profile (`CLAUDE.md` ## SDD Stack Profile) or the kit.
+
+| Category | rails | nextjs-prisma | workers (example) |
+|----------|-------|---------------|-------------------|
+| `MIGRATION` recovery | `bin/rails db:rollback` before the revert | add a down migration; `prisma migrate reset` only on a dev DB (`db_reset_safe: yes`) | the migration's down script |
+| `CONFIG` files | `config/*.rb`, `config/credentials*`, `.env*` → restart the server | `next.config.*`, `.env*` → rebuild and restart | `wrangler.toml` bindings → redeploy |
+| Wiring (usually `COUPLED`) | `config/routes.rb`, `db/schema.rb`, layouts | `src/app/layout.tsx`, `prisma/schema.prisma` | `src/index.ts` |
+
+### Revert Entry Format
+
+```markdown
+- **Revert:** {CATEGORY} — {impact description}
+  - Revert with: {specific tasks if COUPLED}
+  - Recovery: {steps after revert, e.g., "run down migration"}
+```
+
+**Compact format** (`--compact` / `task_format: compact`): SAFE tasks omit the Revert line — an absent Revert line means SAFE. COUPLED, MIGRATION and CONFIG are always written.
+
+### Examples
+
+**SAFE revert:**
+```markdown
+- **Revert:** SAFE — health endpoint becomes unavailable, no other impact
+```
+
+**COUPLED revert:**
+```markdown
+- **Revert:** COUPLED — must revert with TASK-F0-014 (handler uses this middleware)
+  - Revert order: TASK-F0-014 first, then TASK-F0-012
+```
+
+**MIGRATION revert:**
+```markdown
+- **Revert:** MIGRATION — users table will be dropped
+  - Recovery: roll the migration back before reverting (e.g. rails `bin/rails db:rollback`; see Per-stack examples)
+  - Data loss: existing user records will be lost
+```
+
+**CONFIG revert:**
+```markdown
+- **Revert:** CONFIG — cache store binding removed from the deploy config
+  - Recovery: restart / redeploy after revert to drop the stale binding
+```
+
+---
+
+## Rollback Checkpoints
+
+Checkpoints are git tags placed at stable points within a FASE's implementation. They enable reverting to a known-good state without reverting individual commits.
+
+### When to Place Checkpoints
+
+| After Phase | Tag Format | Verification |
+|------------|------------|-------------|
+| Setup + Foundation complete | `fase-{N}-foundation` | Smoke tests pass (branch point of every Stream worktree) |
+| Verification complete | `fase-{N}-verified` | All FASE criteria met |
+
+Only these two are created, and only in the main checkout (V-17); Stream worktrees never tag.
+
+### Checkpoint Commands
+
+```bash
+# Place checkpoint
+git tag -a fase-0-foundation -m "FASE-0 foundation phase complete"
+
+# Rollback to checkpoint
+git revert --no-commit HEAD..fase-0-foundation
+git commit -m "revert: rollback to FASE-0 foundation checkpoint"
+
+# Or hard reset on feature branch (destructive)
+git reset --hard fase-0-foundation
+```
+
+---
+
+## Branches, merges and PRs
+
+Branch names, the branch-before-commit rule, merge commits (never squash or rebase) and tags: the plugin-root
+`references/git-conventions.md`. To roll back a whole merged FASE, revert its merge commit:
+`git revert -m 1 <merge-sha>`.
+
+---
+
+## Anti-Patterns
+
+### Commits to Avoid
+
+| Anti-Pattern | Problem | Fix |
+|-------------|---------|-----|
+| "WIP" commits | Not atomic, not reviewable | Split into real tasks |
+| "fix review comments" | Loses traceability | Amend the original or create new task |
+| "misc changes" | No scope, no traceability | One commit per concern |
+| Commit touching 10+ files | Unreviewable diff | Split into smaller tasks |
+| Commit with unrelated changes | Not atomic | Separate tasks |
+| Squash or rebase merge | Rewrites the per-task commits and drops their `Task:` trailers | Merge commit (`git merge --no-ff`) |

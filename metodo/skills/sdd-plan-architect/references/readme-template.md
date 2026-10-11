@@ -1,0 +1,164 @@
+# README Template for fases/
+
+Template for generating the `fases/README.md` file. This is the entry point for understanding the phase structure. Budget ≤ 4 000 chars: coverage tables carry ids only; the two notes below are one line each.
+
+---
+
+## Template
+
+```markdown
+# Fases de Implementación - {SystemName} {Version}
+
+> **Propósito:** Índices de navegación para implementar el sistema por fases.
+> **Fuente de verdad:** Las especificaciones en `spec/` (no estos índices).
+
+---
+
+## Principio Fundamental
+
+`spec/` = fuente única de verdad → `plan/fases/` = índices de navegación → `src/` = derivado. Si algo cambia se cambia la spec; los índices solo referencian.
+
+---
+
+## Diagrama de Dependencias
+
+\```
+{ASCII dependency graph generated from phase dependencies}
+\```
+
+---
+
+## Resumen de Fases
+
+Cada fase es un incremento que el cliente ve funcionar en su Demo (`phase-assignment-rules.md`).
+
+| Fase | Documento | Incremento | Requisitos | Dependencias |
+|------|-----------|------------|------------|--------------|
+{For each phase:}
+| **{N}** | [{filename}]({filename}) | {Incremento line} | {REQ ids of its Requisitos line} | {Dependencies} |
+
+**Requisitos Must sin fase:** {ninguno | ids} (V9)
+
+---
+
+## Cobertura de Casos de Uso
+
+| Fase | UCs Incluidos |
+|------|---------------|
+{For each phase:}
+| {N} | {UC list with brief descriptions} |
+
+**Total:** {N} casos de uso cubiertos (UC-001 a UC-{max})
+
+---
+
+## Cobertura de ADRs
+
+| Fase | ADRs Incluidos |
+|------|----------------|
+{For each phase:}
+| {N} | {ADR list} |
+
+**Total:** {N} ADRs referenciados
+
+---
+
+## Cobertura de Tests BDD
+
+| Fase | Tests Incluidos |
+|------|-----------------|
+{For each phase:}
+| {N} | {Test file list} |
+
+**Total:** {N} archivos de tests BDD referenciados
+
+---
+
+## Cobertura de Workflows
+
+| Fase | Workflows Incluidos |
+|------|---------------------|
+{For each phase with workflows:}
+| {N} | {Workflow list} |
+
+---
+
+## Cobertura de Contratos API
+
+| Fase | Contratos Incluidos |
+|------|---------------------|
+{For each phase:}
+| {N} | {Contract list} |
+
+---
+
+## Cobertura de Runbooks y Legal
+
+| Fase | Documentos Operacionales |
+|------|--------------------------|
+{For each phase with runbooks/legal:}
+| {N} | {Document list} |
+
+---
+
+## Archivos No Referenciados (Temporales)
+
+Los siguientes archivos en `spec/temp_files/` son documentos de trabajo y NO están incluidos en las fases:
+{List of excluded files and why}
+
+---
+
+## Cómo Usar Estos Índices
+
+Implementar: abre `FASE-N-*.md`, lee las specs listadas, implementa con sus invariantes, verifica. Cambiar: actualiza la spec en `spec/`; el índice sigue siendo válido. Contexto para un agente: pásale el documento de fase.
+
+---
+
+## Estado
+
+- **Todas las fases:** Implementables
+- **Decisiones pendientes:** {N}
+- **Bloqueos:** {description or "Ninguno"}
+```
+
+---
+
+## Dependency Graph Generation
+
+The ASCII dependency graph should be generated from the phase dependency data. Rules:
+
+1. FASE-0 (the walking skeleton) is always the root (no dependencies)
+2. Use `│`, `├`, `▼`, `◄`, `►` for arrows
+3. Show parallel phases side by side
+4. Show the full DAG from FASE-0 to the last phase
+5. Keep it readable (max ~60 chars wide)
+
+Example pattern:
+```
+FASE 0: {Title}
+    │
+    ├─────────────────────┐
+    ▼                     ▼
+FASE 1: {Title}     FASE 3: {Title}
+    │                     │
+    ▼                     │
+FASE 2: {Title} ◄─────────┤
+    │                     │
+    ├─────────────────────┘
+    ▼
+FASE 4: {Title}
+    │
+    ▼
+...
+```
+
+---
+
+## Coverage Matrix Rules
+
+1. **UCs**: List ALL UC numbers, grouped by phase. Verify total = expected count.
+2. **ADRs**: List ALL ADR numbers. Some appear in multiple phases (list all).
+3. **BDD Tests**: List test file names. Some appear in multiple phases (note section).
+4. **Workflows**: Only list phases that have workflows.
+5. **Contracts**: List contract files. EVENTS-domain.md appears in ALL phases.
+6. **Runbooks/Legal**: Only list phases that have operational docs.
