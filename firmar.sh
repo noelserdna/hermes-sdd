@@ -205,6 +205,30 @@ Kanban-Task: $BOARD/$TASK"
 
   requisitos:cambios|plan:cambios|ruta:rechazo)
     mkdir -p .sdd/hermes/feedback; printf '%s\n' "$TEXTO" > ".sdd/hermes/feedback/$TIPO.txt"
+    # Respuestas a preguntas abiertas escritas como «Q1: A, Q2: B» (en el orden en que la puerta las mostró)
+    if ! hecho preguntas && printf '%s' "$TEXTO" | grep -qiE 'q[a-z]?[[:space:]]*[0-9]'; then
+      python3 - "$NOMBRE ($ROL)" "$HOY" "$TEXTO" .sdd/questions-*.md <<'PY'
+import re, sys
+quien, hoy, texto, *ficheros = sys.argv[1:]
+elegidas = {int(n): l.upper() for n, l in re.findall(r"[Qq][A-Za-z]?\s*(\d+)\W{0,3}\s*([A-Ca-c])\b", texto)}
+n = 0
+for p in ficheros:
+    try:
+        t = open(p).read()
+    except OSError:
+        continue
+    def contestar(m):
+        global n
+        n += 1
+        if n not in elegidas:
+            return m.group(0)
+        b = m.group(0).replace("[OPEN]", "[ANSWERED]", 1)
+        return re.sub(r"^Answer:\s*$", f"Answer: {elegidas[n]} — elegida por {quien} ({hoy})", b, count=1, flags=re.M)
+    t = re.sub(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", contestar, t, flags=re.M | re.S)
+    open(p, "w").write(t)
+PY
+      marcar preguntas
+    fi
     if ! hecho registrado; then
       node "$SDD" journal add --stage "$TIPO" --kind feedback --text "$TEXTO" --by "$NOMBRE ($ROL)" >/dev/null 2>&1 || true
       marcar registrado
