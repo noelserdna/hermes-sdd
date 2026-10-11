@@ -67,6 +67,15 @@ Revisa la demo antes de decidir."
   *) echo "tipo de puerta desconocido: $TIPO" >&2; exit 2 ;;
 esac
 
+# ── Preguntas abiertas (clase C): la persona las ve en la puerta; conformar = aceptar la opción recomendada ──────
+PREG=$(awk '/^## Q-.*\[OPEN\]/{q=1; next} q && /^Question:/{sub(/^Question: */,""); print "❓ " $0} q && /^  [A-Z]\)/{print "   " $0} /^Blocks:/{q=0}' .sdd/questions-*.md 2>/dev/null | head -30)
+if [ -n "$PREG" ]; then
+  TEXTO="$TEXTO
+
+Preguntas abiertas (si das conformidad, se aplica la opción recomendada; para otra, usa ✏️ y escribe p. ej. «Q1: B»):
+$PREG"
+fi
+
 SHA=$(git rev-parse HEAD)
 ID="g$(date +%s)$(openssl rand -hex 2)"
 
