@@ -42,7 +42,7 @@ bot = Bot(); ctx = NS(bot=bot)
 leer = lambda: json.loads((HOME / "puertas/t_1.json").read_text())
 
 async def main():
-    m._RT["app"] = NS(bot=bot)
+    m._RT["app"] = NS(bot=bot); m._RT["bucle"] = asyncio.get_running_loop().create_future()  # bucle "vivo": el test no lo lanza
     await m._publicar(bot, puerta); (HOME / "puertas/t_1.json").write_text(json.dumps(puerta))
     kb = bot.enviados[-1][1]; datos = [b.callback_data for f in kb.inline_keyboard for b in f]
     ok(datos == ["g:ver:t_1"], f"paso 1 solo ofrece Ver demo ({datos})")

@@ -20,7 +20,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-log = logging.getLogger("hermes_sdd")
+log = logging.getLogger("hermes_plugins.hermes_sdd")   # este prefijo llega a gateway.log
 
 HOME = Path(os.environ.get("HERMES_SDD_HOME", Path.home() / ".hermes" / "hermes-sdd"))
 DESHACER_S = int(os.environ.get("HERMES_SDD_DESHACER_S", "180"))
@@ -126,6 +126,7 @@ async def _decidir(bot, gid: str, verbo: str, texto: str, user, persona: str, pr
 
 
 async def _on_boton(update, context) -> None:
+    _asegurar_bucle()
     q = update.callback_query
     _, verbo, gid = (q.data.split(":", 2) + ["", ""])[:3]
     persona, _p = _persona_de(q.from_user.id)
@@ -224,7 +225,10 @@ async def _firmar(bot, puerta: dict) -> None:
         "bash", str(_root() / "firmar.sh"), puerta["repo"], gid,
         stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
         env={**os.environ, "PATH": PATH_CMDS, "HERMES_SDD_HOME": str(HOME)})
-    out, err = await proc.communicate()
+    try:
+        out, err = await asyncio.wait_for(proc.communicate(), 600)
+    except asyncio.TimeoutError:
+        proc.kill(); out, err = b"", b"el notario no termino en 10 min"
     idx = HOME / "puertas" / f"{gid}.json"
     async with _lock:
         p = _leer(idx) or puerta
@@ -243,7 +247,7 @@ async def _avisar_fallos(bot) -> None:
     proc = await asyncio.create_subprocess_exec("hermes", "kanban", "boards", "list", "--json",
                                                 stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.DEVNULL,
                                                 env={**os.environ, "PATH": PATH_CMDS})
-    out, _ = await proc.communicate()
+    out, _ = await asyncio.wait_for(proc.communicate(), 60)
     nuevos = []
     for b in json.loads(out or b"[]"):
         wd = b.get("default_workdir") or ""
@@ -252,7 +256,7 @@ async def _avisar_fallos(bot) -> None:
         proc = await asyncio.create_subprocess_exec("hermes", "kanban", "--board", b["slug"], "list", "--json",
                                                     stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.DEVNULL,
                                                     env={**os.environ, "PATH": PATH_CMDS})
-        out, _ = await proc.communicate()
+        out, _ = await asyncio.wait_for(proc.communicate(), 60)
         try:
             tareas = json.loads(out or b"[]")
         except Exception:
@@ -280,47 +284,69 @@ async def _crear_tarjeta(puerta: dict) -> str:
         "hermes", "kanban", "--board", puerta["tablero"], "create", f"PUERTA {puerta.get('titulo', '')}",
         "--initial-status", "blocked", "--body", cuerpo, "--json",
         stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, env={**os.environ, "PATH": PATH_CMDS})
-    out, err = await proc.communicate()
+    out, err = await asyncio.wait_for(proc.communicate(), 60)
     if proc.returncode != 0:
         raise RuntimeError(err.decode()[-300:])
     return json.loads(out)["id"]
 
 
+async def _vuelta(ciclo: int) -> None:
+    bot = _RT["app"].bot   # la app puede reconstruirse tras un fallo de conexión: siempre la actual
+    for idx in sorted((HOME / "puertas").glob("*.json")):
+        p = _leer(idx)
+        if not p:
+            continue
+        if p.get("estado") == "abierta" and not p.get("tarjeta") and p.get("tablero"):
+            tarjeta = await _crear_tarjeta(p)
+            async with _lock:
+                actual = _leer(idx) or p
+                actual["tarjeta"] = tarjeta
+                _escribir(idx, actual)
+                local = Path(actual["repo"]) / ".sdd" / "hermes" / "puertas" / f"{actual['id']}.json"
+                loc = _leer(local)
+                if loc is not None:
+                    loc["tarjeta"] = tarjeta
+                    _escribir(local, loc)
+            p = actual
+        if p.get("estado") == "abierta" and not p.get("telegram"):
+            await asyncio.wait_for(_publicar(bot, p), 60)
+            async with _lock:
+                actual = _leer(idx) or p
+                actual.update(telegram=p["telegram"], publicada=p["publicada"])
+                _escribir(idx, actual)
+        elif p.get("estado") == "decidida" and time.time() >= p.get("firmar_en", 0):
+            log.info("hermes-sdd: firmando la puerta %s", p["id"])
+            await _firmar(bot, p)
+    if ciclo % 12 == 0:
+        await asyncio.wait_for(_avisar_fallos(bot), 180)
+
+
 async def _bucle() -> None:
     ciclo = 0
+    log.info("hermes-sdd: bucle en marcha")
     while True:
         await asyncio.sleep(5)
         try:
-            bot = _RT["app"].bot   # la app puede reconstruirse tras un fallo de conexión: siempre la actual
-            for idx in sorted((HOME / "puertas").glob("*.json")):
-                p = _leer(idx)
-                if not p:
-                    continue
-                if p.get("estado") == "abierta" and not p.get("tarjeta") and p.get("tablero"):
-                    tarjeta = await _crear_tarjeta(p)
-                    async with _lock:
-                        actual = _leer(idx) or p
-                        actual["tarjeta"] = tarjeta
-                        _escribir(idx, actual)
-                        local = Path(actual["repo"]) / ".sdd" / "hermes" / "puertas" / f"{actual['id']}.json"
-                        loc = _leer(local)
-                        if loc is not None:
-                            loc["tarjeta"] = tarjeta
-                            _escribir(local, loc)
-                    p = actual
-                if p.get("estado") == "abierta" and not p.get("telegram"):
-                    await _publicar(bot, p)
-                    async with _lock:
-                        actual = _leer(idx) or p
-                        actual.update(telegram=p["telegram"], publicada=p["publicada"])
-                        _escribir(idx, actual)
-                elif p.get("estado") == "decidida" and time.time() >= p.get("firmar_en", 0):
-                    await _firmar(bot, p)
-            if ciclo % 12 == 0:
-                await _avisar_fallos(bot)
+            await _vuelta(ciclo)
+        except asyncio.CancelledError:
+            log.warning("hermes-sdd: bucle cancelado")
+            raise
         except Exception:
-            log.exception("hermes-sdd: error en el bucle")
+            log.exception("hermes-sdd: error en una vuelta del bucle (sigue)")
         ciclo += 1
+        try:   # latido: lo leen /estado y doctor para saber que el canal está vivo
+            _escribir(HOME / "latido.json", {"ts": _ahora(), "ciclo": ciclo, "pid": os.getpid()})
+        except Exception:
+            pass
+
+
+def _asegurar_bucle() -> None:
+    """Si el bucle murió (cancelado o por una excepción no prevista), lo vuelve a lanzar."""
+    t = _RT.get("bucle")
+    if t is None or t.done():
+        if t is not None:
+            log.warning("hermes-sdd: el bucle estaba parado; se relanza")
+        _RT["bucle"] = asyncio.get_running_loop().create_task(_bucle())
 
 
 # ── registro ────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -338,10 +364,13 @@ def register(ctx):
         application.add_handler(MessageHandler(filters.TEXT & _EsRespuestaDePuerta(), _on_respuesta))
         (HOME / "puertas").mkdir(parents=True, exist_ok=True)
 
-        if not _RT.get("bucle"):   # una sola tarea aunque el adaptador reconstruya la app
-            _RT["bucle"] = asyncio.get_running_loop().create_task(_bucle())
+        _asegurar_bucle()   # una sola tarea viva aunque el adaptador reconstruya la app
 
     def _cmd_puertas(raw_args: str = "") -> str:
+        try:
+            _asegurar_bucle()
+        except RuntimeError:
+            pass
         abiertas = [p for p in (_leer(f) for f in sorted((HOME / "puertas").glob("*.json"))) if p and p.get("estado") == "abierta"]
         if not abiertas:
             return "No hay puertas abiertas."
