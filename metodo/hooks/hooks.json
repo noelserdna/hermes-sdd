@@ -1,0 +1,22 @@
+{
+  "description": "Guardias del ejecutor hermes-sdd: contexto del estado al empezar, inmutabilidad de etapas anteriores, denegación de todo lo que sea firmar o tocar el kanban (el ejecutor nunca firma) y actualización del estado de la etapa.",
+  "hooks": {
+    "SessionStart": [
+      { "matcher": "startup|resume|compact",
+        "hooks": [ { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/sdd-session-start.sh\"", "timeout": 10 } ] }
+    ],
+    "PreToolUse": [
+      { "matcher": "Edit|Write",
+        "hooks": [ { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/sdd-upstream-guard.sh\"", "timeout": 5 } ] },
+      { "matcher": "Bash",
+        "hooks": [ { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/sdd-executor-deny.sh\"", "timeout": 5 },
+                   { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/sdd-tool-guard.sh\"", "timeout": 5 } ] },
+      { "matcher": "Skill",
+        "hooks": [ { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/sdd-pipeline-state-updater.sh\"", "timeout": 5, "async": true } ] }
+    ],
+    "PostToolUse": [
+      { "matcher": "Write",
+        "hooks": [ { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/sdd-pipeline-state-updater.sh\"", "timeout": 5, "async": true } ] }
+    ]
+  }
+}
