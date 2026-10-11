@@ -42,12 +42,12 @@ grep -q '^> \*\*Status:\*\* Approved' requirements/REQUIREMENTS.md && ok "REQUIR
 git log -1 --format=%B | grep -q "Gate-Id: g3" && ok "commit con trailer Gate-Id" || bad "commit sin Gate-Id"
 # 4. idempotencia: repetir no duplica
 n1=$(git rev-list --count HEAD); firmar g3; n2=$(git rev-list --count HEAD)
-[ $rc -eq 0 ] && [ "$n1" = "$n2" ] && ok "repetir la firma no crea nada nuevo" || bad "no idempotente ($n1→$n2, $out)"
+[ $rc -eq 0 ] && [ "$n1" = "$n2" ] && ok "repetir la firma no crea nada nuevo" || bad "no idempotente (${n1}→${n2}, $out)"
 # 5. retomar a mitad: simular corte tras 'registrado'
 puerta g5 plan; decidir g5 conforme local tester; mkdir -p "$HERMES_SDD_HOME/actas/local"
 jq -n '{puerta:"g5", pasos:["validado","registrado"], rol:"Cliente", nombre:"Andrés León", head:"x"}' > "$HERMES_SDD_HOME/actas/local/g5.json"
 nj=$(wc -l < status/journal.jsonl 2>/dev/null || echo 0); firmar g5; nj2=$(wc -l < status/journal.jsonl 2>/dev/null || echo 0)
-[ $rc -eq 0 ] && [ "$nj" = "$nj2" ] && ok "retoma tras un corte sin repetir el registro" || bad "retomar: $out ($nj→$nj2)"
+[ $rc -eq 0 ] && [ "$nj" = "$nj2" ] && ok "retoma tras un corte sin repetir el registro" || bad "retomar: $out (${nj}→${nj2})"
 # 6. aceptar una FASE sin puerta de calidad cumplida → solo rechazo
 puerta g6 fase 0; decidir g6 acepto telegram 111; firmar g6
 [ $rc -ne 0 ] && echo "$out" | grep -q "solo se admite rechazo" && ok "no acepta FASE con gate≠0/3" || bad "gate: $out"
