@@ -93,9 +93,12 @@ case "$TIPO:$VERBO" in
     V=$(sed -n 's/^> \*\*Version:\*\* *//p' requirements/REQUIREMENTS.md | head -1); V=${V:-1.0}
     if ! hecho registrado; then
       sed -i.bak -E "s/^> \*\*Status:\*\*.*/> **Status:** Approved/" requirements/REQUIREMENTS.md
-      grep -q '^> \*\*Approved by:\*\*' requirements/REQUIREMENTS.md ||
+      if grep -q '^> \*\*Approved by:\*\*' requirements/REQUIREMENTS.md; then
+        sed -i.bak -E "s/^> \*\*Approved by:\*\*.*/> **Approved by:** $NOMBRE ($ROL), $HOY/" requirements/REQUIREMENTS.md
+      else
         sed -i.bak -E "/^> \*\*Status:\*\*/a\\
 > **Approved by:** $NOMBRE ($ROL), $HOY" requirements/REQUIREMENTS.md
+      fi
       rm -f requirements/REQUIREMENTS.md.bak
       node "$SDD" journal add --stage requirements-engineer --kind decision \
         --text "$NOMBRE aprobó los requisitos (versión $V) el $HOY" --by "$NOMBRE ($ROL)" --refs "requirements-v$V" >/dev/null

@@ -39,6 +39,7 @@ git tag -l 'requirements-v*' | grep -q . && ok "crea el tag requirements-v*" || 
 git tag -n20 -l 'requirements-v*' | grep -q "Approved-by: Andrés León" && ok "tag con Approved-by" || bad "tag sin Approved-by"
 git tag -n20 -l 'requirements-v*' | grep -q "Channel: telegram:111 msg:42" && ok "tag con el canal y la prueba" || bad "tag sin canal"
 grep -q '^> \*\*Status:\*\* Approved' requirements/REQUIREMENTS.md && ok "REQUIREMENTS.md en Approved" || bad "Status no cambia"
+grep -q "^> \*\*Approved by:\*\* Andrés León (Cliente)" requirements/REQUIREMENTS.md && ok "Approved by sustituye al anterior" || bad "Approved by no se sustituye"
 git log -1 --format=%B | grep -q "Gate-Id: g3" && ok "commit con trailer Gate-Id" || bad "commit sin Gate-Id"
 # 4. idempotencia: repetir no duplica
 n1=$(git rev-list --count HEAD); firmar g3; n2=$(git rev-list --count HEAD)
