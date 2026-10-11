@@ -34,6 +34,11 @@ $TEXTO
       (.stages | to_entries | map(select(.value.run|not)) | if length>0 then "Se salta: " + (map(.key) | join(", ")) else empty end),
       ([.factors | to_entries[] | select(.value.value=="doubt") | .key] | if length>0 then "⚠️ Dudas (cuentan como sí): " + join(", ") else "Sin dudas" end)' \
       .sdd/hermes/ruta.json)
+    # Etapas que la ruta pide y este arnés aún no ejecuta: la persona debe saberlo antes de aceptar
+    SIN_SOPORTE=$(jq -r '[.stages | to_entries[] | select(.value.run) | .key
+      | select(IN("requirements-engineer","plan-architect","task-generator","task-implementer","acceptance") | not)] | join(", ")' .sdd/hermes/ruta.json)
+    [ -n "$SIN_SOPORTE" ] && TEXTO="$TEXTO
+⛔ Este arnés aún no ejecuta: $SIN_SOPORTE. Si aceptas, esas etapas quedarán pendientes; rechaza con un motivo si no encaja."
     OPCIONES='[{"verbo":"acepto","etiqueta":"✅ Aprobar ruta"},{"verbo":"completo","etiqueta":"🔁 Pipeline completo"},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]' ;;
   plan)
     TITULO="Plan por FASEs"
