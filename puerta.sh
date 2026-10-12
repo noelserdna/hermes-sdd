@@ -27,6 +27,20 @@ case "$TIPO" in
 $TEXTO
 
 ¿Son estos los requisitos que quieres? Al aprobarlos quedan como línea base (tag)."
+    if [ -f .sdd/hermes/cambio-actual ]; then   # un cambio: primero lo que se pidió y lo que cambia
+      INT=$(cat .sdd/hermes/cambio-actual)
+      PREV=$(git describe --tags --abbrev=0 --match 'requirements-v*' 2>/dev/null || true)
+      DIFF=$( [ -n "$PREV" ] && git diff "$PREV" -- requirements/REQUIREMENTS.md | grep -E '^[+-]### REQ-' | sed -E 's/^\+### /➕ /; s/^-### /➖ /' | head -15)
+      TITULO="Requisitos (cambio $INT)"
+      TEXTO="Pediste: «$(sed -n '/^> /{s/^> //;p;}' "intent/$INT.md" | head -5 | tr '\n' ' ')»
+Versión $(sed -n 's/^> \*\*Version:\*\* *//p' requirements/REQUIREMENTS.md | head -1) de los requisitos. Cambia:
+${DIFF:-(los mismos requisitos con criterios modificados; mira el Change Report en changes/)}
+
+¿Apruebas esta versión? Después se replanifica solo lo nuevo; las FASEs aceptadas no se tocan."
+    fi
+    [ -f .sdd/hermes/adopcion ] && TITULO="Requisitos deducidos del código" && TEXTO="$TEXTO
+
+Proyecto adoptado: estos requisitos salen de leer el código. Corrige lo que no sea lo que quieres."
     OPCIONES='[{"verbo":"acepto","etiqueta":"✅ Apruebo"},{"verbo":"cambios","etiqueta":"✏️ Falta o sobra algo","texto":true}]' ;;
   ruta)
     TITULO="Ruta del proyecto"
@@ -112,7 +126,8 @@ AHORA=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 mkdir -p .sdd/hermes/puertas "$HOME_SDD/puertas"
 jq -n --arg id "$ID" --arg t "$TIPO" --arg f "$FASE" --arg b "$BOARD" --arg s "$SHA" --arg c "$AHORA" \
   --arg r "$REPO" --arg ti "$TITULO" --arg tx "$TEXTO" --argjson o "$OPCIONES" --arg v "${VIDEO:-}" --argjson q "$PREGUNTAS" \
-  '{id:$id, tipo:$t, fase:$f, tablero:$b, tarjeta:"", sha:$s, creada:$c, repo:$r, titulo:$ti, texto:$tx,
+  --argjson ad "$([ -f .sdd/hermes/adopcion ] && echo true || echo false)" \
+  '{id:$id, tipo:$t, fase:$f, tablero:$b, tarjeta:"", adopcion:$ad, sha:$s, creada:$c, repo:$r, titulo:$ti, texto:$tx,
     opciones:$o, demo:$v, preguntas:$q, estado:"abierta"}' > ".sdd/hermes/puertas/$ID.json"
 cp ".sdd/hermes/puertas/$ID.json" "$HOME_SDD/puertas/$ID.json"   # índice global para los canales
 echo "$ID"

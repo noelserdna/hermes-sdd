@@ -637,7 +637,23 @@ def register(ctx):
         except Exception as e:
             return f"No se anuló: {e}"
 
+    async def _cmd_cambio(raw_args: str = "") -> str:
+        persona, _ = _autorizado_en_sesion()
+        if not persona:
+            return "Solo una persona autorizada puede pedir cambios."
+        partes = raw_args.split(maxsplit=1)
+        if len(partes) < 2:
+            return "Uso: /cambio <proyecto> <qué quieres, en tus palabras>"
+        repo = (await _proyectos()).get(partes[0])
+        if not repo:
+            return f"No conozco el proyecto {partes[0]}."
+        try:
+            return await _cli("bash", str(_root() / "lanzar.sh"), "cambio", repo, partes[1])
+        except Exception as e:
+            return f"No se lanzó el cambio: {e}"
+
     ctx.register_telegram_handler(_wire)
+    ctx.register_command("cambio", _cmd_cambio, description="Pide un cambio o una funcionalidad a un proyecto SDD", args_hint="<proyecto> <petición>")
     ctx.register_command("estado", _cmd_estado, description="Estado de los proyectos SDD", args_hint="[proyecto]")
     ctx.register_command("pausar", _cmd_pausar, description="Pausa proyectos SDD (ahora = detener)", args_hint="[proyecto|todo] [ahora]")
     ctx.register_command("reanudar", _cmd_reanudar, description="Reanuda proyectos SDD en pausa", args_hint="[proyecto|todo]")

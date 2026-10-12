@@ -9,6 +9,8 @@
 #     tareas         tareas de todas las FASEs → puerta de plan (conformidad con el orden de entrega)
 #     implementar N  implementa la FASE N y verifica (tareas hechas, commits válidos)
 #     aceptar N      veredictos y demo de la FASE N → puerta de aceptación
+#     cambio         aplica la petición de intent/INT-NNN.md a los requisitos (versión nueva) → puerta de requisitos
+#     adoptar        ingeniería inversa de un repo existente: requisitos y FASEs retroactivas → puerta de requisitos
 #     cierre         puerta de calidad GLOBAL; si quedan Must sin verificar, el ejecutor cierra los huecos y se
 #                    repite la aceptación global → puerta de entrega
 #
@@ -78,12 +80,14 @@ case "$ETAPA" in
     fin '{"outcome":"done","reason":"ok"}' "Ruta propuesta" "$P" ;;
 
   plan)
-    claude_etapa plan-architect "/sdd-plan-architect --skip-clarify — $ARNES Generate plan/."
+    INC=""; git tag -l 'fase-*-accepted' | grep -q . && INC=" INCREMENTAL: the requirements changed after some FASEs were accepted (tags fase-N-accepted, see changes/). Keep every accepted FASE file untouched and add new FASE(s) after the last one, covering only the new or modified requirements."
+    claude_etapa plan-architect "/sdd-plan-architect --skip-clarify — $ARNES Generate plan/.$INC"
     node "$SDD" lint --plan >/dev/null 2>&1 || falla "sdd lint --plan encuentra errores: $(node "$SDD" lint --plan 2>&1 | tail -3 | tr '\n' ' ')"
     fin "$RES" "Plan generado ($(ls plan/fases/FASE-*.md 2>/dev/null | wc -l | tr -d ' ') FASEs)" ;;
 
   tareas)
-    claude_etapa task-generator "/sdd-task-generator — $ARNES Generate task/ for all FASEs."
+    INC=""; git tag -l 'fase-*-accepted' | grep -q . && INC=" INCREMENTAL: generate task files only for the FASEs that do not have one yet; do not touch the task files of accepted FASEs."
+    claude_etapa task-generator "/sdd-task-generator — $ARNES Generate task/ for all FASEs.$INC"
     node "$SDD" lint --dir task >/dev/null 2>&1 || falla "sdd lint de tareas encuentra errores"
     P=$(puerta plan) || falla "no se pudo abrir la puerta de plan"
     fin "$RES" "Tareas generadas: $(node "$SDD" tasks status 2>/dev/null | tail -1)" "$P" ;;
@@ -101,6 +105,17 @@ case "$ETAPA" in
     claude_etapa acceptance "/sdd-acceptance --fase $FASE — $ARNES Produce the per-requirement verdicts with evidence and the FASE demo (captures and a short video in evidencias/FASE-$FASE/). Do not sign off."
     P=$(puerta fase "$FASE") || falla "no se pudo abrir la puerta de la FASE-$FASE"
     fin "$RES" "Veredictos y demo de la FASE-$FASE listos" "$P" ;;
+
+  cambio)
+    INT=$(cat .sdd/hermes/cambio-actual 2>/dev/null) || falla "no hay ningún cambio en curso (.sdd/hermes/cambio-actual)"
+    claude_etapa req-change "/sdd-req-change --batch --cascade=manual --file intent/$INT.md — $ARNES Apply this change request to requirements/ as the next version (Version +1, Status: Review)."
+    P=$(puerta requisitos) || falla "no se pudo abrir la puerta de requisitos"
+    fin "$RES" "Cambio $INT aplicado a los requisitos (pendiente de aprobar)" "$P" ;;
+
+  adoptar)
+    claude_etapa reverse-engineer "/sdd-reverse-engineer — $ARNES Adopt this existing repository: derive requirements/CUSTOMER-NEEDS.md and requirements/REQUIREMENTS.md (Version 1.0, Status: Review) with verifiable criteria, plus retroactive FASEs and findings."
+    P=$(puerta requisitos) || falla "no se pudo abrir la puerta de requisitos"
+    fin "$RES" "Línea base propuesta a partir del código" "$P" ;;
 
   cierre)
     rc=0; node "$SDD" gate >/dev/null 2>&1 || rc=$?
