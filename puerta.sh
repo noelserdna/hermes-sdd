@@ -67,6 +67,18 @@ ${VIDEO:+🎬 Hay vídeo de la demo}
 Revisa la demo antes de decidir."
     OPCIONES='[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1},{"verbo":"acepto","etiqueta":"✅ Aceptar","paso":2},{"verbo":"observaciones","etiqueta":"📝 Con observaciones","texto":true,"paso":2},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'
     [ "$rc" = 0 ] || [ "$rc" = 3 ] || OPCIONES='[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]' ;;
+  entrega)
+    TITULO="Entrega final"
+    rc=0; GATE_MD=$(node "$SDD" gate --md 2>/dev/null) || rc=$?
+    case $rc in 0) ALERTAS="✅ Todos los Must verificados";; 3) ALERTAS="⚠️ Cumple con exenciones";;
+      *) ALERTAS="⛔ La puerta de calidad global no se cumple (código $rc): solo se puede rechazar";; esac
+    TEXTO="$ALERTAS
+$(echo "$GATE_MD" | grep -E '^\|' | grep -v '^|---' | cut -d'|' -f2,3,5,6 | head -20)
+FASEs aceptadas: $(git tag -l 'fase-*-accepted' | tr '\n' ' ')
+
+¿Aceptas la entrega del proyecto?"
+    OPCIONES='[{"verbo":"acepto","etiqueta":"✅ Acepto la entrega"},{"verbo":"observaciones","etiqueta":"📝 Con observaciones","texto":true},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]'
+    [ "$rc" = 0 ] || [ "$rc" = 3 ] || OPCIONES='[{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]' ;;
   *) echo "tipo de puerta desconocido: $TIPO" >&2; exit 2 ;;
 esac
 

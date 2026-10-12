@@ -12,6 +12,8 @@
 #   plan conforme     → implementar 0 → aceptar 0 plan cambios       → plan → tareas
 #   fase N aceptada   → implementar N+1 → aceptar N+1 (si hay más FASEs)
 #   fase N rechazada  → implementar N → aceptar N (con lo pedido)
+#   última FASE ok    → cierre (puerta global; cierra huecos si los hay) → PUERTA entrega
+#   entrega rechazada → cierre (con lo pedido)
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 CMD=$1; REPO=$(cd "$2" && pwd)
@@ -57,8 +59,10 @@ case "$CMD" in
         N=$((FASE + 1))
         if ls "$REPO"/plan/fases/FASE-"$N"-*.md >/dev/null 2>&1; then
           t=$(tarjeta "Implementar FASE-$N" - 120m implementar "$N"); tarjeta "Aceptar FASE-$N" "$t" 60m aceptar "$N"
-        else echo "Todas las FASEs aceptadas"; fi ;;
+        else tarjeta "Cierre: puerta global y entrega" - 120m cierre; fi ;;
       fase:rechazo)                   t=$(tarjeta "Implementar FASE-$FASE (cambios)" - 120m implementar "$FASE"); tarjeta "Aceptar FASE-$FASE" "$t" 60m aceptar "$FASE" ;;
+      entrega:acepto|entrega:observaciones) echo "Proyecto entregado" ;;
+      entrega:rechazo)                tarjeta "Cierre (otra vez)" - 120m cierre ;;
       *) echo "Sin tramo siguiente para $TIPO:$RESULTADO" ;;
     esac ;;
 

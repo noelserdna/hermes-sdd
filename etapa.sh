@@ -9,6 +9,8 @@
 #     tareas         tareas de todas las FASEs → puerta de plan (conformidad con el orden de entrega)
 #     implementar N  implementa la FASE N y verifica (tareas hechas, commits válidos)
 #     aceptar N      veredictos y demo de la FASE N → puerta de aceptación
+#     cierre         puerta de calidad GLOBAL; si quedan Must sin verificar, el ejecutor cierra los huecos y se
+#                    repite la aceptación global → puerta de entrega
 #
 # Si existe .sdd/hermes/feedback/<etapa>[-N].txt (lo deja el notario tras un "cambios"/"rechazo"), se pasa al
 # ejecutor como lo que la persona pidió cambiar.
@@ -87,6 +89,18 @@ case "$ETAPA" in
     claude_etapa acceptance "/sdd-acceptance --fase $FASE — $ARNES Produce the per-requirement verdicts with evidence and the FASE demo (captures and a short video in evidencias/FASE-$FASE/). Do not sign off."
     P=$(puerta fase "$FASE") || falla "no se pudo abrir la puerta de la FASE-$FASE"
     fin "$RES" "Veredictos y demo de la FASE-$FASE listos" "$P" ;;
+
+  cierre)
+    rc=0; node "$SDD" gate >/dev/null 2>&1 || rc=$?
+    if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then
+      HUECOS=$(node "$SDD" gate 2>/dev/null | grep -E 'MISSING|FAILING|STALE' | awk '{print $1" "$2}' | tr '\n' ';')
+      ULT=$(ls plan/fases/FASE-*.md | sed -E 's/.*FASE-([0-9]+).*/\1/' | sort -n | tail -1)
+      claude_etapa task-implementer "/sdd-task-implementer --fase=$ULT — $ARNES The GLOBAL acceptance gate is not met. Requirements without evidence: $HUECOS. For each one, first append a task to task/TASK-FASE-$ULT.md (next TASK-F$ULT id, same grammar, Refs the requirement), then implement it test-first (the test name carries the requirement id and criterion, e.g. 'REQ-C-001 AC1'), one commit per task with Task:/Refs: trailers. Do not touch tests that already exist."
+      claude_etapa acceptance "/sdd-acceptance — $ARNES Compute the GLOBAL per-requirement verdicts (all FASEs) with evidence. Do not sign off."
+    fi
+    P=$(puerta entrega) || falla "no se pudo abrir la puerta de entrega"
+    [ -n "${RES:-}" ] || RES='{"outcome":"done","reason":"ok"}'
+    fin "$RES" "Cierre: puerta de calidad global calculada" "$P" ;;
 
   *) falla "etapa desconocida: $ETAPA" ;;
 esac

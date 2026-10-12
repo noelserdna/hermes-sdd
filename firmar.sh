@@ -55,14 +55,16 @@ if ! hecho validado; then
   # Verbos válidos por tipo de puerta
   case "$TIPO:$VERBO" in
     requisitos:acepto|requisitos:cambios|ruta:acepto|ruta:completo|ruta:rechazo|plan:conforme|plan:cambios) ;;
-    fase:acepto|fase:observaciones|fase:rechazo) ;;
+    fase:acepto|fase:observaciones|fase:rechazo|entrega:acepto|entrega:observaciones|entrega:rechazo) ;;
     *) fallo "verbo '$VERBO' no vale para una puerta de tipo '$TIPO'" ;;
   esac
   case "$VERBO" in cambios|observaciones|rechazo) [ -n "$TEXTO" ] || fallo "'$VERBO' necesita un texto" ;; esac
   # Aceptar una FASE exige la puerta de calidad cumplida (0) o cumplida con exenciones (3); rechazar, no
-  if [ "$TIPO" = fase ] && [ "$VERBO" != rechazo ]; then
-    rc=0; node "$SDD" gate --fase "$FASE" >/dev/null 2>&1 || rc=$?
-    [ "$rc" = 0 ] || [ "$rc" = 3 ] || fallo "sdd gate --fase $FASE sale con $rc: solo se admite rechazo"
+  if { [ "$TIPO" = fase ] || [ "$TIPO" = entrega ]; } && [ "$VERBO" != rechazo ]; then
+    rc=0
+    if [ "$TIPO" = fase ]; then node "$SDD" gate --fase "$FASE" >/dev/null 2>&1 || rc=$?
+    else node "$SDD" gate >/dev/null 2>&1 || rc=$?; fi
+    [ "$rc" = 0 ] || [ "$rc" = 3 ] || fallo "la puerta de calidad sale con $rc: solo se admite rechazo"
   fi
   t=$(mktemp); jq --arg r "$ROL" --arg n "$NOMBRE" --arg h "$(git rev-parse HEAD)" --arg g "${rc:-}" \
     '.rol=$r | .nombre=$n | .head=$h | .gate_exit=$g' "$ACTA" > "$t" && mv "$t" "$ACTA"
@@ -222,6 +224,38 @@ Kanban-Task: $BOARD/$TASK"
     fi
     if ! hecho commit; then commit_si_hay "docs(acceptance): reject FASE-$FASE" acceptance/ status/; marcar commit; fi
     RESULTADO="rechazo"; RESUMEN="FASE-$FASE rechazada por $NOMBRE ($ROL): $TEXTO" ;;
+
+  entrega:acepto|entrega:observaciones)
+    N=$(( $(git tag -l 'entrega-*' | wc -l) + 1 ))
+    if ! hecho registrado; then
+      node "$SDD" journal add --stage acceptance --kind decision --text "$NOMBRE aceptó la entrega $N${TEXTO:+ con observaciones: $TEXTO}" \
+        --by "$NOMBRE ($ROL)" --refs "entrega-$N" >/dev/null
+      marcar registrado
+    fi
+    if ! hecho commit; then commit_si_hay "docs(acceptance): accept delivery $N" status/ acceptance/; marcar commit; fi
+    if ! hecho tag; then
+      etiquetar "entrega-$N" "Delivery $N accepted
+
+Accepted-by: $NOMBRE
+Approver-role: $ROL
+Channel: $CHANNEL
+Commit: $HEAD0
+Acceptance: global gate exit $(jq -r '.gate_exit // "?"' "$ACTA")${TEXTO:+; observations: $TEXTO}
+Kanban-Task: $BOARD/$TASK
+
+$(node "$SDD" gate --md 2>/dev/null)"
+      marcar tag
+    fi
+    RESULTADO="$VERBO"; RESUMEN="Entrega $N aceptada por $NOMBRE ($ROL) — tag entrega-$N" ;;
+
+  entrega:rechazo)
+    mkdir -p .sdd/hermes/feedback; printf '%s\n' "$TEXTO" > ".sdd/hermes/feedback/cierre.txt"
+    if ! hecho registrado; then
+      node "$SDD" journal add --stage acceptance --kind feedback --text "$TEXTO" --by "$NOMBRE ($ROL)" >/dev/null
+      marcar registrado
+    fi
+    if ! hecho commit; then commit_si_hay "docs(acceptance): delivery rejected by $NOMBRE" status/; marcar commit; fi
+    RESULTADO="rechazo"; RESUMEN="Entrega rechazada por $NOMBRE ($ROL): $TEXTO" ;;
 
   requisitos:cambios|plan:cambios|ruta:rechazo)
     mkdir -p .sdd/hermes/feedback; printf '%s\n' "$TEXTO" > ".sdd/hermes/feedback/$TIPO.txt"
