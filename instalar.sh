@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Instala el arnés hermes-sdd en este Mac (una vez; se puede repetir para actualizar).
 #
-#   bash instalar.sh
+#   bash instalar.sh [--sin-estacion]
 #
 # 1. Copia el arnés a ~/.hermes/hermes-sdd/<versión> (disco interno: los repos pueden estar en un disco externo)
 # 2. Crea aprobadores.json (tú, con tu id de Telegram y tu usuario local) si no existe
@@ -36,6 +36,7 @@ rm -rf "$HH/plugins/hermes-sdd"; mkdir -p "$HH/plugins"
 cp -R "$DEST/plugin/hermes-sdd" "$HH/plugins/hermes-sdd"
 hermes plugins enable hermes-sdd >/dev/null 2>&1 || echo "  AVISO: activa el plugin con: hermes plugins enable hermes-sdd"
 
+if [ "${1:-}" != --sin-estacion ]; then   # --sin-estacion: no tocar el perfil de la estación (p. ej. con etapas en marcha)
 echo "· Perfil $P (limpio)"
 hermes profile list 2>/dev/null | grep -qw "$P" && { hermes profile delete -y "$P" >/dev/null 2>&1 || true; }
 hermes profile create "$P" --no-alias --no-skills \
@@ -54,6 +55,31 @@ for kv in "timeouts.tools.sequential_call 5400" "timeouts.tools.concurrent_batch
 done
 hermes -p "$P" config set approvals.deny \
   '["*accept record*","*git tag*","*update-ref*","*route --write*","*git push*","*firmar.sh*","*decidir.sh*","*hermes kanban*","*sqlite3*"]' >/dev/null
+
+fi
+echo "· Perfil sdd-ejecutor (ejecutor Hermes nativo para etapas ligeras)"
+E=sdd-ejecutor
+hermes profile list 2>/dev/null | grep -qw "$E" && { hermes profile delete -y "$E" >/dev/null 2>&1 || true; }
+hermes profile create "$E" --no-alias --no-skills \
+  --description "Ejecutor hermes-sdd: hace etapas ligeras del método con sus skills. Nunca firma ni toca el kanban." >/dev/null
+ED="$HH/profiles/$E"
+for k in default provider base_url api_mode; do
+  v=$(hermes config get "model.$k" 2>/dev/null | tail -1); [ -n "$v" ] && hermes -p "$E" config set "model.$k" "$v" >/dev/null
+done
+{ grep '^OPENROUTER_API_KEY=' "$HH/.env" || true; echo "TERMINAL_MAX_FOREGROUND_TIMEOUT=5400"; } > "$ED/.env"; chmod 600 "$ED/.env"
+hermes -p "$E" tools disable web browser vision image_gen tts computer_use cronjob delegation memory \
+  code_execution connections clarify session_search kanban >/dev/null 2>&1 || true
+for kv in "timeouts.tools.sequential_call 5400" "timeouts.tools.concurrent_batch 5400" \
+          "auxiliary.background_review.enabled false" "curator.enabled false" "memory.memory_enabled false" \
+          "skills.write_approval true"; do
+  hermes -p "$E" config set $kv >/dev/null
+done
+hermes -p "$E" config set skills.external_dirs "[\"$HOME_SDD/actual/metodo/skills\"]" >/dev/null
+hermes -p "$E" config set terminal.env_passthrough '["SDD_PLUGIN_ROOT","CLAUDE_PLUGIN_ROOT","SDD_EXECUTOR"]' >/dev/null
+hermes -p "$E" config set approvals.deny \
+  '["*accept record*","*git tag*","*update-ref*","*route --write*","*git push*","*firmar.sh*","*decidir.sh*","*hermes kanban*","*sqlite3*"]' >/dev/null
+hermes -p "$E" config set hooks.pre_tool_call \
+  "[{\"matcher\":\"terminal\",\"command\":\"bash $HOME_SDD/actual/metodo/hooks/sdd-executor-deny.sh\",\"timeout\":10,\"fail_closed\":true}]" >/dev/null
 
 [ "$(hermes config get kanban.auto_decompose 2>/dev/null | tail -1)" = false ] ||
   echo "  AVISO: kanban.auto_decompose está activo; desactívalo con: hermes config set kanban.auto_decompose false"

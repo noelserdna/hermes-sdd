@@ -2,8 +2,11 @@
   "canales": [
     "telegram"
   ],
+  "ejecutor": "claude",
+  "ejecutores": {
+    "ruta": "hermes"
+  },
   "modelos": {
-    "defecto": "",
-    "ruta": ""
+    "ruta": "anthropic/claude-sonnet-5.5"
   }
 }
