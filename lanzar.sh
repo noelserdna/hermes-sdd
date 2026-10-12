@@ -38,6 +38,9 @@ preparar() {  # lo común a iniciar y adoptar: sin LLM
   bash "$ROOT/metodo/scripts/install-git-hooks.sh" -C "$REPO" --quiet
   [ -f AGENTS.md ] || { cp "$ROOT/templates/AGENTS.md" AGENTS.md; echo "AVISO: AGENTS.md creado desde la plantilla; revisa el Stack Profile" >&2; }
   git add -A && { git diff --cached --quiet || git commit -qm "chore(sdd): set up hermes-sdd"; }
+  asegurar_tablero
+}
+asegurar_tablero() {
   hermes kanban boards list --json | jq -e --arg b "$BOARD" 'any(.[]; .slug == $b)' >/dev/null ||
     hermes kanban boards create "$BOARD" --name "$(basename "$REPO")" --default-workdir "$REPO" >/dev/null
 }
@@ -63,6 +66,7 @@ case "$CMD" in
 
   cambio)
     PETICION=$3
+    asegurar_tablero
     cd "$REPO"; mkdir -p intent .sdd/hermes
     N=$(( $(ls intent/INT-*.md 2>/dev/null | wc -l) + 1 )); INT=$(printf 'INT-%03d' "$N")
     { echo "# $INT"; echo; echo "Petición literal ($(date +%Y-%m-%d)):"; echo; printf '%s\n' "$PETICION" | sed 's/^/> /'; } > "intent/$INT.md"
