@@ -2,7 +2,7 @@
 # Reproduce la grabación todo-app de principio a fin (sin LLM ni kanban), decidiendo con el canal local.
 set -uo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
+T=$(mktemp -d); [ -n "${CONSERVAR:-}" ] || trap 'rm -rf "$T"' EXIT
 export HERMES_SDD_HOME="$T/home" HERMES_SDD_SIN_KANBAN=1; mkdir -p "$HERMES_SDD_HOME"
 jq -n --arg u "$USER" '{yo:{nombre:"Alumna", rol:"Cliente", canales:{local:$u}}}' > "$HERMES_SDD_HOME/aprobadores.json"
 fail=0; ok() { echo "ok   $1"; }; bad() { echo "FAIL $1"; fail=1; }

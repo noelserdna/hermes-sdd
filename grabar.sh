@@ -9,11 +9,14 @@
 #   ejecuciones.json [{nombre, commits:[sha…]}] en orden: los commits que produjo cada ejecución del ejecutor
 #                    (deducidos de la hora de inicio y fin de cada run en .sdd/hermes/runs/); los del notario no
 #   extras/          lo que no está en git y hace falta: evidencias/, respuestas de la ruta y preguntas abiertas
+#
+# La grabación se ANONIMIZA: en una copia del historial, los ids y usuarios de canal (telegram:<n>, user:<nombre>)
+# de los registros humanos se sustituyen por marcadores, y no se incluyen los tags (llevan la identidad de quien
+# firmó). Así se puede publicar con un curso sin exponer a nadie.
 set -euo pipefail
 REPO=$(cd "$1" && pwd); OUT=$2
 mkdir -p "$OUT/extras"; OUT=$(cd "$OUT" && pwd)
 cd "$REPO"
-git bundle create "$OUT/repo.bundle" --all 2>/dev/null
 git log --reverse --format=%H --grep='^chore(sdd): set up hermes-sdd' | head -1 > "$OUT/base.txt"
 [ -s "$OUT/base.txt" ] || git rev-list --max-parents=0 HEAD > "$OUT/base.txt"
 
@@ -41,6 +44,33 @@ for f in runs:
     ejecuciones.append({"nombre": m.group(2), "commits": commits})
 json.dump(ejecuciones, open(f"{out}/ejecuciones.json", "w"), indent=1)
 print(f"{len(ejecuciones)} ejecuciones, {sum(len(e['commits']) for e in ejecuciones)} commits del ejecutor")
+PY
+
+# Copia anonimizada del historial; los commits del ejecutor se vuelven a casar por posición (mismo orden y número)
+TMP=$(mktemp -d); trap 'rm -rf "$TMP"' EXIT
+git clone -q --no-local "$REPO" "$TMP/r"
+(
+  cd "$TMP/r"
+  T=$(git tag -l); [ -z "$T" ] || git tag -d $T >/dev/null
+  git rev-list --reverse HEAD > "$TMP/antes"
+  ANON='s/telegram:[0-9]+/telegram:<id>/g; s/user:[A-Za-z0-9_]+/user:<usuario>/g'
+  FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch -f \
+    --tree-filter "find acceptance status -type f 2>/dev/null | while read f; do sed -i.bak -E '$ANON' \"\$f\" && rm -f \"\$f.bak\"; done; true" \
+    --msg-filter "sed -E '$ANON'" -- HEAD >/dev/null 2>&1
+  git rev-list --reverse HEAD > "$TMP/despues"
+  git bundle create "$OUT/repo.bundle" --all 2>/dev/null   # sin tags (se borraron arriba)
+)
+python3 - "$TMP/antes" "$TMP/despues" "$OUT" <<'PY'
+import json, sys
+antes, despues, out = sys.argv[1:4]
+m = dict(zip(open(antes).read().split(), open(despues).read().split()))
+for f in ("ejecuciones.json",):
+    e = json.load(open(f"{out}/{f}"))
+    for x in e:
+        x["commits"] = [m[c] for c in x["commits"]]
+    json.dump(e, open(f"{out}/{f}", "w"), indent=1)
+b = open(f"{out}/base.txt").read().strip()
+open(f"{out}/base.txt", "w").write(m.get(b, b) + "\n")
 PY
 
 [ -d evidencias ] && cp -R evidencias "$OUT/extras/"

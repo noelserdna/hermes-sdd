@@ -67,7 +67,7 @@ if [ "${NOMBRE%%-*}" = aceptar ] || [ "${NOMBRE%%-*}" = cierre ]; then
   REP=$(node -e 'import(process.argv[1]).then(m=>console.log(m.stackProfile(process.argv[2]).test_report||""))' \
         "$ROOT/metodo/scripts/lib/git-log.mjs" "$REPO")
   [ -n "$REP" ] && bash -c "$REP" >/dev/null 2>&1
-  node "$ROOT/metodo/scripts/sdd.mjs" accept --junit-sha HEAD ${FASE:+--fase $FASE} --report acceptance/ACCEPTANCE-REPORT.md >/dev/null 2>&1
+  node "$ROOT/metodo/scripts/sdd.mjs" accept --remeasure --junit-sha HEAD ${FASE:+--fase $FASE} --report acceptance/ACCEPTANCE-REPORT.md >/dev/null 2>&1
   git add acceptance/ 2>/dev/null
   git diff --cached --quiet || git commit -qm "docs(acceptance): acceptance report at $(git rev-parse --short HEAD) (replay)"
 fi
