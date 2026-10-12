@@ -1,0 +1,136 @@
+[
+ {
+  "nombre": "ruta-factores",
+  "commits": []
+ },
+ {
+  "nombre": "ruta-factores",
+  "commits": []
+ },
+ {
+  "nombre": "plan",
+  "commits": [
+   "8ef7cbb3bef143b43384b003bed4d9236a6955af"
+  ]
+ },
+ {
+  "nombre": "tareas",
+  "commits": [
+   "ad52d1435ab7bec943b6dc38a67a85ffc06ee01d"
+  ]
+ },
+ {
+  "nombre": "plan",
+  "commits": [
+   "23cff72bcbec5b527e0394cdc03b967305c0f50b"
+  ]
+ },
+ {
+  "nombre": "tareas",
+  "commits": [
+   "4e5076621d76467c8fcdd15e6538fcda92788341"
+  ]
+ },
+ {
+  "nombre": "implementar-0",
+  "commits": [
+   "35338c7ef07762478353f6e370e9f403ded35aad",
+   "93e6101c2da695adda737acf0f4e946735133130",
+   "c3d9e7f579823aeb81fcb82b368aaaaa77db074a",
+   "3618c77dbe3c3ca09cca067d9ef32562a31f9bc5",
+   "a1175b4c970973d6795f3e7ff6895badfe7ab1dc",
+   "26001a795662c259c817625cd7170920aa608b27",
+   "400436a076ae4902f6922bcafa0ecb9576258992",
+   "17a74eaf8e3ee236c11916a28f33a04ce5a72e1c",
+   "1bd7305ebc4bcec4d42a8b34e4f04ccb03439eee",
+   "a711ec000b90c786acf7c03def21e6fc28cc95ea",
+   "a308ec09b118bc2655b6e49bcb0697dc53642f9a",
+   "a9ba936454dc0dac2319a085179d788eaa4d5bf9",
+   "777ddba1bc08108cb4d9885932e1eafec2c712dc",
+   "97e11f04f0410211ba63a89211bf5b29e09756b2",
+   "ec8bd2923a026bcd2912df5c35d3ec0092b7ba6c",
+   "187a28a678dbd8946a8e3534a88f432fb82bd0bd",
+   "5b447127e0ae00213dd1d52d16ebf8e451d10b7c",
+   "60c06a7201d07fe53640d23976ca968c658121c2"
+  ]
+ },
+ {
+  "nombre": "aceptar-0",
+  "commits": [
+   "d0e4c265f93c880e189f158766222b5460411b61"
+  ]
+ },
+ {
+  "nombre": "implementar-1",
+  "commits": [
+   "d3a3fc1a5f95ba0b9e8366d62e7464d208254da4",
+   "1daeff04c9a0d5c0e052ebd894017468140532a7",
+   "5bd9523fadb0760feb45e349e60d1f34136f4780",
+   "6f707553e76bc204bd5bc523355b33790741d877",
+   "bb442f30470a82c3e743c798a9cca31b5eea7b39",
+   "ab8f69d351e22703d3f28f959053d5eb5ccc2932",
+   "9f0042ff58b95016c156c85247b6f0ced38c0897",
+   "c3ac5a99dbbaa8f1708be153d586e1d9698ad0a1",
+   "a10ad7050b6b5189ad8df2c81cb86c1cca92a7b7",
+   "32f9c96590d911ff7546dbaa3d3c76e580932cc3",
+   "44cd3a4e8bb32c634a34e84a4e2e2b09c31c7a50"
+  ]
+ },
+ {
+  "nombre": "aceptar-1",
+  "commits": [
+   "8bc44b048201c125d96e6050bf5abfbccbb9985d"
+  ]
+ },
+ {
+  "nombre": "implementar-2",
+  "commits": [
+   "3e851de68892080d3c9179066fbae56f0c13e130",
+   "1764513f642e42a656c484a49e224027d4e94807",
+   "916c928eeb13556a1e958a689437ac3147b3527a",
+   "065092f719ccafa95800c0a56908bfe6c815f482",
+   "9e5e007ba00e4c20fab006c2137df76bb20d637c",
+   "95bfa5d2a563b39c5056056e0c5fffa1452e64f0",
+   "934d42e46471544e4f74eea09c6d412676395aa6"
+  ]
+ },
+ {
+  "nombre": "aceptar-2",
+  "commits": [
+   "44049f0953e16de2f699b386bb34fcf53bf5f116"
+  ]
+ },
+ {
+  "nombre": "implementar-3",
+  "commits": [
+   "5d5d284f6c1044ee61ea48514206b758edd6fa1c",
+   "a582a45ad7946e23ccd12abe5801ff9567bc49fd",
+   "f05358160c8bbdc9d4d30b5838405d076adb3c36",
+   "3ece939a1236a784ddfa872723ab766df1ae606d",
+   "53c13bacbb5a8e8634af1a9c9e220ea58984b0a6",
+   "1f17f2fd9bebfedf152f108b4818645b3dc506f8",
+   "bcc1e49b66f4e10b9d3ba9cdb39fba260f680655"
+  ]
+ },
+ {
+  "nombre": "aceptar-3",
+  "commits": [
+   "84e75623e9ad7a60419d796372227e383c6ba7ed"
+  ]
+ },
+ {
+  "nombre": "cierre",
+  "commits": [
+   "9867b0f3840e96aac9915b121f025aa2afc830cd",
+   "9d7de05580d42dc610fa5610d6cc56a796f2fd81",
+   "a19a19f38c955ab7b2acd4ae546785e7911357fd",
+   "8f6bb16f490dd373622e339c10e58a1f6095f784"
+  ]
+ },
+ {
+  "nombre": "cierre",
+  "commits": [
+   "924563c7f49cab0ceebc1968de7468ee39d0e447"
+  ]
+ }
+]
