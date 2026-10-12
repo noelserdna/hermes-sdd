@@ -20,6 +20,7 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 SDD="$ROOT/metodo/scripts/sdd.mjs"; STATE="$ROOT/metodo/scripts/sdd-state.sh"
 REPO=$(cd "$1" && pwd); ETAPA=$2; FASE=${3:-}
 cd "$REPO"
+EJEC=$(jq -r '.ejecutor // "claude"' .sdd/hermes/hermes-sdd.json 2>/dev/null || echo claude)   # claude | replay
 modelo() { jq -r --arg e "$1" '.modelos[$e] // .modelos.defecto // empty' .sdd/hermes/hermes-sdd.json 2>/dev/null; }
 fin() {  # fin <json-del-ejecutor-o-propio> [resumen] [puerta]
   echo "$1" | jq -c --arg r "${2:-}" --arg p "${3:-}" '. + {resumen:$r} + (if $p != "" then {puerta:$p} else {} end)'
@@ -33,7 +34,7 @@ ARNES="Modo arnés (hermes-sdd): sin persona en la sesión; sigue references/mod
 
 claude_etapa() {  # claude_etapa <clave-de-estado> <prompt>
   local clave=$1 res st
-  res=$(bash "$ROOT/executors/claude.sh" "$REPO" "$ETAPA${FASE:+-$FASE}" "$2" "$(modelo "$ETAPA")" | tail -1)
+  res=$(bash "$ROOT/executors/$EJEC.sh" "$REPO" "$ETAPA${FASE:+-$FASE}" "$2" "$(modelo "$ETAPA")" | tail -1)
   [ "$(echo "$res" | jq -r .outcome)" = done ] || fin "$res" "$(echo "$res" | jq -r .reason)"
   # Post-condición: la etapa no puede quedar a medias en el estado del método
   st=$(bash "$STATE" get "$clave" 2>/dev/null || echo "?")
@@ -59,7 +60,7 @@ case "$ETAPA" in
   ruta)
     rc=0; node "$SDD" route --json > .sdd/hermes/ruta.json 2>/dev/null || rc=$?
     if [ "$rc" = 3 ]; then   # sin Jev: el ejecutor estima los siete factores; el código decide la ruta
-      bash "$ROOT/executors/claude.sh" "$REPO" ruta-factores "Read requirements/CUSTOMER-NEEDS.md and requirements/REQUIREMENTS.md. Estimate the seven route factors (external_customer, sensitive_data, multi_actor, integrations, ui_flows, long_lived, complex_state) as probabilities 0-1, honestly, 0.5 when the text does not say. Write ONLY .sdd/route-answers.json as {\"factors\": {...}}. Do not run anything else." "$(modelo ruta)" >/dev/null
+      bash "$ROOT/executors/$EJEC.sh" "$REPO" ruta-factores "Read requirements/CUSTOMER-NEEDS.md and requirements/REQUIREMENTS.md. Estimate the seven route factors (external_customer, sensitive_data, multi_actor, integrations, ui_flows, long_lived, complex_state) as probabilities 0-1, honestly, 0.5 when the text does not say. Write ONLY .sdd/route-answers.json as {\"factors\": {...}}. Do not run anything else." "$(modelo ruta)" >/dev/null
       node "$SDD" route --json --answers .sdd/route-answers.json > .sdd/hermes/ruta.json || falla "sdd route falló"
     fi
     P=$(puerta ruta) || falla "no se pudo abrir la puerta de ruta"

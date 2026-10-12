@@ -13,7 +13,7 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 SDD="$ROOT/metodo/scripts/sdd.mjs"
 HOME_SDD="${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}"
 REPO=$(cd "$1" && pwd); TIPO=$2; FASE=${3:-}
-BOARD=${HERMES_KANBAN_BOARD:-$(basename "$REPO" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')}
+[ -n "${HERMES_SDD_SIN_KANBAN:-}" ] && BOARD="" || BOARD=${HERMES_KANBAN_BOARD:-$(basename "$REPO" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')}
 cd "$REPO"
 
 # ── Texto de la puerta: primero lo que conviene mirar, después el resumen ─────────────────────────────────────────
@@ -83,7 +83,7 @@ FASEs aceptadas: $(git tag -l 'fase-*-accepted' | tr '\n' ' ')
 esac
 
 # ── Preguntas abiertas (clase C): la persona las ve en la puerta; conformar = aceptar la opción recomendada ──────
-PREG=$(awk '/^## Q-.*\[OPEN\]/{q=1; next} q && /^Question:/{sub(/^Question: */,""); print "❓ " $0} q && /^  [A-Z]\)/{print "   " $0} /^Blocks:/{q=0}' .sdd/questions-*.md 2>/dev/null | head -30)
+PREG=$(awk '/^## Q-.*\[OPEN\]/{q=1; next} q && /^Question:/{sub(/^Question: */,""); print "❓ " $0} q && /^  [A-Z]\)/{print "   " $0} /^Blocks:/{q=0}' .sdd/questions-*.md 2>/dev/null | head -30 || true)
 if [ -n "$PREG" ]; then
   TEXTO="$TEXTO
 

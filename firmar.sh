@@ -48,7 +48,7 @@ if ! hecho validado; then
   ROL=$(jq -r --arg p "$PERSONA" '.[$p].rol' "$HOME_SDD/aprobadores.json")
   NOMBRE=$(jq -r --arg p "$PERSONA" '.[$p].nombre // $p' "$HOME_SDD/aprobadores.json")
   # La decisión es posterior a la puerta
-  [ "$(d .at)" \> "$(p .creada)" ] || fallo "la decisión es anterior a la puerta"
+  [ ! "$(d .at)" \< "$(p .creada)" ] || fallo "la decisión es anterior a la puerta"
   # Lo que se firma es lo que la persona vio
   [ "$(git rev-parse --short=7 HEAD)" = "${SHA:0:7}" ] || fallo "HEAD ($(git rev-parse --short=7 HEAD)) no es el commit mostrado (${SHA:0:7})"
   [ -z "$(git status --porcelain --untracked-files=no)" ] || fallo "el árbol tiene cambios sin commit"
@@ -166,7 +166,7 @@ Kanban-Task: $BOARD/$TASK"
     if ! hecho registrado; then
       extra=(); [ "$VERBO" = completo ] && extra+=(--full)
       [ -f .sdd/route-answers.json ] && extra+=(--answers .sdd/route-answers.json)
-      node "$SDD" route --write --confirm "$NOMBRE ($ROL) vía $CANAL" "${extra[@]}" >/dev/null
+      node "$SDD" route --write --confirm "$NOMBRE ($ROL) vía $CANAL" ${extra[@]+"${extra[@]}"} >/dev/null
       marcar registrado
     fi
     if ! hecho commit; then commit_si_hay "chore(sdd): route confirmed by $NOMBRE" status/; marcar commit; fi
