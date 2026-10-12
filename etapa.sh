@@ -58,6 +58,12 @@ claude_etapa() {  # claude_etapa <clave-de-estado> <prompt>
     fin "$(echo "$res" | jq -c '.outcome="failed" | .reason="la etapa quedó en running: marcada stale"')"
   fi
   [ -s "$FB" ] && mv "$FB" "$FB.aplicado"
+  # Lo que el ejecutor dejó versionado y sin commit (p. ej. un registro de medición): se commitea, a la vista, para
+  # que la puerta se abra sobre un árbol limpio (el notario se niega a firmar con cambios pendientes)
+  if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+    git add -u && git commit -qm "docs(sdd): changes left uncommitted by the $clave stage" >/dev/null 2>&1 &&
+      res=$(echo "$res" | jq -c '.reason = "ok (el arnés hizo commit de cambios que el ejecutor dejó pendientes)"')
+  fi
   RES=$res
 }
 puerta() { bash "$ROOT/puerta.sh" "$REPO" "$@"; }
