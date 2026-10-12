@@ -87,9 +87,23 @@ PREG=$(awk '/^## Q-.*\[OPEN\]/{q=1; next} q && /^Question:/{sub(/^Question: */,"
 if [ -n "$PREG" ]; then
   TEXTO="$TEXTO
 
-Preguntas abiertas (si das conformidad, se aplica la opción recomendada; para otra, usa el botón con texto (✏️ o 📝) y escribe p. ej. «Q1: B»):
+Preguntas abiertas (marca tu opción con los botones Q1·A, Q1·B…; la recomendada viene marcada):
 $PREG"
 fi
+
+# Preguntas como datos, para que el canal pueda ofrecerlas como formulario (Q1: A/B/C…)
+PREGUNTAS=$(python3 - .sdd/questions-*.md <<'PY' 2>/dev/null || echo '[]'
+import json, re, sys
+out, n = [], 0
+for p in sorted(a for a in sys.argv[1:] if not a.endswith("*.md")):
+    for b in re.findall(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", open(p).read(), flags=re.M | re.S):
+        n += 1
+        ops = re.findall(r"^\s+([A-Z])\)", b, re.M)
+        rec = re.search(r"^\s+([A-Z])\).*\(recommended\)", b, re.M)
+        out.append({"n": n, "id": b.split()[1], "opciones": ops, "recomendada": rec.group(1) if rec else (ops[0] if ops else "")})
+print(json.dumps(out))
+PY
+)
 
 SHA=$(git rev-parse HEAD)
 ID="g$(date +%s)$(openssl rand -hex 2)"
@@ -97,8 +111,8 @@ ID="g$(date +%s)$(openssl rand -hex 2)"
 AHORA=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 mkdir -p .sdd/hermes/puertas "$HOME_SDD/puertas"
 jq -n --arg id "$ID" --arg t "$TIPO" --arg f "$FASE" --arg b "$BOARD" --arg s "$SHA" --arg c "$AHORA" \
-  --arg r "$REPO" --arg ti "$TITULO" --arg tx "$TEXTO" --argjson o "$OPCIONES" --arg v "${VIDEO:-}" \
+  --arg r "$REPO" --arg ti "$TITULO" --arg tx "$TEXTO" --argjson o "$OPCIONES" --arg v "${VIDEO:-}" --argjson q "$PREGUNTAS" \
   '{id:$id, tipo:$t, fase:$f, tablero:$b, tarjeta:"", sha:$s, creada:$c, repo:$r, titulo:$ti, texto:$tx,
-    opciones:$o, demo:$v, estado:"abierta"}' > ".sdd/hermes/puertas/$ID.json"
+    opciones:$o, demo:$v, preguntas:$q, estado:"abierta"}' > ".sdd/hermes/puertas/$ID.json"
 cp ".sdd/hermes/puertas/$ID.json" "$HOME_SDD/puertas/$ID.json"   # índice global para los canales
 echo "$ID"

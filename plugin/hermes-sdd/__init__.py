@@ -62,18 +62,45 @@ def _chats() -> list[str]:
             if p.get("canales", {}).get("telegram")]
 
 
+def _config() -> dict:
+    """Presupuesto de atención (atencion.json): horas de silencio y resúmenes."""
+    defecto = {"silencio": [22, 8], "resumenes": ["08:30", "19:00"], "mensaje_vivo": True}
+    return {**defecto, **(_leer(HOME / "atencion.json", {}) or {})}
+
+
+def _en_silencio() -> bool:
+    ini, fin = _config()["silencio"]
+    h = datetime.now().hour
+    return (h >= ini or h < fin) if ini > fin else (ini <= h < fin)
+
+
 def _root() -> Path:
     return Path((_leer(HOME / "instalacion.json", {}) or {}).get("root", ""))
 
 
 # ── mensajes ────────────────────────────────────────────────────────────────────────────────────────────────────
+def _respuestas(puerta: dict) -> dict:
+    """Opción elegida por pregunta: la que marcó la persona o, si no, la recomendada."""
+    elegidas = puerta.get("respuestas") or {}
+    return {str(q["n"]): elegidas.get(str(q["n"]), q.get("recomendada", "")) for q in puerta.get("preguntas") or []}
+
+
 def _teclado(puerta: dict, paso: int = 1):
     from telegram import InlineKeyboardButton as B, InlineKeyboardMarkup as M
     ops = puerta.get("opciones", [])
-    if any(o.get("paso") for o in ops):
+    escalonada = any(o.get("paso") for o in ops)
+    if escalonada:
         ops = [o for o in ops if o.get("paso", 1) == paso]
+    filas = []
+    # Formulario de preguntas abiertas: una fila por pregunta, la opción marcada con ✓ (en el paso de decidir)
+    if puerta.get("preguntas") and (not escalonada or paso == 2):
+        marcadas = _respuestas(puerta)
+        for q in puerta["preguntas"]:
+            n = str(q["n"])
+            filas.append([B(f"{'✓ ' if marcadas.get(n) == l else ''}Q{n}·{l}", callback_data=f"g:q{n}{l}:{puerta['id']}")
+                          for l in q.get("opciones", [])])
     botones = [B(o["etiqueta"], callback_data=f"g:{o['verbo']}:{puerta['id']}") for o in ops]
-    filas = [botones[i:i + 2] for i in range(0, len(botones), 2)]
+    filas += [botones[i:i + 2] for i in range(0, len(botones), 2)]
     return M(filas)
 
 
@@ -85,7 +112,8 @@ async def _publicar(bot, puerta: dict) -> None:
     texto = _cabecera(puerta) + "\n" + puerta.get("texto", "")
     enviados = []
     for chat in _chats():
-        m = await bot.send_message(chat_id=int(chat), text=texto[:4000], reply_markup=_teclado(puerta, 1))
+        m = await bot.send_message(chat_id=int(chat), text=texto[:4000], reply_markup=_teclado(puerta, 1),
+                                   disable_notification=_en_silencio())
         enviados.append({"chat": m.chat_id, "msg": m.message_id})
     puerta["telegram"] = enviados
     puerta["publicada"] = _ahora()
@@ -106,6 +134,9 @@ async def _decidir(bot, gid: str, verbo: str, texto: str, user, persona: str, pr
         puerta = _leer(idx)
         if not puerta or puerta.get("estado") != "abierta":
             return "Esta puerta ya está resuelta"
+        if puerta.get("preguntas") and verbo not in ("rechazo",):
+            resp = ", ".join(f"Q{n}: {l}" for n, l in _respuestas(puerta).items() if l)
+            texto = f"{texto}. {resp}" if texto else resp
         decision = {"verbo": verbo, "texto": texto or "",
                     "actor": {"persona": persona, "canal": "telegram", "id": str(user.id)},
                     "prueba": {"user": user.username or "", **prueba}, "at": _ahora()}
@@ -156,6 +187,14 @@ async def _on_boton(update, context) -> None:
         return
     if puerta.get("estado") != "abierta":
         await q.answer("Esta puerta ya está resuelta", show_alert=True)
+        return
+    if verbo.startswith("q") and len(verbo) >= 3:   # marcar una opción del formulario: g:q<n><letra>:<puerta>
+        n, letra = verbo[1:-1], verbo[-1]
+        async with _lock:
+            puerta = _leer(idx); puerta.setdefault("respuestas", {})[n] = letra; _escribir(idx, puerta)
+        await q.answer(f"Q{n}: {letra}")
+        paso = 2 if (puerta.get("ver_at") or not any(o.get("paso") for o in puerta.get("opciones", []))) else 1
+        await _editar(bot, puerta, _cabecera(puerta) + "\n" + puerta.get("texto", ""), _teclado(puerta, paso))
         return
     if verbo == "ver":
         await q.answer("Enviando la demo…")
@@ -319,6 +358,7 @@ async def _vuelta(ciclo: int) -> None:
             await _firmar(bot, p)
     if ciclo % 12 == 0:
         await asyncio.wait_for(_avisar_fallos(bot), 180)
+        await asyncio.wait_for(_vigia(bot), 180)
 
 
 async def _bucle() -> None:
@@ -348,6 +388,170 @@ def _asegurar_bucle() -> None:
             log.warning("hermes-sdd: el bucle estaba parado; se relanza")
         _RT["bucle"] = asyncio.get_running_loop().create_task(_bucle())
 
+
+
+# ── operación: proyectos, estado, pausa, cuota, mensaje vivo y resúmenes ─────────────────────────────────────────────
+async def _cli(*args: str, timeout: int = 60) -> str:
+    proc = await asyncio.create_subprocess_exec(*args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+                                                env={**os.environ, "PATH": PATH_CMDS, "HERMES_SDD_HOME": str(HOME)})
+    out, err = await asyncio.wait_for(proc.communicate(), timeout)
+    if proc.returncode != 0:
+        raise RuntimeError((err or out).decode().strip()[-300:])
+    return out.decode()
+
+
+async def _proyectos() -> dict:
+    """Tableros del arnés → carpeta del repo (los que tienen .sdd/hermes)."""
+    res = {}
+    for b in json.loads(await _cli("hermes", "kanban", "boards", "list", "--json") or "[]"):
+        wd = b.get("default_workdir") or ""
+        if wd and (Path(wd) / ".sdd" / "hermes").is_dir():
+            res[b["slug"]] = wd
+    return res
+
+
+async def _tarjetas(board: str) -> list:
+    try:
+        datos = json.loads(await _cli("hermes", "kanban", "--board", board, "list", "--json") or "[]")
+    except Exception:
+        return []
+    return datos if isinstance(datos, list) else datos.get("tasks", [])
+
+
+def _coste(repo: str, desde: float = 0) -> float:
+    total = 0.0
+    for f in (Path(repo) / ".sdd" / "hermes" / "runs").glob("*.json"):
+        if f.stat().st_mtime >= desde:
+            total += float((_leer(f, {}) or {}).get("total_cost_usd") or 0)
+    return round(total, 2)
+
+
+async def _resumen_proyecto(board: str, repo: str) -> str:
+    ts = await _tarjetas(board)
+    activa = next((t for t in ts if t.get("status") == "running"), None)
+    paradas = [t for t in ts if t.get("assignee") == "sdd-estacion" and t.get("status") in ("blocked", "triage")]
+    aparcadas = [t for t in ts if t.get("status") == "scheduled"]
+    puertas = [p for p in (_leer(f) for f in (HOME / "puertas").glob("*.json"))
+               if p and p.get("tablero") == board and p.get("estado") in ("abierta", "decidida")]
+    pausado = (HOME / "pausa" / board).exists() or (HOME / "pausa" / "_todo").exists()
+    hecho = sum(1 for t in ts if t.get("status") == "done")
+    lineas = [f"📁 {board}" + (" ⏸ en pausa" if pausado else ""),
+              f"  ▶ {activa['title']}" if activa else "  ▶ nada en marcha",
+              f"  🚪 puertas: {', '.join(p.get('titulo', '') for p in puertas) or 'ninguna'}"]
+    if paradas:
+        lineas.append(f"  ⚠️ paradas: {', '.join(t['title'] for t in paradas)}")
+    if aparcadas:
+        lineas.append(f"  ⏳ aparcadas: {len(aparcadas)}")
+    lineas.append(f"  ✓ {hecho} tarjetas hechas · {_coste(repo)} $ de ejecutor")
+    return "\n".join(lineas)
+
+
+async def _estado_texto(filtro: str = "") -> str:
+    proys = await _proyectos()
+    if filtro:
+        proys = {b: r for b, r in proys.items() if b == filtro}
+    if not proys:
+        return "No hay proyectos del arnés" + (f" llamados {filtro}" if filtro else "") + "."
+    partes = [await _resumen_proyecto(b, r) for b, r in sorted(proys.items())]
+    lat = _leer(HOME / "latido.json", {}) or {}
+    cuota = _leer(HOME / "cuota.json")
+    pie = f"💓 canal vivo (último latido {lat.get('ts', '?')})"
+    if cuota:
+        pie += f"\n⛔ cuota de Claude agotada hasta las {datetime.fromtimestamp(cuota['reset_at']).strftime('%H:%M')}"
+    return "\n\n".join(partes) + "\n\n" + pie
+
+
+def _autorizado_en_sesion():
+    """Persona que escribe el comando (Telegram), o None."""
+    try:
+        from gateway.session_context import get_session_env
+        uid = get_session_env("HERMES_SESSION_USER_ID") or ""
+    except Exception:
+        uid = ""
+    return (_persona_de(uid)[0], uid) if uid else (None, "")
+
+
+async def _reanudar_aparcadas(boards) -> int:
+    n = 0
+    for b in boards:
+        for t in await _tarjetas(b):
+            if t.get("status") == "scheduled" and t.get("assignee") == "sdd-estacion":
+                try:
+                    await _cli("hermes", "kanban", "--board", b, "unblock", t["id"]); n += 1
+                except Exception as e:
+                    log.warning("hermes-sdd: no se pudo reanudar %s/%s: %s", b, t["id"], e)
+    return n
+
+
+async def _vigia(bot) -> None:
+    """Cada minuto: cuota que ya se reinició, mensaje vivo por proyecto y resúmenes programados."""
+    cuota = _leer(HOME / "cuota.json")
+    if cuota and time.time() >= cuota.get("reset_at", 0):
+        (HOME / "cuota.json").unlink(missing_ok=True)
+        proys = await _proyectos()
+        libres = [b for b in proys if not (HOME / "pausa" / b).exists() and not (HOME / "pausa" / "_todo").exists()]
+        n = await _reanudar_aparcadas(libres)
+        log.info("hermes-sdd: cuota reiniciada; %d etapa(s) reanudadas", n)
+    cfg = _config()
+    if cfg.get("mensaje_vivo"):
+        vivos = _leer(HOME / "vivos.json", {}) or {}
+        for b, repo in (await _proyectos()).items():
+            texto = "🛰 " + await _resumen_proyecto(b, repo)
+            v = vivos.get(b)
+            if v and v.get("texto") == texto:
+                continue
+            for chat in _chats():
+                try:
+                    if v and str(v.get("chat")) == str(chat):
+                        await bot.edit_message_text(chat_id=int(chat), message_id=v["msg"], text=texto)
+                    else:
+                        m = await bot.send_message(chat_id=int(chat), text=texto, disable_notification=True)
+                        v = {"chat": m.chat_id, "msg": m.message_id}
+                except Exception as e:
+                    log.debug("hermes-sdd: mensaje vivo de %s: %s", b, e)
+            if v:
+                vivos[b] = {**v, "texto": texto}
+        _escribir(HOME / "vivos.json", vivos)
+    hoy = datetime.now().strftime("%Y-%m-%d")
+    enviados = _leer(HOME / "resumenes.json", {}) or {}
+    for hora in cfg.get("resumenes", []):
+        clave = f"{hoy} {hora}"
+        if datetime.now().strftime("%H:%M") >= hora and clave not in enviados:
+            texto = await _resumen_periodico()
+            for chat in _chats():
+                await bot.send_message(chat_id=int(chat), text=texto[:4000])
+            enviados[clave] = _ahora()
+            _escribir(HOME / "resumenes.json", dict(list(enviados.items())[-20:]))
+
+
+async def _resumen_periodico() -> str:
+    """Resumen sin LLM: estado de cada proyecto, decisiones de las últimas 12 h y la métrica de aprobación por inercia."""
+    partes = ["🗞 Resumen hermes-sdd", await _estado_texto()]
+    desde = time.time() - 12 * 3600
+    decisiones = []
+    for b, repo in (await _proyectos()).items():
+        j = Path(repo) / "status" / "journal.jsonl"
+        for linea in (j.read_text().splitlines() if j.exists() else []):
+            try:
+                e = json.loads(linea)
+                if e.get("kind") in ("decision", "feedback") and \
+                   datetime.fromisoformat(e["at"].replace("Z", "+00:00")).timestamp() >= desde:
+                    decisiones.append(f"  · {b}: {e.get('text', '')[:120]}")
+            except Exception:
+                pass
+    if decisiones:
+        partes.append("Últimas 12 h:\n" + "\n".join(decisiones[-10:]))
+    # Aprobación por inercia: aceptaciones muy rápidas tras ver la demo, en los últimos 7 días
+    semana = time.time() - 7 * 86400
+    firmadas = [p for p in (_leer(f) for f in (HOME / "puertas").glob("*.json"))
+                if p and p.get("estado") == "firmada" and p.get("tipo") in ("fase", "entrega")
+                and (p.get("firmar_en") or 0) >= semana and (p.get("decision") or {}).get("verbo") == "acepto"]
+    dwell = sorted((p["decision"].get("dwell_s") or 0) for p in firmadas if p.get("decision"))
+    if dwell:
+        med = dwell[len(dwell) // 2]
+        aviso = " ⚠️ posible aprobación por inercia: mira las demos con más calma" if len(dwell) >= 3 and med < 20 else ""
+        partes.append(f"Aceptaciones de la semana: {len(dwell)}, mediana {med} s viendo la demo.{aviso}")
+    return "\n\n".join(partes)
 
 # ── registro ────────────────────────────────────────────────────────────────────────────────────────────────────
 def register(ctx):
@@ -379,5 +583,63 @@ def register(ctx):
             _escribir(HOME / "puertas" / f"{p['id']}.json", p)
         return f"{len(abiertas)} puerta(s) abierta(s); te las reenvío con sus botones."
 
+    async def _cmd_estado(raw_args: str = "") -> str:
+        return await _estado_texto(raw_args.strip())
+
+    async def _cmd_pausar(raw_args: str = "") -> str:
+        persona, _ = _autorizado_en_sesion()
+        if not persona:
+            return "Solo una persona autorizada puede pausar."
+        args = raw_args.split()
+        ahora = "ahora" in args
+        objetivo = next((a for a in args if a != "ahora"), "todo")
+        (HOME / "pausa").mkdir(parents=True, exist_ok=True)
+        (HOME / "pausa" / ("_todo" if objetivo == "todo" else objetivo)).write_text(f"{persona} {_ahora()}\n")
+        msg = f"⏸ {'Todo' if objetivo == 'todo' else objetivo} en pausa: no arranca ninguna etapa nueva."
+        if ahora:   # botón de pánico: detener la etapa en curso (el supervisor mata a Claude y libera el candado)
+            import signal
+            parados = 0
+            for b, repo in (await _proyectos()).items():
+                if objetivo not in ("todo", b):
+                    continue
+                pid = (Path(repo) / ".sdd" / "hermes" / "lock" / "pid")
+                if pid.exists():
+                    try:
+                        os.kill(int(pid.read_text().strip()), signal.SIGTERM); parados += 1
+                    except Exception:
+                        pass
+            msg += f" Etapas detenidas ahora: {parados}."
+        return msg + " /reanudar para seguir."
+
+    async def _cmd_reanudar(raw_args: str = "") -> str:
+        persona, _ = _autorizado_en_sesion()
+        if not persona:
+            return "Solo una persona autorizada puede reanudar."
+        objetivo = raw_args.strip() or "todo"
+        f = HOME / "pausa" / ("_todo" if objetivo == "todo" else objetivo)
+        f.unlink(missing_ok=True)
+        boards = list((await _proyectos()).keys()) if objetivo == "todo" else [objetivo]
+        n = await _reanudar_aparcadas(boards)
+        return f"▶ {objetivo} reanudado; {n} etapa(s) vuelven a la cola."
+
+    async def _cmd_anular(raw_args: str = "") -> str:
+        persona, uid = _autorizado_en_sesion()
+        if not persona:
+            return "Solo una persona autorizada puede anular una aceptación."
+        partes = raw_args.split(maxsplit=2)
+        if len(partes) < 3 or not partes[1].isdigit():
+            return "Uso: /anular <proyecto> <número de FASE> <motivo>"
+        repo = (await _proyectos()).get(partes[0])
+        if not repo:
+            return f"No conozco el proyecto {partes[0]}."
+        try:
+            return await _cli("bash", str(_root() / "anular.sh"), repo, partes[1], persona, "telegram", uid, partes[2])
+        except Exception as e:
+            return f"No se anuló: {e}"
+
     ctx.register_telegram_handler(_wire)
+    ctx.register_command("estado", _cmd_estado, description="Estado de los proyectos SDD", args_hint="[proyecto]")
+    ctx.register_command("pausar", _cmd_pausar, description="Pausa proyectos SDD (ahora = detener)", args_hint="[proyecto|todo] [ahora]")
+    ctx.register_command("reanudar", _cmd_reanudar, description="Reanuda proyectos SDD en pausa", args_hint="[proyecto|todo]")
+    ctx.register_command("anular", _cmd_anular, description="Anula la aceptación de una FASE", args_hint="<proyecto> <fase> <motivo>")
     ctx.register_command("puertas", _cmd_puertas, description="Puertas SDD abiertas, con sus botones")

@@ -72,4 +72,40 @@ async def main():
     q = Query("g:deshacer:t_1", 111); await m._on_boton(NS(callback_query=q), ctx)
     ok("Ya no se puede deshacer" in (q.respuestas[-1] or ""), "después de firmar ya no se puede deshacer")
 
-asyncio.run(main()); sys.exit(1 if fallos else 0)
+async def formulario_y_operacion():
+    # Puerta de plan con dos preguntas: el formulario marca la recomendada y se puede cambiar con un toque
+    pq = {"id": "t_2", "tipo": "plan", "tablero": "demo", "repo": str(R), "titulo": "Plan", "texto": "4 FASEs",
+          "opciones": [{"verbo": "conforme", "etiqueta": "✅ Conforme"}], "estado": "abierta",
+          "preguntas": [{"n": 1, "id": "Q-a", "opciones": ["A", "B"], "recomendada": "A"},
+                        {"n": 2, "id": "Q-b", "opciones": ["A", "B", "C"], "recomendada": "A"}]}
+    (HOME / "puertas/t_2.json").write_text(json.dumps(pq))
+    kb = m._teclado(pq, 1)
+    filas = [[b.text for b in f] for f in kb.inline_keyboard]
+    ok(filas[0] == ["✓ Q1·A", "Q1·B"] and filas[1][0] == "✓ Q2·A", f"formulario con la recomendada marcada ({filas[:2]})")
+    await m._publicar(bot, pq); (HOME / "puertas/t_2.json").write_text(json.dumps(pq))
+    q = Query("g:q2C:t_2", 111); await m._on_boton(NS(callback_query=q), ctx)
+    ok(json.loads((HOME / "puertas/t_2.json").read_text())["respuestas"] == {"2": "C"}, "un toque cambia la respuesta de Q2 a C")
+    q = Query("g:conforme:t_2", 111); await m._on_boton(NS(callback_query=q), ctx)
+    d = json.loads((R / ".sdd/hermes/decisiones/t_2.json").read_text())
+    ok(d["texto"] == "Q1: A, Q2: C", f"la decisión lleva las respuestas del formulario ({d['texto']})")
+    # Estado y resumen con proyectos simulados
+    async def falso_cli(*a, timeout=60):
+        if a[:4] == ("hermes", "kanban", "boards", "list"):
+            return json.dumps([{"slug": "demo", "default_workdir": str(R)}])
+        return json.dumps([{"id": "t_9", "title": "Implementar FASE-1", "status": "running", "assignee": "sdd-estacion"}])
+    m._cli = falso_cli
+    (R / ".sdd/hermes/runs").mkdir(parents=True, exist_ok=True)
+    (R / ".sdd/hermes/runs/x.json").write_text(json.dumps({"total_cost_usd": 1.5}))
+    txt = await m._estado_texto()
+    ok("demo" in txt and "Implementar FASE-1" in txt and "1.5 $" in txt, "/estado muestra etapa en curso y coste")
+    for i in range(3):   # tres aceptaciones rápidas → aviso de aprobación por inercia
+        (HOME / f"puertas/f{i}.json").write_text(json.dumps({"id": f"f{i}", "tipo": "fase", "estado": "firmada",
+            "firmar_en": time.time(), "decision": {"verbo": "acepto", "dwell_s": 5}}))
+    res = await m._resumen_periodico()
+    ok("aprobación por inercia" in res, "el resumen avisa de aprobación por inercia")
+    ok(m._autorizado_en_sesion()[0] is None, "sin sesión de Telegram no hay persona autorizada (pausar/anular se niegan)")
+
+async def todo():
+    await main(); await formulario_y_operacion()
+
+asyncio.run(todo()); sys.exit(1 if fallos else 0)

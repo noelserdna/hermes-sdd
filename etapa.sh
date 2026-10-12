@@ -28,6 +28,17 @@ fin() {  # fin <json-del-ejecutor-o-propio> [resumen] [puerta]
 }
 falla() { fin "$(jq -nc --arg r "$1" '{outcome:"failed", reason:$r}')"; }
 
+# ── Antes de gastar nada: ¿el proyecto está en pausa? ¿la cuota de Claude está agotada? ────────────────────────────
+HOME_SDD=${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}
+BOARD=$(basename "$REPO" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')
+if [ -f "$HOME_SDD/pausa/_todo" ] || [ -f "$HOME_SDD/pausa/$BOARD" ]; then
+  fin '{"outcome":"scheduled","reason":"proyecto en pausa: /reanudar para seguir"}'
+fi
+if [ "$EJEC" = claude ] && [ -f "$HOME_SDD/cuota.json" ]; then
+  R=$(jq -r '.reset_at // 0' "$HOME_SDD/cuota.json")
+  [ "$R" -gt "$(date +%s)" ] && fin "$(jq -nc --arg r "$R" '{outcome:"scheduled", reason:"cuota de Claude agotada", reset_at:$r}')"
+fi
+
 FB=".sdd/hermes/feedback/${ETAPA}${FASE:+-$FASE}.txt"
 PEDIDO=""; [ -s "$FB" ] && PEDIDO=" La persona revisó la propuesta anterior y pidió estos cambios, que son la prioridad de esta ejecución: «$(cat "$FB")»."
 ARNES="Modo arnés (hermes-sdd): sin persona en la sesión; sigue references/modo-arnes.md del plugin.$PEDIDO"

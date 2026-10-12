@@ -19,6 +19,11 @@ OUT="$DIR/runs/$RUN.json"; ERR="$DIR/runs/$RUN.err"
 
 salir() {  # salir <outcome> <reason> [extra-json]
   local x=${3:-}; [ -n "$x" ] || x='{}'
+  if [ "$1" = scheduled ]; then   # cuota agotada: todos los proyectos esperan hasta el reinicio (o 1 h si no se sabe)
+    local r; r=$(echo "$x" | jq -r '.reset_at // empty'); [ -n "$r" ] || r=$(( $(date +%s) + 3600 ))
+    mkdir -p "${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}"
+    jq -n --arg r "$r" '{reset_at: ($r|tonumber)}' > "${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}/cuota.json"
+  fi
   jq -nc --arg o "$1" --arg r "$2" --arg run "$RUN" --argjson x "$x" '{outcome:$o, reason:$r, run:$run} + $x'
   exit 0
 }

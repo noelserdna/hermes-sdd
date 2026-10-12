@@ -3,7 +3,7 @@
 set -uo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 T=$(mktemp -d); trap 'pkill -f "$T" 2>/dev/null; rm -rf "$T"' EXIT
-export TMPDIR="$T/"; export CLAUDE_BIN="$ROOT/evals/fake-claude.sh"
+export TMPDIR="$T/"; export CLAUDE_BIN="$ROOT/evals/fake-claude.sh"; export HERMES_SDD_HOME="$T/home"
 fail=0; ok() { echo "ok   $1"; }; bad() { echo "FAIL $1"; fail=1; }
 modo() { echo "$1" > "$T/fake-claude-mode"; }
 R="$T/repo"; mkdir -p "$R"; git -C "$R" init -q
@@ -12,6 +12,7 @@ sup() { bash "$ROOT/executors/claude.sh" "$R" prueba "haz algo" | tail -1; }
 modo ok; o=$(sup); [ "$(echo "$o" | jq -r .outcome)" = done ] && [ "$(echo "$o" | jq -r .session_id)" = s-1 ] && ok "done con session_id y coste" || bad "ok: $o"
 ls "$R/.sdd/hermes/runs/"*-prueba.json >/dev/null 2>&1 && ok "guarda el run en su propio fichero" || bad "sin fichero de run"
 modo cuota; o=$(sup); [ "$(echo "$o" | jq -r .outcome)" = scheduled ] && [ "$(echo "$o" | jq -r .reset_at)" = 1791800000 ] && ok "cuota → scheduled con reset_at" || bad "cuota: $o"
+[ "$(jq -r .reset_at "$HERMES_SDD_HOME/cuota.json" 2>/dev/null)" = 1791800000 ] && ok "anota la cuota para que esperen todos los proyectos" || bad "sin cuota.json"
 modo error; o=$(sup); [ "$(echo "$o" | jq -r .outcome)" = failed ] && ok "error → failed" || bad "error: $o"
 modo sinjson; o=$(sup); [ "$(echo "$o" | jq -r .outcome)" = failed ] && echo "$o" | grep -q "no auth" && ok "sin JSON → failed con el motivo" || bad "sinjson: $o"
 [ ! -d "$R/.sdd/hermes/lock" ] && ok "libera el candado al terminar" || bad "candado sin liberar"
