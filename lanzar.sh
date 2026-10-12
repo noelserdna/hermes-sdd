@@ -68,7 +68,7 @@ case "$CMD" in
     PETICION=$3
     asegurar_tablero
     cd "$REPO"; mkdir -p intent .sdd/hermes
-    N=$(( $(ls intent/INT-*.md 2>/dev/null | wc -l) + 1 )); INT=$(printf 'INT-%03d' "$N")
+    N=$(( $(find intent -name 'INT-*.md' | wc -l) + 1 )); INT=$(printf 'INT-%03d' "$N")
     { echo "# $INT"; echo; echo "Petición literal ($(date +%Y-%m-%d)):"; echo; printf '%s\n' "$PETICION" | sed 's/^/> /'; } > "intent/$INT.md"
     git add "intent/$INT.md" && git commit -qm "docs(intent): $INT" && echo "$INT" > .sdd/hermes/cambio-actual
     T=$(tarjeta "Cambio $INT" - 60m cambio)
