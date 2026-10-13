@@ -21,8 +21,11 @@ interpreta.*
    `git push`, tocar el kanban (`hermes kanban …`) o `~/.hermes/`. Si el procedimiento de la skill dice "pregunta y
    registra", haz solo la parte de preparar y para.
 3. **Termina siempre la etapa con el estado coherente**: deja tu etapa en `pipeline-state.json` como `done` (o
-   `error` con motivo) y commitea lo que escribiste con las convenciones de `references/git-conventions.md`. Una
-   etapa que queda en `running` se considera rota.
+   `error` con motivo) y commitea lo que escribiste con las convenciones de `references/git-conventions.md`, también
+   lo que la CLI añadió a `acceptance/decisions.jsonl` (`accept measure`) o a `acceptance/challenges.jsonl`
+   (`accept challenge add`): commitearlos está permitido; escribirlos a mano, no. Al cerrar la etapa el arnés comprueba
+   que esos registros solo crecieron y que lo nuevo es de la CLI; si no, la etapa falla. Una etapa que queda en
+   `running` se considera rota.
 4. **Resumen final** (lo lee Hermes y lo verá la persona en la puerta): primera línea
    `stage=<etapa> status=done|blocked questions=<n> artifacts=<n>`, después como mucho 5 líneas en español con lo
    que importa para decidir: qué se hizo, qué decidiste por defecto (clase R) y qué queda abierto (clase C).

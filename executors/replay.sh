@@ -29,16 +29,37 @@ case "$NOMBRE" in
     salir done "ok" ;;
 esac
 
+# Los registros de quien practica no heredan decisiones de la grabación: con -X theirs y merge=union, el contexto de
+# un commit grabado puede traer las aceptaciones que firmó quien grabó. Tras cada commit, cada registro vuelve a ser
+# el de antes más lo que la CLI añadió en ESE commit (mediciones de un comando; hallazgos adversariales).
+registros() {  # registros <head-antes> <commit-grabado>
+  local f nuevo cambio=""
+  for f in acceptance/decisions.jsonl acceptance/challenges.jsonl; do
+    git diff --quiet "$1" HEAD -- "$f" 2>/dev/null && continue
+    nuevo=$(mktemp); git show "$1:$f" > "$nuevo" 2>/dev/null || : > "$nuevo"
+    git show --format= "$2" -- "$f" | sed -n 's/^+\([^+]\)/\1/p' |
+      if [ "$f" = acceptance/decisions.jsonl ]; then
+        jq -c 'select(.type == "measurement" and .by == "command" and .role == "automated")' 2>/dev/null
+      else cat; fi |
+      while IFS= read -r l; do grep -qxF "$l" "$nuevo" || printf '%s\n' "$l" >> "$nuevo"; done
+    cmp -s "$nuevo" "$f" || { mv "$nuevo" "$f"; git add "$f"; cambio=1; }
+    rm -f "$nuevo"
+  done
+  [ -z "$cambio" ] || git commit -q --amend --no-edit --allow-empty >/dev/null 2>&1
+}
+
 # Ejecuciones grabadas con este nombre, aún no aplicadas
 IDX=$(jq -r --arg n "$NOMBRE" --slurpfile e "$ESTADO" \
   'to_entries | map(select(.value.nombre == $n) | .key) - $e[0].aplicadas | .[]' "$G/ejecuciones.json")
 for i in $IDX; do
   for c in $(jq -r --argjson i "$i" '.[$i].commits[]' "$G/ejecuciones.json"); do
+    antes=$(git rev-parse HEAD)
     if ! git -c user.name="$(git log -1 --format=%an "$c")" -c user.email="$(git log -1 --format=%ae "$c")" \
          cherry-pick -X theirs --allow-empty --keep-redundant-commits "$c" >/dev/null 2>&1; then
       git cherry-pick --abort >/dev/null 2>&1
       salir failed "no se pudo reproducir el commit $(git log -1 --format='%h %s' "$c")"
     fi
+    registros "$antes" "$c"
   done
   t=$(mktemp); jq --argjson i "$i" '.aplicadas += [$i]' "$ESTADO" > "$t" && mv "$t" "$ESTADO"
 done

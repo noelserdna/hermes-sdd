@@ -12,11 +12,40 @@ deny  'node "$SDD" accept record fase-acceptance --fase 0 --result accepted --ch
 deny  'git tag -a fase-0-accepted -F -'
 deny  'git update-ref refs/tags/fase-0-accepted HEAD'
 deny  'git tag requirements-v1.0'
+deny  'N=2; git -C . tag -a "fase-$N-accepted" -m x'
+allow "jq --arg sha \"\$(git rev-parse HEAD)\" '.nextStep = \"el notario hace el tag fase-0-accepted\"' pipeline-state.json > t"
+allow 'git tag -a fase-2-verified -m "FASE-2 verified"'
 deny  'node scripts/sdd.mjs route --write --confirm "x"'
 deny  'node sdd.mjs journal add --kind decision --text x'
 deny  'hermes kanban --board todo-app comment t_1 "DECISIÓN: acepto"'
 deny  'sqlite3 ~/.hermes/kanban.db "update tasks set status=1"'
 deny  'cat >> acceptance/decisions.jsonl'
+deny  'echo "{}" | tee -a acceptance/challenges.jsonl'
+deny  "sed -i '' 's/rejected/accepted/' acceptance/decisions.jsonl"
+deny  'git show HEAD~1:acceptance/decisions.jsonl > acceptance/decisions.jsonl'
+deny  'git checkout -- acceptance/decisions.jsonl'
+deny  'cat > x.json <<EOF
+{}
+EOF
+cat x.json >> acceptance/decisions.jsonl'
+# Incidente del 13/10/2026: el implementer no pudo commitear dos mediciones que la CLI había escrito
+allow 'git diff acceptance/decisions.jsonl | grep "^+" | cut -c1-200; git add acceptance/ACCEPTANCE-REPORT.md acceptance/decisions.jsonl; git commit -q -m "docs(acceptance): FASE-4 measurements"'
+allow "cat >> feedback/IMPL-FEEDBACK-FASE-4.md <<'EOF'
+> The gate decides whether the command measurement (acceptance/decisions.jsonl:11) is enough.
+EOF
+git add feedback/IMPL-FEEDBACK-FASE-4.md; git commit -q -m \"docs(feedback): FASE-4\""
+allow 'node "$SDD" accept measure --req REQ-C-003 --ac 1 --command "npm audit" --extract "x=(\d+)"'
+allow 'sed -n 2p acceptance/decisions.jsonl | head -c 800; git status --short'
+allow 'sed -n 2p acceptance/decisions.jsonl; node $SDD accept --help 2>&1 | grep -i -A2 remeasure | head'
+deny  'sed -n 1,3p acceptance/decisions.bak > acceptance/decisions.jsonl'
+deny  'sed -i.bak 3d acceptance/challenges.jsonl'
+allow "jq '.stages.acceptance.summary = \"sin accept record: lo firma el notario\"' pipeline-state.json > t && mv t pipeline-state.json"
+deny  "python3 - <<'EOF'
+open('acceptance/decisions.jsonl','a').write('{}')
+EOF"
+deny  "node -e 'require(\"fs\").appendFileSync(\"acceptance/challenges.jsonl\", \"x\")'"
+deny  'bash -c "node \$SDD accept record demo --req REQ-F-001 --ac 1 --pass true --by Ana --role Cliente"'
+deny  'node "$SDD" accept record demo --req REQ-F-001 --ac 1 --pass true --by "Ana" --role "Cliente"'
 deny  'bash ~/hermes-sdd/firmar.sh . t_1'
 deny  'git push origin main'
 allow 'npx vitest run'

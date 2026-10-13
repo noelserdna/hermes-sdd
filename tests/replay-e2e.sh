@@ -23,5 +23,7 @@ for n in 0 1 2 3; do paso implementar $n && paso aceptar $n "" || break; done
 paso cierre "" acepto
 tags=$(git -C "$R" tag -l 'requirements-v*' 'fase-*-accepted' 'entrega-*' | tr '\n' ' ')
 [ "$(echo $tags | wc -w | tr -d ' ')" = 6 ] && ok "tags: $tags" || bad "tags: $tags"
+ajenas=$(jq -r 'select(.by != "Alumna" and .by != "command") | "\(.type) por \(.by)"' "$R/acceptance/decisions.jsonl" | sort -u | tr '\n' ' ')
+[ -z "$ajenas" ] && ok "las decisiones registradas son de quien practica (ninguna heredada de la grabación)" || bad "decisiones ajenas: $ajenas"
 (cd "$R" && node "$ROOT/metodo/scripts/sdd.mjs" gate >/dev/null 2>&1) && ok "gate global en verde" || bad "gate global no se cumple"
 exit $fail

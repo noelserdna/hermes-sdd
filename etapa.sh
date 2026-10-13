@@ -47,8 +47,24 @@ FB=".sdd/hermes/feedback/${ETAPA}${FASE:+-$FASE}.txt"
 PEDIDO=""; [ -s "$FB" ] && PEDIDO=" La persona revisó la propuesta anterior y pidió estos cambios, que son la prioridad de esta ejecución: «$(cat "$FB")»."
 ARNES="Modo arnés (hermes-sdd): sin persona en la sesión; sigue references/modo-arnes.md del plugin.$PEDIDO"
 
+registros_ajenos() {  # registros_ajenos <head-antes> → imprime qué está mal y sale 0; nada y sale 1 si todo es de la CLI
+  local f d m
+  for f in acceptance/decisions.jsonl acceptance/challenges.jsonl; do
+    [ -f "$f" ] || { git cat-file -e "$1:$f" 2>/dev/null && { echo "$f: borrado"; return 0; }; continue; }
+    # cada línea que había antes de la etapa sigue ahí (lo nuevo puede quedar en medio: merge=union en el replay)
+    d=$(diff <(git show "$1:$f" 2>/dev/null) "$f" || true)
+    printf '%s\n' "$d" | grep -q '^<' && { echo "$f: líneas borradas o cambiadas"; return 0; }
+    [ "$f" = acceptance/challenges.jsonl ] && continue
+    m=$(printf '%s\n' "$d" | sed -n 's/^> //p' | jq -rs '[.[] | select((.type == "measurement" and .by == "command"
+      and .role == "automated" and (.command | type) == "string") | not) | "\(.type) por \(.by)"] | unique | join(", ")' 2>/dev/null) ||
+      m="líneas que no son JSON"
+    [ -z "$m" ] || { echo "$f: registros que no son mediciones de la CLI ($m)"; return 0; }
+  done
+  return 1
+}
 claude_etapa() {  # claude_etapa <clave-de-estado> <prompt>
-  local clave=$1 res st
+  local clave=$1 res st head0 malo
+  head0=$(git rev-parse HEAD)
   res=$(bash "$ROOT/executors/$EJEC.sh" "$REPO" "$ETAPA${FASE:+-$FASE}" "$2" "$(modelo "$ETAPA")" | tail -1)
   [ "$(echo "$res" | jq -r .outcome)" = done ] || fin "$res" "$(echo "$res" | jq -r .reason)"
   # Post-condición: la etapa no puede quedar a medias en el estado del método
@@ -58,8 +74,15 @@ claude_etapa() {  # claude_etapa <clave-de-estado> <prompt>
     fin "$(echo "$res" | jq -c '.outcome="failed" | .reason="la etapa quedó en running: marcada stale"')"
   fi
   [ -s "$FB" ] && mv "$FB" "$FB.aplicado"
+  # Los registros solo crecen, y el ejecutor solo puede añadir lo que escribe la CLI: mediciones de un comando
+  # (`accept measure`) en decisions.jsonl y hallazgos (`accept challenge add`) en challenges.jsonl. Lo demás es una
+  # decisión humana: se para la etapa sin commitear nada y lo ve una persona.
+  if malo=$(registros_ajenos "$head0"); then
+    fin "$(echo "$res" | jq -c --arg r "el ejecutor tocó registros humanos: $malo" '.outcome="failed" | .reason=$r')"
+  fi
   # Lo que el ejecutor dejó versionado y sin commit (p. ej. un registro de medición): se commitea, a la vista, para
   # que la puerta se abra sobre un árbol limpio (el notario se niega a firmar con cambios pendientes)
+  git add -- $(ls acceptance/decisions.jsonl acceptance/challenges.jsonl 2>/dev/null) >/dev/null 2>&1  # ya validados (un registro nuevo también)
   if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
     git add -u && git commit -qm "docs(sdd): changes left uncommitted by the $clave stage" >/dev/null 2>&1 &&
       res=$(echo "$res" | jq -c '.reason = "ok (el arnés hizo commit de cambios que el ejecutor dejó pendientes)"')

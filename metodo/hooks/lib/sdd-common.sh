@@ -540,3 +540,23 @@ sdd_peers() {
   done
   return 0
 }
+
+# Texto fuera de comillas: cada cadena '…' o "…" pasa a ser un espacio, para que un texto que solo MENCIONA
+# `accept record` (un resumen persistido con jq, un echo) no cuente como invocación. Sale con 1 si queda una
+# comilla abierta (p. ej. un apóstrofo en un heredoc): entonces el llamante usa el texto sin quitar (conservador).
+unquoted_text() {
+  printf '%s' "$1" | awk -v sq="'" -v dq='"' 'BEGIN { RS = "\001" } {
+    s = $0; out = ""; q = ""; n = length(s)
+    for (i = 1; i <= n; i++) {
+      ch = substr(s, i, 1)
+      if (q == "") {
+        if (ch == sq || ch == dq) { q = ch; out = out " " }
+        else if (ch == "\\") { out = out ch substr(s, i + 1, 1); i++ }
+        else out = out ch
+      } else if (q == dq) { if (ch == "\\") i++; else if (ch == dq) q = "" }
+      else if (ch == sq) q = ""
+    }
+    printf "%s", out
+    if (q != "") exit 1
+  }'
+}
