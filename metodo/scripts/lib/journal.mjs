@@ -18,7 +18,7 @@ export const DEFAULT_FEATURE = "initial";
  *  orchestrator and the lead) and the brownfield skills. */
 export const STAGES = ["requirements-engineer", "specifications-engineer", "spec-auditor", "test-planner", "plan-architect",
   "task-generator", "task-implementer", "acceptance", "security-auditor", "ux-designer", "tech-designer", "gap-detector",
-  "req-change", "reverse-engineer", "reconcile", "import", "setup", "route", "status-page", "orchestrator", "lead"];
+  "req-change", "reverse-engineer", "reconcile", "import", "setup", "route", "status-page", "orchestrator", "lead", "maintenance"];
 const FEATURE_RE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$/;
 const REF_RE = /^[A-Za-z0-9][A-Za-z0-9._#:/-]{0,119}$/;
 const MAX_TEXT = 600;
@@ -117,6 +117,7 @@ export const STAGE_PLAIN = {
     "task-generator": "dividir cada entrega en tareas",
     "task-implementer": "construir la entrega",
     acceptance: "comprobar que cada requisito se cumple",
+    maintenance: "revisar periódicamente un proyecto entregado",
   },
   en: {
     "requirements-engineer": "gathering what you need and writing the requirements",
@@ -131,6 +132,7 @@ export const STAGE_PLAIN = {
     "task-generator": "splitting each delivery into tasks",
     "task-implementer": "building the delivery",
     acceptance: "checking that every requirement is met",
+    maintenance: "periodically reviewing a delivered project",
   },
 };
 export const plainStage = (stage, lang = "es") => (STAGE_PLAIN[lang] || STAGE_PLAIN.es)[stage] || stage;

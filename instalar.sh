@@ -26,12 +26,18 @@ jq -n --arg r "$HOME_SDD/actual" --arg v "$VERSION" '{root:$r, version:$v}' > "$
 if [ ! -f "$HOME_SDD/aprobadores.json" ]; then
   TG=$(grep '^TELEGRAM_ALLOWED_USERS=' "$HH/.env" 2>/dev/null | cut -d= -f2- | cut -d, -f1 | tr -d ' "' || true)
   jq -n --arg n "$(git config user.name || echo "$USER")" --arg tg "$TG" --arg u "$USER" \
-    '{yo: {nombre:$n, rol:"Cliente", canales: ({local:$u} + (if $tg != "" then {telegram:$tg} else {} end))}}' \
+    '{yo: {nombre:$n, rol:"Cliente", canales: ({local:$u, dashboard:$u} + (if $tg != "" then {telegram:$tg} else {} end))}}' \
     > "$HOME_SDD/aprobadores.json"
   echo "· aprobadores.json creado (tú; Telegram: $([ -n "$TG" ] && echo sí || echo 'no encontrado'))"
 fi
+# Canal dashboard (panel web local): quien decide en esta máquina como usuario local, decide también en el panel
+if jq -e --arg u "$USER" 'any(.[]; .canales.local == $u and (.canales.dashboard // "") == "")' "$HOME_SDD/aprobadores.json" >/dev/null; then
+  t=$(mktemp); jq --arg u "$USER" 'map_values(if .canales.local == $u and (.canales.dashboard // "") == "" then .canales.dashboard = $u else . end)' \
+    "$HOME_SDD/aprobadores.json" > "$t" && mv "$t" "$HOME_SDD/aprobadores.json"
+  echo "· aprobadores.json: canal dashboard añadido para el usuario local $USER"
+fi
 
-echo "· Plugin de Telegram"
+echo "· Plugin (Telegram + pestaña Puertas SDD del panel)"
 rm -rf "$HH/plugins/hermes-sdd"; mkdir -p "$HH/plugins"
 cp -R "$DEST/plugin/hermes-sdd" "$HH/plugins/hermes-sdd"
 hermes plugins enable hermes-sdd >/dev/null 2>&1 || echo "  AVISO: activa el plugin con: hermes plugins enable hermes-sdd"
@@ -83,4 +89,4 @@ hermes -p "$E" config set hooks.pre_tool_call \
 
 [ "$(hermes config get kanban.auto_decompose 2>/dev/null | tail -1)" = false ] ||
   echo "  AVISO: kanban.auto_decompose está activo; desactívalo con: hermes config set kanban.auto_decompose false"
-echo "Listo. Reinicia el gateway para cargar el plugin: hermes gateway restart"
+echo "Listo. Reinicia el gateway (hermes gateway restart) y el panel (hermes dashboard) para cargar el plugin"

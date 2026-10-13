@@ -56,9 +56,10 @@ if ! hecho validado; then
   case "$TIPO:$VERBO" in
     requisitos:acepto|requisitos:cambios|ruta:acepto|ruta:completo|ruta:rechazo|plan:conforme|plan:cambios) ;;
     fase:acepto|fase:observaciones|fase:rechazo|entrega:acepto|entrega:observaciones|entrega:rechazo) ;;
+    mantenimiento:cambio|mantenimiento:ignoro) ;;
     *) fallo "verbo '$VERBO' no vale para una puerta de tipo '$TIPO'" ;;
   esac
-  case "$VERBO" in cambios|observaciones|rechazo) [ -n "$TEXTO" ] || fallo "'$VERBO' necesita un texto" ;; esac
+  case "$VERBO" in cambios|observaciones|rechazo|ignoro) [ -n "$TEXTO" ] || fallo "'$VERBO' necesita un texto" ;; esac
   # Aceptar una FASE exige la puerta de calidad cumplida (0) o cumplida con exenciones (3); rechazar, no
   if { [ "$TIPO" = fase ] || [ "$TIPO" = entrega ]; } && [ "$VERBO" != rechazo ]; then
     rc=0
@@ -118,7 +119,11 @@ for p in sorted(ficheros):
             rec = re.search(r"^\s+([A-Z])\).*\(recommended\)", b, re.M)
             letra, como = (rec.group(1) if rec else "?"), "opción recomendada, aceptada por"
         b = b.replace("[OPEN]", "[ANSWERED]", 1)
-        return re.sub(r"^Answer:\s*$", f"Answer: {letra} — {como} {quien} ({hoy})", b, count=1, flags=re.M)
+        linea = f"Answer: {letra} — {como} {quien} ({hoy})"
+        if re.search(r"^Answer:[ \t]*$", b, re.M):   # [ \t]: no comerse los saltos de línea que separan preguntas
+            return re.sub(r"^Answer:[ \t]*$", linea, b, count=1, flags=re.M)
+        cuerpo = b.rstrip("\n")                       # sin línea Answer: se añade, conservando la separación
+        return cuerpo + "\n" + linea + b[len(cuerpo):] if b[len(cuerpo):] else cuerpo + "\n" + linea + "\n"
     t = re.sub(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", contestar, t, flags=re.M | re.S)
     open(p, "w").write(t)
 PY
@@ -206,12 +211,13 @@ Approver-role: $ROL
 Channel: $CHANNEL
 Demo: none
 Commit: $HEAD0
-Acceptance: gate exit $GRC; result $RES${TEXTO:+; observations: $TEXTO}
+Acceptance: gate exit $GRC; result $RES${TEXTO:+; notes: $TEXTO}
 Kanban-Task: $BOARD/$TASK"
       marcar tag
     fi
     if ! hecho pack; then node "$SDD" accept pack --fase "$FASE" >/dev/null 2>&1 || true; marcar pack; fi
-    RESULTADO="$VERBO"; RESUMEN="FASE-$FASE aceptada${TEXTO:+ con observaciones} por $NOMBRE ($ROL) — tag fase-$FASE-accepted" ;;
+    RESULTADO="$VERBO"; OBS=""; [ "$VERBO" = observaciones ] && OBS=" con observaciones"
+    RESUMEN="FASE-$FASE aceptada$OBS por $NOMBRE ($ROL) — tag fase-$FASE-accepted" ;;
 
   fase:rechazo)
     mkdir -p .sdd/hermes/feedback; printf '%s\n' "$TEXTO" > ".sdd/hermes/feedback/implementar-$FASE.txt"
@@ -240,7 +246,7 @@ Accepted-by: $NOMBRE
 Approver-role: $ROL
 Channel: $CHANNEL
 Commit: $HEAD0
-Acceptance: global gate exit $(jq -r '.gate_exit // "?"' "$ACTA")${TEXTO:+; observations: $TEXTO}
+Acceptance: global gate exit $(jq -r '.gate_exit // "?"' "$ACTA")${TEXTO:+; notes: $TEXTO}
 Kanban-Task: $BOARD/$TASK
 
 $(node "$SDD" gate --md 2>/dev/null)"
@@ -257,10 +263,37 @@ $(node "$SDD" gate --md 2>/dev/null)"
     if ! hecho commit; then commit_si_hay "docs(acceptance): delivery rejected by $NOMBRE" status/; marcar commit; fi
     RESULTADO="rechazo"; RESUMEN="Entrega rechazada por $NOMBRE ($ROL): $TEXTO" ;;
 
+  mantenimiento:cambio)
+    # La petición del cambio sale de los hallazgos que la persona vio (están en la puerta), más su comentario
+    if ! hecho registrado; then
+      mkdir -p .sdd/hermes/mantenimiento
+      { echo "Mantenimiento detectado el $(jq -r '.creada[0:10]' "$PUERTA") por la revisión periódica:"
+        jq -r '.hallazgos[] | "- \(.titulo): \(.propuesta)"' "$PUERTA"
+        [ -n "$TEXTO" ] && echo "Comentario de $NOMBRE: $TEXTO"; } > ".sdd/hermes/mantenimiento/peticion-$GATE.txt"
+      node "$SDD" journal add --stage maintenance --kind decision \
+        --text "$NOMBRE pidió un cambio de mantenimiento: $(jq -r '[.hallazgos[].titulo] | join("; ")' "$PUERTA")" --by "$NOMBRE ($ROL)" >/dev/null
+      marcar registrado
+    fi
+    if ! hecho commit; then commit_si_hay "docs(status): maintenance change requested by $NOMBRE" status/; marcar commit; fi
+    RESULTADO="cambio"; RESUMEN="Mantenimiento: $NOMBRE ($ROL) lanza un cambio" ;;
+
+  mantenimiento:ignoro)
+    if ! hecho registrado; then
+      mkdir -p .sdd/hermes/mantenimiento; SIL=.sdd/hermes/mantenimiento/silenciados.json; [ -f "$SIL" ] || echo '{}' > "$SIL"
+      t=$(mktemp); jq --slurpfile p "$PUERTA" --arg m "$TEXTO" --arg q "$NOMBRE" --arg h "$HOY" \
+        '. + ([$p[0].hallazgos[] | {(.clave): {titulo, motivo:$m, por:$q, el:$h}}] | add // {})' "$SIL" > "$t" && mv "$t" "$SIL"
+      node "$SDD" journal add --stage maintenance --kind feedback \
+        --text "$NOMBRE ignoró: $(jq -r '[.hallazgos[].titulo] | join("; ")' "$PUERTA"). Motivo: $TEXTO" --by "$NOMBRE ($ROL)" >/dev/null
+      marcar registrado
+    fi
+    if ! hecho commit; then commit_si_hay "docs(status): maintenance findings dismissed by $NOMBRE" status/; marcar commit; fi
+    RESULTADO="ignoro"; RESUMEN="Mantenimiento ignorado por $NOMBRE ($ROL): $TEXTO" ;;
+
   requisitos:cambios|plan:cambios|ruta:rechazo)
     mkdir -p .sdd/hermes/feedback; printf '%s\n' "$TEXTO" > ".sdd/hermes/feedback/$TIPO.txt"
     if ! hecho registrado; then
-      node "$SDD" journal add --stage "$TIPO" --kind feedback --text "$TEXTO" --by "$NOMBRE ($ROL)" >/dev/null 2>&1 || true
+      case "$TIPO" in requisitos) ST=requirements-engineer;; plan) ST=plan-architect;; *) ST=route;; esac
+      node "$SDD" journal add --stage "$ST" --kind feedback --text "$TEXTO" --by "$NOMBRE ($ROL)" >/dev/null
       marcar registrado
     fi
     if ! hecho commit; then commit_si_hay "docs(status): $TIPO changes requested by $NOMBRE" status/; marcar commit; fi

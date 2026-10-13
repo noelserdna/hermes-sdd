@@ -19,6 +19,9 @@ mkdir -p .sdd/hermes
 jq -n --arg g "$G" '{ejecutor:"replay", grabacion:$g, canales:["telegram"], modelos:{}}' > .sdd/hermes/hermes-sdd.json
 cp "$ROOT/metodo/templates/pipeline-state.template.json" pipeline-state.json
 if [ "$SIN_KANBAN" = --sin-kanban ]; then
-  bash "$ROOT/metodo/scripts/install-git-hooks.sh" -C "$DEST" --quiet; echo "Repo listo en $DEST"; exit 0
+  bash "$ROOT/metodo/scripts/install-git-hooks.sh" -C "$DEST" --quiet
+  # la CLI del método que se copia al repo puede ser más nueva que la de la grabación: commit visible
+  git add .claude/sdd 2>/dev/null && { git diff --cached --quiet || git commit -qm "chore(sdd): vendor the method CLI of this harness"; }
+  echo "Repo listo en $DEST"; exit 0
 fi
 bash "$ROOT/lanzar.sh" iniciar "$DEST"

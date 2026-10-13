@@ -4,7 +4,7 @@
 # No crea la tarjeta él mismo: lo lanza un worker del kanban, y Hermes no deja que los procesos de un worker
 # modifiquen el tablero (frontera de seguridad que respetamos).
 #
-#   puerta.sh <repo> <tipo> [fase]        tipo: requisitos | ruta | plan | fase
+#   puerta.sh <repo> <tipo> [fase]        tipo: requisitos | ruta | plan | fase | entrega | mantenimiento
 #
 # Escribe <repo>/.sdd/hermes/puertas/<id>.json (lo lee el notario) y $HERMES_SDD_HOME/puertas/<id>.json (índice
 # global que leen los canales). Imprime el id de la puerta.
@@ -93,6 +93,14 @@ FASEs aceptadas: $(git tag -l 'fase-*-accepted' | tr '\n' ' ')
 ¿Aceptas la entrega del proyecto?"
     OPCIONES='[{"verbo":"acepto","etiqueta":"✅ Acepto la entrega"},{"verbo":"observaciones","etiqueta":"📝 Con observaciones","texto":true},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]'
     [ "$rc" = 0 ] || [ "$rc" = 3 ] || OPCIONES='[{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]' ;;
+  mantenimiento)   # lo abre vigilar.sh con .sdd/hermes/mantenimiento/hallazgos.json
+    TITULO="Mantenimiento"
+    TEXTO="La revisión periódica encontró:
+$(jq -r '.[] | "• \(.titulo)" + (if .detalle != "" then "\n" + (.detalle | split("\n") | map("   " + .) | join("\n")) else "" end)' .sdd/hermes/mantenimiento/hallazgos.json)
+
+¿Lanzo un cambio para resolverlo? Pasará por tus puertas como cualquier cambio (requisitos, plan, FASE).
+Si lo ignoras, explica por qué: no se volverá a preguntar mientras no cambie."
+    OPCIONES='[{"verbo":"cambio","etiqueta":"🛠 Lanzar cambio"},{"verbo":"ignoro","etiqueta":"🔕 Ignorar","texto":true}]' ;;
   *) echo "tipo de puerta desconocido: $TIPO" >&2; exit 2 ;;
 esac
 
@@ -127,7 +135,8 @@ mkdir -p .sdd/hermes/puertas "$HOME_SDD/puertas"
 jq -n --arg id "$ID" --arg t "$TIPO" --arg f "$FASE" --arg b "$BOARD" --arg s "$SHA" --arg c "$AHORA" \
   --arg r "$REPO" --arg ti "$TITULO" --arg tx "$TEXTO" --argjson o "$OPCIONES" --arg v "${VIDEO:-}" --argjson q "$PREGUNTAS" \
   --argjson ad "$([ -f .sdd/hermes/adopcion ] && echo true || echo false)" \
+  --argjson hz "$([ "$TIPO" = mantenimiento ] && cat .sdd/hermes/mantenimiento/hallazgos.json || echo null)" \
   '{id:$id, tipo:$t, fase:$f, tablero:$b, tarjeta:"", adopcion:$ad, sha:$s, creada:$c, repo:$r, titulo:$ti, texto:$tx,
-    opciones:$o, demo:$v, preguntas:$q, estado:"abierta"}' > ".sdd/hermes/puertas/$ID.json"
+    opciones:$o, demo:$v, preguntas:$q, hallazgos:$hz, estado:"abierta"}' > ".sdd/hermes/puertas/$ID.json"
 cp ".sdd/hermes/puertas/$ID.json" "$HOME_SDD/puertas/$ID.json"   # índice global para los canales
 echo "$ID"

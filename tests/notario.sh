@@ -55,4 +55,27 @@ puerta g6 fase 0; decidir g6 acepto telegram 111; firmar g6
 # 7. verbo inválido y texto obligatorio
 puerta g7 fase 0; decidir g7 rechazo telegram 111; firmar g7
 [ $rc -ne 0 ] && echo "$out" | grep -q "necesita un texto" && ok "rechazo exige motivo" || bad "texto: $out"
+# 8. preguntas: la elegida se escribe aunque falte la línea Answer: y sin pegar una pregunta con la siguiente
+cat > .sdd/questions-x.md <<'Q'
+# Questions
+
+## Q-x-001 [OPEN] skill=x
+Question: ¿uno?
+  A) a (recommended)
+  B) b
+Answer:
+
+## Q-x-002 [OPEN] skill=x
+Question: ¿dos?
+  A) a (recommended)
+  B) b
+Blocks: nada
+Q
+puerta g8 plan; decidir g8 conforme telegram 111 "Q1: A, Q2: B"; firmar g8
+grep -q "^Answer: A — elegida" .sdd/questions-x.md && grep -q "^Answer: B — elegida" .sdd/questions-x.md \
+  && [ "$(grep -c '^## Q-x-00[12] \[ANSWERED\]' .sdd/questions-x.md)" = 2 ] \
+  && ok "escribe la respuesta elegida aunque falte la línea Answer:" || bad "preguntas: $(cat .sdd/questions-x.md | tr '\n' '|')"
+# 9. el motivo de "cambios" en el plan queda en el diario
+puerta g9 plan; decidir g9 cambios telegram 111 "FASE-2 antes que FASE-1"; firmar g9
+grep -q "FASE-2 antes que FASE-1" status/journal.jsonl && ok "el motivo de cambios queda en el diario" || bad "diario: $out"
 exit $fail

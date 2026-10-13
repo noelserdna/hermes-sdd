@@ -1,0 +1,11 @@
+{
+  "name": "hermes-sdd",
+  "label": "Puertas SDD",
+  "description": "Puertas del método SDD: decide desde el panel (canal dashboard); firma el notario.",
+  "icon": "Shield",
+  "version": "0.2.0",
+  "tab": { "path": "/sdd", "position": "end" },
+  "entry": "dist/index.js",
+  "css": "dist/style.css",
+  "api": "plugin_api.py"
+}

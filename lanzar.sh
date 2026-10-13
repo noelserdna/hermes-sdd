@@ -100,6 +100,8 @@ case "$CMD" in
       fase:rechazo)                   t=$(tarjeta "Implementar FASE-$FASE (cambios)" - 120m implementar "$FASE"); tarjeta "Aceptar FASE-$FASE" "$t" 60m aceptar "$FASE" ;;
       entrega:acepto|entrega:observaciones) echo "Proyecto entregado" ;;
       entrega:rechazo)                tarjeta "Cierre (otra vez)" - 120m cierre ;;
+      mantenimiento:cambio)           bash "$ROOT/lanzar.sh" cambio "$REPO" "$(cat "$REPO/.sdd/hermes/mantenimiento/peticion-$GATE.txt")" ;;
+      mantenimiento:ignoro)           echo "Hallazgos ignorados; no se vuelve a preguntar mientras no cambien" ;;
       *) echo "Sin tramo siguiente para $TIPO:$RESULTADO" ;;
     esac ;;
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "hermes-sdd",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "El método SDD como ejecutor de un arnés de Hermes: skills sin preguntas en mitad de la ejecución, CLI determinista y guardias. Las decisiones las toman personas en puertas; el ejecutor nunca firma.",
   "author": { "name": "Andres Leon", "url": "https://github.com/noelserdna" },
   "license": "MIT",

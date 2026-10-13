@@ -22,36 +22,26 @@ from pathlib import Path
 
 log = logging.getLogger("hermes_plugins.hermes_sdd")   # este prefijo llega a gateway.log
 
-HOME = Path(os.environ.get("HERMES_SDD_HOME", Path.home() / ".hermes" / "hermes-sdd"))
-DESHACER_S = int(os.environ.get("HERMES_SDD_DESHACER_S", "180"))
 PATH_CMDS = f"{Path.home()}/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
 _RT: dict = {"app": None, "pendientes": {}}   # pendientes: id del mensaje ForceReply → (puerta, verbo, persona)
-_lock = asyncio.Lock()
 
 
-# ── ficheros ────────────────────────────────────────────────────────────────────────────────────────────────────
-def _leer(p: Path, defecto=None):
-    try:
-        return json.loads(p.read_text())
-    except Exception:
-        return defecto
+# ── núcleo común a los canales (validación, decisión, deshacer y cerrojo entre procesos) ─────────────────────────
+def _cargar_nucleo():
+    import importlib.util, sys
+    if "hsdd_nucleo" not in sys.modules:
+        spec = importlib.util.spec_from_file_location("hsdd_nucleo", Path(__file__).with_name("hsdd_nucleo.py"))
+        mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod); sys.modules["hsdd_nucleo"] = mod
+    return sys.modules["hsdd_nucleo"]
 
 
-def _escribir(p: Path, datos) -> None:
-    tmp = p.with_suffix(".tmp")
-    tmp.write_text(json.dumps(datos, ensure_ascii=False, indent=2))
-    tmp.replace(p)
+N = _cargar_nucleo()
+HOME = N.HOME
+_leer, _escribir, _ahora, _respuestas = N.leer, N.escribir, N.ahora, N.respuestas
 
 
-def _ahora() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-
-def _persona_de(user_id: int):
-    for clave, p in (_leer(HOME / "aprobadores.json", {}) or {}).items():
-        if str(p.get("canales", {}).get("telegram", "")) == str(user_id):
-            return clave, p
-    return None, None
+def _persona_de(user_id):
+    return N.persona_de("telegram", user_id)
 
 
 def _chats() -> list[str]:
@@ -64,7 +54,7 @@ def _chats() -> list[str]:
 
 def _config() -> dict:
     """Presupuesto de atención (atencion.json): horas de silencio y resúmenes."""
-    defecto = {"silencio": [22, 8], "resumenes": ["08:30", "19:00"], "mensaje_vivo": True}
+    defecto = {"silencio": [22, 8], "resumenes": ["08:30", "19:00"], "mensaje_vivo": True, "mantenimiento": "07:00"}
     return {**defecto, **(_leer(HOME / "atencion.json", {}) or {})}
 
 
@@ -79,16 +69,10 @@ def _root() -> Path:
 
 
 # ── mensajes ────────────────────────────────────────────────────────────────────────────────────────────────────
-def _respuestas(puerta: dict) -> dict:
-    """Opción elegida por pregunta: la que marcó la persona o, si no, la recomendada."""
-    elegidas = puerta.get("respuestas") or {}
-    return {str(q["n"]): elegidas.get(str(q["n"]), q.get("recomendada", "")) for q in puerta.get("preguntas") or []}
-
-
 def _teclado(puerta: dict, paso: int = 1):
     from telegram import InlineKeyboardButton as B, InlineKeyboardMarkup as M
     ops = puerta.get("opciones", [])
-    escalonada = any(o.get("paso") for o in ops)
+    escalonada = N.escalonada(puerta)
     if escalonada:
         ops = [o for o in ops if o.get("paso", 1) == paso]
     filas = []
@@ -108,15 +92,34 @@ def _cabecera(puerta: dict) -> str:
     return f"🚪 {puerta.get('titulo', 'Puerta')} · {puerta.get('tablero', '')}\n"
 
 
+def _render(puerta: dict):
+    """Texto y botones que corresponden al estado de la puerta, venga el cambio del canal que venga."""
+    from telegram import InlineKeyboardButton as B, InlineKeyboardMarkup as M
+    if puerta.get("estado") == "decidida":
+        dec = puerta.get("decision") or {}
+        verbo, texto = dec.get("verbo", ""), dec.get("texto", "")
+        etiqueta = next((o["etiqueta"] for o in puerta.get("opciones", []) if o["verbo"] == verbo), verbo)
+        canal = dec.get("actor", {}).get("canal", "")
+        desde = f" (desde {canal})" if canal and canal != "telegram" else ""
+        hora = datetime.fromtimestamp(puerta.get("firmar_en", time.time())).strftime("%H:%M")
+        return (f"{_cabecera(puerta)}\n{etiqueta} — {dec.get('actor', {}).get('persona', '')}{desde}"
+                f"{(': ' + texto) if texto else ''}\n🕒 Se firma a las {hora}",
+                M([[B("↩ Deshacer", callback_data=f"g:deshacer:{puerta['id']}")]]))
+    paso = N.paso_actual(puerta)
+    extra = "\n\n👀 Demo vista. Decide:" if (N.escalonada(puerta) and paso == 2) else ""
+    return _cabecera(puerta) + "\n" + puerta.get("texto", "") + extra, _teclado(puerta, paso)
+
+
 async def _publicar(bot, puerta: dict) -> None:
-    texto = _cabecera(puerta) + "\n" + puerta.get("texto", "")
+    texto, teclado = _render(puerta)
     enviados = []
     for chat in _chats():
-        m = await bot.send_message(chat_id=int(chat), text=texto[:4000], reply_markup=_teclado(puerta, 1),
+        m = await bot.send_message(chat_id=int(chat), text=texto[:4000], reply_markup=teclado,
                                    disable_notification=_en_silencio())
         enviados.append({"chat": m.chat_id, "msg": m.message_id})
     puerta["telegram"] = enviados
     puerta["publicada"] = _ahora()
+    puerta["tg_vista"] = N.clave_vista(puerta)
 
 
 async def _editar(bot, puerta: dict, texto: str, teclado=None) -> None:
@@ -127,32 +130,29 @@ async def _editar(bot, puerta: dict, texto: str, teclado=None) -> None:
             log.debug("hermes-sdd: no se pudo editar %s: %s", t, e)
 
 
+async def _sincronizar(bot, puerta: dict) -> None:
+    """Pone el mensaje de Telegram al día con la puerta (decidida o deshecha aquí o en otro canal)."""
+    if not puerta.get("telegram") or puerta.get("estado") not in ("abierta", "decidida"):
+        return
+    clave = N.clave_vista(puerta)
+    if puerta.get("tg_vista") == clave:
+        return
+    texto, teclado = _render(puerta)
+    await _editar(bot, puerta, texto, teclado)
+    try:
+        N.marcar(puerta["id"], tg_vista=clave)
+    except N.Rechazo:
+        pass
+
+
 # ── decisiones ──────────────────────────────────────────────────────────────────────────────────────────────────
 async def _decidir(bot, gid: str, verbo: str, texto: str, user, persona: str, prueba: dict) -> str:
-    async with _lock:
-        idx = HOME / "puertas" / f"{gid}.json"
-        puerta = _leer(idx)
-        if not puerta or puerta.get("estado") != "abierta":
-            return "Esta puerta ya está resuelta"
-        if puerta.get("preguntas") and verbo not in ("rechazo",):
-            resp = ", ".join(f"Q{n}: {l}" for n, l in _respuestas(puerta).items() if l)
-            texto = f"{texto}. {resp}" if texto else resp
-        decision = {"verbo": verbo, "texto": texto or "",
-                    "actor": {"persona": persona, "canal": "telegram", "id": str(user.id)},
-                    "prueba": {"user": user.username or "", **prueba}, "at": _ahora()}
-        dirdec = Path(puerta["repo"]) / ".sdd" / "hermes" / "decisiones"
-        dirdec.mkdir(parents=True, exist_ok=True)
-        _escribir(dirdec / f"{gid}.json", decision)
-        if puerta.get("ver_at"):
-            decision["dwell_s"] = int(time.time() - puerta["ver_at"])
-        puerta.update(estado="decidida", decision=decision, firmar_en=time.time() + DESHACER_S)
-        _escribir(idx, puerta)
-    from telegram import InlineKeyboardButton as B, InlineKeyboardMarkup as M
-    hora = datetime.fromtimestamp(puerta["firmar_en"]).strftime("%H:%M")
-    etiqueta = next((o["etiqueta"] for o in puerta.get("opciones", []) if o["verbo"] == verbo), verbo)
-    await _editar(bot, puerta, f"{_cabecera(puerta)}\n{etiqueta} — {persona}{(': ' + texto) if texto else ''}\n"
-                                f"🕒 Se firma a las {hora}",
-                  M([[B("↩ Deshacer", callback_data=f"g:deshacer:{gid}")]]))
+    try:
+        puerta = N.decidir(gid, verbo, texto, persona, "telegram", str(user.id),
+                           {"user": user.username or "", **prueba})
+    except N.Rechazo as e:
+        return str(e)
+    await _sincronizar(bot, puerta)
     return "Decisión registrada; tienes unos minutos para deshacerla"
 
 
@@ -164,45 +164,40 @@ async def _on_boton(update, context) -> None:
     if not persona:
         await q.answer("No estás autorizado para decidir esta puerta", show_alert=True)
         return
-    idx = HOME / "puertas" / f"{gid}.json"
-    puerta = _leer(idx)
+    try:
+        puerta = _leer(N.indice(gid))
+    except ValueError:
+        puerta = None
     if not puerta:
         await q.answer("No conozco esta puerta", show_alert=True)
         return
     bot = context.bot
     if verbo == "deshacer":
-        async with _lock:
-            puerta = _leer(idx)
-            dec = puerta.get("decision") or {}
-            if puerta.get("estado") != "decidida" or dec.get("actor", {}).get("persona") != persona:
-                await q.answer("Ya no se puede deshacer", show_alert=True)
-                return
-            (Path(puerta["repo"]) / ".sdd" / "hermes" / "decisiones" / f"{gid}.json").unlink(missing_ok=True)
-            puerta.update(estado="abierta")
-            puerta.pop("decision", None); puerta.pop("firmar_en", None)
-            _escribir(idx, puerta)
+        try:
+            puerta = N.deshacer(gid, persona)
+        except N.Rechazo as e:
+            await q.answer(str(e), show_alert=True)
+            return
         await q.answer("Deshecho")
-        paso = 2 if puerta.get("ver_at") else 1
-        await _editar(bot, puerta, _cabecera(puerta) + "\n" + puerta.get("texto", ""), _teclado(puerta, paso))
+        await _sincronizar(bot, puerta)
         return
     if puerta.get("estado") != "abierta":
         await q.answer("Esta puerta ya está resuelta", show_alert=True)
         return
     if verbo.startswith("q") and len(verbo) >= 3:   # marcar una opción del formulario: g:q<n><letra>:<puerta>
         n, letra = verbo[1:-1], verbo[-1]
-        async with _lock:
-            puerta = _leer(idx); puerta.setdefault("respuestas", {})[n] = letra; _escribir(idx, puerta)
+        try:
+            puerta = N.marcar(gid, respuesta=(n, letra))
+        except N.Rechazo as e:
+            await q.answer(str(e), show_alert=True)
+            return
         await q.answer(f"Q{n}: {letra}")
-        paso = 2 if (puerta.get("ver_at") or not any(o.get("paso") for o in puerta.get("opciones", []))) else 1
-        await _editar(bot, puerta, _cabecera(puerta) + "\n" + puerta.get("texto", ""), _teclado(puerta, paso))
+        await _sincronizar(bot, puerta)
         return
     if verbo == "ver":
         await q.answer("Enviando la demo…")
         await _enviar_demo(bot, q.message.chat_id, puerta)
-        async with _lock:
-            puerta = _leer(idx); puerta["ver_at"] = time.time(); _escribir(idx, puerta)
-        await _editar(bot, puerta, _cabecera(puerta) + "\n" + puerta.get("texto", "") + "\n\n👀 Demo vista. Decide:",
-                      _teclado(puerta, 2))
+        await _sincronizar(bot, N.marcar(gid, ver_at=puerta.get("ver_at") or time.time()))
         return
     opcion = next((o for o in puerta.get("opciones", []) if o["verbo"] == verbo), None)
     if not opcion:
@@ -269,7 +264,7 @@ async def _firmar(bot, puerta: dict) -> None:
     except asyncio.TimeoutError:
         proc.kill(); out, err = b"", b"el notario no termino en 10 min"
     idx = HOME / "puertas" / f"{gid}.json"
-    async with _lock:
+    with N.cerrojo():
         p = _leer(idx) or puerta
         if proc.returncode == 0:
             p["estado"] = "firmada"; p["resultado"] = out.decode().strip().splitlines()[-1] if out else "firmada"
@@ -337,7 +332,7 @@ async def _vuelta(ciclo: int) -> None:
             continue
         if p.get("estado") == "abierta" and not p.get("tarjeta") and p.get("tablero"):
             tarjeta = await _crear_tarjeta(p)
-            async with _lock:
+            with N.cerrojo():
                 actual = _leer(idx) or p
                 actual["tarjeta"] = tarjeta
                 _escribir(idx, actual)
@@ -349,13 +344,15 @@ async def _vuelta(ciclo: int) -> None:
             p = actual
         if p.get("estado") == "abierta" and not p.get("telegram"):
             await asyncio.wait_for(_publicar(bot, p), 60)
-            async with _lock:
+            with N.cerrojo():
                 actual = _leer(idx) or p
-                actual.update(telegram=p["telegram"], publicada=p["publicada"])
+                actual.update(telegram=p["telegram"], publicada=p["publicada"], tg_vista=p["tg_vista"])
                 _escribir(idx, actual)
         elif p.get("estado") == "decidida" and time.time() >= p.get("firmar_en", 0):
             log.info("hermes-sdd: firmando la puerta %s", p["id"])
             await _firmar(bot, p)
+        else:   # decidida o deshecha desde otro canal (dashboard): el mensaje de Telegram se pone al día
+            await asyncio.wait_for(_sincronizar(bot, p), 60)
     if ciclo % 12 == 0:
         await asyncio.wait_for(_avisar_fallos(bot), 180)
         await asyncio.wait_for(_vigia(bot), 180)
@@ -512,6 +509,7 @@ async def _vigia(bot) -> None:
             if v:
                 vivos[b] = {**v, "texto": texto}
         _escribir(HOME / "vivos.json", vivos)
+    await _mantenimiento_diario()
     hoy = datetime.now().strftime("%Y-%m-%d")
     enviados = _leer(HOME / "resumenes.json", {}) or {}
     for hora in cfg.get("resumenes", []):
@@ -522,6 +520,49 @@ async def _vigia(bot) -> None:
                 await bot.send_message(chat_id=int(chat), text=texto[:4000])
             enviados[clave] = _ahora()
             _escribir(HOME / "resumenes.json", dict(list(enviados.items())[-20:]))
+
+
+async def _mantenimiento(proyectos: dict) -> list[str]:
+    """Revisión por umbrales (vigilar.sh) de los proyectos ya entregados. Si algo cruza un umbral se abre una puerta
+    de mantenimiento, que el bucle publica como cualquier otra; aquí no se decide nada."""
+    res = []
+    for b, repo in sorted(proyectos.items()):
+        if (HOME / "pausa" / b).exists() or (HOME / "pausa" / "_todo").exists():
+            res.append(f"{b}: en pausa"); continue
+        if not (Path(repo) / ".git").exists():
+            continue
+        tags = await _cli("git", "-C", repo, "tag", "-l", "entrega-*")
+        if not tags.strip():
+            res.append(f"{b}: aún sin entrega"); continue
+        try:
+            out = await _cli("bash", str(_root() / "vigilar.sh"), repo, timeout=1200)
+            ultima = out.strip().splitlines()[-1] if out.strip() else ""
+            res.append(f"{b}: " + ("🛠 puerta de mantenimiento abierta" if ultima.startswith("g") else ultima))
+        except Exception as e:
+            res.append(f"{b}: la revisión falló ({e})")
+    log.info("hermes-sdd: mantenimiento: %s", "; ".join(res))
+    return res
+
+
+async def _mantenimiento_diario() -> None:
+    hora = _config().get("mantenimiento")
+    hoy = datetime.now().strftime("%Y-%m-%d")
+    hecho = _leer(HOME / "mantenimiento.json", {}) or {}
+    if not hora or datetime.now().strftime("%H:%M") < hora or hecho.get("dia") == hoy or _RT.get("mant_vivo"):
+        return
+    inicio = _ahora()
+    _escribir(HOME / "mantenimiento.json", {"dia": hoy, "inicio": inicio})
+
+    async def _tarea():
+        _RT["mant_vivo"] = True
+        try:
+            res = await _mantenimiento(await _proyectos())
+            _escribir(HOME / "mantenimiento.json", {"dia": hoy, "inicio": inicio, "fin": _ahora(), "resultado": res})
+        except Exception:
+            log.exception("hermes-sdd: mantenimiento diario")
+        finally:
+            _RT["mant_vivo"] = False
+    asyncio.get_running_loop().create_task(_tarea())   # puede tardar (tests de cada proyecto): no bloquea el bucle
 
 
 async def _resumen_periodico() -> str:
@@ -652,10 +693,22 @@ def register(ctx):
         except Exception as e:
             return f"No se lanzó el cambio: {e}"
 
+    async def _cmd_mantenimiento(raw_args: str = "") -> str:
+        persona, _ = _autorizado_en_sesion()
+        if not persona:
+            return "Solo una persona autorizada puede lanzar la revisión."
+        proys = await _proyectos()
+        if raw_args.strip():
+            proys = {b: r for b, r in proys.items() if b == raw_args.strip()}
+            if not proys:
+                return f"No conozco el proyecto {raw_args.strip()}."
+        return "🔎 Revisión de mantenimiento:\n" + "\n".join(await _mantenimiento(proys))
+
     ctx.register_telegram_handler(_wire)
     ctx.register_command("cambio", _cmd_cambio, description="Pide un cambio o una funcionalidad a un proyecto SDD", args_hint="<proyecto> <petición>")
     ctx.register_command("estado", _cmd_estado, description="Estado de los proyectos SDD", args_hint="[proyecto]")
     ctx.register_command("pausar", _cmd_pausar, description="Pausa proyectos SDD (ahora = detener)", args_hint="[proyecto|todo] [ahora]")
     ctx.register_command("reanudar", _cmd_reanudar, description="Reanuda proyectos SDD en pausa", args_hint="[proyecto|todo]")
     ctx.register_command("anular", _cmd_anular, description="Anula la aceptación de una FASE", args_hint="<proyecto> <fase> <motivo>")
+    ctx.register_command("mantenimiento", _cmd_mantenimiento, description="Revisa ahora los proyectos SDD entregados (umbrales)", args_hint="[proyecto]")
     ctx.register_command("puertas", _cmd_puertas, description="Puertas SDD abiertas, con sus botones")

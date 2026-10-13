@@ -2,8 +2,8 @@
 
 El método **SDD** (Specification-Driven Development) como **arnés para [Hermes Agent](https://github.com/NousResearch/hermes-agent)**.
 Hermes orquesta con su kanban (un tablero por proyecto), un agente ejecutor hace cada etapa (Claude Code de momento)
-y **las decisiones las toman personas** en *puertas* que llegan por un canal (Telegram primero) y que firma un
-notario sin LLM.
+y **las decisiones las toman personas** en *puertas* que llegan por un canal (Telegram o el panel web de Hermes) y
+que firma un notario sin LLM.
 
 > **Artículo 13.** El ejecutor nunca firma; el notario nunca decide; el orquestador nunca interpreta.
 
@@ -71,10 +71,15 @@ de verdad. Coste 0 $; recorrerlo entero lleva lo que tardes en decidir. `grabar.
   FASEs retroactivas y preguntas sobre lo que no puede deducir; tu aprobación es la línea base. Medido sobre una
   tienda web pequeña: 9 requisitos, 3 FASEs y tres hallazgos reales (búsqueda sin SKU ni tildes, "79,90" rechazado y
   "1e2" aceptado como precio) en 9 min y 3,08 $.
+- **Mantenimiento por umbrales:** cada día (07:00, configurable) o con `/mantenimiento`, `vigilar.sh` revisa los
+  proyectos entregados sin LLM: tests en HEAD, puerta de calidad global, código cambiado fuera del método,
+  vulnerabilidades (`npm audit`) y versiones mayores nuevas. Si algo cruza su umbral abre una **puerta de
+  mantenimiento**: `🛠 Lanzar cambio` (entra como un `/cambio` con lo detectado) o `🔕 Ignorar` con motivo (no se
+  vuelve a preguntar mientras no cambie). Umbrales en `.sdd/hermes/hermes-sdd.json` → `mantenimiento`.
 - **Ejecutor por etapa:** Claude Code para lo pesado; un agente de Hermes para lo ligero (la ruta, por defecto). Ver
   [`docs/ejecutores.md`](docs/ejecutores.md).
 
-## Puertas en Telegram
+## Puertas en Telegram y en el panel
 
 - **Requisitos, ruta, plan:** resumen y botones (`✅`, `✏️ cambios` con motivo, `❌`).
 - **FASE:** en dos tiempos. Primero alertas, veredictos por requisito y `▶ Ver demo` (capturas y vídeo); después
@@ -82,7 +87,11 @@ de verdad. Coste 0 $; recorrerlo entero lleva lo que tardes en decidir. `grabar.
 - **Preguntas abiertas:** formulario `Q1·A Q1·B …` con la recomendada marcada.
 - **Entrega:** puerta de calidad global (todos los requisitos de todas las FASEs) y tag `entrega-N`.
 
-Comandos: `/puertas` · `/cambio <proyecto> <petición>` · `/estado [proyecto]` · `/pausar [proyecto|todo] [ahora]` · `/reanudar [proyecto|todo]` ·
+Lo mismo en el **panel web** (`hermes dashboard` → pestaña «Puertas SDD»): demo con capturas y vídeo, formulario,
+botones, proyectos con sus hitos y últimas firmas. Decidir en un canal actualiza los demás. Ver
+[`docs/canales.md`](docs/canales.md) (identidad de cada canal y cómo añadir Slack o email).
+
+Comandos: `/puertas` · `/cambio <proyecto> <petición>` · `/mantenimiento [proyecto]` · `/estado [proyecto]` · `/pausar [proyecto|todo] [ahora]` · `/reanudar [proyecto|todo]` ·
 `/anular <proyecto> <fase> <motivo>`. Un mensaje vivo por proyecto se actualiza en silencio; resúmenes a las 08:30 y
 19:00; silencio de 22 a 8 (configurable en `~/.hermes/hermes-sdd/atencion.json`).
 
@@ -104,10 +113,12 @@ operativo (el kanban, los registros y los tags son ficheros tuyos). Las guardias
 | `etapa.sh` · `puerta.sh` · `firmar.sh` · `lanzar.sh` | Los papeles del arnés |
 | `executors/claude.sh` · `executors/hermes.sh` · `executors/replay.sh` | Supervisor de `claude -p` (candado, grupo de procesos, cuota, entorno limpio), ejecutor Hermes nativo y reproducción |
 | `decidir.sh` · `anular.sh` | Canal local y anulación auditable de una aceptación |
+| `vigilar.sh` | Mantenimiento por umbrales: abre una puerta de mantenimiento si algo se degrada |
 | `grabar.sh` · `practicar.sh` · `grabaciones/` | Grabar una ejecución real y practicarla sin coste |
-| `plugin/hermes-sdd/` | Canal Telegram: puertas, formulario, deshacer, comandos, mensaje vivo, resúmenes |
+| `plugin/hermes-sdd/` | Núcleo de las puertas (`hsdd_nucleo.py`), canal Telegram (puertas, formulario, deshacer, comandos, mensaje vivo, resúmenes, revisión diaria) y canal panel (`dashboard/`) |
 | `profiles/` · `instalar.sh` | Perfil `sdd-estacion` (solo terminal; no programa ni decide) |
 | `tests/` · `evals/` | Pruebas sin LLM (`tests/todo.sh`) y el simulador de Claude |
+| `docs/` | Ejecutores, canales y borradores de issues para Hermes |
 
 ## Origen
 
