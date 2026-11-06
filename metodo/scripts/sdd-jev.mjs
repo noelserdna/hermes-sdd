@@ -261,6 +261,13 @@ export function checkNeedCoverage(needs, reqs, reqText = "", opts = {}) {
     if (n.status !== "confirmed" && n.status !== "out-of-scope")
       warnings.push({ code: "unconfirmed-need", id: n.id, msg: `${n.id} status is ${n.status || "missing"}; read it back to the customer` });
   }
+  // A REQ-F/REQ-NF without a criterion this parser can read cannot be planned, verified or accepted: the plan lint
+  // and the acceptance count criteria by position. The usual cause is a prefix the template does not use
+  // ("- AC1: GIVEN …" instead of "- GIVEN …"), so the message names it when the text has that shape.
+  const acPrefixed = /^\s{2,}[-*]\s+AC\s*\d+\b[^\n]*?\b(GIVEN|DADO)\b/im.test(reqText);
+  for (const r of fnf) if (!r.criteria.length)
+    errors.push({ code: "no-criteria", id: r.id, msg: `${r.id} has no acceptance criterion the method can read (nested "  - GIVEN … WHEN … THEN …")`
+      + (acPrefixed ? `; drop the "ACn:" prefix: criteria are numbered by position` : "") });
   for (const r of fnf) {
     if (r.needs === null) errors.push({ code: "no-needs-field", id: r.id, msg: `${r.id} has no Needs: line` });
     else if (!r.needs.length) errors.push({ code: "gold-plating", id: r.id, msg: `${r.id} traces to no customer need (only REQ-C may use "Needs: —")` });

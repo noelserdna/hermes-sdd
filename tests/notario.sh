@@ -78,4 +78,17 @@ grep -q "^Answer: A — elegida" .sdd/questions-x.md && grep -q "^Answer: B — 
 # 9. el motivo de "cambios" en el plan queda en el diario
 puerta g9 plan; decidir g9 cambios telegram 111 "FASE-2 antes que FASE-1"; firmar g9
 grep -q "FASE-2 antes que FASE-1" status/journal.jsonl && ok "el motivo de cambios queda en el diario" || bad "diario: $out"
+# 10. aprobar requisitos eligiendo una opción distinta de la recomendada no firma: pide cambios con esas respuestas
+con_preguntas() {  # con_preguntas <id>: la puerta mostró Q1 (recomendada A) y Q2 (recomendada B)
+  t=$(mktemp); jq '.preguntas = [{n:1, id:"Q-r-001", opciones:["A","B"], recomendada:"A"},
+                                 {n:2, id:"Q-r-002", opciones:["A","B"], recomendada:"B"}]' \
+    ".sdd/hermes/puertas/$1.json" > "$t" && mv "$t" ".sdd/hermes/puertas/$1.json"; }
+tags0=$(git tag -l | wc -l)
+puerta g10 requisitos; con_preguntas g10; decidir g10 acepto telegram 111 "Q1: B, Q2: B"; firmar g10
+[ $rc -eq 0 ] && echo "$out" | grep -q "pide cambios en requisitos" && [ "$(git tag -l | wc -l)" = "$tags0" ] \
+  && grep -q "Q-r-001 = B" .sdd/hermes/feedback/requisitos.txt && ! grep -q "Q-r-002" .sdd/hermes/feedback/requisitos.txt \
+  && ok "respuesta no recomendada en requisitos: pide cambios, sin tag" || bad "no recomendada: $out"
+# 11. dar conformidad al plan con las recomendadas sigue siendo conformidad
+puerta g11 plan; con_preguntas g11; decidir g11 conforme telegram 111 "Q1: A, Q2: B"; firmar g11
+[ $rc -eq 0 ] && echo "$out" | grep -q "Plan conforme" && ok "con las recomendadas, el plan queda conforme" || bad "recomendadas: $out"
 exit $fail

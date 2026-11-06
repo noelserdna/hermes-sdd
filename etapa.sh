@@ -90,12 +90,25 @@ claude_etapa() {  # claude_etapa <clave-de-estado> <prompt>
   RES=$res
 }
 puerta() { bash "$ROOT/puerta.sh" "$REPO" "$@"; }
+# Antes de abrir la puerta de requisitos, requirements/ debe pasar `sdd lint --needs`: lo que la persona aprueba es
+# lo que después leen el plan y la aceptación (p. ej. criterios "- AC1: GIVEN …" que el método no sabe contar).
+# Una pasada de corrección del ejecutor; si siguen los errores, la etapa falla en vez de abrir la puerta.
+requisitos_legibles() {  # requisitos_legibles <clave-de-estado> <skill>
+  local errs
+  errs=$(node "$SDD" lint --needs 2>&1 | grep '^error' | head -20) || true
+  [ -z "$errs" ] && return 0
+  claude_etapa "$1" "/$2 — $ARNES requirements/ fails \`sdd lint --needs\`. Fix ONLY these errors, without changing the meaning of any requirement or criterion:
+$errs"
+  errs=$(node "$SDD" lint --needs 2>&1 | grep '^error' | head -5) || true
+  [ -z "$errs" ] || falla "sdd lint --needs sigue con errores: $(echo "$errs" | tr '\n' ' ')"
+}
 
 case "$ETAPA" in
   requisitos)
     if [ ! -s requirements/REQUIREMENTS.md ] || [ -s "$FB" ]; then
       claude_etapa requirements-engineer "/sdd-requirements-engineer — $ARNES Escribe las necesidades y los requisitos a partir de la petición literal de intent/ (y de lo que ya haya en requirements/)."
     else RES='{"outcome":"done","reason":"requisitos ya escritos"}'; fi
+    requisitos_legibles requirements-engineer sdd-requirements-engineer
     sed -i '' -E 's/^> \*\*Status:\*\* *Approved.*/> **Status:** Review/' requirements/REQUIREMENTS.md 2>/dev/null || true
     git add requirements/ && { git diff --cached --quiet || git commit -qm "docs(requirements): requirements ready for review"; }
     P=$(puerta requisitos) || falla "no se pudo abrir la puerta de requisitos"
@@ -140,11 +153,13 @@ case "$ETAPA" in
   cambio)
     INT=$(cat .sdd/hermes/cambio-actual 2>/dev/null) || falla "no hay ningún cambio en curso (.sdd/hermes/cambio-actual)"
     claude_etapa req-change "/sdd-req-change --batch --cascade=manual --file intent/$INT.md — $ARNES Apply this change request to requirements/ as the next version (Version +1, Status: Review)."
+    requisitos_legibles req-change sdd-req-change
     P=$(puerta requisitos) || falla "no se pudo abrir la puerta de requisitos"
     fin "$RES" "Cambio $INT aplicado a los requisitos (pendiente de aprobar)" "$P" ;;
 
   adoptar)
     claude_etapa reverse-engineer "/sdd-reverse-engineer — $ARNES Adopt this existing repository: derive requirements/CUSTOMER-NEEDS.md and requirements/REQUIREMENTS.md (Version 1.0, Status: Review) with verifiable criteria, plus retroactive FASEs and findings."
+    requisitos_legibles reverse-engineer sdd-reverse-engineer
     P=$(puerta requisitos) || falla "no se pudo abrir la puerta de requisitos"
     fin "$RES" "Línea base propuesta a partir del código" "$P" ;;
 

@@ -30,7 +30,8 @@ $TEXTO
     if [ -f .sdd/hermes/cambio-actual ]; then   # un cambio: primero lo que se pidió y lo que cambia
       INT=$(cat .sdd/hermes/cambio-actual)
       PREV=$(git describe --tags --abbrev=0 --match 'requirements-v*' 2>/dev/null || true)
-      DIFF=$( [ -n "$PREV" ] && git diff "$PREV" -- requirements/REQUIREMENTS.md | grep -E '^[+-]### REQ-' | sed -E 's/^\+### /➕ /; s/^-### /➖ /' | head -15)
+      # Un cambio que solo toca criterios no añade ni quita cabeceras: grep sin coincidencias no debe tumbar la puerta
+      DIFF=$( [ -n "$PREV" ] || exit 0; git diff "$PREV" -- requirements/REQUIREMENTS.md | { grep -E '^[+-]### REQ-' || true; } | sed -E 's/^\+### /➕ /; s/^-### /➖ /' | head -15)
       TITULO="Requisitos (cambio $INT)"
       TEXTO="Pediste: «$(sed -n '/^> /{s/^> //;p;}' "intent/$INT.md" | head -5 | tr '\n' ' ')»
 Versión $(sed -n 's/^> \*\*Version:\*\* *//p' requirements/REQUIREMENTS.md | head -1) de los requisitos. Cambia:

@@ -30,6 +30,20 @@ TIPO=$(p .tipo); FASE=$(p .fase); BOARD=$(p .tablero); TASK=$(p .tarjeta); SHA=$
 VERBO=$(d .verbo); TEXTO=$(d .texto); PERSONA=$(d .actor.persona); CANAL=$(d .actor.canal); ID=$(d .actor.id)
 PRUEBA=$(d '.prueba | to_entries | map("\(.key):\(.value)") | join(" ")')
 
+# Aprobar requisitos o plan eligiendo en alguna pregunta una opción distinta de la recomendada: el texto que la
+# persona vio está escrito con la recomendada, así que firmarlo dejaría aprobado algo distinto de lo que eligió.
+# Se convierte en una petición de cambios con esas respuestas: la etapa rehace el texto y la puerta vuelve a abrirse.
+if { [ "$TIPO:$VERBO" = requisitos:acepto ] || [ "$TIPO:$VERBO" = plan:conforme ]; } && [ -n "$TEXTO" ]; then
+  DISTINTAS=$(jq -r --arg t "$TEXTO" '
+    ([$t | scan("[Qq][A-Za-z]?\\s*(\\d+)\\W{0,3}\\s*([A-Ca-c])\\b")] | map({key: .[0], value: (.[1] | ascii_upcase)}) | from_entries) as $e
+    | [.preguntas[]? | ($e[(.n | tostring)] // null) as $x | select($x != null and $x != .recomendada) | "\(.id) = \($x)"]
+    | join("; ")' "$PUERTA")
+  if [ -n "$DISTINTAS" ]; then
+    VERBO=cambios
+    TEXTO="$TEXTO. Respuestas distintas de la recomendada ($DISTINTAS): reescribe lo afectado según esas respuestas (están en .sdd/questions-*.md)."
+  fi
+fi
+
 ACTA="$HOME_SDD/actas/${BOARD:-local}/$GATE.json"
 mkdir -p "$(dirname "$ACTA")"
 [ -f "$ACTA" ] || jq -n --arg g "$GATE" '{puerta:$g, pasos:[]}' > "$ACTA"
