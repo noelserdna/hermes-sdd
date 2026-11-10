@@ -189,7 +189,8 @@ async def config_guardar(request: Request):
     """Carpeta y stack por defecto, lista de stacks y ventana para deshacer (lo que venga; lo demás no cambia)."""
     _actor(request)
     body = await request.json()
-    _accion(lambda: PR.guardar_config(body.get("carpeta"), body.get("stack_defecto"), body.get("stacks"), body.get("deshacer_s")))
+    _accion(lambda: PR.guardar_config(body.get("carpeta"), body.get("stack_defecto"), body.get("stacks"), body.get("deshacer_s"),
+                                      body.get("perfil_modelos"), body.get("modelos")))
     return {**PR.config(), "jev": N.config_jev(), "modos_jev": list(N.MODOS), "tipos_puerta": list(N.TIPOS_PUERTA)}
 
 

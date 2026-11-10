@@ -5,6 +5,7 @@
 #   lanzar.sh siguiente <repo> <puerta> <resultado>   lo llama el notario al cerrar una puerta
 #   lanzar.sh cambio <repo> "<petición>"              un cambio o una funcionalidad nueva (también por /cambio)
 #   lanzar.sh adoptar <repo>                          un repo existente sin método: línea base desde el código
+#   lanzar.sh rehacer <repo> <N>                      vuelve a lanzar la FASE N: huecos (si quedan [PLAN GAP]) → implementar → aceptar
 #
 # Cada tarjeta de etapa la toma el perfil sdd-estacion y ejecuta `etapa.sh`. Las puertas las abre la propia etapa
 # (puerta.sh) y las cierra el notario; después, este script crea el tramo siguiente:
@@ -43,6 +44,17 @@ preparar() {  # lo común a iniciar y adoptar: sin LLM
 asegurar_tablero() {
   hermes kanban boards list --json | jq -e --arg b "$BOARD" 'any(.[]; .slug == $b)' >/dev/null ||
     hermes kanban boards create "$BOARD" --name "$(basename "$REPO")" --default-workdir "$REPO" >/dev/null
+}
+
+con_huecos() {  # ¿quedan tareas [PLAN GAP] sin hacer en la FASE N? (sus preguntas se contestaron en la puerta del plan)
+  grep -qE '^- \[ \] .*\[PLAN GAP\]' "$REPO/task/TASK-FASE-$1.md" 2>/dev/null
+}
+fase_n() {  # fase_n <N> [sufijo]: (huecos →) implementar → aceptar la FASE N; imprime el id de la primera tarjeta
+  local h="-" t primera=""
+  if con_huecos "$1"; then h=$(tarjeta "Completar huecos del plan FASE-$1" - 60m huecos "$1"); primera=$h; fi
+  t=$(tarjeta "Implementar FASE-$1${2:-}" "$h" 120m implementar "$1"); primera=${primera:-$t}
+  tarjeta "Aceptar FASE-$1" "$t" 60m aceptar "$1" >/dev/null
+  echo "$primera"
 }
 
 tarjeta() {  # tarjeta <título> <padre|-> <runtime> <etapa> [fase] — imprime el id
@@ -89,15 +101,13 @@ case "$CMD" in
       ruta:acepto|ruta:completo)      t=$(tarjeta "Plan" - 60m plan); tarjeta "Tareas" "$t" 60m tareas ;;
       ruta:rechazo)                   tarjeta "Ruta (otra vez)" - 20m ruta ;;
       plan:conforme)
-        N=$(primera_sin_aceptar); N=${N:-0}
-        t=$(tarjeta "Implementar FASE-$N" - 120m implementar "$N"); tarjeta "Aceptar FASE-$N" "$t" 60m aceptar "$N" ;;
+        N=$(primera_sin_aceptar); fase_n "${N:-0}" ;;
       plan:cambios)                   t=$(tarjeta "Plan (cambios)" - 60m plan); tarjeta "Tareas" "$t" 60m tareas ;;
       fase:acepto|fase:observaciones)
         N=$(primera_sin_aceptar)
-        if [ -n "$N" ]; then
-          t=$(tarjeta "Implementar FASE-$N" - 120m implementar "$N"); tarjeta "Aceptar FASE-$N" "$t" 60m aceptar "$N"
+        if [ -n "$N" ]; then fase_n "$N"
         else tarjeta "Cierre: puerta global y entrega" - 120m cierre; fi ;;
-      fase:rechazo)                   t=$(tarjeta "Implementar FASE-$FASE (cambios)" - 120m implementar "$FASE"); tarjeta "Aceptar FASE-$FASE" "$t" 60m aceptar "$FASE" ;;
+      fase:rechazo)                   fase_n "$FASE" " (cambios)" ;;
       entrega:acepto|entrega:observaciones) echo "Proyecto entregado" ;;
       entrega:rechazo)                tarjeta "Cierre (otra vez)" - 120m cierre ;;
       mantenimiento:cambio)           bash "$ROOT/lanzar.sh" cambio "$REPO" "$(cat "$REPO/.sdd/hermes/mantenimiento/peticion-$GATE.txt")" ;;
@@ -105,9 +115,14 @@ case "$CMD" in
       *) echo "Sin tramo siguiente para $TIPO:$RESULTADO" ;;
     esac ;;
 
+  rehacer)      # la FASE N otra vez, con tarjetas NUEVAS: huecos (si quedan [PLAN GAP]) → implementar → aceptar
+    N=$3; [ -f "$REPO/task/TASK-FASE-$N.md" ] || { echo "no existe task/TASK-FASE-$N.md" >&2; exit 2; }
+    T=$(fase_n "$N")
+    echo "FASE-$N de $BOARD otra vez: $T$(con_huecos "$N" && echo ' (primero completa los huecos del plan)')" ;;
+
   reintentar)   # una etapa fallida se repite con una tarjeta NUEVA (nunca se desbloquea la vieja)
     ETAPA=$3; FASE=${4:-}
     tarjeta "Reintento: $ETAPA${FASE:+ FASE-$FASE}" - 120m "$ETAPA" $FASE ;;
 
-  *) echo "uso: lanzar.sh iniciar <repo> | siguiente <repo> <puerta> <resultado> | reintentar <repo> <etapa> [fase]" >&2; exit 2 ;;
+  *) echo "uso: lanzar.sh iniciar <repo> | siguiente <repo> <puerta> <resultado> | rehacer <repo> <N> | reintentar <repo> <etapa> [fase]" >&2; exit 2 ;;
 esac

@@ -7,6 +7,7 @@
 #     ruta           propone qué etapas necesita el proyecto (factores por el ejecutor si no hay Jev) → puerta
 #     plan           plan por FASEs
 #     tareas         tareas de todas las FASEs → puerta de plan (conformidad con el orden de entrega)
+#     huecos N       completa los [PLAN GAP] de la FASE N con las respuestas ya aprobadas (sin puerta: aplica lo decidido)
 #     implementar N  implementa la FASE N y verifica (tareas hechas, commits válidos)
 #     aceptar N      veredictos y demo de la FASE N → puerta de aceptación
 #     cambio         aplica la petición de intent/INT-NNN.md a los requisitos (versión nueva) → puerta de requisitos
@@ -23,9 +24,14 @@ SDD="$ROOT/metodo/scripts/sdd.mjs"; STATE="$ROOT/metodo/scripts/sdd-state.sh"
 REPO=$(cd "$1" && pwd); ETAPA=$2; FASE=${3:-}
 cd "$REPO"
 # Ejecutor por etapa: .ejecutores[<etapa>] o, si no, .ejecutor (claude | hermes | replay); el modelo, en .modelos[<etapa>]
+# o, si el proyecto no lo fija, el del perfil de modelos global (sdd.json; por defecto «equilibrado»)
 ejecutor() { jq -r --arg e "$1" '.ejecutores[$e] // .ejecutor // "claude"' .sdd/hermes/hermes-sdd.json 2>/dev/null || echo claude; }
 EJEC=$(ejecutor "$ETAPA")
-modelo() { jq -r --arg e "$1" '.modelos[$e] // .modelos.defecto // empty' .sdd/hermes/hermes-sdd.json 2>/dev/null; }
+modelo() {  # el del proyecto (.modelos[<etapa>]); si no fija ninguno, el del perfil global (SDD → Configuración)
+  local m; m=$(jq -r --arg e "$1" '.modelos[$e] // .modelos.defecto // empty' .sdd/hermes/hermes-sdd.json 2>/dev/null)
+  [ -n "$m" ] && { echo "$m"; return; }
+  HERMES_SDD_HOME="${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}" python3 "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" modelo "$1" "$(ejecutor "$1")" 2>/dev/null
+}
 fin() {  # fin <json-del-ejecutor-o-propio> [resumen] [puerta]
   echo "$1" | jq -c --arg r "${2:-}" --arg p "${3:-}" '. + {resumen:$r} + (if $p != "" then {puerta:$p} else {} end)'
   exit 0
@@ -136,8 +142,46 @@ case "$ETAPA" in
     P=$(puerta plan) || falla "no se pudo abrir la puerta de plan"
     fin "$RES" "Tareas generadas: $(node "$SDD" tasks status 2>/dev/null | tail -1)" "$P" ;;
 
+  huecos)   # tareas [PLAN GAP] de la FASE cuyas preguntas ya se contestaron en una puerta (lanzar.sh la encadena)
+    [ -n "$FASE" ] || falla "falta la FASE"
+    HUECOS=$(grep -oE '^- \[ \] TASK-[A-Za-z0-9-]+ .*\[PLAN GAP\]' "task/TASK-FASE-$FASE.md" 2>/dev/null | awk '{print $4}' | tr '\n' ' ')
+    PREG="the open questions they waited for are answered in .sdd/questions-*.md (Answer: lines, approved at the plan gate)"
+    claude_etapa plan-architect "/sdd-plan-architect --fase $FASE --skip-clarify — $ARNES Some tasks of FASE-$FASE are [PLAN GAP] and $PREG. Update ONLY the plan of FASE-$FASE (plan/fase-plans/, plan/fases/ and the SDD Stack Profile of AGENTS.md if an answer requires it) so that it follows those answers. Do not reopen or change any answer."
+    claude_etapa task-generator "/sdd-task-generator --fase=$FASE --incremental — $ARNES Replace every [PLAN GAP] task of task/TASK-FASE-$FASE.md with concrete tasks that follow the updated plan. Keep every other task (done or pending) exactly as it is."
+    node "$SDD" lint --dir task >/dev/null 2>&1 || falla "sdd lint de tareas encuentra errores tras completar los huecos"
+    ! grep -qE '^- \[ \] .*\[PLAN GAP\]' "task/TASK-FASE-$FASE.md" 2>/dev/null || falla "siguen tareas [PLAN GAP] en la FASE-$FASE"
+    git add -A plan/ task/ AGENTS.md 2>/dev/null; git diff --cached --quiet || git commit -qm "docs(tasks): FASE-$FASE gaps filled with the approved answers"
+    # Las preguntas que dejó el implementador porque no podía hacer esos huecos ya no tienen sentido: las cierra el
+    # arnés (no el ejecutor), solo las del implementador y solo si su cabecera nombra una de esas tareas
+    python3 - "$(date +%Y-%m-%d)" "$HUECOS" .sdd/questions-*.md <<'PY' 2>/dev/null || true
+import re, sys
+hoy, huecos, ficheros = sys.argv[1], sys.argv[2].split(), sys.argv[3:]
+for f in ficheros:
+    try:
+        t = open(f).read()
+    except OSError:
+        continue
+    def cerrar(m):
+        b = m.group(0); cab = b.split("\n", 1)[0]
+        if "skill=sdd-task-implementer" not in cab or not any(h in cab for h in huecos):
+            return b
+        linea = f"Answer: resuelta por el arnés ({hoy}): las tareas [PLAN GAP] {', '.join(h for h in huecos if h in cab)} se completaron con las respuestas aprobadas en la puerta del plan"
+        b = b.replace("[OPEN]", "[ANSWERED]", 1)
+        if re.search(r"^Answer:[ \t]*$", b, re.M):
+            return re.sub(r"^Answer:[ \t]*$", linea, b, count=1, flags=re.M)
+        cuerpo = b.rstrip("\n")
+        return cuerpo + "\n" + linea + b[len(cuerpo):]
+    nuevo = re.sub(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", cerrar, t, flags=re.M | re.S)
+    if nuevo != t:
+        open(f, "w").write(nuevo)
+PY
+    fin "$RES" "Huecos de la FASE-$FASE completados con las respuestas aprobadas" ;;
+
   implementar)
     [ -n "$FASE" ] || falla "falta la FASE"
+    # Un [PLAN GAP] pendiente no lo puede hacer el implementador: lo completa la etapa huecos (incidente hola-astro)
+    ! grep -qE '^- \[ \] .*\[PLAN GAP\]' "task/TASK-FASE-$FASE.md" 2>/dev/null ||
+      falla "la FASE-$FASE tiene tareas [PLAN GAP]: antes hay que completarlas (lanzar.sh rehacer $REPO $FASE)"
     claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES Implement FASE-$FASE completely, test-first, one commit per task with Refs:/Task: trailers."
     st=$(node "$SDD" tasks status --fase "$FASE" --require-done 2>&1) || falla "quedan tareas de la FASE-$FASE sin hacer: $(echo "$st" | tail -1)"
     base=$(git describe --tags --abbrev=0 --match 'fase-*-accepted' 2>/dev/null || git describe --tags --abbrev=0 --match 'requirements-v*' 2>/dev/null || git rev-list --max-parents=0 HEAD)

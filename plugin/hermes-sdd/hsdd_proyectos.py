@@ -45,6 +45,70 @@ STACKS_DEFECTO = [
      "stack": "Python 3 + pytest", "test": "python3 -m pytest -q", "test_file": "python3 -m pytest -q {file}",
      "code_paths": "src/", "test_paths": "tests/", "server": "", "port": ""},
 ]
+# ── modelos por etapa ─────────────────────────────────────────────────────────────────────────────────────────────
+# Se guardan como alias (fable, opus, sonnet, haiku: siempre el último de cada familia) o como nombre completo. Para el
+# ejecutor de Hermes (la ruta) un alias se traduce al id de OpenRouter más reciente que Hermes conoce.
+ETAPAS_MODELO = [("requisitos", "Requisitos"), ("ruta", "Ruta"), ("plan", "Plan"), ("tareas", "Tareas"),
+                 ("huecos", "Completar huecos del plan"), ("implementar", "Implementar"), ("aceptar", "Aceptar"),
+                 ("cierre", "Cierre y entrega"), ("cambio", "Cambio de requisitos"), ("adoptar", "Adoptar un repo")]
+_PIENSAN = ("requisitos", "plan", "cambio", "adoptar")   # juicio del contrato: donde más rinde un modelo grande
+PERFILES = {
+    "calidad": {e: ("sonnet" if e == "ruta" else "opus") for e, _ in ETAPAS_MODELO},
+    "equilibrado": {e: ("opus" if e in _PIENSAN else "sonnet") for e, _ in ETAPAS_MODELO},
+    "rapido": {e: "sonnet" for e, _ in ETAPAS_MODELO},
+}
+NOMBRE_PERFIL = {"calidad": "Calidad: Opus en todo", "equilibrado": "Equilibrado: Opus planifica, Sonnet programa",
+                 "rapido": "Rápido: Sonnet en todo"}
+PERFIL_DEFECTO = "equilibrado"
+ALIAS = {"fable": "Fable (el más reciente de Claude)", "opus": "Opus", "sonnet": "Sonnet", "haiku": "Haiku (no para juicios)"}
+OPENROUTER_DEFECTO = {"fable": "anthropic/claude-fable-5.2", "opus": "anthropic/claude-opus-5.5",
+                      "sonnet": "anthropic/claude-sonnet-5.5", "haiku": "anthropic/claude-haiku-5.5"}
+
+
+def _version(mid: str) -> tuple:
+    return tuple(int(x) for x in re.findall(r"\d+", mid.rsplit("-", 1)[-1]))
+
+
+def modelos_openrouter() -> dict:
+    """{familia: [ids de OpenRouter, del más nuevo al más viejo]} según la caché de modelos de Hermes."""
+    try:
+        texto = (Path.home() / ".hermes" / "models_dev_cache.json").read_text(errors="replace")
+    except OSError:
+        texto = ""
+    fam: dict = {}
+    for mid in sorted(set(re.findall(r'"(anthropic/claude-(fable|opus|sonnet|haiku)-[0-9][0-9.]*)"', texto))):
+        fam.setdefault(mid[1], []).append(mid[0])
+    return {f: sorted(ids, key=_version, reverse=True) for f, ids in fam.items()}
+
+
+def modelos_disponibles() -> list:
+    """Opciones para elegir: los alias de Claude Code y, por familia, los dos ids más recientes que conoce Hermes."""
+    ops = [{"id": a, "nombre": n, "tipo": "alias"} for a, n in ALIAS.items()]
+    for f, ids in modelos_openrouter().items():
+        ops += [{"id": i, "nombre": i.split("/", 1)[1], "tipo": "completo"} for i in ids[:2]]
+    return ops
+
+
+def modelos_efectivos(cfg: dict | None = None) -> dict:
+    """{etapa: modelo} del perfil elegido, con los cambios de etapa por encima."""
+    cfg = cfg if cfg is not None else (N.leer(N.HOME / "sdd.json", {}) or {})
+    perfil = cfg.get("perfil_modelos") if cfg.get("perfil_modelos") in PERFILES else PERFIL_DEFECTO
+    return {**PERFILES[perfil], **{e: m for e, m in (cfg.get("modelos") or {}).items() if m}}
+
+
+def modelo_para(etapa: str, ejecutor: str = "claude") -> str:
+    """Modelo global de una etapa, en el formato de su ejecutor ("" = el de por defecto del ejecutor)."""
+    m = modelos_efectivos().get(etapa, "")
+    if ejecutor == "hermes":
+        if m in ALIAS:
+            ids = modelos_openrouter().get(m)
+            return ids[0] if ids else OPENROUTER_DEFECTO[m]
+        return m if "/" in m else ""
+    if ejecutor == "claude":
+        return m.split("/", 1)[1].replace(".", "-") if m.startswith("anthropic/") else m
+    return ""
+
+
 GITIGNORE = "node_modules/\ndist/\n.astro/\n__pycache__/\n.venv/\n.DS_Store\n"
 RESERVADOS = {"default", "todo", "local"}
 
@@ -57,7 +121,11 @@ def config() -> dict:
     carpeta = cfg.get("carpeta") or CARPETA_DEFECTO
     return {"carpeta": carpeta, "carpeta_resuelta": str(Path(carpeta).expanduser()), "carpeta_por_defecto": CARPETA_DEFECTO,
             "stack_defecto": defecto, "stacks": stacks, "deshacer_s": N.deshacer_s(),
-            "deshacer_rango": [N.DESHACER_MIN_S, N.DESHACER_MAX_S], "deshacer_por_defecto": N.DESHACER_DEFECTO_S}
+            "deshacer_rango": [N.DESHACER_MIN_S, N.DESHACER_MAX_S], "deshacer_por_defecto": N.DESHACER_DEFECTO_S,
+            "perfil_modelos": cfg.get("perfil_modelos") if cfg.get("perfil_modelos") in PERFILES else PERFIL_DEFECTO,
+            "modelos_cambiados": {e: m for e, m in (cfg.get("modelos") or {}).items() if m},
+            "modelos": modelos_efectivos(cfg), "perfiles": PERFILES, "nombres_perfil": NOMBRE_PERFIL,
+            "etapas_modelo": ETAPAS_MODELO, "modelos_disponibles": modelos_disponibles()}
 
 
 def _stack_valido(s: dict) -> dict:
@@ -79,7 +147,7 @@ def _stack_valido(s: dict) -> dict:
 
 
 def guardar_config(carpeta: str | None = None, stack_defecto: str | None = None, stacks: list | None = None,
-                   deshacer_s=None) -> dict:
+                   deshacer_s=None, perfil_modelos: str | None = None, modelos: dict | None = None) -> dict:
     """Cambia lo que venga (lo demás se queda como está). Valida antes de escribir nada."""
     actual = N.leer(N.HOME / "sdd.json", {}) or {}
     nuevo = dict(actual)
@@ -108,6 +176,20 @@ def guardar_config(carpeta: str | None = None, stack_defecto: str | None = None,
         if not N.DESHACER_MIN_S <= s <= N.DESHACER_MAX_S:
             raise Rechazo(f"La ventana para deshacer va de {N.DESHACER_MIN_S} s a {N.DESHACER_MAX_S} s (un día)")
         nuevo["deshacer_s"] = s
+    if perfil_modelos is not None:
+        if perfil_modelos not in PERFILES:
+            raise Rechazo(f"Perfil de modelos desconocido: {perfil_modelos}. Perfiles: {', '.join(PERFILES)}")
+        nuevo["perfil_modelos"] = perfil_modelos
+        if modelos is None:
+            nuevo["modelos"] = {}   # elegir un perfil deja todas las etapas como dice el perfil
+    if modelos is not None:
+        etapas = {e for e, _ in ETAPAS_MODELO}
+        if not isinstance(modelos, dict) or any(e not in etapas for e in modelos):
+            raise Rechazo(f"Etapas: {', '.join(sorted(etapas))}")
+        for e, m in modelos.items():
+            if m and not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._/:-]{1,80}", str(m)):
+                raise Rechazo(f"Nombre de modelo no válido para {e}: «{m}»")
+        nuevo["modelos"] = {e: str(m) for e, m in modelos.items() if m}
     (N.HOME).mkdir(parents=True, exist_ok=True)
     N.escribir(N.HOME / "sdd.json", nuevo)
     return config()
@@ -235,6 +317,8 @@ if __name__ == "__main__":   # CLI de nuevo.sh
     c = sub.add_parser("config"); c.add_argument("--carpeta"); c.add_argument("--stack-defecto")
     c.add_argument("--deshacer", metavar="SEGUNDOS")
     sub.add_parser("stacks")
+    mo = sub.add_parser("modelo"); mo.add_argument("etapa"); mo.add_argument("ejecutor", nargs="?", default="claude")
+    mp = sub.add_parser("modelos"); mp.add_argument("--perfil")
     a = ap.parse_args()
     try:
         if a.cmd == "nuevo":
@@ -248,6 +332,15 @@ if __name__ == "__main__":   # CLI de nuevo.sh
             c = config()
             print(f"Carpeta por defecto: {c['carpeta']} ({c['carpeta_resuelta']})\nStack por defecto: {c['stack_defecto']}\n"
                   f"Ventana para deshacer: {c['deshacer_s']} s ({N.duracion(c['deshacer_s'])})")
+        elif a.cmd == "modelo":   # lo usa etapa.sh cuando el proyecto no fija el modelo de una etapa
+            print(modelo_para(a.etapa, a.ejecutor))
+        elif a.cmd == "modelos":
+            if a.perfil:
+                guardar_config(perfil_modelos=a.perfil)
+            c = config()
+            print(f"Perfil: {c['perfil_modelos']} ({NOMBRE_PERFIL[c['perfil_modelos']]})")
+            for e, nombre in ETAPAS_MODELO:
+                print(f"  {nombre:28} {c['modelos'][e]}{'  (cambiado)' if e in c['modelos_cambiados'] else ''}")
         else:
             c = config()
             for s in c["stacks"]:

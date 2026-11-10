@@ -250,6 +250,33 @@
           !esNuevo ? h(C.Boton, { tono: 'peligro', disabled: ocupado, onClick: () => alBorrar(s.id) }, 'Borrar') : null))
     }
 
+    // Modelos por etapa: un perfil (Calidad, Equilibrado, Rápido) y, encima, lo que cambies etapa a etapa
+    function Modelos({ cfg, guardar, ocupado }) {
+      const cambiados = cfg.modelos_cambiados || {}
+      const opciones = m => {
+        const ops = (cfg.modelos_disponibles || []).map(o => [o.id, o.tipo === 'alias' ? o.nombre : `${o.nombre} (versión fija)`])
+        return ops.some(([id]) => id === m) ? ops : [[m, m], ...ops]
+      }
+      return h(Tarjeta, { titulo: '🧠 Modelos por etapa' },
+        h('div', { style: S.meta }, 'Qué modelo hace cada etapa en los proyectos que no fijan uno propio. Fable, Opus, Sonnet y Haiku son siempre el último de cada familia; una «versión fija» no cambia aunque salga otra.'),
+        h('div', { style: S.fila }, Object.keys(cfg.perfiles || {}).map(p => h(C.Boton, {
+          key: p, tono: cfg.perfil_modelos === p && !Object.keys(cambiados).length ? 'principal' : 'borde', disabled: ocupado,
+          title: (cfg.nombres_perfil || {})[p], onClick: () => guardar({ perfil_modelos: p }, `Modelos: ${(cfg.nombres_perfil || {})[p]}`)
+        }, ((cfg.nombres_perfil || {})[p] || p).split(':')[0]))),
+        h('div', { style: S.meta }, `${(cfg.nombres_perfil || {})[cfg.perfil_modelos] || cfg.perfil_modelos}${Object.keys(cambiados).length ? ` · con ${Object.keys(cambiados).length} etapa(s) cambiada(s)` : ''}`),
+        h('div', { style: S.rejilla }, (cfg.etapas_modelo || []).map(([e, nombre]) => h(Campo, {
+          key: e, etiqueta: `${nombre}${cambiados[e] ? ' ✎' : ''}`,
+          ayuda: cambiados[e] ? `El perfil dice ${cfg.perfiles[cfg.perfil_modelos][e]}` : null
+        }, h(Selector, {
+          valor: cfg.modelos[e], opciones: opciones(cfg.modelos[e]),
+          alCambiar: m => guardar({ modelos: { ...cambiados, [e]: m === cfg.perfiles[cfg.perfil_modelos][e] ? '' : m } }, `${nombre}: ${m}`)
+        })))),
+        Object.keys(cambiados).length
+          ? h('div', { style: S.fila }, h(C.Boton, { tono: 'borde', disabled: ocupado, onClick: () => guardar({ modelos: {} }, 'Modelos: como dice el perfil') }, 'Volver al perfil'))
+          : null,
+        h('div', { style: S.meta }, 'Un proyecto puede fijar el suyo en .sdd/hermes/hermes-sdd.json → modelos; ese manda sobre esto.'))
+    }
+
     function Configuracion({ cfg, setCfg }) {
       const [carpeta, setCarpeta] = useState(cfg.carpeta)
       const [editando, setEditando] = useState(null)   // id del stack, o '+' para uno nuevo
@@ -286,6 +313,7 @@
                 onClick: () => guardar({ deshacer_s: segundos }, `Ventana para deshacer: ${duracion(segundos)}`)
               }, 'Guardar'))),
           h('div', { style: S.meta }, 'Se aplica a las decisiones nuevas; las que ya esperan su firma mantienen su hora.')),
+        h(Modelos, { cfg, guardar, ocupado: a.ocupado }),
         h(Tarjeta, { titulo: '🧱 Stacks' },
           h('div', { style: S.meta }, 'Lo que elijas al crear un proyecto se escribe en su AGENTS.md (SDD Stack Profile): el ejecutor construye con ese stack y ejecuta esos tests.'),
           cfg.stacks.map(s => editando === s.id

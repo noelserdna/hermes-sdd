@@ -212,7 +212,7 @@ La pestaña **SDD** tiene cuatro secciones:
 | **Decisiones** | decidir las puertas abiertas (las mismas que en Telegram) |
 | **Proyectos** | ver tus proyectos, sus hitos y el modo de Jev de cada uno |
 | **＋ Nuevo** | lanzar un proyecto nuevo: nombre, qué quieres, stack y modo de Jev |
-| **Configuración** | carpeta por defecto de los proyectos, stacks (ver, editar, añadir), ventana para deshacer (en segundos) y ajustes de Jev |
+| **Configuración** | carpeta por defecto de los proyectos, stacks (ver, editar, añadir), modelos por etapa (perfil Calidad, Equilibrado o Rápido, y cambios por etapa), ventana para deshacer (en segundos) y ajustes de Jev |
 
 | Puerta | Qué ves | Qué puedes hacer |
 |---|---|---|

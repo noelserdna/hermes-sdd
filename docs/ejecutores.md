@@ -21,6 +21,26 @@ hace cada etapa lo decide `.sdd/hermes/hermes-sdd.json` del proyecto:
 
 ## Elegir modelo por etapa
 
+En **SDD → Configuración → Modelos por etapa** (o con `nuevo.sh` / `hsdd_proyectos.py modelos --perfil P`) eliges un
+perfil para todos los proyectos y, encima, puedes cambiar etapas sueltas con los modelos disponibles:
+
+| Perfil | Requisitos · plan · cambio · adoptar | Tareas · huecos · implementar · aceptar · cierre | Ruta |
+|---|---|---|---|
+| Calidad | Opus | Opus | Sonnet |
+| **Equilibrado** (por defecto) | Opus | Sonnet | Sonnet |
+| Rápido | Sonnet | Sonnet | Sonnet |
+
+- Los alias (`fable`, `opus`, `sonnet`, `haiku`) son siempre el último modelo de esa familia; también puedes fijar una
+  versión (`anthropic/claude-opus-5.5`). Para la ruta, que la hace Hermes, el alias se traduce al id de OpenRouter más
+  reciente que conoce Hermes; para Claude Code, el id completo se traduce a su nombre (`claude-opus-5-5`).
+- Un proyecto puede fijar el suyo en `.sdd/hermes/hermes-sdd.json` → `modelos.<etapa>`, y ese manda.
+- Los subagentes de las skills (investigación del plan, una FASE por agente, Streams en paralelo) ya van con Sonnet;
+  en un proyecto de una sola FASE no se lanzan, así que el perfil es lo que decide.
+
+Medido en hola-astro (10/11/2026), todo con Opus: 22 min y 6 $ hasta acabar la FASE-0, el 70 % del tiempo en el
+modelo (implementar, 7,9 min; plan, 3,3 min); los tests y el build, 2 s.
+
+
 - **No uses un modelo pequeño para juicios que acaban en una probabilidad.** Con Haiku, los factores de la ruta
   salieron todos en la banda de duda (0,4) y la regla "duda = sí" pidió el pipeline completo para una CLI de una
   persona. Sonnet y el modelo por defecto de Claude Code dieron la ruta ligera. Valores distintos (vida del proyecto

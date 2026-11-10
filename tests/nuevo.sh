@@ -98,4 +98,27 @@ print(round(p["firmar_en"] - antes), N.duracion(N.deshacer_s()))
 PY2
 )
 [ "$o" = "90 1 min 30 s" ] && ok "una decisión nueva se firma pasados los segundos configurados (sin reiniciar)" || bad "firmar_en: $o"
+
+# ── modelos por etapa ────────────────────────────────────────────────────────────────────────────────────────────
+PR="python3 $ROOT/plugin/hermes-sdd/hsdd_proyectos.py"
+o=$($PR modelo requisitos)/$($PR modelo implementar)/$($PR modelo ruta hermes)
+[ "$o" = "opus/sonnet/anthropic/claude-sonnet-5.5" ] && ok "por defecto, Equilibrado: Opus planifica, Sonnet programa; la ruta con el id de Hermes" || bad "defecto: $o"
+o=$($PR modelos --perfil rapido 2>&1 | head -1); [ "$($PR modelo requisitos)" = sonnet ] && echo "$o" | grep -q "Rápido" && ok "perfil Rápido: Sonnet también en requisitos" || bad "rápido: $o"
+o=$(python3 - "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" <<'PY'
+import importlib.util, sys
+spec = importlib.util.spec_from_file_location("hsdd_proyectos", sys.argv[1]); P = importlib.util.module_from_spec(spec); spec.loader.exec_module(P)
+c = P.guardar_config(modelos={"implementar": "anthropic/claude-opus-5.5", "aceptar": "haiku"})
+print(c["modelos"]["implementar"], P.modelo_para("implementar", "claude"), P.modelo_para("aceptar", "hermes")[:22], sorted(c["modelos_cambiados"]))
+for malo in ({"inventada": "opus"}, {"plan": "opus; rm -rf /"}):
+    try:
+        P.guardar_config(modelos=malo); print("coló")
+    except P.Rechazo:
+        print("rechazo")
+c = P.guardar_config(perfil_modelos="equilibrado"); print(c["modelos_cambiados"], c["modelos"]["implementar"])
+PY
+)
+[ "$o" = "anthropic/claude-opus-5.5 claude-opus-5-5 anthropic/claude-haiku ['aceptar', 'implementar']
+rechazo
+rechazo
+{} sonnet" ] && ok "cambios por etapa (traducidos a cada ejecutor), validados; elegir un perfil los quita" || bad "por etapa: $o"
 exit $fail
