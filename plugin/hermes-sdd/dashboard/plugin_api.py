@@ -35,6 +35,11 @@ def _actor(request: Request) -> tuple[str, str, dict]:
     if sesion is not None:
         ident = sesion.email or sesion.user_id
         prueba = {"proveedor": sesion.provider, "cuenta": sesion.user_id}
+    elif getattr(request.state, "native_http_principal", None) and getattr(request.app.state, "auth_required", None) is False:
+        # Hermes Desktop contra su backend local: Hermes ya verificó que es el mismo usuario de esta máquina (credencial
+        # nativa de la app), así que la identidad es la del modo local, marcada como desktop
+        ident = getpass.getuser()
+        prueba = {"modo": "desktop", "host": socket.gethostname().split(".")[0]}
     else:
         # Solo en modo local explícito (panel sin login, petición desde esta máquina); si no, no hay persona
         local = getattr(request.app.state, "auth_required", None) is False
@@ -54,11 +59,15 @@ def _vista(p: dict, persona: str) -> dict:
     v["paso"] = N.paso_actual(p)
     v["respuestas"] = N.respuestas(p)
     v["evidencias"] = N.evidencias(p)
+    v["jev"] = p.get("jev")
+    v["jev_linea"] = N.describir_jev(p)
     dec = p.get("decision")
     if dec:
+        canal = dec.get("actor", {}).get("canal")
         v["decision"] = {"verbo": dec.get("verbo"), "texto": dec.get("texto"), "at": dec.get("at"),
-                         "persona": dec.get("actor", {}).get("persona"), "canal": dec.get("actor", {}).get("canal")}
-        v["puedo_deshacer"] = dec.get("actor", {}).get("persona") == persona
+                         "persona": dec.get("actor", {}).get("persona"), "canal": canal,
+                         "prueba": dec.get("prueba") if canal == N.JEV else None}
+        v["puedo_deshacer"] = dec.get("actor", {}).get("persona") == persona or canal == N.JEV
     return v
 
 
@@ -127,6 +136,35 @@ async def evidencia(gid: str, nombre: str, request: Request):
     return FileResponse(_accion(lambda: N.fichero_evidencia(_puerta(gid), nombre)))
 
 
+@router.get("/evidencia64/{gid}/{nombre}")
+async def evidencia64(gid: str, nombre: str, request: Request):
+    """La evidencia como data URL (Hermes Desktop: ctx.rest devuelve JSON). Un vídeo grande no se manda: va la ruta,
+    y la app lo abre en el Finder."""
+    import base64, mimetypes
+    _actor(request)
+    ruta = _accion(lambda: N.fichero_evidencia(_puerta(gid), nombre))
+    mime = mimetypes.guess_type(ruta.name)[0] or "application/octet-stream"
+    if ruta.stat().st_size > 25 * 1024 * 1024:
+        return {"nombre": nombre, "mime": mime, "ruta": str(ruta), "datos": None}
+    return {"nombre": nombre, "mime": mime, "ruta": str(ruta),
+            "datos": f"data:{mime};base64,{base64.b64encode(ruta.read_bytes()).decode()}"}
+
+
+@router.get("/jev")
+async def jev(request: Request):
+    _actor(request)
+    return N.config_jev()
+
+
+@router.post("/jev")
+async def jev_modo(request: Request):
+    """Cambia el modo de Jev (de un proyecto, o el de por defecto sin tablero). Solo una persona autorizada."""
+    persona, _, _ = _actor(request)
+    body = await request.json()
+    cfg = _accion(lambda: N.poner_modo(str(body.get("modo", "")), body.get("tablero") or None))
+    return {**cfg, "cambiado_por": persona}
+
+
 @router.get("/proyectos")
 async def proyectos(request: Request):
     """Proyectos del arnés con sus hitos (tags) y su estado de pausa; el detalle de tarjetas está en la pestaña Kanban."""
@@ -143,6 +181,6 @@ async def proyectos(request: Request):
             continue
         tags = subprocess.run(["git", "-C", wd, "tag", "-l", "requirements-v*", "fase-*-accepted", "entrega-*"],
                               capture_output=True, text=True).stdout.split()
-        res.append({"tablero": b["slug"], "repo": wd, "hitos": tags,
+        res.append({"tablero": b["slug"], "repo": wd, "hitos": tags, "jev": N.modo_jev(b["slug"]),
                     "pausado": (N.HOME / "pausa" / b["slug"]).exists() or (N.HOME / "pausa" / "_todo").exists()})
     return {"proyectos": res}

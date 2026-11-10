@@ -3,7 +3,7 @@
   "label": "Puertas SDD",
   "description": "Puertas del método SDD: decide desde el panel (canal dashboard); firma el notario.",
   "icon": "Shield",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "tab": { "path": "/sdd", "position": "end" },
   "entry": "dist/index.js",
   "css": "dist/style.css",

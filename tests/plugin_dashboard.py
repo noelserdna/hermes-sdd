@@ -85,4 +85,37 @@ async def sincronizar():
     datos = [b.callback_data for f in bot.editados[-1][1].inline_keyboard for b in f]
     ok(r["estado"] == "abierta" and "g:acepto:g1" in datos, "deshacer en el panel reabre también el mensaje de Telegram")
 asyncio.run(sincronizar())
+
+# ── Hermes Desktop: misma API, identidad por la credencial nativa de la app (mismo usuario de esta máquina) ────────
+def cliente_desktop(host="127.0.0.1", local=True):
+    app = FastAPI(); app.state.auth_required = not local
+    @app.middleware("http")
+    async def _n(request, call_next):
+        request.state.native_http_principal = {"profile": "default"}; return await call_next(request)
+    app.include_router(api.router, prefix="/api/plugins/hermes-sdd")
+    return TestClient(app, client=(host, 5000))
+d = cliente_desktop()
+r = d.get(f"{B}/puertas").json()
+ok(r["persona"] == "ana" and r["identidad"] == YO, "Desktop: la credencial nativa identifica al usuario local")
+ok(cliente_desktop(local=False).get(f"{B}/puertas").status_code == 403, "Desktop contra un backend con login: sin sesión no hay persona")
+e = d.get(f"{B}/evidencia64/g1/a.png").json()
+ok(e["mime"] == "image/png" and e["datos"].startswith("data:image/png;base64,"), "Desktop: la captura llega como data URL")
+ok(d.get(f"{B}/evidencia64/g1/..%2Fsecreto.txt").status_code in (404, 409), "Desktop: tampoco sirve ficheros fuera de las evidencias")
+r = d.post(f"{B}/decidir/g1", json={"verbo": "acepto"}).json()
+ok(json.loads((R / ".sdd/hermes/decisiones/g1.json").read_text())["prueba"]["modo"] == "desktop", "Desktop: la decisión queda marcada como desde Desktop")
+d.post(f"{B}/deshacer/g1")
+
+# ── Jev desde el panel: cambiar el modo y deshacer una decisión suya ────────────────────────────────────────────────
+r = d.post(f"{B}/jev", json={"tablero": "demo", "modo": "auto"})
+ok(r.status_code == 200 and r.json()["proyectos"]["demo"] == "auto" and r.json()["cambiado_por"] == "ana", "el panel cambia el modo de Jev de un proyecto")
+ok(d.post(f"{B}/jev", json={"tablero": "demo", "modo": "loco"}).status_code == 409, "un modo desconocido se rechaza")
+ok(cliente(host="10.0.0.5").post(f"{B}/jev", json={"modo": "auto"}).status_code == 403, "nadie de fuera cambia el modo de Jev")
+p2 = {**puerta, "id": "g2", "tipo": "plan", "fase": "", "preguntas": [], "telegram": [],
+      "opciones": [{"verbo": "conforme", "etiqueta": "✅ Conforme"}, {"verbo": "cambios", "etiqueta": "✏️", "texto": True}]}
+(HOME / "puertas/g2.json").write_text(json.dumps(p2))
+tg.N.aplicar_jev("g2", {"choice": "conforme", "p": 0.97, "confidence": "high", "modelo": "jev-test"})
+v = next(x for x in d.get(f"{B}/puertas").json()["puertas"] if x["id"] == "g2")
+ok(v["estado"] == "decidida" and v["decision"]["canal"] == "jev" and v["decision"]["prueba"]["p"] == "0.970" and v["puedo_deshacer"],
+   "el panel ve la decisión de Jev y puede deshacerla")
+ok(d.post(f"{B}/deshacer/g2").json()["estado"] == "abierta", "deshacer a Jev desde el panel")
 sys.exit(1 if fallos else 0)

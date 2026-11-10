@@ -11,6 +11,7 @@ import contextlib
 import fcntl
 import json
 import os
+import re
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -87,9 +88,27 @@ class Rechazo(Exception):
     """La acción no procede; el mensaje se enseña tal cual a la persona."""
 
 
+def _registrar(idx: Path, puerta: dict, verbo: str, texto: str, actor: dict, prueba: dict) -> dict:
+    """Guarda la decisión normalizada (la lee el notario) y abre la ventana de deshacer. Con el cerrojo tomado."""
+    if puerta.get("preguntas") and verbo != "rechazo":
+        resp = ", ".join(f"Q{n}: {l}" for n, l in respuestas(puerta).items() if l)
+        texto = f"{texto}. {resp}" if texto else resp
+    decision = {"verbo": verbo, "texto": texto, "actor": actor, "prueba": prueba, "at": ahora()}
+    dirdec = Path(puerta["repo"]) / ".sdd" / "hermes" / "decisiones"
+    dirdec.mkdir(parents=True, exist_ok=True)
+    escribir(dirdec / f"{puerta['id']}.json", decision)
+    if puerta.get("ver_at"):
+        decision["dwell_s"] = int(time.time() - puerta["ver_at"])
+    puerta.update(estado="decidida", decision=decision, firmar_en=time.time() + DESHACER_S)
+    escribir(idx, puerta)
+    return puerta
+
+
 def decidir(gid: str, verbo: str, texto: str, persona: str, canal: str, ident: str, prueba: dict) -> dict:
     """Registra la decisión de `persona` (ya identificada por el canal) y abre la ventana de deshacer.
     Devuelve la puerta actualizada. Lanza Rechazo si no procede."""
+    if canal == JEV:
+        raise Rechazo("Jev decide solo con aplicar_jev")
     with cerrojo():
         idx = indice(gid)
         puerta = leer(idx)
@@ -107,36 +126,209 @@ def decidir(gid: str, verbo: str, texto: str, persona: str, canal: str, ident: s
         texto = (texto or "").strip()
         if opcion.get("texto") and not texto:
             raise Rechazo(f"«{opcion['etiqueta']}» necesita un motivo")
-        if puerta.get("preguntas") and verbo != "rechazo":
-            resp = ", ".join(f"Q{n}: {l}" for n, l in respuestas(puerta).items() if l)
-            texto = f"{texto}. {resp}" if texto else resp
-        decision = {"verbo": verbo, "texto": texto,
-                    "actor": {"persona": persona, "canal": canal, "id": str(ident)},
-                    "prueba": prueba, "at": ahora()}
-        dirdec = Path(puerta["repo"]) / ".sdd" / "hermes" / "decisiones"
-        dirdec.mkdir(parents=True, exist_ok=True)
-        escribir(dirdec / f"{gid}.json", decision)
-        if puerta.get("ver_at"):
-            decision["dwell_s"] = int(time.time() - puerta["ver_at"])
-        puerta.update(estado="decidida", decision=decision, firmar_en=time.time() + DESHACER_S)
-        escribir(idx, puerta)
-        return puerta
+        return _registrar(idx, puerta, verbo, texto, {"persona": persona, "canal": canal, "id": str(ident)}, prueba)
 
 
 def deshacer(gid: str, persona: str) -> dict:
-    """Solo quien decidió, y solo mientras no se haya firmado (dentro de la ventana)."""
+    """Quien decidió, o cualquier persona autorizada si decidió Jev; solo mientras no se haya firmado. Deshacer una
+    decisión de Jev la veta: esa puerta ya solo la decide una persona."""
     with cerrojo():
         idx = indice(gid)
         puerta = leer(idx) or {}
         dec = puerta.get("decision") or {}
-        if puerta.get("estado") != "decidida" or dec.get("actor", {}).get("persona") != persona:
+        de_jev = dec.get("actor", {}).get("canal") == JEV
+        if puerta.get("estado") != "decidida" or not persona or (dec.get("actor", {}).get("persona") != persona and not de_jev):
             raise Rechazo("Ya no se puede deshacer")
         (Path(puerta["repo"]) / ".sdd" / "hermes" / "decisiones" / f"{gid}.json").unlink(missing_ok=True)
         puerta.update(estado="abierta")
+        if de_jev:
+            puerta["jev_vetado"] = {"por": persona, "at": ahora()}
         puerta.pop("decision", None)
         puerta.pop("firmar_en", None)
         escribir(idx, puerta)
         return puerta
+
+
+# ── Jev (TypeSafe) en las puertas: consejo, piloto automático o todo automático ─────────────────────────────────────
+# Modos por proyecto (jev.json en $HERMES_SDD_HOME, nunca en el repo: el ejecutor no debe poder cambiarlo):
+#   humano   Jev no interviene (por defecto)
+#   consejo  Jev recomienda en cada puerta; decide siempre una persona
+#   piloto   como consejo, y Jev decide él mismo las puertas de los tipos de "piloto" (ruta y plan por defecto)
+#   auto     Jev decide cualquier puerta, FASEs y entrega incluidas
+# En todos los modos Jev solo puede dar por buena una puerta (verbos sin texto): si se inclina por pedir cambios o
+# rechazar, o no llega al umbral, la puerta queda para una persona. Las reglas duras de puede_jev mandan sobre el modo.
+JEV = "jev"
+MODOS = ("humano", "consejo", "piloto", "auto")
+JEV_DEFECTO = {"defecto": "humano", "proyectos": {}, "piloto": ["ruta", "plan"], "umbral": 0.9}
+
+
+def config_jev() -> dict:
+    return {**JEV_DEFECTO, **(leer(HOME / "jev.json", {}) or {})}
+
+
+def modo_jev(tablero: str, cfg: dict | None = None) -> str:
+    cfg = cfg or config_jev()
+    modo = (cfg.get("proyectos") or {}).get(tablero or "local", cfg.get("defecto", "humano"))
+    return modo if modo in MODOS else "humano"
+
+
+def poner_modo(modo: str, tablero: str | None = None) -> dict:
+    """Cambia el modo de un proyecto (o el de por defecto si tablero es None)."""
+    if modo not in MODOS:
+        raise Rechazo(f"Modo desconocido: {modo}. Modos: {', '.join(MODOS)}")
+    cfg = config_jev()
+    if tablero:
+        cfg["proyectos"] = {**(cfg.get("proyectos") or {}), tablero: modo}
+    else:
+        cfg["defecto"] = modo
+    escribir(HOME / "jev.json", cfg)
+    return cfg
+
+
+def verbos_jev(puerta: dict) -> dict:
+    """Opciones que Jev puede elegir: las que no piden un motivo escrito."""
+    return {o["verbo"]: o["etiqueta"] for o in puerta.get("opciones", []) if o["verbo"] != "ver" and not o.get("texto")}
+
+
+def puede_jev(puerta: dict, cfg: dict | None = None) -> tuple[bool, str]:
+    """¿Puede Jev decidir esta puerta (si está seguro)? → (sí/no, motivo). Lo usan el gateway y el notario."""
+    cfg = cfg or config_jev()
+    modo = modo_jev(puerta.get("tablero", ""), cfg)
+    tipo = puerta.get("tipo", "")
+    if modo in ("humano", "consejo"):
+        return False, f"modo {modo}"
+    if modo == "piloto" and tipo not in (cfg.get("piloto") or []):
+        return False, f"en modo piloto las puertas de {tipo} las decide una persona"
+    if puerta.get("jev_vetado"):
+        return False, "una persona deshizo la decisión de Jev"
+    if modo == "piloto" and puerta.get("preguntas"):
+        return False, "hay preguntas abiertas (clase C): en modo piloto las contesta una persona"
+    texto = puerta.get("texto", "")
+    if "⛔" in texto:
+        return False, "la puerta muestra un bloqueo (⛔)"
+    m = re.search(r"Tests existentes con líneas borradas o cambiadas: (\d+)", texto)
+    if m and int(m.group(1)) > 0:
+        return False, "se modificaron tests que ya existían (art. 12: lo revisa una persona)"
+    if not verbos_jev(puerta):
+        return False, "ninguna opción de esta puerta se puede elegir sin escribir un motivo"
+    return True, f"modo {modo}"
+
+
+def _preguntas_jev() -> dict:
+    return leer(Path(__file__).with_name("jev_puertas.json"), {}) or {}
+
+
+def pregunta_jev(puerta: dict) -> dict:
+    """La pregunta de TypeSafe para esta puerta: una Choice entre los verbos sin texto y «persona»."""
+    q = _preguntas_jev()
+    tipo = (q.get("tipos") or {}).get(puerta.get("tipo", ""), {})
+    criterios = {v: tipo.get("verbos", {}).get(v, f"Choose «{e}»") for v, e in verbos_jev(puerta).items()}
+    criterios["persona"] = q.get("persona", "A person must decide")
+    return {"decision": {"type": "choice", "criteria": criterios,
+                         "instructions": f"{q.get('instructions', '')} {tipo.get('contexto', '')}".strip()}}
+
+
+def estado_jev(puerta: dict, max_chars: int = 90000) -> dict:
+    """Lo que Jev lee: la puerta tal como la vería la persona y los documentos que hay detrás."""
+    repo = Path(puerta.get("repo", "."))
+    tipo = puerta.get("tipo", "")
+    ficheros = {"requisitos": ["requirements/CUSTOMER-NEEDS.md", "requirements/REQUIREMENTS.md"],
+                "ruta": [".sdd/hermes/ruta.json"],
+                "plan": sorted(str(p.relative_to(repo)) for p in (repo / "plan" / "fases").glob("FASE-*.md"))
+                        if (repo / "plan" / "fases").is_dir() else [],
+                "fase": ["acceptance/ACCEPTANCE-REPORT.md"],
+                "entrega": ["acceptance/ACCEPTANCE-REPORT.md"]}.get(tipo, [])
+    contexto, resto = {}, max_chars
+    for f in ficheros:
+        try:
+            t = (repo / f).read_text(errors="replace")
+        except OSError:
+            continue
+        contexto[f] = t[:max(0, resto)]
+        resto -= len(contexto[f])
+    if puerta.get("hallazgos"):
+        contexto["hallazgos"] = json.dumps(puerta["hallazgos"], ensure_ascii=False)[:20000]
+    return {"puerta": {k: puerta.get(k) for k in ("tipo", "titulo", "texto")},
+            "opciones": {**verbos_jev(puerta), "persona": "Que lo decida una persona"}, "contexto": contexto}
+
+
+def aplicar_jev(gid: str, juicio: dict) -> dict:
+    """Guarda el juicio de Jev en la puerta y, si el modo lo permite y Jev está seguro, registra su decisión.
+    juicio: {"choice", "p", "confidence", "modelo"} o {"error"}. Devuelve la puerta actualizada."""
+    with cerrojo():
+        idx = indice(gid)
+        puerta = leer(idx)
+        if not puerta:
+            raise Rechazo("No conozco esta puerta")
+        cfg = config_jev()
+        modo = modo_jev(puerta.get("tablero", ""), cfg)
+        umbral = float(cfg.get("umbral", 0.9))
+        jev = {**juicio, "modo": modo, "umbral": umbral, "at": ahora()}
+        if puerta.get("estado") != "abierta":
+            jev["decide"], jev["motivo"] = False, "la puerta ya estaba resuelta"
+        elif juicio.get("error"):
+            jev["decide"], jev["motivo"] = False, "Jev no respondió"
+        else:
+            puede, motivo = puede_jev(puerta, cfg)
+            eleccion, p = juicio.get("choice"), float(juicio.get("p") or 0)
+            if not puede:
+                jev["decide"], jev["motivo"] = False, motivo
+            elif eleccion not in verbos_jev(puerta):
+                jev["decide"], jev["motivo"] = False, "Jev pide que lo decida una persona"
+            elif p < umbral:
+                jev["decide"], jev["motivo"] = False, f"Jev no está seguro (p {p:.2f} < {umbral:.2f})"
+            else:
+                jev["decide"], jev["motivo"] = True, motivo
+        puerta["jev"] = jev
+        if not jev["decide"]:
+            escribir(idx, puerta)
+            return puerta
+        prueba = {"modelo": juicio.get("modelo", ""), "p": f"{float(juicio['p']):.3f}", "modo": modo,
+                  "demo": "no vista" if puerta.get("tipo") == "fase" else ""}
+        return _registrar(idx, puerta, juicio["choice"], "",
+                          {"persona": JEV, "canal": JEV, "id": juicio.get("modelo") or "jev"},
+                          {k: v for k, v in prueba.items() if v})
+
+
+def describir_jev(puerta: dict) -> str:
+    """Una línea para los canales: qué dijo Jev en esta puerta."""
+    j = puerta.get("jev") or {}
+    if not j:
+        return ""
+    if j.get("error"):
+        return f"🤖 Jev no respondió ({j['error'][:80]}); decide una persona."
+    etiqueta = verbos_jev(puerta).get(j.get("choice"), "que lo decida una persona")
+    linea = f"🤖 Jev recomienda: {etiqueta} (p {float(j.get('p') or 0):.2f}, modo {j.get('modo')})"
+    if not j.get("decide") and j.get("modo") in ("piloto", "auto"):
+        linea += f"\n   No decide él: {j.get('motivo')}."
+    return linea
+
+
+if __name__ == "__main__":   # CLI del notario y de jev.sh
+    import sys
+    a = sys.argv[1:]
+    try:
+        if a[:1] == ["permite-jev"]:      # permite-jev <puerta.json> <verbo> <p>: ¿vale una decisión de Jev?
+            puerta, verbo, p = leer(Path(a[1])) or {}, a[2], float(a[3] or 0)
+            # El veto (una persona deshizo a Jev) vive en el índice global, no en la copia del repo
+            global_ = (leer(indice(puerta["id"]), {}) or {}) if puerta.get("id") else {}
+            ok, motivo = puede_jev({**puerta, "jev_vetado": global_.get("jev_vetado")})
+            if ok and verbo not in verbos_jev(puerta):
+                ok, motivo = False, f"Jev no puede elegir «{verbo}»"
+            if ok and p < float(config_jev().get("umbral", 0.9)):
+                ok, motivo = False, f"p {p} por debajo del umbral"
+            print(f"{modo_jev(puerta.get('tablero', ''))}" if ok else motivo)
+            sys.exit(0 if ok else 1)
+        if a[:1] == ["modo"]:             # modo [<modo> [<tablero>]]
+            if len(a) > 1:
+                poner_modo(a[1], a[2] if len(a) > 2 else None)
+            print(json.dumps(config_jev(), ensure_ascii=False, indent=2))
+            sys.exit(0)
+    except Rechazo as e:
+        print(e, file=sys.stderr)
+        sys.exit(2)
+    print("uso: hsdd_nucleo.py permite-jev <puerta.json> <verbo> <p> | modo [<modo> [<tablero>]]", file=sys.stderr)
+    sys.exit(2)
 
 
 def marcar(gid: str, **campos) -> dict:

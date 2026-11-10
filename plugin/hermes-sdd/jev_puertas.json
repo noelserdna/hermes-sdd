@@ -1,0 +1,44 @@
+{
+  "description": "Preguntas a Jev (TypeSafe) en las puertas del arnés (hsdd_nucleo.pregunta_jev). Una Choice por puerta entre los verbos que no piden texto y «persona» (que lo decida una persona). Jev nunca escribe un motivo, así que nunca rechaza ni pide cambios: solo puede dar por buena una puerta o devolverla a una persona. El estado es {puerta: {tipo, titulo, texto}, opciones: {verbo: etiqueta}, contexto: {fichero: texto}}.",
+  "instructions": "You screen an approval gate of a software project on behalf of its customer. `puerta.texto` is exactly what the customer would see on the gate; `contexto` holds the documents behind it. Choose the option a careful, demanding customer would choose. Choose `persona` whenever anything is missing, doubtful, contradictory, unverified, risky, or would deserve a written comment: approving something wrong is much worse than asking the customer.",
+  "persona": "A person must decide: something is missing, extra, doubtful, unverified, contradictory or risky, or the gate shows warnings, exemptions or open questions worth a human look",
+  "tipos": {
+    "requisitos": {
+      "contexto": "requirements/CUSTOMER-NEEDS.md holds the customer's needs in their own words; requirements/REQUIREMENTS.md the requirements derived from them.",
+      "verbos": {
+        "acepto": "Approve: every customer need is covered by clear, testable requirements with acceptance criteria, and nothing was invented beyond what the customer asked"
+      }
+    },
+    "ruta": {
+      "contexto": "ruta.json holds the factors judged about the project and the stages they select.",
+      "verbos": {
+        "acepto": "Approve the proposed route: the stages that run and the ones skipped fit the project as described, with no doubts and no stage this harness cannot run",
+        "completo": "Run the full pipeline instead: the project is risky, regulated, for an external customer or ambiguous enough that no stage should be skipped"
+      }
+    },
+    "plan": {
+      "contexto": "plan/ holds the implementation phases (FASEs) and their tasks.",
+      "verbos": {
+        "conforme": "Agree with the plan: the FASEs deliver the requirements in a sensible order, each one small and demonstrable, with no requirement left out"
+      }
+    },
+    "fase": {
+      "contexto": "ACCEPTANCE-REPORT.md holds the verdict per requirement. You cannot see the demo screenshots or video.",
+      "verbos": {
+        "acepto": "Accept the FASE: the quality gate passes with no alerts or exemptions, every requirement of the FASE is VERIFIED by evidence, and no existing test was weakened"
+      }
+    },
+    "entrega": {
+      "contexto": "ACCEPTANCE-REPORT.md holds the verdict per requirement for the whole project.",
+      "verbos": {
+        "acepto": "Accept the delivery: every Must requirement is VERIFIED, there are no failing or missing requirements and no exemptions, and every FASE was accepted"
+      }
+    },
+    "mantenimiento": {
+      "contexto": "The findings come from the periodic review of a delivered project.",
+      "verbos": {
+        "cambio": "Launch a change: the findings are real problems (security, failing tests, outdated dependencies) worth fixing; the change will still pass through the customer's own gates"
+      }
+    }
+  }
+}

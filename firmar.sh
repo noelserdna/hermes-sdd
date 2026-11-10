@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # El NOTARIO: registra y firma la decisión humana de una puerta. Determinista, sin LLM.
+# Si el proyecto tiene a Jev en modo piloto o auto, firma también la decisión de Jev, con su nombre y su modo en el
+# registro y en el tag: nunca la presenta como de una persona.
 #
 #   firmar.sh <repo> <puerta>
 #
@@ -54,6 +56,14 @@ fallo() { local t; t=$(mktemp); jq --arg m "$1" '.error = $m | .actualizado = (n
 
 # ── 1. validar (solo la primera vez: después el HEAD ya habrá avanzado con nuestro propio commit) ──────────────────
 if ! hecho validado; then
+  if [ "$CANAL" = jev ]; then
+    # Decidió Jev: no es una persona de aprobadores.json. Vale solo si el modo de ESTE proyecto, ahora, le deja
+    # decidir esta puerta con este verbo y esta seguridad (jev.json en $HERMES_SDD_HOME, fuera del alcance del repo).
+    [ "$PERSONA" = jev ] || fallo "una decisión del canal jev debe ser de jev, no de '$PERSONA'"
+    MODO=$(HERMES_SDD_HOME="$HOME_SDD" python3 "$ROOT/plugin/hermes-sdd/hsdd_nucleo.py" permite-jev "$PUERTA" "$VERBO" "$(d .prueba.p)" 2>&1) ||
+      fallo "Jev no puede decidir esta puerta: $MODO"
+    ROL="Agente automático (modo $MODO)"; NOMBRE="Jev ($ID)"
+  else
   # La persona existe y la identidad del canal es la suya
   [ -f "$HOME_SDD/aprobadores.json" ] || fallo "falta $HOME_SDD/aprobadores.json"
   jq -e --arg p "$PERSONA" --arg c "$CANAL" --arg i "$ID" \
@@ -61,6 +71,7 @@ if ! hecho validado; then
     fallo "$CANAL:$ID no es una identidad autorizada de '$PERSONA'"
   ROL=$(jq -r --arg p "$PERSONA" '.[$p].rol' "$HOME_SDD/aprobadores.json")
   NOMBRE=$(jq -r --arg p "$PERSONA" '.[$p].nombre // $p' "$HOME_SDD/aprobadores.json")
+  fi
   # La decisión es posterior a la puerta
   [ ! "$(d .at)" \< "$(p .creada)" ] || fallo "la decisión es anterior a la puerta"
   # Lo que se firma es lo que la persona vio

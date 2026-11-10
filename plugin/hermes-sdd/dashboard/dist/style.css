@@ -7,3 +7,4 @@
 .hsdd-error { color: var(--color-destructive); font-size: 0.85rem; }
 .hsdd-meta { font-size: 0.75rem; opacity: 0.7; }
 .hsdd-motivo { flex: 1 1 260px; min-width: 0; }
+.hsdd-jev { border-left: 2px solid var(--color-primary); padding-left: 0.5rem; }

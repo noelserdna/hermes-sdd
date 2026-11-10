@@ -174,8 +174,13 @@ Cuesta 0 $ y tardas lo que tardes en decidir. Para ver lo que quedó: `git -C ~/
 
 ## 5. Decidir: las puertas
 
-Cada puerta te llega por **Telegram** y aparece también en el **panel web** (`hermes dashboard` → pestaña «Puertas
-SDD»). Puedes decidir en cualquiera de los dos: al decidir en uno, el otro se actualiza.
+Cada puerta te llega por **Telegram** y aparece también en la pestaña «Puertas SDD» del **panel web**
+(`hermes dashboard`) y de **Hermes Desktop**. Puedes decidir en cualquiera: al decidir en uno, los otros se
+actualizan.
+
+**Hermes Desktop:** la pestaña viene con el plugin, pero la primera vez está apagada. En la app, ve a
+**Capabilities → Plugins**, pulsa **Rescan** y activa «Puertas SDD». Aparece en la barra lateral y en ⌘K («Abrir
+Puertas SDD»).
 
 | Puerta | Qué ves | Qué puedes hacer |
 |---|---|---|
@@ -196,6 +201,7 @@ En las puertas de FASE se registra cuánto tiempo pasó entre ver la demo y deci
 | `/mantenimiento [proyecto]` | lanzar ahora la revisión de mantenimiento |
 | `/pausar [proyecto\|todo] [ahora]` · `/reanudar [proyecto\|todo]` | parar y seguir |
 | `/anular <proyecto> <fase> <motivo>` | anular una aceptación ya firmada (queda registrado, no se borra nada) |
+| `/jev [proyecto] [modo]` | ver o cambiar el modo de Jev (`humano`, `consejo`, `piloto`, `auto`) |
 
 Un mensaje por proyecto se actualiza en silencio con el progreso. Hay resúmenes a las 08:30 y a las 19:00, y silencio
 de 22:00 a 8:00 (configurable en `~/.hermes/hermes-sdd/atencion.json`).
@@ -203,6 +209,20 @@ de 22:00 a 8:00 (configurable en `~/.hermes/hermes-sdd/atencion.json`).
 **Sin Telegram** (plan B): `bash decidir.sh <puerta> acepto`. Queda registrado que la decisión fue local.
 
 Más detalle sobre cada canal y cómo añadir otros (Slack, email): [docs/canales.md](docs/canales.md).
+
+**Dejar que Jev decida (opcional).** Con una clave de TypeSafe, Jev puede aconsejarte en cada puerta o decidir él,
+proyecto a proyecto y como tú elijas:
+
+| Modo | Jev… |
+|---|---|
+| `humano` (por defecto) | no interviene |
+| `consejo` | recomienda; decides tú |
+| `piloto` | decide ruta y plan; el resto, tú |
+| `auto` | decide cualquier puerta, FASEs y entrega incluidas |
+
+`bash jev.sh recetas consejo`, `/jev recetas consejo` o los botones de la pestaña. Jev solo puede dar una puerta por
+buena: rechazar o pedir cambios sigue siendo tuyo. Cuando decide, te llega la puerta ya decidida con **↩ Deshacer**,
+y el tag dice que aprobó Jev, no tú. Detalle y límites: [docs/jev.md](docs/jev.md).
 
 ---
 
@@ -235,8 +255,9 @@ Más detalle sobre cada canal y cómo añadir otros (Slack, email): [docs/canale
 
 ## 7. Qué garantiza y qué no
 
-**Garantiza** que nada se firma sin la decisión de una persona autorizada en su canal, y que lo firmado es exactamente
-el commit que se le mostró. Tres registros cuentan la misma historia: el canal, el acta del notario y
+**Garantiza** que nada se firma sin la decisión de una persona autorizada en su canal (o de Jev, si tú lo
+activaste para ese proyecto, y entonces el registro y el tag lo dicen), y que lo firmado es exactamente el commit que
+se mostró. Tres registros cuentan la misma historia: el canal, el acta del notario y
 `acceptance/decisions.jsonl` más el tag de git.
 
 **No garantiza** quién sostenía el móvil, ni resiste a alguien con acceso a tu sesión del sistema operativo: el kanban,
@@ -252,6 +273,7 @@ en un contenedor o una firma con llave física lo *impiden*.
 | `instalar.sh` dice «faltan: …» | Instala lo que indica (`brew install …` en macOS, `sudo apt install …` en Ubuntu) y repite. |
 | No llega nada a Telegram | `hermes gateway restart`. Comprueba que tu id de Telegram está en `~/.hermes/hermes-sdd/aprobadores.json`. |
 | La pestaña «Puertas SDD» no sale en el panel | Reinicia `hermes dashboard` después de instalar. |
+| La pestaña no sale en Hermes Desktop | **Capabilities → Plugins → Rescan** y activa «Puertas SDD» (viene apagada). |
 | `AVISO: kanban.auto_decompose está activo` | `hermes config set kanban.auto_decompose false` |
 | Una etapa sale «busy» | Ya hay otra etapa en marcha en ese repo: el arnés nunca ejecuta dos a la vez en el mismo proyecto. Espera a que termine. |
 | Una etapa sale «scheduled» | Se agotó la cuota de tu suscripción de Claude. Se reanuda sola a la hora de reinicio. |
@@ -287,7 +309,8 @@ en un contenedor o una firma con llave física lo *impiden*.
 | `decidir.sh` · `anular.sh` | Decidir sin Telegram y anular una aceptación de forma auditable |
 | `vigilar.sh` | Mantenimiento por umbrales |
 | `practicar.sh` · `grabar.sh` · `grabaciones/` | Practicar sin coste y crear grabaciones |
-| `plugin/hermes-sdd/` | Plugin de Hermes: núcleo de las puertas (`hsdd_nucleo.py`), canal Telegram y canal panel (`dashboard/`) |
+| `plugin/hermes-sdd/` | Plugin de Hermes: núcleo de las puertas (`hsdd_nucleo.py`), canal Telegram, canal panel (`dashboard/`), pestaña de Hermes Desktop (`desktop/`) y preguntas a Jev (`jev_puertas.json`) |
+| `jev.sh` | Modo de Jev en las puertas (consejo, piloto, auto) |
 | `metodo/` | El método SDD como plugin de Claude Code: CLI (`scripts/sdd.mjs`), skills, hooks (la guardia que impide firmar), plantillas, ejemplo y tests |
 | `profiles/` · `templates/` | Perfil de la estación y plantillas (`AGENTS.md`, configuración por proyecto) |
 | `tests/` · `evals/` | Pruebas sin IA (`bash tests/todo.sh`) y el simulador de Claude |
@@ -298,6 +321,7 @@ en un contenedor o una firma con llave física lo *impiden*.
 ## 11. Más documentación
 
 - [docs/windows.md](docs/windows.md): instalación en Windows (WSL2), paso a paso.
+- [docs/jev.md](docs/jev.md): Jev en las puertas (consejo, piloto, auto), sus límites y qué queda registrado.
 - [docs/canales.md](docs/canales.md): Telegram, el panel y el canal local, la identidad de cada uno y cómo añadir otros.
 - [docs/ejecutores.md](docs/ejecutores.md): Claude Code o Hermes por etapa, con modelos y costes.
 - [docs/metodo/](docs/metodo/): el método por dentro (constitución, ruta, aceptación, preguntas asíncronas, convenciones de git).

@@ -34,6 +34,19 @@ preguntas y los botones, la lista de proyectos con sus hitos y las últimas firm
 No expongas el panel con `--host 0.0.0.0` sin el login del panel: en modo local la identidad es «quien está sentado
 en esta máquina», y el plugin rechaza (403) cualquier petición que no venga de 127.0.0.1.
 
+### Hermes Desktop (pestaña «Puertas SDD»)
+
+La misma pestaña, escrita con el SDK de la app (`plugin/hermes-sdd/desktop/plugin.js`), sobre el mismo backend que el
+panel. Hermes copia esa parte a `~/.hermes/desktop-plugins/hermes-sdd/` y la deja **apagada**: se activa en
+**Capabilities → Plugins** (pulsa **Rescan** si no aparece). Sale en la barra lateral y en ⌘K.
+
+La identidad es la del canal `dashboard`: contra el backend local, Hermes verifica que la petición viene de la app
+del mismo usuario (credencial nativa de Desktop) y el plugin decide como el usuario del sistema, que debe figurar en
+`aprobadores.json` con canal `dashboard`. La decisión queda marcada con `modo: desktop`. Contra un backend remoto con
+login, la identidad es la cuenta de esa sesión, como en el panel.
+
+Las capturas de la demo llegan como imágenes dentro de la pestaña. Un vídeo de más de 25 MB se abre en el Finder.
+
 ## Añadir un canal (Slack, email…)
 
 1. Presentar: leer `hsdd_nucleo.puertas()` y enseñar `titulo`, `texto`, `opciones` (respetando `paso`: primero

@@ -105,7 +105,41 @@ async def formulario_y_operacion():
     ok("aprobación por inercia" in res, "el resumen avisa de aprobación por inercia")
     ok(m._autorizado_en_sesion()[0] is None, "sin sesión de Telegram no hay persona autorizada (pausar/anular se niegan)")
 
+async def jev():
+    # Jev en modo auto: el bucle lo consulta antes de publicar, decide, y el mensaje sale ya decidido con Deshacer
+    juicios = {"j_1": {"choice": "conforme", "p": 0.96, "confidence": "high", "modelo": "jev-test"},
+               "j_2": {"choice": "persona", "p": 0.8, "confidence": "medium", "modelo": "jev-test"}}
+    consultadas = []
+    async def falso_jev(p):
+        consultadas.append(p["id"]); return juicios[p["id"]]
+    m._consultar_jev = falso_jev
+    (HOME / "jev.json").write_text(json.dumps({"defecto": "humano", "proyectos": {"local": "auto"}}))
+    for gid in ("j_1", "j_2"):
+        (HOME / f"puertas/{gid}.json").write_text(json.dumps({
+            "id": gid, "tipo": "plan", "tablero": "", "repo": str(R), "titulo": "Plan", "texto": "3 FASEs", "estado": "abierta",
+            "opciones": [{"verbo": "conforme", "etiqueta": "✅ Conforme"}, {"verbo": "cambios", "etiqueta": "✏️ Cambiar", "texto": True}]}))
+    for f in HOME.glob("puertas/t_*.json"):   # las de las otras pruebas, fuera del bucle
+        f.unlink()
+    for f in HOME.glob("puertas/f*.json"):
+        f.unlink()
+    antes = len(bot.enviados)
+    await m._vuelta(1)
+    j1 = json.loads((HOME / "puertas/j_1.json").read_text()); j2 = json.loads((HOME / "puertas/j_2.json").read_text())
+    ok(j1["estado"] == "decidida" and j1["decision"]["actor"]["canal"] == "jev", "auto: el bucle consulta a Jev y registra su decisión")
+    textos = [t for t, _ in bot.enviados[antes:]]
+    ok(any("Ha decidido Jev (modo auto, p 0.960)" in t for t in textos), "el mensaje dice que decidió Jev, con su seguridad")
+    kb = [b.callback_data for t, k in bot.enviados[antes:] if "Ha decidido Jev" in t for f in k.inline_keyboard for b in f]
+    ok(kb == ["g:deshacer:j_1"], f"y trae el botón Deshacer ({kb})")
+    ok(j2["estado"] == "abierta" and any("🤖 Jev recomienda: que lo decida una persona" in t for t in textos),
+       "si Jev pide una persona, la puerta sale con su consejo y tus botones")
+    await m._vuelta(2)
+    ok(consultadas.count("j_1") == 1 and consultadas.count("j_2") == 1, "Jev se consulta una sola vez por puerta")
+    q = Query("g:deshacer:j_1", 111); await m._on_boton(NS(callback_query=q), ctx)
+    j1 = json.loads((HOME / "puertas/j_1.json").read_text())
+    ok(j1["estado"] == "abierta" and j1.get("jev_vetado", {}).get("por") == "andres", "tú deshaces a Jev desde Telegram y la puerta vuelve a ti")
+    (HOME / "jev.json").write_text(json.dumps({"defecto": "humano"}))
+
 async def todo():
-    await main(); await formulario_y_operacion()
+    await main(); await formulario_y_operacion(); await jev()
 
 asyncio.run(todo()); sys.exit(1 if fallos else 0)

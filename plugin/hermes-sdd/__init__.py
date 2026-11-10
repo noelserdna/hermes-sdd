@@ -113,14 +113,21 @@ def _render(puerta: dict):
         verbo, texto = dec.get("verbo", ""), dec.get("texto", "")
         etiqueta = next((o["etiqueta"] for o in puerta.get("opciones", []) if o["verbo"] == verbo), verbo)
         canal = dec.get("actor", {}).get("canal", "")
-        desde = f" (desde {canal})" if canal and canal != "telegram" else ""
         hora = datetime.fromtimestamp(puerta.get("firmar_en", time.time())).strftime("%H:%M")
+        deshacer = M([[B("↩ Deshacer", callback_data=f"g:deshacer:{puerta['id']}")]])
+        if canal == N.JEV:   # decidió Jev: se dice claro y cualquier persona autorizada puede deshacerlo
+            pr = dec.get("prueba", {})
+            return (f"{_cabecera(puerta)}\n{puerta.get('texto', '')}\n\n🤖 Ha decidido Jev (modo {pr.get('modo', '?')}, "
+                    f"p {pr.get('p', '?')}): {etiqueta}{(' — ' + texto) if texto else ''}\n"
+                    f"🕒 Se firma a las {hora}. Si no estás de acuerdo, deshazlo: la puerta vuelve a ti.", deshacer)
+        desde = f" (desde {canal})" if canal and canal != "telegram" else ""
         return (f"{_cabecera(puerta)}\n{etiqueta} — {dec.get('actor', {}).get('persona', '')}{desde}"
-                f"{(': ' + texto) if texto else ''}\n🕒 Se firma a las {hora}",
-                M([[B("↩ Deshacer", callback_data=f"g:deshacer:{puerta['id']}")]]))
+                f"{(': ' + texto) if texto else ''}\n🕒 Se firma a las {hora}", deshacer)
     paso = N.paso_actual(puerta)
     extra = "\n\n👀 Demo vista. Decide:" if (N.escalonada(puerta) and paso == 2) else ""
-    return _cabecera(puerta) + "\n" + puerta.get("texto", "") + extra, _teclado(puerta, paso)
+    jev = N.describir_jev(puerta)
+    return (_cabecera(puerta) + "\n" + puerta.get("texto", "") + (f"\n\n{jev}" if jev else "") + extra,
+            _teclado(puerta, paso))
 
 
 async def _publicar(bot, puerta: dict) -> None:
@@ -337,6 +344,46 @@ async def _crear_tarjeta(puerta: dict) -> str:
     return json.loads(out)["id"]
 
 
+async def _consultar_jev(puerta: dict) -> dict:
+    """Pregunta a Jev por esta puerta con sdd-jev.mjs (el mismo cliente que usa el método). Nunca lanza: un fallo
+    vuelve como {"error"} y la puerta queda para una persona."""
+    import tempfile
+    sdd_jev = _root() / "metodo" / "scripts" / "sdd-jev.mjs"
+    try:
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "q.json").write_text(json.dumps({"questions": N.pregunta_jev(puerta)}))
+            (Path(d) / "i.jsonl").write_text(json.dumps({"id": puerta["id"], "state": N.estado_jev(puerta)}) + "\n")
+            proc = await asyncio.create_subprocess_exec(
+                "node", str(sdd_jev), "judge", "--questions", str(Path(d) / "q.json"), "--items", str(Path(d) / "i.jsonl"),
+                stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, env={**os.environ, "PATH": PATH_CMDS})
+            out, err = await asyncio.wait_for(proc.communicate(), 180)
+        if proc.returncode == 3:
+            return {"error": "Jev apagado: " + (err.decode().strip() or "falta TYPESAFE_API_KEY")}
+        res = json.loads(out or b"{}")
+        if not res.get("items"):
+            return {"error": ((res.get("errors") or [{}])[0].get("error") or err.decode().strip() or "sin respuesta")[:300]}
+        a = res["items"][0]["answers"]["decision"]
+        return {"choice": a.get("choice"), "p": float((a.get("p") or {}).get(a.get("choice"), 0)),
+                "confidence": a.get("confidence"), "modelo": res.get("model") or "jev"}
+    except Exception as e:
+        return {"error": str(e)[:300]}
+
+
+async def _jev_en_puerta(idx: Path, p: dict) -> dict:
+    """Si el proyecto tiene a Jev activo y aún no ha juzgado esta puerta, lo juzga (y decide si el modo lo deja)."""
+    if p.get("estado") != "abierta" or "jev" in p or N.modo_jev(p.get("tablero", "")) == "humano":
+        return p
+    juicio = await _consultar_jev(p)
+    try:
+        p = N.aplicar_jev(p["id"], juicio)
+    except N.Rechazo:
+        return _leer(idx) or p
+    j = p.get("jev", {})
+    log.info("hermes-sdd: Jev en %s → %s (p %s, decide %s: %s)", p["id"], j.get("choice") or j.get("error"),
+             j.get("p"), j.get("decide"), j.get("motivo"))
+    return p
+
+
 async def _vuelta(ciclo: int) -> None:
     bot = _RT["app"].bot   # la app puede reconstruirse tras un fallo de conexión: siempre la actual
     for idx in sorted((HOME / "puertas").glob("*.json")):
@@ -355,7 +402,9 @@ async def _vuelta(ciclo: int) -> None:
                     loc["tarjeta"] = tarjeta
                     _escribir(local, loc)
             p = actual
-        if p.get("estado") == "abierta" and not p.get("telegram"):
+        p = await _jev_en_puerta(idx, p)
+        # Se publica también la que Jev acaba de decidir: así la ves, con su botón de deshacer, antes de que se firme
+        if (p.get("estado") == "abierta" and not p.get("telegram")) or (p.get("estado") == "decidida" and "telegram" not in p):
             await asyncio.wait_for(_publicar(bot, p), 60)
             with N.cerrojo():
                 actual = _leer(idx) or p
@@ -717,7 +766,34 @@ def register(ctx):
                 return f"No conozco el proyecto {raw_args.strip()}."
         return "🔎 Revisión de mantenimiento:\n" + "\n".join(await _mantenimiento(proys))
 
+    async def _cmd_jev(raw_args: str = "") -> str:
+        """/jev → modos actuales · /jev <modo> → modo por defecto · /jev <proyecto> <modo> → modo de un proyecto."""
+        partes = raw_args.split()
+        if partes:
+            persona, _ = _autorizado_en_sesion()
+            if not persona:
+                return "Solo una persona autorizada puede cambiar el modo de Jev."
+            try:
+                if len(partes) == 1:
+                    N.poner_modo(partes[0])
+                else:
+                    if partes[0] not in await _proyectos():
+                        return f"No conozco el proyecto {partes[0]}."
+                    N.poner_modo(partes[1], partes[0])
+            except N.Rechazo as e:
+                return str(e)
+            log.info("hermes-sdd: %s cambia el modo de Jev: %s", persona, raw_args)
+        cfg = N.config_jev()
+        lineas = [f"🤖 Jev en las puertas (umbral {cfg['umbral']}; en piloto decide: {', '.join(cfg['piloto'])})",
+                  f"  por defecto: {cfg['defecto']}"]
+        lineas += [f"  {b}: {m}" for b, m in sorted((cfg.get("proyectos") or {}).items())]
+        lineas.append("Modos: humano · consejo (recomienda) · piloto (decide ruta y plan) · auto (decide todo). "
+                      "Uso: /jev <proyecto> <modo>")
+        return "\n".join(lineas)
+
     ctx.register_telegram_handler(_wire)
+    ctx.register_command("jev", _cmd_jev, description="Modo de Jev en las puertas SDD (humano, consejo, piloto, auto)",
+                         args_hint="[proyecto] [modo]")
     ctx.register_command("cambio", _cmd_cambio, description="Pide un cambio o una funcionalidad a un proyecto SDD", args_hint="<proyecto> <petición>")
     ctx.register_command("estado", _cmd_estado, description="Estado de los proyectos SDD", args_hint="[proyecto]")
     ctx.register_command("pausar", _cmd_pausar, description="Pausa proyectos SDD (ahora = detener)", args_hint="[proyecto|todo] [ahora]")

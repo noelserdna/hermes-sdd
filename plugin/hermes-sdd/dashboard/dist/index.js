@@ -46,12 +46,17 @@
     const cuerpo = [];
 
     cuerpo.push(h("div", { className: "hsdd-texto", key: "t" }, p.texto));
+    if (p.jev_linea && !decidida) cuerpo.push(h("div", { className: "hsdd-texto hsdd-jev", key: "j" }, p.jev_linea));
     if (decidida) {
       const d = p.decision || {};
       const etiqueta = ((p.opciones || []).find((o) => o.verbo === d.verbo) || {}).etiqueta || d.verbo;
       const hora = p.firmar_en ? new Date(p.firmar_en * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "?";
+      const pr = d.prueba || {};
+      const quien = d.canal === "jev"
+        ? `🤖 Ha decidido Jev (modo ${pr.modo || "?"}, p ${pr.p || "?"}). Si no estás de acuerdo, deshazlo y la puerta vuelve a ti`
+        : `${d.persona} desde ${d.canal}${d.texto ? ": " + d.texto : ""}`;
       cuerpo.push(h("div", { className: "hsdd-fila", key: "d" },
-        h(Badge, null, etiqueta), h("span", null, `${d.persona} desde ${d.canal}${d.texto ? ": " + d.texto : ""}`),
+        h(Badge, null, etiqueta), h("span", null, quien),
         h("span", { className: "hsdd-meta" }, `se firma a las ${hora} (lo hace el gateway)`),
         p.puedo_deshacer && h(Button, { size: "sm", variant: "outline", disabled: ocupado, onClick: () => accion(`/deshacer/${p.id}`) }, "↩ Deshacer")));
     } else {
@@ -90,18 +95,33 @@
       h(CardContent, null, cuerpo));
   }
 
+  const MODOS = [["humano", "Humano"], ["consejo", "Consejo"], ["piloto", "Piloto"], ["auto", "Auto"]];
+
+  // Modo de Jev de un proyecto: cuatro botones; el activo, relleno
+  function ModoJev({ tablero, modo, alCambiar }) {
+    const [ocupado, setOcupado] = useState(false);
+    return h("span", { className: "hsdd-fila", style: { margin: 0 } },
+      h("span", { className: "hsdd-meta" }, "🤖 Jev:"),
+      MODOS.map(([m, et]) => h("button", {
+        key: m, className: "hsdd-q", "data-on": modo === m ? "1" : "0", disabled: ocupado || modo === m,
+        title: m === "auto" ? "Jev decide cualquier puerta, FASEs y entrega incluidas" : undefined,
+        onClick: () => { setOcupado(true); post("/jev", { tablero, modo: m }).then(alCambiar).finally(() => setOcupado(false)); },
+      }, et)));
+  }
+
   function Pagina() {
     const [datos, setDatos] = useState(null);
     const [error, setError] = useState("");
     const [proys, setProys] = useState([]);
     const recargar = useCallback(() =>
       SDK.fetchJSON(`${API}/puertas`).then((d) => { setDatos(d); setError(""); }).catch((e) => setError(String(e.message || e))), []);
+    const cargarProys = useCallback(() =>
+      SDK.fetchJSON(`${API}/proyectos`).then((d) => setProys(d.proyectos || [])).catch(() => {}), []);
     useEffect(() => {
-      recargar();
-      SDK.fetchJSON(`${API}/proyectos`).then((d) => setProys(d.proyectos || [])).catch(() => {});
+      recargar(); cargarProys();
       const t = setInterval(recargar, 5000);
       return () => clearInterval(t);
-    }, [recargar]);
+    }, [recargar, cargarProys]);
 
     if (error) return h(Card, null, h(CardContent, { className: "py-4" }, h("div", { className: "hsdd-error" }, error)));
     if (!datos) return h("div", { className: "hsdd-meta" }, "Cargando puertas…");
@@ -114,7 +134,8 @@
       proys.length ? h(Card, { className: "mb-4" }, h(CardHeader, null, h(CardTitle, null, "Proyectos")),
         h(CardContent, null, proys.map((x) => h("div", { className: "hsdd-fila", key: x.tablero },
           h("strong", null, x.tablero), x.pausado ? h(Badge, { variant: "secondary" }, "⏸ en pausa") : null,
-          h("span", { className: "hsdd-meta" }, x.hitos.join(" · ") || "sin hitos todavía"))))) : null,
+          h("span", { className: "hsdd-meta" }, x.hitos.join(" · ") || "sin hitos todavía"),
+          h(ModoJev, { tablero: x.tablero, modo: x.jev, alCambiar: cargarProys }))))) : null,
       datos.recientes.length ? h(Card, null, h(CardHeader, null, h(CardTitle, null, "Últimas firmadas")),
         h(CardContent, null, datos.recientes.map((r) => h("div", { className: "hsdd-meta", key: r.id },
           `${r.estado === "error" ? "⚠️" : "✅"} ${r.tablero} · ${r.titulo}: ${r.resultado}`)))) : null);
