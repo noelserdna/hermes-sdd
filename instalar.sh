@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Instala el arnés hermes-sdd en este Mac (una vez; se puede repetir para actualizar).
+# Instala el arnés hermes-sdd en esta máquina: macOS, Linux o Windows con WSL2 (ver docs/windows.md).
+# Una vez; se puede repetir para actualizar.
 #
 #   bash instalar.sh [--sin-estacion]
 #
@@ -13,10 +14,26 @@
 set -euo pipefail
 SRC="$(cd "$(dirname "$0")" && pwd)"
 HH="$HOME/.hermes"; HOME_SDD="$HH/hermes-sdd"
-VERSION=$(jq -r .version "$SRC/metodo/.claude-plugin/plugin.json")
-DEST="$HOME_SDD/$VERSION"
 P=sdd-estacion
 
+# ── Comprobaciones previas: dependencias y, en WSL, que nada viva en el disco de Windows ──────────────────────────
+falta=()
+for c in jq rsync git node python3 perl openssl hermes; do command -v "$c" >/dev/null || falta+=("$c"); done
+if [ ${#falta[@]} -gt 0 ]; then
+  echo "ERROR: faltan: ${falta[*]}" >&2
+  if command -v apt-get >/dev/null; then echo "  Linux/WSL: sudo apt install jq rsync git python3 perl openssl; Node ≥ 18 y Hermes según docs/windows.md" >&2
+  else echo "  macOS: brew install jq rsync node; Hermes según su README" >&2; fi
+  exit 1
+fi
+command -v claude >/dev/null || echo "  AVISO: no encuentro Claude Code (claude); el ejecutor de las etapas pesadas lo necesita"
+if [ -n "${WSL_DISTRO_NAME:-}" ] || [ -e /proc/sys/fs/binfmt_misc/WSLInterop ]; then
+  case "$SRC/:$HOME/" in */mnt/[a-z]/*)
+    echo "  AVISO (WSL): el arnés o tu HOME están en el disco de Windows (/mnt/…): mucho más lento y chmod 600 no protege" \
+         "las claves. Clónalo dentro de ~ (ext4). Ver docs/windows.md" >&2;; esac
+fi
+
+VERSION=$(jq -r .version "$SRC/metodo/.claude-plugin/plugin.json")
+DEST="$HOME_SDD/$VERSION"
 echo "· Arnés $VERSION → $DEST"
 mkdir -p "$DEST" "$HOME_SDD/puertas" "$HOME_SDD/actas"
 rsync -a --delete --exclude .git "$SRC/" "$DEST/"

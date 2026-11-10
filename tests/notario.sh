@@ -9,7 +9,7 @@ fail=0; ok() { echo "ok   $1"; }; bad() { echo "FAIL $1"; fail=1; }
 R="$T/repo"; cp -R "$ROOT/metodo/examples/todo-app" "$R"; cd "$R"
 git init -q -b main && git config user.email t@t && git config user.name t && git config commit.gpgsign false
 cp "$ROOT/metodo/templates/pipeline-state.template.json" pipeline-state.json; printf "pipeline-state.json\n.sdd/\n" >> .gitignore
-sed -i '' -E 's/^> \*\*Status:\*\*.*/> **Status:** Review/' requirements/REQUIREMENTS.md
+sed -i.bak -E 's/^> \*\*Status:\*\*.*/> **Status:** Review/' requirements/REQUIREMENTS.md && rm -f requirements/REQUIREMENTS.md.bak
 git add -A && git commit -qm "chore: toy project"
 cat > "$HERMES_SDD_HOME/aprobadores.json" <<J
 {"andres": {"nombre": "Andrés León", "rol": "Cliente", "canales": {"telegram": "111", "local": "tester"}}}

@@ -2,7 +2,7 @@
 # Ejecutor CLAUDE CODE, con supervisor. Lanza UNA etapa con `claude -p` y la vigila:
 #   · candado por repo: nunca dos ejecuciones a la vez en el mismo proyecto (otra viva → outcome "busy")
 #   · Claude en su propio grupo de procesos; si este supervisor muere o su padre desaparece, el grupo se mata
-#   · caffeinate mientras dura (el Mac no se duerme a mitad de etapa)
+#   · caffeinate mientras dura (el Mac no se duerme a mitad de etapa; en Linux/WSL no existe y se salta)
 #   · entorno limpio: Claude no hereda tokens del bot ni claves de proveedor de Hermes
 #   · cuota de la suscripción agotada → outcome "scheduled" con la hora de reinicio, no un fallo
 #   · cada ejecución en su propio fichero .sdd/hermes/runs/<run>.json (nunca se sobrescribe)
@@ -47,12 +47,18 @@ trap 'limpiar; exit 143' TERM INT HUP
 
 # ── Lanzar Claude en su propio grupo, con entorno limpio ───────────────────────────────────────────────────────────
 BIN=$(command -v "${CLAUDE_BIN:-claude}") || salir failed "no encuentro el ejecutable de Claude Code"
+# PATH limpio + los directorios donde están claude y node (nvm, ~/.npm-global… en Linux/WSL no están en el fijo)
+PATH_LIMPIO="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+for b in "$BIN" "$(command -v node || true)"; do
+  [ -n "$b" ] || continue; d=$(dirname "$b")
+  case ":$PATH_LIMPIO:" in *":$d:"*) ;; *) PATH_LIMPIO="$d:$PATH_LIMPIO";; esac
+done
 ARGS=(-p "$PROMPT" --output-format json --plugin-dir "$ROOT/metodo"
       --settings '{"enabledPlugins":{"sdd-pipeline@noelserdna":false}}')
 [ -n "$MODELO" ] && ARGS+=(--model "$MODELO")
 cd "$REPO"
 env -i HOME="$HOME" USER="$USER" LOGNAME="${LOGNAME:-$USER}" TMPDIR="${TMPDIR:-/tmp}" LANG="${LANG:-es_ES.UTF-8}" \
-  PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin" TERM=dumb \
+  PATH="$PATH_LIMPIO" TERM=dumb \
   SDD_EXECUTOR=hermes SDD_RUN="$RUN" DISABLE_AUTOUPDATER=1 \
   perl -e 'setpgrp(0,0); exec @ARGV' "$BIN" "${ARGS[@]}" > "$OUT" 2> "$ERR" &
 CPID=$!

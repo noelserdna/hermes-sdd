@@ -37,6 +37,7 @@ hallazgo() {  # hallazgo <clave> <título> <detalle> <propuesta>
   local t; t=$(mktemp)
   jq --arg c "$1" --arg ti "$2" --arg d "$3" --arg p "$4" '. + [{clave:$c, titulo:$ti, detalle:$d, propuesta:$p}]' "$H" > "$t" && mv "$t" "$H"
 }
+huella() { if command -v sha1sum >/dev/null; then sha1sum; else shasum; fi | cut -c1-10; }  # misma clave que antes (SHA-1)
 perfil() { sed -n "/## SDD Stack Profile/,/^## /s/^- $1: *//p" AGENTS.md 2>/dev/null | head -1; }
 
 # 1. tests en HEAD
@@ -45,7 +46,7 @@ if [ -n "$TEST" ]; then
   [ -f package-lock.json ] && [ ! -d node_modules ] && npm ci --silent >/dev/null 2>&1 || true
   if ! out=$(bash -c "$TEST" 2>&1); then
     FALLAN=$(echo "$out" | grep -E 'FAIL|failed|Error' | head -4)
-    hallazgo "tests:$(echo "$FALLAN" | shasum | cut -c1-10)" "Los tests fallan en $HEAD7" "$FALLAN" \
+    hallazgo "tests:$(echo "$FALLAN" | huella)" "Los tests fallan en $HEAD7" "$FALLAN" \
       "Los tests del proyecto fallan en el commit $HEAD7. Encuentra la causa y arréglala sin debilitar ningún test existente."
   fi
 fi
@@ -55,7 +56,7 @@ if git tag -l 'entrega-*' | grep -q .; then
   rc=0; node "$SDD" gate >/dev/null 2>&1 || rc=$?
   if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then
     MAL=$(node "$SDD" gate --md 2>/dev/null | grep -E 'MISSING|FAIL|UNVERIFIED|NOT' | cut -d'|' -f2,5 | head -6 || true)
-    hallazgo "gate:$rc:$(echo "$MAL" | shasum | cut -c1-10)" "La puerta de calidad global ya no se cumple (código $rc)" "$MAL" \
+    hallazgo "gate:$rc:$(echo "$MAL" | huella)" "La puerta de calidad global ya no se cumple (código $rc)" "$MAL" \
     "La puerta de calidad global ha dejado de cumplirse. Vuelve a verificar los requisitos afectados."
   fi
 fi
@@ -83,14 +84,14 @@ if [ -z "${HERMES_SDD_SIN_RED:-}" ] && [ -f package-lock.json ]; then
   NA=$(echo "$A" | jq '[.vulnerabilities // {} | to_entries[] | select(.value.severity == "high" or .value.severity == "critical")] | length' 2>/dev/null || echo 0)
   if [ "$NA" -ge "$(umbral vulnerabilidades 1)" ]; then
     LISTA=$(echo "$A" | jq -r '[.vulnerabilities | to_entries[] | select(.value.severity == "high" or .value.severity == "critical") | "\(.key) (\(.value.severity))"] | join(", ")')
-    hallazgo "seguridad:$(echo "$LISTA" | shasum | cut -c1-10)" "$NA dependencia(s) con vulnerabilidades altas o críticas" "$LISTA" \
+    hallazgo "seguridad:$(echo "$LISTA" | huella)" "$NA dependencia(s) con vulnerabilidades altas o críticas" "$LISTA" \
       "Actualiza estas dependencias vulnerables sin cambiar el comportamiento: $LISTA."
   fi
   O=$(npm outdated --json 2>/dev/null || true); [ -n "$O" ] || O='{}'
   MAJ=$(echo "$O" | jq -r 'to_entries[] | select((.value.latest|split(".")[0]) != ((.value.current // "0")|split(".")[0])) | "\(.key) \(.value.current)→\(.value.latest)"' 2>/dev/null || true)
   NM=$(echo "$MAJ" | grep -c . || true)
   if [ "$NM" -ge "$(umbral majors 3)" ]; then
-    hallazgo "versiones:$(echo "$MAJ" | shasum | cut -c1-10)" "$NM dependencia(s) con una versión mayor nueva" "$MAJ" \
+    hallazgo "versiones:$(echo "$MAJ" | huella)" "$NM dependencia(s) con una versión mayor nueva" "$MAJ" \
       "Valora subir de versión mayor: $(echo "$MAJ" | tr '\n' ';'). Hazlo solo si los tests siguen en verde sin tocarlos."
   fi
 fi

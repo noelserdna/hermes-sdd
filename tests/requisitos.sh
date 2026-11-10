@@ -26,7 +26,7 @@ cp "$T/R.md" requirements/REQUIREMENTS.md
 # 3. la puerta de un cambio que solo modifica criterios (no añade ni quita REQ) se abre
 mkdir -p intent .sdd/hermes
 printf '# INT-001\n\n> que el título admita 120 caracteres\n' > intent/INT-001.md; echo INT-001 > .sdd/hermes/cambio-actual
-sed -i '' -E 's/^> \*\*Version:\*\* *1\.0/> **Version:** 1.1/' requirements/REQUIREMENTS.md
+sed -i.bak -E 's/^> \*\*Version:\*\* *1\.0/> **Version:** 1.1/' requirements/REQUIREMENTS.md && rm -f requirements/REQUIREMENTS.md.bak
 awk '!d && /^  - GIVEN/{sub(/THEN/, "THEN (v1.1)"); d=1} {print}' requirements/REQUIREMENTS.md > "$T/R2.md" && cp "$T/R2.md" requirements/REQUIREMENTS.md
 git add -A && git commit -qm "docs(requirements): v1.1"
 out=$(bash "$ROOT/puerta.sh" "$R" requisitos 2>&1); rc=$?

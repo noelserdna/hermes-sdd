@@ -16,13 +16,26 @@ import asyncio
 import json
 import logging
 import os
+import shutil
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 
 log = logging.getLogger("hermes_plugins.hermes_sdd")   # este prefijo llega a gateway.log
 
-PATH_CMDS = f"{Path.home()}/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+
+def _path_cmds() -> str:
+    """PATH fijo para los scripts, más los directorios donde están hermes, node y claude (nvm, ~/.npm-global… en
+    Linux/WSL no están en el fijo)."""
+    dirs = [f"{Path.home()}/.local/bin", "/opt/homebrew/bin", "/usr/local/bin", "/usr/bin", "/bin"]
+    for cmd in ("hermes", "node", "claude", "jq"):
+        p = shutil.which(cmd)
+        if p and str(Path(p).parent) not in dirs:
+            dirs.insert(0, str(Path(p).parent))
+    return ":".join(dirs)
+
+
+PATH_CMDS = _path_cmds()
 _RT: dict = {"app": None, "pendientes": {}}   # pendientes: id del mensaje ForceReply → (puerta, verbo, persona)
 
 

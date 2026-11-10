@@ -88,7 +88,7 @@ fi
 ROL=$(jq -r .rol "$ACTA"); NOMBRE=$(jq -r .nombre "$ACTA"); HEAD0=$(jq -r .head "$ACTA")
 CHANNEL="$CANAL:$ID $PRUEBA ${BOARD}/${TASK}"
 HOY=$(date +%Y-%m-%d)
-sha256() { shasum -a 256 "$1" | cut -d' ' -f1; }
+sha256() { if command -v sha256sum >/dev/null; then sha256sum "$1"; else shasum -a 256 "$1"; fi | cut -d' ' -f1; }
 etiquetar() {  # etiquetar <tag> <mensaje> — idempotente: si existe y apunta a HEAD, ya está hecho
   local tag=$1 msg=$2
   if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then

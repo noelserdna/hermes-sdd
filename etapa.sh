@@ -109,7 +109,7 @@ case "$ETAPA" in
       claude_etapa requirements-engineer "/sdd-requirements-engineer — $ARNES Escribe las necesidades y los requisitos a partir de la petición literal de intent/ (y de lo que ya haya en requirements/)."
     else RES='{"outcome":"done","reason":"requisitos ya escritos"}'; fi
     requisitos_legibles requirements-engineer sdd-requirements-engineer
-    sed -i '' -E 's/^> \*\*Status:\*\* *Approved.*/> **Status:** Review/' requirements/REQUIREMENTS.md 2>/dev/null || true
+    { sed -i.bak -E 's/^> \*\*Status:\*\* *Approved.*/> **Status:** Review/' requirements/REQUIREMENTS.md && rm -f requirements/REQUIREMENTS.md.bak; } 2>/dev/null || true
     git add requirements/ && { git diff --cached --quiet || git commit -qm "docs(requirements): requirements ready for review"; }
     P=$(puerta requisitos) || falla "no se pudo abrir la puerta de requisitos"
     fin "$RES" "Requisitos listos para revisar" "$P" ;;
