@@ -271,12 +271,18 @@ def pregunta_jev(puerta: dict) -> dict:
     criterios = {v: tipo.get("verbos", {}).get(v, f"Choose «{e}»") for v, e in verbos_jev(puerta).items()}
     # Preguntas abiertas: en auto la persona delegó sus respuestas (aprobar acepta las recomendadas) y Jev juzga si son
     # aceptables; en los demás modos, que haya preguntas ya es motivo para que decida una persona.
-    delegadas = bool(puerta.get("preguntas")) and modo_jev(puerta.get("tablero", "")) == "auto"
-    if puerta.get("preguntas") and not delegadas:
+    # En auto la persona delegó la decisión: Jev aprueba lo que responde fielmente a lo pedido y solo devuelve la puerta
+    # ante un problema concreto (instructions_auto); en consejo y piloto, ante cualquier duda.
+    auto = modo_jev(puerta.get("tablero", "")) == "auto"
+    delegadas = bool(puerta.get("preguntas")) and auto
+    if auto:
+        criterios["persona"] = q.get("persona_auto") or q.get("persona", "A person must decide")
+    elif puerta.get("preguntas"):
         criterios["persona"] = q.get("persona_preguntas") or q.get("persona", "A person must decide")
     else:
         criterios["persona"] = q.get("persona", "A person must decide")
-    instrucciones = f"{q.get('instructions', '')} {tipo.get('contexto', '')}"
+    base = (q.get("instructions_auto") if auto else None) or q.get("instructions", "")
+    instrucciones = f"{base} {tipo.get('contexto', '')}"
     if delegadas:
         instrucciones += " " + q.get("preguntas_auto", "")
     return {"decision": {"type": "choice", "criteria": criterios, "instructions": instrucciones.strip()}}

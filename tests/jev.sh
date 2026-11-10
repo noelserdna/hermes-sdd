@@ -176,11 +176,12 @@ pregunta() { py q1 <<PY
 $CABECERA
 p = json.load(open(N.indice(sys.argv[2])))
 q = N.pregunta_jev(p)["decision"]; s = N.estado_jev(p)
-print(("RECOMMENDED" in q["instructions"]), ("open questions" in q["criteria"]["persona"]), (".sdd/questions-x.md" in s["contexto"]))
+print(("RECOMMENDED" in q["instructions"]), ("open questions" in q["criteria"]["persona"]), (".sdd/questions-x.md" in s["contexto"]),
+      ("delegated this decision" in q["instructions"]), ("concrete problem" in q["criteria"]["persona"]))
 PY
 }
-modo auto demo; o=$(pregunta); [ "$o" = "True False True" ] && ok "auto con preguntas: Jev juzga las recomendadas (y las ve), sin devolver la puerta solo por haberlas" || bad "auto preguntas: $o"
-modo consejo demo; o=$(pregunta); [ "$o" = "False True True" ] && ok "consejo con preguntas: las preguntas siguen siendo motivo para una persona" || bad "consejo preguntas: $o"
+modo auto demo; o=$(pregunta); [ "$o" = "True False True True True" ] && ok "auto: el cliente delegó; Jev juzga las recomendadas y solo devuelve la puerta ante un problema concreto" || bad "auto preguntas: $o"
+modo consejo demo; o=$(pregunta); [ "$o" = "False True True False False" ] && ok "consejo: instrucción prudente y las preguntas siguen siendo motivo para una persona" || bad "consejo preguntas: $o"
 modo auto demo; aplicar q1 persona 0.99 >/dev/null
 o=$(python3 "$NUCLEO" rejuzgar q1 2>&1; jq -r 'has("jev")' "$HERMES_SDD_HOME/puertas/q1.json")
 echo "$o" | grep -q "volverá a preguntar" && echo "$o" | grep -qx false && ok "rejuzgar borra el juicio para que el gateway pregunte otra vez" || bad "rejuzgar: $o"

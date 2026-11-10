@@ -28,6 +28,24 @@ cada proyecto tiene sus cuatro botones de modo en **Proyectos**, y los ajustes g
 La configuración vive en `~/.hermes/hermes-sdd/jev.json`, nunca en el repo del proyecto, y el ejecutor tiene
 prohibido tocarla: un agente no puede darse a sí mismo más permisos.
 
+## Cómo juzga en cada modo
+
+- **consejo y piloto:** Jev es prudente. Ante cualquier duda, o si hay preguntas abiertas, recomienda que decida una
+  persona.
+- **auto:** el cliente le delegó la decisión. Aprueba cuando el trabajo responde fielmente a lo que se pidió, aunque se
+  puedan pulir detalles. Solo devuelve la puerta ante un problema concreto que pueda señalar: una necesidad sin cubrir,
+  algo inventado, una contradicción, un requisito que falla o sin verificar, o avisos y exenciones en la puerta. Con
+  preguntas abiertas, juzga si las opciones recomendadas son aceptables, porque aprobar las acepta.
+
+Calibrado el 10/11/2026 con Jev real sobre puertas que una persona aprobó y sobre copias con un defecto:
+
+| Puerta | auto |
+|---|---|
+| recetas: aceptar FASE-1 · entrega | aprueba (0,94 · 0,97): decide él |
+| hola-astro: ruta · requisitos · plan | se inclina por aprobar (0,73 · 0,59 · 0,52): por debajo del umbral, te la devuelve |
+| requisitos con una necesidad sin cubrir | persona (0,91) |
+| entrega con un Must en FAILING | persona (0,97) |
+
 ## Lo que Jev nunca hace, en ningún modo
 
 - **Rechazar o pedir cambios.** Jev elige entre las opciones que no piden un motivo escrito (aprobar, conforme,

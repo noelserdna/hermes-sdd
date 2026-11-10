@@ -3,7 +3,7 @@
   "label": "SDD",
   "description": "Método SDD: decide las puertas, mira tus proyectos, lanza uno nuevo y configura stacks y Jev (canal dashboard; firma el notario).",
   "icon": "Shield",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "tab": { "path": "/sdd", "position": "end" },
   "entry": "dist/index.js",
   "css": "dist/style.css",
