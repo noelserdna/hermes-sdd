@@ -96,6 +96,13 @@ async def formulario_y_operacion():
     m._cli = falso_cli
     (R / ".sdd/hermes/runs").mkdir(parents=True, exist_ok=True)
     (R / ".sdd/hermes/runs/x.json").write_text(json.dumps({"total_cost_usd": 1.5}))
+    tarjetas_viejas = [{"id": "t_1", "title": "Implementar FASE-0", "status": "blocked", "assignee": "sdd-estacion", "created_at": 1},
+                       {"id": "t_2", "title": "Implementar FASE-0", "status": "done", "assignee": "sdd-estacion", "created_at": 2},
+                       {"id": "t_3", "title": "Aceptar FASE-1", "status": "blocked", "assignee": "sdd-estacion", "created_at": 3}]
+    async def tarjetas_falsas(board): return tarjetas_viejas
+    real = m._tarjetas; m._tarjetas = tarjetas_falsas
+    r = await m._resumen_proyecto("demo", str(R)); m._tarjetas = real
+    ok("Parado en: Aceptar FASE-1" in r and "Implementar FASE-0" not in r, f"una tarjeta parada que se relanzó después no sale como parada ({r!r})")
     txt = await m._estado_texto()
     ok("demo" in txt and "Implementar FASE-1" in txt and "1.5 $" in txt, "/estado muestra etapa en curso y coste")
     for i in range(3):   # tres aceptaciones rápidas → aviso de aprobación por inercia

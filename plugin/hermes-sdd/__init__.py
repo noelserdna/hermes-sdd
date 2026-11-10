@@ -127,6 +127,8 @@ def _resultado_claro(resumen: str) -> str:
     quedó registrado, dónde (el tag, aparte) y qué pasa ahora."""
     principal, _, tag = resumen.partition(" — tag ")
     principal = principal.replace(" (acepto)", "").replace(" (completo)", ", haciéndolo todo")
+    principal = re.sub(r"Jev \([^()]*\) \(Agente automático \(modo (\w+)\)\)", r"Jev, en modo \1", principal)
+    principal = principal.replace("Jev, en modo auto", "Jev, en modo automático")
     negativo = bool(re.search(r"rechaz|pide cambios|ignor", principal, re.I))
     lineas = [f"{'↩️' if negativo else '✅'} {principal}."]
     if tag:
@@ -162,7 +164,9 @@ def _render(puerta: dict):
             return (f"{_cabecera(puerta)}\n{puerta.get('texto', '')}\n\n🤖 Jev lo ha decidido por ti: {etiqueta} "
                     f"(seguridad {seguro}).\n{plazo}\nSi no estás de acuerdo, deshazlo y la decisión vuelve a ti.", deshacer)
         desde = {"dashboard": " desde el panel", "local": " desde el ordenador"}.get(canal, "")
-        return (f"{_cabecera(puerta)}\n{etiqueta} — lo ha decidido {dec.get('actor', {}).get('persona', '')}{desde}"
+        quien = dec.get("actor", {}).get("persona", "")
+        quien = ((_leer(HOME / "aprobadores.json", {}) or {}).get(quien) or {}).get("nombre") or quien
+        return (f"{_cabecera(puerta)}\n{etiqueta} — lo ha decidido {quien}{desde}"
                 f"{('. Motivo: ' + texto) if texto else '.'}\n{plazo}", deshacer)
     paso = N.paso_actual(puerta)
     extra = "\n\n👀 Ya has visto la demo. Decide:" if (N.escalonada(puerta) and paso == 2) else ""
@@ -534,7 +538,10 @@ def _coste(repo: str, desde: float = 0) -> float:
 async def _resumen_proyecto(board: str, repo: str) -> str:
     ts = await _tarjetas(board)
     activa = next((t for t in ts if t.get("status") == "running"), None)
-    paradas = [t for t in ts if t.get("assignee") == "sdd-estacion" and t.get("status") in ("blocked", "triage")]
+    # Una tarjeta parada deja de contar si después se creó otra con el mismo nombre (el paso se relanzó: lanzar.sh
+    # rehacer/reintentar crean tarjetas nuevas y la vieja se queda en el tablero tal cual)
+    paradas = [t for t in ts if t.get("assignee") == "sdd-estacion" and t.get("status") in ("blocked", "triage")
+               and not any(o.get("title") == t.get("title") and (o.get("created_at") or 0) > (t.get("created_at") or 0) for o in ts)]
     aparcadas = [t for t in ts if t.get("status") == "scheduled"]
     puertas = [p for p in (_leer(f) for f in (HOME / "puertas").glob("*.json"))
                if p and p.get("tablero") == board and p.get("estado") in ("abierta", "decidida")]

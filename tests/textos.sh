@@ -117,5 +117,5 @@ PY
 )
 echo "$o" | sed -n 1p | grep -q '^✅ FASE-0 aceptada por Ana (Cliente). | 🏷 Queda guardado en el historial como «fase-0-accepted». | Sigue solo' \
   && echo "$o" | sed -n 2p | grep -q '^✅ Ruta confirmada por Ana (Cliente).' && echo "$o" | sed -n 3p | grep -q '^↩️ .*Se rehace con lo que has pedido' \
-  && echo "$o" | sed -n 4p | grep -q '🎉 Proyecto entregado.' && ok "al firmar: qué quedó registrado y qué pasa ahora, sin «— tag» en medio" || bad "resultado: $o"
+  && echo "$o" | sed -n 4p | grep -q '^✅ Entrega 1 aceptada por Jev, en modo automático. | .*🎉 Proyecto entregado.' && ok "al firmar: qué quedó registrado y qué pasa ahora, sin «— tag» en medio" || bad "resultado: $o"
 exit $fail

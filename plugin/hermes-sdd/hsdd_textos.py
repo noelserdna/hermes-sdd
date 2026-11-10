@@ -230,7 +230,7 @@ def puerta_fase(repo: Path, proyecto: str, fase: str, gate_md: str, rc: int, tes
     if filas:
         partes.append("\n".join(_lineas_veredictos(repo, filas)))
     partes.append("🛡 No se ha tocado ningún test que ya existía." if not tests_editados else
-                  f"⚠️ Se han cambiado {_plural(tests_editados, 'test que ya existía', 'tests que ya existían')}: "
+                  f"⚠️ {'Se ha cambiado 1 test que ya existía' if tests_editados == 1 else f'Se han cambiado {tests_editados} tests que ya existían'}: "
                   "conviene saber por qué antes de aceptar.")
     demo = [x for x in ((f"vídeo" if video else ""), (_plural(capturas, "captura", "capturas") if capturas else "")) if x]
     partes.append(f"🎬 Demo: {' y '.join(demo)}." if demo else "🎬 Esta fase no trae demo (ni vídeo ni capturas).")
