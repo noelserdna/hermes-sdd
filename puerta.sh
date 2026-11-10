@@ -20,8 +20,12 @@ cd "$REPO"
 case "$TIPO" in
   requisitos)
     TITULO="Requisitos"
-    TEXTO=$(awk '/^### REQ-/{sub(/^### /,""); t=$0} /\*\*Priority:\*\*/{p=$0; sub(/.*\*\*Priority:\*\* */,"",p); if(t){print "• " t " (" p ")"; t=""}}' \
-      requirements/REQUIREMENTS.md | head -20)
+    # Todos los REQ, también las restricciones (REQ-C-*), que no llevan Priority: si no, la puerta decía «4 necesidades →
+    # 3 requisitos» con una necesidad cubierta solo por restricciones, y parecía que faltaba (incidente 10/11/2026)
+    TEXTO=$(awk 'function sale(){ if(t) print "• " t " (" (t ~ /^REQ-C-/ ? "restricción" : "sin prioridad") ")"; t="" }
+      /^### REQ-/{sale(); sub(/^### /,""); t=$0; next}
+      /\*\*Priority:\*\*/{p=$0; sub(/.*\*\*Priority:\*\* */,"",p); if(t){print "• " t " (" p ")"; t=""}}
+      END{sale()}' requirements/REQUIREMENTS.md | head -20)
     NEC=$(grep -c '^### N-' requirements/CUSTOMER-NEEDS.md 2>/dev/null || echo 0)
     TEXTO="$NEC necesidades → requisitos:
 $TEXTO

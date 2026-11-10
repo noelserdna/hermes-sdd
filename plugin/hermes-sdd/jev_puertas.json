@@ -1,7 +1,7 @@
 {
-  "description": "Preguntas a Jev (TypeSafe) en las puertas del arnés (hsdd_nucleo.pregunta_jev). Una Choice por puerta entre los verbos que no piden texto y «persona» (que lo decida una persona). Jev nunca escribe un motivo, así que nunca rechaza ni pide cambios: solo puede dar por buena una puerta o devolverla a una persona. El estado es {puerta: {tipo, titulo, texto}, opciones: {verbo: etiqueta}, contexto: {fichero: texto}}.",
+  "description": "Preguntas a Jev (TypeSafe) en las puertas del arnés (hsdd_nucleo.pregunta_jev). Una Choice por puerta entre los verbos que no piden texto y «persona» (que lo decida una persona). Jev nunca escribe un motivo, así que nunca rechaza ni pide cambios: solo puede dar por buena una puerta o devolverla a una persona. El estado es {puerta: {tipo, titulo, texto}, opciones: {verbo: etiqueta}, contexto: {fichero: texto}}. En modo auto, con preguntas abiertas, Jev juzga si las opciones recomendadas son aceptables (aprobar las acepta); en los demás modos, las preguntas abiertas son motivo para que decida una persona.",
   "instructions": "You screen an approval gate of a software project on behalf of its customer. `puerta.texto` is exactly what the customer would see on the gate; `contexto` holds the documents behind it. Choose the option a careful, demanding customer would choose. Choose `persona` whenever anything is missing, doubtful, contradictory, unverified, risky, or would deserve a written comment: approving something wrong is much worse than asking the customer.",
-  "persona": "A person must decide: something is missing, extra, doubtful, unverified, contradictory or risky, or the gate shows warnings, exemptions or open questions worth a human look",
+  "persona": "A person must decide: something is missing, extra, doubtful, unverified, contradictory or risky, or the gate shows warnings or exemptions worth a human look",
   "tipos": {
     "requisitos": {
       "contexto": "requirements/CUSTOMER-NEEDS.md holds the customer's needs in their own words; requirements/REQUIREMENTS.md the requirements derived from them.",
@@ -40,5 +40,7 @@
         "cambio": "Launch a change: the findings are real problems (security, failing tests, outdated dependencies) worth fixing; the change will still pass through the customer's own gates"
       }
     }
-  }
+  },
+  "persona_preguntas": "A person must decide: something is missing, extra, doubtful, unverified, contradictory or risky, the gate shows warnings or exemptions, or it has open questions worth a human look",
+  "preguntas_auto": "The gate also lists open questions (`preguntas`), each with options and one marked as recommended. In this project the customer delegated these choices: approving the gate ACCEPTS THE RECOMMENDED OPTION of every open question. Judge whether those recommended options are acceptable: approve when each one is a reasonable reading of what the customer asked; choose `persona` only if a recommended option contradicts the customer's own words, adds something they did not ask for, or is clearly a bad choice. Having open questions is NOT by itself a reason to choose `persona`."
 }

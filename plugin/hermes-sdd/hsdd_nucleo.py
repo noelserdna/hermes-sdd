@@ -269,9 +269,17 @@ def pregunta_jev(puerta: dict) -> dict:
     q = _preguntas_jev()
     tipo = (q.get("tipos") or {}).get(puerta.get("tipo", ""), {})
     criterios = {v: tipo.get("verbos", {}).get(v, f"Choose «{e}»") for v, e in verbos_jev(puerta).items()}
-    criterios["persona"] = q.get("persona", "A person must decide")
-    return {"decision": {"type": "choice", "criteria": criterios,
-                         "instructions": f"{q.get('instructions', '')} {tipo.get('contexto', '')}".strip()}}
+    # Preguntas abiertas: en auto la persona delegó sus respuestas (aprobar acepta las recomendadas) y Jev juzga si son
+    # aceptables; en los demás modos, que haya preguntas ya es motivo para que decida una persona.
+    delegadas = bool(puerta.get("preguntas")) and modo_jev(puerta.get("tablero", "")) == "auto"
+    if puerta.get("preguntas") and not delegadas:
+        criterios["persona"] = q.get("persona_preguntas") or q.get("persona", "A person must decide")
+    else:
+        criterios["persona"] = q.get("persona", "A person must decide")
+    instrucciones = f"{q.get('instructions', '')} {tipo.get('contexto', '')}"
+    if delegadas:
+        instrucciones += " " + q.get("preguntas_auto", "")
+    return {"decision": {"type": "choice", "criteria": criterios, "instructions": instrucciones.strip()}}
 
 
 def estado_jev(puerta: dict, max_chars: int = 90000) -> dict:
@@ -292,6 +300,12 @@ def estado_jev(puerta: dict, max_chars: int = 90000) -> dict:
             continue
         contexto[f] = t[:max(0, resto)]
         resto -= len(contexto[f])
+    for f in sorted(repo.glob(".sdd/questions-*.md")) if puerta.get("preguntas") else []:
+        try:   # las preguntas abiertas con sus opciones (la recomendada, marcada)
+            contexto[str(f.relative_to(repo))] = f.read_text(errors="replace")[:max(0, resto)]
+            resto -= len(contexto[str(f.relative_to(repo))])
+        except OSError:
+            pass
     if puerta.get("hallazgos"):
         contexto["hallazgos"] = json.dumps(puerta["hallazgos"], ensure_ascii=False)[:20000]
     return {"puerta": {k: puerta.get(k) for k in ("tipo", "titulo", "texto")},
@@ -336,6 +350,23 @@ def aplicar_jev(gid: str, juicio: dict) -> dict:
                           {k: v for k, v in prueba.items() if v})
 
 
+def rejuzgar_jev(gid: str) -> dict:
+    """Borra el juicio de Jev de una puerta abierta para que el gateway le vuelva a preguntar (p. ej. tras cambiar el
+    modo o sus instrucciones). No vale para una puerta en la que una persona deshizo a Jev."""
+    with cerrojo():
+        idx = indice(gid)
+        puerta = leer(idx)
+        if not puerta:
+            raise Rechazo("No conozco esta puerta")
+        if puerta.get("estado") != "abierta":
+            raise Rechazo("Solo se puede volver a preguntar a Jev en una puerta abierta")
+        if puerta.get("jev_vetado"):
+            raise Rechazo("Una persona deshizo a Jev en esta puerta: ya solo la decide una persona")
+        puerta.pop("jev", None)
+        escribir(idx, puerta)
+        return puerta
+
+
 def describir_jev(puerta: dict) -> str:
     """Una línea para los canales: qué dijo Jev en esta puerta."""
     j = puerta.get("jev") or {}
@@ -365,6 +396,8 @@ if __name__ == "__main__":   # CLI del notario y de jev.sh
                 ok, motivo = False, f"p {p} por debajo del umbral"
             print(f"{modo_jev(puerta.get('tablero', ''))}" if ok else motivo)
             sys.exit(0 if ok else 1)
+        if a[:1] == ["rejuzgar"]:         # rejuzgar <puerta>
+            rejuzgar_jev(a[1]); print(f"El gateway volverá a preguntar a Jev por {a[1]} en unos segundos"); sys.exit(0)
         if a[:1] == ["modo"]:             # modo [<modo> [<tablero>]]
             if len(a) > 1:
                 poner_modo(a[1], a[2] if len(a) > 2 else None)

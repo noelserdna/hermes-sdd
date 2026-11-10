@@ -168,6 +168,37 @@ PY
 )
 [[ "$o" == "Jev apagado"* ]] && ok "sin clave de TypeSafe, Jev queda apagado y decide una persona" || bad "sin clave: $o"
 
+# ── 4b. preguntas abiertas según el modo, y volver a preguntar ──────────────────────────────────────────────────
+TAB=demo; puerta q1 requisitos
+jq '.preguntas = [{"n":1,"id":"Q-x-001","opciones":["A","B"],"recomendada":"A"}]' "$HERMES_SDD_HOME/puertas/q1.json" > "$T/x" && mv "$T/x" "$HERMES_SDD_HOME/puertas/q1.json"
+mkdir -p .sdd && printf '## Q-x-001 [OPEN]\nQuestion: ¿Texto?\n  A) Hola (recommended)\n  B) Adiós\n' > .sdd/questions-x.md
+pregunta() { py q1 <<PY
+$CABECERA
+p = json.load(open(N.indice(sys.argv[2])))
+q = N.pregunta_jev(p)["decision"]; s = N.estado_jev(p)
+print(("RECOMMENDED" in q["instructions"]), ("open questions" in q["criteria"]["persona"]), (".sdd/questions-x.md" in s["contexto"]))
+PY
+}
+modo auto demo; o=$(pregunta); [ "$o" = "True False True" ] && ok "auto con preguntas: Jev juzga las recomendadas (y las ve), sin devolver la puerta solo por haberlas" || bad "auto preguntas: $o"
+modo consejo demo; o=$(pregunta); [ "$o" = "False True True" ] && ok "consejo con preguntas: las preguntas siguen siendo motivo para una persona" || bad "consejo preguntas: $o"
+modo auto demo; aplicar q1 persona 0.99 >/dev/null
+o=$(python3 "$NUCLEO" rejuzgar q1 2>&1; jq -r 'has("jev")' "$HERMES_SDD_HOME/puertas/q1.json")
+echo "$o" | grep -q "volverá a preguntar" && echo "$o" | grep -qx false && ok "rejuzgar borra el juicio para que el gateway pregunte otra vez" || bad "rejuzgar: $o"
+jq '.jev_vetado = {"por":"andres"}' "$HERMES_SDD_HOME/puertas/q1.json" > "$T/x" && mv "$T/x" "$HERMES_SDD_HOME/puertas/q1.json"
+python3 "$NUCLEO" rejuzgar q1 >/dev/null 2>&1 && bad "rejuzga una puerta vetada" || ok "rejuzgar no vale si una persona deshizo a Jev"
+rm -f .sdd/questions-x.md
+
+# ── 4c. la puerta de requisitos lista también las restricciones (REQ-C) ───────────────────────────────────────────
+cat >> requirements/REQUIREMENTS.md <<'R'
+
+### REQ-C-901: Sin servidor
+- **Statement:** The tool runs without a server.
+- **Needs:** N-001
+R
+git add -A && git commit -qm "test: restricción"
+o=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" requisitos); 
+jq -r '.texto' "$HERMES_SDD_HOME/puertas/$o.json" | grep -q '^• REQ-C-901: Sin servidor (restricción)$' && ok "la puerta de requisitos muestra las restricciones" || bad "REQ-C: $(jq -r .texto "$HERMES_SDD_HOME/puertas/$o.json" | head -12)"
+
 # ── 5. jev.sh ────────────────────────────────────────────────────────────────────────────────────────────────────
 bash "$ROOT/jev.sh" umbral 0.8 >/dev/null && bash "$ROOT/jev.sh" piloto ruta,plan,mantenimiento >/dev/null && bash "$ROOT/jev.sh" recetas piloto >/dev/null
 o=$(jq -c '[.umbral, .piloto, .proyectos.recetas, .proyectos.demo]' "$HERMES_SDD_HOME/jev.json")

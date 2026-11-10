@@ -7,6 +7,7 @@
 #   jev.sh umbral <0..1>           seguridad mínima de Jev para decidir él (por defecto 0.9)
 #   jev.sh piloto <tipo>[,<tipo>]  puertas que decide en modo piloto (por defecto ruta,plan)
 #   jev.sh probar <puerta>         pregunta a Jev por una puerta abierta y enseña su respuesta, sin decidir nada
+#   jev.sh rejuzgar <puerta>       el gateway vuelve a preguntar a Jev por una puerta abierta (y decide si el modo lo deja)
 #
 # Modos: humano (Jev no interviene) · consejo (recomienda; decides tú) · piloto (decide las puertas de "piloto") ·
 #        auto (decide cualquier puerta, FASEs y entrega incluidas). En todos, Jev solo da por buena una puerta: pedir
@@ -29,6 +30,7 @@ case "${1:-}" in
     [ -n "${2:-}" ] || { echo "uso: jev.sh piloto ruta,plan" >&2; exit 2; }
     for t in ${2//,/ }; do case $t in requisitos|ruta|plan|fase|entrega|mantenimiento) ;; *) echo "tipo desconocido: $t" >&2; exit 2;; esac; done
     ajustar ".piloto = (\"$2\" | split(\",\"))" ;;
+  rejuzgar) python3 "$NUCLEO" rejuzgar "${2:?uso: jev.sh rejuzgar <puerta>}" ;;
   probar)
     P="$HERMES_SDD_HOME/puertas/${2:?uso: jev.sh probar <puerta>}.json"
     [ -f "$P" ] || { echo "No conozco la puerta $2" >&2; exit 2; }
