@@ -56,7 +56,8 @@ def config() -> dict:
     defecto = cfg.get("stack_defecto") if any(s["id"] == cfg.get("stack_defecto") for s in stacks) else stacks[0]["id"]
     carpeta = cfg.get("carpeta") or CARPETA_DEFECTO
     return {"carpeta": carpeta, "carpeta_resuelta": str(Path(carpeta).expanduser()), "carpeta_por_defecto": CARPETA_DEFECTO,
-            "stack_defecto": defecto, "stacks": stacks}
+            "stack_defecto": defecto, "stacks": stacks, "deshacer_s": N.deshacer_s(),
+            "deshacer_rango": [N.DESHACER_MIN_S, N.DESHACER_MAX_S], "deshacer_por_defecto": N.DESHACER_DEFECTO_S}
 
 
 def _stack_valido(s: dict) -> dict:
@@ -77,7 +78,8 @@ def _stack_valido(s: dict) -> dict:
     return s
 
 
-def guardar_config(carpeta: str | None = None, stack_defecto: str | None = None, stacks: list | None = None) -> dict:
+def guardar_config(carpeta: str | None = None, stack_defecto: str | None = None, stacks: list | None = None,
+                   deshacer_s=None) -> dict:
     """Cambia lo que venga (lo demás se queda como está). Valida antes de escribir nada."""
     actual = N.leer(N.HOME / "sdd.json", {}) or {}
     nuevo = dict(actual)
@@ -98,6 +100,14 @@ def guardar_config(carpeta: str | None = None, stack_defecto: str | None = None,
         if not any(s["id"] == stack_defecto for s in (nuevo.get("stacks") or STACKS_DEFECTO)):
             raise Rechazo(f"No hay ningún stack {stack_defecto}")
         nuevo["stack_defecto"] = stack_defecto
+    if deshacer_s is not None:
+        try:
+            s = int(str(deshacer_s).strip())
+        except ValueError:
+            raise Rechazo("La ventana para deshacer es un número de segundos")
+        if not N.DESHACER_MIN_S <= s <= N.DESHACER_MAX_S:
+            raise Rechazo(f"La ventana para deshacer va de {N.DESHACER_MIN_S} s a {N.DESHACER_MAX_S} s (un día)")
+        nuevo["deshacer_s"] = s
     (N.HOME).mkdir(parents=True, exist_ok=True)
     N.escribir(N.HOME / "sdd.json", nuevo)
     return config()
@@ -223,6 +233,7 @@ if __name__ == "__main__":   # CLI de nuevo.sh
     n = sub.add_parser("nuevo"); n.add_argument("nombre"); n.add_argument("que")
     n.add_argument("--stack"); n.add_argument("--carpeta"); n.add_argument("--jev"); n.add_argument("--sin-lanzar", action="store_true")
     c = sub.add_parser("config"); c.add_argument("--carpeta"); c.add_argument("--stack-defecto")
+    c.add_argument("--deshacer", metavar="SEGUNDOS")
     sub.add_parser("stacks")
     a = ap.parse_args()
     try:
@@ -232,10 +243,11 @@ if __name__ == "__main__":   # CLI de nuevo.sh
             if r["salida"]:
                 print(r["salida"])
         elif a.cmd == "config":
-            if a.carpeta is not None or a.stack_defecto is not None:
-                guardar_config(carpeta=a.carpeta, stack_defecto=a.stack_defecto)
+            if a.carpeta is not None or a.stack_defecto is not None or a.deshacer is not None:
+                guardar_config(carpeta=a.carpeta, stack_defecto=a.stack_defecto, deshacer_s=a.deshacer)
             c = config()
-            print(f"Carpeta por defecto: {c['carpeta']} ({c['carpeta_resuelta']})\nStack por defecto: {c['stack_defecto']}")
+            print(f"Carpeta por defecto: {c['carpeta']} ({c['carpeta_resuelta']})\nStack por defecto: {c['stack_defecto']}\n"
+                  f"Ventana para deshacer: {c['deshacer_s']} s ({N.duracion(c['deshacer_s'])})")
         else:
             c = config()
             for s in c["stacks"]:

@@ -38,7 +38,7 @@ se decidió. Aquí es igual, con un papel por pieza:
 |---|---|---|---|
 | **Propone** | el ejecutor (Claude Code con las skills del método) | hace una etapa entera sin preguntarte a mitad | `etapa.sh`, `executors/` |
 | **Pregunta** | la puerta | te enseña el resultado y te pide una decisión con botones | `puerta.sh`, `plugin/` |
-| **Decide** | tú (o quien esté autorizado) | un toque; tienes 3 min para deshacer | Telegram o el panel |
+| **Decide** | tú (o quien esté autorizado) | un toque; tienes 3 min para deshacer (configurable) | Telegram o el panel |
 | **Firma** | el notario (sin IA) | comprueba quién decidió y sobre qué commit, lo registra y pone un tag de git | `firmar.sh` |
 | **Orquesta** | el kanban de Hermes (sin IA) | encadena las etapas: un tablero por proyecto | `lanzar.sh` |
 
@@ -212,7 +212,7 @@ La pestaña **SDD** tiene cuatro secciones:
 | **Decisiones** | decidir las puertas abiertas (las mismas que en Telegram) |
 | **Proyectos** | ver tus proyectos, sus hitos y el modo de Jev de cada uno |
 | **＋ Nuevo** | lanzar un proyecto nuevo: nombre, qué quieres, stack y modo de Jev |
-| **Configuración** | carpeta por defecto de los proyectos, stacks (ver, editar, añadir) y ajustes de Jev |
+| **Configuración** | carpeta por defecto de los proyectos, stacks (ver, editar, añadir), ventana para deshacer (en segundos) y ajustes de Jev |
 
 | Puerta | Qué ves | Qué puedes hacer |
 |---|---|---|

@@ -17,7 +17,27 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 HOME = Path(os.environ.get("HERMES_SDD_HOME", Path.home() / ".hermes" / "hermes-sdd"))
-DESHACER_S = int(os.environ.get("HERMES_SDD_DESHACER_S", "180"))
+DESHACER_DEFECTO_S = 180
+DESHACER_MIN_S, DESHACER_MAX_S = 10, 86400
+
+
+def deshacer_s() -> int:
+    """Segundos para deshacer una decisión antes de que el notario la firme. Se lee en cada decisión: cambiarlo no pide
+    reiniciar nada. HERMES_SDD_DESHACER_S (pruebas, operación) manda sobre sdd.json → "deshacer_s"."""
+    if os.environ.get("HERMES_SDD_DESHACER_S"):
+        return int(os.environ["HERMES_SDD_DESHACER_S"])
+    try:
+        v = int((leer(HOME / "sdd.json", {}) or {}).get("deshacer_s") or DESHACER_DEFECTO_S)
+    except (TypeError, ValueError):
+        return DESHACER_DEFECTO_S
+    return min(max(v, DESHACER_MIN_S), DESHACER_MAX_S)
+
+
+def duracion(s: int) -> str:
+    """180 → «3 min», 90 → «1 min 30 s», 45 → «45 s», 7200 → «2 h»."""
+    h, m, s = s // 3600, s % 3600 // 60, s % 60
+    partes = [f"{h} h"] * bool(h) + [f"{m} min"] * bool(m) + [f"{s} s"] * bool(s)
+    return " ".join(partes) or "0 s"
 
 
 def leer(p: Path, defecto=None):
@@ -99,7 +119,7 @@ def _registrar(idx: Path, puerta: dict, verbo: str, texto: str, actor: dict, pru
     escribir(dirdec / f"{puerta['id']}.json", decision)
     if puerta.get("ver_at"):
         decision["dwell_s"] = int(time.time() - puerta["ver_at"])
-    puerta.update(estado="decidida", decision=decision, firmar_en=time.time() + DESHACER_S)
+    puerta.update(estado="decidida", decision=decision, firmar_en=time.time() + deshacer_s())
     escribir(idx, puerta)
     return puerta
 

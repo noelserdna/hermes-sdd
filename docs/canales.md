@@ -9,7 +9,7 @@ identidad de ese canal pertenece a la persona en `aprobadores.json` y firma.
 canal ──gesto──▶ hsdd_nucleo.decidir(puerta, verbo, texto, persona, canal, id, prueba)
                    · puerta abierta · persona autorizada en ESE canal · demo vista antes del paso 2
                    · motivo obligatorio donde toca · respuestas del formulario Q1·A…
-                 ──▶ <repo>/.sdd/hermes/decisiones/<puerta>.json  +  ventana de deshacer (3 min)
+                 ──▶ <repo>/.sdd/hermes/decisiones/<puerta>.json  +  ventana de deshacer (180 s por defecto; SDD → Configuración)
 gateway ─────────▶ firmar.sh (notario)  ──▶ registro, commit, tag, tarjeta, siguiente tramo
 ```
 

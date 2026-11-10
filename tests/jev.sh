@@ -141,6 +141,23 @@ PY
 [ "$o" = "decidida acepto 0.93 jev-falso" ] && ok "el gateway pregunta a Jev con sdd-jev.mjs y aplica su respuesta ($o)" || bad "gateway: $o"
 jq -e '.state.contexto["requirements/REQUIREMENTS.md"] and .state.contexto["requirements/CUSTOMER-NEEDS.md"] and (.questions.decision.criteria | keys == ["acepto","persona"])' \
   "$T/visto.json" >/dev/null && ok "Jev recibe necesidades y requisitos, y solo puede elegir acepto o persona" || bad "lo que ve Jev: $(head -c 300 "$T/visto.json")"
+# Instalado, el arnés está detrás de un enlace (actual → versión): sdd-jev.mjs debe ejecutarse igual (incidente 10/11/2026:
+# salía con 0 y sin salida, y la puerta quedaba en «Jev no respondió»)
+ln -s "$ROOT" "$T/actual"
+o=$(TYPESAFE_API_KEY= node "$T/actual/metodo/scripts/sdd-jev.mjs" status 2>&1); rc=$?
+[ $rc -eq 3 ] && echo "$o" | grep -q "disabled" && ok "sdd-jev.mjs llamado a través de un enlace sí se ejecuta" || bad "enlace: rc=${rc} «${o}»"
+echo "{\"root\": \"$T/actual\"}" > "$HERMES_SDD_HOME/instalacion.json"
+consulta() { python3 - "$ROOT" <<'PY'
+import asyncio, importlib.util, json, sys
+from pathlib import Path
+spec = importlib.util.spec_from_file_location("hsdd", Path(sys.argv[1]) / "plugin/hermes-sdd/__init__.py"); m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+r = asyncio.run(m._consultar_jev(json.loads((m.HOME / "puertas" / "c1.json").read_text())))
+print(r.get("error", "")[:40] if r.get("error") else f"{r.get('choice')} {r.get('p')}")
+PY
+}
+o=$(consulta); [ "$o" = "acepto 0.93" ] && ok "el gateway consulta a Jev con el arnés instalado detrás de un enlace" || bad "gateway con enlace: $o"
+o=$(TYPESAFE_API_KEY= consulta); [[ "$o" == "Jev apagado"* ]] && ok "con el enlace y sin clave: «Jev apagado», no «sin respuesta»" || bad "apagado con enlace: $o"
+echo "{\"root\": \"$ROOT\"}" > "$HERMES_SDD_HOME/instalacion.json"
 o=$(bash "$ROOT/jev.sh" probar c1 2>&1); echo "$o" | grep -q "Jev elige: acepto (p 0.93" && ok "jev.sh probar enseña la respuesta sin decidir" || bad "probar: $o"
 o=$(TYPESAFE_API_KEY= python3 - "$ROOT" <<'PY'
 import asyncio, importlib.util, json, sys

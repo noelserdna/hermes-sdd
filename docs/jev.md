@@ -44,7 +44,8 @@ prohibido tocarla: un agente no puede darse a sí mismo más permisos.
 ## Lo que ves cuando decide Jev
 
 La puerta te llega igual, por Telegram y al panel, pero ya decidida: «🤖 Ha decidido Jev (modo auto, p 0.94)», con
-el botón **↩ Deshacer**. Tienes la misma ventana que con tus decisiones (3 minutos) y puede deshacerla cualquier
+el botón **↩ Deshacer**. Tienes la misma ventana que con tus decisiones (180 s por defecto, configurable en **SDD → Configuración** o con
+`nuevo.sh config --deshacer SEGUNDOS`) y puede deshacerla cualquier
 persona autorizada. Una puerta en la que deshaces a Jev ya solo la decide una persona.
 
 Cuando Jev no decide, la puerta llega con tus botones de siempre y una línea de consejo:

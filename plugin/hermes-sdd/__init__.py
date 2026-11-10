@@ -184,7 +184,7 @@ async def _decidir(bot, gid: str, verbo: str, texto: str, user, persona: str, pr
     except N.Rechazo as e:
         return str(e)
     await _sincronizar(bot, puerta)
-    return "Decisión registrada; tienes unos minutos para deshacerla"
+    return f"Decisión registrada; tienes {N.duracion(N.deshacer_s())} para deshacerla"
 
 
 async def _on_boton(update, context) -> None:

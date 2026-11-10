@@ -78,4 +78,24 @@ rechazo
 rechazo
 rechazo" ] && ok "stacks: se añaden y se validan (test_file con {file}, id, sin repetir)" || bad "stacks: $o"
 o=$($NUEVO api-pagos "$QUE" 2>&1); grep -q '^- test: go test ./...$' "$T/proyectos/api-pagos/AGENTS.md" && ok "un stack añadido por ti se usa en el AGENTS.md" || bad "stack propio: $o"
+
+# ── ventana para deshacer, en segundos ───────────────────────────────────────────────────────────────────────────
+unset HERMES_SDD_DESHACER_S
+o=$($NUEVO config --deshacer 90 2>&1); echo "$o" | grep -q "Ventana para deshacer: 90 s (1 min 30 s)" && ok "nuevo.sh config --deshacer guarda los segundos" || bad "deshacer: $o"
+o=$($NUEVO config --deshacer 5 2>&1) && bad "acepta 5 s" || { echo "$o" | grep -q "va de 10 s" && ok "menos de 10 s: rechazado" || bad "5 s: $o"; }
+o=$($NUEVO config --deshacer tres 2>&1) && bad "acepta texto" || ok "algo que no es un número: rechazado"
+o=$(python3 - "$ROOT/plugin/hermes-sdd/hsdd_nucleo.py" "$T" <<'PY2'
+import importlib.util, json, sys, time
+from pathlib import Path
+spec = importlib.util.spec_from_file_location("hsdd_nucleo", sys.argv[1]); N = importlib.util.module_from_spec(spec); spec.loader.exec_module(N)
+(N.HOME / "puertas").mkdir(parents=True, exist_ok=True)
+(N.HOME / "aprobadores.json").write_text(json.dumps({"yo": {"nombre": "Yo", "rol": "Cliente", "canales": {"local": "u"}}}))
+repo = Path(sys.argv[2]) / "r"; repo.mkdir(exist_ok=True)
+(N.HOME / "puertas" / "d1.json").write_text(json.dumps({"id": "d1", "tipo": "plan", "repo": str(repo), "estado": "abierta",
+    "opciones": [{"verbo": "conforme", "etiqueta": "Conforme"}]}))
+antes = time.time(); p = N.decidir("d1", "conforme", "", "yo", "local", "u", {})
+print(round(p["firmar_en"] - antes), N.duracion(N.deshacer_s()))
+PY2
+)
+[ "$o" = "90 1 min 30 s" ] && ok "una decisión nueva se firma pasados los segundos configurados (sin reiniciar)" || bad "firmar_en: $o"
 exit $fail

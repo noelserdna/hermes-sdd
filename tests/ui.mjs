@@ -46,6 +46,7 @@ const cfg = {
   carpeta: '~/proyectos-sdd', carpeta_resuelta: '/Users/x/proyectos-sdd', carpeta_por_defecto: '~/proyectos-sdd', stack_defecto: 'web-astro',
   stacks: [{ id: 'web-vite', nombre: 'Web con Vite', descripcion: 'd1', stack: 'JS + Vite', test: 'npm test' },
            { id: 'web-astro', nombre: 'Web con Astro', descripcion: 'Web de contenido', stack: 'Astro + TS', test: 'npm test', server: 'npx astro dev' }],
+  deshacer_s: 90, deshacer_rango: [10, 86400], deshacer_por_defecto: 180,
   jev: { defecto: 'humano', umbral: 0.9, piloto: ['ruta', 'plan'] }, tipos_puerta: ['requisitos', 'ruta', 'plan', 'fase', 'entrega', 'mantenimiento'] }
 html = pinta(Nuevo, { cfg, alCrear: () => {} })
 ok(html.includes('¿Qué quieres construir?') && html.includes('Web con Astro') && html.includes('Web de contenido') && html.includes('Lanzar'),
@@ -57,4 +58,5 @@ html = pinta(Configuracion, { cfg, setCfg: () => {} })
 ok(html.includes('Carpeta por defecto') && html.includes('/Users/x/proyectos-sdd'), 'Configuración: carpeta por defecto')
 ok(html.includes('Stacks') && html.includes('por defecto') && html.includes('Usar por defecto') && html.includes('Añadir stack'), 'Configuración: stacks editables')
 ok(html.includes('Modo por defecto') && html.includes('umbral') && html.includes('mantenimiento'), 'Configuración: ajustes de Jev')
+ok(html.includes('Ventana para deshacer') && html.includes('value="90"') && html.includes('1 min 30 s'), 'Configuración: ventana para deshacer en segundos')
 process.exit(fallos ? 1 : 0)

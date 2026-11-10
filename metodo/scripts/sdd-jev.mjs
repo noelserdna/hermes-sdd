@@ -36,7 +36,7 @@
 //       chars, well under Jev's 32k-token state budget) for `judge`.
 // Environment: TYPESAFE_API_KEY, SDD_JEV=off, SDD_JEV_MODEL (default jev-latest), SDD_JEV_URL (tests).
 // Exit codes: 0 ok · 1 some items failed · 2 usage or input error · 3 disabled (skills fall back to the LLM).
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync, realpathSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -476,6 +476,13 @@ async function main() {
   die(`unknown command ${cmd}`);
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+// Compare real paths: the harness is installed behind a symlink (~/.hermes/hermes-sdd/actual → <version>) and Node
+// resolves it for import.meta.url, so a plain path comparison would skip main() and exit 0 with no output.
+function isMain() {
+  if (!process.argv[1]) return false;
+  try { return realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url)); }
+  catch { return path.resolve(process.argv[1]) === fileURLToPath(import.meta.url); }
+}
+if (isMain()) {
   main().then((c) => process.exit(c || 0), (e) => die(String(e.stack || e)));
 }

@@ -128,6 +128,11 @@ ok(r["carpeta"] == str(T / "proys") and r["stack_defecto"] == "python", "config:
 ok(d.post(f"{B}/config", json={"carpeta": "relativa"}).status_code == 409, "config: una carpeta relativa se rechaza")
 ok(d.post(f"{B}/config", json={"stacks": []}).status_code == 409, "config: no se puede quedar sin stacks")
 ok(cliente(host="10.0.0.5").post(f"{B}/config", json={"carpeta": "/tmp"}).status_code == 403, "config: nadie de fuera la cambia")
+os.environ.pop("HERMES_SDD_DESHACER_S")
+r = d.post(f"{B}/config", json={"deshacer_s": 300}).json()
+ok(r["deshacer_s"] == 300, "config: la ventana para deshacer se guarda en segundos")
+ok(d.post(f"{B}/config", json={"deshacer_s": 3}).status_code == 409, "config: una ventana de menos de 10 s se rechaza")
+os.environ["HERMES_SDD_DESHACER_S"] = "180"
 r = d.post(f"{B}/jev/ajustes", json={"defecto": "consejo", "umbral": 0.95, "piloto": ["plan", "ruta"]}).json()
 ok(r["defecto"] == "consejo" and r["umbral"] == 0.95 and r["piloto"] == ["ruta", "plan"], "Jev: modo por defecto, umbral y puertas del piloto")
 ok(d.post(f"{B}/jev/ajustes", json={"umbral": 0.2}).status_code == 409, "Jev: un umbral por debajo de 0.5 se rechaza")

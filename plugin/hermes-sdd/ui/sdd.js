@@ -12,6 +12,10 @@ function crearSDD(E) {
     auto: 'Jev decide cualquier puerta, FASEs y entrega incluidas. Rechazar o pedir cambios sigue siendo tuyo.'
   }
   const mensaje = e => String((e && e.message) || e)
+  const duracion = s => {   // 180 → «3 min», 90 → «1 min 30 s»
+    const hh = Math.floor(s / 3600), mm = Math.floor((s % 3600) / 60), ss = s % 60
+    return [hh && `${hh} h`, mm && `${mm} min`, ss && `${ss} s`].filter(Boolean).join(' ') || '0 s'
+  }
 
   const S = {
     pagina: { padding: '12px 4px', display: 'flex', flexDirection: 'column', gap: 12 },
@@ -237,6 +241,10 @@ function crearSDD(E) {
     const [carpeta, setCarpeta] = useState(cfg.carpeta)
     const [editando, setEditando] = useState(null)   // id del stack, o '+' para uno nuevo
     const [umbral, setUmbral] = useState(String(cfg.jev.umbral))
+    const [deshacer, setDeshacer] = useState(String(cfg.deshacer_s))
+    const segundos = Number(deshacer)
+    const [minS, maxS] = cfg.deshacer_rango || [10, 86400]
+    const deshacerValido = Number.isInteger(segundos) && segundos >= minS && segundos <= maxS
     const a = useAccion()
     const guardar = (cuerpo, aviso) => a.ejecutar(() => api.post('/config', cuerpo), r => { setCfg(r); setEditando(null); E.avisar(aviso) })
     const jev = (cuerpo, aviso) => a.ejecutar(() => api.post('/jev/ajustes', cuerpo), j => { setCfg({ ...cfg, jev: j }); E.avisar(aviso) })
@@ -251,6 +259,20 @@ function crearSDD(E) {
           tono: 'principal', disabled: a.ocupado || carpeta === cfg.carpeta,
           onClick: () => guardar({ carpeta }, 'Carpeta por defecto guardada')
         }, 'Guardar carpeta'))),
+      h(Tarjeta, { titulo: '⏱ Ventana para deshacer' },
+        h(Campo, {
+          etiqueta: 'Segundos desde que decides (tú o Jev) hasta que el notario firma',
+          ayuda: deshacerValido
+            ? `${duracion(segundos)}. Durante ese tiempo la decisión se puede deshacer; después se firma y ya no. Por defecto, ${cfg.deshacer_por_defecto} s.`
+            : `Un número entero de segundos, entre ${minS} y ${maxS}.`
+        },
+          h('span', { style: S.fila },
+            h(C.Campo, { value: deshacer, onChange: e => setDeshacer(e.target.value.trim()), style: { maxWidth: 120 } }),
+            h(C.Boton, {
+              tono: 'principal', disabled: a.ocupado || !deshacerValido || segundos === cfg.deshacer_s,
+              onClick: () => guardar({ deshacer_s: segundos }, `Ventana para deshacer: ${duracion(segundos)}`)
+            }, 'Guardar'))),
+        h('div', { style: S.meta }, 'Se aplica a las decisiones nuevas; las que ya esperan su firma mantienen su hora.')),
       h(Tarjeta, { titulo: '🧱 Stacks' },
         h('div', { style: S.meta }, 'Lo que elijas al crear un proyecto se escribe en su AGENTS.md (SDD Stack Profile): el ejecutor construye con ese stack y ejecuta esos tests.'),
         cfg.stacks.map(s => editando === s.id
