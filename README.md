@@ -100,7 +100,7 @@ Qué deja instalado:
 
 - Una copia del arnés en `~/.hermes/hermes-sdd/<versión>`, con un enlace `actual`.
 - `~/.hermes/hermes-sdd/aprobadores.json`: tú como persona que decide, con tu id de Telegram.
-- El plugin `hermes-sdd`: Telegram y la pestaña «Puertas SDD» del panel.
+- El plugin `hermes-sdd`: Telegram y la pestaña «SDD» del panel web y de Hermes Desktop.
 - Dos perfiles de Hermes con permisos mínimos y sin tus tokens: `sdd-estacion`, que solo ejecuta etapas y no decide
   nada, y `sdd-ejecutor`, para etapas ligeras.
 
@@ -145,6 +145,30 @@ Cuesta 0 $ y tardas lo que tardes en decidir. Para ver lo que quedó: `git -C ~/
 
 ## 4. Un proyecto de verdad
 
+**Lo más fácil:** pestaña **SDD → ＋ Nuevo** (en el panel o en Hermes Desktop), o desde Telegram:
+
+```
+/nuevo bogota web-astro Una web para turistas con los barrios de Bogotá y qué ver en cada uno
+```
+
+o desde la terminal:
+
+```bash
+bash ~/.hermes/hermes-sdd/actual/nuevo.sh bogota "Una web para turistas…" --stack web-astro [--jev consejo]
+```
+
+Las tres hacen lo mismo:
+
+1. Crean `<carpeta por defecto>/<nombre>` con git. La carpeta por defecto es `~/proyectos-sdd`; se cambia en
+   **Configuración** o con `nuevo.sh config --carpeta DIR`.
+2. Escriben `AGENTS.md` con el Stack Profile del stack elegido y tu petición, tal cual, en `intent/INT-001.md`.
+3. Llaman a `lanzar.sh iniciar`, que crea el tablero del kanban y la primera tarjeta.
+
+Lo primero que te llega es la puerta de requisitos. Los stacks (`web-vite`, `web-astro`, `node-ts`, `python` y los
+que añadas) se editan en **Configuración** o en `~/.hermes/hermes-sdd/sdd.json`.
+
+**A mano**, si ya tienes el repo preparado:
+
 1. **Prepara el repo** (un repo git sin cambios pendientes):
    - `AGENTS.md` con su sección `## SDD Stack Profile`, que le dice al método cómo ejecutar tus tests. Parte de la
      plantilla [`templates/AGENTS.md`](templates/AGENTS.md):
@@ -174,13 +198,21 @@ Cuesta 0 $ y tardas lo que tardes en decidir. Para ver lo que quedó: `git -C ~/
 
 ## 5. Decidir: las puertas
 
-Cada puerta te llega por **Telegram** y aparece también en la pestaña «Puertas SDD» del **panel web**
+Cada puerta te llega por **Telegram** y aparece también en la pestaña **SDD → Decisiones** del **panel web**
 (`hermes dashboard`) y de **Hermes Desktop**. Puedes decidir en cualquiera: al decidir en uno, los otros se
 actualizan.
 
 **Hermes Desktop:** la pestaña viene con el plugin, pero la primera vez está apagada. En la app, ve a
-**Capabilities → Plugins**, pulsa **Rescan** y activa «Puertas SDD». Aparece en la barra lateral y en ⌘K («Abrir
-Puertas SDD»).
+**Capabilities → Plugins**, pulsa **Rescan** y activa «SDD». Aparece en la barra lateral y en ⌘K («Abrir SDD»).
+
+La pestaña **SDD** tiene cuatro secciones:
+
+| Sección | Qué haces ahí |
+|---|---|
+| **Decisiones** | decidir las puertas abiertas (las mismas que en Telegram) |
+| **Proyectos** | ver tus proyectos, sus hitos y el modo de Jev de cada uno |
+| **＋ Nuevo** | lanzar un proyecto nuevo: nombre, qué quieres, stack y modo de Jev |
+| **Configuración** | carpeta por defecto de los proyectos, stacks (ver, editar, añadir) y ajustes de Jev |
 
 | Puerta | Qué ves | Qué puedes hacer |
 |---|---|---|
@@ -201,6 +233,7 @@ En las puertas de FASE se registra cuánto tiempo pasó entre ver la demo y deci
 | `/mantenimiento [proyecto]` | lanzar ahora la revisión de mantenimiento |
 | `/pausar [proyecto\|todo] [ahora]` · `/reanudar [proyecto\|todo]` | parar y seguir |
 | `/anular <proyecto> <fase> <motivo>` | anular una aceptación ya firmada (queda registrado, no se borra nada) |
+| `/nuevo <nombre> [stack] <qué quieres>` | crear y lanzar un proyecto nuevo (carpeta y stack por defecto si no los dices) |
 | `/jev [proyecto] [modo]` | ver o cambiar el modo de Jev (`humano`, `consejo`, `piloto`, `auto`) |
 
 Un mensaje por proyecto se actualiza en silencio con el progreso. Hay resúmenes a las 08:30 y a las 19:00, y silencio
@@ -272,8 +305,8 @@ en un contenedor o una firma con llave física lo *impiden*.
 |---|---|
 | `instalar.sh` dice «faltan: …» | Instala lo que indica (`brew install …` en macOS, `sudo apt install …` en Ubuntu) y repite. |
 | No llega nada a Telegram | `hermes gateway restart`. Comprueba que tu id de Telegram está en `~/.hermes/hermes-sdd/aprobadores.json`. |
-| La pestaña «Puertas SDD» no sale en el panel | Reinicia `hermes dashboard` después de instalar. |
-| La pestaña no sale en Hermes Desktop | **Capabilities → Plugins → Rescan** y activa «Puertas SDD» (viene apagada). |
+| La pestaña «SDD» no sale en el panel | Reinicia `hermes dashboard` después de instalar. |
+| La pestaña no sale en Hermes Desktop | **Capabilities → Plugins → Rescan** y activa «SDD» (viene apagada). |
 | `AVISO: kanban.auto_decompose está activo` | `hermes config set kanban.auto_decompose false` |
 | Una etapa sale «busy» | Ya hay otra etapa en marcha en ese repo: el arnés nunca ejecuta dos a la vez en el mismo proyecto. Espera a que termine. |
 | Una etapa sale «scheduled» | Se agotó la cuota de tu suscripción de Claude. Se reanuda sola a la hora de reinicio. |
@@ -309,8 +342,9 @@ en un contenedor o una firma con llave física lo *impiden*.
 | `decidir.sh` · `anular.sh` | Decidir sin Telegram y anular una aceptación de forma auditable |
 | `vigilar.sh` | Mantenimiento por umbrales |
 | `practicar.sh` · `grabar.sh` · `grabaciones/` | Practicar sin coste y crear grabaciones |
-| `plugin/hermes-sdd/` | Plugin de Hermes: núcleo de las puertas (`hsdd_nucleo.py`), canal Telegram, canal panel (`dashboard/`), pestaña de Hermes Desktop (`desktop/`) y preguntas a Jev (`jev_puertas.json`) |
+| `plugin/hermes-sdd/` | Plugin de Hermes: núcleo de las puertas (`hsdd_nucleo.py`), canal Telegram, canal panel (`dashboard/`), pestaña de Hermes Desktop (`desktop/`), las dos generadas desde `ui/sdd.js` con `ui/construir.py`, proyectos nuevos y stacks (`hsdd_proyectos.py`) y preguntas a Jev (`jev_puertas.json`) |
 | `jev.sh` | Modo de Jev en las puertas (consejo, piloto, auto) |
+| `nuevo.sh` | Crear y lanzar un proyecto nuevo; carpeta y stacks por defecto |
 | `metodo/` | El método SDD como plugin de Claude Code: CLI (`scripts/sdd.mjs`), skills, hooks (la guardia que impide firmar), plantillas, ejemplo y tests |
 | `profiles/` · `templates/` | Perfil de la estación y plantillas (`AGENTS.md`, configuración por proyecto) |
 | `tests/` · `evals/` | Pruebas sin IA (`bash tests/todo.sh`) y el simulador de Claude |

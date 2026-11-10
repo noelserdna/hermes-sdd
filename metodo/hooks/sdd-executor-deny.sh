@@ -42,8 +42,8 @@ check 'journal[[:space:]]+add.*--kind[[:space:]]+(decision|gate)' "$INVOCA" "ano
 check '(^|[^a-z])hermes[[:space:]]+kanban'                        "$CMD_SIN_ARNES" "el ejecutor no mueve tarjetas del kanban"
 check 'sqlite3'                                                   "$CMD_SIN_ARNES" "el ejecutor no edita bases de datos de Hermes"
 check '\.hermes/'                                                 "$CMD_SIN_ARNES" "el ejecutor no toca el directorio de Hermes"
-check '(firmar|decidir|puerta|jev)\.sh|hsdd_nucleo'              "$CMD_SIN_ARNES" "las puertas, la firma y el modo de Jev son del arnés, no del ejecutor"
-check '(aprobadores|jev)\.json'                                   "$CMD" "quién decide (aprobadores.json) y el modo de Jev (jev.json) los fija una persona"
+check '(firmar|decidir|puerta|jev|nuevo)\.sh|hsdd_(nucleo|proyectos)' "$CMD_SIN_ARNES" "las puertas, la firma, el modo de Jev y crear proyectos son del arnés, no del ejecutor"
+check '(aprobadores|jev|sdd)\.json'                                   "$CMD" "quién decide (aprobadores.json), el modo de Jev (jev.json) y la configuración (sdd.json) los fija una persona"
 check '(decisions|challenges)\.jsonl|gate-evidence'               "$ESCRIBE$ESCRIBE_I" "los registros humanos no se editan desde el ejecutor"
 check 'git[[:space:]]+push'                                       "$CMD_SIN_ARNES" "publicar (push) lo decide una persona"
 [ -n "$motivo" ] || exit 0

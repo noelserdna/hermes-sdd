@@ -48,6 +48,8 @@ deny  'bash -c "node \$SDD accept record demo --req REQ-F-001 --ac 1 --pass true
 deny  'node "$SDD" accept record demo --req REQ-F-001 --ac 1 --pass true --by "Ana" --role "Cliente"'
 deny  'bash ~/hermes-sdd/firmar.sh . t_1'
 deny  'bash ~/.hermes/hermes-sdd/actual/jev.sh recetas auto'
+deny  'bash ~/.hermes/hermes-sdd/actual/nuevo.sh otra "una app que gasta tokens sin que nadie la pidiera"'
+deny  'echo {} > ~/.hermes/hermes-sdd/sdd.json'
 deny  'python3 ~/.hermes/hermes-sdd/actual/plugin/hermes-sdd/hsdd_nucleo.py modo auto'
 deny  'echo "{\"defecto\":\"auto\"}" > ~/.hermes/hermes-sdd/jev.json'
 deny  'jq ".yo.canales.local = \"x\"" ~/.hermes/hermes-sdd/aprobadores.json > t && mv t ~/.hermes/hermes-sdd/aprobadores.json'

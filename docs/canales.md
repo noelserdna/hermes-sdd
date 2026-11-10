@@ -24,7 +24,7 @@ gateway ─────────▶ firmar.sh (notario)  ──▶ registro, 
 Si una puerta se decide o se deshace en un canal, los demás se ponen al día solos (el mensaje de Telegram pasa a
 «decidida desde dashboard» con su botón de deshacer).
 
-### Panel web (pestaña «Puertas SDD»)
+### Panel web (pestaña «SDD»)
 
 `bash instalar.sh` copia el plugin con su parte de panel; reinicia `hermes dashboard` para montar sus rutas
 (`/api/plugins/hermes-sdd/…`). La pestaña enseña las puertas abiertas con su demo (capturas y vídeo), el formulario de
@@ -34,11 +34,15 @@ preguntas y los botones, la lista de proyectos con sus hitos y las últimas firm
 No expongas el panel con `--host 0.0.0.0` sin el login del panel: en modo local la identidad es «quien está sentado
 en esta máquina», y el plugin rechaza (403) cualquier petición que no venga de 127.0.0.1.
 
-### Hermes Desktop (pestaña «Puertas SDD»)
+### Hermes Desktop (pestaña «SDD»)
 
 La misma pestaña, escrita con el SDK de la app (`plugin/hermes-sdd/desktop/plugin.js`), sobre el mismo backend que el
 panel. Hermes copia esa parte a `~/.hermes/desktop-plugins/hermes-sdd/` y la deja **apagada**: se activa en
 **Capabilities → Plugins** (pulsa **Rescan** si no aparece). Sale en la barra lateral y en ⌘K.
+
+El panel y Desktop pintan la misma pestaña: `plugin/hermes-sdd/ui/sdd.js` es el único código, y
+`python3 plugin/hermes-sdd/ui/construir.py` genera `dashboard/dist/index.js` y `desktop/plugin.js` con el adaptador
+de cada uno (no se editan a mano; `tests/ui.sh` falla si no están al día).
 
 La identidad es la del canal `dashboard`: contra el backend local, Hermes verifica que la petición viene de la app
 del mismo usuario (credencial nativa de Desktop) y el plugin decide como el usuario del sistema, que debe figurar en

@@ -54,7 +54,7 @@ if jq -e --arg u "$USER" 'any(.[]; .canales.local == $u and (.canales.dashboard 
   echo "· aprobadores.json: canal dashboard añadido para el usuario local $USER"
 fi
 
-echo "· Plugin (Telegram, pestaña Puertas SDD del panel y de Hermes Desktop)"
+echo "· Plugin (Telegram, pestaña SDD del panel y de Hermes Desktop)"
 rm -rf "$HH/plugins/hermes-sdd"; mkdir -p "$HH/plugins"
 cp -R "$DEST/plugin/hermes-sdd" "$HH/plugins/hermes-sdd"
 hermes plugins enable hermes-sdd >/dev/null 2>&1 || echo "  AVISO: activa el plugin con: hermes plugins enable hermes-sdd"
@@ -77,7 +77,7 @@ for kv in "timeouts.tools.sequential_call 5400" "timeouts.tools.concurrent_batch
   hermes -p "$P" config set $kv >/dev/null
 done
 hermes -p "$P" config set approvals.deny \
-  '["*accept record*","*git tag*","*update-ref*","*route --write*","*git push*","*firmar.sh*","*decidir.sh*","*jev.sh*","*hsdd_nucleo.py*","*jev.json*","*hermes kanban*","*sqlite3*"]' >/dev/null
+  '["*accept record*","*git tag*","*update-ref*","*route --write*","*git push*","*firmar.sh*","*decidir.sh*","*jev.sh*","*nuevo.sh*","*hsdd_nucleo.py*","*hsdd_proyectos.py*","*jev.json*","*sdd.json*","*hermes kanban*","*sqlite3*"]' >/dev/null
 
 fi
 echo "· Perfil sdd-ejecutor (ejecutor Hermes nativo para etapas ligeras)"
@@ -100,12 +100,12 @@ done
 hermes -p "$E" config set skills.external_dirs "[\"$HOME_SDD/actual/metodo/skills\"]" >/dev/null
 hermes -p "$E" config set terminal.env_passthrough '["SDD_PLUGIN_ROOT","CLAUDE_PLUGIN_ROOT","SDD_EXECUTOR"]' >/dev/null
 hermes -p "$E" config set approvals.deny \
-  '["*accept record*","*git tag*","*update-ref*","*route --write*","*git push*","*firmar.sh*","*decidir.sh*","*jev.sh*","*hsdd_nucleo.py*","*jev.json*","*hermes kanban*","*sqlite3*"]' >/dev/null
+  '["*accept record*","*git tag*","*update-ref*","*route --write*","*git push*","*firmar.sh*","*decidir.sh*","*jev.sh*","*nuevo.sh*","*hsdd_nucleo.py*","*hsdd_proyectos.py*","*jev.json*","*sdd.json*","*hermes kanban*","*sqlite3*"]' >/dev/null
 hermes -p "$E" config set hooks.pre_tool_call \
   "[{\"matcher\":\"terminal\",\"command\":\"bash $HOME_SDD/actual/metodo/hooks/sdd-executor-deny.sh\",\"timeout\":10,\"fail_closed\":true}]" >/dev/null
 
 [ "$(hermes config get kanban.auto_decompose 2>/dev/null | tail -1)" = false ] ||
   echo "  AVISO: kanban.auto_decompose está activo; desactívalo con: hermes config set kanban.auto_decompose false"
 echo "Listo. Reinicia el gateway (hermes gateway restart) y el panel (hermes dashboard) para cargar el plugin"
-echo "  Hermes Desktop: Capabilities → Plugins → Rescan y activa «Puertas SDD» (la primera vez está apagada)."
+echo "  Hermes Desktop: Capabilities → Plugins → Rescan y activa «SDD» (la primera vez está apagada)."
 echo "  Jev en las puertas: bash jev.sh (modos humano, consejo, piloto, auto; ver docs/jev.md)"

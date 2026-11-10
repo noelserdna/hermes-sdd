@@ -49,6 +49,17 @@ def _cargar_nucleo():
 
 
 N = _cargar_nucleo()
+
+
+def _cargar_proyectos():
+    import importlib.util, sys
+    if "hsdd_proyectos" not in sys.modules:
+        spec = importlib.util.spec_from_file_location("hsdd_proyectos", Path(__file__).with_name("hsdd_proyectos.py"))
+        mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod); sys.modules["hsdd_proyectos"] = mod
+    return sys.modules["hsdd_proyectos"]
+
+
+PR = _cargar_proyectos()
 HOME = N.HOME
 _leer, _escribir, _ahora, _respuestas = N.leer, N.escribir, N.ahora, N.respuestas
 
@@ -791,7 +802,34 @@ def register(ctx):
                       "Uso: /jev <proyecto> <modo>")
         return "\n".join(lineas)
 
+    async def _cmd_nuevo(raw_args: str = "") -> str:
+        """/nuevo <nombre> [stack] <qué quieres construir> — crea y lanza un proyecto (carpeta y stack por defecto)."""
+        persona, _ = _autorizado_en_sesion()
+        if not persona:
+            return "Solo una persona autorizada puede crear proyectos."
+        cfg = PR.config()
+        ids = [s["id"] for s in cfg["stacks"]]
+        partes = raw_args.split(maxsplit=1)
+        if len(partes) < 2:
+            return ("Uso: /nuevo <nombre> [stack] <qué quieres construir>\n"
+                    f"Stacks: {', '.join(ids)} (por defecto {cfg['stack_defecto']}). Se crea en {cfg['carpeta']}/<nombre>.\n"
+                    "Ejemplo: /nuevo bogota web-astro Una web para turistas con los barrios de Bogotá y qué ver en cada uno")
+        nombre, resto = partes
+        stack = None
+        primera = resto.split(maxsplit=1)
+        if len(primera) == 2 and primera[0] in ids:
+            stack, resto = primera
+        try:
+            r = await asyncio.to_thread(PR.nuevo_proyecto, nombre, resto, stack)
+        except N.Rechazo as e:
+            return f"No se creó el proyecto: {e}"
+        log.info("hermes-sdd: %s crea el proyecto %s en %s", persona, r["tablero"], r["repo"])
+        return (f"🚀 Proyecto {r['tablero']} en marcha\n📁 {r['repo']}\n🧱 {r['stack']} · 🤖 Jev {r['jev']}\n"
+                "Te llegará la puerta de Requisitos cuando el ejecutor los tenga.")
+
     ctx.register_telegram_handler(_wire)
+    ctx.register_command("nuevo", _cmd_nuevo, description="Crea y lanza un proyecto SDD nuevo",
+                         args_hint="<nombre> [stack] <qué quieres construir>")
     ctx.register_command("jev", _cmd_jev, description="Modo de Jev en las puertas SDD (humano, consejo, piloto, auto)",
                          args_hint="[proyecto] [modo]")
     ctx.register_command("cambio", _cmd_cambio, description="Pide un cambio o una funcionalidad a un proyecto SDD", args_hint="<proyecto> <petición>")

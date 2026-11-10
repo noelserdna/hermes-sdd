@@ -22,8 +22,8 @@ bash jev.sh piloto ruta,plan     # qué puertas decide en modo piloto
 bash jev.sh probar <puerta>      # pregunta a Jev por una puerta abierta y enseña su respuesta, sin decidir
 ```
 
-También desde Telegram (`/jev`, `/jev recetas auto`) y desde la pestaña «Puertas SDD» del panel y de Hermes Desktop:
-cada proyecto tiene sus cuatro botones de modo.
+También desde Telegram (`/jev`, `/jev recetas auto`) y desde la pestaña **SDD** del panel y de Hermes Desktop:
+cada proyecto tiene sus cuatro botones de modo en **Proyectos**, y los ajustes generales están en **Configuración**.
 
 La configuración vive en `~/.hermes/hermes-sdd/jev.json`, nunca en el repo del proyecto, y el ejecutor tiene
 prohibido tocarla: un agente no puede darse a sí mismo más permisos.

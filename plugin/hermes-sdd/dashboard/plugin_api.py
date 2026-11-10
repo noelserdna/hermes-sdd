@@ -18,11 +18,16 @@ from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import FileResponse
+from starlette.concurrency import run_in_threadpool
 
 if "hsdd_nucleo" not in sys.modules:
     _spec = importlib.util.spec_from_file_location("hsdd_nucleo", Path(__file__).resolve().parent.parent / "hsdd_nucleo.py")
     _mod = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(_mod); sys.modules["hsdd_nucleo"] = _mod
 N = sys.modules["hsdd_nucleo"]
+if "hsdd_proyectos" not in sys.modules:
+    _spec = importlib.util.spec_from_file_location("hsdd_proyectos", Path(__file__).resolve().parent.parent / "hsdd_proyectos.py")
+    _mod = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(_mod); sys.modules["hsdd_proyectos"] = _mod
+PR = sys.modules["hsdd_proyectos"]
 
 router = APIRouter()
 CAMPOS = ("id", "tipo", "fase", "tablero", "titulo", "texto", "opciones", "preguntas", "estado", "creada", "sha",
@@ -163,6 +168,41 @@ async def jev_modo(request: Request):
     body = await request.json()
     cfg = _accion(lambda: N.poner_modo(str(body.get("modo", "")), body.get("tablero") or None))
     return {**cfg, "cambiado_por": persona}
+
+
+@router.post("/jev/ajustes")
+async def jev_ajustes(request: Request):
+    """Modo por defecto, umbral y puertas del modo piloto."""
+    _actor(request)
+    body = await request.json()
+    return _accion(lambda: N.ajustar_jev(body.get("defecto"), body.get("umbral"), body.get("piloto")))
+
+
+@router.get("/config")
+async def config(request: Request):
+    _actor(request)
+    return {**PR.config(), "jev": N.config_jev(), "modos_jev": list(N.MODOS), "tipos_puerta": list(N.TIPOS_PUERTA)}
+
+
+@router.post("/config")
+async def config_guardar(request: Request):
+    """Carpeta por defecto, stack por defecto y lista de stacks (lo que venga; lo demás no cambia)."""
+    _actor(request)
+    body = await request.json()
+    _accion(lambda: PR.guardar_config(body.get("carpeta"), body.get("stack_defecto"), body.get("stacks")))
+    return {**PR.config(), "jev": N.config_jev(), "modos_jev": list(N.MODOS), "tipos_puerta": list(N.TIPOS_PUERTA)}
+
+
+@router.post("/nuevo")
+async def nuevo(request: Request):
+    """Crea y lanza un proyecto (carpeta, git, AGENTS.md del stack, petición literal, lanzar.sh iniciar).
+    Lanzar no decide nada: lo primero que llegará es la puerta de requisitos."""
+    persona, _, _ = _actor(request)
+    body = await request.json()
+    r = await run_in_threadpool(lambda: _accion(lambda: PR.nuevo_proyecto(
+        str(body.get("nombre", "")), str(body.get("que", "")), body.get("stack") or None,
+        body.get("carpeta") or None, body.get("jev") or None)))
+    return {**r, "creado_por": persona}
 
 
 @router.get("/proyectos")

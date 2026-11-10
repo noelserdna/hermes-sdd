@@ -185,6 +185,32 @@ def poner_modo(modo: str, tablero: str | None = None) -> dict:
     return cfg
 
 
+TIPOS_PUERTA = ("requisitos", "ruta", "plan", "fase", "entrega", "mantenimiento")
+
+
+def ajustar_jev(defecto: str | None = None, umbral=None, piloto: list | None = None) -> dict:
+    """Ajustes generales de Jev (los modos por proyecto, con poner_modo). Valida todo antes de escribir."""
+    cfg = config_jev()
+    if defecto is not None:
+        if defecto not in MODOS:
+            raise Rechazo(f"Modo desconocido: {defecto}. Modos: {', '.join(MODOS)}")
+        cfg["defecto"] = defecto
+    if umbral is not None:
+        try:
+            u = float(umbral)
+        except (TypeError, ValueError):
+            raise Rechazo("El umbral es un número entre 0 y 1")
+        if not 0.5 <= u <= 1:
+            raise Rechazo("El umbral va de 0.5 a 1: por debajo, Jev decidiría casi a cara o cruz")
+        cfg["umbral"] = u
+    if piloto is not None:
+        if not isinstance(piloto, list) or any(t not in TIPOS_PUERTA for t in piloto):
+            raise Rechazo(f"Tipos de puerta: {', '.join(TIPOS_PUERTA)}")
+        cfg["piloto"] = [t for t in TIPOS_PUERTA if t in piloto]
+    escribir(HOME / "jev.json", cfg)
+    return cfg
+
+
 def verbos_jev(puerta: dict) -> dict:
     """Opciones que Jev puede elegir: las que no piden un motivo escrito."""
     return {o["verbo"]: o["etiqueta"] for o in puerta.get("opciones", []) if o["verbo"] != "ver" and not o.get("texto")}

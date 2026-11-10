@@ -118,4 +118,21 @@ v = next(x for x in d.get(f"{B}/puertas").json()["puertas"] if x["id"] == "g2")
 ok(v["estado"] == "decidida" and v["decision"]["canal"] == "jev" and v["decision"]["prueba"]["p"] == "0.970" and v["puedo_deshacer"],
    "el panel ve la decisión de Jev y puede deshacerla")
 ok(d.post(f"{B}/deshacer/g2").json()["estado"] == "abierta", "deshacer a Jev desde el panel")
+
+# ── Configuración y proyecto nuevo (secciones de la pestaña SDD) ───────────────────────────────────────────────────
+r = d.get(f"{B}/config").json()
+ok(r["carpeta"] == "~/proyectos-sdd" and r["stack_defecto"] == "web-vite" and len(r["stacks"]) >= 4 and r["jev"]["defecto"] == "humano",
+   "config: carpeta y stacks por defecto, y los ajustes de Jev")
+r = d.post(f"{B}/config", json={"carpeta": str(T / "proys"), "stack_defecto": "python"}).json()
+ok(r["carpeta"] == str(T / "proys") and r["stack_defecto"] == "python", "config: cambia la carpeta y el stack por defecto")
+ok(d.post(f"{B}/config", json={"carpeta": "relativa"}).status_code == 409, "config: una carpeta relativa se rechaza")
+ok(d.post(f"{B}/config", json={"stacks": []}).status_code == 409, "config: no se puede quedar sin stacks")
+ok(cliente(host="10.0.0.5").post(f"{B}/config", json={"carpeta": "/tmp"}).status_code == 403, "config: nadie de fuera la cambia")
+r = d.post(f"{B}/jev/ajustes", json={"defecto": "consejo", "umbral": 0.95, "piloto": ["plan", "ruta"]}).json()
+ok(r["defecto"] == "consejo" and r["umbral"] == 0.95 and r["piloto"] == ["ruta", "plan"], "Jev: modo por defecto, umbral y puertas del piloto")
+ok(d.post(f"{B}/jev/ajustes", json={"umbral": 0.2}).status_code == 409, "Jev: un umbral por debajo de 0.5 se rechaza")
+r = d.post(f"{B}/nuevo", json={"nombre": "x", "que": "corto"})
+ok(r.status_code == 409 and not (T / "proys" / "x").exists(), "nuevo: lo que no procede se rechaza sin crear nada")
+ok(cliente(host="10.0.0.5").post(f"{B}/nuevo", json={"nombre": "otra", "que": "una app que nadie de aquí pidió, desde fuera"}).status_code == 403,
+   "nuevo: nadie de fuera crea proyectos")
 sys.exit(1 if fallos else 0)
