@@ -49,10 +49,10 @@ puerta g6 requisitos; modo auto demo
 o=$(aplicar g6 persona 0.97); [[ "$o" == abierta* ]] && echo "$o" | grep -q "una persona" && ok "si Jev elige «persona», la puerta queda para ti" || bad "persona: $o"
 o=$(aplicar g6 cambios 0.99); [[ "$o" == abierta* ]] && ok "Jev nunca elige un verbo que pide motivo (cambios)" || bad "cambios: $o"
 puerta g7 fase "⛔ La puerta de calidad no se cumple (código 1): solo se puede rechazar"
-o=$(aplicar g7 acepto 0.99); [[ "$o" == abierta* ]] && echo "$o" | grep -q "bloqueo" && ok "auto: con ⛔ en la puerta, decide una persona" || bad "⛔: $o"
+o=$(aplicar g7 acepto 0.99); [[ "$o" == abierta* ]] && echo "$o" | grep -q "no pasa la comprobación" && ok "auto: con ⛔ en la puerta, decide una persona" || bad "⛔: $o"
 puerta g8 fase "✅ Sin alertas
 Tests existentes con líneas borradas o cambiadas: 2"
-o=$(aplicar g8 acepto 0.99); [[ "$o" == abierta* ]] && echo "$o" | grep -q "art. 12" && ok "auto: tests existentes modificados → una persona" || bad "art 12: $o"
+o=$(aplicar g8 acepto 0.99); [[ "$o" == abierta* ]] && echo "$o" | grep -q "tests que ya existían" && ok "auto: tests existentes modificados → una persona" || bad "art 12: $o"
 
 # ── 2. decisión de Jev, ventana y veto ──────────────────────────────────────────────────────────────────────────
 puerta g9 requisitos
@@ -198,7 +198,7 @@ cat >> requirements/REQUIREMENTS.md <<'R'
 R
 git add -A && git commit -qm "test: restricción"
 o=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" requisitos); 
-jq -r '.texto' "$HERMES_SDD_HOME/puertas/$o.json" | grep -q '^• REQ-C-901: Sin servidor (restricción)$' && ok "la puerta de requisitos muestra las restricciones" || bad "REQ-C: $(jq -r .texto "$HERMES_SDD_HOME/puertas/$o.json" | head -12)"
+jq -r '.texto' "$HERMES_SDD_HOME/puertas/$o.json" | sed -n '/^🔧 Condiciones/,/^$/p' | grep -q '^• Sin servidor$' && ok "la puerta de requisitos muestra las restricciones, aparte" || bad "REQ-C: $(jq -r .texto "$HERMES_SDD_HOME/puertas/$o.json" | head -12)"
 
 # ── 5. jev.sh ────────────────────────────────────────────────────────────────────────────────────────────────────
 bash "$ROOT/jev.sh" umbral 0.8 >/dev/null && bash "$ROOT/jev.sh" piloto ruta,plan,mantenimiento >/dev/null && bash "$ROOT/jev.sh" recetas piloto >/dev/null

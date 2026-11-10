@@ -76,7 +76,7 @@ async def sincronizar():
     bot = Bot()
     await tg._sincronizar(bot, json.loads((HOME / "puertas/g1.json").read_text()))
     texto, kb = bot.editados[-1]
-    ok("desde dashboard" in texto and kb.inline_keyboard[0][0].callback_data == "g:deshacer:g1",
+    ok("desde el panel" in texto and "Deshacer" in texto and kb.inline_keyboard[0][0].callback_data == "g:deshacer:g1",
        "Telegram se pone al día: decidida desde el panel, con Deshacer")
     await tg._sincronizar(bot, json.loads((HOME / "puertas/g1.json").read_text()))
     ok(len(bot.editados) == 1, "sin cambios no se vuelve a editar el mensaje")

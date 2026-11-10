@@ -261,12 +261,14 @@ def puede_jev(puerta: dict, cfg: dict | None = None) -> tuple[bool, str]:
         return False, "una persona deshizo la decisión de Jev"
     if modo == "piloto" and puerta.get("preguntas"):
         return False, "hay preguntas abiertas (clase C): en modo piloto las contesta una persona"
+    # Campos de la puerta (puerta.sh ≥ 0.2.10); en puertas anteriores, lo que decía su texto
     texto = puerta.get("texto", "")
-    if "⛔" in texto:
-        return False, "la puerta muestra un bloqueo (⛔)"
+    if puerta.get("bloqueo") or ("bloqueo" not in puerta and "⛔" in texto):
+        return False, "la puerta no pasa la comprobación de calidad"
     m = re.search(r"Tests existentes con líneas borradas o cambiadas: (\d+)", texto)
-    if m and int(m.group(1)) > 0:
-        return False, "se modificaron tests que ya existían (art. 12: lo revisa una persona)"
+    editados = puerta.get("tests_editados") if "tests_editados" in puerta else (int(m.group(1)) if m else 0)
+    if editados:
+        return False, "se modificaron tests que ya existían (lo revisa una persona)"
     if not verbos_jev(puerta):
         return False, "ninguna opción de esta puerta se puede elegir sin escribir un motivo"
     return True, f"modo {modo}"
@@ -391,11 +393,19 @@ def describir_jev(puerta: dict) -> str:
     if not j:
         return ""
     if j.get("error"):
-        return f"🤖 Jev no respondió ({j['error'][:80]}); decide una persona."
-    etiqueta = verbos_jev(puerta).get(j.get("choice"), "que lo decida una persona")
-    linea = f"🤖 Jev recomienda: {etiqueta} (p {float(j.get('p') or 0):.2f}, modo {j.get('modo')})"
-    if not j.get("decide") and j.get("modo") in ("piloto", "auto"):
-        linea += f"\n   No decide él: {j.get('motivo')}."
+        apagado = "apagado" in j["error"].lower()
+        return ("🤖 Jev, el asistente que decide por ti, está apagado (falta su clave): decides tú." if apagado
+                else "🤖 Jev, el asistente que decide por ti, no ha podido responder: decides tú.")
+    seguro = f"{round(float(j.get('p') or 0) * 100)} %"
+    eleccion = j.get("choice")
+    if eleccion in verbos_jev(puerta):
+        linea = f"🤖 Jev aprobaría esto ({verbos_jev(puerta)[eleccion]}), con un {seguro} de seguridad."
+    else:
+        linea = f"🤖 Jev prefiere que lo mires tú (está seguro al {seguro})."
+    if not j.get("decide") and j.get("modo") in ("piloto", "auto") and eleccion in verbos_jev(puerta):
+        umbral = f"{round(float(j.get('umbral') or 0.9) * 100)} %"
+        linea += (f" No lo decide él: necesita al menos un {umbral}." if "seguro" in (j.get("motivo") or "")
+                  else f" No lo decide él: {j.get('motivo')}.")
     return linea
 
 

@@ -16,6 +16,7 @@ import asyncio
 import json
 import logging
 import os
+import re
 import shutil
 import time
 from datetime import datetime, timezone
@@ -112,6 +113,33 @@ def _teclado(puerta: dict, paso: int = 1):
     return M(filas)
 
 
+def _plural(n: int, uno: str, varios: str) -> str:
+    return f"{n} {uno if n == 1 else varios}"
+
+
+def _corta_linea(t: str, n: int = 220) -> str:
+    t = " ".join(str(t).split())
+    return t if len(t) <= n else t[: n - 1].rstrip() + "…"
+
+
+def _resultado_claro(resumen: str) -> str:
+    """El resumen del notario («FASE-0 aceptada por Ana (Cliente) — tag fase-0-accepted») dicho para una persona: qué
+    quedó registrado, dónde (el tag, aparte) y qué pasa ahora."""
+    principal, _, tag = resumen.partition(" — tag ")
+    principal = principal.replace(" (acepto)", "").replace(" (completo)", ", haciéndolo todo")
+    negativo = bool(re.search(r"rechaz|pide cambios|ignor", principal, re.I))
+    lineas = [f"{'↩️' if negativo else '✅'} {principal}."]
+    if tag:
+        lineas.append(f"🏷 Queda guardado en el historial como «{tag.strip()}».")
+    if re.search(r"^Entrega \d+ aceptada", principal):
+        lineas.append("🎉 Proyecto entregado.")
+    elif negativo:
+        lineas.append("Se rehace con lo que has pedido y te volverá a llegar para decidir.")
+    else:
+        lineas.append("Sigue solo con el siguiente paso.")
+    return "\n".join(lineas)
+
+
 def _cabecera(puerta: dict) -> str:
     return f"🚪 {puerta.get('titulo', 'Puerta')} · {puerta.get('tablero', '')}\n"
 
@@ -124,18 +152,20 @@ def _render(puerta: dict):
         verbo, texto = dec.get("verbo", ""), dec.get("texto", "")
         etiqueta = next((o["etiqueta"] for o in puerta.get("opciones", []) if o["verbo"] == verbo), verbo)
         canal = dec.get("actor", {}).get("canal", "")
-        hora = datetime.fromtimestamp(puerta.get("firmar_en", time.time())).strftime("%H:%M")
+        hora = datetime.fromtimestamp(puerta.get("firmar_en", time.time())).strftime("%H:%M:%S")
         deshacer = M([[B("↩ Deshacer", callback_data=f"g:deshacer:{puerta['id']}")]])
+        quedan = max(0, int(puerta.get("firmar_en", time.time()) - time.time()))
+        plazo = f"🕒 Tienes hasta las {hora} ({N.duracion(quedan)}) para pulsar ↩ Deshacer; después queda registrado."
         if canal == N.JEV:   # decidió Jev: se dice claro y cualquier persona autorizada puede deshacerlo
             pr = dec.get("prueba", {})
-            return (f"{_cabecera(puerta)}\n{puerta.get('texto', '')}\n\n🤖 Ha decidido Jev (modo {pr.get('modo', '?')}, "
-                    f"p {pr.get('p', '?')}): {etiqueta}{(' — ' + texto) if texto else ''}\n"
-                    f"🕒 Se firma a las {hora}. Si no estás de acuerdo, deshazlo: la puerta vuelve a ti.", deshacer)
-        desde = f" (desde {canal})" if canal and canal != "telegram" else ""
-        return (f"{_cabecera(puerta)}\n{etiqueta} — {dec.get('actor', {}).get('persona', '')}{desde}"
-                f"{(': ' + texto) if texto else ''}\n🕒 Se firma a las {hora}", deshacer)
+            seguro = f"{round(float(pr.get('p') or 0) * 100)} %"
+            return (f"{_cabecera(puerta)}\n{puerta.get('texto', '')}\n\n🤖 Jev lo ha decidido por ti: {etiqueta} "
+                    f"(seguridad {seguro}).\n{plazo}\nSi no estás de acuerdo, deshazlo y la decisión vuelve a ti.", deshacer)
+        desde = {"dashboard": " desde el panel", "local": " desde el ordenador"}.get(canal, "")
+        return (f"{_cabecera(puerta)}\n{etiqueta} — lo ha decidido {dec.get('actor', {}).get('persona', '')}{desde}"
+                f"{('. Motivo: ' + texto) if texto else '.'}\n{plazo}", deshacer)
     paso = N.paso_actual(puerta)
-    extra = "\n\n👀 Demo vista. Decide:" if (N.escalonada(puerta) and paso == 2) else ""
+    extra = "\n\n👀 Ya has visto la demo. Decide:" if (N.escalonada(puerta) and paso == 2) else ""
     jev = N.describir_jev(puerta)
     return (_cabecera(puerta) + "\n" + puerta.get("texto", "") + (f"\n\n{jev}" if jev else "") + extra,
             _teclado(puerta, paso))
@@ -184,7 +214,7 @@ async def _decidir(bot, gid: str, verbo: str, texto: str, user, persona: str, pr
     except N.Rechazo as e:
         return str(e)
     await _sincronizar(bot, puerta)
-    return f"Decisión registrada; tienes {N.duracion(N.deshacer_s())} para deshacerla"
+    return f"Hecho. Tienes {N.duracion(N.deshacer_s())} para deshacerlo si te has equivocado."
 
 
 async def _on_boton(update, context) -> None:
@@ -209,7 +239,7 @@ async def _on_boton(update, context) -> None:
         except N.Rechazo as e:
             await q.answer(str(e), show_alert=True)
             return
-        await q.answer("Deshecho")
+        await q.answer("Deshecho: la decisión vuelve a estar pendiente")
         await _sincronizar(bot, puerta)
         return
     if puerta.get("estado") != "abierta":
@@ -226,7 +256,7 @@ async def _on_boton(update, context) -> None:
         await _sincronizar(bot, puerta)
         return
     if verbo == "ver":
-        await q.answer("Enviando la demo…")
+        await q.answer("Te envío la demo…")
         await _enviar_demo(bot, q.message.chat_id, puerta)
         await _sincronizar(bot, N.marcar(gid, ver_at=puerta.get("ver_at") or time.time()))
         return
@@ -238,7 +268,7 @@ async def _on_boton(update, context) -> None:
         from telegram import ForceReply
         await q.answer()
         m = await bot.send_message(chat_id=q.message.chat_id,
-                                   text=f"{opcion['etiqueta']} — escribe el motivo respondiendo a este mensaje:",
+                                   text=f"{opcion['etiqueta']}: responde a este mensaje explicando qué quieres, con tus palabras.",
                                    reply_markup=ForceReply(selective=True, input_field_placeholder="Qué falta o qué cambiar…"))
         _RT["pendientes"][m.message_id] = (gid, verbo, persona)
         return
@@ -251,7 +281,7 @@ async def _on_respuesta(update, context) -> None:
     m = update.message
     gid, verbo, persona = _RT["pendientes"].pop(m.reply_to_message.message_id)
     if _persona_de(m.from_user.id)[0] != persona:
-        await m.reply_text("Solo puede responder quien pulsó el botón")
+        await m.reply_text("Solo puede responder quien pulsó el botón.")
         return
     aviso = await _decidir(context.bot, gid, verbo, m.text.strip(), m.from_user, persona, {"msg": str(m.message_id)})
     await m.reply_text(aviso)
@@ -261,7 +291,7 @@ async def _enviar_demo(bot, chat_id: int, puerta: dict) -> None:
     from telegram import InputMediaPhoto
     carpeta = Path(puerta["repo"]) / "evidencias" / f"FASE-{puerta.get('fase', '')}"
     if not carpeta.is_dir():
-        await bot.send_message(chat_id=chat_id, text="Esta FASE no tiene capturas ni vídeo en evidencias/.")
+        await bot.send_message(chat_id=chat_id, text="Esta fase no trae demo (ni vídeo ni capturas). Decide con el resumen de la puerta.")
         return
     videos = sorted([*carpeta.glob("*.mp4"), *carpeta.glob("*.webm"), *carpeta.glob("*.mov")])
     if videos and videos[0].stat().st_size < 49_000_000:
@@ -299,10 +329,12 @@ async def _firmar(bot, puerta: dict) -> None:
         p = _leer(idx) or puerta
         if proc.returncode == 0:
             p["estado"] = "firmada"; p["resultado"] = out.decode().strip().splitlines()[-1] if out else "firmada"
-            texto = f"{_cabecera(p)}\n✅ {p['resultado']}"
+            texto = f"{_cabecera(p)}\n{_resultado_claro(p['resultado'])}"
         else:
             p["estado"] = "error"; p["error"] = err.decode().strip()[-500:]
-            texto = f"{_cabecera(p)}\n⚠️ El notario no firmó: {p['error']}"
+            texto = (f"{_cabecera(p)}\n⚠️ Tu decisión no se ha podido registrar, así que no se ha aplicado.\n"
+                     f"Motivo: {p['error'].replace('NOTARIO: rechazado — ', '')}\n"
+                     "Normalmente es porque el proyecto cambió después de abrir esta puerta: espera a la siguiente.")
         _escribir(idx, p)
     await _editar(bot, p, texto, None)
 
@@ -332,9 +364,12 @@ async def _avisar_fallos(bot) -> None:
                 if clave not in avisados:
                     nuevos.append(clave)
                     for chat in _chats():
-                        await bot.send_message(chat_id=int(chat),
-                                               text=f"⚠️ {b['slug']}: la etapa «{t.get('title')}» se ha parado ({t.get('status')}).\n"
-                                                    f"Detalle: hermes kanban --board {b['slug']} show {t['id']}")
+                        motivo = _corta_linea(t.get("latest_summary") or t.get("result") or "")
+                        await bot.send_message(chat_id=int(chat), text=(
+                            f"⚠️ «{b['slug']}» se ha parado en «{t.get('title')}».\n"
+                            + (f"Motivo: {motivo}\n" if motivo else "")
+                            + "No sigue solo: hay que revisarlo y relanzar ese paso.\n"
+                            f"(Detalle técnico: hermes kanban --board {b['slug']} show {t['id']})"))
     if nuevos:
         _escribir(HOME / "avisos.json", sorted(avisados | set(nuevos)))
 
@@ -505,14 +540,19 @@ async def _resumen_proyecto(board: str, repo: str) -> str:
                if p and p.get("tablero") == board and p.get("estado") in ("abierta", "decidida")]
     pausado = (HOME / "pausa" / board).exists() or (HOME / "pausa" / "_todo").exists()
     hecho = sum(1 for t in ts if t.get("status") == "done")
-    lineas = [f"📁 {board}" + (" ⏸ en pausa" if pausado else ""),
-              f"  ▶ {activa['title']}" if activa else "  ▶ nada en marcha",
-              f"  🚪 puertas: {', '.join(p.get('titulo', '') for p in puertas) or 'ninguna'}"]
+    entregado = any(t.get("status") == "done" and str(t.get("title", "")).startswith("PUERTA Entrega") for t in ts)
+    lineas = [f"📁 {board}" + (" ⏸ en pausa" if pausado else "")]
+    if puertas:
+        lineas.append(f"  🚪 Esperando tu decisión: {', '.join(p.get('titulo', '') for p in puertas)}")
+    if activa:
+        lineas.append(f"  ▶ Trabajando en: {activa['title']}")
     if paradas:
-        lineas.append(f"  ⚠️ paradas: {', '.join(t['title'] for t in paradas)}")
+        lineas.append(f"  ⚠️ Parado en: {', '.join(t['title'] for t in paradas)}")
     if aparcadas:
-        lineas.append(f"  ⏳ aparcadas: {len(aparcadas)}")
-    lineas.append(f"  ✓ {hecho} tarjetas hechas · {_coste(repo)} $ de ejecutor")
+        lineas.append(f"  ⏳ {_plural(len(aparcadas), 'paso espera', 'pasos esperan')} a que se renueve la cuota de Claude")
+    if not (puertas or activa or paradas or aparcadas):
+        lineas.append("  ✅ Entregado" if entregado else "  💤 Sin nada en marcha")
+    lineas.append(f"  {_plural(hecho, 'paso hecho', 'pasos hechos')} · {_coste(repo)} $ gastados")
     return "\n".join(lineas)
 
 
@@ -521,13 +561,13 @@ async def _estado_texto(filtro: str = "") -> str:
     if filtro:
         proys = {b: r for b, r in proys.items() if b == filtro}
     if not proys:
-        return "No hay proyectos del arnés" + (f" llamados {filtro}" if filtro else "") + "."
+        return f"No conozco ningún proyecto llamado «{filtro}»." if filtro else "Todavía no hay proyectos. Crea uno con /nuevo."
     partes = [await _resumen_proyecto(b, r) for b, r in sorted(proys.items())]
     lat = _leer(HOME / "latido.json", {}) or {}
     cuota = _leer(HOME / "cuota.json")
-    pie = f"💓 canal vivo (último latido {lat.get('ts', '?')})"
+    pie = "💓 Todo conectado" if lat.get("ts") else "⚠️ El gateway no da señales: no se registrarán decisiones hasta que vuelva"
     if cuota:
-        pie += f"\n⛔ cuota de Claude agotada hasta las {datetime.fromtimestamp(cuota['reset_at']).strftime('%H:%M')}"
+        pie += f"\n⛔ Se ha agotado la cuota de Claude: se sigue a las {datetime.fromtimestamp(cuota['reset_at']).strftime('%H:%M')}"
     return "\n\n".join(partes) + "\n\n" + pie
 
 
@@ -640,7 +680,7 @@ async def _mantenimiento_diario() -> None:
 
 async def _resumen_periodico() -> str:
     """Resumen sin LLM: estado de cada proyecto, decisiones de las últimas 12 h y la métrica de aprobación por inercia."""
-    partes = ["🗞 Resumen hermes-sdd", await _estado_texto()]
+    partes = ["🗞 Así van tus proyectos", await _estado_texto()]
     desde = time.time() - 12 * 3600
     decisiones = []
     for b, repo in (await _proyectos()).items():
@@ -654,7 +694,7 @@ async def _resumen_periodico() -> str:
             except Exception:
                 pass
     if decisiones:
-        partes.append("Últimas 12 h:\n" + "\n".join(decisiones[-10:]))
+        partes.append("Decisiones de las últimas 12 horas:\n" + "\n".join(decisiones[-10:]))
     # Aprobación por inercia: aceptaciones muy rápidas tras ver la demo, en los últimos 7 días
     semana = time.time() - 7 * 86400
     firmadas = [p for p in (_leer(f) for f in (HOME / "puertas").glob("*.json"))
@@ -663,8 +703,8 @@ async def _resumen_periodico() -> str:
     dwell = sorted((p["decision"].get("dwell_s") or 0) for p in firmadas if p.get("decision"))
     if dwell:
         med = dwell[len(dwell) // 2]
-        aviso = " ⚠️ posible aprobación por inercia: mira las demos con más calma" if len(dwell) >= 3 and med < 20 else ""
-        partes.append(f"Aceptaciones de la semana: {len(dwell)}, mediana {med} s viendo la demo.{aviso}")
+        aviso = "\n⚠️ Estás aceptando muy deprisa: mira las demos con más calma." if len(dwell) >= 3 and med < 20 else ""
+        partes.append(f"Esta semana aceptaste {_plural(len(dwell), 'fase', 'fases')}; normalmente mirando la demo {med} s antes de decidir.{aviso}")
     return "\n\n".join(partes)
 
 # ── registro ────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -691,11 +731,11 @@ def register(ctx):
             pass
         abiertas = [p for p in (_leer(f) for f in sorted((HOME / "puertas").glob("*.json"))) if p and p.get("estado") == "abierta"]
         if not abiertas:
-            return "No hay puertas abiertas."
+            return "No tienes nada pendiente de decidir."
         for p in abiertas:   # el bucle las vuelve a publicar con sus botones
             p.pop("telegram", None)
             _escribir(HOME / "puertas" / f"{p['id']}.json", p)
-        return f"{len(abiertas)} puerta(s) abierta(s); te las reenvío con sus botones."
+        return f"Tienes {_plural(len(abiertas), 'decisión pendiente', 'decisiones pendientes')}: te las reenvío con sus botones."
 
     async def _cmd_estado(raw_args: str = "") -> str:
         return await _estado_texto(raw_args.strip())

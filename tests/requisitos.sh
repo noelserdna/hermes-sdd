@@ -32,6 +32,6 @@ git add -A && git commit -qm "docs(requirements): v1.1"
 out=$(bash "$ROOT/puerta.sh" "$R" requisitos 2>&1); rc=$?
 id=$(echo "$out" | tail -1)
 [ $rc -eq 0 ] && [ -f ".sdd/hermes/puertas/$id.json" ] \
-  && jq -r .texto ".sdd/hermes/puertas/$id.json" | grep -q "criterios modificados" \
+  && jq -r .texto ".sdd/hermes/puertas/$id.json" | grep -q "criterios ajustados" \
   && ok "puerta de cambio sin REQ nuevos: se abre y lo explica" || bad "puerta de cambio: rc=$rc $out"
 exit $fail

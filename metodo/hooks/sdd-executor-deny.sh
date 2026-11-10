@@ -46,9 +46,22 @@ check '(firmar|decidir|puerta|jev|nuevo)\.sh|hsdd_(nucleo|proyectos)' "$CMD_SIN_
 check '(aprobadores|jev|sdd)\.json'                                   "$CMD" "quién decide (aprobadores.json), el modo de Jev (jev.json) y la configuración (sdd.json) los fija una persona"
 check '(decisions|challenges)\.jsonl|gate-evidence'               "$ESCRIBE$ESCRIBE_I" "los registros humanos no se editan desde el ejecutor"
 check 'git[[:space:]]+push'                                       "$CMD_SIN_ARNES" "publicar (push) lo decide una persona"
-[ -n "$motivo" ] || exit 0
+# Chrome abierto a mano (capturas, PDF, headless) sin llavero simulado: en macOS pide a la persona la contraseña del
+# llavero («Chromium Safe Storage») en CADA arranque (incidente raciones, 10/11/2026). No se para la etapa: se repite
+# el comando bien. Playwright ya pasa --use-mock-keychain por su cuenta.
+navegador=""
+if [ -z "$motivo" ] && printf '%s' "$CMD" | grep -qiE 'chrome for testing|chromium|chrome-headless-shell|google-chrome|google chrome' &&
+   printf '%s' "$CMD" | grep -qE -- '--(headless|screenshot|print-to-pdf|dump-dom|remote-debugging-port)' &&
+   ! printf '%s' "$CMD" | grep -q -- '--use-mock-keychain'; then
+  navegador=1
+fi
+[ -n "$motivo" ] || [ -n "$navegador" ] || exit 0
 
-RAZON="hermes-sdd: $motivo. Termina tu etapa; la decisión llega por una puerta y la firma el notario."
+if [ -n "$motivo" ]; then
+  RAZON="hermes-sdd: $motivo. Termina tu etapa; la decisión llega por una puerta y la firma el notario."
+else
+  RAZON="hermes-sdd: abrir Chrome a mano sin --use-mock-keychain hace que macOS pida a la persona la contraseña del llavero en cada arranque. Repite el comando añadiendo --use-mock-keychain --password-store=basic (o usa Playwright, que ya lo hace)."
+fi
 if [ "$EVENTO" = pre_tool_call ]; then
   jq -nc --arg r "$RAZON" '{decision:"block", reason:$r}'; exit 2
 fi
