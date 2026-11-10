@@ -18,6 +18,7 @@ from pathlib import Path
 
 HOME = Path(os.environ.get("HERMES_SDD_HOME", Path.home() / ".hermes" / "hermes-sdd"))
 DESHACER_DEFECTO_S = 180
+DESHACER_JEV_DEFECTO_S = 60   # Jev decide en piloto y auto: su ventana es aparte (más corta, para no frenar el pipeline)
 DESHACER_MIN_S, DESHACER_MAX_S = 10, 86400
 
 
@@ -30,6 +31,17 @@ def deshacer_s() -> int:
         v = int((leer(HOME / "sdd.json", {}) or {}).get("deshacer_s") or DESHACER_DEFECTO_S)
     except (TypeError, ValueError):
         return DESHACER_DEFECTO_S
+    return min(max(v, DESHACER_MIN_S), DESHACER_MAX_S)
+
+
+def deshacer_jev_s() -> int:
+    """Segundos para deshacer una decisión de Jev. HERMES_SDD_DESHACER_S (pruebas) manda; si no, sdd.json → deshacer_jev_s."""
+    if os.environ.get("HERMES_SDD_DESHACER_S"):
+        return int(os.environ["HERMES_SDD_DESHACER_S"])
+    try:
+        v = int((leer(HOME / "sdd.json", {}) or {}).get("deshacer_jev_s") or DESHACER_JEV_DEFECTO_S)
+    except (TypeError, ValueError):
+        return DESHACER_JEV_DEFECTO_S
     return min(max(v, DESHACER_MIN_S), DESHACER_MAX_S)
 
 
@@ -108,7 +120,7 @@ class Rechazo(Exception):
     """La acción no procede; el mensaje se enseña tal cual a la persona."""
 
 
-def _registrar(idx: Path, puerta: dict, verbo: str, texto: str, actor: dict, prueba: dict) -> dict:
+def _registrar(idx: Path, puerta: dict, verbo: str, texto: str, actor: dict, prueba: dict, ventana_s: int | None = None) -> dict:
     """Guarda la decisión normalizada (la lee el notario) y abre la ventana de deshacer. Con el cerrojo tomado."""
     if puerta.get("preguntas") and verbo != "rechazo":
         resp = ", ".join(f"Q{n}: {l}" for n, l in respuestas(puerta).items() if l)
@@ -119,7 +131,7 @@ def _registrar(idx: Path, puerta: dict, verbo: str, texto: str, actor: dict, pru
     escribir(dirdec / f"{puerta['id']}.json", decision)
     if puerta.get("ver_at"):
         decision["dwell_s"] = int(time.time() - puerta["ver_at"])
-    puerta.update(estado="decidida", decision=decision, firmar_en=time.time() + deshacer_s())
+    puerta.update(estado="decidida", decision=decision, firmar_en=time.time() + (ventana_s or deshacer_s()))
     escribir(idx, puerta)
     return puerta
 
@@ -353,7 +365,7 @@ def aplicar_jev(gid: str, juicio: dict) -> dict:
                   "demo": "no vista" if puerta.get("tipo") == "fase" else ""}
         return _registrar(idx, puerta, juicio["choice"], "",
                           {"persona": JEV, "canal": JEV, "id": juicio.get("modelo") or "jev"},
-                          {k: v for k, v in prueba.items() if v})
+                          {k: v for k, v in prueba.items() if v}, ventana_s=deshacer_jev_s())
 
 
 def rejuzgar_jev(gid: str) -> dict:

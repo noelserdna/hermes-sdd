@@ -212,7 +212,7 @@ La pestaña **SDD** tiene cuatro secciones:
 | **Decisiones** | decidir las puertas abiertas (las mismas que en Telegram) |
 | **Proyectos** | ver tus proyectos, sus hitos y el modo de Jev de cada uno |
 | **＋ Nuevo** | lanzar un proyecto nuevo: nombre, qué quieres, stack y modo de Jev |
-| **Configuración** | carpeta por defecto de los proyectos, stacks (ver, editar, añadir), modelos por etapa (perfil Calidad, Equilibrado o Rápido, y cambios por etapa), ventana para deshacer (en segundos) y ajustes de Jev |
+| **Configuración** | carpeta por defecto de los proyectos, stacks (ver, editar, añadir), modelos por etapa (perfil Calidad, Equilibrado o Rápido, y cambios por etapa), ventanas para deshacer en segundos (la tuya, 180 s, y la de Jev, 60 s) y ajustes de Jev |
 
 | Puerta | Qué ves | Qué puedes hacer |
 |---|---|---|
@@ -308,6 +308,7 @@ en un contenedor o una firma con llave física lo *impiden*.
 | La pestaña «SDD» no sale en el panel | Reinicia `hermes dashboard` después de instalar. |
 | La pestaña no sale en Hermes Desktop | **Capabilities → Plugins → Rescan** y activa «SDD» (viene apagada). |
 | `AVISO: kanban.auto_decompose está activo` | `hermes config set kanban.auto_decompose false` |
+| Las etapas tardan en arrancar (hasta un minuto entre tarjeta y tarjeta) | `hermes config set kanban.dispatch_interval_seconds 10` y `hermes gateway restart` (el instalador lo avisa) |
 | Una etapa sale «busy» | Ya hay otra etapa en marcha en ese repo: el arnés nunca ejecuta dos a la vez en el mismo proyecto. Espera a que termine. |
 | Una etapa sale «scheduled» | Se agotó la cuota de tu suscripción de Claude. Se reanuda sola a la hora de reinicio. |
 | La demo de una FASE no tiene capturas | Falta el navegador de Playwright en el proyecto: `npx playwright install chromium` (en Linux/WSL, con `--with-deps`). |

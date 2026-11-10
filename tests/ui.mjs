@@ -46,7 +46,7 @@ const cfg = {
   carpeta: '~/proyectos-sdd', carpeta_resuelta: '/Users/x/proyectos-sdd', carpeta_por_defecto: '~/proyectos-sdd', stack_defecto: 'web-astro',
   stacks: [{ id: 'web-vite', nombre: 'Web con Vite', descripcion: 'd1', stack: 'JS + Vite', test: 'npm test' },
            { id: 'web-astro', nombre: 'Web con Astro', descripcion: 'Web de contenido', stack: 'Astro + TS', test: 'npm test', server: 'npx astro dev' }],
-  deshacer_s: 90, deshacer_rango: [10, 86400], deshacer_por_defecto: 180,
+  deshacer_s: 90, deshacer_rango: [10, 86400], deshacer_por_defecto: 180, deshacer_jev_s: 45, deshacer_jev_por_defecto: 60,
   perfil_modelos: 'equilibrado', modelos_cambiados: { implementar: 'haiku' },
   modelos: { requisitos: 'opus', implementar: 'haiku' }, perfiles: { calidad: { requisitos: 'opus', implementar: 'opus' }, equilibrado: { requisitos: 'opus', implementar: 'sonnet' }, rapido: { requisitos: 'sonnet', implementar: 'sonnet' } },
   nombres_perfil: { calidad: 'Calidad: Opus en todo', equilibrado: 'Equilibrado: Opus planifica, Sonnet programa', rapido: 'Rápido: Sonnet en todo' },
@@ -65,5 +65,5 @@ ok(html.includes('Stacks') && html.includes('por defecto') && html.includes('Usa
 ok(html.includes('Modo por defecto') && html.includes('umbral') && html.includes('mantenimiento'), 'Configuración: ajustes de Jev')
 ok(html.includes('Modelos por etapa') && html.includes('Equilibrado') && html.includes('Implementar ✎') && html.includes('El perfil dice sonnet') && html.includes('Volver al perfil') && html.includes('claude-opus-5.5 (versión fija)'),
   'Configuración: perfil de modelos y modelo por etapa, con lo cambiado marcado')
-ok(html.includes('Ventana para deshacer') && html.includes('value="90"') && html.includes('1 min 30 s'), 'Configuración: ventana para deshacer en segundos')
+ok(html.includes('Ventana para deshacer') && html.includes('value="90"') && html.includes('1 min 30 s') && html.includes('Las de Jev') && html.includes('value="45"') && html.includes('45 s'), 'Configuración: ventanas para deshacer, la tuya y la de Jev')
 process.exit(fallos ? 1 : 0)

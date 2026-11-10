@@ -274,14 +274,27 @@ function crearSDD(E) {
       h('div', { style: S.meta }, 'Un proyecto puede fijar el suyo en .sdd/hermes/hermes-sdd.json → modelos; ese manda sobre esto.'))
   }
 
+  function Ventana({ etiqueta, clave, valor, defecto, minS, maxS, guardar, ocupado }) {
+    const [texto, setTexto] = useState(String(valor))
+    const s = Number(texto)
+    const valido = Number.isInteger(s) && s >= minS && s <= maxS
+    return h(Campo, {
+      etiqueta,
+      ayuda: valido ? `${duracion(s)}. Por defecto, ${defecto} s.` : `Un número entero de segundos, entre ${minS} y ${maxS}.`
+    },
+      h('span', { style: S.fila },
+        h(C.Campo, { value: texto, onChange: e => setTexto(e.target.value.trim()), style: { maxWidth: 120 } }),
+        h(C.Boton, {
+          tono: 'principal', disabled: ocupado || !valido || s === valor,
+          onClick: () => guardar({ [clave]: s }, `${etiqueta}: ${duracion(s)} para deshacer`)
+        }, 'Guardar')))
+  }
+
   function Configuracion({ cfg, setCfg }) {
     const [carpeta, setCarpeta] = useState(cfg.carpeta)
     const [editando, setEditando] = useState(null)   // id del stack, o '+' para uno nuevo
     const [umbral, setUmbral] = useState(String(cfg.jev.umbral))
-    const [deshacer, setDeshacer] = useState(String(cfg.deshacer_s))
-    const segundos = Number(deshacer)
     const [minS, maxS] = cfg.deshacer_rango || [10, 86400]
-    const deshacerValido = Number.isInteger(segundos) && segundos >= minS && segundos <= maxS
     const a = useAccion()
     const guardar = (cuerpo, aviso) => a.ejecutar(() => api.post('/config', cuerpo), r => { setCfg(r); setEditando(null); E.avisar(aviso) })
     const jev = (cuerpo, aviso) => a.ejecutar(() => api.post('/jev/ajustes', cuerpo), j => { setCfg({ ...cfg, jev: j }); E.avisar(aviso) })
@@ -297,19 +310,10 @@ function crearSDD(E) {
           onClick: () => guardar({ carpeta }, 'Carpeta por defecto guardada')
         }, 'Guardar carpeta'))),
       h(Tarjeta, { titulo: '⏱ Ventana para deshacer' },
-        h(Campo, {
-          etiqueta: 'Segundos desde que decides (tú o Jev) hasta que el notario firma',
-          ayuda: deshacerValido
-            ? `${duracion(segundos)}. Durante ese tiempo la decisión se puede deshacer; después se firma y ya no. Por defecto, ${cfg.deshacer_por_defecto} s.`
-            : `Un número entero de segundos, entre ${minS} y ${maxS}.`
-        },
-          h('span', { style: S.fila },
-            h(C.Campo, { value: deshacer, onChange: e => setDeshacer(e.target.value.trim()), style: { maxWidth: 120 } }),
-            h(C.Boton, {
-              tono: 'principal', disabled: a.ocupado || !deshacerValido || segundos === cfg.deshacer_s,
-              onClick: () => guardar({ deshacer_s: segundos }, `Ventana para deshacer: ${duracion(segundos)}`)
-            }, 'Guardar'))),
-        h('div', { style: S.meta }, 'Se aplica a las decisiones nuevas; las que ya esperan su firma mantienen su hora.')),
+        h('div', { style: S.meta }, 'Segundos desde que se decide hasta que el notario firma. Durante ese tiempo la decisión se puede deshacer; después se firma y ya no. Se aplica a las decisiones nuevas.'),
+        h('div', { style: S.rejilla },
+          h(Ventana, { etiqueta: 'Tus decisiones', clave: 'deshacer_s', valor: cfg.deshacer_s, defecto: cfg.deshacer_por_defecto, minS, maxS, guardar, ocupado: a.ocupado }),
+          h(Ventana, { etiqueta: 'Las de Jev (piloto y auto)', clave: 'deshacer_jev_s', valor: cfg.deshacer_jev_s, defecto: cfg.deshacer_jev_por_defecto, minS, maxS, guardar, ocupado: a.ocupado }))),
       h(Modelos, { cfg, guardar, ocupado: a.ocupado }),
       h(Tarjeta, { titulo: '🧱 Stacks' },
         h('div', { style: S.meta }, 'Lo que elijas al crear un proyecto se escribe en su AGENTS.md (SDD Stack Profile): el ejecutor construye con ese stack y ejecuta esos tests.'),

@@ -122,6 +122,7 @@ def config() -> dict:
     return {"carpeta": carpeta, "carpeta_resuelta": str(Path(carpeta).expanduser()), "carpeta_por_defecto": CARPETA_DEFECTO,
             "stack_defecto": defecto, "stacks": stacks, "deshacer_s": N.deshacer_s(),
             "deshacer_rango": [N.DESHACER_MIN_S, N.DESHACER_MAX_S], "deshacer_por_defecto": N.DESHACER_DEFECTO_S,
+            "deshacer_jev_s": N.deshacer_jev_s(), "deshacer_jev_por_defecto": N.DESHACER_JEV_DEFECTO_S,
             "perfil_modelos": cfg.get("perfil_modelos") if cfg.get("perfil_modelos") in PERFILES else PERFIL_DEFECTO,
             "modelos_cambiados": {e: m for e, m in (cfg.get("modelos") or {}).items() if m},
             "modelos": modelos_efectivos(cfg), "perfiles": PERFILES, "nombres_perfil": NOMBRE_PERFIL,
@@ -147,7 +148,8 @@ def _stack_valido(s: dict) -> dict:
 
 
 def guardar_config(carpeta: str | None = None, stack_defecto: str | None = None, stacks: list | None = None,
-                   deshacer_s=None, perfil_modelos: str | None = None, modelos: dict | None = None) -> dict:
+                   deshacer_s=None, perfil_modelos: str | None = None, modelos: dict | None = None,
+                   deshacer_jev_s=None) -> dict:
     """Cambia lo que venga (lo demás se queda como está). Valida antes de escribir nada."""
     actual = N.leer(N.HOME / "sdd.json", {}) or {}
     nuevo = dict(actual)
@@ -168,14 +170,16 @@ def guardar_config(carpeta: str | None = None, stack_defecto: str | None = None,
         if not any(s["id"] == stack_defecto for s in (nuevo.get("stacks") or STACKS_DEFECTO)):
             raise Rechazo(f"No hay ningún stack {stack_defecto}")
         nuevo["stack_defecto"] = stack_defecto
-    if deshacer_s is not None:
+    for clave, valor, quien in (("deshacer_s", deshacer_s, "tus decisiones"), ("deshacer_jev_s", deshacer_jev_s, "las de Jev")):
+        if valor is None:
+            continue
         try:
-            s = int(str(deshacer_s).strip())
+            s = int(str(valor).strip())
         except ValueError:
-            raise Rechazo("La ventana para deshacer es un número de segundos")
+            raise Rechazo(f"La ventana para deshacer {quien} es un número de segundos")
         if not N.DESHACER_MIN_S <= s <= N.DESHACER_MAX_S:
-            raise Rechazo(f"La ventana para deshacer va de {N.DESHACER_MIN_S} s a {N.DESHACER_MAX_S} s (un día)")
-        nuevo["deshacer_s"] = s
+            raise Rechazo(f"La ventana para deshacer {quien} va de {N.DESHACER_MIN_S} s a {N.DESHACER_MAX_S} s (un día)")
+        nuevo[clave] = s
     if perfil_modelos is not None:
         if perfil_modelos not in PERFILES:
             raise Rechazo(f"Perfil de modelos desconocido: {perfil_modelos}. Perfiles: {', '.join(PERFILES)}")
@@ -316,6 +320,7 @@ if __name__ == "__main__":   # CLI de nuevo.sh
     n.add_argument("--stack"); n.add_argument("--carpeta"); n.add_argument("--jev"); n.add_argument("--sin-lanzar", action="store_true")
     c = sub.add_parser("config"); c.add_argument("--carpeta"); c.add_argument("--stack-defecto")
     c.add_argument("--deshacer", metavar="SEGUNDOS")
+    c.add_argument("--deshacer-jev", metavar="SEGUNDOS")
     sub.add_parser("stacks")
     mo = sub.add_parser("modelo"); mo.add_argument("etapa"); mo.add_argument("ejecutor", nargs="?", default="claude")
     mp = sub.add_parser("modelos"); mp.add_argument("--perfil")
@@ -327,11 +332,12 @@ if __name__ == "__main__":   # CLI de nuevo.sh
             if r["salida"]:
                 print(r["salida"])
         elif a.cmd == "config":
-            if a.carpeta is not None or a.stack_defecto is not None or a.deshacer is not None:
-                guardar_config(carpeta=a.carpeta, stack_defecto=a.stack_defecto, deshacer_s=a.deshacer)
+            if any(v is not None for v in (a.carpeta, a.stack_defecto, a.deshacer, a.deshacer_jev)):
+                guardar_config(carpeta=a.carpeta, stack_defecto=a.stack_defecto, deshacer_s=a.deshacer, deshacer_jev_s=a.deshacer_jev)
             c = config()
             print(f"Carpeta por defecto: {c['carpeta']} ({c['carpeta_resuelta']})\nStack por defecto: {c['stack_defecto']}\n"
-                  f"Ventana para deshacer: {c['deshacer_s']} s ({N.duracion(c['deshacer_s'])})")
+                  f"Ventana para deshacer: {c['deshacer_s']} s ({N.duracion(c['deshacer_s'])}); "
+                  f"las de Jev: {c['deshacer_jev_s']} s ({N.duracion(c['deshacer_jev_s'])})")
         elif a.cmd == "modelo":   # lo usa etapa.sh cuando el proyecto no fija el modelo de una etapa
             print(modelo_para(a.etapa, a.ejecutor))
         elif a.cmd == "modelos":

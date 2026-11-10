@@ -104,6 +104,9 @@ hermes -p "$E" config set approvals.deny \
 hermes -p "$E" config set hooks.pre_tool_call \
   "[{\"matcher\":\"terminal\",\"command\":\"bash $HOME_SDD/actual/metodo/hooks/sdd-executor-deny.sh\",\"timeout\":10,\"fail_closed\":true}]" >/dev/null
 
+DI=$(hermes config get kanban.dispatch_interval_seconds 2>/dev/null | tail -1)
+[ -n "$DI" ] && [ "$DI" -gt 15 ] 2>/dev/null &&
+  echo "  AVISO: el kanban mira las tarjetas cada ${DI} s; cada etapa espera hasta eso en arrancar. Para 10 s: hermes config set kanban.dispatch_interval_seconds 10"
 [ "$(hermes config get kanban.auto_decompose 2>/dev/null | tail -1)" = false ] ||
   echo "  AVISO: kanban.auto_decompose está activo; desactívalo con: hermes config set kanban.auto_decompose false"
 echo "Listo. Reinicia el gateway (hermes gateway restart) y el panel (hermes dashboard) para cargar el plugin"

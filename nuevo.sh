@@ -4,7 +4,7 @@
 #
 #   nuevo.sh <nombre> "<qué quieres construir>" [--stack ID] [--carpeta DIR] [--jev MODO]
 #   nuevo.sh stacks                                  stacks disponibles (* = el de por defecto)
-#   nuevo.sh config [--carpeta DIR] [--stack-defecto ID] [--deshacer SEGUNDOS]
+#   nuevo.sh config [--carpeta DIR] [--stack-defecto ID] [--deshacer SEGUNDOS] [--deshacer-jev SEGUNDOS]
 #                                                    ver o cambiar carpeta, stack por defecto y ventana para deshacer
 #
 # Sin --carpeta, el proyecto va a la carpeta por defecto (~/proyectos-sdd si no la cambias): <carpeta>/<nombre>.

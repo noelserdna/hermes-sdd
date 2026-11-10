@@ -99,6 +99,21 @@ PY2
 )
 [ "$o" = "90 1 min 30 s" ] && ok "una decisión nueva se firma pasados los segundos configurados (sin reiniciar)" || bad "firmar_en: $o"
 
+o=$($NUEVO config --deshacer-jev 30 2>&1); echo "$o" | grep -q "las de Jev: 30 s" && ok "nuevo.sh config --deshacer-jev guarda la ventana de Jev" || bad "deshacer-jev: $o"
+o=$(python3 - "$ROOT/plugin/hermes-sdd/hsdd_nucleo.py" "$T" <<'PY2'
+import importlib.util, json, sys, time
+from pathlib import Path
+spec = importlib.util.spec_from_file_location("hsdd_nucleo", sys.argv[1]); N = importlib.util.module_from_spec(spec); spec.loader.exec_module(N)
+N.poner_modo("auto", "demo")
+repo = Path(sys.argv[2]) / "r"
+(N.HOME / "puertas" / "j1.json").write_text(json.dumps({"id": "j1", "tipo": "plan", "tablero": "demo", "repo": str(repo), "estado": "abierta",
+    "texto": "3 FASEs", "opciones": [{"verbo": "conforme", "etiqueta": "Conforme"}]}))
+antes = time.time(); p = N.aplicar_jev("j1", {"choice": "conforme", "p": 0.97, "confidence": 0.9, "modelo": "jev-test"})
+print(p["decision"]["actor"]["canal"], round(p["firmar_en"] - antes))
+PY2
+)
+[ "$o" = "jev 30" ] && ok "una decisión de Jev usa su propia ventana (30 s), no la tuya (90 s)" || bad "ventana de Jev: $o"
+
 # ── modelos por etapa ────────────────────────────────────────────────────────────────────────────────────────────
 PR="python3 $ROOT/plugin/hermes-sdd/hsdd_proyectos.py"
 o=$($PR modelo requisitos)/$($PR modelo implementar)/$($PR modelo ruta hermes)
