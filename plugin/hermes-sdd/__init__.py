@@ -356,10 +356,10 @@ async def _firmar(bot, puerta: dict) -> None:
     with N.cerrojo():
         p = _leer(idx) or puerta
         if proc.returncode == 0:
-            p["estado"] = "firmada"; p["resultado"] = out.decode().strip().splitlines()[-1] if out else "firmada"
+            p["estado"] = "firmada"; p["resultado"] = out.decode("utf-8", errors="replace").strip().splitlines()[-1] if out else "firmada"
             texto = f"{_cabecera(p)}\n{_resultado_claro(p['resultado'])}"
         else:
-            p["estado"] = "error"; p["error"] = err.decode().strip()[-500:]
+            p["estado"] = "error"; p["error"] = err.decode("utf-8", errors="replace").strip()[-500:]
             texto = (f"{_cabecera(p)}\n⚠️ Tu decisión no se ha podido registrar, así que no se ha aplicado.\n"
                      f"Motivo: {p['error'].replace('NOTARIO: rechazado — ', '')}\n"
                      "Normalmente es porque el proyecto cambió después de abrir esta puerta: espera a la siguiente.")
@@ -415,7 +415,7 @@ async def _crear_tarjeta(puerta: dict) -> str:
         stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, env={**os.environ, "PATH": PATH_CMDS})
     out, err = await asyncio.wait_for(proc.communicate(), 60)
     if proc.returncode != 0:
-        raise RuntimeError(err.decode()[-300:])
+        raise RuntimeError(err.decode("utf-8", errors="replace")[-300:])
     return json.loads(out)["id"]
 
 
@@ -433,10 +433,10 @@ async def _consultar_jev(puerta: dict) -> dict:
                 stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, env={**os.environ, "PATH": PATH_CMDS})
             out, err = await asyncio.wait_for(proc.communicate(), 180)
         if proc.returncode == 3:
-            return {"error": "Jev apagado: " + (err.decode().strip() or "falta TYPESAFE_API_KEY")}
+            return {"error": "Jev apagado: " + (err.decode("utf-8", errors="replace").strip() or "falta TYPESAFE_API_KEY")}
         res = json.loads(out or b"{}")
         if not res.get("items"):
-            return {"error": ((res.get("errors") or [{}])[0].get("error") or err.decode().strip() or "sin respuesta")[:300]}
+            return {"error": ((res.get("errors") or [{}])[0].get("error") or err.decode("utf-8", errors="replace").strip() or "sin respuesta")[:300]}
         a = res["items"][0]["answers"]["decision"]
         return {"choice": a.get("choice"), "p": float((a.get("p") or {}).get(a.get("choice"), 0)),
                 "confidence": a.get("confidence"), "modelo": res.get("model") or "jev"}
@@ -530,9 +530,15 @@ async def _cli(*args: str, timeout: int = 60) -> str:
     proc = await asyncio.create_subprocess_exec(*args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
                                                 env={**os.environ, "PATH": PATH_CMDS, "HERMES_SDD_HOME": str(HOME)})
     out, err = await asyncio.wait_for(proc.communicate(), timeout)
+    # errors="replace": una salida con bytes que no son UTF-8 (un mensaje de otra herramienta, una tilde cortada) no
+    # debe convertir en fallo lo que salió bien (/encargado, 11/11/2026: el tema quedó creado pero «no enlazado»)
     if proc.returncode != 0:
-        raise RuntimeError((err or out).decode().strip()[-300:])
-    return out.decode()
+        detalle = (err or out).decode("utf-8", errors="replace").strip()
+        log.warning("hermes-sdd: %s salió con %s: %s", " ".join(args[:3]), proc.returncode, detalle[-800:])
+        raise RuntimeError(detalle[-300:])
+    if err:
+        log.info("hermes-sdd: %s avisó por stderr: %s", " ".join(args[:3]), err.decode("utf-8", errors="replace").strip()[-400:])
+    return out.decode("utf-8", errors="replace")
 
 
 async def _proyectos() -> dict:
@@ -962,20 +968,20 @@ def register(ctx):
     ctx.register_telegram_handler(_wire)
     # args_hint siempre entre [ ]: Hermes deja fuera del menú de Telegram las órdenes cuya ayuda empieza por «<»
     # (argumento obligatorio). Sin argumentos, cada orden explica cómo se usa.
-    ctx.register_command("nuevo", _cmd_nuevo, description="Crea y lanza un proyecto SDD nuevo",
+    ctx.register_command("nuevo", _cmd_nuevo, description="Crea y lanza un proyecto",
                          args_hint="[nombre] [stack] [qué quieres construir]")
-    ctx.register_command("jev", _cmd_jev, description="Modo de Jev en las puertas SDD (humano, consejo, piloto, auto)",
+    ctx.register_command("jev", _cmd_jev, description="Modo de Jev en las puertas",
                          args_hint="[proyecto] [modo]")
-    ctx.register_command("cambio", _cmd_cambio, description="Pide un cambio o una funcionalidad a un proyecto SDD", args_hint="[proyecto] [petición]")
-    ctx.register_command("estado", _cmd_estado, description="Estado de los proyectos SDD", args_hint="[proyecto]")
-    ctx.register_command("pausar", _cmd_pausar, description="Pausa proyectos SDD (ahora = detener)", args_hint="[proyecto|todo] [ahora]")
-    ctx.register_command("reanudar", _cmd_reanudar, description="Reanuda proyectos SDD en pausa", args_hint="[proyecto|todo]")
+    ctx.register_command("cambio", _cmd_cambio, description="Pide un cambio a un proyecto", args_hint="[proyecto] [petición]")
+    ctx.register_command("estado", _cmd_estado, description="Estado de los proyectos", args_hint="[proyecto]")
+    ctx.register_command("pausar", _cmd_pausar, description="Pausa un proyecto (ahora = detener)", args_hint="[proyecto|todo] [ahora]")
+    ctx.register_command("reanudar", _cmd_reanudar, description="Reanuda un proyecto en pausa", args_hint="[proyecto|todo]")
     ctx.register_command("anular", _cmd_anular, description="Anula la aceptación de una FASE", args_hint="[proyecto] [fase] [motivo]")
-    ctx.register_command("mantenimiento", _cmd_mantenimiento, description="Revisa ahora los proyectos SDD entregados (umbrales)", args_hint="[proyecto]")
-    ctx.register_command("puertas", _cmd_puertas, description="Puertas SDD abiertas, con sus botones")
-    ctx.register_command("preparar", _cmd_preparar, description="Crea un proyecto SDD sin lanzarlo: su encargado recoge la entrada",
+    ctx.register_command("mantenimiento", _cmd_mantenimiento, description="Revisa los proyectos entregados", args_hint="[proyecto]")
+    ctx.register_command("puertas", _cmd_puertas, description="Decisiones pendientes, con sus botones")
+    ctx.register_command("preparar", _cmd_preparar, description="Prepara un proyecto con su encargado",
                          args_hint="[nombre] [stack] [qué quieres construir]")
-    ctx.register_command("encargado", _cmd_encargado, description="Tema de Telegram para hablar con el encargado de un proyecto",
+    ctx.register_command("encargado", _cmd_encargado, description="Habla con el encargado de un proyecto",
                          args_hint="[proyecto]")
 
     # El encargado de cada proyecto (perfil sdd-p-<proyecto>, encargado.sh): al abrir una sesión encuentra en su prompt
