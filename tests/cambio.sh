@@ -37,4 +37,24 @@ o=$(cambio_corto); [ -z "$o" ] && ok "un requisito de una FASE ya aceptada: casc
 git reset -q --hard requirements-v1.0; printf '### REQ-F-004: Nuevo\n- **Statement:** d\n' >> requirements/REQUIREMENTS.md
 g commit -qam nuevo; git tag -d requirements-v1.1 >/dev/null; g tag requirements-v1.1
 o=$(cambio_corto); [ -z "$o" ] && ok "un requisito nuevo: cascada completa (hay que planificarlo)" || bad "nuevo: [$o]"
+
+# ── plan: criterios que citan una pantalla de una FASE posterior ───────────────────────────────────────────────────
+D="$T/d"; mkdir -p "$D/requirements" "$D/plan/fases"
+cat > "$D/requirements/REQUIREMENTS.md" <<'R'
+## Functional
+### REQ-F-001: Préstamo
+- **Statement:** a
+  - GIVEN a book WHEN lent THEN 1 free copy
+  - GIVEN the loan WHEN Marta opens "Mis préstamos" THEN the user sees "Rayuela"
+### REQ-F-002: Mis préstamos y mis reservas
+- **Statement:** b
+  - GIVEN a loan WHEN she opens her area THEN the user sees "Rayuela — devolver antes del 25/11"
+R
+printf '# FASE-0 — Préstamos\n> **Requisitos:** REQ-F-001\n\n## Objetivo\n' > "$D/plan/fases/FASE-0-PRESTAMOS.md"
+printf '# FASE-1 — Consultas\n> **Requisitos:** REQ-F-002\n\n## Objetivo\n' > "$D/plan/fases/FASE-1-CONSULTAS.md"
+o=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_plan.py" dependencias "$D" | jq -r '.[] | "\(.requisito) \(.criterio) \(.cita) \(.fase_vista)"')
+[ "$o" = "REQ-F-001 AC2 Mis préstamos 1" ] && ok "plan: un criterio que cita una pantalla de una FASE posterior se detecta" || bad "dependencias: [$o]"
+printf '# FASE-0 — Préstamos\n> **Requisitos:** REQ-F-001, REQ-F-002\n\n## Objetivo\n' > "$D/plan/fases/FASE-0-PRESTAMOS.md"; rm "$D/plan/fases/FASE-1-CONSULTAS.md"
+o=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_plan.py" dependencias "$D")
+[ "$o" = "[]" ] && ok "plan: si la pantalla llega en la misma FASE no hay aviso" || bad "misma FASE: $o"
 exit $fail

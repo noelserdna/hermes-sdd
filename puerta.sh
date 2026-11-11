@@ -115,6 +115,12 @@ esac
 T_JSON=$(python3 "$TEXTOS" puerta "$TIPO" "$REPO" --proyecto "${BOARD:-$(basename "$REPO")}" ${FASE:+--fase "$FASE"} ${EXTRA[@]+"${EXTRA[@]}"}) ||
   { echo "no se pudo escribir el texto de la puerta $TIPO" >&2; exit 1; }
 TITULO=$(echo "$T_JSON" | jq -r .titulo); TEXTO=$(echo "$T_JSON" | jq -r .texto)
+if [ "$TIPO" = plan ] && [ -s .sdd/hermes/plan-avisos.txt ]; then
+  TEXTO="$TEXTO
+
+⚠️ Estos criterios citan una pantalla que llega en una fase posterior: su fase no podrá aceptarse tal cual. Pide un cambio (✏️) para moverlos o adelantar esa pantalla:
+$(cat .sdd/hermes/plan-avisos.txt)"
+fi
 
 # Preguntas como datos, para que el canal pueda ofrecerlas como formulario (Q1: A/B/C…)
 PREGUNTAS=$(python3 - .sdd/questions-*.md <<'PY' 2>/dev/null || echo '[]'

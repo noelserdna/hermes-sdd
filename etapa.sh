@@ -203,6 +203,17 @@ case "$ETAPA" in
     claude_etapa plan-architect "/sdd-plan-architect --skip-clarify — $ARNES Generate plan/.$INC$PLAN_G"
     ls plan/fases/FASE-*.md >/dev/null 2>&1 || falla "el plan no se generó: $(no_hecho)"
     node "$SDD" lint --plan >/dev/null 2>&1 || falla "sdd lint --plan encuentra errores: $(node "$SDD" lint --plan 2>&1 | tail -3 | tr '\n' ' ')"
+    # Criterios que citan una pantalla que entrega una FASE posterior: esa FASE nunca pasaría su aceptación
+    # (biblioteca, 11/11/2026). El plan se corrige una vez; lo que quede se avisa en la puerta del plan.
+    DEP="$ROOT/plugin/hermes-sdd/hsdd_plan.py"
+    H=$(python3 "$DEP" dependencias . --texto 2>/dev/null || true)
+    if [ -n "$H" ]; then
+      claude_etapa plan-architect "/sdd-plan-architect --skip-clarify — $ARNES Fix plan/ (do not change requirements/): each line below is an acceptance criterion of a requirement planned in a FASE that quotes a screen or view delivered by a later FASE, so that FASE could never pass its acceptance. For each one, either move the requirement to the FASE that delivers that screen, or deliver a minimal version of that screen in the earlier FASE (its FASE file and its plan). $(echo "$H" | tr '\n' ' ')"
+      node "$SDD" lint --plan >/dev/null 2>&1 || falla "sdd lint --plan encuentra errores tras corregir dependencias entre FASEs"
+      H=$(python3 "$DEP" dependencias . --texto 2>/dev/null || true)
+    fi
+    mkdir -p .sdd/hermes
+    if [ -n "$H" ]; then printf '%s\n' "$H" > .sdd/hermes/plan-avisos.txt; else rm -f .sdd/hermes/plan-avisos.txt; fi
     fin "$RES" "Plan generado ($(ls plan/fases/FASE-*.md 2>/dev/null | wc -l | tr -d ' ') FASEs)" ;;
 
   tareas)
@@ -260,7 +271,11 @@ PY
     [ -s "$FB" ] && RECH=" This FASE comes back with a person's request (a rejection at its acceptance gate or newly approved requirements): all tasks being done does NOT finish it. Treat every point of the person's request above as new work: add the tasks it needs to task/TASK-FASE-$FASE.md and implement them (test-first, one commit each), including the missing captures and the literal letter of each criterion in its test. If a point needs a change to requirements/ or to the plan (outside your reach), do not skip it: write an [OPEN] question in .sdd/questions-task-implementer.md explaining what change is needed."
     claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES Implement FASE-$FASE completely, test-first, one commit per task with Refs:/Task: trailers.$TESTS_G$RECH"
     st=$(node "$SDD" tasks status --fase "$FASE" --require-done 2>&1) || falla "quedan tareas de la FASE-$FASE sin hacer: $(echo "$st" | tail -1)"
-    if [ -n "$RECH" ] && [ -z "$(git log --format=%H "$ANTES..HEAD" -- . ':!acceptance' ':!status' ':!.sdd' 2>/dev/null)" ]; then
+    # Un cambio de requisitos que no deja criterios fallando puede no necesitar ningún commit: solo se exige cambio
+    # cuando la persona rechazó o hay criterios concretos que arreglar
+    OBLIGA=""; [ -n "$RECH" ] && { ! head -1 "$FB.aplicado" 2>/dev/null | grep -q '^Los requisitos cambiaron' ||
+      grep -q '^Criterios de la FASE que no pasan' "$FB.aplicado" 2>/dev/null; } && OBLIGA=1
+    if [ -n "$OBLIGA" ] && [ -z "$(git log --format=%H "$ANTES..HEAD" -- . ':!acceptance' ':!status' ':!.sdd' 2>/dev/null)" ]; then
       falla "la FASE-$FASE volvió con cambios pedidos y la implementación no ha cambiado nada: lo pedido necesita algo que esta etapa no puede hacer (mira .sdd/questions-task-implementer.md)"
     fi
     base=$(git describe --tags --abbrev=0 --match 'fase-*-accepted' 2>/dev/null || git describe --tags --abbrev=0 --match 'requirements-v*' 2>/dev/null || git rev-list --max-parents=0 HEAD)

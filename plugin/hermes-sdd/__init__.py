@@ -287,22 +287,22 @@ def _pendientes() -> dict:
     return N.leer(HOME / "pendientes.json", {}) or {}
 
 
+# El disco es la única fuente: borrar una entrada (o que la puerta ya no esté abierta) anula la espera.
 def _pendientes_guardar(msg_id, valor) -> None:
     d = _pendientes()
     d[str(msg_id)] = list(valor)
-    _RT["pendientes"][msg_id] = tuple(valor)
     N.escribir(HOME / "pendientes.json", d)
 
 
 def _pendientes_hay(msg_id) -> bool:
-    return msg_id in _RT["pendientes"] or str(msg_id) in _pendientes()
+    return str(msg_id) in _pendientes()
 
 
 def _pendientes_sacar(msg_id) -> tuple:
     d = _pendientes()
     valor = d.pop(str(msg_id), None)
     N.escribir(HOME / "pendientes.json", d)
-    return tuple(_RT["pendientes"].pop(msg_id, None) or valor)
+    return tuple(valor)
 
 
 async def _on_respuesta(update, context) -> None:
