@@ -122,7 +122,8 @@ class Rechazo(Exception):
 
 def _registrar(idx: Path, puerta: dict, verbo: str, texto: str, actor: dict, prueba: dict, ventana_s: int | None = None) -> dict:
     """Guarda la decisión normalizada (la lee el notario) y abre la ventana de deshacer. Con el cerrojo tomado."""
-    if puerta.get("preguntas") and verbo != "rechazo":
+    # En una FASE o entrega bloqueada rechazar es la única salida: sus preguntas se contestan al rechazar
+    if puerta.get("preguntas") and (verbo != "rechazo" or puerta.get("tipo") in ("fase", "entrega")):
         resp = ", ".join(f"Q{n}: {l}" for n, l in respuestas(puerta).items() if l)
         texto = f"{texto}. {resp}" if texto else resp
     decision = {"verbo": verbo, "texto": texto, "actor": actor, "prueba": prueba, "at": ahora()}

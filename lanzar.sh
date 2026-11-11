@@ -66,6 +66,40 @@ fase_n() {  # fase_n <N> [sufijo]: (huecos →) implementar → aceptar la FASE 
   echo "$primera"
 }
 
+cambio_corto() {  # ¿el cambio aprobado se puede hacer sin replanificar? Imprime las FASEs a rehacer (vacío si no).
+  # Sí cuando no añade ni quita requisitos y cada requisito cambiado ya está en una FASE sin aceptar: el plan sigue
+  # valiendo y basta con rehacer esas FASEs. Compara REQUIREMENTS.md con la versión aprobada anterior.
+  local prev
+  prev=$(git -C "$REPO" tag -l 'requirements-v*' --sort=-v:refname | sed -n 2p)
+  [ -n "$prev" ] || return 0
+  python3 - "$REPO" "$prev" <<'PY'
+import re, subprocess, sys
+from pathlib import Path
+repo, prev = Path(sys.argv[1]), sys.argv[2]
+def bloques(t):
+    return {m.group(1): m.group(0) for m in re.finditer(r"^### (REQ-[A-Z]+-\d+).*?(?=^### |^## |\Z)", t, re.M | re.S)}
+antes = bloques(subprocess.run(["git", "-C", str(repo), "show", f"{prev}:requirements/REQUIREMENTS.md"], capture_output=True, text=True).stdout)
+ahora = bloques((repo / "requirements/REQUIREMENTS.md").read_text())
+if not antes or set(antes) != set(ahora):
+    sys.exit(0)
+cambiados = [r for r in ahora if antes[r] != ahora[r]]
+fases = {}
+for f in sorted((repo / "plan/fases").glob("FASE-*.md")):
+    n = re.match(r"FASE-0*(\d+)", f.name).group(1)
+    cab = f.read_text().split("\n## ", 1)[0]
+    linea = next((l for l in cab.splitlines() if re.search(r"\b(Requisitos|Requirements)\b[*\s]*:", l, re.I)), "")
+    for r in re.findall(r"REQ-[A-Z]+-\d+", linea):
+        fases.setdefault(r, set()).add(n)
+aceptada = lambda n: subprocess.run(["git", "-C", str(repo), "rev-parse", "-q", "--verify", f"refs/tags/fase-{n}-accepted"], capture_output=True).returncode == 0
+rehacer = set()
+for r in cambiados:
+    if not fases.get(r) or any(aceptada(n) for n in fases[r]):
+        sys.exit(0)
+    rehacer |= fases[r]
+print(" ".join(sorted(rehacer, key=int)))
+PY
+}
+
 # Etapas opcionales en el orden del método: clave del estado | etapa de etapa.sh | título de la tarjeta
 OPCIONALES="specifications-engineer|especificar|Especificaciones
 spec-auditor|auditar|Auditoría de especificaciones
@@ -130,7 +164,28 @@ case "$CMD" in
         if [ "$(jq -r '.adopcion // false' "$P")" = true ]; then
           rm -f "$REPO/.sdd/hermes/adopcion"; echo "Línea base aprobada: los cambios entran con /cambio"
         else
-          rm -f "$REPO/.sdd/hermes/cambio-actual"; tarjeta "Ruta" - 20m ruta
+          rm -f "$REPO/.sdd/hermes/cambio-actual"
+          RF=$(cambio_corto)
+          N=$(primera_sin_aceptar)
+          if [ -n "$RF" ] && [ -n "$N" ] && [ "${RF%% *}" -ge "$N" ]; then
+            # Cambio sin replanificar: el plan sigue valiendo; la FASE en curso se rehace con los requisitos nuevos
+            # (las FASEs posteriores ya los leerán al implementarse)
+            mkdir -p "$REPO/.sdd/hermes/feedback"
+            { echo "Los requisitos cambiaron (aprobados en $(git -C "$REPO" tag -l 'requirements-v*' --sort=-v:refname | head -1)): ajusta el código y los tests de la FASE-$N a los criterios actuales (sus números pueden haber cambiado)."
+              (cd "$REPO" && node "$ROOT/metodo/scripts/sdd.mjs" accept --fase "$N" --json 2>/dev/null) | jq -r '
+                (.scope.requirements // []) as $s
+                | [.requirements[] | select(.verdict != "VERIFIED" and (($s | length) == 0 or (.id as $i | $s | index($i))))
+                   | .id as $id | .criteria[]? | select(.state != "pass")
+                   | "- \($id) AC\(.n // .index): \(.state)"
+                     + (if ((.literal_gaps // []) | length) > 0 then " — el test no lleva la letra literal: " + ([.literal_gaps[].literal] | unique | join(", ")) else "" end)
+                     + (if .visual == "missing" then " — falta su captura" else "" end)]
+                | if length > 0 then "Criterios de la FASE que no pasan la aceptación (corrígelos todos):", .[] else empty end' || true
+            } > "$REPO/.sdd/hermes/feedback/implementar-$N.txt" 2>/dev/null || true
+            echo "Cambio sin replanificar (requisitos de las FASEs $RF): se rehace la FASE-$N"
+            fase_n "$N" " (requisitos nuevos)"
+          else
+            tarjeta "Ruta" - 20m ruta
+          fi
         fi ;;
       requisitos:cambios)             tarjeta "Requisitos (cambios)" - 40m requisitos ;;
       ruta:acepto|ruta:completo|ruta:ruta-*) tras_ruta ;;

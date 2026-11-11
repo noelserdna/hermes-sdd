@@ -98,6 +98,21 @@ print(round(p["firmar_en"] - antes), N.duracion(N.deshacer_s()))
 PY2
 )
 [ "$o" = "90 1 min 30 s" ] && ok "una decisión nueva se firma pasados los segundos configurados (sin reiniciar)" || bad "firmar_en: $o"
+o=$(python3 - "$ROOT/plugin/hermes-sdd/hsdd_nucleo.py" "$T" <<'PY2'
+import importlib.util, json, sys
+from pathlib import Path
+spec = importlib.util.spec_from_file_location("hsdd_nucleo", sys.argv[1]); N = importlib.util.module_from_spec(spec); spec.loader.exec_module(N)
+repo = Path(sys.argv[2]) / "r"
+q = [{"n": 1, "id": "Q-x", "opciones": ["A", "B", "C"], "recomendada": "A"}]
+op = [{"verbo": "ver", "etiqueta": "Ver", "paso": 1}, {"verbo": "rechazo", "etiqueta": "Rechazar", "texto": True, "paso": 2}]
+for gid, tipo in (("f1", "fase"), ("r1", "requisitos")):
+    (N.HOME / "puertas" / f"{gid}.json").write_text(json.dumps({"id": gid, "tipo": tipo, "repo": str(repo), "estado": "abierta",
+        "ver_at": 1, "preguntas": q, "respuestas": {"1": "C"}, "opciones": op}))
+print(N.decidir("f1", "rechazo", "faltan capturas", "yo", "local", "u", {})["decision"]["texto"], "|",
+      N.decidir("r1", "rechazo", "no", "yo", "local", "u", {})["decision"]["texto"])
+PY2
+)
+[ "$o" = "faltan capturas. Q1: C | no" ] && ok "rechazar una FASE lleva las respuestas marcadas a sus preguntas" || bad "rechazo con preguntas: $o"
 
 o=$($NUEVO config --deshacer-jev 30 2>&1); echo "$o" | grep -q "las de Jev: 30 s" && ok "nuevo.sh config --deshacer-jev guarda la ventana de Jev" || bad "deshacer-jev: $o"
 o=$(python3 - "$ROOT/plugin/hermes-sdd/hsdd_nucleo.py" "$T" <<'PY2'

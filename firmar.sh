@@ -284,7 +284,39 @@ Kanban-Task: $BOARD/$TASK"
     RESUMEN="FASE-$FASE aceptada$OBS por $NOMBRE ($ROL) — tag fase-$FASE-accepted" ;;
 
   fase:rechazo)
-    mkdir -p .sdd/hermes/feedback; printf '%s\n' "$TEXTO" > ".sdd/hermes/feedback/implementar-$FASE.txt"
+    # Lo que recibe la implementación: el texto de la persona, sus respuestas a las preguntas de la puerta (con el
+    # texto de la opción, no solo la letra) y los criterios de la FASE que no pasan. Un «A» suelto no es trabajo.
+    mkdir -p .sdd/hermes/feedback
+    {
+      printf '%s\n' "$TEXTO"
+      python3 - "$TEXTO" "$PUERTA" .sdd/questions-*.md <<'PY' 2>/dev/null || true
+import json, re, sys
+texto, puerta, *ficheros = sys.argv[1:]
+elegidas = {int(n): l.upper() for n, l in re.findall(r"[Qq][A-Za-z]?\s*(\d+)\W{0,3}\s*([A-Ca-c])\b", texto)}
+qs = {q["n"]: q["id"] for q in (json.load(open(puerta)).get("preguntas") or [])}
+bloques = {}
+for f in ficheros:
+    try:
+        t = open(f).read()
+    except OSError:
+        continue
+    for m in re.finditer(r"^## (Q-\S+)[^\n]*\n(.*?)(?=^## |\Z)", t, re.M | re.S):
+        bloques[m.group(1)] = m.group(2)
+for n, letra in sorted(elegidas.items()):
+    b = bloques.get(qs.get(n, ""), "")
+    preg = re.search(r"^Question:\s*(.*)$", b, re.M)
+    op = re.search(rf"^\s+{letra}\)\s*(.*?)(?:\s*\(recommended\))?$", b, re.M)
+    print(f"Q{n} ({qs.get(n, '?')}): {preg.group(1) if preg else ''} → elegida {letra}: {op.group(1) if op else '?'}")
+PY
+      node "$SDD" accept --fase "$FASE" --json 2>/dev/null | jq -r '
+        (.scope.requirements // []) as $s
+        | [.requirements[] | select(.verdict != "VERIFIED" and (($s | length) == 0 or (.id as $i | $s | index($i))))
+           | .id as $id | .criteria[]? | select(.state != "pass")
+           | "- \($id) AC\(.n // .index): \(.state)"
+             + (if ((.literal_gaps // []) | length) > 0 then " — el test no lleva la letra literal: " + ([.literal_gaps[].literal] | unique | join(", ")) else "" end)
+             + (if .visual == "missing" then " — falta su captura en evidencias/FASE-'"$FASE"'/" else "" end)]
+        | if length > 0 then "Criterios de la FASE que no pasan la aceptación (corrígelos todos):", .[] else empty end' || true
+    } > ".sdd/hermes/feedback/implementar-$FASE.txt"
     if ! hecho registrado; then
       grep -qF "${BOARD}/${TASK}" acceptance/decisions.jsonl 2>/dev/null ||
         node "$SDD" accept record fase-acceptance --fase "$FASE" --result rejected \

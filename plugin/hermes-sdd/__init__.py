@@ -274,16 +274,40 @@ async def _on_boton(update, context) -> None:
         m = await bot.send_message(chat_id=q.message.chat_id,
                                    text=f"{opcion['etiqueta']}: responde a este mensaje explicando qué quieres, con tus palabras.",
                                    reply_markup=ForceReply(selective=True, input_field_placeholder="Qué falta o qué cambiar…"))
-        _RT["pendientes"][m.message_id] = (gid, verbo, persona)
+        _pendientes_guardar(m.message_id, (gid, verbo, persona))
         return
     aviso = await _decidir(bot, gid, verbo, "", q.from_user, persona,
                            {"msg": str(q.message.message_id), "cb": q.id})
     await q.answer(aviso)
 
 
+# Las respuestas de texto pendientes (❌ Rechazar → «responde a este mensaje») viven en disco: un reinicio del
+# gateway entre el botón y la respuesta no debe tragarse la decisión.
+def _pendientes() -> dict:
+    return N.leer(HOME / "pendientes.json", {}) or {}
+
+
+def _pendientes_guardar(msg_id, valor) -> None:
+    d = _pendientes()
+    d[str(msg_id)] = list(valor)
+    _RT["pendientes"][msg_id] = tuple(valor)
+    N.escribir(HOME / "pendientes.json", d)
+
+
+def _pendientes_hay(msg_id) -> bool:
+    return msg_id in _RT["pendientes"] or str(msg_id) in _pendientes()
+
+
+def _pendientes_sacar(msg_id) -> tuple:
+    d = _pendientes()
+    valor = d.pop(str(msg_id), None)
+    N.escribir(HOME / "pendientes.json", d)
+    return tuple(_RT["pendientes"].pop(msg_id, None) or valor)
+
+
 async def _on_respuesta(update, context) -> None:
     m = update.message
-    gid, verbo, persona = _RT["pendientes"].pop(m.reply_to_message.message_id)
+    gid, verbo, persona = _pendientes_sacar(m.reply_to_message.message_id)
     if _persona_de(m.from_user.id)[0] != persona:
         await m.reply_text("Solo puede responder quien pulsó el botón.")
         return
@@ -722,7 +746,7 @@ def register(ctx):
         class _EsRespuestaDePuerta(filters.MessageFilter):
             def filter(self, message):
                 r = message.reply_to_message
-                return bool(r and r.message_id in _RT["pendientes"])
+                return bool(r and _pendientes_hay(r.message_id))
 
         _RT["app"] = application
         application.add_handler(CallbackQueryHandler(_on_boton, pattern=r"^g:"))
