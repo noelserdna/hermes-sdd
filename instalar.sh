@@ -132,7 +132,10 @@ hermes config set platforms.telegram.extra.command_menu.priority \
 # Encargados ya creados: se ponen al día (SOUL, guardia, skills); sus sesiones, su memoria y su wiki se conservan
 if [ -s "$HOME_SDD/encargados.json" ]; then
   for r in $(jq -r '.[]' "$HOME_SDD/encargados.json"); do
-    [ -d "$r" ] && bash "$DEST/encargado.sh" crear "$r" | head -1 | sed 's/^/· /'
+    # sin «| head -1»: cerrar la tubería pronto mataba crear (SIGPIPE) y, con pipefail + set -e, el instalador entero
+    [ -d "$r" ] || continue
+    if salida=$(bash "$DEST/encargado.sh" crear "$r" 2>&1); then echo "· ${salida%%$'\n'*}"
+    else echo "  AVISO: no se pudo poner al día el encargado de $r: ${salida##*$'\n'}"; fi
   done
 fi
 
