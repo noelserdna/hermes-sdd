@@ -68,11 +68,20 @@ cat > .sdd/hermes/ruta.json <<'J'
  "factors": {"external_customer": {"p": 0.4, "value": "doubt"}, "sensitive_data": {"p": 0.02, "value": "no"}}}
 J
 o=$($TX puerta ruta "$R" --proyecto bar | jq -r .texto)
-echo "$o" | grep -q 'Pasos: requisitos → plan por fases → revisión de seguridad → programación.' && echo "$o" | grep -q 'Me salto.*diseño visual y de uso' \
-  && ok "ruta: los pasos con nombres normales" || bad "ruta: $o"
-echo "$o" | grep -q 'No tengo claro si la web es para un cliente que tiene que revisarla' && ok "ruta: las dudas explicadas" || bad "duda: $o"
-echo "$o" | grep -q '⚠️ Esto aún no lo hago aquí: revisión de seguridad' && ! echo "$o" | grep -q 'Hacerlo todo' && ok "ruta: avisa de lo que el arnés aún no hace" || bad "sin soporte: $o"
+echo "$o" | grep -q 'el método propone: requisitos → plan por fases → revisión de seguridad → programación.' \
+  && ok "ruta (sin rutas configuradas): los pasos con nombres normales" || bad "ruta: $o"
+echo "$o" | grep -q 'no tengo claro si la web es para un cliente que tiene que revisarla' && ok "ruta: las dudas explicadas" || bad "duda: $o"
 echo "$o" | grep -qE "$JERGA" && bad "ruta con jerga: $(echo "$o" | grep -E "$JERGA")" || ok "ruta: sin jerga del método"
+# con las rutas configuradas: una línea por botón, la recomendada (o la fijada al crear el proyecto) marcada
+cat > "$T/rutas.json" <<'J'
+[{"verbo":"ruta-ligera","etiqueta":"⭐ Ligera","descripcion":"Solo lo esencial.","etapas":[],"hace":"ninguna etapa extra","recomendada":true,"fijada":true},
+ {"verbo":"ruta-completa","etiqueta":"🧭 Completa","descripcion":"Todo.","etapas":["spec-auditor"],"hace":"auditoría de especificaciones","recomendada":false}]
+J
+o=$($TX puerta ruta "$R" --proyecto bar --opciones-ruta "$T/rutas.json" | jq -r .texto)
+echo "$o" | grep -q '^⭐ Ligera (la fijaste al crear el proyecto): Solo lo esencial. → sin pasos extra.$' \
+  && echo "$o" | grep -q '^🧭 Completa: Todo. → pasos extra: auditoría de especificaciones.$' && ! echo "$o" | grep -q 'el método propone' \
+  && ok "ruta: una línea por ruta configurada, con sus pasos extra y la fijada marcada" || bad "rutas: $o"
+echo "$o" | grep -qE "$JERGA|Hacerlo todo" && bad "ruta con jerga: $o" || ok "ruta con rutas: sin jerga"
 
 # ── plan ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 printf '# FASE 0: La portada\n' > plan/fases/FASE-0-portada.md; printf '# FASE 1: La carta\n' > plan/fases/FASE-1-carta.md
@@ -98,6 +107,8 @@ echo "$o" | grep -q '^⛔ No pasa la comprobación' && echo "$o" | grep -q 'Se h
 echo "$o" | grep -qE "$JERGA" && bad "fase con jerga: $(echo "$o" | grep -E "$JERGA")" || ok "fase: sin jerga del método"
 o=$($TX puerta entrega "$R" --proyecto bar --gate-md "$T/g.md" --rc 0 --fases-aceptadas "fase-0-accepted fase-1-accepted" | jq -r .texto)
 echo "$o" | grep -q 'está terminado y listo para entregar' && echo "$o" | grep -q 'Fases aceptadas: 2.' && ok "entrega: clara" || bad "entrega: $o"
+echo "$o" | grep -q '^✅ Lo imprescindible está comprobado (1 de 2 requisitos). Queda 1 requisito sin comprobar que no es imprescindible' \
+  && ! echo "$o" | grep -q 'Todo en orden' && ok "entrega: no dice «todo en orden» con requisitos sin comprobar" || bad "cabeza entrega: $o"
 
 # ── la puerta entera con puerta.sh (texto y datos para Jev) ──────────────────────────────────────────────────────
 git init -q -b main && git config user.email t@t && git config user.name t && git config commit.gpgsign false && git add -A && git commit -qm x

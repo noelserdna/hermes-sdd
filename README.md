@@ -45,13 +45,16 @@ se decidió. Aquí es igual, con un papel por pieza:
 El recorrido de un proyecto (🚪 = puerta, donde decides tú):
 
 ```
- requisitos ─▶ 🚪 ─▶ ruta ─▶ 🚪 ─▶ plan ─▶ tareas ─▶ 🚪 ─▶ implementar N ─▶ aceptar N ─▶ 🚪 ─▶ … ─▶ cierre ─▶ 🚪 entrega
+ requisitos ─▶ 🚪 ─▶ ruta ─▶ 🚪 ─▶ (pasos extra) ─▶ plan ─▶ tareas ─▶ 🚪 ─▶ implementar N ─▶ aceptar N ─▶ 🚪 ─▶ … ─▶ cierre ─▶ 🚪 entrega
                                                                    ▲                       │
                                                                    └──── rechazo ──────────┘
 ```
 
 1. **Requisitos:** qué tiene que hacer el software, cada requisito con criterios comprobables. Los apruebas tú.
-2. **Ruta:** qué etapas opcionales necesita *este* proyecto (no todos necesitan specs formales). La confirmas tú.
+2. **Ruta:** qué pasos extra del método necesita *este* proyecto (especificaciones, auditoría, plan de pruebas,
+   seguridad, diseño técnico, diseño visual, huecos entre especificación y código). Las rutas se configuran en
+   **SDD → Configuración → Rutas** (de serie: Adaptativa, Ligera, Con diseño y Completa; puedes crear las tuyas) y en
+   la puerta cada una es un botón. La eliges tú o Jev; si la fijas al crear el proyecto, es la recomendada.
 3. **Plan y tareas:** el trabajo dividido en **FASEs**, y cada FASE en tareas de un commit cada una.
 4. **Implementar y aceptar, FASE a FASE:** el ejecutor programa con los tests primero y te enseña una demo con
    capturas y vídeo. Aceptas o rechazas. Si rechazas, vuelve a implementar con lo que pediste.

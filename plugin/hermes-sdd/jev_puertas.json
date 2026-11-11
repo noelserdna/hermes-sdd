@@ -4,15 +4,15 @@
   "persona": "A person must decide: something is missing, extra, doubtful, unverified, contradictory or risky, or the gate shows warnings or exemptions worth a human look",
   "tipos": {
     "requisitos": {
-      "contexto": "requirements/CUSTOMER-NEEDS.md holds the customer's needs in their own words; requirements/REQUIREMENTS.md the requirements derived from them.",
+      "contexto": "requirements/CUSTOMER-NEEDS.md holds the customer's needs in their own words; requirements/REQUIREMENTS.md the requirements derived from them. Requirements the gate lists under «➕ Lo añade el método» are openly proposed additions (lower priority or no customer need behind them): they are not invented scope by themselves; choose `persona` for them only if they contradict the customer's words or widen the scope in a way the customer would notice.",
       "verbos": {
         "acepto": "Approve: every customer need is covered by clear, testable requirements with acceptance criteria, and nothing was invented beyond what the customer asked"
       }
     },
     "ruta": {
-      "contexto": "ruta.json holds the factors judged about the project and the stages they select.",
+      "contexto": "ruta.json holds the factors judged about the project and the stages the adaptive route would run. Each option is a route (a set of extra stages besides the core) with its own criterion. Choose the route that fits the project as the customer described it: lighter routes for small or throwaway work, routes with design or specifications when the requirements show screens, several kinds of user, sensitive data, integrations or an external customer. When the customer fixed a route when creating the project, keep it unless the requirements clearly need more rigor.",
       "verbos": {
-        "acepto": "Approve the proposed route: the stages that run and the ones skipped fit the project as described, with no doubts and no stage this harness cannot run"
+        "acepto": "Approve the proposed route: the stages that run and the ones skipped fit the project as described, with no doubts"
       }
     },
     "plan": {

@@ -16,6 +16,21 @@ REPO=$(cd "$1" && pwd); TIPO=$2; FASE=${3:-}
 [ -n "${HERMES_SDD_SIN_KANBAN:-}" ] && BOARD="" || BOARD=${HERMES_KANBAN_BOARD:-$(basename "$REPO" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')}
 cd "$REPO"
 
+tests_editados() {  # tests_editados <base> → nº de ficheros de test existentes con líneas que cambian lo que se comprueba
+  git diff -U0 --diff-filter=MD "$1..HEAD" -- tests test 2>/dev/null | python3 -c '
+import re, sys
+ficheros, actual, quitadas, puestas = {}, None, {}, {}
+for l in sys.stdin.read().splitlines():
+    if l.startswith("diff --git"):
+        actual = l.split(" b/")[-1]; quitadas[actual] = []; puestas[actual] = set()
+    elif actual and l.startswith("-") and not l.startswith("---"):
+        quitadas[actual].append(l[1:].strip())
+    elif actual and l.startswith("+") and not l.startswith("+++"):
+        puestas[actual].add(l[1:].strip())
+trivial = re.compile(r"^(import\b|export \{|from\s|//|#|/\*|\*|\}?\)?;?$|\}\);?$)")
+print(sum(1 for f, q in quitadas.items() if any(x and not trivial.match(x) and x not in puestas[f] for x in q)))'
+}
+
 # ── Texto de la puerta: lo escribe hsdd_textos.py en castellano llano (lo que pediste, lo que se añadió, qué decidir) ─
 TEXTOS="$ROOT/plugin/hermes-sdd/hsdd_textos.py"
 GATE_MD=$(mktemp); trap 'rm -f "$GATE_MD"' EXIT
@@ -33,16 +48,22 @@ case "$TIPO" in
     fi
     [ -f .sdd/hermes/adopcion ] && EXTRA+=(--adopcion 1)
     OPCIONES='[{"verbo":"acepto","etiqueta":"✅ Apruebo"},{"verbo":"cambios","etiqueta":"✏️ Falta o sobra algo","texto":true}]' ;;
-  ruta)
-    OPCIONES='[{"verbo":"acepto","etiqueta":"✅ Aprobar ruta"},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]' ;;
+  ruta)   # un botón por ruta configurada (SDD → Configuración → Rutas), la recomendada primero; cada opción guarda las
+          # etapas que hará, para que el notario firme exactamente lo que se vio
+    RUTAS=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" opciones-ruta "${BOARD:-$(basename "$REPO")}" .sdd/hermes/ruta.json) ||
+      { echo "no se pudieron leer las rutas configuradas" >&2; exit 1; }
+    echo "$RUTAS" > "$GATE_MD"; EXTRA+=(--opciones-ruta "$GATE_MD")
+    OPCIONES=$(echo "$RUTAS" | jq -c '[.[] | {verbo, etiqueta, etapas, auto, criterio}] + [{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]') ;;
   plan)
     OPCIONES='[{"verbo":"conforme","etiqueta":"✅ Conforme"},{"verbo":"cambios","etiqueta":"✏️ Cambiar","texto":true}]' ;;
   fase)
     node "$SDD" gate --fase "$FASE" --md > "$GATE_MD" 2>/dev/null || rc=$?
     # Tests que YA existían y se modificaron desde la última aceptación (art. 12: se arregla el código, no el test).
-    # Solo cuentan ficheros con líneas borradas o cambiadas: añadir tests nuevos a un fichero existente no debilita nada
+    # Solo cuentan ficheros con líneas borradas o cambiadas: añadir tests nuevos a un fichero existente no debilita nada.
+    # Tampoco cuentan los imports, las líneas en blanco, los comentarios ni las líneas que solo se movieron (coches,
+    # FASE-1: ampliar un `import { a, b }` mandaba la puerta a una persona y la tuvo esperando 7 h)
     BASE=$(git describe --tags --abbrev=0 --match 'fase-*-accepted' 2>/dev/null || git describe --tags --abbrev=0 --match 'requirements-v*' 2>/dev/null || git rev-list --max-parents=0 HEAD)
-    EDIT=$(git diff --numstat --diff-filter=MD "$BASE..HEAD" -- tests test 2>/dev/null | awk '$2 > 0' | wc -l | tr -d ' ')
+    EDIT=$(tests_editados "$BASE")
     VIDEO=$(ls evidencias/FASE-"$FASE"/*.mp4 evidencias/FASE-"$FASE"/*.webm evidencias/FASE-"$FASE"/*.mov 2>/dev/null | head -1 || true)
     CAPTURAS=$( (ls evidencias/FASE-"$FASE"/*.png evidencias/FASE-"$FASE"/*.jpg 2>/dev/null || true) | wc -l | tr -d ' ')
     EXTRA+=(--gate-md "$GATE_MD" --rc "$rc" --tests-editados "$EDIT" --video "$([ -n "$VIDEO" ] && echo 1 || echo 0)" --capturas "$CAPTURAS")

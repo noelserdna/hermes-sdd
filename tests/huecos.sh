@@ -104,8 +104,8 @@ echo '{"ejecutor":"claude","ejecutores":{"plan":"../tests/ejecutor-falso","tarea
 dice=$'stage=plan-architect status=blocked questions=0 artifacts=0\n\nNo generé `plan/`, porque faltan las especificaciones.'
 cp "$ROOT/metodo/templates/pipeline-state.template.json" pipeline-state.json
 o=$(FALSO_RESUMEN="$dice" bash "$ROOT/etapa.sh" "$R" plan | tail -1)
-[ "$(bash "$ROOT/metodo/scripts/sdd-state.sh" get specifications-engineer)" = skipped ] && [ "$(bash "$ROOT/metodo/scripts/sdd-state.sh" get test-planner)" = skipped ] \
-  && ok "plan: las etapas que el arnés no tiene quedan saltadas (el plan sale de requirements/)" || bad "estado: $(cat pipeline-state.json | head -c 400)"
+[ "$(bash "$ROOT/metodo/scripts/sdd-state.sh" get specifications-engineer)" = pending ] \
+  && ok "plan: con todas las skills en el arnés no salta etapas por su cuenta (las decide la ruta)" || bad "estado: $(cat pipeline-state.json | head -c 400)"
 echo "$o" | jq -e '.outcome == "failed" and (.reason | test("el plan no se generó: No generé"))' >/dev/null && ok "plan sin plan/: falla con lo que dijo el ejecutor" || bad "plan vacío: $o"
 mv task "$T/task-bak"
 o=$(FALSO_RESUMEN="$dice" bash "$ROOT/etapa.sh" "$R" tareas | tail -1)

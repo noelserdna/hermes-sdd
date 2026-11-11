@@ -39,7 +39,7 @@ grep -q "kanban boards create bogota-turismo --name bogota-turismo --default-wor
   && ok "crea el tablero del kanban con la carpeta del proyecto" || bad "tablero: $(cat "$T/llamadas")"
 grep -q 'kanban --board bogota-turismo create Requisitos --assignee sdd-estacion' "$T/llamadas" \
   && ok "y la primera tarjeta (Requisitos) para la estación" || bad "tarjeta: $(cat "$T/llamadas")"
-echo "$o" | grep -q "Proyecto bogota-turismo en $R (stack web-astro, Jev humano)" && ok "nuevo.sh dice dónde y con qué stack" || bad "salida: $o"
+echo "$o" | grep -q "Proyecto bogota-turismo en $R (stack web-astro, Jev humano, ruta adaptativa)" && ok "nuevo.sh dice dónde, con qué stack y qué ruta" || bad "salida: $o"
 
 # ── otra carpeta, stack por defecto y Jev ────────────────────────────────────────────────────────────────────────
 o=$($NUEVO tienda "$QUE" --carpeta "$T/otra" --jev consejo 2>&1)

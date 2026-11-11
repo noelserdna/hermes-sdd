@@ -191,7 +191,7 @@ def deshacer(gid: str, persona: str) -> dict:
 # rechazar, o no llega al umbral, la puerta queda para una persona. Las reglas duras de puede_jev mandan sobre el modo.
 JEV = "jev"
 MODOS = ("humano", "consejo", "piloto", "auto")
-JEV_DEFECTO = {"defecto": "humano", "proyectos": {}, "piloto": ["ruta", "plan"], "umbral": 0.9}
+JEV_DEFECTO = {"defecto": "humano", "proyectos": {}, "piloto": ["ruta", "plan"], "umbral": 0.9, "umbral_auto": 0.8}
 
 
 def config_jev() -> dict:
@@ -220,21 +220,23 @@ def poner_modo(modo: str, tablero: str | None = None) -> dict:
 TIPOS_PUERTA = ("requisitos", "ruta", "plan", "fase", "entrega", "mantenimiento")
 
 
-def ajustar_jev(defecto: str | None = None, umbral=None, piloto: list | None = None) -> dict:
+def ajustar_jev(defecto: str | None = None, umbral=None, piloto: list | None = None, umbral_auto=None) -> dict:
     """Ajustes generales de Jev (los modos por proyecto, con poner_modo). Valida todo antes de escribir."""
     cfg = config_jev()
     if defecto is not None:
         if defecto not in MODOS:
             raise Rechazo(f"Modo desconocido: {defecto}. Modos: {', '.join(MODOS)}")
         cfg["defecto"] = defecto
-    if umbral is not None:
+    for clave, valor in (("umbral", umbral), ("umbral_auto", umbral_auto)):
+        if valor is None:
+            continue
         try:
-            u = float(umbral)
+            u = float(valor)
         except (TypeError, ValueError):
             raise Rechazo("El umbral es un número entre 0 y 1")
         if not 0.5 <= u <= 1:
             raise Rechazo("El umbral va de 0.5 a 1: por debajo, Jev decidiría casi a cara o cruz")
-        cfg["umbral"] = u
+        cfg[clave] = u
     if piloto is not None:
         if not isinstance(piloto, list) or any(t not in TIPOS_PUERTA for t in piloto):
             raise Rechazo(f"Tipos de puerta: {', '.join(TIPOS_PUERTA)}")
@@ -261,7 +263,7 @@ def puede_jev(puerta: dict, cfg: dict | None = None) -> tuple[bool, str]:
         return False, "una persona deshizo la decisión de Jev"
     if modo == "piloto" and puerta.get("preguntas"):
         return False, "hay preguntas abiertas (clase C): en modo piloto las contesta una persona"
-    # Campos de la puerta (puerta.sh ≥ 0.2.11); en puertas anteriores, lo que decía su texto
+    # Campos de la puerta (puerta.sh ≥ 0.3.0); en puertas anteriores, lo que decía su texto
     texto = puerta.get("texto", "")
     if puerta.get("bloqueo") or ("bloqueo" not in puerta and "⛔" in texto):
         return False, "la puerta no pasa la comprobación de calidad"
@@ -282,7 +284,8 @@ def pregunta_jev(puerta: dict) -> dict:
     """La pregunta de TypeSafe para esta puerta: una Choice entre los verbos sin texto y «persona»."""
     q = _preguntas_jev()
     tipo = (q.get("tipos") or {}).get(puerta.get("tipo", ""), {})
-    criterios = {v: tipo.get("verbos", {}).get(v, f"Choose «{e}»") for v, e in verbos_jev(puerta).items()}
+    propios = {o["verbo"]: o.get("criterio") for o in puerta.get("opciones", []) if o.get("criterio")}
+    criterios = {v: tipo.get("verbos", {}).get(v) or propios.get(v) or f"Choose «{e}»" for v, e in verbos_jev(puerta).items()}
     # Preguntas abiertas: en auto la persona delegó sus respuestas (aprobar acepta las recomendadas) y Jev juzga si son
     # aceptables; en los demás modos, que haya preguntas ya es motivo para que decida una persona.
     # En auto la persona delegó la decisión: Jev aprueba lo que responde fielmente a lo pedido y solo devuelve la puerta
@@ -342,7 +345,8 @@ def aplicar_jev(gid: str, juicio: dict) -> dict:
             raise Rechazo("No conozco esta puerta")
         cfg = config_jev()
         modo = modo_jev(puerta.get("tablero", ""), cfg)
-        umbral = float(cfg.get("umbral", 0.9))
+        # En auto la persona delegó la decisión: su propio umbral (umbral_auto); si no lo fija, el general
+        umbral = float(cfg.get("umbral_auto") or cfg.get("umbral", 0.9)) if modo == "auto" else float(cfg.get("umbral", 0.9))
         jev = {**juicio, "modo": modo, "umbral": umbral, "at": ahora()}
         if puerta.get("estado") != "abierta":
             jev["decide"], jev["motivo"] = False, "la puerta ya estaba resuelta"

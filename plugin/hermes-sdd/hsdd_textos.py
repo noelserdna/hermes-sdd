@@ -153,25 +153,40 @@ def _cierre_requisitos(extras: list) -> str:
             + "\nAl aprobar, esta versión queda guardada como punto de partida.")
 
 
-def puerta_ruta(repo: Path, proyecto: str) -> dict:
+def puerta_ruta(repo: Path, proyecto: str, opciones: list | None = None) -> dict:
+    """La ruta: qué propone el método para este proyecto y qué rutas configuradas se pueden elegir (un botón cada una)."""
     ruta = json.loads(_leer(repo / ".sdd" / "hermes" / "ruta.json") or "{}")
     etapas = ruta.get("stages") or {}
     se_hace = [ETAPAS.get(k, k) for k, e in etapas.items() if e.get("run")]
-    se_salta = [ETAPAS.get(k, k) for k, e in etapas.items() if not e.get("run")]
     dudas = [k for k, f in (ruta.get("factors") or {}).items() if f.get("value") == "doubt"]
-    soportadas = {"requirements-engineer", "plan-architect", "task-generator", "task-implementer", "acceptance"}
-    sin_soporte = [ETAPAS.get(k, k) for k, e in etapas.items() if e.get("run") and k not in soportadas]
-    partes = [f"🧭 Cómo propongo hacer «{proyecto}»:", "Pasos: " + " → ".join(se_hace) + "."]
-    if se_salta:
-        partes.append("Me salto (para un proyecto así no hacen falta): " + ", ".join(se_salta) + ".")
+    partes = [f"🧭 Cómo hacer «{proyecto}»: elige una ruta.",
+              "Siempre se hacen los requisitos, el plan por fases, la programación y la comprobación final con demo. "
+              "Lo que cambia entre rutas son los pasos extra (especificaciones, diseño, auditorías…)."]
+    if se_hace and not opciones:
+        partes.append("Para este proyecto el método propone: " + " → ".join(se_hace) + ".")
     if dudas:
-        partes.append("❓ No tengo claro " + "; ni ".join(DUDAS.get(d, d) for d in dudas)
+        partes.append("❓ Para la ruta adaptativa no tengo claro " + "; ni ".join(DUDAS.get(d, d) for d in dudas)
                       + ". Por prudencia lo cuento como que sí.")
-    if sin_soporte:
-        partes.append("⚠️ Esto aún no lo hago aquí: " + ", ".join(sin_soporte)
-                      + ". El plan saldrá directamente de los requisitos que aprobaste.")
-    partes.append("👉 ✅ Aprobar ruta para seguir así · ❌ Rechazar si algo no te cuadra (y cuéntame qué).")
+    if opciones:
+        lineas = []
+        for o in opciones:
+            extra = "pasos extra: " + o["hace"] if o.get("etapas") else "sin pasos extra"
+            marca = " (la fijaste al crear el proyecto)" if o.get("fijada") else (" (recomendada)" if o.get("recomendada") else "")
+            lineas.append(f"{o['etiqueta']}{marca}: {o['descripcion']} → {extra}.")
+        partes.append("\n".join(lineas))
+        partes.append("👉 Pulsa la ruta que quieras · ❌ Rechazar si ninguna te vale (y cuéntame por qué).")
+    else:
+        partes.append("👉 ✅ Aprobar ruta para seguir así · ❌ Rechazar si algo no te cuadra (y cuéntame qué).")
     return {"titulo": "Ruta del proyecto", "texto": "\n\n".join(partes)}
+
+
+def _hecho_antes(repo: Path) -> str:
+    """Los pasos extra de la ruta que ya dejaron documentos (el plan sale de ellos), dichos en castellano."""
+    hechos = [(repo / "spec" / "use-cases", "especificaciones"), (repo / "audits" / "AUDIT-BASELINE.md", "auditoría de especificaciones"),
+              (repo / "test" / "TEST-PLAN.md", "plan de pruebas"), (repo / "audits" / "SECURITY-AUDIT-BASELINE.md", "revisión de seguridad"),
+              (repo / "design", "diseño técnico"), (repo / "ux", "diseño visual y de uso")]
+    nombres = [n for p, n in hechos if p.exists()]
+    return ("📐 Antes del plan se hizo: " + ", ".join(nombres) + ". El plan parte de esos documentos.") if nombres else ""
 
 
 def puerta_plan(repo: Path, proyecto: str) -> dict:
@@ -184,6 +199,7 @@ def puerta_plan(repo: Path, proyecto: str) -> dict:
         lineas.append(f"• FASE-{int(n)}: {cab}" + (f" ({_plural(tareas, 'tarea', 'tareas')})" if tareas else ""))
     total = len(lineas)
     partes = [f"🗺 Plan de «{proyecto}»: {_plural(total, 'fase', 'fases')}, en este orden:", "\n".join(lineas) or "(sin fases)",
+              *([_hecho_antes(repo)] if _hecho_antes(repo) else []),
               "Cada fase se programa, se prueba y te llega con una demo para que la aceptes antes de pasar a la siguiente.",
               "👉 Si el orden te parece bien, pulsa ✅ Conforme. Nada se programa hasta entonces."]
     return {"titulo": "Plan por fases", "texto": "\n\n".join(partes)}
@@ -213,13 +229,27 @@ def _lineas_veredictos(repo: Path, filas: list[dict]) -> list[str]:
     return out
 
 
+def _cabeza_ok(filas: list[dict], de_fase: bool) -> str:
+    """Puerta de calidad cumplida (rc 0): todo lo imprescindible está comprobado. Si queda algo no imprescindible sin
+    comprobar se dice, para no anunciar «todo en orden» con requisitos en ⚠️ (coches, entrega 1)."""
+    ok, total = sum(1 for f in filas if f["veredicto"] == "VERIFIED"), len(filas)
+    donde = " de esta fase" if de_fase else ""
+    if ok == total:
+        if total == 1:
+            return f"✅ Todo en orden: el requisito{donde} funciona y está comprobado."
+        return f"✅ Todo en orden: los {total} requisitos{donde} funcionan y están comprobados."
+    pend = total - ok
+    return (f"✅ Lo imprescindible{donde} está comprobado ({ok} de {total} requisitos). "
+            f"{'Queda 1 requisito' if pend == 1 else f'Quedan {pend} requisitos'} sin comprobar que no "
+            f"{'es imprescindible' if pend == 1 else 'son imprescindibles'} (⚠️ en la lista).")
+
+
 def puerta_fase(repo: Path, proyecto: str, fase: str, gate_md: str, rc: int, tests_editados: int,
                 video: bool, capturas: int) -> dict:
     filas = _filas_gate(gate_md)
     ok = sum(1 for f in filas if f["veredicto"] == "VERIFIED")
     if rc == 0:
-        cabeza = ("✅ Todo en orden: el requisito de esta fase funciona y está comprobado." if len(filas) == 1 else
-                  f"✅ Todo en orden: {ok} de {len(filas)} requisitos de esta fase funcionan y están comprobados.")
+        cabeza = _cabeza_ok(filas, True)
     elif rc == 3:
         cabeza = "⚠️ Cumple, pero con exenciones: algo se aceptó sin comprobar."
     else:
@@ -241,7 +271,7 @@ def puerta_entrega(repo: Path, proyecto: str, gate_md: str, rc: int, fases_acept
     filas = _filas_gate(gate_md)
     ok = sum(1 for f in filas if f["veredicto"] == "VERIFIED")
     if rc == 0:
-        cabeza = "✅ Todo en orden: el requisito está comprobado." if ok == 1 else f"✅ Todo en orden: los {ok} requisitos están comprobados."
+        cabeza = _cabeza_ok(filas, False)
     elif rc == 3:
         cabeza = "⚠️ Cumple, pero con exenciones: algo se aceptó sin comprobar."
     else:
@@ -297,7 +327,7 @@ if __name__ == "__main__":
     ap.add_argument("--capturas", type=int, default=0); ap.add_argument("--version", default="")
     ap.add_argument("--cambio", default=""); ap.add_argument("--anadidos", default=""); ap.add_argument("--quitados", default="")
     ap.add_argument("--adopcion", type=int, default=0); ap.add_argument("--fases-aceptadas", default="")
-    ap.add_argument("--hallazgos", default="")
+    ap.add_argument("--hallazgos", default=""); ap.add_argument("--opciones-ruta", default="")
     a = ap.parse_args()
     repo = Path(a.repo)
     proyecto = a.proyecto or repo.name
@@ -309,7 +339,7 @@ if __name__ == "__main__":
             cambio = {"id": a.cambio, "peticion": pet, "anadidos": a.anadidos.split(), "quitados": [q for q in a.quitados.split("|") if q]}
         r = puerta_requisitos(repo, proyecto, a.version, cambio, bool(a.adopcion))
     elif a.tipo == "ruta":
-        r = puerta_ruta(repo, proyecto)
+        r = puerta_ruta(repo, proyecto, json.loads(_leer(Path(a.opciones_ruta)) or "[]") if a.opciones_ruta else None)
     elif a.tipo == "plan":
         r = puerta_plan(repo, proyecto)
     elif a.tipo == "fase":

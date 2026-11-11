@@ -5,6 +5,7 @@
 #   jev.sh <modo>                  modo por defecto para todos los proyectos
 #   jev.sh <proyecto> <modo>       modo de un proyecto (su tablero del kanban)
 #   jev.sh umbral <0..1>           seguridad mínima de Jev para decidir él (por defecto 0.9)
+#   jev.sh umbral-auto <0..1>      la de los proyectos en modo auto, donde la persona delegó (por defecto 0.8)
 #   jev.sh piloto <tipo>[,<tipo>]  puertas que decide en modo piloto (por defecto ruta,plan)
 #   jev.sh probar <puerta>         pregunta a Jev por una puerta abierta y enseña su respuesta, sin decidir nada
 #   jev.sh rejuzgar <puerta>       el gateway vuelve a preguntar a Jev por una puerta abierta (y decide si el modo lo deja)
@@ -26,6 +27,9 @@ case "${1:-}" in
   umbral)
     [[ "${2:-}" =~ ^(0(\.[0-9]+)?|1(\.0+)?)$ ]] || { echo "umbral entre 0 y 1, p. ej. 0.9" >&2; exit 2; }
     ajustar ".umbral = $2" ;;
+  umbral-auto)
+    [[ "${2:-}" =~ ^(0(\.[0-9]+)?|1(\.0+)?)$ ]] || { echo "umbral entre 0 y 1, p. ej. 0.8" >&2; exit 2; }
+    ajustar ".umbral_auto = $2" ;;
   piloto)
     [ -n "${2:-}" ] || { echo "uso: jev.sh piloto ruta,plan" >&2; exit 2; }
     for t in ${2//,/ }; do case $t in requisitos|ruta|plan|fase|entrega|mantenimiento) ;; *) echo "tipo desconocido: $t" >&2; exit 2;; esac; done

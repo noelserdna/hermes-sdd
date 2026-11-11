@@ -18,6 +18,7 @@ bash jev.sh                      # modos actuales
 bash jev.sh recetas consejo      # modo de un proyecto (el nombre de su tablero)
 bash jev.sh piloto               # modo por defecto para todos los proyectos
 bash jev.sh umbral 0.9           # seguridad mínima para que Jev decida él (por defecto 0.9)
+bash jev.sh umbral-auto 0.8      # la de los proyectos en modo auto, donde delegaste la decisión (por defecto 0.8)
 bash jev.sh piloto ruta,plan     # qué puertas decide en modo piloto
 bash jev.sh probar <puerta>      # pregunta a Jev por una puerta abierta y enseña su respuesta, sin decidir
 ```
@@ -49,11 +50,14 @@ Calibrado el 10/11/2026 con Jev real sobre puertas que una persona aprobó y sob
 ## Lo que Jev nunca hace, en ningún modo
 
 - **Rechazar o pedir cambios.** Jev elige entre las opciones que no piden un motivo escrito (aprobar, conforme,
-  aceptar, ruta completa, lanzar cambio) y «que lo decida una persona». Si se inclina por algo que necesita un
+  aceptar, una de las rutas configuradas, lanzar cambio) y «que lo decida una persona». Si se inclina por algo que necesita un
   motivo, la puerta queda para ti con su consejo.
-- **Decidir sin estar seguro.** Por debajo del umbral, la puerta queda para ti.
+- **Decidir sin estar seguro.** Por debajo del umbral, la puerta queda para ti. En modo `auto` el umbral es
+  `umbral_auto` (0.8 de serie): delegaste la decisión y Jev puede decidir con algo menos de seguridad.
 - **Decidir una puerta con un bloqueo.** Si la puerta muestra ⛔ (la puerta de calidad no se cumple), o si se
-  modificaron tests que ya existían (artículo 12), decides tú.
+  modificaron tests que ya existían (artículo 12), decides tú. Solo cuenta lo que cambia lo que un test comprueba:
+  añadir tests nuevos, ampliar un `import`, líneas en blanco, comentarios o líneas que solo se movieron no cuentan
+  (en coches, ampliar un `import` dejó una FASE 7 horas esperando a una persona).
 - **Contestar preguntas abiertas en modo piloto.** Las preguntas de clase C tocan el contrato. En modo `auto`, al
   aprobar se aceptan las opciones recomendadas, y queda anotado que las aceptó Jev.
 - **Ver la demo.** Jev no ve imágenes ni vídeo. En una FASE juzga el informe de aceptación (veredicto por
@@ -105,3 +109,11 @@ no pueda salir.
   (`ls ~/.hermes/hermes-sdd/puertas`).
 - **Jev aprobó algo que no debía.** Deshazlo en la ventana. Si ya se firmó, es como cualquier otra aceptación: para
   una FASE, `/anular <proyecto> <fase> <motivo>`; para requisitos, un `/cambio`.
+
+## La puerta de ruta
+
+Cada ruta configurada (**SDD → Configuración → Rutas**) es un botón, con su descripción como criterio para Jev; la
+recomendada va primero (la que fijaste al crear el proyecto o, si no, la de por defecto). Jev elige la ruta que mejor
+encaja con los requisitos: ligera para algo pequeño, con diseño o especificaciones cuando hay pantallas, varios tipos
+de usuario, datos delicados, integraciones o un cliente externo. Si fijaste una al crear el proyecto, la mantiene
+salvo que los requisitos pidan claramente más rigor.

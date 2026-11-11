@@ -52,7 +52,10 @@ const cfg = {
   nombres_perfil: { calidad: 'Calidad: Opus en todo', equilibrado: 'Equilibrado: Opus planifica, Sonnet programa', rapido: 'Rápido: Sonnet en todo' },
   etapas_modelo: [['requisitos', 'Requisitos'], ['implementar', 'Implementar']],
   modelos_disponibles: [{ id: 'opus', nombre: 'Opus', tipo: 'alias' }, { id: 'sonnet', nombre: 'Sonnet', tipo: 'alias' }, { id: 'haiku', nombre: 'Haiku (no para juicios)', tipo: 'alias' }, { id: 'anthropic/claude-opus-5.5', nombre: 'claude-opus-5.5', tipo: 'completo' }],
-  jev: { defecto: 'humano', umbral: 0.9, piloto: ['ruta', 'plan'] }, tipos_puerta: ['requisitos', 'ruta', 'plan', 'fase', 'entrega', 'mantenimiento'] }
+  rutas: [{ id: 'adaptativa', nombre: 'Adaptativa', descripcion: 'El método elige', etapas: 'auto' },
+          { id: 'con-diseno', nombre: 'Con diseño', descripcion: 'Con pantallas cuidadas', etapas: ['ux-designer'] }],
+  ruta_defecto: 'adaptativa', rutas_por_defecto: [], etapas_ruta: [['ux-designer', 'diseño visual y de uso'], ['spec-auditor', 'auditoría de especificaciones']],
+  jev: { defecto: 'humano', umbral: 0.9, umbral_auto: 0.8, piloto: ['ruta', 'plan'] }, tipos_puerta: ['requisitos', 'ruta', 'plan', 'fase', 'entrega', 'mantenimiento'] }
 html = pinta(Nuevo, { cfg, alCrear: () => {} })
 ok(html.includes('¿Qué quieres construir?') && html.includes('Web con Astro') && html.includes('Web de contenido') && html.includes('Lanzar'),
   'Nuevo: formulario con el stack por defecto y su descripción')
@@ -66,4 +69,9 @@ ok(html.includes('Modo por defecto') && html.includes('umbral') && html.includes
 ok(html.includes('Modelos por etapa') && html.includes('Equilibrado') && html.includes('Implementar ✎') && html.includes('El perfil dice sonnet') && html.includes('Volver al perfil') && html.includes('claude-opus-5.5 (versión fija)'),
   'Configuración: perfil de modelos y modelo por etapa, con lo cambiado marcado')
 ok(html.includes('Ventana para deshacer') && html.includes('value="90"') && html.includes('1 min 30 s') && html.includes('Las de Jev') && html.includes('value="45"') && html.includes('45 s'), 'Configuración: ventanas para deshacer, la tuya y la de Jev')
+ok(html.includes('🧭 Rutas') && html.includes('Con diseño') && html.includes('Con pantallas cuidadas → diseño visual y de uso') && html.includes('los pasos que proponga el método')
+  && html.includes('Añadir ruta') && html.includes('Restaurar las de serie'), 'Configuración: rutas con sus pasos extra, la de por defecto y añadir')
+ok(html.includes('Umbral en modo auto') && html.includes('value="0.8"'), 'Configuración: umbral de Jev en modo auto')
+html = pinta(Nuevo, { cfg, alCrear: () => {} })
+ok(html.includes('La decide la puerta (recomendada: Adaptativa)') && html.includes('Con diseño'), 'Nuevo: ruta (la decide la puerta o una fijada)')
 process.exit(fallos ? 1 : 0)

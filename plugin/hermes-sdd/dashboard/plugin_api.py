@@ -175,7 +175,7 @@ async def jev_ajustes(request: Request):
     """Modo por defecto, umbral y puertas del modo piloto."""
     _actor(request)
     body = await request.json()
-    return _accion(lambda: N.ajustar_jev(body.get("defecto"), body.get("umbral"), body.get("piloto")))
+    return _accion(lambda: N.ajustar_jev(body.get("defecto"), body.get("umbral"), body.get("piloto"), body.get("umbral_auto")))
 
 
 @router.get("/config")
@@ -190,7 +190,8 @@ async def config_guardar(request: Request):
     _actor(request)
     body = await request.json()
     _accion(lambda: PR.guardar_config(body.get("carpeta"), body.get("stack_defecto"), body.get("stacks"), body.get("deshacer_s"),
-                                      body.get("perfil_modelos"), body.get("modelos"), body.get("deshacer_jev_s")))
+                                      body.get("perfil_modelos"), body.get("modelos"), body.get("deshacer_jev_s"),
+                                      body.get("rutas"), body.get("ruta_defecto")))
     return {**PR.config(), "jev": N.config_jev(), "modos_jev": list(N.MODOS), "tipos_puerta": list(N.TIPOS_PUERTA)}
 
 
@@ -202,7 +203,7 @@ async def nuevo(request: Request):
     body = await request.json()
     r = await run_in_threadpool(lambda: _accion(lambda: PR.nuevo_proyecto(
         str(body.get("nombre", "")), str(body.get("que", "")), body.get("stack") or None,
-        body.get("carpeta") or None, body.get("jev") or None)))
+        body.get("carpeta") or None, body.get("jev") or None, ruta=body.get("ruta") or None)))
     return {**r, "creado_por": persona}
 
 

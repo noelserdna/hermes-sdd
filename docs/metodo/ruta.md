@@ -78,3 +78,15 @@ Los requisitos cambian: aparecen pagos en una CLI, llega un segundo tipo de usua
 
 - `tests/route/run.sh`: reglas, umbrales, dudas y respuestas sin Jev.
 - `tests/e2e/20-smoke.sh --route auto|full`: la etapa `route` se ejecuta después de `setup`, con Jev si hay clave y, si no, con `tests/fixtures/route/todo-answers.json`. Las etapas specs, audit y test saltadas no se ejecutan, y la etapa plan acepta escenarios `REQ ACn`.
+
+## En el arnés (hermes-sdd ≥ 0.3.0): rutas configurables
+
+El arnés ejecuta todas las etapas opcionales (`etapa.sh especificar · auditar · pruebas · seguridad · tecnico · ux ·
+brechas`) y las encadena según la ruta confirmada: las de diseño entre la ruta y el plan, en el orden del método, y
+`brechas` (gap-detector) antes del cierre.
+
+Las rutas se guardan en `~/.hermes/hermes-sdd/sdd.json` (`rutas`, `ruta_defecto`, `rutas_proyecto`) y se editan en
+**SDD → Configuración → Rutas** o con `nuevo.sh rutas`. Cada una es `{id, nombre, descripcion, etapas}`, donde
+`etapas` es una lista de etapas opcionales o `"auto"` (la propuesta de `sdd route`, la ruta adaptativa). La puerta de
+ruta ofrece una por botón (`ruta-<id>`), con las etapas que hará guardadas en la propia puerta; el notario firma con
+`sdd route --write --set <etapa>=run|skip` por cada etapa opcional, así que se hace exactamente lo que se vio.

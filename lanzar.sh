@@ -57,6 +57,32 @@ fase_n() {  # fase_n <N> [sufijo]: (huecos →) implementar → aceptar la FASE 
   echo "$primera"
 }
 
+# Etapas opcionales en el orden del método: clave del estado | etapa de etapa.sh | título de la tarjeta
+OPCIONALES="specifications-engineer|especificar|Especificaciones
+spec-auditor|auditar|Auditoría de especificaciones
+test-planner|pruebas|Plan de pruebas
+security-auditor|seguridad|Revisión de seguridad
+tech-designer|tecnico|Diseño técnico
+ux-designer|ux|Diseño visual y de uso"
+toca() {  # toca <clave>: ¿la ruta confirmada la ejecuta y aún no está hecha?
+  jq -e --arg k "$1" '(.route.stages[$k].run == true) and (.stages[$k].status != "done")' "$REPO/pipeline-state.json" >/dev/null 2>&1
+}
+tras_ruta() {  # las etapas opcionales que pide la ruta → Plan → Tareas, encadenadas; imprime la primera
+  local padre=- primera="" clave etapa titulo t
+  while IFS='|' read -r clave etapa titulo; do
+    toca "$clave" || continue
+    t=$(tarjeta "$titulo" "$padre" 90m "$etapa"); padre=$t; primera=${primera:-$t}
+  done <<< "$OPCIONALES"
+  t=$(tarjeta "Plan" "$padre" 60m plan); primera=${primera:-$t}
+  tarjeta "Tareas" "$t" 60m tareas >/dev/null
+  echo "$primera"
+}
+cierre() {  # (huecos entre especificación y código, si la ruta los pide →) cierre
+  local p=-
+  toca gap-detector && p=$(tarjeta "Huecos entre especificación y código" - 60m brechas)
+  tarjeta "Cierre: puerta global y entrega" "$p" 120m cierre
+}
+
 tarjeta() {  # tarjeta <título> <padre|-> <runtime> <etapa> [fase] — imprime el id
   local args=("$1" --assignee sdd-estacion --workspace "dir:$REPO" --max-runtime "$3" --max-retries 1
               --body "Ejecuta: bash $ROOT/etapa.sh $REPO $4${5:+ $5}" --json)
@@ -98,7 +124,7 @@ case "$CMD" in
           rm -f "$REPO/.sdd/hermes/cambio-actual"; tarjeta "Ruta" - 20m ruta
         fi ;;
       requisitos:cambios)             tarjeta "Requisitos (cambios)" - 40m requisitos ;;
-      ruta:acepto|ruta:completo)      t=$(tarjeta "Plan" - 60m plan); tarjeta "Tareas" "$t" 60m tareas ;;
+      ruta:acepto|ruta:completo|ruta:ruta-*) tras_ruta ;;
       ruta:rechazo)                   tarjeta "Ruta (otra vez)" - 20m ruta ;;
       plan:conforme)
         N=$(primera_sin_aceptar); fase_n "${N:-0}" ;;
@@ -106,7 +132,7 @@ case "$CMD" in
       fase:acepto|fase:observaciones)
         N=$(primera_sin_aceptar)
         if [ -n "$N" ]; then fase_n "$N"
-        else tarjeta "Cierre: puerta global y entrega" - 120m cierre; fi ;;
+        else cierre; fi ;;
       fase:rechazo)                   fase_n "$FASE" " (cambios)" ;;
       entrega:acepto|entrega:observaciones) echo "Proyecto entregado" ;;
       entrega:rechazo)                tarjeta "Cierre (otra vez)" - 120m cierre ;;

@@ -80,6 +80,7 @@ if ! hecho validado; then
   # Verbos válidos por tipo de puerta
   case "$TIPO:$VERBO" in
     requisitos:acepto|requisitos:cambios|ruta:acepto|ruta:completo|ruta:rechazo|plan:conforme|plan:cambios) ;;
+    ruta:ruta-*) jq -e --arg v "$VERBO" 'any(.opciones[]; .verbo == $v)' "$PUERTA" >/dev/null || fallo "la puerta no ofrecía la ruta $VERBO" ;;
     fase:acepto|fase:observaciones|fase:rechazo|entrega:acepto|entrega:observaciones|entrega:rechazo) ;;
     mantenimiento:cambio|mantenimiento:ignoro) ;;
     *) fallo "verbo '$VERBO' no vale para una puerta de tipo '$TIPO'" ;;
@@ -192,17 +193,27 @@ Kanban-Task: $BOARD/$TASK"
     fi
     RESULTADO="aprobado"; RESUMEN="Requisitos v$V aprobados por $NOMBRE ($ROL) — tag requirements-v$V" ;;
 
-  ruta:acepto|ruta:completo)
+  ruta:acepto|ruta:completo|ruta:ruta-*)
     if ! hecho registrado; then
-      # «completo» (puertas antiguas) = acepto: el arnés no tiene las etapas opcionales (especificaciones, auditoría,
-      # plan de pruebas) y con el modo «full» de route el plan se negaría a arrancar esperándolas
+      # «acepto»/«completo» (puertas anteriores a 0.3.0) = la propuesta del método. Una ruta configurada fija cada etapa
+      # opcional a lo que mostraba su botón; la «auto» (adaptativa) deja la propuesta del método
       extra=()
+      if [ "${VERBO#ruta-}" != "$VERBO" ] && [ "$(jq -r --arg v "$VERBO" '.opciones[] | select(.verbo == $v) | .auto' "$PUERTA")" != true ]; then
+        for k in specifications-engineer spec-auditor test-planner security-auditor ux-designer tech-designer gap-detector; do
+          jq -e --arg v "$VERBO" --arg k "$k" '.opciones[] | select(.verbo == $v) | .etapas | index($k)' "$PUERTA" >/dev/null &&
+            extra+=(--set "$k=run") || extra+=(--set "$k=skip")
+        done
+      fi
       [ -f .sdd/route-answers.json ] && extra+=(--answers .sdd/route-answers.json)
       node "$SDD" route --write --confirm "$NOMBRE ($ROL) vía $CANAL" ${extra[@]+"${extra[@]}"} >/dev/null
       marcar registrado
     fi
     if ! hecho commit; then commit_si_hay "chore(sdd): route confirmed by $NOMBRE" status/; marcar commit; fi
-    RESULTADO="$VERBO"; RESUMEN="Ruta confirmada ($VERBO) por $NOMBRE ($ROL)" ;;
+    RESULTADO="$VERBO"; RESUMEN="Ruta confirmada ($VERBO) por $NOMBRE ($ROL)"
+    if [ "${VERBO#ruta-}" != "$VERBO" ]; then
+      RN=$(jq -r --arg v "$VERBO" '.opciones[] | select(.verbo == $v) | .etiqueta | sub("^[^A-Za-zÁÉÍÓÚÑáéíóúñ]+"; "")' "$PUERTA")
+      RESUMEN="Ruta «${RN}» elegida por $NOMBRE ($ROL)"
+    fi ;;
 
   plan:conforme)
     if ! hecho registrado; then

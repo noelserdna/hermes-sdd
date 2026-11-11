@@ -48,10 +48,15 @@ STACKS_DEFECTO = [
 # ── modelos por etapa ─────────────────────────────────────────────────────────────────────────────────────────────
 # Se guardan como alias (fable, opus, sonnet, haiku: siempre el último de cada familia) o como nombre completo. Para el
 # ejecutor de Hermes (la ruta) un alias se traduce al id de OpenRouter más reciente que Hermes conoce.
-ETAPAS_MODELO = [("requisitos", "Requisitos"), ("ruta", "Ruta"), ("plan", "Plan"), ("tareas", "Tareas"),
+ETAPAS_MODELO = [("requisitos", "Requisitos"), ("ruta", "Ruta"),
+                 ("especificar", "Especificaciones"), ("auditar", "Auditoría de especificaciones"),
+                 ("pruebas", "Plan de pruebas"), ("seguridad", "Revisión de seguridad"), ("tecnico", "Diseño técnico"),
+                 ("ux", "Diseño visual y de uso"), ("plan", "Plan"), ("tareas", "Tareas"),
                  ("huecos", "Completar huecos del plan"), ("implementar", "Implementar"), ("aceptar", "Aceptar"),
+                 ("brechas", "Huecos entre especificación y código"),
                  ("cierre", "Cierre y entrega"), ("cambio", "Cambio de requisitos"), ("adoptar", "Adoptar un repo")]
-_PIENSAN = ("requisitos", "plan", "cambio", "adoptar")   # juicio del contrato: donde más rinde un modelo grande
+# juicio del contrato: donde más rinde un modelo grande
+_PIENSAN = ("requisitos", "especificar", "auditar", "seguridad", "tecnico", "plan", "cambio", "adoptar")
 PERFILES = {
     "calidad": {e: ("sonnet" if e == "ruta" else "opus") for e, _ in ETAPAS_MODELO},
     "equilibrado": {e: ("opus" if e in _PIENSAN else "sonnet") for e, _ in ETAPAS_MODELO},
@@ -109,6 +114,85 @@ def modelo_para(etapa: str, ejecutor: str = "claude") -> str:
     return ""
 
 
+# ── rutas ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+# Una ruta es qué etapas opcionales del método se hacen. «auto» = las que proponga `sdd route` para ESTE proyecto
+# (la ruta adaptativa). En la puerta de ruta se ofrecen todas como botones; la recomendada es la fijada al crear el
+# proyecto o, si no, la de por defecto. Elige quien decida la puerta (una persona o Jev).
+OPCIONALES_RUTA = [("specifications-engineer", "especificaciones"), ("spec-auditor", "auditoría de especificaciones"),
+                   ("test-planner", "plan de pruebas"), ("security-auditor", "revisión de seguridad"),
+                   ("tech-designer", "diseño técnico"), ("ux-designer", "diseño visual y de uso"),
+                   ("gap-detector", "huecos entre especificación y código")]
+RUTAS_DEFECTO = [
+    {"id": "adaptativa", "nombre": "Adaptativa", "etapas": "auto",
+     "descripcion": "El método elige las etapas según cómo es el proyecto (tamaño, datos sensibles, pantallas, integraciones…)."},
+    {"id": "ligera", "nombre": "Ligera", "etapas": [],
+     "descripcion": "Solo lo esencial: requisitos, plan, programación y aceptación. Para prototipos y proyectos pequeños."},
+    {"id": "con-diseno", "nombre": "Con diseño", "etapas": ["tech-designer", "ux-designer"],
+     "descripcion": "Lo esencial más el diseño visual y de uso y el diseño técnico. Para apps con pantallas cuidadas."},
+    {"id": "completa", "nombre": "Completa", "etapas": [k for k, _ in OPCIONALES_RUTA],
+     "descripcion": "Todas las etapas del método: especificaciones, auditoría, plan de pruebas, seguridad, diseño y huecos. "
+                    "Más lenta y más cara; para proyectos serios o de un cliente externo."},
+]
+RUTA_DEFECTO = "adaptativa"
+
+
+def _ruta_valida(r: dict) -> dict:
+    if not isinstance(r, dict):
+        raise Rechazo("Cada ruta es un objeto con sus campos")
+    rid = str(r.get("id") or "").strip()
+    if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,30}", rid):
+        raise Rechazo(f"Id de ruta no válido: «{rid}» (minúsculas, números y guiones)")
+    nombre = " ".join(str(r.get("nombre") or "").split())
+    if not nombre:
+        raise Rechazo(f"La ruta {rid} necesita un nombre")
+    etapas = r.get("etapas")
+    if etapas != "auto":
+        validas = [k for k, _ in OPCIONALES_RUTA]
+        if not isinstance(etapas, list) or any(e not in validas for e in etapas):
+            raise Rechazo(f"Las etapas de la ruta {rid} son «auto» o una lista de: {', '.join(validas)}")
+        etapas = [k for k in validas if k in etapas]
+    return {"id": rid, "nombre": nombre[:40], "descripcion": " ".join(str(r.get("descripcion") or "").split())[:300],
+            "etapas": etapas}
+
+
+def rutas(cfg: dict | None = None) -> list:
+    cfg = cfg if cfg is not None else (N.leer(N.HOME / "sdd.json", {}) or {})
+    return cfg.get("rutas") or RUTAS_DEFECTO
+
+
+def ruta_de(tablero: str, cfg: dict | None = None) -> str:
+    """La ruta recomendada para un proyecto: la que se fijó al crearlo o, si no, la de por defecto."""
+    cfg = cfg if cfg is not None else (N.leer(N.HOME / "sdd.json", {}) or {})
+    ids = [r["id"] for r in rutas(cfg)]
+    for rid in ((cfg.get("rutas_proyecto") or {}).get(tablero), cfg.get("ruta_defecto"), RUTA_DEFECTO):
+        if rid in ids:
+            return rid
+    return ids[0]
+
+
+def opciones_ruta(tablero: str, propuesta: dict | None = None) -> list:
+    """Los botones de la puerta de ruta: una opción por ruta (la recomendada primero), cada una con las etapas que
+    hará (para «auto», las de la propuesta del método) y un criterio para Jev."""
+    cfg = N.leer(N.HOME / "sdd.json", {}) or {}
+    rec = ruta_de(tablero, cfg)
+    fijada = (cfg.get("rutas_proyecto") or {}).get(tablero) == rec
+    nombres = dict(OPCIONALES_RUTA)
+    auto = [k for k, e in ((propuesta or {}).get("stages") or {}).items() if e.get("run") and k in nombres]
+    ops = []
+    for r in sorted(rutas(cfg), key=lambda r: r["id"] != rec):
+        etapas = auto if r["etapas"] == "auto" else list(r["etapas"])
+        hace = ", ".join(nombres[k] for k in etapas) or "ninguna etapa extra"
+        criterio = (f"Use the route «{r['nombre']}» ({r['descripcion']}). Extra stages it runs besides the core "
+                    f"(requirements, plan, tasks, implementation, acceptance): {', '.join(etapas) or 'none'}.")
+        if r["id"] == rec:
+            criterio += (" The customer fixed this route when creating the project: choose it unless the requirements "
+                         "clearly need more rigor." if fijada else " This is the recommended route.")
+        ops.append({"verbo": f"ruta-{r['id']}", "etiqueta": ("⭐ " if r["id"] == rec else "🧭 ") + r["nombre"],
+                    "nombre": r["nombre"], "descripcion": r["descripcion"], "etapas": etapas, "auto": r["etapas"] == "auto",
+                    "hace": hace, "recomendada": r["id"] == rec, "fijada": fijada and r["id"] == rec, "criterio": criterio})
+    return ops
+
+
 GITIGNORE = "node_modules/\ndist/\n.astro/\n__pycache__/\n.venv/\n.DS_Store\n"
 RESERVADOS = {"default", "todo", "local"}
 
@@ -126,7 +210,10 @@ def config() -> dict:
             "perfil_modelos": cfg.get("perfil_modelos") if cfg.get("perfil_modelos") in PERFILES else PERFIL_DEFECTO,
             "modelos_cambiados": {e: m for e, m in (cfg.get("modelos") or {}).items() if m},
             "modelos": modelos_efectivos(cfg), "perfiles": PERFILES, "nombres_perfil": NOMBRE_PERFIL,
-            "etapas_modelo": ETAPAS_MODELO, "modelos_disponibles": modelos_disponibles()}
+            "etapas_modelo": ETAPAS_MODELO, "modelos_disponibles": modelos_disponibles(),
+            "rutas": rutas(cfg), "ruta_defecto": ruta_de("", {**cfg, "rutas_proyecto": {}}),
+            "rutas_proyecto": cfg.get("rutas_proyecto") or {}, "etapas_ruta": OPCIONALES_RUTA,
+            "rutas_por_defecto": RUTAS_DEFECTO}
 
 
 def _stack_valido(s: dict) -> dict:
@@ -149,7 +236,7 @@ def _stack_valido(s: dict) -> dict:
 
 def guardar_config(carpeta: str | None = None, stack_defecto: str | None = None, stacks: list | None = None,
                    deshacer_s=None, perfil_modelos: str | None = None, modelos: dict | None = None,
-                   deshacer_jev_s=None) -> dict:
+                   deshacer_jev_s=None, rutas_cfg: list | None = None, ruta_defecto: str | None = None) -> dict:
     """Cambia lo que venga (lo demás se queda como está). Valida antes de escribir nada."""
     actual = N.leer(N.HOME / "sdd.json", {}) or {}
     nuevo = dict(actual)
@@ -194,6 +281,20 @@ def guardar_config(carpeta: str | None = None, stack_defecto: str | None = None,
             if m and not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._/:-]{1,80}", str(m)):
                 raise Rechazo(f"Nombre de modelo no válido para {e}: «{m}»")
         nuevo["modelos"] = {e: str(m) for e, m in modelos.items() if m}
+    if rutas_cfg is not None:
+        if not isinstance(rutas_cfg, list) or not rutas_cfg:
+            raise Rechazo("Tiene que quedar al menos una ruta")
+        validas = [_ruta_valida(r) for r in rutas_cfg]
+        ids = [r["id"] for r in validas]
+        if len(set(ids)) != len(ids):
+            raise Rechazo("Hay dos rutas con el mismo id")
+        nuevo["rutas"] = validas
+        if nuevo.get("ruta_defecto") not in ids:
+            nuevo.pop("ruta_defecto", None)
+    if ruta_defecto is not None:
+        if ruta_defecto not in [r["id"] for r in rutas(nuevo)]:
+            raise Rechazo(f"No hay ninguna ruta {ruta_defecto}")
+        nuevo["ruta_defecto"] = ruta_defecto
     (N.HOME).mkdir(parents=True, exist_ok=True)
     N.escribir(N.HOME / "sdd.json", nuevo)
     return config()
@@ -255,7 +356,7 @@ def _tableros(env: dict) -> list:
 
 
 def nuevo_proyecto(nombre: str, que: str, stack: str | None = None, carpeta: str | None = None,
-                   jev: str | None = None, lanzar: bool = True) -> dict:
+                   jev: str | None = None, lanzar: bool = True, ruta: str | None = None) -> dict:
     """Crea la carpeta, el primer commit y lanza el proyecto. Devuelve {tablero, repo, stack, salida}.
     Lanza Rechazo (con un mensaje para la persona) si algo no procede; no deja nada a medias si falla antes de git."""
     cfg = config()
@@ -272,6 +373,8 @@ def nuevo_proyecto(nombre: str, que: str, stack: str | None = None, carpeta: str
         raise Rechazo(f"No hay ningún stack {stack}")
     if jev and jev not in N.MODOS:
         raise Rechazo(f"Modo de Jev desconocido: {jev}")
+    if ruta and ruta not in [r["id"] for r in cfg["rutas"]]:
+        raise Rechazo(f"No hay ninguna ruta {ruta}")
     base = Path((carpeta or "").strip() or cfg["carpeta"]).expanduser()
     if not base.is_absolute():
         raise Rechazo("La carpeta debe ser una ruta completa (/Users/…, ~/…)")
@@ -301,6 +404,10 @@ def nuevo_proyecto(nombre: str, que: str, stack: str | None = None, carpeta: str
     git("commit", "-q", "-m", f"chore: proyecto {tablero} (stack {st['id']}) con la petición inicial")
     if jev:
         N.poner_modo(jev, tablero)
+    if ruta:   # la ruta fijada al crear el proyecto: será la recomendada en su puerta de ruta
+        sdd = N.leer(N.HOME / "sdd.json", {}) or {}
+        sdd["rutas_proyecto"] = {**(sdd.get("rutas_proyecto") or {}), tablero: ruta}
+        N.escribir(N.HOME / "sdd.json", sdd)
     salida = ""
     if lanzar:
         r = subprocess.run(["bash", str(_raiz_arnes() / "lanzar.sh"), "iniciar", str(repo)],
@@ -309,7 +416,8 @@ def nuevo_proyecto(nombre: str, que: str, stack: str | None = None, carpeta: str
             raise Rechazo(f"El proyecto quedó creado en {repo}, pero no se pudo lanzar: "
                           f"{(r.stderr or r.stdout).strip()[-300:]}. Reinténtalo con: lanzar.sh iniciar {repo}")
         salida = r.stdout.strip()
-    return {"tablero": tablero, "repo": str(repo), "stack": st["id"], "jev": N.modo_jev(tablero), "salida": salida}
+    return {"tablero": tablero, "repo": str(repo), "stack": st["id"], "jev": N.modo_jev(tablero),
+            "ruta": ruta_de(tablero), "salida": salida}
 
 
 if __name__ == "__main__":   # CLI de nuevo.sh
@@ -317,18 +425,20 @@ if __name__ == "__main__":   # CLI de nuevo.sh
     ap = argparse.ArgumentParser(prog="nuevo.sh", description="Crea y lanza un proyecto SDD nuevo")
     sub = ap.add_subparsers(dest="cmd", required=True)
     n = sub.add_parser("nuevo"); n.add_argument("nombre"); n.add_argument("que")
-    n.add_argument("--stack"); n.add_argument("--carpeta"); n.add_argument("--jev"); n.add_argument("--sin-lanzar", action="store_true")
+    n.add_argument("--stack"); n.add_argument("--carpeta"); n.add_argument("--jev"); n.add_argument("--ruta"); n.add_argument("--sin-lanzar", action="store_true")
     c = sub.add_parser("config"); c.add_argument("--carpeta"); c.add_argument("--stack-defecto")
     c.add_argument("--deshacer", metavar="SEGUNDOS")
     c.add_argument("--deshacer-jev", metavar="SEGUNDOS")
     sub.add_parser("stacks")
     mo = sub.add_parser("modelo"); mo.add_argument("etapa"); mo.add_argument("ejecutor", nargs="?", default="claude")
     mp = sub.add_parser("modelos"); mp.add_argument("--perfil")
+    ru = sub.add_parser("rutas"); ru.add_argument("--defecto")
+    op = sub.add_parser("opciones-ruta"); op.add_argument("tablero"); op.add_argument("propuesta", nargs="?")
     a = ap.parse_args()
     try:
         if a.cmd == "nuevo":
-            r = nuevo_proyecto(a.nombre, a.que, a.stack, a.carpeta, a.jev, lanzar=not a.sin_lanzar)
-            print(f"Proyecto {r['tablero']} en {r['repo']} (stack {r['stack']}, Jev {r['jev']})")
+            r = nuevo_proyecto(a.nombre, a.que, a.stack, a.carpeta, a.jev, lanzar=not a.sin_lanzar, ruta=a.ruta)
+            print(f"Proyecto {r['tablero']} en {r['repo']} (stack {r['stack']}, Jev {r['jev']}, ruta {r['ruta']})")
             if r["salida"]:
                 print(r["salida"])
         elif a.cmd == "config":
@@ -340,6 +450,16 @@ if __name__ == "__main__":   # CLI de nuevo.sh
                   f"las de Jev: {c['deshacer_jev_s']} s ({N.duracion(c['deshacer_jev_s'])})")
         elif a.cmd == "modelo":   # lo usa etapa.sh cuando el proyecto no fija el modelo de una etapa
             print(modelo_para(a.etapa, a.ejecutor))
+        elif a.cmd == "rutas":
+            if a.defecto:
+                guardar_config(ruta_defecto=a.defecto)
+            c = config(); nombres = dict(OPCIONALES_RUTA)
+            for r in c["rutas"]:
+                et = "las que proponga el método" if r["etapas"] == "auto" else (", ".join(nombres[k] for k in r["etapas"]) or "solo lo esencial")
+                print(f"{'*' if r['id'] == c['ruta_defecto'] else ' '} {r['id']:12} {r['nombre']}: {et}")
+        elif a.cmd == "opciones-ruta":   # lo usa puerta.sh: los botones de la puerta de ruta
+            prop = N.leer(Path(a.propuesta), {}) if a.propuesta else {}
+            print(json.dumps(opciones_ruta(a.tablero, prop), ensure_ascii=False))
         elif a.cmd == "modelos":
             if a.perfil:
                 guardar_config(perfil_modelos=a.perfil)

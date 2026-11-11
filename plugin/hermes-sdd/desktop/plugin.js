@@ -193,6 +193,7 @@ function crearSDD(E) {
     const [stack, setStack] = useState(cfg.stack_defecto)
     const [carpeta, setCarpeta] = useState('')
     const [jev, setJev] = useState('')
+    const [ruta, setRuta] = useState('')
     const [hecho, setHecho] = useState(null)
     const a = useAccion()
     const st = cfg.stacks.find(s => s.id === stack) || cfg.stacks[0]
@@ -202,7 +203,7 @@ function crearSDD(E) {
 
     if (hecho)
       return h('div', { style: S.pagina }, h(Tarjeta, { titulo: `✅ Proyecto ${hecho.tablero} en marcha` },
-        h('div', { style: S.texto }, `Carpeta: ${hecho.repo}\nStack: ${hecho.stack} · Jev: ${hecho.jev}\n${hecho.salida || ''}`),
+        h('div', { style: S.texto }, `Carpeta: ${hecho.repo}\nStack: ${hecho.stack} · Jev: ${hecho.jev} · Ruta recomendada: ${nombreRuta(cfg, hecho.ruta)}\n${hecho.salida || ''}`),
         h('div', { style: S.texto }, 'El ejecutor está escribiendo los requisitos a partir de lo que pediste. Cuando acabe te llegará la primera puerta (Requisitos) aquí, en Decisiones, y por Telegram.'),
         h('div', { style: S.fila },
           h(C.Boton, { tono: 'principal', onClick: () => { setHecho(null); setNombre(''); setQue('') } }, 'Crear otro'),
@@ -218,13 +219,17 @@ function crearSDD(E) {
           h(Selector, { valor: stack, opciones: cfg.stacks.map(s => [s.id, s.nombre]), alCambiar: setStack })),
         h(Campo, { etiqueta: 'Jev en este proyecto', ayuda: jev ? AYUDA_MODO[jev] : `El de por defecto (${cfg.jev.defecto}).` },
           h(Selector, { valor: jev, opciones: [['', `Por defecto (${cfg.jev.defecto})`], ...MODOS], alCambiar: setJev })),
+        h(Campo, {
+          etiqueta: 'Ruta', ayuda: ruta ? ((cfg.rutas || []).find(r => r.id === ruta) || {}).descripcion
+            : 'Se elige en la puerta de ruta (tú o Jev), tras aprobar los requisitos. Si fijas una, será la recomendada.'
+        }, h(Selector, { valor: ruta, opciones: [['', `La decide la puerta (recomendada: ${nombreRuta(cfg, cfg.ruta_defecto)})`], ...(cfg.rutas || []).map(r => [r.id, r.nombre])], alCambiar: setRuta })),
         h(Campo, { etiqueta: 'Carpeta (opcional)', ayuda: `Vacía: ${cfg.carpeta}` },
           h(C.Campo, { value: carpeta, placeholder: cfg.carpeta, onChange: e => setCarpeta(e.target.value) }))),
       st ? h('div', { style: S.meta }, `AGENTS.md → stack: ${st.stack} · test: ${st.test}${st.server ? ' · server: ' + st.server : ''}`) : null,
       h('div', { style: S.fila },
         h(C.Boton, {
           tono: 'principal', disabled: !listo || a.ocupado,
-          onClick: () => a.ejecutar(() => api.post('/nuevo', { nombre, que, stack, carpeta: carpeta.trim(), jev }), r => { setHecho(r); alCrear() })
+          onClick: () => a.ejecutar(() => api.post('/nuevo', { nombre, que, stack, carpeta: carpeta.trim(), jev, ruta }), r => { setHecho(r); alCrear() })
         }, a.ocupado ? 'Lanzando…' : '🚀 Lanzar'),
         h('span', { style: S.meta }, listo ? 'Crea la carpeta con git, el tablero del kanban y la primera tarjeta (requisitos).' : 'Pon un nombre y una frase de lo que quieres.')),
       h(Error, { texto: a.error })))
@@ -245,6 +250,58 @@ function crearSDD(E) {
         h(C.Boton, { tono: 'principal', disabled: ocupado, onClick: () => alGuardar(s) }, 'Guardar stack'),
         h(C.Boton, { tono: 'suave', disabled: ocupado, onClick: alCancelar }, 'Cancelar'),
         !esNuevo ? h(C.Boton, { tono: 'peligro', disabled: ocupado, onClick: () => alBorrar(s.id) }, 'Borrar') : null))
+  }
+
+  // Rutas: qué etapas extra del método se hacen. «auto» = las que proponga el método para cada proyecto
+  const nombreRuta = (cfg, id) => ((cfg.rutas || []).find(r => r.id === id) || {}).nombre || id || '—'
+  const RUTA_VACIA = { id: '', nombre: '', descripcion: '', etapas: [] }
+
+  function EditorRuta({ inicial, esNuevo, etapas, alGuardar, alBorrar, alCancelar, ocupado, puedeBorrar }) {
+    const [r, setR] = useState(inicial)
+    const auto = r.etapas === 'auto'
+    const lista = auto ? [] : r.etapas
+    const alternar = k => setR({ ...r, etapas: lista.includes(k) ? lista.filter(x => x !== k) : [...lista, k] })
+    return h('div', { style: { ...S.tarjeta, borderStyle: 'dashed' } },
+      h('div', { style: S.rejilla },
+        h(Campo, { etiqueta: 'Id (minúsculas y guiones)' }, h(C.Campo, { value: r.id, disabled: !esNuevo, onChange: e => setR({ ...r, id: e.target.value }) })),
+        h(Campo, { etiqueta: 'Nombre' }, h(C.Campo, { value: r.nombre, onChange: e => setR({ ...r, nombre: e.target.value }) })),
+        h(Campo, { etiqueta: 'Para qué sirve (lo lee Jev para elegir)' }, h(C.Campo, { value: r.descripcion, onChange: e => setR({ ...r, descripcion: e.target.value }) }))),
+      h(Campo, { etiqueta: 'Pasos extra, además de requisitos → plan → programación → aceptación' },
+        h('span', { style: S.fila },
+          h(C.Boton, { tono: auto ? 'principal' : 'borde', disabled: ocupado, onClick: () => setR({ ...r, etapas: auto ? [] : 'auto' }) }, '✨ Los que proponga el método'),
+          etapas.map(([k, nombre]) => h(C.Boton, { key: k, tono: lista.includes(k) ? 'principal' : 'borde', disabled: ocupado || auto, onClick: () => alternar(k) }, nombre)))),
+      h('div', { style: S.fila },
+        h(C.Boton, { tono: 'principal', disabled: ocupado || !r.id || !r.nombre, onClick: () => alGuardar(r) }, 'Guardar ruta'),
+        h(C.Boton, { tono: 'suave', disabled: ocupado, onClick: alCancelar }, 'Cancelar'),
+        !esNuevo && puedeBorrar ? h(C.Boton, { tono: 'peligro', disabled: ocupado, onClick: () => alBorrar(r.id) }, 'Borrar') : null))
+  }
+
+  function Rutas({ cfg, guardar, ocupado }) {
+    const [editando, setEditando] = useState(null)   // id de la ruta, o '+' para una nueva
+    const rutas = cfg.rutas || []
+    const etapas = cfg.etapas_ruta || []
+    const nombres = Object.fromEntries(etapas)
+    const g = (cuerpo, aviso) => { guardar(cuerpo, aviso); setEditando(null) }
+    const sin = id => rutas.filter(r => r.id !== id)
+    return h(Tarjeta, { titulo: '🧭 Rutas' },
+      h('div', { style: S.meta }, 'Qué pasos extra del método se hacen en un proyecto. En la puerta de ruta salen todas como botones y la decide quien decida esa puerta (tú o Jev); la recomendada es la que fijes al crear el proyecto o, si no, la de por defecto.'),
+      rutas.map(r => editando === r.id
+        ? h(EditorRuta, {
+          key: r.id, inicial: r, esNuevo: false, etapas, ocupado, puedeBorrar: rutas.length > 1, alCancelar: () => setEditando(null),
+          alGuardar: n => g({ rutas: rutas.map(x => (x.id === r.id ? n : x)) }, `Ruta ${n.nombre} guardada`),
+          alBorrar: id => g({ rutas: sin(id) }, `Ruta ${r.nombre} borrada`)
+        })
+        : h('div', { key: r.id, style: S.fila },
+          h('strong', { style: { fontSize: 13 } }, r.nombre),
+          r.id === cfg.ruta_defecto ? h(C.Etiqueta, { tono: 'normal' }, 'por defecto') : null,
+          h('span', { style: S.meta }, `${r.descripcion} → ${r.etapas === 'auto' ? 'los pasos que proponga el método' : (r.etapas.map(k => nombres[k] || k).join(', ') || 'sin pasos extra')}`),
+          h(C.Boton, { tono: 'suave', disabled: ocupado, onClick: () => setEditando(r.id) }, 'Editar'),
+          r.id !== cfg.ruta_defecto ? h(C.Boton, { tono: 'suave', disabled: ocupado, onClick: () => guardar({ ruta_defecto: r.id }, `${r.nombre}: ruta por defecto`) }, 'Usar por defecto') : null)),
+      editando === '+'
+        ? h(EditorRuta, { inicial: RUTA_VACIA, esNuevo: true, etapas, ocupado, alCancelar: () => setEditando(null), alGuardar: n => g({ rutas: [...rutas, n] }, `Ruta ${n.nombre} añadida`) })
+        : h('div', { style: S.fila },
+          h(C.Boton, { tono: 'borde', disabled: ocupado, onClick: () => setEditando('+') }, '＋ Añadir ruta'),
+          h(C.Boton, { tono: 'suave', disabled: ocupado, onClick: () => g({ rutas: cfg.rutas_por_defecto }, 'Rutas como venían') }, 'Restaurar las de serie')))
   }
 
   // Modelos por etapa: un perfil (Calidad, Equilibrado, Rápido) y, encima, lo que cambies etapa a etapa
@@ -294,6 +351,7 @@ function crearSDD(E) {
     const [carpeta, setCarpeta] = useState(cfg.carpeta)
     const [editando, setEditando] = useState(null)   // id del stack, o '+' para uno nuevo
     const [umbral, setUmbral] = useState(String(cfg.jev.umbral))
+    const [umbralAuto, setUmbralAuto] = useState(String(cfg.jev.umbral_auto ?? cfg.jev.umbral))
     const [minS, maxS] = cfg.deshacer_rango || [10, 86400]
     const a = useAccion()
     const guardar = (cuerpo, aviso) => a.ejecutar(() => api.post('/config', cuerpo), r => { setCfg(r); setEditando(null); E.avisar(aviso) })
@@ -314,6 +372,7 @@ function crearSDD(E) {
         h('div', { style: S.rejilla },
           h(Ventana, { etiqueta: 'Tus decisiones', clave: 'deshacer_s', valor: cfg.deshacer_s, defecto: cfg.deshacer_por_defecto, minS, maxS, guardar, ocupado: a.ocupado }),
           h(Ventana, { etiqueta: 'Las de Jev (piloto y auto)', clave: 'deshacer_jev_s', valor: cfg.deshacer_jev_s, defecto: cfg.deshacer_jev_por_defecto, minS, maxS, guardar, ocupado: a.ocupado }))),
+      h(Rutas, { cfg, guardar, ocupado: a.ocupado }),
       h(Modelos, { cfg, guardar, ocupado: a.ocupado }),
       h(Tarjeta, { titulo: '🧱 Stacks' },
         h('div', { style: S.meta }, 'Lo que elijas al crear un proyecto se escribe en su AGENTS.md (SDD Stack Profile): el ejecutor construye con ese stack y ejecuta esos tests.'),
@@ -346,6 +405,10 @@ function crearSDD(E) {
           h('span', { style: S.fila },
             h(C.Campo, { value: umbral, onChange: e => setUmbral(e.target.value), style: { maxWidth: 100 } }),
             h(C.Boton, { tono: 'borde', disabled: a.ocupado || umbral === String(cfg.jev.umbral), onClick: () => jev({ umbral: Number(umbral) }, `Umbral: ${umbral}`) }, 'Guardar'))),
+        h(Campo, { etiqueta: 'Umbral en modo auto', ayuda: 'En auto delegaste la decisión: Jev puede decidir con algo menos de seguridad. Entre 0.5 y 1.' },
+          h('span', { style: S.fila },
+            h(C.Campo, { value: umbralAuto, onChange: e => setUmbralAuto(e.target.value), style: { maxWidth: 100 } }),
+            h(C.Boton, { tono: 'borde', disabled: a.ocupado || umbralAuto === String(cfg.jev.umbral_auto ?? cfg.jev.umbral), onClick: () => jev({ umbral_auto: Number(umbralAuto) }, `Umbral en auto: ${umbralAuto}`) }, 'Guardar'))),
         h(Campo, { etiqueta: 'En modo piloto, Jev decide las puertas de…' },
           h('span', { style: S.fila }, cfg.tipos_puerta.map(t => {
             const on = cfg.jev.piloto.includes(t)

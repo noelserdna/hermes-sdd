@@ -5,6 +5,8 @@
 #   etapa.sh <repo> <etapa> [fase]
 #     requisitos     si ya hay requisitos, abre la puerta; si no, el ejecutor los escribe desde intent/
 #     ruta           propone qué etapas necesita el proyecto (factores por el ejecutor si no hay Jev) → puerta
+#     especificar · auditar · pruebas · seguridad · tecnico · ux
+#                    pasos extra que pide la ruta (spec/, audits/, test/TEST-PLAN.md, design/, ux/), antes del plan
 #     plan           plan por FASEs
 #     tareas         tareas de todas las FASEs → puerta de plan (conformidad con el orden de entrega)
 #     huecos N       completa los [PLAN GAP] de la FASE N con las respuestas ya aprobadas (sin puerta: aplica lo decidido)
@@ -12,6 +14,7 @@
 #     aceptar N      veredictos y demo de la FASE N → puerta de aceptación
 #     cambio         aplica la petición de intent/INT-NNN.md a los requisitos (versión nueva) → puerta de requisitos
 #     adoptar        ingeniería inversa de un repo existente: requisitos y FASEs retroactivas → puerta de requisitos
+#     brechas        huecos entre especificación y código (si la ruta lo pide), antes del cierre
 #     cierre         puerta de calidad GLOBAL; si quedan Must sin verificar, el ejecutor cierra los huecos y se
 #                    repite la aceptación global → puerta de entrega
 #
@@ -136,11 +139,35 @@ case "$ETAPA" in
     P=$(puerta ruta) || falla "no se pudo abrir la puerta de ruta"
     fin '{"outcome":"done","reason":"ok"}' "Ruta propuesta" "$P" ;;
 
+  especificar|auditar|pruebas|seguridad|tecnico|ux|brechas)   # etapas opcionales: las encadena la ruta (lanzar.sh)
+    case "$ETAPA" in
+      especificar) CL=specifications-engineer; HECHO="Especificaciones escritas"; PRODUCTO="spec/use-cases spec/domain spec/contracts"
+        PIDE="Write the formal specifications in spec/ from the approved requirements/." ;;
+      auditar)     CL=spec-auditor; HECHO="Especificaciones auditadas"; PRODUCTO=audits/AUDIT-BASELINE.md
+        PIDE="Audit spec/ (baseline audit), then Mode Fix only for defects whose fix is unambiguous." ;;
+      pruebas)     CL=test-planner; HECHO="Plan de pruebas escrito"; PRODUCTO=test/TEST-PLAN.md
+        PIDE="Write the test plan (test/TEST-PLAN.md, matrices and E2E scenarios) from spec/." ;;
+      seguridad)   CL=security-auditor; HECHO="Seguridad revisada"; PRODUCTO=audits/SECURITY-AUDIT-BASELINE.md
+        PIDE="Audit the security posture of spec/ (or requirements/ when there is no spec/)." ;;
+      tecnico)     CL=tech-designer; HECHO="Diseño técnico escrito"; PRODUCTO=design
+        PIDE="Write the technical design in design/, keeping the Stack Profile of AGENTS.md." ;;
+      ux)          CL=ux-designer; HECHO="Diseño visual y de uso escrito"; PRODUCTO=ux
+        PIDE="Write the UX design in ux/ (design system, wireframes of the screens the requirements need, accessibility)." ;;
+      brechas)     CL=gap-detector; HECHO="Huecos entre especificación y código revisados"; PRODUCTO=audits/GAP-ANALYSIS-REVIEW.md
+        PIDE="Detect the gaps between spec/ (or requirements/) and the code${FASE:+ of FASE-$FASE}; --semantic." ;;
+    esac
+    claude_etapa "$CL" "/sdd-$CL — $ARNES $PIDE"
+    hay=""; for x in $PRODUCTO; do [ -e "$x" ] && hay=1; done
+    [ -n "$hay" ] || falla "$CL no dejó $PRODUCTO: $(no_hecho)"
+    fin "$RES" "$HECHO" ;;
+
   plan)
     INC=""; git tag -l 'fase-*-accepted' | grep -q . && INC=" INCREMENTAL: the requirements changed after some FASEs were accepted (tags fase-N-accepted, see changes/). Keep every accepted FASE file untouched and add new FASE(s) after the last one, covering only the new or modified requirements."
     # Las etapas opcionales que el arnés no ejecuta quedan saltadas: si no, el plan se niega a arrancar esperando
     # especificaciones que nunca llegan (incidente coches, 11/11/2026). El plan sale de requirements/.
+    # Desde 0.3.0 el arnés tiene todas; queda la red para una etapa cuya skill falte en metodo/skills.
     for k in specifications-engineer spec-auditor test-planner security-auditor ux-designer tech-designer gap-detector; do
+      [ -d "$ROOT/metodo/skills/sdd-$k" ] && continue
       case "$(bash "$STATE" get "$k" 2>/dev/null)" in done|skipped|running) ;;
         *) bash "$STATE" set "$k" skipped --reason "hermes-sdd no tiene esta etapa: el plan sale de requirements/" >/dev/null 2>&1 || true ;; esac
     done
