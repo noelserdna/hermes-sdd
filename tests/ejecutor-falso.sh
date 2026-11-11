@@ -13,4 +13,4 @@ case "${FALSO_MODO:-}" in
             git add task && { git diff --cached --quiet || git commit -qm "docs(tasks): gaps"; } ;;
   borra)    sed 's/"observed":0/"observed":1/' "$D" > "$D.tmp" && mv "$D.tmp" "$D" ;;  # reescribe un registro anterior
 esac
-jq -nc '{outcome:"done", reason:"ok", run:"falso", cost_usd:0}'
+jq -nc --arg r "${FALSO_RESUMEN:-}" '{outcome:"done", reason:"ok", run:"falso", cost_usd:0, resumen:$r}'  # FALSO_RESUMEN: lo que «dice» el ejecutor

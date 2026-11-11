@@ -12,8 +12,7 @@
     "ruta": {
       "contexto": "ruta.json holds the factors judged about the project and the stages they select.",
       "verbos": {
-        "acepto": "Approve the proposed route: the stages that run and the ones skipped fit the project as described, with no doubts and no stage this harness cannot run",
-        "completo": "Run the full pipeline instead: the project is risky, regulated, for an external customer or ambiguous enough that no stage should be skipped"
+        "acepto": "Approve the proposed route: the stages that run and the ones skipped fit the project as described, with no doubts and no stage this harness cannot run"
       }
     },
     "plan": {

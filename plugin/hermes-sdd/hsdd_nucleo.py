@@ -261,7 +261,7 @@ def puede_jev(puerta: dict, cfg: dict | None = None) -> tuple[bool, str]:
         return False, "una persona deshizo la decisión de Jev"
     if modo == "piloto" and puerta.get("preguntas"):
         return False, "hay preguntas abiertas (clase C): en modo piloto las contesta una persona"
-    # Campos de la puerta (puerta.sh ≥ 0.2.10); en puertas anteriores, lo que decía su texto
+    # Campos de la puerta (puerta.sh ≥ 0.2.11); en puertas anteriores, lo que decía su texto
     texto = puerta.get("texto", "")
     if puerta.get("bloqueo") or ("bloqueo" not in puerta and "⛔" in texto):
         return False, "la puerta no pasa la comprobación de calidad"

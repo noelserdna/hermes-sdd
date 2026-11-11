@@ -194,7 +194,9 @@ Kanban-Task: $BOARD/$TASK"
 
   ruta:acepto|ruta:completo)
     if ! hecho registrado; then
-      extra=(); [ "$VERBO" = completo ] && extra+=(--full)
+      # «completo» (puertas antiguas) = acepto: el arnés no tiene las etapas opcionales (especificaciones, auditoría,
+      # plan de pruebas) y con el modo «full» de route el plan se negaría a arrancar esperándolas
+      extra=()
       [ -f .sdd/route-answers.json ] && extra+=(--answers .sdd/route-answers.json)
       node "$SDD" route --write --confirm "$NOMBRE ($ROL) vía $CANAL" ${extra[@]+"${extra[@]}"} >/dev/null
       marcar registrado

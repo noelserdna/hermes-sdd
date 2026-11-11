@@ -34,7 +34,7 @@ case "$TIPO" in
     [ -f .sdd/hermes/adopcion ] && EXTRA+=(--adopcion 1)
     OPCIONES='[{"verbo":"acepto","etiqueta":"✅ Apruebo"},{"verbo":"cambios","etiqueta":"✏️ Falta o sobra algo","texto":true}]' ;;
   ruta)
-    OPCIONES='[{"verbo":"acepto","etiqueta":"✅ Aprobar ruta"},{"verbo":"completo","etiqueta":"🔁 Hacerlo todo"},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]' ;;
+    OPCIONES='[{"verbo":"acepto","etiqueta":"✅ Aprobar ruta"},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]' ;;
   plan)
     OPCIONES='[{"verbo":"conforme","etiqueta":"✅ Conforme"},{"verbo":"cambios","etiqueta":"✏️ Cambiar","texto":true}]' ;;
   fase)

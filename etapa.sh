@@ -96,6 +96,9 @@ claude_etapa() {  # claude_etapa <clave-de-estado> <prompt>
   RES=$res
 }
 puerta() { bash "$ROOT/puerta.sh" "$REPO" "$@"; }
+no_hecho() {  # la explicación del ejecutor cuando termina sin hacer la etapa (su primer párrafo tras la línea stage=…)
+  echo "$RES" | jq -r '.resumen // .reason // ""' | grep -v '^stage=' | grep -v '^ *$' | head -1 | cut -c1-300
+}
 # Antes de abrir la puerta de requisitos, requirements/ debe pasar `sdd lint --needs`: lo que la persona aprueba es
 # lo que después leen el plan y la aceptación (p. ej. criterios "- AC1: GIVEN …" que el método no sabe contar).
 # Una pasada de corrección del ejecutor; si siguen los errores, la etapa falla en vez de abrir la puerta.
@@ -131,14 +134,22 @@ case "$ETAPA" in
 
   plan)
     INC=""; git tag -l 'fase-*-accepted' | grep -q . && INC=" INCREMENTAL: the requirements changed after some FASEs were accepted (tags fase-N-accepted, see changes/). Keep every accepted FASE file untouched and add new FASE(s) after the last one, covering only the new or modified requirements."
+    # Las etapas opcionales que el arnés no ejecuta quedan saltadas: si no, el plan se niega a arrancar esperando
+    # especificaciones que nunca llegan (incidente coches, 11/11/2026). El plan sale de requirements/.
+    for k in specifications-engineer spec-auditor test-planner security-auditor ux-designer tech-designer gap-detector; do
+      case "$(bash "$STATE" get "$k" 2>/dev/null)" in done|skipped|running) ;;
+        *) bash "$STATE" set "$k" skipped --reason "hermes-sdd no tiene esta etapa: el plan sale de requirements/" >/dev/null 2>&1 || true ;; esac
+    done
     claude_etapa plan-architect "/sdd-plan-architect --skip-clarify — $ARNES Generate plan/.$INC"
+    ls plan/fases/FASE-*.md >/dev/null 2>&1 || falla "el plan no se generó: $(no_hecho)"
     node "$SDD" lint --plan >/dev/null 2>&1 || falla "sdd lint --plan encuentra errores: $(node "$SDD" lint --plan 2>&1 | tail -3 | tr '\n' ' ')"
     fin "$RES" "Plan generado ($(ls plan/fases/FASE-*.md 2>/dev/null | wc -l | tr -d ' ') FASEs)" ;;
 
   tareas)
     INC=""; git tag -l 'fase-*-accepted' | grep -q . && INC=" INCREMENTAL: generate task files only for the FASEs that do not have one yet; do not touch the task files of accepted FASEs."
     claude_etapa task-generator "/sdd-task-generator — $ARNES Generate task/ for all FASEs.$INC"
-    node "$SDD" lint --dir task >/dev/null 2>&1 || falla "sdd lint de tareas encuentra errores"
+    ls task/TASK-FASE-*.md >/dev/null 2>&1 || falla "las tareas no se generaron: $(no_hecho)"
+    node "$SDD" lint --dir task >/dev/null 2>&1 || falla "sdd lint de tareas encuentra errores: $(node "$SDD" lint --dir task 2>&1 | grep -v '^ *$' | tail -3 | tr '\n' ' ')"
     P=$(puerta plan) || falla "no se pudo abrir la puerta de plan"
     fin "$RES" "Tareas generadas: $(node "$SDD" tasks status 2>/dev/null | tail -1)" "$P" ;;
 

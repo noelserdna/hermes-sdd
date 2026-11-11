@@ -168,10 +168,9 @@ def puerta_ruta(repo: Path, proyecto: str) -> dict:
         partes.append("❓ No tengo claro " + "; ni ".join(DUDAS.get(d, d) for d in dudas)
                       + ". Por prudencia lo cuento como que sí.")
     if sin_soporte:
-        partes.append("⛔ Este arnés aún no sabe hacer: " + ", ".join(sin_soporte)
-                      + ". Si apruebas, esos pasos quedarán pendientes; si no te vale, recházalo y explica por qué.")
-    partes.append("👉 ✅ Aprobar ruta para seguir así · 🔁 Hacerlo todo si prefieres no saltarte ningún paso "
-                  "(más lento y más caro).")
+        partes.append("⚠️ Esto aún no lo hago aquí: " + ", ".join(sin_soporte)
+                      + ". El plan saldrá directamente de los requisitos que aprobaste.")
+    partes.append("👉 ✅ Aprobar ruta para seguir así · ❌ Rechazar si algo no te cuadra (y cuéntame qué).")
     return {"titulo": "Ruta del proyecto", "texto": "\n\n".join(partes)}
 
 

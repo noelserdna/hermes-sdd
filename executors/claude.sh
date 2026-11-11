@@ -85,7 +85,8 @@ if ! jq -e . "$OUT" >/dev/null 2>&1; then
   salir failed "Claude Code no devolvió JSON (rc=$RC): $(tail -c 300 "$ERR" | tr '\n' ' ')"
 fi
 TEXTO=$(jq -r '.result // ""' "$OUT")
-EXTRA=$(jq -c --argjson m "$MIN" '{session_id, cost_usd: .total_cost_usd, turns: .num_turns, minutes: $m}' "$OUT")
+EXTRA=$(jq -c --argjson m "$MIN" '{session_id, cost_usd: .total_cost_usd, turns: .num_turns, minutes: $m,
+  resumen: ((.result // "") | .[0:800])}' "$OUT")
 if [ "$(jq -r .is_error "$OUT")" = true ] || [ "$RC" -ne 0 ]; then
   if echo "$TEXTO" | grep -qiE "usage limit|rate limit|limit reached"; then
     RESET=$(echo "$TEXTO" | grep -oE '\|[0-9]{10}' | head -1 | tr -d '|' || true)

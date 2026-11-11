@@ -98,4 +98,21 @@ grep -q '^## Q-task-implementer-001 \[ANSWERED\]' .sdd/questions-task-implemente
   && ok "cierra la pregunta del implementador sobre ese hueco" || bad "cerrar: $(cat .sdd/questions-task-implementer.md)"
 grep -q '^## Q-task-implementer-002 \[OPEN\]' .sdd/questions-task-implementer.md && ok "no toca otra pregunta del implementador" || bad "otra: $(grep '^## ' .sdd/questions-task-implementer.md)"
 grep -q '^## Q-plan-architect-001 \[OPEN\]' .sdd/questions-plan-architect.md && ok "no toca preguntas de contrato (plan), aunque nombren la tarea" || bad "contrato: $(cat .sdd/questions-plan-architect.md)"
+# 7. incidente coches (11/11/2026): el ejecutor termina «bien» pero se niega a planificar (esperaba especificaciones
+#    por un --full que el arnés no ejecuta). Plan y Tareas sin ficheros fallan con su explicación, no pasan a la siguiente
+echo '{"ejecutor":"claude","ejecutores":{"plan":"../tests/ejecutor-falso","tareas":"../tests/ejecutor-falso"}}' > .sdd/hermes/hermes-sdd.json
+dice=$'stage=plan-architect status=blocked questions=0 artifacts=0\n\nNo generé `plan/`, porque faltan las especificaciones.'
+cp "$ROOT/metodo/templates/pipeline-state.template.json" pipeline-state.json
+o=$(FALSO_RESUMEN="$dice" bash "$ROOT/etapa.sh" "$R" plan | tail -1)
+[ "$(bash "$ROOT/metodo/scripts/sdd-state.sh" get specifications-engineer)" = skipped ] && [ "$(bash "$ROOT/metodo/scripts/sdd-state.sh" get test-planner)" = skipped ] \
+  && ok "plan: las etapas que el arnés no tiene quedan saltadas (el plan sale de requirements/)" || bad "estado: $(cat pipeline-state.json | head -c 400)"
+echo "$o" | jq -e '.outcome == "failed" and (.reason | test("el plan no se generó: No generé"))' >/dev/null && ok "plan sin plan/: falla con lo que dijo el ejecutor" || bad "plan vacío: $o"
+mv task "$T/task-bak"
+o=$(FALSO_RESUMEN="$dice" bash "$ROOT/etapa.sh" "$R" tareas | tail -1)
+echo "$o" | jq -e '.outcome == "failed" and (.reason | test("las tareas no se generaron"))' >/dev/null && ok "tareas sin task/: falla en vez de abrir la puerta del plan" || bad "tareas vacías: $o"
+mv "$T/task-bak" task
+
+# 8. la puerta de ruta ya no ofrece «método completo»: lleva a etapas que el arnés no tiene
+grep -q '"verbo":"completo"' "$ROOT/puerta.sh" && bad "la puerta de ruta ofrece «completo»" || ok "la puerta de ruta no ofrece «completo»"
+grep -q -- '--full' "$ROOT/firmar.sh" && bad "firmar.sh aún pasa --full" || ok "una puerta antigua con «completo» se firma como «acepto» (sin --full)"
 exit $fail

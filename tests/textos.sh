@@ -71,7 +71,7 @@ o=$($TX puerta ruta "$R" --proyecto bar | jq -r .texto)
 echo "$o" | grep -q 'Pasos: requisitos → plan por fases → revisión de seguridad → programación.' && echo "$o" | grep -q 'Me salto.*diseño visual y de uso' \
   && ok "ruta: los pasos con nombres normales" || bad "ruta: $o"
 echo "$o" | grep -q 'No tengo claro si la web es para un cliente que tiene que revisarla' && ok "ruta: las dudas explicadas" || bad "duda: $o"
-echo "$o" | grep -q '⛔ Este arnés aún no sabe hacer: revisión de seguridad' && ok "ruta: avisa de lo que el arnés aún no hace" || bad "sin soporte: $o"
+echo "$o" | grep -q '⚠️ Esto aún no lo hago aquí: revisión de seguridad' && ! echo "$o" | grep -q 'Hacerlo todo' && ok "ruta: avisa de lo que el arnés aún no hace" || bad "sin soporte: $o"
 echo "$o" | grep -qE "$JERGA" && bad "ruta con jerga: $(echo "$o" | grep -E "$JERGA")" || ok "ruta: sin jerga del método"
 
 # ── plan ─────────────────────────────────────────────────────────────────────────────────────────────────────────
