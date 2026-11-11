@@ -111,8 +111,31 @@ case "$CMD" in
     echo "Encargado de $BOARD listo: perfil $P, modelo $(modelo), wiki en $REPO/wiki"
     echo "  Hablar con él: panel de Hermes → /chat?profile=$P   ·   hermes -p $P chat" ;;
 
+  tema)   # encargado.sh tema <repo> <chat_id> <thread_id>: ese tema de Telegram habla con el encargado del proyecto.
+          # Ruta por chat Y tema (si fuera solo por chat, todo el privado iría al encargado y se perderían los avisos);
+          # el tema queda también en dm_topics para que Hermes lo conozca. El gateway la carga al reiniciar.
+    CHAT=${3:?falta el chat_id}; HILO=${4:?falta el thread_id}
+    RUTAS=$(hermes config get gateway.profile_routes --json 2>/dev/null || echo '[]')
+    TEMAS=$(hermes config get platforms.telegram.extra.dm_topics --json 2>/dev/null || echo '[]')
+    jq -e . <<< "$RUTAS" >/dev/null 2>&1 || RUTAS='[]'; jq -e . <<< "$TEMAS" >/dev/null 2>&1 || TEMAS='[]'
+    RUTAS=$(jq -c --arg n "encargado-$BOARD" --arg c "$CHAT" --argjson t "$HILO" --arg p "$P" \
+      '[.[] | select(.name != $n)] + [{name: $n, platform: "telegram", chat_id: $c, thread_id: ($t | tostring), profile: $p}]' <<< "$RUTAS")
+    TEMAS=$(jq -c --arg c "$CHAT" --argjson t "$HILO" --arg nombre "🧭 $BOARD" '
+      (if any(.[]; (.chat_id | tostring) == $c) then . else . + [{chat_id: ($c | tonumber), topics: []}] end)
+      | map(if (.chat_id | tostring) == $c
+            then .topics = ([.topics[]? | select(.name != $nombre and (.thread_id // 0) != $t)] + [{name: $nombre, thread_id: $t}])
+            else . end)' <<< "$TEMAS")
+    hermes config set gateway.profile_routes "$RUTAS" >/dev/null
+    hermes config set platforms.telegram.extra.dm_topics "$TEMAS" >/dev/null
+    echo "Tema «🧭 $BOARD» ($CHAT/$HILO) → $P (se activa al reiniciar el gateway)" ;;
+
   borrar)
     hermes profile delete -y "$P" >/dev/null 2>&1 || true
+    RUTAS=$(hermes config get gateway.profile_routes --json 2>/dev/null || echo '[]')
+    if jq -e --arg n "encargado-$BOARD" 'any(.[]; .name == $n)' <<< "$RUTAS" >/dev/null 2>&1; then
+      hermes config set gateway.profile_routes "$(jq -c --arg n "encargado-$BOARD" '[.[] | select(.name != $n)]' <<< "$RUTAS")" >/dev/null
+      echo "(quitada la ruta de su tema de Telegram: reinicia el gateway)"
+    fi
     registrar ""
     echo "Perfil $P borrado (el wiki sigue en $REPO/wiki)" ;;
 

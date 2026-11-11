@@ -105,4 +105,18 @@ puerta g10 requisitos; con_preguntas g10; decidir g10 acepto telegram 111 "Q1: B
 # 11. dar conformidad al plan con las recomendadas sigue siendo conformidad
 puerta g11 plan; con_preguntas g11; decidir g11 conforme telegram 111 "Q1: A, Q2: B"; firmar g11
 [ $rc -eq 0 ] && echo "$out" | grep -q "Plan conforme" && ok "con las recomendadas, el plan queda conforme" || bad "recomendadas: $out"
+# ── fusión de la rama de la FASE en la rama por defecto al aceptarla (el notario; nunca push) ──────────────────────
+F="$T/fusion"; mkdir -p "$F"; cd "$F"; git init -q -b main; g() { git -c user.email=t@t -c user.name=t "$@"; }
+g commit -q --allow-empty -m base; git switch -q -c fase-0-base; echo a > a.txt; git add a.txt; g commit -qm "feat: a"
+eval "$(sed -n '/^rama_defecto() {/,/^}/p' "$ROOT/firmar.sh")"; FUSION=""
+eval "$(sed -n '/^fusionar() {/,/^}/p' "$ROOT/firmar.sh" | sed 's/git merge --no-ff/git -c user.email=t@t -c user.name=t merge --no-ff/')"
+FASE=0; GATE=gx; TIPO=fase; fusionar "FASE-0 accepted"
+[ "$(git rev-parse --abbrev-ref HEAD)" = main ] && [ -f a.txt ] && git log -1 --format=%s | grep -q "^Merge fase-0-base" && git log -1 --format=%B | grep -q "Gate-Id: gx" \
+  && ok "al aceptar la FASE su rama entra en main con un commit de merge y HEAD queda en main ($FUSION)" || bad "fusión: $FUSION $(git log --oneline -3)"
+n=$(git rev-list --count HEAD); fusionar "otra vez"; [ "$(git rev-list --count HEAD)" = "$n" ] && ok "fusionar otra vez no crea nada" || bad "fusión repetida"
+git switch -q -c fase-1-x; echo b > a.txt; g commit -qam "feat: b"; git switch -q main; echo c > a.txt; g commit -qam "fix: c"; git switch -q fase-1-x
+FUSION=""; FASE=1; fusionar "FASE-1 accepted"
+[ "$(git rev-parse --abbrev-ref HEAD)" = fase-1-x ] && echo "$FUSION" | grep -q "conflictos" && [ -z "$(git status --porcelain)" ] \
+  && ok "con conflictos no fusiona: queda en la rama, el árbol limpio y lo avisa" || bad "conflicto: $FUSION $(git status --short)"
+cd "$R"
 exit $fail

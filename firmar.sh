@@ -143,6 +143,27 @@ etiquetar() {  # etiquetar <tag> <mensaje> — idempotente: si existe y apunta a
   local sign=-a; [ -n "$(git config user.signingkey || true)" ] && sign=-s
   git tag $sign "$tag" -F - <<<"$msg"
 }
+rama_defecto() {  # la del Stack Profile (default_branch en AGENTS.md), si no main o master
+  local d; d=$(grep -oE '^- *default_branch: *[A-Za-z0-9._/-]+' AGENTS.md 2>/dev/null | head -1 | sed -E 's/.*: *//')
+  for b in $d main master; do git rev-parse -q --verify "refs/heads/$b" >/dev/null && { echo "$b"; return; }; done
+}
+FUSION=""
+fusionar() {  # fusionar <qué>: la rama de trabajo (fase-N-…, cambio…) entra en la rama por defecto con un commit de
+  # merge (convención del método: nunca squash ni rebase) y HEAD queda en la por defecto, de donde sale la siguiente
+  # FASE. Aceptar la FASE o la entrega es la decisión de la persona; el notario solo la aplica en local (nunca push).
+  # Con conflicto: se aborta, se queda en la rama y se avisa en el resumen (la firma no se deshace).
+  local rama def; rama=$(git rev-parse --abbrev-ref HEAD); def=$(rama_defecto)
+  [ -n "$def" ] && [ "$rama" != HEAD ] && [ "$rama" != "$def" ] || return 0
+  git merge-base --is-ancestor "$rama" "$def" && { git switch -q "$def"; return 0; }   # ya fusionada
+  git switch -q "$def" || { FUSION=" (no se pudo pasar a $def: queda en $rama)"; return 0; }
+  if git merge --no-ff -q "$rama" -m "Merge $rama: $1" -m "Refs: ${FASE:+FASE-$FASE}${FASE:-$TIPO}
+Gate-Id: $GATE" >/dev/null 2>&1; then
+    FUSION=" · $rama fusionada en $def"
+  else
+    git merge --abort >/dev/null 2>&1 || true; git switch -q "$rama" 2>/dev/null || true
+    FUSION=" (la rama $rama no se pudo fusionar en $def: hay conflictos; queda para una persona)"
+  fi
+}
 commit_si_hay() {  # commit_si_hay <mensaje> <rutas...> — solo las que existen; no hace nada si no hay cambios
   local msg=$1 r; shift
   for r in "$@"; do [ -e "$r" ] && git add -- "$r"; done
@@ -290,8 +311,9 @@ Kanban-Task: $BOARD/$TASK"
       marcar tag
     fi
     if ! hecho pack; then node "$SDD" accept pack --fase "$FASE" >/dev/null 2>&1 || true; marcar pack; fi
+    if ! hecho fusion; then fusionar "FASE-$FASE accepted"; marcar fusion; fi
     RESULTADO="$VERBO"; OBS=""; [ "$VERBO" = observaciones ] && OBS=" con observaciones"
-    RESUMEN="FASE-$FASE aceptada$OBS por $NOMBRE ($ROL) — tag fase-$FASE-accepted" ;;
+    RESUMEN="FASE-$FASE aceptada$OBS por $NOMBRE ($ROL) — tag fase-$FASE-accepted$FUSION" ;;
 
   fase:rechazo)
     # Lo que recibe la implementación: el texto de la persona, sus respuestas a las preguntas de la puerta (con el
@@ -374,8 +396,9 @@ Kanban-Task: $BOARD/$TASK
 $(node "$SDD" gate --md 2>/dev/null)"
       marcar tag
     fi
-    RESULTADO="$VERBO"; RESUMEN="Entrega $N aceptada por $NOMBRE ($ROL) — tag entrega-$N"
-    [ "$UNICA" = true ] && RESUMEN="Entrega $N (y su única fase) aceptada por $NOMBRE ($ROL) — tag entrega-$N" ;;
+    if ! hecho fusion; then fusionar "delivery $N accepted"; marcar fusion; fi
+    RESULTADO="$VERBO"; RESUMEN="Entrega $N aceptada por $NOMBRE ($ROL) — tag entrega-$N$FUSION"
+    [ "$UNICA" = true ] && RESUMEN="Entrega $N (y su única fase) aceptada por $NOMBRE ($ROL) — tag entrega-$N$FUSION" ;;
 
   entrega:rechazo)
     mkdir -p .sdd/hermes/feedback; printf '%s\n' "$TEXTO" > ".sdd/hermes/feedback/cierre.txt"

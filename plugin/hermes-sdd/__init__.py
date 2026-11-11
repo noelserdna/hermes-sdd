@@ -805,6 +805,49 @@ def register(ctx):
         except Exception as e:
             return f"No se anuló: {e}"
 
+    async def _cmd_encargado(raw_args: str = "") -> str:
+        """/encargado <proyecto>: crea (si falta) el encargado del proyecto y un tema «🧭 proyecto» en este chat que
+        habla con él (profile_routes por chat y tema). Requiere el modo de temas del bot (BotFather → Threaded Mode)."""
+        persona, uid = _autorizado_en_sesion()
+        if not persona:
+            return "Solo una persona autorizada puede crear el encargado de un proyecto."
+        proys = await _proyectos()
+        nombre = raw_args.strip()
+        encs = _leer(HOME / "encargados.json", {}) or {}
+        if not nombre or nombre not in proys:
+            lista = ", ".join(f"{b}{' 🧭' if any(r == repo for r in encs.values()) else ''}" for b, repo in sorted(proys.items()))
+            return (("" if not nombre else f"No conozco el proyecto «{nombre}».\n") +
+                    f"Uso: /encargado <proyecto>. Proyectos: {lista or 'ninguno'} (🧭 = ya tiene encargado).")
+        repo = proys[nombre]
+        try:
+            if not any(r == repo for r in encs.values()):
+                await _cli("bash", str(_root() / "encargado.sh"), "crear", repo, timeout=300)
+            rutas = json.loads(await _cli("hermes", "config", "get", "gateway.profile_routes", "--json") or "[]")
+        except Exception as e:
+            return f"No se pudo preparar el encargado de {nombre}: {e}"
+        if any(r.get("name") == f"encargado-{nombre}" for r in rutas if isinstance(r, dict)):
+            return f"El encargado de {nombre} ya tiene su tema «🧭 {nombre}» en este chat: escríbele allí."
+        bot = _RT["app"].bot
+        try:
+            tema = await bot.create_forum_topic(chat_id=int(uid), name=f"🧭 {nombre}")
+        except Exception as e:
+            return (f"No pude crear el tema: {e}. Activa los temas del bot en @BotFather (Mini App → My bots → el bot → "
+                    "Bot Settings → Threads Settings → Threaded Mode) y vuelve a pedirlo.")
+        hilo = tema.message_thread_id
+        try:
+            await _cli("bash", str(_root() / "encargado.sh"), "tema", repo, str(uid), str(hilo))
+        except Exception as e:
+            return f"Creé el tema pero no pude enlazarlo con el encargado: {e}"
+        await bot.send_message(chat_id=int(uid), message_thread_id=hilo, text=(
+            f"🧭 Aquí hablas con el encargado de «{nombre}»: sabe en qué punto está el proyecto, consulta requisitos, "
+            "plan y código, discute arquitectura, diseño y UX contigo y recuerda en su wiki. No decide puertas: esas "
+            "siguen llegando al chat principal.\nEstará listo en un minuto (se reinicia el gateway para enlazar el tema)."))
+        # El gateway carga las rutas al arrancar: se reinicia solo, desde fuera de su propio proceso
+        import subprocess as _sp
+        _sp.Popen(["bash", "-c", "sleep 8; hermes gateway restart >/dev/null 2>&1"], start_new_session=True,
+                  env={**os.environ, "PATH": PATH_CMDS}, stdout=_sp.DEVNULL, stderr=_sp.DEVNULL)
+        return f"Tema «🧭 {nombre}» creado. En un minuto, lo que escribas allí lo lee su encargado."
+
     async def _cmd_cambio(raw_args: str = "") -> str:
         persona, _ = _autorizado_en_sesion()
         if not persona:
@@ -882,17 +925,21 @@ def register(ctx):
                 "Te llegará la puerta de Requisitos cuando el ejecutor los tenga.")
 
     ctx.register_telegram_handler(_wire)
+    # args_hint siempre entre [ ]: Hermes deja fuera del menú de Telegram las órdenes cuya ayuda empieza por «<»
+    # (argumento obligatorio). Sin argumentos, cada orden explica cómo se usa.
     ctx.register_command("nuevo", _cmd_nuevo, description="Crea y lanza un proyecto SDD nuevo",
-                         args_hint="<nombre> [stack] <qué quieres construir>")
+                         args_hint="[nombre] [stack] [qué quieres construir]")
     ctx.register_command("jev", _cmd_jev, description="Modo de Jev en las puertas SDD (humano, consejo, piloto, auto)",
                          args_hint="[proyecto] [modo]")
-    ctx.register_command("cambio", _cmd_cambio, description="Pide un cambio o una funcionalidad a un proyecto SDD", args_hint="<proyecto> <petición>")
+    ctx.register_command("cambio", _cmd_cambio, description="Pide un cambio o una funcionalidad a un proyecto SDD", args_hint="[proyecto] [petición]")
     ctx.register_command("estado", _cmd_estado, description="Estado de los proyectos SDD", args_hint="[proyecto]")
     ctx.register_command("pausar", _cmd_pausar, description="Pausa proyectos SDD (ahora = detener)", args_hint="[proyecto|todo] [ahora]")
     ctx.register_command("reanudar", _cmd_reanudar, description="Reanuda proyectos SDD en pausa", args_hint="[proyecto|todo]")
-    ctx.register_command("anular", _cmd_anular, description="Anula la aceptación de una FASE", args_hint="<proyecto> <fase> <motivo>")
+    ctx.register_command("anular", _cmd_anular, description="Anula la aceptación de una FASE", args_hint="[proyecto] [fase] [motivo]")
     ctx.register_command("mantenimiento", _cmd_mantenimiento, description="Revisa ahora los proyectos SDD entregados (umbrales)", args_hint="[proyecto]")
     ctx.register_command("puertas", _cmd_puertas, description="Puertas SDD abiertas, con sus botones")
+    ctx.register_command("encargado", _cmd_encargado, description="Tema de Telegram para hablar con el encargado de un proyecto",
+                         args_hint="[proyecto]")
 
     # El encargado de cada proyecto (perfil sdd-p-<proyecto>, encargado.sh): al abrir una sesión encuentra en su prompt
     # la foto de su proyecto y lo que pasó desde su última sesión (Hermes congela la sección por sesión)
