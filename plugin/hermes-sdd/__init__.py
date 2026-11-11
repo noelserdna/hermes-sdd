@@ -594,8 +594,10 @@ def _asegurar_bucle() -> None:
 
 # ── operación: proyectos, estado, pausa, cuota, mensaje vivo y resúmenes ─────────────────────────────────────────────
 async def _cli(*args: str, timeout: int = 60) -> str:
+    # Locale UTF-8: sin él, bash lee «$BOARD»» como una variable con un byte de «»» en el nombre (unbound variable)
+    loc = {} if "UTF-8" in (os.environ.get("LC_ALL") or os.environ.get("LANG") or "").upper() else {"LANG": "en_US.UTF-8", "LC_ALL": "en_US.UTF-8"}
     proc = await asyncio.create_subprocess_exec(*args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
-                                                env={**os.environ, "PATH": PATH_CMDS, "HERMES_SDD_HOME": str(HOME)})
+                                                env={**os.environ, **loc, "PATH": PATH_CMDS, "HERMES_SDD_HOME": str(HOME)})
     out, err = await asyncio.wait_for(proc.communicate(), timeout)
     # errors="replace": una salida con bytes que no son UTF-8 (un mensaje de otra herramienta, una tilde cortada) no
     # debe convertir en fallo lo que salió bien (/encargado, 11/11/2026: el tema quedó creado pero «no enlazado»)

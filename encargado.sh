@@ -91,7 +91,8 @@ V
     '[.[]? | select(.name == $n)][0] | if . then "telegram:\(.chat_id):\(.thread_id)" else empty end' 2>/dev/null)
   destino=${destino:-telegram}
   local PROMPT="Eres el encargado de $BOARD y te despierta el vigía: cambió la lista de asuntos que mirar (va arriba, MONITOR CHANGE). Para cada asunto NUEVO, diagnostica (hsdd_proyectos.py estado, .sdd/hermes/etapas.jsonl, el motivo, git log) y actúa según tu carta, sección «Supervisar». En esta ronda no hay nadie para aprobar: no relances; si hace falta, recomiéndalo. Después escribe a la persona un mensaje breve en castellano: qué pasó, qué hiciste o qué recomiendas, y qué necesitas que decida. Si lo único que cambió es que algo se resolvió, una línea. Si no hay nada que contar, responde exactamente [SILENT]."
-  id=$(jq -r '(if type == "array" then . else (.jobs // []) end)[] | select(.name == "vigia") | .id' "$PD/cron/jobs.json" 2>/dev/null | head -1)
+  # (la primera vez el perfil aún no tiene cron/jobs.json: sin «|| true», pipefail + set -e cortarían aquí el script)
+  id=$(jq -r '(if type == "array" then . else (.jobs // []) end)[] | select(.name == "vigia") | .id' "$PD/cron/jobs.json" 2>/dev/null | head -1 || true)
   if [ -n "$id" ]; then
     hermes -p "$P" cron edit "$id" --schedule "every 5m" --prompt "$PROMPT" --monitor-script vigia.sh --workdir "$REPO" --deliver "$destino" >/dev/null
   else
@@ -229,7 +230,7 @@ case "$CMD" in
             else . end)' <<< "$TEMAS")
     hermes config set gateway.profile_routes "$RUTAS" >/dev/null
     hermes config set platforms.telegram.extra.dm_topics "$TEMAS" >/dev/null
-    echo "Tema «🧭 $BOARD» ($CHAT/$HILO) → $P (se activa al reiniciar el gateway)"
+    echo "Tema «🧭 ${BOARD}» (${CHAT}/${HILO}) → ${P} (se activa al reiniciar el gateway)"
     vigilante ;;   # el vigía avisa en el tema
 
   borrar)

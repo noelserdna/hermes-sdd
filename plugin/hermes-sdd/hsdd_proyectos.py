@@ -364,7 +364,9 @@ def entorno() -> dict:
         p = shutil.which(cmd)
         if p and str(Path(p).parent) not in dirs:
             dirs.insert(0, str(Path(p).parent))
-    return {**os.environ, "PATH": ":".join(dirs), "HERMES_SDD_HOME": str(N.HOME)}
+    # Locale UTF-8: sin él, bash lee «$VAR»» con un byte de «»» dentro del nombre de la variable (unbound variable)
+    loc = {} if "UTF-8" in (os.environ.get("LC_ALL") or os.environ.get("LANG") or "").upper() else {"LANG": "en_US.UTF-8", "LC_ALL": "en_US.UTF-8"}
+    return {**os.environ, **loc, "PATH": ":".join(dirs), "HERMES_SDD_HOME": str(N.HOME)}
 
 
 def _tableros(env: dict) -> list:
