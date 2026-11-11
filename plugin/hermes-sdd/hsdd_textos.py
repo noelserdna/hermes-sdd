@@ -192,6 +192,12 @@ def _hecho_antes(repo: Path) -> str:
     return ("📐 Antes del plan se hizo: " + ", ".join(nombres) + ". El plan parte de esos documentos.") if nombres else ""
 
 
+def _unica_plan(repo: Path, fases: int) -> bool:
+    """Plan de una sola FASE que no es «fina»: no tendrá puerta de FASE, se acepta con la entrega (lanzar.sh unica)."""
+    g = _leer(repo / ".sdd" / "hermes" / "granularidad-plan").strip()
+    return fases == 1 and bool(g) and g != "fina"
+
+
 def puerta_plan(repo: Path, proyecto: str) -> dict:
     lineas = []
     for f in sorted((repo / "plan" / "fases").glob("FASE-*.md"), key=lambda p: int(re.findall(r"\d+", p.name)[0])):
@@ -201,10 +207,13 @@ def puerta_plan(repo: Path, proyecto: str) -> dict:
         tareas = len(re.findall(r"^- \[[ x!]\] TASK-", _leer(repo / "task" / f"TASK-FASE-{n}.md"), re.M))
         lineas.append(f"• FASE-{int(n)}: {cab}" + (f" ({_plural(tareas, 'tarea', 'tareas')})" if tareas else ""))
     total = len(lineas)
-    partes = [f"🗺 Plan de «{proyecto}»: {_plural(total, 'fase', 'fases')}, en este orden:", "\n".join(lineas) or "(sin fases)",
+    partes = [(f"🗺 Plan de «{proyecto}»: una sola fase." if total == 1 else f"🗺 Plan de «{proyecto}»: {_plural(total, 'fase', 'fases')}, en este orden:"), "\n".join(lineas) or "(sin fases)",
               *([_hecho_antes(repo)] if _hecho_antes(repo) else []),
-              "Cada fase se programa, se prueba y te llega con una demo para que la aceptes antes de pasar a la siguiente.",
-              "👉 Si el orden te parece bien, pulsa ✅ Conforme. Nada se programa hasta entonces."]
+              *(["Se programa y se prueba de una vez, y te llega con su demo en la entrega final: ahí la aceptas (no hay una "
+                 "puerta aparte para la fase).",
+                 "👉 Si te parece bien, pulsa ✅ Conforme. Nada se programa hasta entonces."] if _unica_plan(repo, total) else
+                ["Cada fase se programa, se prueba y te llega con una demo para que la aceptes antes de pasar a la siguiente.",
+                 "👉 Si el orden te parece bien, pulsa ✅ Conforme. Nada se programa hasta entonces."])]
     return {"titulo": "Plan por fases", "texto": "\n\n".join(partes)}
 
 

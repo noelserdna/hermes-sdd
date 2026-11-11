@@ -89,6 +89,13 @@ printf -- '- [ ] TASK-F0-001 a\n- [ ] TASK-F0-002 b\n' > task/TASK-FASE-0.md
 o=$($TX puerta plan "$R" --proyecto bar | jq -r .texto)
 echo "$o" | grep -q '2 fases' && echo "$o" | grep -q '^• FASE-0: La portada (2 tareas)$' && echo "$o" | grep -q '^• FASE-1: La carta$' \
   && ok "plan: las fases por su nombre, en orden, con sus tareas" || bad "plan: $o"
+mv plan/fases/FASE-1-carta.md "$T/"; echo compacta > .sdd/hermes/granularidad-plan
+o=$($TX puerta plan "$R" --proyecto bar | jq -r .texto)
+echo "$o" | grep -q '^🗺 Plan de «bar»: una sola fase.$' && echo "$o" | grep -q 'en la entrega final' && ! echo "$o" | grep -q 'antes de pasar a la siguiente' \
+  && ok "plan de una sola fase: dice que se acepta con la entrega, no «antes de la siguiente»" || bad "plan único: $o"
+echo fina > .sdd/hermes/granularidad-plan; o=$($TX puerta plan "$R" --proyecto bar | jq -r .texto)
+echo "$o" | grep -q 'antes de pasar a la siguiente' && ok "plan fino de una fase: conserva su puerta de fase" || bad "plan fino: $o"
+rm -f .sdd/hermes/granularidad-plan; mv "$T/FASE-1-carta.md" plan/fases/
 
 # ── fase y entrega ───────────────────────────────────────────────────────────────────────────────────────────────
 cat > "$T/g.md" <<'G'
