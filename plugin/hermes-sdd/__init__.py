@@ -61,6 +61,17 @@ def _cargar_proyectos():
 
 
 PR = _cargar_proyectos()
+
+
+def _cargar_lecciones():
+    import importlib.util, sys
+    if "hsdd_lecciones" not in sys.modules:
+        spec = importlib.util.spec_from_file_location("hsdd_lecciones", Path(__file__).with_name("hsdd_lecciones.py"))
+        mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod); sys.modules["hsdd_lecciones"] = mod
+    return sys.modules["hsdd_lecciones"]
+
+
+PL = _cargar_lecciones()
 HOME = N.HOME
 _leer, _escribir, _ahora, _respuestas = N.leer, N.escribir, N.ahora, N.respuestas
 
@@ -367,6 +378,57 @@ async def _firmar(bot, puerta: dict) -> None:
     await _editar(bot, p, texto, None)
 
 
+# ── lecciones entre proyectos (encargado, fase 5): las decide una persona con botones ──────────────────────────
+def _texto_leccion(l: dict) -> tuple:
+    from telegram import InlineKeyboardButton as B, InlineKeyboardMarkup as M
+    ev = "\n".join(f"• {e['proyecto']}: {e['tipo']} {e['ref']} — {e['resumen']}" for e in l["evidencias"])
+    if l["estado"] == "propuesta":
+        texto = (f"📚 Lección propuesta {l['id']} (para la etapa {l['etapa']}), del {l['por']}:\n«{l['regla']}»\n\n"
+                 f"Evidencia:\n{ev}\n\nSi la confirmas, llegará a esa etapa en los próximos proyectos.")
+        botones = [B("✅ Confirmar", callback_data=f"lc:confirmar:{l['id']}"), B("🗑 Descartar", callback_data=f"lc:descartar:{l['id']}")]
+    else:
+        usos = sorted({u["proyecto"] for u in l.get("usos", [])})
+        texto = (f"📚 La lección {l['id']} ya se ha usado en {len(usos)} proyectos ({', '.join(usos)}):\n«{l['regla']}»\n\n"
+                 "¿Sigue sirviendo? Mírala con lo que ha pasado en esos proyectos.")
+        botones = [B("♻️ Mantener", callback_data=f"lc:mantener:{l['id']}"), B("⌛ Caducar", callback_data=f"lc:caducar:{l['id']}")]
+    return texto, M([botones])
+
+
+async def _avisar_lecciones(bot) -> None:
+    for l in PL.pendientes():
+        clave = f"{l['estado']}:{len(l.get('usos', []))}"
+        if l.get("avisada") == clave:
+            continue
+        texto, teclado = _texto_leccion(l)
+        for chat in _chats():
+            try:
+                await bot.send_message(chat_id=int(chat), text=texto[:4000], reply_markup=teclado)
+            except Exception as e:
+                log.warning("hermes-sdd: aviso de la lección %s: %s", l["id"], e)
+        PL.marcar_avisada(l["id"], clave)
+
+
+async def _on_leccion(update, context) -> None:
+    q = update.callback_query
+    _, accion, lid = (q.data.split(":", 2) + ["", ""])[:3]
+    persona, _p = _persona_de(q.from_user.id)
+    if not persona:
+        await q.answer("No estás autorizado", show_alert=True)
+        return
+    try:
+        l = PL.decidir(lid, accion, persona)
+    except Exception as e:
+        await q.answer(str(e)[:190], show_alert=True)
+        return
+    hecho = {"confirmada": "✅ Confirmada: llegará a esa etapa en los próximos proyectos.",
+             "descartada": "🗑 Descartada.", "caducada": "⌛ Caducada: ya no se usa."}.get(l["estado"], "♻️ Se mantiene.")
+    await q.answer(hecho[:190])
+    try:
+        await q.edit_message_text(f"📚 {l['id']} · {l['etapa']}: «{l['regla']}»\n{hecho} ({persona})")
+    except Exception:
+        pass
+
+
 async def _avisar_fallos(bot) -> None:
     avisados = set(_leer(HOME / "avisos.json", []) or [])
     proc = await asyncio.create_subprocess_exec("hermes", "kanban", "boards", "list", "--json",
@@ -494,6 +556,8 @@ async def _vuelta(ciclo: int) -> None:
             await _firmar(bot, p)
         else:   # decidida o deshecha desde otro canal (dashboard): el mensaje de Telegram se pone al día
             await asyncio.wait_for(_sincronizar(bot, p), 60)
+    if ciclo % 6 == 0:
+        await asyncio.wait_for(_avisar_lecciones(bot), 60)
     if ciclo % 12 == 0:
         await asyncio.wait_for(_avisar_fallos(bot), 180)
         await asyncio.wait_for(_vigia(bot), 180)
@@ -766,6 +830,7 @@ def register(ctx):
 
         _RT["app"] = application
         application.add_handler(CallbackQueryHandler(_on_boton, pattern=r"^g:"))
+        application.add_handler(CallbackQueryHandler(_on_leccion, pattern=r"^lc:"))
         application.add_handler(MessageHandler(filters.TEXT & _EsRespuestaDePuerta(), _on_respuesta))
         (HOME / "puertas").mkdir(parents=True, exist_ok=True)
 
@@ -892,6 +957,19 @@ def register(ctx):
             "que recomiendo primero. Cuando lo tengamos, dime «lanza» y arranca con todo eso."))
         return (f"🧭 Proyecto {r['tablero']} preparado (sin lanzar)\n📁 {r['repo']}\n🧱 {r['stack']}\n{tema}")
 
+    async def _cmd_lecciones(raw_args: str = "") -> str:
+        """/lecciones: las lecciones entre proyectos, por estado (las pendientes te llegan con sus botones)."""
+        ls = PL._todas()
+        if not ls:
+            return "Todavía no hay lecciones. Las propone el encargado de un proyecto cuando algo falló y te llegan aquí para confirmarlas."
+        for l in ls:   # reenviar con botones las que esperan a una persona
+            if l["estado"] in ("propuesta", "revisar"):
+                PL.marcar_avisada(l["id"], "")
+        orden = ("confirmada", "revisar", "propuesta", "caducada", "descartada")
+        filas = [f"{ {'confirmada': '✅', 'revisar': '♻️', 'propuesta': '📝', 'caducada': '⌛', 'descartada': '🗑'}[l['estado']] } "
+                 f"{l['id']} · {l['etapa']}: {l['regla']}" for e in orden for l in ls if l["estado"] == e]
+        return "📚 Lecciones entre proyectos:\n" + "\n".join(filas[:30])
+
     async def _cmd_cambio(raw_args: str = "") -> str:
         persona, _ = _autorizado_en_sesion()
         if not persona:
@@ -984,6 +1062,7 @@ def register(ctx):
     ctx.register_command("puertas", _cmd_puertas, description="Decisiones pendientes, con sus botones")
     ctx.register_command("preparar", _cmd_preparar, description="Prepara un proyecto con su encargado",
                          args_hint="[nombre] [stack] [qué quieres construir]")
+    ctx.register_command("lecciones", _cmd_lecciones, description="Lecciones entre proyectos")
     ctx.register_command("encargado", _cmd_encargado, description="Habla con el encargado de un proyecto",
                          args_hint="[proyecto]")
 

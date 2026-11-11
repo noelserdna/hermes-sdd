@@ -1,7 +1,7 @@
 # El encargado del proyecto (diseño, v2)
 
 > Estado: revisado (11/11/2026) tras una revisión con cuatro enfoques: viabilidad en Hermes, integración con el arnés,
-> producto y método, y crítica y seguridad. Hechas las fases 0 a 4 (ver «Fases»).
+> producto y método, y crítica y seguridad. Hechas las cinco fases (ver «Fases»).
 
 ## Por qué
 
@@ -207,7 +207,14 @@ Cierre propuesto, por capas:
    (`puede_jev`, también en el notario). Revisor independiente con IA opcional (`nuevo.sh config --revision-ia
    requisitos,plan`): una sesión de Claude aparte, en sandbox, sin el wiki del encargado, hasta 5 avisos «GRAVE/AVISO»
    (en vasos encontró el redondeo sin fijar de 3/8, qué es «un día» y un guardado sin criterio).
-5. **Lecciones entre proyectos**, con evidencia, confirmadas y con caducidad.
+5. **Lecciones entre proyectos** — ✅ hecha (12/11/2026): el encargado propone con `encargado.sh leccion <repo>
+   <etapa> "<regla>" <evidencia>…`; `hsdd_lecciones.py` exige al menos una evidencia de su proyecto que exista (puerta
+   g…, tarjeta t_… de `etapas.jsonl` o commit) y una regla general (sin el nombre del proyecto, ids REQ-/INT-/N-…,
+   ni textos citados; 20–300 caracteres). Te llega a Telegram con **✅ Confirmar / 🗑 Descartar**; solo las
+   confirmadas entran en el prompt de su etapa (`etapa.sh`, máx. 5) en **otros** proyectos, y cada uso se anota. Tras
+   3 proyectos pasa a «revisar» (**♻️ Mantener / ⌛ Caducar**): no hay forma honrada de medir sola si una lección
+   cambió el resultado, así que lo decide una persona. Todo en `~/.hermes/hermes-sdd/lecciones/` (repositorio git,
+   `lecciones.json` y `LECCIONES.md`); `/lecciones` las lista.
 
 ## Cómo sabremos si aporta
 - Línea base (fase 0) y después con encargado: minutos que un proyecto pasa parado sin que nadie lo sepa;

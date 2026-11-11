@@ -89,12 +89,14 @@ def segmento(seg: list, cwd: str) -> str | None:
             return None
         if orden in ("limpiar", "apartar") and not resto:
             return None
+        if orden == "leccion" and len(resto) >= 3:   # la comprueba y la guarda hsdd_lecciones.py; la confirma una persona
+            return None
         if orden == "relanzar" and len(resto) == 1 and resto[0].isdigit():
             if "--seco" in args:
                 return None
             APROBAR.append(f"El encargado quiere relanzar la FASE-{resto[0]} de {os.path.basename(REPO)} (rehace una fase ya hecha)")
             return None
-        return f"encargado.sh {orden} no está entre sus acciones (lanzar en preparación, reintentar, limpiar, apartar, relanzar)"
+        return f"encargado.sh {orden} no está entre sus acciones (lanzar en preparación, reintentar, limpiar, apartar, relanzar, leccion)"
     if cmd in ("python3", "python"):
         script = next((a for a in args if a.endswith(".py")), "")
         nombre = os.path.basename(script)

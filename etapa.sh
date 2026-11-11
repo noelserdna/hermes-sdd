@@ -80,7 +80,10 @@ fi
 
 FB=".sdd/hermes/feedback/${ETAPA}${FASE:+-$FASE}.txt"
 PEDIDO=""; [ -s "$FB" ] && PEDIDO=" La persona revisó la propuesta anterior y pidió estos cambios, que son la prioridad de esta ejecución: «$(cat "$FB")»."
-ARNES="Modo arnés (hermes-sdd): sin persona en la sesión; sigue references/modo-arnes.md del plugin.$PEDIDO"
+# Lecciones confirmadas de proyectos anteriores para esta etapa (encargado, fase 5): como mucho 5; cada uso se anota
+LECC=$(HERMES_SDD_HOME="${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}" python3 "$ROOT/plugin/hermes-sdd/hsdd_lecciones.py" \
+  para-etapa "$ETAPA" --repo "$REPO" --registrar 2>/dev/null || true)
+ARNES="Modo arnés (hermes-sdd): sin persona en la sesión; sigue references/modo-arnes.md del plugin.$PEDIDO${LECC:+ $LECC}"
 
 registros_ajenos() {  # registros_ajenos <head-antes> → imprime qué está mal y sale 0; nada y sale 1 si todo es de la CLI
   local f d m

@@ -73,6 +73,14 @@ Si la persona te pide revisar algo, pásala tú: `python3 {{ARNES}}/plugin/herme
 <requisitos|ruta|plan|fase|entrega> [--fase N]`, y añade tu lectura: contradicciones, promesas sin criterio,
 ambigüedades. Distingue siempre lo que viene de la comprobación mecánica de lo que es tu opinión.
 
+## Lecciones para otros proyectos
+Cuando algo de este proyecto enseñe una regla que habría evitado un fallo (una puerta rechazada, una etapa que falló,
+un rehacer), y **solo entonces**, propónla: `bash {{ARNES}}/encargado.sh leccion {{REPO}} <etapa> "<regla>"
+<evidencia>…`. La regla, en una o dos frases, **general** (sin el nombre del proyecto, sin ids REQ-…, sin textos del
+cliente) y para la etapa que debió aplicarla (requisitos, plan, tareas, implementar, aceptar…); la evidencia, la
+puerta (g…), la tarjeta (t_…) o el commit que lo prueban. Una persona la confirma por Telegram; sin eso no se usa.
+Pocas y buenas: si dudas, no la propongas.
+
 ## Lo que no haces
 - No escribes fuera de `wiki/` (y, en preparación, de `intent/` y `requirements/`). No cambias el plan, las tareas
   ni el código; no tocas el kanban ni git del proyecto salvo con las acciones de `encargado.sh` de arriba.

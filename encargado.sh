@@ -11,6 +11,7 @@
 #   encargado.sh limpiar <repo> [--seco]     archiva tarjetas obsoletas
 #   encargado.sh apartar <repo> [--seco]     restos sin commit de una etapa cortada → stash con nombre (nunca se borran)
 #   encargado.sh relanzar <repo> <N> [--seco]   rehace la FASE N (el guardia pide antes la aprobación de la persona)
+#   encargado.sh leccion <repo> <etapa> "<regla>" <evidencia>...   propone una lección para otros proyectos
 #
 # Hablar con él: en el panel de Hermes, /chat?profile=sdd-p-<proyecto>, o `hermes -p sdd-p-<proyecto> chat`.
 #
@@ -21,7 +22,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 HH="$HOME/.hermes"; HOME_SDD="${HERMES_SDD_HOME:-$HH/hermes-sdd}"
-CMD=${1:-}; [ -n "${2:-}" ] || { sed -n '2,19p' "$0" >&2; exit 2; }
+CMD=${1:-}; [ -n "${2:-}" ] || { sed -n '2,20p' "$0" >&2; exit 2; }
 REPO=$(cd "$2" && pwd)
 BOARD=$(basename "$REPO" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')
 P="sdd-p-$BOARD"
@@ -206,6 +207,12 @@ case "$CMD" in
         R=$(bash "$ROOT/lanzar.sh" rehacer "$REPO" "$N"); anotar "relanza FASE-$N: $R" ;;
     esac ;;
 
+  leccion)   # encargado.sh leccion <repo> <etapa> "<regla general>" <evidencia>...: propone una lección entre proyectos
+             # (fase 5). La comprueba hsdd_lecciones.py (evidencia que exista, sin datos del proyecto); la confirma una
+             # persona por Telegram y solo entonces llega a las etapas de otros proyectos.
+    [ $# -ge 5 ] || { echo "Uso: encargado.sh leccion <repo> <etapa> \"<regla general>\" <puerta g…|tarjeta t_…|commit>..." >&2; exit 2; }
+    HERMES_SDD_HOME="$HOME_SDD" python3 "$ARNES/plugin/hermes-sdd/hsdd_lecciones.py" proponer "$REPO" "$3" "$4" "${@:5}" --por "encargado de $BOARD" ;;
+
   tema)   # encargado.sh tema <repo> <chat_id> <thread_id>: ese tema de Telegram habla con el encargado del proyecto.
           # Ruta por chat Y tema (si fuera solo por chat, todo el privado iría al encargado y se perderían los avisos);
           # el tema queda también en dm_topics para que Hermes lo conozca. El gateway la carga al reiniciar.
@@ -235,5 +242,5 @@ case "$CMD" in
     registrar ""
     echo "Perfil $P borrado (el wiki sigue en $REPO/wiki)" ;;
 
-  *) sed -n '2,19p' "$0" >&2; exit 2 ;;
+  *) sed -n '2,20p' "$0" >&2; exit 2 ;;
 esac

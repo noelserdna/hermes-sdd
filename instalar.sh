@@ -122,7 +122,7 @@ fi
 
 # Menú de Telegram: Bot API admite como mucho 100 órdenes y Hermes muestra 60 por defecto; sin prioridad, las del
 # arnés (plugin) quedan ocultas tras las de Hermes y las skills. Se ponen delante, conservando la prioridad que ya hubiera.
-NUESTRAS='["nuevo","preparar","estado","puertas","cambio","encargado","jev","pausar","reanudar","anular","mantenimiento"]'
+NUESTRAS='["nuevo","preparar","estado","puertas","cambio","encargado","lecciones","jev","pausar","reanudar","anular","mantenimiento"]'
 ANTES=$(hermes config get platforms.telegram.extra.command_menu.priority --json 2>/dev/null || echo '[]')
 jq -e 'type == "array"' <<< "$ANTES" >/dev/null 2>&1 || ANTES='[]'
 hermes config set platforms.telegram.extra.command_menu.priority \

@@ -292,7 +292,10 @@ stash) y te lo cuenta en su tema. Rehacer una FASE ya hecha te lo pregunta antes
 comprobar a mano aunque lo podría leer un test, un Must que no pediste, un criterio que depende de una pantalla de una
 fase posterior…). No bloquea, pero con un aviso grave Jev no aprueba solo. Si quieres además un revisor independiente
 con IA en algunas puertas: `bash nuevo.sh config --revision-ia requisitos,plan`.
-Diseño y fases siguientes: [docs/encargado.md](docs/encargado.md).
+**Aprende entre proyectos**: cuando algo falla, el encargado puede proponer una lección general con su evidencia (la
+puerta rechazada, la etapa que falló). Te llega a Telegram para confirmarla; solo las confirmadas llegan a esa etapa en
+los proyectos siguientes, y tras usarse en 3 te pregunta si siguen sirviendo. `/lecciones` las lista.
+Diseño completo: [docs/encargado.md](docs/encargado.md).
 
 ---
 
