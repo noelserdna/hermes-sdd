@@ -62,7 +62,7 @@ def requisitos(repo: Path) -> list[dict]:
         m = re.match(r"^###\s+(REQ-([A-Z]+)-[0-9A-Za-z]+)\s*:?\s*(.*)$", linea)
         if m:
             actual = {"id": m.group(1), "tipo": m.group(2), "titulo": m.group(3).strip(), "cliente": "", "prioridad": "",
-                      "necesidades": None, "obsoleto": False}
+                      "necesidades": None, "obsoleto": False, "verificacion": ""}
             res.append(actual)
             continue
         if linea.startswith("#"):
@@ -79,6 +79,8 @@ def requisitos(repo: Path) -> list[dict]:
             actual["prioridad"] = v
         elif k in ("needs", "necesidades"):
             actual["necesidades"] = re.findall(r"\bN-\d+\b", v)
+        elif k in ("verification", "verificación", "verificacion"):
+            actual["verificacion"] = v.split("—")[0].split(" - ")[0].strip().lower()
         elif k in ("status", "estado") and re.search(r"deprecat|obsolet", v, re.I):
             actual["obsoleto"] = True
     return [r for r in res if not r["obsoleto"]]
@@ -245,42 +247,89 @@ def _cabeza_ok(filas: list[dict], de_fase: bool) -> str:
             f"{'es imprescindible' if pend == 1 else 'son imprescindibles'} (⚠️ en la lista).")
 
 
+def revisar(repo: Path, gate: dict) -> dict:
+    """Lo que solo una persona puede comprobar: requisitos sin verificar cuya verificación es una inspección o una demo.
+    → {"revisar": [{id, titulo, cliente, como}], "solo": bool}. «solo»: es lo único que impide pasar la comprobación (todo
+    Must sin verificar es de inspección y no hay otras alertas); entonces la puerta ofrece 🔍 Lo he revisado y acepto
+    (vasos, 11/11/2026: «Interfaz en español» por inspección y la entrega solo dejaba rechazar)."""
+    plano = {r["id"]: r for r in requisitos(repo)}
+    pend = [r for r in gate.get("requirements", []) if r.get("verdict") not in ("VERIFIED", "WAIVED", "DEPRECATED")]
+    como = lambda r: next((c for c in ("inspection", "demo") if plano.get(r["id"], {}).get("verificacion", "").startswith(c)), "")
+    rev = [r for r in pend if como(r)]
+    s = gate.get("summary", {})
+    alertas = sum(int(s.get(k) or 0) for k in ("unshown", "literal_gaps", "weakened", "must_challenged", "stale_evidence",
+                                                "stale_decisions", "challenges_open"))
+    musts = [r["id"] for r in pend if r.get("priority") == "Must"]
+    ids = {r["id"] for r in rev}
+    solo = bool(rev) and not alertas and all(m in ids for m in musts) and not any(r.get("verdict") == "FAILING" for r in pend)
+    return {"revisar": [{"id": r["id"], "titulo": plano[r["id"]]["titulo"], "cliente": plano[r["id"]]["cliente"], "como": como(r)}
+                        for r in rev],
+            "solo": solo}
+
+
+def _bloque_revisar(rev: dict | None) -> list[str]:
+    if not rev or not rev.get("revisar"):
+        return []
+    lineas = [f"• {r['titulo'] or r['id']}" + (f": {r['cliente']}" if r.get("cliente") else "") for r in rev["revisar"]]
+    return ["🔍 Esto no lo puede comprobar un test, lo compruebas tú:\n" + "\n".join(lineas)]
+
+
 def puerta_fase(repo: Path, proyecto: str, fase: str, gate_md: str, rc: int, tests_editados: int,
-                video: bool, capturas: int) -> dict:
+                video: bool, capturas: int, rev: dict | None = None) -> dict:
     filas = _filas_gate(gate_md)
     ok = sum(1 for f in filas if f["veredicto"] == "VERIFIED")
     if rc == 0:
         cabeza = _cabeza_ok(filas, True)
     elif rc == 3:
         cabeza = "⚠️ Cumple, pero con exenciones: algo se aceptó sin comprobar."
+    elif rev and rev.get("solo"):
+        cabeza = "🔍 Solo falta tu revisión: lo que queda por comprobar no lo puede comprobar un test."
     else:
         cabeza = ("⛔ No pasa la comprobación: hay requisitos que fallan o sin comprobar. "
                   "Solo puedes rechazarla para que se corrija.")
     partes = [f"🧪 La FASE-{fase} de «{proyecto}» está lista para revisar.", cabeza]
     if filas:
         partes.append("\n".join(_lineas_veredictos(repo, filas)))
+    partes += _bloque_revisar(rev)
     partes.append("🛡 No se ha tocado ningún test que ya existía." if not tests_editados else
                   f"⚠️ {'Se ha cambiado 1 test que ya existía' if tests_editados == 1 else f'Se han cambiado {tests_editados} tests que ya existían'}: "
                   "conviene saber por qué antes de aceptar.")
     demo = [x for x in ((f"vídeo" if video else ""), (_plural(capturas, "captura", "capturas") if capturas else "")) if x]
     partes.append(f"🎬 Demo: {' y '.join(demo)}." if demo else "🎬 Esta fase no trae demo (ni vídeo ni capturas).")
-    partes.append("👉 Pulsa ▶ Ver demo; después podrás aceptarla, aceptarla con observaciones o rechazarla.")
+    partes.append(_que_pulsar(rc, rev, "aceptarla", "aceptarla con observaciones", "rechazarla", demo=True))
     return {"titulo": f"Aceptar FASE-{fase}", "texto": "\n\n".join(partes)}
 
 
+def _que_pulsar(rc: int, rev: dict | None, aceptar: str, obs: str, rechazar: str, demo: bool) -> str:
+    """La última línea: qué botones hay de verdad (nunca ofrecer aceptar en una puerta que solo deja rechazar).
+    aceptar/obs/rechazar en infinitivo («aceptarla», «aceptar la entrega»…)."""
+    antes = "Pulsa ▶ Ver demo; después " if demo else ""
+    hay_rev = bool(rev and rev.get("revisar"))
+    revisado = "si has comprobado lo de 🔍, pulsa 🔍 Lo he revisado y acepto (queda registrado a tu nombre)"
+    if rc in (0, 3):
+        extra = f" Si has comprobado lo de 🔍, mejor 🔍 Lo he revisado y acepto (queda registrado a tu nombre)." if hay_rev else ""
+        return f"👉 {antes or 'Puedes '}{'podrás ' if demo else ''}{aceptar}, {obs} o {rechazar}.{extra}"
+    if hay_rev and rev.get("solo"):
+        return f"👉 {antes}{revisado if demo else revisado[0].upper() + revisado[1:]}; si algo no está bien, ❌ Rechazar y di qué."
+    return f"👉 {antes}solo podrás rechazarla: di qué hay que corregir." if demo else "👉 Pulsa ❌ Rechazar y di qué hay que corregir."
+
+
 def puerta_entrega(repo: Path, proyecto: str, gate_md: str, rc: int, fases_aceptadas: list[str], unica: bool = False,
-                   video: bool = False, capturas: int = 0, tests_editados: int = 0) -> dict:
+                   video: bool = False, capturas: int = 0, tests_editados: int = 0, rev: dict | None = None) -> dict:
     filas = _filas_gate(gate_md)
     ok = sum(1 for f in filas if f["veredicto"] == "VERIFIED")
     if rc == 0:
         cabeza = _cabeza_ok(filas, False)
     elif rc == 3:
         cabeza = "⚠️ Cumple, pero con exenciones: algo se aceptó sin comprobar."
+    elif rev and rev.get("solo"):
+        cabeza = "🔍 Solo falta tu revisión: lo que queda por comprobar no lo puede comprobar un test."
     else:
         cabeza = "⛔ No pasa la comprobación final: solo puedes rechazarla para que se corrija."
     partes = [f"🎁 «{proyecto}» está terminado y listo para entregar.", cabeza]
     if filas:
         partes.append("\n".join(_lineas_veredictos(repo, filas)))
+    partes += _bloque_revisar(rev)
     if unica:   # plan compacto: una sola fase, sin puerta propia; se acepta aquí con su demo
         partes.append("🧩 Se hizo en una sola fase: al aceptar la entrega aceptas también esa fase.")
         partes.append("🛡 No se ha tocado ningún test que ya existía." if not tests_editados else
@@ -288,12 +337,11 @@ def puerta_entrega(repo: Path, proyecto: str, gate_md: str, rc: int, fases_acept
                       "conviene saber por qué antes de aceptar.")
         demo = [x for x in (("vídeo" if video else ""), (_plural(capturas, "captura", "capturas") if capturas else "")) if x]
         partes.append(f"🎬 Demo: {' y '.join(demo)}." if demo else "🎬 No hay demo (ni vídeo ni capturas).")
-        if rc in (0, 3):
-            partes.append("👉 Pulsa ▶ Ver demo; después podrás aceptar la entrega, aceptarla con observaciones o rechazarla.")
+        partes.append(_que_pulsar(rc, rev, "aceptar la entrega", "aceptarla con observaciones", "rechazarla", demo=True))
     else:
         if fases_aceptadas:
             partes.append(f"Fases aceptadas: {len(fases_aceptadas)}.")
-        partes.append("👉 Si lo das por bueno, pulsa ✅ Acepto la entrega.")
+        partes.append(_que_pulsar(rc, rev, "aceptar la entrega (✅)", "aceptarla con observaciones", "rechazarla", demo=False))
     return {"titulo": "Entrega final", "texto": "\n\n".join(partes)}
 
 
@@ -340,8 +388,11 @@ if __name__ == "__main__":
     ap.add_argument("--cambio", default=""); ap.add_argument("--anadidos", default=""); ap.add_argument("--quitados", default="")
     ap.add_argument("--adopcion", type=int, default=0); ap.add_argument("--fases-aceptadas", default="")
     ap.add_argument("--hallazgos", default=""); ap.add_argument("--opciones-ruta", default="")
-    ap.add_argument("--unica", type=int, default=0)
+    ap.add_argument("--unica", type=int, default=0); ap.add_argument("--revisar", default="")
+    if sys.argv[1:2] == ["revisar"]:   # revisar <repo>  (gate --json por stdin) → {"revisar": [...], "solo": bool}
+        print(json.dumps(revisar(Path(sys.argv[2]), json.loads(sys.stdin.read() or "{}")), ensure_ascii=False)); sys.exit(0)
     a = ap.parse_args()
+    rev = json.loads(_leer(Path(a.revisar)) or "null") if a.revisar else None
     repo = Path(a.repo)
     proyecto = a.proyecto or repo.name
     md = _leer(Path(a.gate_md)) if a.gate_md else ""
@@ -356,10 +407,10 @@ if __name__ == "__main__":
     elif a.tipo == "plan":
         r = puerta_plan(repo, proyecto)
     elif a.tipo == "fase":
-        r = puerta_fase(repo, proyecto, a.fase, md, a.rc, a.tests_editados, bool(a.video), a.capturas)
+        r = puerta_fase(repo, proyecto, a.fase, md, a.rc, a.tests_editados, bool(a.video), a.capturas, rev)
     elif a.tipo == "entrega":
         r = puerta_entrega(repo, proyecto, md, a.rc, a.fases_aceptadas.split(), bool(a.unica), bool(a.video), a.capturas,
-                           a.tests_editados)
+                           a.tests_editados, rev)
     elif a.tipo == "mantenimiento":
         r = puerta_mantenimiento(proyecto, json.loads(_leer(Path(a.hallazgos)) or "[]"))
     else:

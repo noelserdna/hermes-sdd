@@ -110,6 +110,34 @@ echo "$o" | grep -q 'está terminado y listo para entregar' && echo "$o" | grep 
 echo "$o" | grep -q '^✅ Lo imprescindible está comprobado (1 de 2 requisitos). Queda 1 requisito sin comprobar que no es imprescindible' \
   && ! echo "$o" | grep -q 'Todo en orden' && ok "entrega: no dice «todo en orden» con requisitos sin comprobar" || bad "cabeza entrega: $o"
 
+# ── lo que solo una persona puede comprobar (inspección o demo): 🔍 Lo he revisado y acepto ─────────────────────────
+cat >> requirements/REQUIREMENTS.md <<'M'
+
+### REQ-C-009: Textos en español
+- **Para el cliente:** Todos los textos de la web están en español.
+- **Priority:** Must have
+- **Verification:** inspection — a person reviews the texts
+M
+gj() { jq -n --arg v "$1" --argjson a "${2:-0}" '{summary:{unshown:$a}, requirements:[{id:"REQ-F-001",priority:"Must",verdict:"VERIFIED"},{id:"REQ-C-009",priority:"Must",verdict:$v}]}'; }
+o=$(gj MISSING | $TX revisar "$R" | jq -c '[.solo, [.revisar[] | .id + ":" + .como + ":" + .cliente]]')
+[ "$o" = '[true,["REQ-C-009:inspection:Todos los textos de la web están en español."]]' ] && ok "revisar: la inspección pendiente es lo único que falta" || bad "revisar: $o"
+o=$(gj MISSING 1 | $TX revisar "$R" | jq -c .solo); [ "$o" = false ] && ok "revisar: con otras alertas no basta con revisar" || bad "revisar alertas: $o"
+o=$(gj VERIFIED | $TX revisar "$R" | jq -c '.revisar | length'); [ "$o" = 0 ] && ok "revisar: nada que revisar si ya está comprobado" || bad "revisar verificado: $o"
+gj MISSING | $TX revisar "$R" > "$T/rev.json"
+o=$($TX puerta entrega "$R" --proyecto bar --gate-md "$T/g.md" --rc 1 --revisar "$T/rev.json" | jq -r .texto)
+echo "$o" | grep -q '^🔍 Solo falta tu revisión' && echo "$o" | grep -q '^• Textos en español: Todos los textos de la web están en español.$' \
+  && echo "$o" | grep -q 'pulsa 🔍 Lo he revisado y acepto' && ! echo "$o" | grep -q 'solo puedes rechazarla' \
+  && ok "entrega: enseña lo que revisas tú y el botón de revisado, sin decir «solo rechazar»" || bad "entrega revisar: $o"
+o=$($TX puerta entrega "$R" --proyecto bar --gate-md "$T/g.md" --rc 1 | jq -r .texto)
+echo "$o" | grep -q 'Pulsa ❌ Rechazar' && ! echo "$o" | grep -q 'Acepto la entrega' && ok "entrega bloqueada: no invita a aceptar" || bad "entrega bloqueada: $o"
+o=$($TX puerta fase "$R" --proyecto bar --fase 0 --gate-md "$T/g.md" --rc 1 | jq -r .texto)
+echo "$o" | grep -q 'solo podrás rechazarla' && ! echo "$o" | grep -q 'podrás aceptarla' && ok "fase bloqueada: no invita a aceptar" || bad "fase bloqueada: $o"
+python3 - "$ROOT" <<'PY' && ok "Jev no puede elegir «revisado»: una inspección la confirma una persona" || bad "jev revisado"
+import sys; sys.path.insert(0, sys.argv[1] + "/plugin/hermes-sdd"); import hsdd_nucleo as N
+v = N.verbos_jev({"opciones": [{"verbo": "ver"}, {"verbo": "revisado", "etiqueta": "🔍"}, {"verbo": "acepto", "etiqueta": "✅"}]})
+assert list(v) == ["acepto"], v
+PY
+
 # ── la puerta entera con puerta.sh (texto y datos para Jev) ──────────────────────────────────────────────────────
 git init -q -b main && git config user.email t@t && git config user.name t && git config commit.gpgsign false && git add -A && git commit -qm x
 g=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" requisitos)

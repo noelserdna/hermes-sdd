@@ -94,6 +94,8 @@ modo auto local; puerta n2 requisitos; jevdecide n2 acepto 0.5; firmar n2
 puerta n8 requisitos; jevdecide n8 acepto 0.83; firmar n8   # entre umbral_auto (0.8) y umbral (0.9): en auto vale
 [ $rc -eq 0 ] && ok "notario: en modo auto mide con umbral_auto, como quien decide (p 0.83)" || bad "notario umbral_auto: $out"
 git tag -l 'requirements-v*' | xargs -r git tag -d >/dev/null
+puerta n9 entrega "Todo bien" '[{"verbo":"revisado","etiqueta":"🔍 Lo he revisado y acepto"},{"verbo":"acepto","etiqueta":"✅"}]'; jevdecide n9 revisado 0.99; firmar n9
+[ $rc -ne 0 ] && echo "$out" | grep -q "una inspección la confirma una persona, no Jev" && ok "notario: Jev no puede firmar «revisado»" || bad "notario revisado: $out"
 puerta n3 requisitos; jevdecide n3 acepto 0.97; firmar n3
 [ $rc -eq 0 ] && ok "notario: en modo auto firma la decisión de Jev ($out)" || bad "notario auto: $out"
 T3=$(git tag -l 'requirements-v*' | head -1)

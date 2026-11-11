@@ -31,6 +31,15 @@ d() { jq -r "$1 // empty" "$DECISION"; }
 TIPO=$(p .tipo); FASE=$(p .fase); BOARD=$(p .tablero); TASK=$(p .tarjeta); SHA=$(p .sha)
 VERBO=$(d .verbo); TEXTO=$(d .texto); PERSONA=$(d .actor.persona); CANAL=$(d .actor.canal); ID=$(d .actor.id)
 PRUEBA=$(d '.prueba | to_entries | map("\(.key):\(.value)") | join(" ")')
+# «🔍 Lo he revisado y acepto»: la persona confirma las inspecciones que la puerta enseñaba y acepta. Se registran a su
+# nombre (paso 1b) y lo demás es una aceptación normal. Solo una persona: una inspección nunca la firma Jev.
+REVISADO=false
+if [ "$VERBO" = revisado ]; then
+  { [ "$TIPO" = fase ] || [ "$TIPO" = entrega ]; } || { echo "NOTARIO: rechazado — 'revisado' no vale para una puerta de tipo '$TIPO'" >&2; exit 1; }
+  jq -e 'any(.opciones[]; .verbo == "revisado")' "$PUERTA" >/dev/null || { echo "NOTARIO: rechazado — la puerta no ofrecía 🔍 Lo he revisado" >&2; exit 1; }
+  [ "$CANAL" != jev ] || { echo "NOTARIO: rechazado — una inspección la confirma una persona, no Jev" >&2; exit 1; }
+  REVISADO=true; VERBO=acepto
+fi
 
 # Aprobar requisitos o plan eligiendo en alguna pregunta una opción distinta de la recomendada: el texto que la
 # persona vio está escrito con la recomendada, así que firmarlo dejaría aprobado algo distinto de lo que eligió.
@@ -86,6 +95,20 @@ if ! hecho validado; then
     *) fallo "verbo '$VERBO' no vale para una puerta de tipo '$TIPO'" ;;
   esac
   case "$VERBO" in cambios|observaciones|rechazo|ignoro) [ -n "$TEXTO" ] || fallo "'$VERBO' necesita un texto" ;; esac
+  # 1b. inspecciones confirmadas en la puerta (idempotente: una por requisito y puerta)
+  if [ "$REVISADO" = true ]; then
+    for r in $(jq -r '.revisar[]?.id' "$PUERTA"); do
+      grep -F "\"$r\"" acceptance/decisions.jsonl 2>/dev/null | grep -qF "puerta $GATE" && continue
+      QUE="Revisado por $NOMBRE en la puerta $GATE ($CANAL): $(jq -r --arg r "$r" '.revisar[] | select(.id == $r) | .cliente // .titulo' "$PUERTA")"
+      if [ "$(jq -r --arg r "$r" '.revisar[] | select(.id == $r) | .como' "$PUERTA")" = demo ]; then
+        node "$SDD" accept record demo --req "$r" --observed "$QUE" --pass true --by "$NOMBRE" --role "$ROL" >/dev/null
+      else
+        node "$SDD" accept record inspection --req "$r" --note "$QUE" --by "$NOMBRE" --role "$ROL" >/dev/null
+      fi || fallo "no se pudo registrar la revisión de $r"
+    done
+    git add acceptance/decisions.jsonl 2>/dev/null || true
+    git diff --cached --quiet || git commit -q -m "docs(acceptance): inspection by $NOMBRE" --trailer "Refs: $(jq -r '[.revisar[]?.id] | join(", ")' "$PUERTA")" --trailer "Gate-Id: $GATE"
+  fi
   # Aceptar una FASE exige la puerta de calidad cumplida (0) o cumplida con exenciones (3); rechazar, no
   if { [ "$TIPO" = fase ] || [ "$TIPO" = entrega ]; } && [ "$VERBO" != rechazo ]; then
     rc=0

@@ -706,7 +706,7 @@ async def _resumen_periodico() -> str:
     semana = time.time() - 7 * 86400
     firmadas = [p for p in (_leer(f) for f in (HOME / "puertas").glob("*.json"))
                 if p and p.get("estado") == "firmada" and p.get("tipo") in ("fase", "entrega")
-                and (p.get("firmar_en") or 0) >= semana and (p.get("decision") or {}).get("verbo") == "acepto"]
+                and (p.get("firmar_en") or 0) >= semana and (p.get("decision") or {}).get("verbo") in ("acepto", "revisado")]
     dwell = sorted((p["decision"].get("dwell_s") or 0) for p in firmadas if p.get("decision"))
     if dwell:
         med = dwell[len(dwell) // 2]

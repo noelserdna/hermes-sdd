@@ -256,7 +256,9 @@ def ajustar_jev(defecto: str | None = None, umbral=None, piloto: list | None = N
 
 def verbos_jev(puerta: dict) -> dict:
     """Opciones que Jev puede elegir: las que no piden un motivo escrito."""
-    return {o["verbo"]: o["etiqueta"] for o in puerta.get("opciones", []) if o["verbo"] != "ver" and not o.get("texto")}
+    # «revisado» confirma una inspección: es un registro humano, Jev nunca puede hacerlo
+    return {o["verbo"]: o["etiqueta"] for o in puerta.get("opciones", [])
+            if o["verbo"] not in ("ver", "revisado") and not o.get("texto")}
 
 
 def puede_jev(puerta: dict, cfg: dict | None = None) -> tuple[bool, str]:

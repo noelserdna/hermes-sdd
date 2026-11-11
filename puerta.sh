@@ -31,9 +31,18 @@ trivial = re.compile(r"^(import\b|export \{|from\s|//|#|/\*|\*|\}?\)?;?$|\}\);?$
 print(sum(1 for f, q in quitadas.items() if any(x and not trivial.match(x) and x not in puestas[f] for x in q)))'
 }
 
+# Requisitos sin verificar que solo una persona puede comprobar (Verification: inspection o demo): la puerta los enseña y
+# ofrece 🔍 Lo he revisado y acepto; el notario registra la inspección a nombre de quien lo pulsa.
+REV_JSON=$(mktemp); trap 'rm -f "$REV_JSON"' EXIT; echo null > "$REV_JSON"
+revisar() { { node "$SDD" gate "$@" --json 2>/dev/null || true; } | python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" revisar "$REPO" > "$REV_JSON" 2>/dev/null ||
+  echo null > "$REV_JSON"; }
+hay_rev() { jq -e '(.revisar // []) | length > 0' "$REV_JSON" >/dev/null; }
+solo_rev() { jq -e '.solo == true' "$REV_JSON" >/dev/null; }
+REVISADO='{"verbo":"revisado","etiqueta":"🔍 Lo he revisado y acepto"}'
+
 # ── Texto de la puerta: lo escribe hsdd_textos.py en castellano llano (lo que pediste, lo que se añadió, qué decidir) ─
 TEXTOS="$ROOT/plugin/hermes-sdd/hsdd_textos.py"
-GATE_MD=$(mktemp); trap 'rm -f "$GATE_MD"' EXIT
+GATE_MD=$(mktemp); trap 'rm -f "$GATE_MD" "$REV_JSON"' EXIT
 EXTRA=(); EDIT=0; BLOQUEO=false; UNICA=false; rc=0
 case "$TIPO" in
   requisitos)
@@ -68,8 +77,13 @@ case "$TIPO" in
     CAPTURAS=$( (ls evidencias/FASE-"$FASE"/*.png evidencias/FASE-"$FASE"/*.jpg 2>/dev/null || true) | wc -l | tr -d ' ')
     EXTRA+=(--gate-md "$GATE_MD" --rc "$rc" --tests-editados "$EDIT" --video "$([ -n "$VIDEO" ] && echo 1 || echo 0)" --capturas "$CAPTURAS")
     OPCIONES='[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1},{"verbo":"acepto","etiqueta":"✅ Aceptar","paso":2},{"verbo":"observaciones","etiqueta":"📝 Con observaciones","texto":true,"paso":2},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'
-    if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then BLOQUEO=true
-      OPCIONES='[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'; fi ;;
+    revisar --fase "$FASE"; EXTRA+=(--revisar "$REV_JSON")
+    if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then
+      if solo_rev; then   # solo faltan inspecciones: se confirman aquí mismo
+        OPCIONES=$(jq -nc --argjson r "$REVISADO" '[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1}, ($r + {paso:2}), {"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]')
+      else BLOQUEO=true
+        OPCIONES='[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'; fi
+    elif hay_rev; then OPCIONES=$(echo "$OPCIONES" | jq -c --argjson r "$REVISADO" '.[0:1] + [$r + {paso:2}] + .[1:]'); fi ;;
   entrega)
     node "$SDD" gate --md > "$GATE_MD" 2>/dev/null || rc=$?
     EXTRA+=(--gate-md "$GATE_MD" --rc "$rc" --fases-aceptadas "$(git tag -l 'fase-*-accepted' | tr '\n' ' ')")
@@ -85,7 +99,14 @@ case "$TIPO" in
       EXTRA+=(--unica 1 --video "$([ -n "$VIDEO" ] && echo 1 || echo 0)" --capturas "$CAPTURAS" --tests-editados "$EDIT")
       OPCIONES='[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1},{"verbo":"acepto","etiqueta":"✅ Acepto la entrega","paso":2},{"verbo":"observaciones","etiqueta":"📝 Con observaciones","texto":true,"paso":2},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'
     fi
-    if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then BLOQUEO=true; OPCIONES='[{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]'; fi ;;
+    revisar; EXTRA+=(--revisar "$REV_JSON")
+    PASO=$([ "$UNICA" = true ] && echo '{paso:2}' || echo '{}')
+    if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then
+      if solo_rev; then   # solo faltan inspecciones: se confirman aquí mismo
+        OPCIONES=$(echo "$OPCIONES" | jq -c --argjson r "$REVISADO" "[.[] | select(.verbo == \"ver\")] + [\$r + $PASO] + [.[] | select(.verbo == \"rechazo\")]")
+      else BLOQUEO=true; OPCIONES='[{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]'; fi
+    elif hay_rev; then
+      OPCIONES=$(echo "$OPCIONES" | jq -c --argjson r "$REVISADO" "[.[] | select(.verbo == \"ver\")] + [\$r + $PASO] + [.[] | select(.verbo != \"ver\")]"); fi ;;
   mantenimiento)   # lo abre vigilar.sh con .sdd/hermes/mantenimiento/hallazgos.json
     EXTRA+=(--hallazgos .sdd/hermes/mantenimiento/hallazgos.json)
     OPCIONES='[{"verbo":"cambio","etiqueta":"🛠 Lanzar cambio"},{"verbo":"ignoro","etiqueta":"🔕 Ignorar","texto":true}]' ;;
@@ -118,8 +139,9 @@ jq -n --arg id "$ID" --arg t "$TIPO" --arg f "$FASE" --arg b "$BOARD" --arg s "$
   --arg r "$REPO" --arg ti "$TITULO" --arg tx "$TEXTO" --argjson o "$OPCIONES" --arg v "${VIDEO:-}" --argjson q "$PREGUNTAS" \
   --argjson ad "$([ -f .sdd/hermes/adopcion ] && echo true || echo false)" \
   --argjson hz "$([ "$TIPO" = mantenimiento ] && cat .sdd/hermes/mantenimiento/hallazgos.json || echo null)" \
-  --argjson te "${EDIT:-0}" --argjson bl "$BLOQUEO" --argjson un "${UNICA:-false}" \
+  --argjson te "${EDIT:-0}" --argjson bl "$BLOQUEO" --argjson un "${UNICA:-false}" --argjson rv "$(cat "$REV_JSON")" \
   '{id:$id, tipo:$t, fase:$f, tablero:$b, tarjeta:"", adopcion:$ad, sha:$s, creada:$c, repo:$r, titulo:$ti, texto:$tx,
-    opciones:$o, demo:$v, preguntas:$q, hallazgos:$hz, tests_editados:$te, bloqueo:$bl, unica:$un, estado:"abierta"}' > ".sdd/hermes/puertas/$ID.json"
+    opciones:$o, demo:$v, preguntas:$q, hallazgos:$hz, tests_editados:$te, bloqueo:$bl, unica:$un,
+    revisar:(($rv // {}).revisar // []), estado:"abierta"}' > ".sdd/hermes/puertas/$ID.json"
 cp ".sdd/hermes/puertas/$ID.json" "$HOME_SDD/puertas/$ID.json"   # índice global para los canales
 echo "$ID"

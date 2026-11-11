@@ -228,6 +228,11 @@ La pestaña **SDD** tiene cuatro secciones:
 
 En las puertas de FASE se registra cuánto tiempo pasó entre ver la demo y decidir.
 
+Lo que ningún test puede comprobar (requisitos que se verifican por inspección o por demo) aparece en las puertas de
+FASE y de entrega bajo «🔍 Esto no lo puede comprobar un test, lo compruebas tú», con el botón `🔍 Lo he revisado y
+acepto`: el notario registra cada revisión a tu nombre y después acepta. Si eso es lo único que falta, la puerta lo
+ofrece en vez de dejar solo `❌ Rechazar`. Jev nunca puede pulsarlo.
+
 **Comandos de Telegram**
 
 | Comando | Para qué |

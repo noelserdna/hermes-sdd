@@ -150,7 +150,7 @@ $errs"
 case "$ETAPA" in
   requisitos)
     if [ ! -s requirements/REQUIREMENTS.md ] || [ -s "$FB" ]; then
-      claude_etapa requirements-engineer "/sdd-requirements-engineer — $ARNES Escribe las necesidades y los requisitos a partir de la petición literal de intent/ (y de lo que ya haya en requirements/)."
+      claude_etapa requirements-engineer "/sdd-requirements-engineer — $ARNES Escribe las necesidades y los requisitos a partir de la petición literal de intent/ (y de lo que ya haya en requirements/). Verification: usa test siempre que un test pueda leerlo (también en restricciones REQ-C: idioma de los textos, dependencias, stack, sin red); inspection o demo solo para lo que ningún test puede observar, porque eso lo tiene que confirmar una persona a mano en la puerta."
     else RES='{"outcome":"done","reason":"requisitos ya escritos"}'; fi
     requisitos_legibles requirements-engineer sdd-requirements-engineer
     { sed -i.bak -E 's/^> \*\*Status:\*\* *Approved.*/> **Status:** Review/' requirements/REQUIREMENTS.md && rm -f requirements/REQUIREMENTS.md.bak; } 2>/dev/null || true
