@@ -53,3 +53,20 @@ Ningún ejecutor puede firmar: la guardia `metodo/hooks/sdd-executor-deny.sh` de
 aceptación, `route --write`, el kanban, `~/.hermes`, `git push`… en los dos dialectos (Claude Code y Hermes), y los
 perfiles añaden `approvals.deny`. Probado: un agente de Hermes al que se le pide `git tag fase-0-accepted` no puede
 crearlo y explica por qué.
+
+### Decisiones fabricadas (cerrado en 0.3.2)
+
+Hasta 0.3.1 una etapa podía fabricar una decisión «humana»: escribir `.sdd/hermes/decisiones/<puerta>.json` y la
+puerta como decidida en `~/.hermes/hermes-sdd/puertas/` bastaba para que el gateway llamara al notario y este firmara.
+Ahora hay cuatro capas, de más a menos fuerte:
+
+| Capa | Qué impide | Límite |
+|---|---|---|
+| **Notario** | Solo firma si la decisión del repo es idéntica (hora, verbo, texto, persona, canal) a la que un canal registró en el índice de puertas de Hermes (`~/.hermes/hermes-sdd/puertas/`). El gateway no firma decisiones del canal `local`: las firma `decidir.sh` en el momento | Quien pueda escribir en `~/.hermes` puede escribir los dos |
+| **Sandbox de Claude Code** en las etapas sin navegador (requisitos, ruta, especificaciones, auditoría, pruebas, seguridad, diseño, plan, tareas, huecos, cambio) | Su Bash, y todo lo que lance (Python, Node), solo escribe en el repo (menos `.sdd/hermes/decisiones` y `puertas`), `$TMPDIR` y las cachés de npm y Playwright. Sin escape (`allowUnsandboxedCommands: false`); en macOS, si el sandbox no arranca, la etapa no corre | Las etapas con navegador (implementar, aceptar, cierre, huecos entre especificación y código, adoptar) van sin sandbox: en macOS no deja arrancar Chromium |
+| **Permisos de Claude Code** en todas las etapas | `Edit(~/.hermes/**)`, `Edit(.sdd/hermes/decisiones/**)`, `Edit(.sdd/hermes/puertas/**)` denegados (también las redirecciones de Bash a esas rutas) | No ven lo que abre un script por su cuenta |
+| **Guardias** (`sdd-executor-deny.sh`, `sdd-upstream-guard.sh`) | Órdenes que mencionan `.hermes/`, decisiones o puertas, `firmar.sh`/`decidir.sh`; en Hermes también `write_file`/`patch` a esas rutas y `execute_code` | Son regex: dificultan, no garantizan |
+
+Lo que queda abierto: una etapa con navegador que se lo proponga (un script propio que escriba en `~/.hermes`). El
+cierre completo es separar usuarios del sistema (o un contenedor) para las etapas, con el estado de Hermes sin permiso
+de escritura para ellas (ver `docs/encargado.md`).

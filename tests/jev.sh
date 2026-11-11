@@ -81,7 +81,11 @@ PY
 [ "$o" = rechazo ] && ok "nadie puede hacerse pasar por Jev con decidir()" || bad "suplantar: $o"
 
 # ── 3. el notario ────────────────────────────────────────────────────────────────────────────────────────────────
-firmar() { out=$(bash "$ROOT/firmar.sh" "$R" "$1" 2>&1); rc=$?; }
+gemelo() {  # lo que haría un canal: la misma decisión en el índice de puertas de Hermes (el notario los compara)
+  local f="$HERMES_SDD_HOME/puertas/$1.json"; mkdir -p "$HERMES_SDD_HOME/puertas"
+  [ -f "$f" ] || cp ".sdd/hermes/puertas/$1.json" "$f"
+  jq --slurpfile d ".sdd/hermes/decisiones/$1.json" --arg r "$R" '.repo = $r | .estado = "decidida" | .decision = $d[0]' "$f" > "$f.t" && mv "$f.t" "$f"; }
+firmar() { gemelo "$1"; out=$(bash "$ROOT/firmar.sh" "$R" "$1" 2>&1); rc=$?; }
 jevdecide() {  # decisión de Jev escrita a mano (como si la hubiera dejado el gateway)
   mkdir -p .sdd/hermes/decisiones
   jq -n --arg v "$2" --arg p "$3" --arg a "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \

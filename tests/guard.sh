@@ -71,4 +71,17 @@ o=$(jq -nc '{hook_event_name:"PreToolUse",tool_name:"Bash",tool_input:{command:"
 # Dialecto de Hermes: bloquea con exit 2
 o=$(jq -nc '{hook_event_name:"pre_tool_call",tool_name:"terminal",tool_input:{command:"git tag fase-1-accepted"}}' | bash "$G"); rc=$?
 [ $rc = 2 ] && echo "$o" | jq -e '.decision=="block"' >/dev/null && echo "ok   dialecto Hermes: block + exit 2" || { echo "FAIL hermes: $rc $o"; fail=1; }
+# Decisiones y puertas fabricadas: ni por la terminal ni por las herramientas de ficheros de Hermes o de Claude
+deny  'echo "{}" > .sdd/hermes/decisiones/g1.json'
+deny  "python3 -c \"open('.sdd/hermes/puertas/g1.json','w').write('{}')\""
+allow 'cat .sdd/questions-task-implementer.md'
+hermes() { jq -nc --arg t "$1" --arg p "$2" '{hook_event_name:"pre_tool_call",tool_name:$t,tool_input:{path:$p,content:"{}"}}' | bash "$G" >/dev/null 2>&1; echo $?; }
+[ "$(hermes write_file .sdd/hermes/decisiones/g1.json)" = 2 ] && echo "ok   Hermes write_file: deniega una decisión" || { echo "FAIL write_file decisión"; fail=1; }
+[ "$(hermes patch "$HOME/.hermes/hermes-sdd/puertas/g1.json")" = 2 ] && echo "ok   Hermes patch: deniega el estado de Hermes" || { echo "FAIL patch hermes"; fail=1; }
+[ "$(hermes write_file src/app.js)" = 0 ] && echo "ok   Hermes write_file: permite el código del proyecto" || { echo "FAIL write_file código"; fail=1; }
+[ "$(hermes execute_code x)" = 2 ] && echo "ok   Hermes execute_code: denegado al ejecutor" || { echo "FAIL execute_code"; fail=1; }
+U="$(dirname "$G")/sdd-upstream-guard.sh"
+edit() { jq -nc --arg p "$1" '{tool_name:"Write",tool_input:{file_path:$p}}' | SDD_EXECUTOR=hermes bash "$U" | jq -r '.hookSpecificOutput.permissionDecision // "allow"' 2>/dev/null || echo allow; }
+[ "$(edit .sdd/hermes/decisiones/g1.json)" = deny ] && echo "ok   Claude Write: deniega una decisión" || { echo "FAIL Write decisión: $(edit .sdd/hermes/decisiones/g1.json)"; fail=1; }
+[ "$(edit "$HOME/.hermes/hermes-sdd/puertas/g1.json")" = deny ] && echo "ok   Claude Write: deniega el estado de Hermes" || { echo "FAIL Write hermes"; fail=1; }
 exit $fail

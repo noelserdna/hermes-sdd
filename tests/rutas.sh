@@ -55,12 +55,17 @@ puerta() {  # puerta <id> → con los botones que abriría puerta.sh
     > ".sdd/hermes/puertas/$1.json"; }
 decidir() { mkdir -p .sdd/hermes/decisiones
   jq -n --arg v "$2" --arg a "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '{verbo:$v, texto:"", actor:{persona:"andres", canal:"local", id:"tester"}, prueba:{}, at:$a}' > ".sdd/hermes/decisiones/$1.json"; }
+gemelo_() {  # lo que haría un canal: la misma decisión en el índice de puertas de Hermes (el notario los compara)
+  local f="$HERMES_SDD_HOME/puertas/$1.json"; mkdir -p "$HERMES_SDD_HOME/puertas"
+  [ -f "$f" ] || cp ".sdd/hermes/puertas/$1.json" "$f"
+  jq --slurpfile d ".sdd/hermes/decisiones/$1.json" --arg r "$R" '.repo = $r | .estado = "decidida" | .decision = $d[0]' "$f" > "$f.t" && mv "$f.t" "$f"; }
+_dec() { decidir "$@"; gemelo_ "$1"; }
 st() { jq -r --arg k "$1" '"\(.route.stages[$k].run)/\(.stages[$k].status)"' pipeline-state.json; }
-puerta r1; decidir r1 ruta-mia; out=$(bash "$ROOT/firmar.sh" "$R" r1 2>&1); rc=$?
+puerta r1; _dec r1 ruta-mia; out=$(bash "$ROOT/firmar.sh" "$R" r1 2>&1); rc=$?
 [ $rc -eq 0 ] && [ "$(st ux-designer | cut -d/ -f1)" = true ] && [ "$(st spec-auditor)" = "true/pending" ] && [ "$(st specifications-engineer)" = "false/skipped" ] && [ "$(st gap-detector)" = "false/skipped" ] \
   && ok "firma una ruta configurada: sus etapas a run, las demás saltadas" || bad "firma mía ($rc): $out | ux=$(st ux-designer) audit=$(st spec-auditor) spec=$(st specifications-engineer)"
 echo "$out" | grep -q 'Ruta «Mía» elegida por Andrés León' && ok "el resumen dice qué ruta se eligió, por su nombre" || bad "resumen: $out"
-git commit -q --allow-empty -m "chore: otra"; puerta r2; decidir r2 ruta-inventada; out=$(bash "$ROOT/firmar.sh" "$R" r2 2>&1)
+git commit -q --allow-empty -m "chore: otra"; puerta r2; _dec r2 ruta-inventada; out=$(bash "$ROOT/firmar.sh" "$R" r2 2>&1)
 echo "$out" | grep -q "no ofrecía la ruta" && ok "no firma una ruta que la puerta no ofrecía" || bad "inventada: $out"
 
 # 4. lanzar.sh: tras la ruta, las etapas que tocan → Plan → Tareas; antes del cierre, los huecos (si tocan)

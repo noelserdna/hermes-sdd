@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Guardia del EJECUTOR (artículo 13: el ejecutor nunca firma). Deniega, sin preguntar, lo que solo puede hacer el
 # notario o una persona: registrar decisiones, crear o mover tags de aceptación, confirmar la ruta, tocar el kanban
-# o el estado de Hermes, publicar. Es una regex sobre el comando: dificulta, no garantiza (ver docs/garantias.md).
+# o el estado de Hermes, publicar. Es una regex sobre el comando: dificulta, no garantiza (ver docs/ejecutores.md, «Garantías del ejecutor»).
 #
 # Habla los dos dialectos: Claude Code (PreToolUse Bash → hookSpecificOutput.permissionDecision) y Hermes
 # (pre_tool_call terminal → {"decision":"block"} + exit 2). Fuera de un ejecutor del arnés no hace nada.
@@ -9,6 +9,23 @@ IN=$(cat)
 EVENTO=$(printf '%s' "$IN" | jq -r '.hook_event_name // ""')
 CMD=$(printf '%s' "$IN" | jq -r '.tool_input.command // ""')
 [ "${SDD_EXECUTOR:-}" = hermes ] || [ "$EVENTO" = pre_tool_call ] || exit 0
+bloquear() {  # bloquear <razón>: en el dialecto de quien pregunta
+  if [ "$EVENTO" = pre_tool_call ]; then jq -nc --arg r "hermes-sdd: $1" '{decision:"block", reason:$r}'; exit 2; fi
+  jq -nc --arg r "hermes-sdd: $1" '{hookSpecificOutput:{hookEventName:"PreToolUse", permissionDecision:"deny", permissionDecisionReason:$r}}'
+  exit 0
+}
+# Herramientas de ficheros de Hermes (write_file, patch) y código suelto (execute_code): las decisiones, las puertas y
+# el estado de Hermes no se escriben desde una etapa (una decisión «humana» fabricada la firmaría el notario).
+HERRAMIENTA=$(printf '%s' "$IN" | jq -r '.tool_name // ""')
+case "$HERRAMIENTA" in
+  execute_code) bloquear "el ejecutor no ejecuta código suelto; usa la terminal" ;;
+  write_file|patch)
+    RUTA=$(printf '%s' "$IN" | jq -r '.tool_input.path // .tool_input.file_path // ""')
+    if printf '%s' "$RUTA" | grep -qE '(^~|/)\.hermes(/|$)|(^|/)\.sdd/hermes/(decisiones|puertas)(/|$)|(aprobadores|jev|sdd)\.json$'; then
+      bloquear "las decisiones, las puertas y el estado de Hermes no se escriben desde una etapa ($RUTA)"
+    fi
+    exit 0 ;;
+esac
 [ -n "$CMD" ] || exit 0
 
 . "$(dirname "${BASH_SOURCE[0]}")/lib/sdd-common.sh"
@@ -40,6 +57,7 @@ check '^[[:space:]]*git([[:space:]]+-[Cc][[:space:]]+[^[:space:]]+)*[[:space:]]+
 check 'route[[:space:]].*--write'                                 "$INVOCA" "confirmar la ruta es una decisión humana"
 check 'journal[[:space:]]+add.*--kind[[:space:]]+(decision|gate)' "$INVOCA" "anotar decisiones o puertas en el diario es del notario"
 check '(^|[^a-z])hermes[[:space:]]+kanban'                        "$CMD_SIN_ARNES" "el ejecutor no mueve tarjetas del kanban"
+check '\.sdd/hermes/(decisiones|puertas)'                         "$CMD" "las decisiones y las puertas solo las escriben los canales y el notario"
 check 'sqlite3'                                                   "$CMD_SIN_ARNES" "el ejecutor no edita bases de datos de Hermes"
 check '\.hermes/'                                                 "$CMD_SIN_ARNES" "el ejecutor no toca el directorio de Hermes"
 check '(firmar|decidir|puerta|jev|nuevo)\.sh|hsdd_(nucleo|proyectos)' "$CMD_SIN_ARNES" "las puertas, la firma, el modo de Jev y crear proyectos son del arnés, no del ejecutor"

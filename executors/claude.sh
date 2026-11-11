@@ -53,13 +53,26 @@ for b in "$BIN" "$(command -v node || true)"; do
   [ -n "$b" ] || continue; d=$(dirname "$b")
   case ":$PATH_LIMPIO:" in *":$d:"*) ;; *) PATH_LIMPIO="$d:$PATH_LIMPIO";; esac
 done
-ARGS=(-p "$PROMPT" --output-format json --plugin-dir "$ROOT/metodo"
-      --settings '{"enabledPlugins":{"sdd-pipeline@noelserdna":false}}')
+# Las decisiones, las puertas y el estado de Hermes no se escriben desde una etapa: una decisión «humana» fabricada la
+# firmaría el notario. Las herramientas de edición lo tienen denegado siempre. Las etapas sin navegador (SDD_SANDBOX=1,
+# lo decide etapa.sh) corren además con el sandbox de Claude Code: su Bash solo escribe en el repo (menos
+# .sdd/hermes/decisiones y puertas), $TMPDIR y las cachés de npm y Playwright, a nivel de sistema operativo (también
+# Python o Node). Con navegador no: en macOS el sandbox no deja arrancar Chromium (puertos Mach); ahí quedan los
+# guardias y la comprobación del notario. Ver docs/ejecutores.md («Decisiones fabricadas»).
+AJUSTES=$(jq -nc --arg sb "${SDD_SANDBOX:-0}" --arg os "$(uname -s)" '
+  {enabledPlugins: {"sdd-pipeline@noelserdna": false},
+   permissions: {deny: ["Edit(~/.hermes/**)", "Edit(.sdd/hermes/decisiones/**)", "Edit(.sdd/hermes/puertas/**)"]}}
+  + (if $sb == "1" then {sandbox: ({enabled: true, allowUnsandboxedCommands: false, autoAllowBashIfSandboxed: true,
+        network: {allowedDomains: ["*"], allowLocalBinding: true},
+        filesystem: {denyWrite: ["./.sdd/hermes/decisiones", "./.sdd/hermes/puertas"],
+                     allowWrite: ["~/.npm", "~/Library/Caches/ms-playwright", "~/.cache"]}}
+        + (if $os == "Darwin" then {failIfUnavailable: true} else {} end))} else {} end)')
+ARGS=(-p "$PROMPT" --output-format json --plugin-dir "$ROOT/metodo" --settings "$AJUSTES")
 [ -n "$MODELO" ] && ARGS+=(--model "$MODELO")
 cd "$REPO"
 env -i HOME="$HOME" USER="$USER" LOGNAME="${LOGNAME:-$USER}" TMPDIR="${TMPDIR:-/tmp}" LANG="${LANG:-es_ES.UTF-8}" \
   PATH="$PATH_LIMPIO" TERM=dumb \
-  SDD_EXECUTOR=hermes SDD_RUN="$RUN" DISABLE_AUTOUPDATER=1 \
+  SDD_EXECUTOR=hermes SDD_RUN="$RUN" DISABLE_AUTOUPDATER=1 NODE_USE_ENV_PROXY=1 \
   perl -e 'setpgrp(0,0); exec @ARGV' "$BIN" "${ARGS[@]}" > "$OUT" 2> "$ERR" &
 CPID=$!
 echo "$CPID" > "$LOCK/claude"

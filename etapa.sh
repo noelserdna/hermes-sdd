@@ -78,7 +78,9 @@ registros_ajenos() {  # registros_ajenos <head-antes> → imprime qué está mal
 claude_etapa() {  # claude_etapa <clave-de-estado> <prompt>
   local clave=$1 res st head0 malo
   head0=$(git rev-parse HEAD)
-  res=$(bash "$ROOT/executors/$EJEC.sh" "$REPO" "$ETAPA${FASE:+-$FASE}" "$2" "$(modelo "$ETAPA")" | tail -1)
+  # Sandbox de Claude Code en las etapas que no abren un navegador (en macOS no puede arrancar Chromium)
+  local sb=1; case "$ETAPA" in implementar|aceptar|cierre|brechas|adoptar) sb=0 ;; esac
+  res=$(SDD_SANDBOX=$sb bash "$ROOT/executors/$EJEC.sh" "$REPO" "$ETAPA${FASE:+-$FASE}" "$2" "$(modelo "$ETAPA")" | tail -1)
   [ "$(echo "$res" | jq -r .outcome)" = done ] || fin "$res" "$(echo "$res" | jq -r .reason)"
   # Post-condición: la etapa no puede quedar a medias en el estado del método
   st=$(bash "$STATE" get "$clave" 2>/dev/null || echo "?")

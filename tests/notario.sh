@@ -23,8 +23,19 @@ decidir() {  # decidir <id> <verbo> <canal> <idcanal> [texto]
   mkdir -p .sdd/hermes/decisiones
   jq -n --arg v "$2" --arg c "$3" --arg i "$4" --arg x "${5:-}" --arg a "$(ahora)" \
     '{verbo:$v, texto:$x, actor:{persona:"andres", canal:$c, id:$i}, prueba:{msg:"42"}, at:$a}' > ".sdd/hermes/decisiones/$1.json"; }
-firmar() { out=$(bash "$ROOT/firmar.sh" "$R" "$1" 2>&1); rc=$?; }
+gemelo() {  # lo que haría un canal: la misma decisión en el índice de puertas de Hermes (el notario los compara)
+  local f="$HERMES_SDD_HOME/puertas/$1.json"; mkdir -p "$HERMES_SDD_HOME/puertas"
+  [ -f "$f" ] || cp ".sdd/hermes/puertas/$1.json" "$f"
+  jq --slurpfile d ".sdd/hermes/decisiones/$1.json" --arg r "$R" '.repo = $r | .estado = "decidida" | .decision = $d[0]' "$f" > "$f.t" && mv "$f.t" "$f"; }
+firmar() { gemelo "$1"; out=$(bash "$ROOT/firmar.sh" "$R" "$1" 2>&1); rc=$?; }
 
+# 0. decisiones fabricadas en el repo (una etapa puede escribir ahí, no en ~/.hermes): el notario no las firma
+puerta f1 requisitos; decidir f1 acepto telegram 111; out=$(bash "$ROOT/firmar.sh" "$R" f1 2>&1); rc=$?
+[ $rc -ne 0 ] && echo "$out" | grep -q "no está en el índice de puertas" && ok "no firma una decisión sin su gemelo en el índice de Hermes" || bad "fabricada: $out"
+puerta f2 requisitos; decidir f2 cambios telegram 111 "otra"; gemelo f2; decidir f2 acepto telegram 111
+out=$(bash "$ROOT/firmar.sh" "$R" f2 2>&1); rc=$?
+[ $rc -ne 0 ] && echo "$out" | grep -q "no coincide con la que registró un canal" && ok "no firma si la decisión del repo no es la que registró el canal" || bad "cambiada: $out"
+rm -f .sdd/hermes/decisiones/f1.json .sdd/hermes/decisiones/f2.json
 # 1. identidad no autorizada
 puerta g1 requisitos; decidir g1 acepto telegram 999; firmar g1
 [ $rc -ne 0 ] && echo "$out" | grep -q "no es una identidad autorizada" && ok "rechaza una identidad no autorizada" || bad "identidad: $out"

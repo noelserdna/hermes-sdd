@@ -60,6 +60,15 @@ fi
 sdd_roots "$INPUT" "$FILE_PATH"
 PIPELINE_STATE="$STATE_ROOT/pipeline-state.json"
 
+# Decisiones, puertas y estado de Hermes: los escriben los canales (Telegram, panel, decidir.sh) y el notario, nunca
+# una herramienta de edición. Una decisión «humana» escrita aquí la firmaría el notario.
+case "$FILE_PATH" in
+  "$HOME"/.hermes|"$HOME"/.hermes/*|*/.sdd/hermes/decisiones/*|*/.sdd/hermes/puertas/*|.sdd/hermes/decisiones/*|.sdd/hermes/puertas/*)
+    escaped=$(sdd_json_string "hermes-sdd: las decisiones, las puertas y el estado de Hermes no se editan ($FILE_PATH); llegan por una puerta y las firma el notario.")
+    printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":%s}}\n' "$escaped"
+    exit 0 ;;
+esac
+
 # Not under the project: allow
 case "$REL_PATH" in
   /*|[A-Za-z]:/*) exit 0 ;;

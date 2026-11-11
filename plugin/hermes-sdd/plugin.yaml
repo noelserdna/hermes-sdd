@@ -1,5 +1,5 @@
 name: hermes-sdd
-version: 0.3.1
+version: 0.3.2
 description: "Puertas del método SDD en Telegram, en el panel web y en Hermes Desktop, con Jev opcional (consejo, piloto o auto): la persona decide, con ventana para deshacer, y el notario del arnés firma. Avisa de fallos y revisa a diario los proyectos entregados."
 author: "Andres Leon"
 provides_hooks: []

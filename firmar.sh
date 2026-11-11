@@ -25,6 +25,16 @@ PUERTA=".sdd/hermes/puertas/$GATE.json"
 DECISION=".sdd/hermes/decisiones/$GATE.json"
 [ -f "$PUERTA" ] || { echo "NOTARIO: no existe la puerta $GATE" >&2; exit 2; }
 [ -f "$DECISION" ] || { echo "NOTARIO: la puerta $GATE no tiene decisión" >&2; exit 2; }
+# La decisión del repo tiene que ser la que registró un canal en el índice de puertas de Hermes (Telegram, el panel y
+# Jev por el núcleo; el canal local por decidir.sh). Una etapa puede escribir en el repo, no en ~/.hermes (sandbox y
+# guardias): un fichero de decisión fabricado en el repo, sin su gemelo en el índice, no se firma.
+IDX="$HOME_SDD/puertas/$GATE.json"
+[ -f "$IDX" ] || { echo "NOTARIO: rechazado — la puerta $GATE no está en el índice de puertas de Hermes" >&2; exit 1; }
+jq -e --arg repo "$REPO" --slurpfile d "$DECISION" '
+  (.repo == $repo) and (.estado | IN("decidida", "firmada", "error"))
+  and (.decision.at == $d[0].at) and (.decision.verbo == $d[0].verbo) and ((.decision.texto // "") == ($d[0].texto // ""))
+  and (.decision.actor.persona == $d[0].actor.persona) and (.decision.actor.canal == $d[0].actor.canal)' "$IDX" >/dev/null ||
+  { echo "NOTARIO: rechazado — la decisión de $GATE no coincide con la que registró un canal" >&2; exit 1; }
 
 p() { jq -r "$1 // empty" "$PUERTA"; }
 d() { jq -r "$1 // empty" "$DECISION"; }

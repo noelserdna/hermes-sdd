@@ -110,7 +110,7 @@ hermes -p "$E" config set terminal.env_passthrough '["SDD_PLUGIN_ROOT","CLAUDE_P
 hermes -p "$E" config set approvals.deny \
   '["*accept record*","*git tag*","*update-ref*","*route --write*","*git push*","*firmar.sh*","*decidir.sh*","*jev.sh*","*nuevo.sh*","*hsdd_nucleo.py*","*hsdd_proyectos.py*","*jev.json*","*sdd.json*","*hermes kanban*","*sqlite3*"]' >/dev/null
 hermes -p "$E" config set hooks.pre_tool_call \
-  "[{\"matcher\":\"terminal\",\"command\":\"bash $HOME_SDD/actual/metodo/hooks/sdd-executor-deny.sh\",\"timeout\":10,\"fail_closed\":true}]" >/dev/null
+  "[{\"matcher\":\"terminal|write_file|patch|execute_code\",\"command\":\"bash $HOME_SDD/actual/metodo/hooks/sdd-executor-deny.sh\",\"timeout\":10,\"fail_closed\":true}]" >/dev/null
 fi
 
 DI=$(hermes config get kanban.dispatch_interval_seconds 2>/dev/null | tail -1)

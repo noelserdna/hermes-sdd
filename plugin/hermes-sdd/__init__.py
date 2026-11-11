@@ -484,7 +484,8 @@ async def _vuelta(ciclo: int) -> None:
                 actual = _leer(idx) or p
                 actual.update(telegram=p["telegram"], publicada=p["publicada"], tg_vista=p["tg_vista"])
                 _escribir(idx, actual)
-        elif p.get("estado") == "decidida" and time.time() >= p.get("firmar_en", 0):
+        elif (p.get("estado") == "decidida" and time.time() >= p.get("firmar_en", 0)
+              and (p.get("decision") or {}).get("actor", {}).get("canal") != "local"):   # el local lo firma decidir.sh
             log.info("hermes-sdd: firmando la puerta %s", p["id"])
             await _firmar(bot, p)
         else:   # decidida o deshecha desde otro canal (dashboard): el mensaje de Telegram se pone al día
