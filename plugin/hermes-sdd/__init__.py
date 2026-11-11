@@ -595,6 +595,30 @@ def _autorizado_en_sesion():
     return (_persona_de(uid)[0], uid) if uid else (None, "")
 
 
+async def _tema_encargado(nombre: str, repo: str, uid: str, bienvenida: str = "") -> str:
+    """Tema «🧭 nombre» en el chat privado con el bot, enlazado con el encargado del proyecto (profile_routes por chat y
+    tema; encargado.sh tema). El gateway carga la ruta al arrancar: se reinicia solo, desde fuera de su proceso."""
+    bot = _RT["app"].bot
+    try:
+        tema = await bot.create_forum_topic(chat_id=int(uid), name=f"🧭 {nombre}")
+    except Exception as e:
+        return (f"No pude crear el tema: {e}. Activa los temas del bot en @BotFather (Mini App → My bots → el bot → "
+                "Bot Settings → Threads Settings → Threaded Mode) y pídelo con /encargado " + nombre)
+    hilo = tema.message_thread_id
+    try:
+        await _cli("bash", str(_root() / "encargado.sh"), "tema", repo, str(uid), str(hilo))
+    except Exception as e:
+        return f"Creé el tema pero no pude enlazarlo con el encargado: {e}"
+    await bot.send_message(chat_id=int(uid), message_thread_id=hilo, text=bienvenida or (
+        f"🧭 Aquí hablas con el encargado de «{nombre}»: sabe en qué punto está el proyecto, consulta requisitos, "
+        "plan y código, discute arquitectura, diseño y UX contigo y recuerda en su wiki. No decide puertas: esas "
+        "siguen llegando al chat principal.") + "\n(Estará listo en un minuto: se reinicia el gateway para enlazar el tema.)")
+    import subprocess as _sp
+    _sp.Popen(["bash", "-c", "sleep 8; hermes gateway restart >/dev/null 2>&1"], start_new_session=True,
+              env={**os.environ, "PATH": PATH_CMDS}, stdout=_sp.DEVNULL, stderr=_sp.DEVNULL)
+    return f"Tema «🧭 {nombre}» creado: en un minuto, lo que escribas allí lo lee su encargado."
+
+
 async def _reanudar_aparcadas(boards) -> int:
     n = 0
     for b in boards:
@@ -827,26 +851,37 @@ def register(ctx):
             return f"No se pudo preparar el encargado de {nombre}: {e}"
         if any(r.get("name") == f"encargado-{nombre}" for r in rutas if isinstance(r, dict)):
             return f"El encargado de {nombre} ya tiene su tema «🧭 {nombre}» en este chat: escríbele allí."
-        bot = _RT["app"].bot
+        return await _tema_encargado(nombre, repo, uid)
+
+    async def _cmd_preparar(raw_args: str = "") -> str:
+        """/preparar <nombre> [stack] <qué quieres construir> — crea el proyecto SIN lanzarlo, con su encargado y su
+        tema: allí le das documentos o requisitos casi listos, te pregunta lo que falte y lo lanza cuando digas."""
+        persona, uid = _autorizado_en_sesion()
+        if not persona:
+            return "Solo una persona autorizada puede crear proyectos."
+        cfg = PR.config()
+        ids = [s["id"] for s in cfg["stacks"]]
+        partes = raw_args.split(maxsplit=1)
+        if len(partes) < 2:
+            return ("Uso: /preparar <nombre> [stack] <qué quieres construir>\n"
+                    "Crea el proyecto sin lanzarlo y te abre un tema con su encargado: allí le pasas lo que tengas "
+                    "(documentos, requisitos casi listos, capturas), te pregunta lo que falte y lo lanza cuando le digas «lanza».\n"
+                    f"Stacks: {', '.join(ids)} (por defecto {cfg['stack_defecto']}).")
+        nombre, resto = partes
+        stack = None
+        primera = resto.split(maxsplit=1)
+        if len(primera) == 2 and primera[0] in ids:
+            stack, resto = primera
         try:
-            tema = await bot.create_forum_topic(chat_id=int(uid), name=f"🧭 {nombre}")
-        except Exception as e:
-            return (f"No pude crear el tema: {e}. Activa los temas del bot en @BotFather (Mini App → My bots → el bot → "
-                    "Bot Settings → Threads Settings → Threaded Mode) y vuelve a pedirlo.")
-        hilo = tema.message_thread_id
-        try:
-            await _cli("bash", str(_root() / "encargado.sh"), "tema", repo, str(uid), str(hilo))
-        except Exception as e:
-            return f"Creé el tema pero no pude enlazarlo con el encargado: {e}"
-        await bot.send_message(chat_id=int(uid), message_thread_id=hilo, text=(
-            f"🧭 Aquí hablas con el encargado de «{nombre}»: sabe en qué punto está el proyecto, consulta requisitos, "
-            "plan y código, discute arquitectura, diseño y UX contigo y recuerda en su wiki. No decide puertas: esas "
-            "siguen llegando al chat principal.\nEstará listo en un minuto (se reinicia el gateway para enlazar el tema)."))
-        # El gateway carga las rutas al arrancar: se reinicia solo, desde fuera de su propio proceso
-        import subprocess as _sp
-        _sp.Popen(["bash", "-c", "sleep 8; hermes gateway restart >/dev/null 2>&1"], start_new_session=True,
-                  env={**os.environ, "PATH": PATH_CMDS}, stdout=_sp.DEVNULL, stderr=_sp.DEVNULL)
-        return f"Tema «🧭 {nombre}» creado. En un minuto, lo que escribas allí lo lee su encargado."
+            r = await asyncio.to_thread(PR.nuevo_proyecto, nombre, resto, stack, None, None, False, None, True)
+        except N.Rechazo as e:
+            return f"No se creó el proyecto: {e}"
+        log.info("hermes-sdd: %s prepara el proyecto %s en %s", persona, r["tablero"], r["repo"])
+        tema = await _tema_encargado(r["tablero"], r["repo"], uid, bienvenida=(
+            f"🧭 Soy el encargado de «{r['tablero']}». El proyecto aún no ha arrancado: pásame lo que tengas "
+            "(documentos, requisitos casi listos, capturas, enlaces) y te preguntaré lo que falte, con opciones y la "
+            "que recomiendo primero. Cuando lo tengamos, dime «lanza» y arranca con todo eso."))
+        return (f"🧭 Proyecto {r['tablero']} preparado (sin lanzar)\n📁 {r['repo']}\n🧱 {r['stack']}\n{tema}")
 
     async def _cmd_cambio(raw_args: str = "") -> str:
         persona, _ = _autorizado_en_sesion()
@@ -938,6 +973,8 @@ def register(ctx):
     ctx.register_command("anular", _cmd_anular, description="Anula la aceptación de una FASE", args_hint="[proyecto] [fase] [motivo]")
     ctx.register_command("mantenimiento", _cmd_mantenimiento, description="Revisa ahora los proyectos SDD entregados (umbrales)", args_hint="[proyecto]")
     ctx.register_command("puertas", _cmd_puertas, description="Puertas SDD abiertas, con sus botones")
+    ctx.register_command("preparar", _cmd_preparar, description="Crea un proyecto SDD sin lanzarlo: su encargado recoge la entrada",
+                         args_hint="[nombre] [stack] [qué quieres construir]")
     ctx.register_command("encargado", _cmd_encargado, description="Tema de Telegram para hablar con el encargado de un proyecto",
                          args_hint="[proyecto]")
 

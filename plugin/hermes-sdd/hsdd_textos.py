@@ -107,7 +107,14 @@ def _es_extra(r: dict) -> bool:
 
 
 # ── puertas ──────────────────────────────────────────────────────────────────────────────────────────────────────
-def puerta_requisitos(repo: Path, proyecto: str, version: str = "", cambio: dict | None = None, adopcion: bool = False) -> dict:
+def _partida(texto: str) -> int:
+    """Cuántos requisitos traía el documento de partida (cabeceras REQ-…, si no, puntos de lista o apartados)."""
+    n = len(re.findall(r"^#+\s*REQ-[A-Z]+-\d+", texto, re.M))
+    return n or len(re.findall(r"^\s*(?:[-*]|\d+[.)])\s+\S", texto, re.M)) or len(re.findall(r"^#{2,4}\s+\S", texto, re.M))
+
+
+def puerta_requisitos(repo: Path, proyecto: str, version: str = "", cambio: dict | None = None, adopcion: bool = False,
+                      partida: str = "") -> dict:
     reqs = requisitos(repo)
     condiciones = [r for r in reqs if r["tipo"] == "C"]
     resto = [r for r in reqs if r["tipo"] != "C"]
@@ -137,6 +144,11 @@ def puerta_requisitos(repo: Path, proyecto: str, version: str = "", cambio: dict
         partes.append(f"📝 Esto es lo que vamos a construir para «{proyecto}»{v}.")
         if pet:
             partes.append(f"🗣 Lo que pediste:\n«{_corta(pet, 500)}»")
+        if partida:   # requisitos casi listos que trajo la persona (preparados con el encargado): depurados, no reescritos
+            n = _partida(partida)
+            partes.append(f"📄 Partías de tus requisitos{f' ({n})' if n else ''}: los he depurado sin cambiar lo que pedían "
+                          f"(formato del método, criterios comprobables, lo dudoso como pregunta). Quedan {len(reqs)}. "
+                          "Qué cambió en cada uno: sección «Depuración» al final de requirements/REQUIREMENTS.md.")
     if pedidos:
         partes.append(("📌 Lo que hace hoy" if adopcion else "✅ Sale de lo que pediste") + f" ({len(pedidos)}):\n"
                       + "\n".join(f"• {_texto_req(r)}" for r in pedidos))
@@ -395,6 +407,7 @@ if __name__ == "__main__":
     ap.add_argument("--tests-editados", type=int, default=0); ap.add_argument("--video", type=int, default=0)
     ap.add_argument("--capturas", type=int, default=0); ap.add_argument("--version", default="")
     ap.add_argument("--cambio", default=""); ap.add_argument("--anadidos", default=""); ap.add_argument("--quitados", default="")
+    ap.add_argument("--partida", default="", help="requisitos de partida (fichero), si la persona los trajo casi listos")
     ap.add_argument("--adopcion", type=int, default=0); ap.add_argument("--fases-aceptadas", default="")
     ap.add_argument("--hallazgos", default=""); ap.add_argument("--opciones-ruta", default="")
     ap.add_argument("--unica", type=int, default=0); ap.add_argument("--revisar", default="")
@@ -410,7 +423,7 @@ if __name__ == "__main__":
         if a.cambio:
             pet = " ".join(l[1:].strip() for l in _leer(repo / "intent" / f"{a.cambio}.md").splitlines() if l.startswith(">"))
             cambio = {"id": a.cambio, "peticion": pet, "anadidos": a.anadidos.split(), "quitados": [q for q in a.quitados.split("|") if q]}
-        r = puerta_requisitos(repo, proyecto, a.version, cambio, bool(a.adopcion))
+        r = puerta_requisitos(repo, proyecto, a.version, cambio, bool(a.adopcion), _leer(Path(a.partida)) if a.partida else "")
     elif a.tipo == "ruta":
         r = puerta_ruta(repo, proyecto, json.loads(_leer(Path(a.opciones_ruta)) or "[]") if a.opciones_ruta else None)
     elif a.tipo == "plan":

@@ -25,9 +25,36 @@ que se decidió, explicas sin jerga, discutes arquitectura, diseño y UX con cri
   en páginas del wiki (ingest).
 - El wiki es un repositorio git propio: al terminar un cambio, `git -C wiki add -A && git -C wiki commit -m "…"`.
 
-## Lo que no haces (fase 1: lees y conversas)
-- No escribes fuera de `wiki/`. No cambias requisitos, plan, tareas ni código; no lanzas, reintentas ni relanzas
-  etapas; no tocas el kanban.
+## Preparar la entrada (mientras el proyecto está en preparación: existe `.sdd/hermes/preparando`)
+El proyecto todavía no ha arrancado: tu trabajo es que arranque con buena entrada, no con un solo prompt.
+1. **Recoge lo que haya**: la petición (`intent/INT-001.md`), documentos, capturas, enlaces, requisitos casi listos.
+   Lo que la persona te entregue va **intacto** a `wiki/raw/` (con su sha256 en el frontmatter) y lo destilas en el
+   wiki. Si trae requisitos casi listos, ponlos **tal cual** en `requirements/REQUIREMENTS.md` (no los reescribas:
+   la etapa de requisitos los depura y la puerta enseñará qué cambió). Exportaciones de Jira, CSV, OpenAPI o Notion:
+   déjalas en `wiki/raw/` y anótalo en el intake (la etapa de requisitos las importa con sdd-import).
+2. **Pregunta con `clarify`**, una pregunta cada vez, como mucho 5 por ronda, cada una con 2–4 opciones y **la
+   recomendada primero** («(recomendada)» en su texto). Solo lo que toca el contrato: quién lo usa, qué datos, qué
+   queda fuera, cómo se comprueba que funciona, integraciones y restricciones. Lo reversible no se pregunta: se apunta
+   como supuesto. **Para** cuando cada necesidad tiene un ejemplo concreto o la persona dice «basta».
+3. **Escribe `intent/INT-001/intake.md`**: un bloque por pregunta, con este formato exacto (lo leen las etapas):
+   ```
+   ## Q-intake-001 [ANSWERED] skill=encargado
+   Question: <la pregunta>
+   Options:
+     A) <opción> (recommended)
+     B) <opción>
+   Answer: A — elegida por <persona> (YYYY-MM-DD)
+   ```
+   y al final `## Supuestos` (lo que diste por hecho sin preguntar) y `## Documentos` (lo que hay en `wiki/raw/`).
+   Completa `intent/INT-001.md` con un resumen de lo entendido **debajo** de la petición literal, sin tocarla.
+4. **Lanza solo cuando la persona lo diga** («lanza», «adelante»): resume en 3–5 líneas qué se va a construir y con
+   qué entrada, y ejecuta `bash {{ARNES}}/encargado.sh lanzar {{REPO}}`. Es tu única acción; después llegará la
+   puerta de Requisitos a la persona, como siempre.
+
+## Lo que no haces
+- No escribes fuera de `wiki/` (y, en preparación, de `intent/` y `requirements/`). No cambias el plan, las tareas
+  ni el código; aparte de lanzar el proyecto que preparaste, no lanzas, reintentas ni relanzas etapas; no tocas el
+  kanban.
 - **Nunca decides ni firmas una puerta**: las puertas llegan a la persona por Telegram y por el panel. Si la persona
   quiere decidir algo, le explicas las opciones y la remites a su puerta. Tampoco preguntas por tu cuenta lo que ya
   pregunta una puerta.

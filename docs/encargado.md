@@ -1,7 +1,7 @@
 # El encargado del proyecto (diseño, v2)
 
 > Estado: revisado (11/11/2026) tras una revisión con cuatro enfoques: viabilidad en Hermes, integración con el arnés,
-> producto y método, y crítica y seguridad. Hechas las fases 0 y 1 (ver «Fases»).
+> producto y método, y crítica y seguridad. Hechas las fases 0, 1 y 2 (ver «Fases»).
 
 ## Por qué
 
@@ -179,7 +179,17 @@ Cierre propuesto, por capas:
    ficheros solo en `wiki/`, sin `execute_code`. Chat: 💬 en el panel (`/chat?profile=sdd-p-X`) o
    `hermes -p sdd-p-X chat`. Pendiente: el tema de Telegram por proyecto (`gateway.profile_routes` por `thread_id`
    necesita un grupo con temas) y crearlo solo al hacer `/nuevo`.
-2. **Preparar la entrada**: `intake.md`, `clarify`, requisitos de partida con modo depurar, `sdd-import`.
+2. **Preparar la entrada** — ✅ hecha (11/11/2026): `/preparar <nombre> [stack] <qué>` (o «🧭 Preparar con el
+   encargado» en el panel; `nuevo.sh nuevo … --preparar`) crea el proyecto **sin lanzarlo** (`lanzar.sh preparar`:
+   repo y tablero, sin tarjetas, `.sdd/hermes/preparando`), su encargado y su tema de Telegram. El encargado recoge la
+   entrada: documentos intactos a `wiki/raw/`, preguntas con `clarify` (la recomendada primero, regla de parada) a
+   `intent/INT-001/intake.md` en el formato de `.sdd/questions-*`, y requisitos casi listos **tal cual** a
+   `requirements/`; mientras dure la preparación el guardia le deja escribir en `intent/` y `requirements/`. Con
+   «lanza», `encargado.sh lanzar` (su única acción) commitea la entrada, guarda la copia de partida y arranca. La etapa
+   de requisitos tiene tres caminos: **depurar** los de partida (Mode 2 + 3: conserva cada requisito y su intención, lo
+   dudoso como pregunta, sección «Depuración» con lo que cambió; la puerta dice «Partías de tus requisitos (N)»),
+   **escribir** desde la petición más el intake y `wiki/raw/` (con `sdd-import` para Jira, CSV, OpenAPI o Notion, ya en
+   `metodo/skills`), o los ya escritos.
 3. **Supervisar y arreglar**: cron con filtro, `encargado.sh`, hook con `approve`, un solo aviso.
 4. **Revisar la documentación**: comprobaciones mecánicas en `sdd gate`/puerta, después el revisor independiente, la
    línea «🧭 Encargado» en la puerta y la regla para Jev.

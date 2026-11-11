@@ -1,8 +1,10 @@
-"""Guardia del ENCARGADO (hook pre_tool_call de Hermes, fail-closed). Fase 1: lee y conversa.
+"""Guardia del ENCARGADO (hook pre_tool_call de Hermes, fail-closed). Lee, conversa y prepara la entrada.
 
   python3 -I guardia.py <repo> <arnes>      (lee el evento de stdin)
 
-- write_file / patch: solo dentro de <repo>/wiki/ (su memoria, un repositorio git propio).
+- write_file / patch: dentro de <repo>/wiki/ (su memoria, un repositorio git propio). Mientras el proyecto está en
+  preparación (<repo>/.sdd/hermes/preparando, lanzar.sh preparar), también intent/ y requirements/ (la entrada).
+- Su única acción: `bash <arnes>/encargado.sh lanzar <repo>`, y solo en preparación.
 - execute_code: nunca.
 - terminal: lista BLANCA de órdenes de solo lectura, segmento a segmento (; && || |). Sin redirecciones a ficheros,
   sin sustituciones ($( ) ni ``), nada de ~/.hermes salvo el propio arnés. Git del proyecto solo para leer; en el wiki,
@@ -21,12 +23,14 @@ import sys
 REPO, ARNES = os.path.realpath(sys.argv[1]), os.path.realpath(sys.argv[2])
 ARNES_RUTAS = {ARNES, os.path.abspath(os.path.expanduser(sys.argv[2]))}   # la real (…/0.3.2) y la del enlace (…/actual)
 WIKI = os.path.join(REPO, "wiki")
+PREPARANDO = os.path.exists(os.path.join(REPO, ".sdd", "hermes", "preparando"))
+ENTRADA = [os.path.join(REPO, "intent"), os.path.join(REPO, "requirements")] if PREPARANDO else []
 HOME = os.path.expanduser("~")
 
 
 def bloquear(motivo: str) -> None:
-    print(json.dumps({"decision": "block", "reason": f"hermes-sdd (encargado): {motivo}. En la fase 1 el encargado lee "
-                      "y conversa, y solo escribe en su wiki; explícale a la persona qué harías."}, ensure_ascii=False))
+    print(json.dumps({"decision": "block", "reason": f"hermes-sdd (encargado): {motivo}. El encargado lee, conversa, "
+                      "escribe en su wiki y, mientras el proyecto se prepara, la entrada; explícale a la persona qué harías."}, ensure_ascii=False))
     sys.exit(2)
 
 
@@ -41,7 +45,7 @@ def dentro(p: str, d: str) -> bool:
 
 LECTURA = {"ls", "cat", "head", "tail", "grep", "egrep", "rg", "wc", "jq", "sort", "uniq", "cut", "tr", "diff", "tree",
            "file", "stat", "date", "echo", "printf", "pwd", "basename", "dirname", "realpath", "column", "nl", "true",
-           "cd", "test", "["}
+           "cd", "test", "[", "shasum", "sha256sum", "md5", "md5sum"}
 GIT_LECTURA = {"log", "show", "diff", "status", "blame", "describe", "rev-parse", "ls-files", "shortlog", "rev-list",
                "cat-file", "grep", "reflog"}
 SDD_LECTURA = {"status", "trace", "gate", "lint", "tasks", "coverage", "context", "query", "impact", "gaps", "accept",
@@ -73,6 +77,10 @@ def segmento(seg: list, cwd: str) -> str | None:
                 or (sub == "branch" and all(a in ("-a", "--list", "-v", "-r") for a in args[1:])):
             return None
         return f"git {sub} en el proyecto (solo lectura: log, show, diff, status…)"
+    if cmd in ("bash", "sh") and args and os.path.basename(args[0]) == "encargado.sh":
+        if dentro(ruta(args[0], cwd), ARNES) and args[1:2] == ["lanzar"] and len(args) == 3 and ruta(args[2], cwd) == REPO:
+            return None if PREPARANDO else "el proyecto ya se lanzó"
+        return "de encargado.sh solo puede usar «lanzar» con su propio proyecto"
     if cmd in ("python3", "python"):
         script = next((a for a in args if a.endswith(".py")), "")
         nombre = os.path.basename(script)
@@ -139,8 +147,9 @@ def main() -> None:
         bloquear("sin código suelto")
     if herramienta in ("write_file", "patch"):
         p = ruta(str(entrada.get("path") or entrada.get("file_path") or ""))
-        if not dentro(p, WIKI) or dentro(p, os.path.join(WIKI, ".git")):
-            bloquear(f"solo escribe en su wiki ({WIKI}), no en {p}")
+        if dentro(p, os.path.join(WIKI, ".git")) or not (dentro(p, WIKI) or any(dentro(p, d) for d in ENTRADA)):
+            donde = "su wiki, intent/ y requirements/ (en preparación)" if PREPARANDO else f"su wiki ({WIKI})"
+            bloquear(f"solo escribe en {donde}, no en {p}")
         sys.exit(0)
     if herramienta == "terminal":
         terminal(str(entrada.get("command") or ""), ruta(str(entrada.get("workdir") or entrada.get("cwd") or REPO)))

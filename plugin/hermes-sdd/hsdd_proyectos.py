@@ -203,7 +203,7 @@ def opciones_ruta(tablero: str, propuesta: dict | None = None) -> list:
     return ops
 
 
-GITIGNORE = "node_modules/\ndist/\n.astro/\n__pycache__/\n.venv/\n.DS_Store\n"
+GITIGNORE = "node_modules/\ndist/\n.astro/\n__pycache__/\n.venv/\n.DS_Store\nwiki/\n"   # wiki/: el del encargado (repo propio)
 RESERVADOS = {"default", "todo", "local"}
 
 
@@ -366,8 +366,10 @@ def _tableros(env: dict) -> list:
 
 
 def nuevo_proyecto(nombre: str, que: str, stack: str | None = None, carpeta: str | None = None,
-                   jev: str | None = None, lanzar: bool = True, ruta: str | None = None) -> dict:
+                   jev: str | None = None, lanzar: bool = True, ruta: str | None = None, preparar: bool = False) -> dict:
     """Crea la carpeta, el primer commit y lanza el proyecto. Devuelve {tablero, repo, stack, salida}.
+    `preparar`: no lo lanza; deja el repo y el tablero listos y crea su encargado, que recoge la entrada (preguntas,
+    documentos, requisitos casi listos) y lo lanza cuando la persona lo diga (docs/encargado.md, fase 2).
     Lanza Rechazo (con un mensaje para la persona) si algo no procede; no deja nada a medias si falla antes de git."""
     cfg = config()
     nombre, que = (nombre or "").strip(), (que or "").strip()
@@ -393,7 +395,7 @@ def nuevo_proyecto(nombre: str, que: str, stack: str | None = None, carpeta: str
         raise Rechazo(f"Ya existe {repo} y no está vacía. Si es un proyecto sin el método, adóptalo: "
                       f"lanzar.sh adoptar {repo}")
     env = entorno()
-    if lanzar and tablero in _tableros(env):
+    if (lanzar or preparar) and tablero in _tableros(env):
         raise Rechazo(f"Ya hay un tablero {tablero} en el kanban; elige otro nombre")
     if not shutil.which("git", path=env["PATH"]):
         raise Rechazo("No encuentro git")
@@ -419,6 +421,16 @@ def nuevo_proyecto(nombre: str, que: str, stack: str | None = None, carpeta: str
         sdd["rutas_proyecto"] = {**(sdd.get("rutas_proyecto") or {}), tablero: ruta}
         N.escribir(N.HOME / "sdd.json", sdd)
     salida = ""
+    if preparar:
+        for orden in (["lanzar.sh", "preparar"], ["encargado.sh", "crear"]):
+            r = subprocess.run(["bash", str(_raiz_arnes() / orden[0]), orden[1], str(repo)],
+                               capture_output=True, text=True, timeout=300, env=env)
+            if r.returncode != 0:
+                raise Rechazo(f"El proyecto quedó creado en {repo}, pero falló {orden[0]} {orden[1]}: "
+                              f"{(r.stderr or r.stdout).strip()[-300:]}")
+            salida += r.stdout.strip() + "\n"
+        return {"tablero": tablero, "repo": str(repo), "stack": st["id"], "jev": N.modo_jev(tablero),
+                "ruta": ruta_de(tablero), "salida": salida.strip(), "preparando": True, "encargado": f"sdd-p-{tablero}"}
     if lanzar:
         r = subprocess.run(["bash", str(_raiz_arnes() / "lanzar.sh"), "iniciar", str(repo)],
                            capture_output=True, text=True, timeout=300, env=env)
@@ -492,6 +504,7 @@ def estado(repo: str, tablero: str | None = None, tarjetas: list | None = None) 
     return {
         "proyecto": tablero, "repo": str(r),
         "pausado": (N.HOME / "pausa" / tablero).exists() or (N.HOME / "pausa" / "_todo").exists(),
+        "preparando": (r / ".sdd" / "hermes" / "preparando").exists(),
         "trabajando": activa.get("title") if activa else None,
         "candado": candado,
         "paradas": [{"tarjeta": t["id"], "titulo": t.get("title"), "motivo": t.get("last_failure_error") or t.get("result")} for t in paradas],
@@ -545,7 +558,7 @@ def foto_encargado(perfil: str, marcar: bool = True) -> str:
     e = estado(repo)
     fs = " ".join(f"FASE-{f['n']}{' ✓' if f['aceptada'] else ''}" for f in e["fases"]) or "sin plan todavía"
     l = [f"# Tu proyecto: {e['proyecto']} ({e['repo']})", "",
-         f"- Ahora: {e['trabajando'] or ('ENTREGADO' if e['entregado'] else 'nada en marcha')}"
+         f"- Ahora: {e['trabajando'] or ('ENTREGADO' if e['entregado'] else 'EN PREPARACIÓN: todavía no ha arrancado; recoge la entrada (ver «Preparar la entrada») y lánzalo cuando la persona lo diga' if e.get('preparando') else 'nada en marcha')}"
          + (" · EN PAUSA" if e["pausado"] else ""),
          f"- Requisitos: {e['requisitos'] or 'sin aprobar'} · Fases: {fs} · Coste: {e['coste_usd']} $"]
     for p in e["puertas"]:
@@ -586,6 +599,7 @@ if __name__ == "__main__":   # CLI de nuevo.sh
     sub = ap.add_subparsers(dest="cmd", required=True)
     n = sub.add_parser("nuevo"); n.add_argument("nombre"); n.add_argument("que")
     n.add_argument("--stack"); n.add_argument("--carpeta"); n.add_argument("--jev"); n.add_argument("--ruta"); n.add_argument("--sin-lanzar", action="store_true")
+    n.add_argument("--preparar", action="store_true", help="no lanzar: el encargado recoge la entrada y lo lanza")
     c = sub.add_parser("config"); c.add_argument("--carpeta"); c.add_argument("--stack-defecto")
     c.add_argument("--deshacer", metavar="SEGUNDOS")
     c.add_argument("--deshacer-jev", metavar="SEGUNDOS")
@@ -600,7 +614,8 @@ if __name__ == "__main__":   # CLI de nuevo.sh
     a = ap.parse_args()
     try:
         if a.cmd == "nuevo":
-            r = nuevo_proyecto(a.nombre, a.que, a.stack, a.carpeta, a.jev, lanzar=not a.sin_lanzar, ruta=a.ruta)
+            r = nuevo_proyecto(a.nombre, a.que, a.stack, a.carpeta, a.jev, lanzar=not (a.sin_lanzar or a.preparar),
+                               ruta=a.ruta, preparar=a.preparar)
             print(f"Proyecto {r['tablero']} en {r['repo']} (stack {r['stack']}, Jev {r['jev']}, ruta {r['ruta']})")
             if r["salida"]:
                 print(r["salida"])

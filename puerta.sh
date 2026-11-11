@@ -56,6 +56,7 @@ case "$TIPO" in
       EXTRA+=(--cambio "$INT" --anadidos "$ANADIDOS" --quitados "$QUITADOS")
     fi
     [ -f .sdd/hermes/adopcion ] && EXTRA+=(--adopcion 1)
+    [ -f .sdd/hermes/requisitos-de-partida.md ] && [ ! -f .sdd/hermes/cambio-actual ] && EXTRA+=(--partida .sdd/hermes/requisitos-de-partida.md)
     OPCIONES='[{"verbo":"acepto","etiqueta":"✅ Apruebo"},{"verbo":"cambios","etiqueta":"✏️ Falta o sobra algo","texto":true}]' ;;
   ruta)   # un botón por ruta configurada (SDD → Configuración → Rutas), la recomendada primero; cada opción guarda las
           # etapas que hará, para que el notario firme exactamente lo que se vio

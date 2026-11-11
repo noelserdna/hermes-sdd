@@ -121,14 +121,13 @@ jq -n --arg c "bash $HOME_SDD/actual/metodo/hooks/sdd-executor-deny.sh" --arg t 
 fi
 
 # Menú de Telegram: Bot API admite como mucho 100 órdenes y Hermes muestra 60 por defecto; sin prioridad, las del
-# arnés (plugin) quedan ocultas tras las de Hermes y las skills. Se ponen delante (si nadie fijó ya una prioridad).
-if ! hermes config get platforms.telegram.extra.command_menu.priority >/dev/null 2>&1; then
-  hermes config set platforms.telegram.extra.command_menu.priority \
-    '["nuevo","estado","puertas","cambio","encargado","jev","pausar","reanudar","anular","mantenimiento"]' >/dev/null &&
-    echo "· Menú de Telegram: las órdenes del arnés (/nuevo, /estado, /puertas…) primero"
-else
-  echo "  AVISO: ya hay una prioridad del menú de Telegram; añade nuevo, estado, puertas y cambio para que se vean"
-fi
+# arnés (plugin) quedan ocultas tras las de Hermes y las skills. Se ponen delante, conservando la prioridad que ya hubiera.
+NUESTRAS='["nuevo","preparar","estado","puertas","cambio","encargado","jev","pausar","reanudar","anular","mantenimiento"]'
+ANTES=$(hermes config get platforms.telegram.extra.command_menu.priority --json 2>/dev/null || echo '[]')
+jq -e 'type == "array"' <<< "$ANTES" >/dev/null 2>&1 || ANTES='[]'
+hermes config set platforms.telegram.extra.command_menu.priority \
+  "$(jq -c --argjson n "$NUESTRAS" '$n + [.[] | select(. as $x | $n | index($x) | not)]' <<< "$ANTES")" >/dev/null &&
+  echo "· Menú de Telegram: las órdenes del arnés (/nuevo, /preparar, /estado, /puertas…) primero"
 
 # Encargados ya creados: se ponen al día (SOUL, guardia, skills); sus sesiones, su memoria y su wiki se conservan
 if [ -s "$HOME_SDD/encargados.json" ]; then

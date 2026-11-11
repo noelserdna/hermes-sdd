@@ -224,7 +224,8 @@ async def nuevo(request: Request):
     body = await request.json()
     r = await run_in_threadpool(lambda: _accion(lambda: PR.nuevo_proyecto(
         str(body.get("nombre", "")), str(body.get("que", "")), body.get("stack") or None,
-        body.get("carpeta") or None, body.get("jev") or None, ruta=body.get("ruta") or None)))
+        body.get("carpeta") or None, body.get("jev") or None, lanzar=not body.get("preparar"),
+        ruta=body.get("ruta") or None, preparar=bool(body.get("preparar")))))
     return {**r, "creado_por": persona}
 
 

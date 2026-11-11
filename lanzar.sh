@@ -2,6 +2,7 @@
 # ORQUESTA el proyecto en su tablero kanban, sin interpretar nada: crea tramos de tarjetas y los encadena.
 #
 #   lanzar.sh iniciar <repo>                          prepara el repo (sin LLM) y crea el primer tramo
+#   lanzar.sh preparar <repo>                         solo prepara el repo y el tablero (el encargado recoge la entrada)
 #   lanzar.sh siguiente <repo> <puerta> <resultado>   lo llama el notario al cerrar una puerta
 #   lanzar.sh cambio <repo> "<petición>"              un cambio o una funcionalidad nueva (también por /cambio)
 #   lanzar.sh adoptar <repo>                          un repo existente sin método: línea base desde el código
@@ -134,6 +135,11 @@ tarjeta() {  # tarjeta <título> <padre|-> <runtime> <etapa> [fase] — imprime 
 }
 
 case "$CMD" in
+  preparar)     # repo y tablero listos, SIN tarjetas: el encargado prepara la entrada y lo lanza (encargado.sh lanzar)
+    preparar
+    touch .sdd/hermes/preparando
+    echo "Proyecto $BOARD preparado: su encargado recoge la entrada; se lanza con encargado.sh lanzar $REPO" ;;
+
   iniciar)
     preparar
     T=$(tarjeta "Requisitos" - 40m requisitos)

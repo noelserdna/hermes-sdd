@@ -174,8 +174,19 @@ $errs"
 
 case "$ETAPA" in
   requisitos)
-    if [ ! -s requirements/REQUIREMENTS.md ] || [ -s "$FB" ]; then
-      claude_etapa requirements-engineer "/sdd-requirements-engineer — $ARNES Escribe las necesidades y los requisitos a partir de la petición literal de intent/ (y de lo que ya haya en requirements/). Verification: usa test siempre que un test pueda leerlo (también en restricciones REQ-C: idioma de los textos, dependencias, stack, sin red); inspection o demo solo para lo que ningún test puede observar, porque eso lo tiene que confirmar una persona a mano en la puerta."
+    VERIF="Verification: usa test siempre que un test pueda leerlo (también en restricciones REQ-C: idioma de los textos, dependencias, stack, sin red); inspection o demo solo para lo que ningún test puede observar, porque eso lo tiene que confirmar una persona a mano en la puerta."
+    # La entrada que preparó el encargado (docs/encargado.md, fase 2): sus preguntas ya contestadas y los documentos
+    INTAKE=""
+    [ -f intent/INT-001/intake.md ] && INTAKE=" Lee también intent/INT-001/intake.md: preguntas que la persona ya contestó (no las repitas; sus respuestas y los Supuestos son decisiones tomadas)."
+    [ -d wiki/raw ] && [ -n "$(find wiki/raw -type f ! -name .gitkeep 2>/dev/null | head -1)" ] &&
+      INTAKE="$INTAKE Los documentos que entregó están en wiki/raw/ (solo lectura): úsalos como fuente; si hay exportaciones de Jira, CSV, OpenAPI o Notion, impórtalas con sdd-import."
+    PARTIDA=.sdd/hermes/requisitos-de-partida.md
+    if [ -s "$FB" ] || [ ! -s requirements/REQUIREMENTS.md ]; then
+      claude_etapa requirements-engineer "/sdd-requirements-engineer — $ARNES Escribe las necesidades y los requisitos a partir de la petición literal de intent/ (y de lo que ya haya en requirements/). $VERIF$INTAKE"
+    elif [ -f "$PARTIDA" ] && [ ! -f .sdd/hermes/requisitos-depurados ]; then
+      # Requisitos casi listos de la persona: se DEPURAN (Mode 2 auditar + Mode 3 formato), no se reescriben
+      claude_etapa requirements-engineer "/sdd-requirements-engineer — $ARNES La persona trajo sus requisitos casi listos en requirements/REQUIREMENTS.md (copia del original en $PARTIDA). DEPÚRALOS, no los reescribas (Mode 2, audit, y Mode 3, format): conserva cada requisito, su intención y sus ids (si no tienen, asigna REQ-F-NNN, REQ-NF-NNN, REQ-C-NNN) y llévalos al formato del método (EARS, Para el cliente, Needs, Verification, prioridad, criterios con datos concretos), y escribe requirements/CUSTOMER-NEEDS.md a partir de intent/ y del intake. Lo vago, contradictorio o sin criterio comprobable NO lo inventes: deja una pregunta [OPEN] con opciones (la recomendada primero) en .sdd/questions-requirements-engineer.md. Al final de REQUIREMENTS.md añade «## Depuración»: por requisito, qué cambió respecto al original (formato, criterio añadido, partido en dos, dudoso → pregunta). $VERIF$INTAKE"
+      touch .sdd/hermes/requisitos-depurados
     else RES='{"outcome":"done","reason":"requisitos ya escritos"}'; fi
     requisitos_legibles requirements-engineer sdd-requirements-engineer
     { sed -i.bak -E 's/^> \*\*Status:\*\* *Approved.*/> **Status:** Review/' requirements/REQUIREMENTS.md && rm -f requirements/REQUIREMENTS.md.bak; } 2>/dev/null || true

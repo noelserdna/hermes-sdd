@@ -276,6 +276,14 @@ plan, el código y el historial; discute arquitectura, diseño y UX contigo; y *
 **solo lee, conversa y escribe en su wiki**: no decide puertas, no relanza etapas ni toca el código (un guardia lo
 impide). Se crea con **🧭 Crear encargado** en la pestaña SDD (Proyectos) o con `bash encargado.sh crear <repo>`, y se
 habla con él con **💬 Hablar con el encargado** (el chat del panel con su perfil) o `hermes -p sdd-p-<proyecto> chat`.
+Desde Telegram, `/encargado <proyecto>` le abre un tema propio en tu chat con el bot (activa antes los temas del bot
+en @BotFather: Threads Settings → Threaded Mode).
+
+**Preparar antes de lanzar**: si tienes más que una frase (documentos, requisitos casi listos, capturas), crea el
+proyecto con `/preparar <nombre> [stack] <qué>` o **🧭 Preparar con el encargado** en el panel. No arranca: su
+encargado te abre un tema, recoge lo que le pases, te pregunta lo que falte (con opciones y la recomendada primero) y,
+cuando le digas «lanza», arranca con todo eso. Si le diste requisitos, la etapa de requisitos los **depura** en vez de
+reescribirlos, y la puerta te dice de cuántos partías y qué cambió.
 Diseño y fases siguientes: [docs/encargado.md](docs/encargado.md).
 
 ---

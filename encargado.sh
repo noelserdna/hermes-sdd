@@ -5,6 +5,8 @@
 #                                    no borra el perfil si ya existe; conserva sus sesiones y su memoria)
 #   encargado.sh perfil <repo>       imprime el nombre del perfil del proyecto
 #   encargado.sh borrar <repo>       borra el perfil (el wiki se queda en el repo)
+#   encargado.sh lanzar <repo>       lanza un proyecto preparado (lanzar.sh preparar) con la entrada que recogió
+#   encargado.sh tema <repo> <chat> <hilo>   enlaza un tema de Telegram con el encargado (lo usa /encargado)
 #
 # Hablar con él: en el panel de Hermes, /chat?profile=sdd-p-<proyecto>, o `hermes -p sdd-p-<proyecto> chat`.
 #
@@ -15,7 +17,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 HH="$HOME/.hermes"; HOME_SDD="${HERMES_SDD_HOME:-$HH/hermes-sdd}"
-CMD=${1:-}; [ -n "${2:-}" ] || { sed -n '2,12p' "$0" >&2; exit 2; }
+CMD=${1:-}; [ -n "${2:-}" ] || { sed -n '2,15p' "$0" >&2; exit 2; }
 REPO=$(cd "$2" && pwd)
 BOARD=$(basename "$REPO" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')
 P="sdd-p-$BOARD"
@@ -111,6 +113,20 @@ case "$CMD" in
     echo "Encargado de $BOARD listo: perfil $P, modelo $(modelo), wiki en $REPO/wiki"
     echo "  Hablar con él: panel de Hermes → /chat?profile=$P   ·   hermes -p $P chat" ;;
 
+  lanzar)   # el proyecto preparado (lanzar.sh preparar) arranca con la entrada que recogió el encargado. Es la única
+            # acción que el guardia le permite, y solo mientras exista .sdd/hermes/preparando.
+    cd "$REPO"
+    [ -f .sdd/hermes/preparando ] || { echo "ERROR: $BOARD no está en preparación (ya se lanzó)" >&2; exit 1; }
+    [ -s intent/INT-001.md ] || { echo "ERROR: falta intent/INT-001.md (la petición)" >&2; exit 1; }
+    # Requisitos de partida (casi listos, de la persona): la etapa de requisitos los depura en vez de escribirlos, y
+    # la puerta enseña qué cambió respecto a esta copia
+    if [ -s requirements/REQUIREMENTS.md ]; then cp requirements/REQUIREMENTS.md .sdd/hermes/requisitos-de-partida.md; fi
+    git add -- intent $( [ -d requirements ] && echo requirements ) 2>/dev/null || true
+    git diff --cached --quiet || git commit -qm "docs(intent): entrada preparada con el encargado" --no-verify
+    [ -z "$(git status --porcelain)" ] || { echo "ERROR: quedan cambios sin commit fuera de intent/ y requirements/:" >&2; git status --short >&2; exit 1; }
+    rm -f .sdd/hermes/preparando
+    bash "$ROOT/lanzar.sh" iniciar "$REPO" ;;
+
   tema)   # encargado.sh tema <repo> <chat_id> <thread_id>: ese tema de Telegram habla con el encargado del proyecto.
           # Ruta por chat Y tema (si fuera solo por chat, todo el privado iría al encargado y se perderían los avisos);
           # el tema queda también en dm_topics para que Hermes lo conozca. El gateway la carga al reiniciar.
@@ -139,5 +155,5 @@ case "$CMD" in
     registrar ""
     echo "Perfil $P borrado (el wiki sigue en $REPO/wiki)" ;;
 
-  *) sed -n '2,12p' "$0" >&2; exit 2 ;;
+  *) sed -n '2,15p' "$0" >&2; exit 2 ;;
 esac

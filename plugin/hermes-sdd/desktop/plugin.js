@@ -218,6 +218,14 @@ function crearSDD(E) {
     const base = carpeta.trim() || cfg.carpeta
     const listo = tablero.length >= 2 && que.trim().length >= 20
 
+    if (hecho && hecho.preparando)
+      return h('div', { style: S.pagina }, h(Tarjeta, { titulo: `🧭 Proyecto ${hecho.tablero} preparado (sin lanzar)` },
+        h('div', { style: S.texto }, `Carpeta: ${hecho.repo}\nStack: ${hecho.stack} · Encargado: ${hecho.encargado}`),
+        h('div', { style: S.texto }, 'Habla con su encargado: pásale lo que tengas (documentos, requisitos casi listos, capturas, enlaces), te preguntará lo que falte con opciones y la que recomienda primero, y cuando le digas «lanza» arrancará con todo eso. También desde Telegram: /encargado ' + hecho.tablero),
+        h('div', { style: S.fila },
+          E.abrirChat ? h(C.Boton, { tono: 'principal', onClick: () => E.abrirChat(hecho.encargado) }, '💬 Hablar con el encargado') : null,
+          h(C.Boton, { tono: 'borde', onClick: () => { setHecho(null); setNombre(''); setQue('') } }, 'Crear otro'))))
+
     if (hecho)
       return h('div', { style: S.pagina }, h(Tarjeta, { titulo: `✅ Proyecto ${hecho.tablero} en marcha` },
         h('div', { style: S.texto }, `Carpeta: ${hecho.repo}\nStack: ${hecho.stack} · Jev: ${hecho.jev} · Ruta recomendada: ${nombreRuta(cfg, hecho.ruta)}\n${hecho.salida || ''}`),
@@ -247,8 +255,12 @@ function crearSDD(E) {
         h(C.Boton, {
           tono: 'principal', disabled: !listo || a.ocupado,
           onClick: () => a.ejecutar(() => api.post('/nuevo', { nombre, que, stack, carpeta: carpeta.trim(), jev, ruta }), r => { setHecho(r); alCrear() })
-        }, a.ocupado ? 'Lanzando…' : '🚀 Lanzar'),
-        h('span', { style: S.meta }, listo ? 'Crea la carpeta con git, el tablero del kanban y la primera tarjeta (requisitos).' : 'Pon un nombre y una frase de lo que quieres.')),
+        }, a.ocupado ? 'Creando…' : '🚀 Lanzar'),
+        h(C.Boton, {
+          tono: 'borde', disabled: !listo || a.ocupado,
+          onClick: () => a.ejecutar(() => api.post('/nuevo', { nombre, que, stack, carpeta: carpeta.trim(), jev, ruta, preparar: true }), r => { setHecho(r); alCrear() })
+        }, '🧭 Preparar con el encargado'),
+        h('span', { style: S.meta }, listo ? 'Lanzar: arranca ya con esta frase. Preparar: antes le pasas a su encargado documentos o requisitos casi listos y te pregunta lo que falte.' : 'Pon un nombre y una frase de lo que quieres.')),
       h(Error, { texto: a.error })))
   }
 
