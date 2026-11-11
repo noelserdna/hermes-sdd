@@ -430,6 +430,84 @@ def nuevo_proyecto(nombre: str, que: str, stack: str | None = None, carpeta: str
             "ruta": ruta_de(tablero), "salida": salida}
 
 
+
+# ── estado de un proyecto (lo leen /estado, el panel y el encargado) ────────────────────────────────────────────────
+def _jsonl_cola(f: Path, n: int) -> list:
+    try:
+        lineas = f.read_text().splitlines()[-n:]
+    except OSError:
+        return []
+    out = []
+    for l in lineas:
+        try:
+            out.append(json.loads(l))
+        except ValueError:
+            pass
+    return out
+
+
+def estado(repo: str, tablero: str | None = None, tarjetas: list | None = None) -> dict:
+    """Foto del proyecto sin LLM: qué hace, dónde está parado, qué espera de una persona, fases, coste y lo último que
+    pasó (etapas.jsonl, puertas.jsonl). `tarjetas`: las del kanban si ya se tienen (si no, se piden)."""
+    r = Path(repo)
+    tablero = tablero or slug(r.name)
+    if tarjetas is None:
+        try:
+            out = subprocess.run(["hermes", "kanban", "--board", tablero, "list", "--json"], capture_output=True,
+                                 text=True, timeout=60).stdout
+            datos = json.loads(out or "[]")
+            tarjetas = datos if isinstance(datos, list) else datos.get("tasks", [])
+        except Exception:
+            tarjetas = []
+    ts = tarjetas
+    activa = next((t for t in ts if t.get("status") == "running"), None)
+    # una tarjeta parada deja de contar si después se creó otra con el mismo nombre (el paso se relanzó)
+    paradas = [t for t in ts if t.get("assignee") == "sdd-estacion" and t.get("status") in ("blocked", "triage")
+               and not any(o.get("title") == t.get("title") and (o.get("created_at") or 0) > (t.get("created_at") or 0) for o in ts)]
+    puertas = [p for p in (N.leer(f) for f in (N.HOME / "puertas").glob("*.json"))
+               if p and p.get("tablero") == tablero and p.get("estado") in ("abierta", "decidida")]
+    candado = None
+    lock = r / ".sdd" / "hermes" / "lock"
+    if lock.is_dir():
+        pid = (lock / "pid").read_text().strip() if (lock / "pid").exists() else ""
+        vivo = False
+        if pid.isdigit():
+            try:
+                os.kill(int(pid), 0); vivo = True
+            except OSError:
+                pass
+        candado = {"run": (lock / "run").read_text().strip() if (lock / "run").exists() else None, "vivo": vivo}
+    def git(*a):
+        return subprocess.run(["git", "-C", str(r), *a], capture_output=True, text=True).stdout.strip()
+    tags = git("tag", "-l").split()
+    fases = []
+    for f in sorted((r / "plan" / "fases").glob("FASE-*.md")):
+        m = re.match(r"FASE-0*(\d+)", f.name)
+        if m:
+            fases.append({"n": int(m.group(1)), "aceptada": f"fase-{m.group(1)}-accepted" in tags})
+    coste = 0.0
+    for f in (r / ".sdd" / "hermes" / "runs").glob("*.json"):
+        coste += float((N.leer(f, {}) or {}).get("total_cost_usd") or 0)
+    req = sorted((t for t in tags if t.startswith("requirements-v")), key=lambda t: [int(x) for x in re.findall(r"\d+", t)])
+    return {
+        "proyecto": tablero, "repo": str(r),
+        "pausado": (N.HOME / "pausa" / tablero).exists() or (N.HOME / "pausa" / "_todo").exists(),
+        "trabajando": activa.get("title") if activa else None,
+        "candado": candado,
+        "paradas": [{"tarjeta": t["id"], "titulo": t.get("title"), "motivo": t.get("last_failure_error") or t.get("result")} for t in paradas],
+        "aparcadas": sum(1 for t in ts if t.get("status") == "scheduled"),
+        "puertas": [{"id": p.get("id"), "titulo": p.get("titulo"), "tipo": p.get("tipo"), "estado": p.get("estado"),
+                     "bloqueada": bool(p.get("bloqueo")), "preguntas": len(p.get("preguntas") or [])} for p in puertas],
+        "pasos_hechos": sum(1 for t in ts if t.get("status") == "done"),
+        "entregado": any(t.startswith("entrega-") for t in tags),
+        "requisitos": req[-1] if req else None,
+        "fases": fases,
+        "coste_usd": round(coste, 2),
+        "ultimas_etapas": _jsonl_cola(r / ".sdd" / "hermes" / "etapas.jsonl", 5),
+        "ultimas_puertas": _jsonl_cola(r / ".sdd" / "hermes" / "puertas.jsonl", 5),
+    }
+
+
 if __name__ == "__main__":   # CLI de nuevo.sh
     import argparse
     ap = argparse.ArgumentParser(prog="nuevo.sh", description="Crea y lanza un proyecto SDD nuevo")
@@ -444,6 +522,7 @@ if __name__ == "__main__":   # CLI de nuevo.sh
     mp = sub.add_parser("modelos"); mp.add_argument("--perfil")
     ru = sub.add_parser("rutas"); ru.add_argument("--defecto")
     op = sub.add_parser("opciones-ruta"); op.add_argument("tablero"); op.add_argument("propuesta", nargs="?")
+    es = sub.add_parser("estado"); es.add_argument("repo"); es.add_argument("--json", action="store_true")
     a = ap.parse_args()
     try:
         if a.cmd == "nuevo":
@@ -458,6 +537,14 @@ if __name__ == "__main__":   # CLI de nuevo.sh
             print(f"Carpeta por defecto: {c['carpeta']} ({c['carpeta_resuelta']})\nStack por defecto: {c['stack_defecto']}\n"
                   f"Ventana para deshacer: {c['deshacer_s']} s ({N.duracion(c['deshacer_s'])}); "
                   f"las de Jev: {c['deshacer_jev_s']} s ({N.duracion(c['deshacer_jev_s'])})")
+        elif a.cmd == "estado":
+            e = estado(a.repo)
+            if a.json:
+                print(json.dumps(e, ensure_ascii=False, indent=1))
+            else:
+                fs = " ".join(f"{f['n']}{'✓' if f['aceptada'] else '·'}" for f in e["fases"])
+                print(f"{e['proyecto']}: {e['trabajando'] or 'sin nada en marcha'} · fases {fs or '-'} · "
+                      f"{len(e['puertas'])} puerta(s) · {e['coste_usd']} $" + (" · ENTREGADO" if e["entregado"] else ""))
         elif a.cmd == "modelo":   # lo usa etapa.sh cuando el proyecto no fija el modelo de una etapa
             print(modelo_para(a.etapa, a.ejecutor))
         elif a.cmd == "rutas":

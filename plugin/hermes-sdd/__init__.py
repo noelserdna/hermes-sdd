@@ -392,7 +392,8 @@ async def _avisar_fallos(bot) -> None:
                 if clave not in avisados:
                     nuevos.append(clave)
                     for chat in _chats():
-                        motivo = _corta_linea(t.get("latest_summary") or t.get("result") or "")
+                        # la lista del kanban no trae latest_summary (solo `show`): el motivo está en el último error o el resultado
+                        motivo = _corta_linea(t.get("last_failure_error") or t.get("latest_summary") or t.get("result") or "")
                         await bot.send_message(chat_id=int(chat), text=(
                             f"⚠️ «{b['slug']}» se ha parado en «{t.get('title')}».\n"
                             + (f"Motivo: {motivo}\n" if motivo else "")
@@ -552,39 +553,20 @@ async def _tarjetas(board: str) -> list:
     return datos if isinstance(datos, list) else datos.get("tasks", [])
 
 
-def _coste(repo: str, desde: float = 0) -> float:
-    total = 0.0
-    for f in (Path(repo) / ".sdd" / "hermes" / "runs").glob("*.json"):
-        if f.stat().st_mtime >= desde:
-            total += float((_leer(f, {}) or {}).get("total_cost_usd") or 0)
-    return round(total, 2)
-
-
 async def _resumen_proyecto(board: str, repo: str) -> str:
-    ts = await _tarjetas(board)
-    activa = next((t for t in ts if t.get("status") == "running"), None)
-    # Una tarjeta parada deja de contar si después se creó otra con el mismo nombre (el paso se relanzó: lanzar.sh
-    # rehacer/reintentar crean tarjetas nuevas y la vieja se queda en el tablero tal cual)
-    paradas = [t for t in ts if t.get("assignee") == "sdd-estacion" and t.get("status") in ("blocked", "triage")
-               and not any(o.get("title") == t.get("title") and (o.get("created_at") or 0) > (t.get("created_at") or 0) for o in ts)]
-    aparcadas = [t for t in ts if t.get("status") == "scheduled"]
-    puertas = [p for p in (_leer(f) for f in (HOME / "puertas").glob("*.json"))
-               if p and p.get("tablero") == board and p.get("estado") in ("abierta", "decidida")]
-    pausado = (HOME / "pausa" / board).exists() or (HOME / "pausa" / "_todo").exists()
-    hecho = sum(1 for t in ts if t.get("status") == "done")
-    entregado = any(t.get("status") == "done" and str(t.get("title", "")).startswith("PUERTA Entrega") for t in ts)
-    lineas = [f"📁 {board}" + (" ⏸ en pausa" if pausado else "")]
-    if puertas:
-        lineas.append(f"  🚪 Esperando tu decisión: {', '.join(p.get('titulo', '') for p in puertas)}")
-    if activa:
-        lineas.append(f"  ▶ Trabajando en: {activa['title']}")
-    if paradas:
-        lineas.append(f"  ⚠️ Parado en: {', '.join(t['title'] for t in paradas)}")
-    if aparcadas:
-        lineas.append(f"  ⏳ {_plural(len(aparcadas), 'paso espera', 'pasos esperan')} a que se renueve la cuota de Claude")
-    if not (puertas or activa or paradas or aparcadas):
-        lineas.append("  ✅ Entregado" if entregado else "  💤 Sin nada en marcha")
-    lineas.append(f"  {_plural(hecho, 'paso hecho', 'pasos hechos')} · {_coste(repo)} $ gastados")
+    e = PR.estado(repo, board, await _tarjetas(board))   # la misma foto que `hsdd_proyectos.py estado` y el encargado
+    lineas = [f"📁 {board}" + (" ⏸ en pausa" if e["pausado"] else "")]
+    if e["puertas"]:
+        lineas.append(f"  🚪 Esperando tu decisión: {', '.join(p['titulo'] or '' for p in e['puertas'])}")
+    if e["trabajando"]:
+        lineas.append(f"  ▶ Trabajando en: {e['trabajando']}")
+    if e["paradas"]:
+        lineas.append(f"  ⚠️ Parado en: {', '.join(t['titulo'] or '' for t in e['paradas'])}")
+    if e["aparcadas"]:
+        lineas.append(f"  ⏳ {_plural(e['aparcadas'], 'paso espera', 'pasos esperan')} a que se renueve la cuota de Claude")
+    if not (e["puertas"] or e["trabajando"] or e["paradas"] or e["aparcadas"]):
+        lineas.append("  ✅ Entregado" if e["entregado"] else "  💤 Sin nada en marcha")
+    lineas.append(f"  {_plural(e['pasos_hechos'], 'paso hecho', 'pasos hechos')} · {e['coste_usd']} $ gastados")
     return "\n".join(lineas)
 
 

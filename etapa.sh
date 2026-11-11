@@ -26,6 +26,7 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 SDD="$ROOT/metodo/scripts/sdd.mjs"; STATE="$ROOT/metodo/scripts/sdd-state.sh"
 REPO=$(cd "$1" && pwd); ETAPA=$2; FASE=${3:-}
 cd "$REPO"
+T0=$(date +%s); HEAD0=$(git rev-parse HEAD 2>/dev/null || echo ""); EJECUCIONES='[]'   # para etapas.jsonl
 # Ejecutor por etapa: .ejecutores[<etapa>] o, si no, .ejecutor (claude | hermes | replay); el modelo, en .modelos[<etapa>]
 # o, si el proyecto no lo fija, el del perfil de modelos global (sdd.json; por defecto «equilibrado»)
 ejecutor() { jq -r --arg e "$1" '.ejecutores[$e] // .ejecutor // "claude"' .sdd/hermes/hermes-sdd.json 2>/dev/null || echo claude; }
@@ -35,7 +36,28 @@ modelo() {  # el del proyecto (.modelos[<etapa>]); si no fija ninguno, el del pe
   [ -n "$m" ] && { echo "$m"; return; }
   HERMES_SDD_HOME="${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}" python3 "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" modelo "$1" "$(ejecutor "$1")" 2>/dev/null
 }
+registrar_etapa() {  # una línea por etapa en .sdd/hermes/etapas.jsonl: la línea base del encargado (docs/encargado.md)
+  local res=$1 head1 ratio='null'
+  head1=$(git rev-parse HEAD 2>/dev/null || echo "")
+  if [ "$ETAPA" = implementar ] && [ -n "$HEAD0" ] && [ -n "$head1" ] && [ "$HEAD0" != "$head1" ]; then
+    # líneas añadidas en tests frente a código (sin documentación ni registros del método)
+    ratio=$(git diff --numstat "$HEAD0" "$head1" 2>/dev/null | awk '
+      $3 ~ /(^|\/)(acceptance|status|evidencias|\.sdd|task|plan|requirements|spec)\// || $3 ~ /\.md$/ {next}
+      $3 ~ /(^|\/)(tests?|spec|e2e|__tests__)\// || $3 ~ /\.(test|spec)\.[a-z]+$/ {t+=$1; next} {c+=$1}
+      END {printf "{\"tests\":%d,\"codigo\":%d}", t, c}')
+  fi
+  mkdir -p .sdd/hermes
+  jq -nc --argjson res "$(echo "$res" | jq -c . 2>/dev/null || echo '{}')" --argjson ej "$EJECUCIONES" --argjson r "$ratio" \
+    --arg etapa "$ETAPA" --arg fase "$FASE" --arg t "${HERMES_KANBAN_TASK:-}" --arg h0 "$HEAD0" --arg h1 "$head1" \
+    --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" --argjson min "$(( ($(date +%s) - T0) / 60 ))" --arg resumen "${2:-}" --arg puerta "${3:-}" '
+    {ts: $ts, etapa: $etapa, fase: (if $fase == "" then null else $fase end), tarjeta: (if $t == "" then null else $t end),
+     resultado: ($res.outcome // null), motivo: ($res.reason // null), resumen: (if $resumen == "" then null else $resumen end),
+     puerta: (if $puerta == "" then null else $puerta end), minutos: $min,
+     ejecuciones: [$ej[] | .run], coste_usd: ([$ej[] | .cost_usd // 0] | add // 0), turnos: ([$ej[] | .turns // 0] | add // 0),
+     head_antes: $h0, head_despues: $h1, tests_codigo: $r}' >> .sdd/hermes/etapas.jsonl 2>/dev/null || true
+}
 fin() {  # fin <json-del-ejecutor-o-propio> [resumen] [puerta]
+  registrar_etapa "$1" "${2:-}" "${3:-}"
   # Etapa resuelta: las tarjetas bloqueadas de intentos anteriores de esta misma etapa quedan obsoletas y se archivan
   if [ "$(echo "$1" | jq -r .outcome 2>/dev/null)" = done ] && [ -z "${HERMES_SDD_SIN_KANBAN:-}" ]; then
     bash "$ROOT/lanzar.sh" limpiar "$REPO" >/dev/null 2>&1 || true
@@ -81,6 +103,7 @@ claude_etapa() {  # claude_etapa <clave-de-estado> <prompt>
   # Sandbox de Claude Code en las etapas que no abren un navegador (en macOS no puede arrancar Chromium)
   local sb=1; case "$ETAPA" in implementar|aceptar|cierre|brechas|adoptar) sb=0 ;; esac
   res=$(SDD_SANDBOX=$sb bash "$ROOT/executors/$EJEC.sh" "$REPO" "$ETAPA${FASE:+-$FASE}" "$2" "$(modelo "$ETAPA")" | tail -1)
+  EJECUCIONES=$(jq -c --argjson r "$(echo "$res" | jq -c . 2>/dev/null || echo '{}')" '. + [$r]' <<< "$EJECUCIONES")
   [ "$(echo "$res" | jq -r .outcome)" = done ] || fin "$res" "$(echo "$res" | jq -r .reason)"
   # Post-condición: la etapa no puede quedar a medias en el estado del método
   st=$(bash "$STATE" get "$clave" 2>/dev/null || echo "?")

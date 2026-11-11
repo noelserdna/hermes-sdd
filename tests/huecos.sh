@@ -69,6 +69,9 @@ bash "$ROOT/lanzar.sh" rehacer "$R" 9 >/dev/null 2>&1 && bad "rehace una FASE qu
 git add -A && git commit -qm huecos
 o=$(bash "$ROOT/etapa.sh" "$R" implementar 0 | tail -1)
 echo "$o" | jq -e '.outcome == "failed" and (.reason | test("PLAN GAP"))' >/dev/null && ok "implementar con [PLAN GAP] pendiente falla al momento y dice cómo seguir" || bad "implementar: $o"
+e=$(tail -1 .sdd/hermes/etapas.jsonl 2>/dev/null)
+echo "$e" | jq -e '.etapa == "implementar" and .fase == "0" and .resultado == "failed" and (.motivo | test("PLAN GAP")) and .ejecuciones == [] and .coste_usd == 0 and (.head_antes | length) == 40' >/dev/null \
+  && ok "etapas.jsonl: la etapa queda registrada con su resultado y su motivo" || bad "etapas.jsonl: $e"
 
 # 6. la etapa huecos completa los [PLAN GAP] y cierra las preguntas que el implementador dejó por ellos (y solo esas)
 mkdir -p .sdd/hermes && echo '{"ejecutor":"claude","ejecutores":{"huecos":"../tests/ejecutor-falso"}}' > .sdd/hermes/hermes-sdd.json
@@ -93,6 +96,9 @@ Question: ¿Contrato?
 Answer:
 Q
 o=$(FALSO_MODO=huecos bash "$ROOT/etapa.sh" "$R" huecos 0 | tail -1)
+e=$(tail -1 .sdd/hermes/etapas.jsonl 2>/dev/null)
+echo "$e" | jq -e '.etapa == "huecos" and .resultado == "done" and .ejecuciones == ["falso","falso"] and .head_antes != .head_despues' >/dev/null \
+  && ok "etapas.jsonl: una etapa con dos llamadas al ejecutor las suma todas" || bad "etapas.jsonl huecos: $e"
 echo "$o" | jq -e '.outcome == "done"' >/dev/null && ! grep -q 'PLAN GAP' task/TASK-FASE-0.md && ok "la etapa huecos deja la FASE sin [PLAN GAP] ($(echo "$o" | jq -r .resumen))" || bad "huecos: $o"
 grep -q '^## Q-task-implementer-001 \[ANSWERED\]' .sdd/questions-task-implementer.md && grep -q '^Answer: resuelta por el arnés .*TASK-F0-007' .sdd/questions-task-implementer.md \
   && ok "cierra la pregunta del implementador sobre ese hueco" || bad "cerrar: $(cat .sdd/questions-task-implementer.md)"

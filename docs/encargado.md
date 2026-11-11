@@ -153,8 +153,11 @@ Cierre propuesto, por capas:
   incluido).
 
 ## Fases
-0. **Seguridad y datos**: cerrar el agujero de las decisiones fabricadas; `etapas.jsonl`, `puertas.jsonl`, `estado`;
-   arreglar el aviso de fallos. Sirve ya, sin encargado, y da la línea base para medir.
+0. **Seguridad y datos** — ✅ hecha (0.3.2, 11/11/2026): el notario solo firma la decisión que registró un canal en el
+   índice de Hermes; sandbox de Claude Code en las etapas sin navegador; permisos y guardias contra escribir decisiones,
+   puertas o `~/.hermes` (detalle y límites en `docs/ejecutores.md`, «Decisiones fabricadas»). `etapas.jsonl`,
+   `puertas.jsonl` y `hsdd_proyectos.py estado <repo> --json` (que ya usa `/estado`); el aviso de fallos lee el motivo
+   real. Pendiente de esta capa: separar usuarios del sistema para las etapas con navegador.
 1. **Encargado que lee y conversa**: perfil, SOUL, `estado`, resumen «desde la última vez», chat en el panel y tema de
    Telegram. Sin escribir fuera de `notas/` ni actuar.
 2. **Preparar la entrada**: `intake.md`, `clarify`, requisitos de partida con modo depurar, `sdd-import`.

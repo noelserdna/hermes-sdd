@@ -52,6 +52,9 @@ git tag -n20 -l 'requirements-v*' | grep -q "Channel: telegram:111 msg:42" && ok
 grep -q '^> \*\*Status:\*\* Approved' requirements/REQUIREMENTS.md && ok "REQUIREMENTS.md en Approved" || bad "Status no cambia"
 grep -q "^> \*\*Approved by:\*\* Andrés León (Cliente)" requirements/REQUIREMENTS.md && ok "Approved by sustituye al anterior" || bad "Approved by no se sustituye"
 git log -1 --format=%B | grep -q "Gate-Id: g3" && ok "commit con trailer Gate-Id" || bad "commit sin Gate-Id"
+e=$(grep '"puerta":"g3"' .sdd/hermes/puertas.jsonl 2>/dev/null | tail -1)
+echo "$e" | jq -e '.tipo == "requisitos" and .verbo == "acepto" and .persona == "andres" and .canal == "telegram" and (.segundos_hasta_decidir > 0)' >/dev/null \
+  && ok "puertas.jsonl: la puerta firmada queda registrada (quién, canal y cuánto tardó)" || bad "puertas.jsonl: $e"
 # 4. idempotencia: repetir no duplica
 n1=$(git rev-list --count HEAD); firmar g3; n2=$(git rev-list --count HEAD)
 [ $rc -eq 0 ] && [ "$n1" = "$n2" ] && ok "repetir la firma no crea nada nuevo" || bad "no idempotente (${n1}→${n2}, $out)"

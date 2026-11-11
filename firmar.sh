@@ -434,6 +434,20 @@ if ! hecho encadenado; then
 fi
 t=$(mktemp); jq --arg r "$RESUMEN" '.resultado = $r | del(.error)' "$ACTA" > "$t" && mv "$t" "$ACTA"
 IDX="$HOME_SDD/puertas/$GATE.json"   # índice que leen los canales: la puerta queda cerrada
+# Una línea por puerta firmada en .sdd/hermes/puertas.jsonl (línea base del encargado): cuánto tardó la decisión, quién,
+# si Jev decidió después de que una persona le quitara una decisión anterior, y el texto que acompañó
+if ! hecho historial; then
+  jq -nc --slurpfile p "$PUERTA" --slurpfile d "$DECISION" --slurpfile i "$IDX" --arg v "$VERBO" --arg r "$RESUMEN" \
+    --arg g "$GATE" --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '
+    def seg($a): ($a // "" | sub("\\.[0-9]+"; "") | try fromdateiso8601 catch null);
+    $p[0] as $p | $d[0] as $d | ($i[0] // {}) as $i |
+    {ts: $ts, puerta: $g, tipo: $p.tipo, fase: ($p.fase // null), verbo: $v, persona: $d.actor.persona,
+     canal: $d.actor.canal, texto: ($d.texto // ""), resultado: $r,
+     segundos_hasta_decidir: (if seg($d.at) and seg($p.creada) then seg($d.at) - seg($p.creada) else null end),
+     segundos_mirando: ($i.decision.dwell_s // null), jev_vetado: ($i.jev_vetado != null),
+     bloqueada: ($i.bloqueo // false)}' >> .sdd/hermes/puertas.jsonl 2>/dev/null || true
+  marcar historial
+fi
 if [ -f "$IDX" ]; then
   t=$(mktemp); jq --arg r "$RESUMEN" --arg v "$VERBO" '.estado = "firmada" | .resultado = $r | .verbo = $v' "$IDX" > "$t" && mv "$t" "$IDX"
 fi

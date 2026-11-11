@@ -57,4 +57,10 @@ o=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_plan.py" dependencias "$D" | jq -r '.[
 printf '# FASE-0 — Préstamos\n> **Requisitos:** REQ-F-001, REQ-F-002\n\n## Objetivo\n' > "$D/plan/fases/FASE-0-PRESTAMOS.md"; rm "$D/plan/fases/FASE-1-CONSULTAS.md"
 o=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_plan.py" dependencias "$D")
 [ "$o" = "[]" ] && ok "plan: si la pantalla llega en la misma FASE no hay aviso" || bad "misma FASE: $o"
+# ── estado del proyecto (hsdd_proyectos.py estado): la foto que leen /estado, el panel y el encargado ───────────────
+cd "$REPO"; git reset -q --hard requirements-v1.0; mkdir -p .sdd/hermes
+echo '{"etapa":"plan","resultado":"done"}' > .sdd/hermes/etapas.jsonl
+o=$(HERMES_SDD_HOME="$T/home" python3 "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" estado "$REPO" --json 2>/dev/null |
+  jq -c '[.fases[] | "\(.n)\(if .aceptada then "+" else "-" end)"] + [.requisitos, (.ultimas_etapas[0].etapa), (.entregado | tostring)]')
+[ "$o" = '["0+","1-","2-","requirements-v1.1","plan","false"]' ] && ok "estado: fases aceptadas, versión de requisitos y últimas etapas" || bad "estado: $o"
 exit $fail
