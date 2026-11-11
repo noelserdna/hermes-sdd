@@ -45,6 +45,7 @@ PANEL = """// hermes-sdd — pestaña «SDD» del panel web de Hermes (canal das
     tema: {{ borde: "var(--color-border)", acento: "var(--color-primary)", peligro: "var(--color-destructive)" }},
     avisar: () => {{}},
     abrirRuta: null,
+    abrirChat: perfil => {{ window.location.href = "/chat?profile=" + encodeURIComponent(perfil); }},
     intervalo: (fn, ms) => {{ const t = setInterval(fn, ms); return () => clearInterval(t); }},
   }};
   window.__HERMES_PLUGINS__.register("hermes-sdd", crearSDD(E));
@@ -81,6 +82,7 @@ export default {{
       tema: {{ borde: 'var(--ui-stroke-secondary)', acento: 'var(--ui-accent)', peligro: 'var(--ui-text-primary)' }},
       avisar: m => host.notify({{ kind: 'info', message: m }}),
       abrirRuta: ruta => ctx.os.revealPath(ruta),
+      abrirChat: null,   // Desktop: el chat de otro perfil se abre desde su selector de perfiles
       intervalo: (fn, ms) => ctx.setInterval(fn, ms),   // se limpia solo al desactivar o recargar el plugin
       relleno: '16px 20px'
     }})

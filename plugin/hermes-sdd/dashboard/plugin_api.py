@@ -161,6 +161,27 @@ async def jev(request: Request):
     return N.config_jev()
 
 
+@router.post("/encargado")
+async def encargado(request: Request):
+    """Crea (o pone al día) el encargado de un proyecto: perfil sdd-p-<proyecto> y su wiki (encargado.sh crear)."""
+    _actor(request)
+    body = await request.json()
+    tablero = str(body.get("tablero") or "")
+    try:
+        boards = json.loads(subprocess.run(["hermes", "kanban", "boards", "list", "--json"], capture_output=True,
+                                           text=True, timeout=30).stdout or "[]")
+    except Exception:
+        boards = []
+    repo = next((b.get("default_workdir") for b in boards if b.get("slug") == tablero), None)
+    if not repo:
+        raise HTTPException(404, f"no conozco el proyecto {tablero}")
+    raiz = Path((N.leer(N.HOME / "instalacion.json", {}) or {}).get("root") or "")
+    r = subprocess.run(["bash", str(raiz / "encargado.sh"), "crear", repo], capture_output=True, text=True, timeout=300)
+    if r.returncode != 0:
+        raise HTTPException(500, (r.stderr or r.stdout).strip()[-400:] or "encargado.sh falló")
+    return {"salida": r.stdout.strip()}
+
+
 @router.post("/jev")
 async def jev_modo(request: Request):
     """Cambia el modo de Jev (de un proyecto, o el de por defecto sin tablero). Solo una persona autorizada."""
@@ -223,6 +244,7 @@ async def proyectos(request: Request):
             continue
         tags = subprocess.run(["git", "-C", wd, "tag", "-l", "requirements-v*", "fase-*-accepted", "entrega-*"],
                               capture_output=True, text=True).stdout.split()
-        res.append({"tablero": b["slug"], "repo": wd, "hitos": tags, "jev": N.modo_jev(b["slug"]),
+        enc = next((pf for pf, r in (N.leer(N.HOME / "encargados.json", {}) or {}).items() if r == wd), None)
+        res.append({"tablero": b["slug"], "repo": wd, "hitos": tags, "jev": N.modo_jev(b["slug"]), "encargado": enc,
                     "pausado": (N.HOME / "pausa" / b["slug"]).exists() or (N.HOME / "pausa" / "_todo").exists()})
     return {"proyectos": res}

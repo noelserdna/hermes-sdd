@@ -508,6 +508,78 @@ def estado(repo: str, tablero: str | None = None, tarjetas: list | None = None) 
     }
 
 
+
+# ── el encargado del proyecto (docs/encargado.md) ──────────────────────────────────────────────────────────────────
+def modelo_encargado(cfg: dict | None = None) -> str:
+    """Modelo del encargado en formato de Hermes (OpenRouter): `encargado_modelo` de sdd.json (alias o id), Sonnet por
+    defecto: conversa de arquitectura y producto, no es un trabajo para Haiku."""
+    cfg = cfg if cfg is not None else (N.leer(N.HOME / "sdd.json", {}) or {})
+    m = cfg.get("encargado_modelo") or "sonnet"
+    if m in OPENROUTER_DEFECTO:
+        return (modelos_openrouter().get(m) or [OPENROUTER_DEFECTO[m]])[0]
+    return m
+
+
+def _ts(t) -> float:
+    """Segundos de una marca ISO en UTC (las de etapas.jsonl y puertas.jsonl); 0 si no se entiende."""
+    from datetime import datetime, timezone
+    try:
+        return datetime.strptime(str(t)[:19], "%Y-%m-%dT%H:%M:%S").replace(tzinfo=timezone.utc).timestamp()
+    except ValueError:
+        return 0.0
+
+
+def foto_encargado(perfil: str, marcar: bool = True) -> str:
+    """Lo que el encargado de `perfil` encuentra en su prompt al abrir sesión: la foto del proyecto y lo que pasó desde
+    su última sesión (etapas y puertas). Vacío si el perfil no es de un encargado. `marcar`: esta sesión pasa a ser la
+    última vista."""
+    repo = (N.leer(N.HOME / "encargados.json", {}) or {}).get(perfil)
+    if not repo or not Path(repo).is_dir():
+        return ""
+    import time as _t
+    visto_f = N.HOME / "encargados" / f"{perfil}.visto"
+    try:
+        desde = float(visto_f.read_text().strip())
+    except (OSError, ValueError):
+        desde = 0.0
+    e = estado(repo)
+    fs = " ".join(f"FASE-{f['n']}{' ✓' if f['aceptada'] else ''}" for f in e["fases"]) or "sin plan todavía"
+    l = [f"# Tu proyecto: {e['proyecto']} ({e['repo']})", "",
+         f"- Ahora: {e['trabajando'] or ('ENTREGADO' if e['entregado'] else 'nada en marcha')}"
+         + (" · EN PAUSA" if e["pausado"] else ""),
+         f"- Requisitos: {e['requisitos'] or 'sin aprobar'} · Fases: {fs} · Coste: {e['coste_usd']} $"]
+    for p in e["puertas"]:
+        extra = (", bloqueada: solo rechazar" if p["bloqueada"] else "") + (f", {p['preguntas']} pregunta(s)" if p["preguntas"] else "")
+        l.append(f"- Puerta esperando a la persona: «{p['titulo']}» ({p['estado']}{extra})")
+    for t in e["paradas"]:
+        l.append(f"- Parado en «{t['titulo']}»: {(t['motivo'] or '')[:200]}")
+    r = Path(repo) / ".sdd" / "hermes"
+    nuevas = [x for x in _jsonl_cola(r / "etapas.jsonl", 200) if _ts(x.get("ts")) > desde]
+    puertas = [x for x in _jsonl_cola(r / "puertas.jsonl", 200) if _ts(x.get("ts")) > desde]
+    if desde:
+        from datetime import datetime
+        l += ["", f"## Desde tu última sesión ({datetime.fromtimestamp(desde).strftime('%d/%m %H:%M')})"]
+        if not (nuevas or puertas):
+            l.append("- Nada nuevo.")
+    elif nuevas or puertas:
+        l += ["", "## Lo último (primera sesión)"]
+        nuevas, puertas = nuevas[-8:], puertas[-6:]
+    for x in nuevas[-12:]:
+        fase = f" FASE-{x['fase']}" if x.get("fase") else ""
+        l.append(f"- Etapa {x.get('etapa')}{fase}: {x.get('resultado')}"
+                 + (f" — {(x.get('motivo') or '')[:160]}" if x.get("resultado") != "done" else "")
+                 + f" ({x.get('minutos', '?')} min, {round(x.get('coste_usd') or 0, 2)} $)")
+    for x in puertas[-8:]:
+        fase = f" FASE-{x['fase']}" if x.get("fase") else ""
+        l.append(f"- Puerta {x.get('tipo')}{fase}: {x.get('verbo')} por {x.get('persona')} ({x.get('canal')})"
+                 + (f" — «{x['texto'][:160]}»" if x.get("texto") else ""))
+    l += ["", "Tu wiki: wiki/ (lee SCHEMA.md, index.md y el final de log.md antes de escribir)."]
+    if marcar:
+        visto_f.parent.mkdir(parents=True, exist_ok=True)
+        visto_f.write_text(str(_t.time()))
+    return "\n".join(l)[:3900]
+
+
 if __name__ == "__main__":   # CLI de nuevo.sh
     import argparse
     ap = argparse.ArgumentParser(prog="nuevo.sh", description="Crea y lanza un proyecto SDD nuevo")
@@ -523,6 +595,8 @@ if __name__ == "__main__":   # CLI de nuevo.sh
     ru = sub.add_parser("rutas"); ru.add_argument("--defecto")
     op = sub.add_parser("opciones-ruta"); op.add_argument("tablero"); op.add_argument("propuesta", nargs="?")
     es = sub.add_parser("estado"); es.add_argument("repo"); es.add_argument("--json", action="store_true")
+    sub.add_parser("modelo-encargado")
+    fo = sub.add_parser("foto-encargado"); fo.add_argument("perfil"); fo.add_argument("--sin-marcar", action="store_true")
     a = ap.parse_args()
     try:
         if a.cmd == "nuevo":
@@ -537,6 +611,10 @@ if __name__ == "__main__":   # CLI de nuevo.sh
             print(f"Carpeta por defecto: {c['carpeta']} ({c['carpeta_resuelta']})\nStack por defecto: {c['stack_defecto']}\n"
                   f"Ventana para deshacer: {c['deshacer_s']} s ({N.duracion(c['deshacer_s'])}); "
                   f"las de Jev: {c['deshacer_jev_s']} s ({N.duracion(c['deshacer_jev_s'])})")
+        elif a.cmd == "modelo-encargado":
+            print(modelo_encargado())
+        elif a.cmd == "foto-encargado":
+            print(foto_encargado(a.perfil, marcar=not a.sin_marcar))
         elif a.cmd == "estado":
             e = estado(a.repo)
             if a.json:

@@ -267,6 +267,17 @@ proyecto a proyecto y como tú elijas:
 buena: rechazar o pedir cambios sigue siendo tuyo. Cuando decide, te llega la puerta ya decidida con **↩ Deshacer**,
 y el tag dice que aprobó Jev, no tú. Detalle y límites: [docs/jev.md](docs/jev.md).
 
+### El encargado del proyecto: con quien hablar (fase 1)
+
+Cada proyecto puede tener un **encargado**: un agente de Hermes (perfil `sdd-p-<proyecto>`, Sonnet) con quien hablar del
+proyecto. Al abrir una sesión ya sabe en qué punto está y qué pasó desde la última vez; consulta los requisitos, el
+plan, el código y el historial; discute arquitectura, diseño y UX contigo; y **recuerda** en un wiki del proyecto
+(`<repo>/wiki`, skill llm-wiki de Hermes; un repositorio git propio, fuera del historial del proyecto). En esta fase
+**solo lee, conversa y escribe en su wiki**: no decide puertas, no relanza etapas ni toca el código (un guardia lo
+impide). Se crea con **🧭 Crear encargado** en la pestaña SDD (Proyectos) o con `bash encargado.sh crear <repo>`, y se
+habla con él con **💬 Hablar con el encargado** (el chat del panel con su perfil) o `hermes -p sdd-p-<proyecto> chat`.
+Diseño y fases siguientes: [docs/encargado.md](docs/encargado.md).
+
 ---
 
 ## 6. Después de la entrega
@@ -369,6 +380,7 @@ en un contenedor o una firma con llave física lo *impiden*.
 - [docs/jev.md](docs/jev.md): Jev en las puertas (consejo, piloto, auto), sus límites y qué queda registrado.
 - [docs/canales.md](docs/canales.md): Telegram, el panel y el canal local, la identidad de cada uno y cómo añadir otros.
 - [docs/ejecutores.md](docs/ejecutores.md): Claude Code o Hermes por etapa, con modelos y costes.
+- [docs/encargado.md](docs/encargado.md): el encargado del proyecto (diseño, fases y qué puede hacer en cada una).
 - [docs/metodo/](docs/metodo/): el método por dentro (constitución, ruta, aceptación, preguntas asíncronas, convenciones de git).
 
 ## Origen

@@ -61,10 +61,10 @@ done
 # guardias y la comprobación del notario. Ver docs/ejecutores.md («Decisiones fabricadas»).
 AJUSTES=$(jq -nc --arg sb "${SDD_SANDBOX:-0}" --arg os "$(uname -s)" '
   {enabledPlugins: {"sdd-pipeline@noelserdna": false},
-   permissions: {deny: ["Edit(~/.hermes/**)", "Edit(.sdd/hermes/decisiones/**)", "Edit(.sdd/hermes/puertas/**)"]}}
+   permissions: {deny: ["Edit(~/.hermes/**)", "Edit(.sdd/hermes/decisiones/**)", "Edit(.sdd/hermes/puertas/**)", "Edit(wiki/**)"]}}
   + (if $sb == "1" then {sandbox: ({enabled: true, allowUnsandboxedCommands: false, autoAllowBashIfSandboxed: true,
         network: {allowedDomains: ["*"], allowLocalBinding: true},
-        filesystem: {denyWrite: ["./.sdd/hermes/decisiones", "./.sdd/hermes/puertas"],
+        filesystem: {denyWrite: ["./.sdd/hermes/decisiones", "./.sdd/hermes/puertas", "./wiki"],
                      allowWrite: ["~/.npm", "~/Library/Caches/ms-playwright", "~/.cache"]}}
         + (if $os == "Darwin" then {failIfUnavailable: true} else {} end))} else {} end)')
 ARGS=(-p "$PROMPT" --output-format json --plugin-dir "$ROOT/metodo" --settings "$AJUSTES")

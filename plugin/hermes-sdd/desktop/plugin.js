@@ -168,6 +168,22 @@ function crearSDD(E) {
   }
 
   // ── Proyectos ────────────────────────────────────────────────────────────────────────────────────────────────────
+  // El encargado del proyecto (perfil sdd-p-<proyecto>): se conversa con él en el chat de Hermes; no decide puertas
+  function Encargado({ x, cargar }) {
+    const a = useAccion()
+    if (!x.encargado)
+      return h('div', { style: S.fila },
+        h(C.Boton, { tono: 'borde', disabled: a.ocupado,
+          onClick: () => a.ejecutar(() => api.post('/encargado', { tablero: x.tablero }), () => { E.avisar(`Encargado de ${x.tablero} listo`); cargar() }) },
+          a.ocupado ? 'Creando…' : '🧭 Crear encargado'),
+        h('span', { style: S.meta }, 'Un agente con quien hablar del proyecto: sabe en qué punto está, recuerda en su wiki y te aconseja. No decide puertas.'),
+        h(Error, { texto: a.error }))
+    return h('div', { style: S.fila },
+      E.abrirChat ? h(C.Boton, { tono: 'principal', onClick: () => E.abrirChat(x.encargado) }, '💬 Hablar con el encargado') : null,
+      h('span', { style: S.meta }, E.abrirChat ? `Perfil ${x.encargado} · wiki en ${x.repo}/wiki`
+        : `Elige el perfil ${x.encargado} en el selector de perfiles, o en la terminal: hermes -p ${x.encargado} chat`))
+  }
+
   function Proyectos({ proys, cargar, irANuevo }) {
     if (proys === null) return h('div', { style: S.meta }, 'Cargando proyectos…')
     return h('div', { style: S.pagina },
@@ -180,7 +196,8 @@ function crearSDD(E) {
         h('div', { style: S.meta }, x.repo),
         h('div', { style: S.meta }, `Hitos: ${x.hitos.join(' · ') || 'sin hitos todavía'}`),
         h('div', { style: S.fila }, h(ModoJev, { tablero: x.tablero, modo: x.jev, alCambiar: cargar }),
-          E.abrirRuta ? h(C.Boton, { tono: 'suave', onClick: () => E.abrirRuta(x.repo) }, '📂 Abrir carpeta') : null)))
+          E.abrirRuta ? h(C.Boton, { tono: 'suave', onClick: () => E.abrirRuta(x.repo) }, '📂 Abrir carpeta') : null),
+        h(Encargado, { x, cargar })))
         : h(Tarjeta, null, h('div', { style: S.texto }, 'Todavía no hay proyectos. Crea el primero con «Nuevo proyecto».')))
   }
 
@@ -477,6 +494,7 @@ export default {
       tema: { borde: 'var(--ui-stroke-secondary)', acento: 'var(--ui-accent)', peligro: 'var(--ui-text-primary)' },
       avisar: m => host.notify({ kind: 'info', message: m }),
       abrirRuta: ruta => ctx.os.revealPath(ruta),
+      abrirChat: null,   // Desktop: el chat de otro perfil se abre desde su selector de perfiles
       intervalo: (fn, ms) => ctx.setInterval(fn, ms),   // se limpia solo al desactivar o recargar el plugin
       relleno: '16px 20px'
     })

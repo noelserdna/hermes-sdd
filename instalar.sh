@@ -38,6 +38,10 @@ echo "· Arnés $VERSION → $DEST"
 mkdir -p "$DEST" "$HOME_SDD/puertas" "$HOME_SDD/actas"
 rsync -a --delete --exclude .git "$SRC/" "$DEST/"
 ln -sfn "$DEST" "$HOME_SDD/actual"
+# Skill llm-wiki de Hermes (oficial, opcional) para la memoria del encargado: solo esa, por skills.external_dirs
+LW="$HH/hermes-agent/optional-skills/research/llm-wiki"
+if [ -d "$LW" ]; then mkdir -p "$DEST/encargado/skills" && rsync -a --delete "$LW/" "$DEST/encargado/skills/llm-wiki/"
+else echo "  AVISO: no encuentro la skill llm-wiki de Hermes ($LW): el encargado no tendrá su guía del wiki"; fi
 jq -n --arg r "$HOME_SDD/actual" --arg v "$VERSION" '{root:$r, version:$v}' > "$HOME_SDD/instalacion.json"
 
 if [ ! -f "$HOME_SDD/aprobadores.json" ]; then
@@ -111,6 +115,16 @@ hermes -p "$E" config set approvals.deny \
   '["*accept record*","*git tag*","*update-ref*","*route --write*","*git push*","*firmar.sh*","*decidir.sh*","*jev.sh*","*nuevo.sh*","*hsdd_nucleo.py*","*hsdd_proyectos.py*","*jev.json*","*sdd.json*","*hermes kanban*","*sqlite3*"]' >/dev/null
 hermes -p "$E" config set hooks.pre_tool_call \
   "[{\"matcher\":\"terminal|write_file|patch|execute_code\",\"command\":\"bash $HOME_SDD/actual/metodo/hooks/sdd-executor-deny.sh\",\"timeout\":10,\"fail_closed\":true}]" >/dev/null
+# Hermes solo ejecuta un hook de shell aprobado (si no, lo salta con un aviso en el log): se aprueba aquí
+jq -n --arg c "bash $HOME_SDD/actual/metodo/hooks/sdd-executor-deny.sh" --arg t "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  '{approvals: [{event: "pre_tool_call", command: $c, approved_at: $t}]}' > "$ED/shell-hooks-allowlist.json"
+fi
+
+# Encargados ya creados: se ponen al día (SOUL, guardia, skills); sus sesiones, su memoria y su wiki se conservan
+if [ -s "$HOME_SDD/encargados.json" ]; then
+  for r in $(jq -r '.[]' "$HOME_SDD/encargados.json"); do
+    [ -d "$r" ] && bash "$DEST/encargado.sh" crear "$r" | head -1 | sed 's/^/· /'
+  done
 fi
 
 DI=$(hermes config get kanban.dispatch_interval_seconds 2>/dev/null | tail -1)

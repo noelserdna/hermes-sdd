@@ -893,3 +893,17 @@ def register(ctx):
     ctx.register_command("anular", _cmd_anular, description="Anula la aceptación de una FASE", args_hint="<proyecto> <fase> <motivo>")
     ctx.register_command("mantenimiento", _cmd_mantenimiento, description="Revisa ahora los proyectos SDD entregados (umbrales)", args_hint="[proyecto]")
     ctx.register_command("puertas", _cmd_puertas, description="Puertas SDD abiertas, con sus botones")
+
+    # El encargado de cada proyecto (perfil sdd-p-<proyecto>, encargado.sh): al abrir una sesión encuentra en su prompt
+    # la foto de su proyecto y lo que pasó desde su última sesión (Hermes congela la sección por sesión)
+    def _foto_encargado(info) -> str:
+        perfil = str((info or {}).get("profile_name") or "")
+        if not perfil.startswith("sdd-p-"):
+            return ""
+        try:
+            return PR.foto_encargado(perfil)
+        except Exception as e:   # nunca romper el prompt del perfil por un fallo de la foto
+            log.warning("hermes-sdd: foto del encargado %s: %s", perfil, e)
+            return ""
+    if hasattr(ctx, "register_system_prompt_section"):
+        ctx.register_system_prompt_section("hermes-sdd.encargado", _foto_encargado, max_chars=4000)

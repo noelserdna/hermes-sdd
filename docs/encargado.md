@@ -1,7 +1,7 @@
 # El encargado del proyecto (diseño, v2)
 
-> Estado: propuesta revisada (11/11/2026) tras una revisión con cuatro enfoques: viabilidad en Hermes, integración
-> con el arnés, producto y método, y crítica y seguridad. Nada de esto está implementado todavía.
+> Estado: revisado (11/11/2026) tras una revisión con cuatro enfoques: viabilidad en Hermes, integración con el arnés,
+> producto y método, y crítica y seguridad. Hechas las fases 0 y 1 (ver «Fases»).
 
 ## Por qué
 
@@ -104,20 +104,32 @@ Cierre propuesto, por capas:
   requisitos) o **indicación para relanzar** (pide permiso).
 - Comentarios sobre la demo → los propone como observación en la puerta de la fase; no decide.
 
-### 5. Recuerda
-- **Del proyecto, en el repo**: `notas/encargado.md` (lo que sabe del proyecto, lo lee al empezar), `decisions/`,
-  `intake.md`, el diario. `MEMORY.md` del perfil (2200 caracteres) solo para lo esencial; holographic (local, viene
-  con Hermes) si hace falta buscar hechos.
+### 5. Recuerda (con llm-wiki)
+- **Memoria del proyecto = un wiki en el repo** (`<repo>/wiki/`, versionado), con la skill **llm-wiki** de Hermes
+  (patrón de Karpathy; oficial, opcional, ya instalada). Sin base de datos: markdown enlazado que el encargado mantiene.
+  - `wiki/raw/`: lo que entrega la persona, intacto (documentos, requisitos casi listos, capturas, transcripciones),
+    con `sha256` para detectar cambios. Es la fuente de `intent/` y del intake.
+  - `wiki/entities/`, `concepts/`, `comparisons/`, `queries/`: la síntesis (usuarios, dominio, integraciones,
+    decisiones y su porqué, riesgos, lecciones), con `sources`, `confidence` y `contested` en el frontmatter.
+  - `wiki/SCHEMA.md` adaptado a SDD: etiquetas cerradas (usuario, dominio, integración, decisión, riesgo, lección,
+    ux, arquitectura) y la regla de **enlazar, no copiar**: a `REQ-…`, `DEC-NNN`, `FASE-N`, `INT-NNN`. Lo que ya tiene
+    sitio en el método (requisitos, especificaciones, plan) no se duplica en el wiki.
+  - `wiki/index.md` y `wiki/log.md`: lo primero que lee al abrir sesión, junto con `estado`.
+- **Los datos no van al wiki**: `etapas.jsonl`, `puertas.jsonl` y `estado` siguen siendo la fuente de verdad; el wiki
+  los resume y los enlaza.
+- **Ingest bajo demanda** (cuando la persona entrega algo o al cerrar una FASE), no en cada etapa; **lint** al cerrar
+  cada FASE (huérfanas, contradicciones, afirmaciones de baja confianza).
+- `MEMORY.md` del perfil (2200 caracteres) solo para lo esencial (dónde está el wiki, el proyecto, la persona).
 - **Entre proyectos**: lecciones **solo con evidencia** (enlace a la puerta rechazada, a la etapa bloqueada…),
-  confirmadas por una persona, con caducidad (se descartan si en 3 proyectos no cambian ningún resultado) y sin
-  datos del cliente. Se borran con el proyecto. Es la última fase: es la de más riesgo de meter ruido.
+  confirmadas por una persona, con caducidad (se descartan si en 3 proyectos no cambian ningún resultado) y sin datos
+  del cliente; un wiki común con su propio `SCHEMA.md`. Es la última fase: es la de más riesgo de meter ruido.
 
 ## Autonomía y cómo se hace cumplir
 
 | Acción | Encargado | Cómo se impone |
 |---|---|---|
 | Leer, diagnosticar, explicar, opinar | Solo | — |
-| Escribir en `intent/`, `notas/`, `decisions/`, `review/` | Solo | Hook `pre_tool_call` fail-closed: `file` solo en esas rutas |
+| Escribir en `wiki/`, `intent/`, `decisions/`, `review/` | Solo | Hook `pre_tool_call` fail-closed: `file` solo en esas rutas |
 | Reintentar una etapa que falló (una vez por tarjeta y causa; después solo avisa) | Solo, y lo cuenta | Solo vía `encargado.sh` |
 | Archivar obsoletas; apartar restos sin commit de una etapa cortada | Solo, y lo cuenta | `encargado.sh`, con `git stash`/rama de respaldo, nunca borrando |
 | Relanzar una etapa ya hecha | Pregunta antes | Hook devuelve `approve` → aprobación humana de Hermes |
@@ -158,8 +170,15 @@ Cierre propuesto, por capas:
    puertas o `~/.hermes` (detalle y límites en `docs/ejecutores.md`, «Decisiones fabricadas»). `etapas.jsonl`,
    `puertas.jsonl` y `hsdd_proyectos.py estado <repo> --json` (que ya usa `/estado`); el aviso de fallos lee el motivo
    real. Pendiente de esta capa: separar usuarios del sistema para las etapas con navegador.
-1. **Encargado que lee y conversa**: perfil, SOUL, `estado`, resumen «desde la última vez», chat en el panel y tema de
-   Telegram. Sin escribir fuera de `notas/` ni actuar.
+1. **Encargado que lee y conversa** — ✅ hecha (11/11/2026): `encargado.sh crear <repo>` (o 🧭 en el panel) crea el
+   perfil `sdd-p-<proyecto>` (SOUL con su carta, Sonnet, `terminal.cwd` en el repo, sin web, kanban, código suelto,
+   delegación ni cron) y el wiki del proyecto (`<repo>/wiki`, llm-wiki, repositorio git propio ignorado por el del
+   proyecto: sus commits no mueven el HEAD de las puertas; las etapas no pueden escribir en él). El plugin le pone en
+   el prompt la foto del proyecto y lo que pasó desde su última sesión (`hsdd_proyectos.py foto-encargado`).
+   `encargado/guardia.py` (hook fail-closed, aprobado en el perfil): terminal solo con una lista blanca de lectura,
+   ficheros solo en `wiki/`, sin `execute_code`. Chat: 💬 en el panel (`/chat?profile=sdd-p-X`) o
+   `hermes -p sdd-p-X chat`. Pendiente: el tema de Telegram por proyecto (`gateway.profile_routes` por `thread_id`
+   necesita un grupo con temas) y crearlo solo al hacer `/nuevo`.
 2. **Preparar la entrada**: `intake.md`, `clarify`, requisitos de partida con modo depurar, `sdd-import`.
 3. **Supervisar y arreglar**: cron con filtro, `encargado.sh`, hook con `approve`, un solo aviso.
 4. **Revisar la documentación**: comprobaciones mecánicas en `sdd gate`/puerta, después el revisor independiente, la
