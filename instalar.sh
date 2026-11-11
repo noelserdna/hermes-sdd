@@ -59,7 +59,16 @@ rm -rf "$HH/plugins/hermes-sdd"; mkdir -p "$HH/plugins"
 cp -R "$DEST/plugin/hermes-sdd" "$HH/plugins/hermes-sdd"
 hermes plugins enable hermes-sdd >/dev/null 2>&1 || echo "  AVISO: activa el plugin con: hermes plugins enable hermes-sdd"
 
-if [ "${1:-}" != --sin-estacion ]; then   # --sin-estacion: no tocar el perfil de la estación (p. ej. con etapas en marcha)
+# Rehacer los perfiles borra su estado: un worker en marcha se pierde y su tarjeta queda bloqueada («Kanban execution
+# unknown»; propinas y biblioteca, 11/11/2026). Con etapas en marcha no se tocan, salvo que se pida con --forzar-perfiles.
+SIN_PERFILES=false
+[ "${1:-}" = --sin-estacion ] && SIN_PERFILES=true
+if [ "${1:-}" != --forzar-perfiles ] && pgrep -f "etapa\.sh " >/dev/null 2>&1; then
+  SIN_PERFILES=true
+  echo "  AVISO: hay etapas en marcha: no rehago los perfiles sdd-estacion ni sdd-ejecutor (vuelve a instalar cuando acaben"
+  echo "         si cambiaste algo de los perfiles, o usa --forzar-perfiles)"
+fi
+if [ "$SIN_PERFILES" != true ]; then   # --sin-estacion: no tocar los perfiles
 echo "· Perfil $P (limpio)"
 hermes profile list 2>/dev/null | grep -qw "$P" && { hermes profile delete -y "$P" >/dev/null 2>&1 || true; }
 hermes profile create "$P" --no-alias --no-skills \
@@ -79,7 +88,6 @@ done
 hermes -p "$P" config set approvals.deny \
   '["*accept record*","*git tag*","*update-ref*","*route --write*","*git push*","*firmar.sh*","*decidir.sh*","*jev.sh*","*nuevo.sh*","*hsdd_nucleo.py*","*hsdd_proyectos.py*","*jev.json*","*sdd.json*","*hermes kanban*","*sqlite3*"]' >/dev/null
 
-fi
 echo "· Perfil sdd-ejecutor (ejecutor Hermes nativo para etapas ligeras)"
 E=sdd-ejecutor
 hermes profile list 2>/dev/null | grep -qw "$E" && { hermes profile delete -y "$E" >/dev/null 2>&1 || true; }
@@ -103,6 +111,7 @@ hermes -p "$E" config set approvals.deny \
   '["*accept record*","*git tag*","*update-ref*","*route --write*","*git push*","*firmar.sh*","*decidir.sh*","*jev.sh*","*nuevo.sh*","*hsdd_nucleo.py*","*hsdd_proyectos.py*","*jev.json*","*sdd.json*","*hermes kanban*","*sqlite3*"]' >/dev/null
 hermes -p "$E" config set hooks.pre_tool_call \
   "[{\"matcher\":\"terminal\",\"command\":\"bash $HOME_SDD/actual/metodo/hooks/sdd-executor-deny.sh\",\"timeout\":10,\"fail_closed\":true}]" >/dev/null
+fi
 
 DI=$(hermes config get kanban.dispatch_interval_seconds 2>/dev/null | tail -1)
 [ -n "$DI" ] && [ "$DI" -gt 15 ] 2>/dev/null &&
