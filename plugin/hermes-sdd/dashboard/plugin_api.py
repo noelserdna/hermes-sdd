@@ -31,7 +31,7 @@ PR = sys.modules["hsdd_proyectos"]
 
 router = APIRouter()
 CAMPOS = ("id", "tipo", "fase", "tablero", "titulo", "texto", "opciones", "preguntas", "estado", "creada", "sha",
-          "firmar_en", "ver_at", "adopcion")
+          "firmar_en", "ver_at", "adopcion", "unica")
 
 
 def _actor(request: Request) -> tuple[str, str, dict]:

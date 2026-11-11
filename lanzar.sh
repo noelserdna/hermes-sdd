@@ -49,11 +49,20 @@ asegurar_tablero() {
 con_huecos() {  # ¿quedan tareas [PLAN GAP] sin hacer en la FASE N? (sus preguntas se contestaron en la puerta del plan)
   grep -qE '^- \[ \] .*\[PLAN GAP\]' "$REPO/task/TASK-FASE-$1.md" 2>/dev/null
 }
+unica() {  # ¿plan de una sola FASE, aún sin aceptar (y no «fina»)? Entonces su aceptación va en la puerta de entrega
+  [ -f "$REPO/.sdd/hermes/granularidad-plan" ] && [ "$(cat "$REPO/.sdd/hermes/granularidad-plan")" != fina ] &&
+    [ "$(ls "$REPO"/plan/fases/FASE-*.md 2>/dev/null | wc -l | tr -d ' ')" = 1 ] &&
+    ! git -C "$REPO" tag -l 'fase-*-accepted' | grep -q .
+}
 fase_n() {  # fase_n <N> [sufijo]: (huecos →) implementar → aceptar la FASE N; imprime el id de la primera tarjeta
   local h="-" t primera=""
   if con_huecos "$1"; then h=$(tarjeta "Completar huecos del plan FASE-$1" - 60m huecos "$1"); primera=$h; fi
   t=$(tarjeta "Implementar FASE-$1${2:-}" "$h" 120m implementar "$1"); primera=${primera:-$t}
-  tarjeta "Aceptar FASE-$1" "$t" 60m aceptar "$1" >/dev/null
+  if unica; then   # una sola FASE: sus veredictos y su demo los hace el cierre, y se aceptan con la entrega
+    cierre "$t" "Cierre: demo, puerta global y entrega" >/dev/null
+  else
+    tarjeta "Aceptar FASE-$1" "$t" 60m aceptar "$1" >/dev/null
+  fi
   echo "$primera"
 }
 
@@ -77,10 +86,10 @@ tras_ruta() {  # las etapas opcionales que pide la ruta → Plan → Tareas, enc
   tarjeta "Tareas" "$t" 60m tareas >/dev/null
   echo "$primera"
 }
-cierre() {  # (huecos entre especificación y código, si la ruta los pide →) cierre
-  local p=-
-  toca gap-detector && p=$(tarjeta "Huecos entre especificación y código" - 60m brechas)
-  tarjeta "Cierre: puerta global y entrega" "$p" 120m cierre
+cierre() {  # cierre [padre] [título]: (huecos entre especificación y código, si la ruta los pide →) cierre
+  local p=${1:--}
+  toca gap-detector && p=$(tarjeta "Huecos entre especificación y código" "$p" 60m brechas)
+  tarjeta "${2:-Cierre: puerta global y entrega}" "$p" 120m cierre
 }
 
 tarjeta() {  # tarjeta <título> <padre|-> <runtime> <etapa> [fase] — imprime el id

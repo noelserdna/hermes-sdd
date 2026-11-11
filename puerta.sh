@@ -34,7 +34,7 @@ print(sum(1 for f, q in quitadas.items() if any(x and not trivial.match(x) and x
 # ── Texto de la puerta: lo escribe hsdd_textos.py en castellano llano (lo que pediste, lo que se añadió, qué decidir) ─
 TEXTOS="$ROOT/plugin/hermes-sdd/hsdd_textos.py"
 GATE_MD=$(mktemp); trap 'rm -f "$GATE_MD"' EXIT
-EXTRA=(); EDIT=0; BLOQUEO=false; rc=0
+EXTRA=(); EDIT=0; BLOQUEO=false; UNICA=false; rc=0
 case "$TIPO" in
   requisitos)
     EXTRA+=(--version "$(sed -n 's/^> \*\*Version:\*\* *//p' requirements/REQUIREMENTS.md | head -1)")
@@ -53,7 +53,7 @@ case "$TIPO" in
     RUTAS=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" opciones-ruta "${BOARD:-$(basename "$REPO")}" .sdd/hermes/ruta.json) ||
       { echo "no se pudieron leer las rutas configuradas" >&2; exit 1; }
     echo "$RUTAS" > "$GATE_MD"; EXTRA+=(--opciones-ruta "$GATE_MD")
-    OPCIONES=$(echo "$RUTAS" | jq -c '[.[] | {verbo, etiqueta, etapas, auto, criterio}] + [{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]') ;;
+    OPCIONES=$(echo "$RUTAS" | jq -c '[.[] | {verbo, etiqueta, etapas, auto, granularidad, criterio}] + [{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]') ;;
   plan)
     OPCIONES='[{"verbo":"conforme","etiqueta":"✅ Conforme"},{"verbo":"cambios","etiqueta":"✏️ Cambiar","texto":true}]' ;;
   fase)
@@ -74,6 +74,17 @@ case "$TIPO" in
     node "$SDD" gate --md > "$GATE_MD" 2>/dev/null || rc=$?
     EXTRA+=(--gate-md "$GATE_MD" --rc "$rc" --fases-aceptadas "$(git tag -l 'fase-*-accepted' | tr '\n' ' ')")
     OPCIONES='[{"verbo":"acepto","etiqueta":"✅ Acepto la entrega"},{"verbo":"observaciones","etiqueta":"📝 Con observaciones","texto":true},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]'
+    # Plan de una sola FASE sin aceptar (y no «fina»): no hubo puerta de FASE, así que esta trae su demo (▶ Ver demo primero)
+    if [ -f .sdd/hermes/granularidad-plan ] && [ "$(cat .sdd/hermes/granularidad-plan)" != fina ] && [ "$(ls plan/fases/FASE-*.md 2>/dev/null | wc -l | tr -d ' ')" = 1 ] \
+       && ! git tag -l 'fase-*-accepted' | grep -q .; then
+      UNICA=true
+      VIDEO=$(ls evidencias/FASE-0/*.mp4 evidencias/FASE-0/*.webm evidencias/FASE-0/*.mov 2>/dev/null | head -1 || true)
+      CAPTURAS=$( (ls evidencias/FASE-0/*.png evidencias/FASE-0/*.jpg 2>/dev/null || true) | wc -l | tr -d ' ')
+      BASE=$(git describe --tags --abbrev=0 --match 'requirements-v*' 2>/dev/null || git rev-list --max-parents=0 HEAD)
+      EDIT=$(tests_editados "$BASE")
+      EXTRA+=(--unica 1 --video "$([ -n "$VIDEO" ] && echo 1 || echo 0)" --capturas "$CAPTURAS" --tests-editados "$EDIT")
+      OPCIONES='[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1},{"verbo":"acepto","etiqueta":"✅ Acepto la entrega","paso":2},{"verbo":"observaciones","etiqueta":"📝 Con observaciones","texto":true,"paso":2},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'
+    fi
     if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then BLOQUEO=true; OPCIONES='[{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]'; fi ;;
   mantenimiento)   # lo abre vigilar.sh con .sdd/hermes/mantenimiento/hallazgos.json
     EXTRA+=(--hallazgos .sdd/hermes/mantenimiento/hallazgos.json)
@@ -107,8 +118,8 @@ jq -n --arg id "$ID" --arg t "$TIPO" --arg f "$FASE" --arg b "$BOARD" --arg s "$
   --arg r "$REPO" --arg ti "$TITULO" --arg tx "$TEXTO" --argjson o "$OPCIONES" --arg v "${VIDEO:-}" --argjson q "$PREGUNTAS" \
   --argjson ad "$([ -f .sdd/hermes/adopcion ] && echo true || echo false)" \
   --argjson hz "$([ "$TIPO" = mantenimiento ] && cat .sdd/hermes/mantenimiento/hallazgos.json || echo null)" \
-  --argjson te "${EDIT:-0}" --argjson bl "$BLOQUEO" \
+  --argjson te "${EDIT:-0}" --argjson bl "$BLOQUEO" --argjson un "${UNICA:-false}" \
   '{id:$id, tipo:$t, fase:$f, tablero:$b, tarjeta:"", adopcion:$ad, sha:$s, creada:$c, repo:$r, titulo:$ti, texto:$tx,
-    opciones:$o, demo:$v, preguntas:$q, hallazgos:$hz, tests_editados:$te, bloqueo:$bl, estado:"abierta"}' > ".sdd/hermes/puertas/$ID.json"
+    opciones:$o, demo:$v, preguntas:$q, hallazgos:$hz, tests_editados:$te, bloqueo:$bl, unica:$un, estado:"abierta"}' > ".sdd/hermes/puertas/$ID.json"
 cp ".sdd/hermes/puertas/$ID.json" "$HOME_SDD/puertas/$ID.json"   # índice global para los canales
 echo "$ID"

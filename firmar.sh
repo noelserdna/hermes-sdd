@@ -209,6 +209,9 @@ Kanban-Task: $BOARD/$TASK"
       marcar registrado
     fi
     if ! hecho commit; then commit_si_hay "chore(sdd): route confirmed by $NOMBRE" status/; marcar commit; fi
+    # La granularidad del plan que mostraba el botón (compacta | normal | fina | auto): la leen el plan y las tareas
+    mkdir -p .sdd/hermes
+    jq -r --arg v "$VERBO" '[.opciones[]? | select(.verbo == $v) | .granularidad // empty][0] // "auto"' "$PUERTA" > .sdd/hermes/granularidad
     RESULTADO="$VERBO"; RESUMEN="Ruta confirmada ($VERBO) por $NOMBRE ($ROL)"
     if [ "${VERBO#ruta-}" != "$VERBO" ]; then
       RN=$(jq -r --arg v "$VERBO" '.opciones[] | select(.verbo == $v) | .etiqueta | sub("^[^A-Za-zÁÉÍÓÚÑáéíóúñ]+"; "")' "$PUERTA")
@@ -271,6 +274,14 @@ Kanban-Task: $BOARD/$TASK"
 
   entrega:acepto|entrega:observaciones)
     N=$(( $(git tag -l 'entrega-*' | wc -l) + 1 ))
+    # Plan compacto de una sola FASE: esta puerta traía su demo y aceptarla acepta también la FASE-0 (una decisión, dos
+    # registros: el de la FASE y el de la entrega)
+    UNICA=$(p .unica); RES=accepted; [ "$VERBO" = observaciones ] && RES=observations
+    if [ "$UNICA" = true ] && ! hecho registrado; then
+      grep -qF "${BOARD}/${TASK}" acceptance/decisions.jsonl 2>/dev/null ||
+        node "$SDD" accept record fase-acceptance --fase 0 --result "$RES" --channel "$CHANNEL" --by "$NOMBRE" --role "$ROL" >/dev/null
+      node "$SDD" accept --report acceptance/ACCEPTANCE-REPORT.md --fase 0 >/dev/null 2>&1 || true
+    fi
     if ! hecho registrado; then
       node "$SDD" journal add --stage acceptance --kind decision --text "$NOMBRE aceptó la entrega $N${TEXTO:+ con observaciones: $TEXTO}" \
         --by "$NOMBRE ($ROL)" --refs "entrega-$N" >/dev/null
@@ -278,6 +289,14 @@ Kanban-Task: $BOARD/$TASK"
     fi
     if ! hecho commit; then commit_si_hay "docs(acceptance): accept delivery $N" status/ acceptance/; marcar commit; fi
     if ! hecho tag; then
+      [ "$UNICA" = true ] && etiquetar "fase-0-accepted" "FASE-0 accepted (single FASE: accepted with delivery $N)
+
+Accepted-by: $NOMBRE
+Approver-role: $ROL
+Channel: $CHANNEL
+Commit: $HEAD0
+Acceptance: global gate exit $(jq -r '.gate_exit // "?"' "$ACTA"); result $RES${TEXTO:+; notes: $TEXTO}
+Kanban-Task: $BOARD/$TASK"
       etiquetar "entrega-$N" "Delivery $N accepted
 
 Accepted-by: $NOMBRE
@@ -290,7 +309,8 @@ Kanban-Task: $BOARD/$TASK
 $(node "$SDD" gate --md 2>/dev/null)"
       marcar tag
     fi
-    RESULTADO="$VERBO"; RESUMEN="Entrega $N aceptada por $NOMBRE ($ROL) — tag entrega-$N" ;;
+    RESULTADO="$VERBO"; RESUMEN="Entrega $N aceptada por $NOMBRE ($ROL) — tag entrega-$N"
+    [ "$UNICA" = true ] && RESUMEN="Entrega $N (y su única fase) aceptada por $NOMBRE ($ROL) — tag entrega-$N" ;;
 
   entrega:rechazo)
     mkdir -p .sdd/hermes/feedback; printf '%s\n' "$TEXTO" > ".sdd/hermes/feedback/cierre.txt"

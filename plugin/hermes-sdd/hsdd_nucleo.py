@@ -220,6 +220,15 @@ def poner_modo(modo: str, tablero: str | None = None) -> dict:
 TIPOS_PUERTA = ("requisitos", "ruta", "plan", "fase", "entrega", "mantenimiento")
 
 
+def umbral_jev(modo: str, cfg: dict | None = None) -> float:
+    """Probabilidad mínima para que Jev decida. En auto la persona delegó la decisión: su propio umbral (umbral_auto);
+    si no lo fija, el general. Lo usan quien decide y el notario: tienen que medir igual."""
+    cfg = cfg if cfg is not None else config_jev()
+    if modo == "auto":
+        return float(cfg.get("umbral_auto") or cfg.get("umbral", 0.9))
+    return float(cfg.get("umbral", 0.9))
+
+
 def ajustar_jev(defecto: str | None = None, umbral=None, piloto: list | None = None, umbral_auto=None) -> dict:
     """Ajustes generales de Jev (los modos por proyecto, con poner_modo). Valida todo antes de escribir."""
     cfg = config_jev()
@@ -263,7 +272,7 @@ def puede_jev(puerta: dict, cfg: dict | None = None) -> tuple[bool, str]:
         return False, "una persona deshizo la decisión de Jev"
     if modo == "piloto" and puerta.get("preguntas"):
         return False, "hay preguntas abiertas (clase C): en modo piloto las contesta una persona"
-    # Campos de la puerta (puerta.sh ≥ 0.3.0); en puertas anteriores, lo que decía su texto
+    # Campos de la puerta (puerta.sh ≥ 0.3.1); en puertas anteriores, lo que decía su texto
     texto = puerta.get("texto", "")
     if puerta.get("bloqueo") or ("bloqueo" not in puerta and "⛔" in texto):
         return False, "la puerta no pasa la comprobación de calidad"
@@ -346,7 +355,7 @@ def aplicar_jev(gid: str, juicio: dict) -> dict:
         cfg = config_jev()
         modo = modo_jev(puerta.get("tablero", ""), cfg)
         # En auto la persona delegó la decisión: su propio umbral (umbral_auto); si no lo fija, el general
-        umbral = float(cfg.get("umbral_auto") or cfg.get("umbral", 0.9)) if modo == "auto" else float(cfg.get("umbral", 0.9))
+        umbral = umbral_jev(modo, cfg)
         jev = {**juicio, "modo": modo, "umbral": umbral, "at": ahora()}
         if puerta.get("estado") != "abierta":
             jev["decide"], jev["motivo"] = False, "la puerta ya estaba resuelta"
@@ -368,7 +377,7 @@ def aplicar_jev(gid: str, juicio: dict) -> dict:
             escribir(idx, puerta)
             return puerta
         prueba = {"modelo": juicio.get("modelo", ""), "p": f"{float(juicio['p']):.3f}", "modo": modo,
-                  "demo": "no vista" if puerta.get("tipo") == "fase" else ""}
+                  "demo": "no vista" if puerta.get("tipo") == "fase" or puerta.get("unica") else ""}
         return _registrar(idx, puerta, juicio["choice"], "",
                           {"persona": JEV, "canal": JEV, "id": juicio.get("modelo") or "jev"},
                           {k: v for k, v in prueba.items() if v}, ventana_s=deshacer_jev_s())
@@ -424,7 +433,7 @@ if __name__ == "__main__":   # CLI del notario y de jev.sh
             ok, motivo = puede_jev({**puerta, "jev_vetado": global_.get("jev_vetado")})
             if ok and verbo not in verbos_jev(puerta):
                 ok, motivo = False, f"Jev no puede elegir «{verbo}»"
-            if ok and p < float(config_jev().get("umbral", 0.9)):
+            if ok and p < umbral_jev(modo_jev(puerta.get("tablero", ""))):
                 ok, motivo = False, f"p {p} por debajo del umbral"
             print(f"{modo_jev(puerta.get('tablero', ''))}" if ok else motivo)
             sys.exit(0 if ok else 1)
@@ -472,9 +481,10 @@ def puertas(estados=("abierta", "decidida")) -> list:
 
 def evidencias(puerta: dict) -> list:
     """Ficheros de la demo de una FASE (nombres; el canal decide cómo enseñarlos)."""
-    if not puerta.get("fase"):
+    fase = puerta.get("fase") or ("0" if puerta.get("unica") else "")   # entrega de una sola FASE: su demo
+    if not fase:
         return []
-    carpeta = Path(puerta["repo"]) / "evidencias" / f"FASE-{puerta['fase']}"
+    carpeta = Path(puerta["repo"]) / "evidencias" / f"FASE-{fase}"
     if not carpeta.is_dir():
         return []
     return sorted(p.name for p in carpeta.iterdir() if p.suffix.lower() in (".png", ".jpg", ".jpeg", ".mp4", ".webm", ".mov"))
@@ -483,4 +493,4 @@ def evidencias(puerta: dict) -> list:
 def fichero_evidencia(puerta: dict, nombre: str) -> Path:
     if nombre not in evidencias(puerta):
         raise Rechazo("No existe esa evidencia")
-    return Path(puerta["repo"]) / "evidencias" / f"FASE-{puerta['fase']}" / nombre
+    return Path(puerta["repo"]) / "evidencias" / f"FASE-{puerta.get('fase') or '0'}" / nombre

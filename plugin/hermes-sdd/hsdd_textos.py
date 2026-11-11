@@ -172,7 +172,8 @@ def puerta_ruta(repo: Path, proyecto: str, opciones: list | None = None) -> dict
         for o in opciones:
             extra = "pasos extra: " + o["hace"] if o.get("etapas") else "sin pasos extra"
             marca = " (la fijaste al crear el proyecto)" if o.get("fijada") else (" (recomendada)" if o.get("recomendada") else "")
-            lineas.append(f"{o['etiqueta']}{marca}: {o['descripcion']} → {extra}.")
+            fases = f"; fases: {o['fases'][0].lower() + o['fases'][1:]}" if o.get("fases") else ""
+            lineas.append(f"{o['etiqueta']}{marca}: {o['descripcion']} → {extra}{fases}.")
         partes.append("\n".join(lineas))
         partes.append("👉 Pulsa la ruta que quieras · ❌ Rechazar si ninguna te vale (y cuéntame por qué).")
     else:
@@ -267,7 +268,8 @@ def puerta_fase(repo: Path, proyecto: str, fase: str, gate_md: str, rc: int, tes
     return {"titulo": f"Aceptar FASE-{fase}", "texto": "\n\n".join(partes)}
 
 
-def puerta_entrega(repo: Path, proyecto: str, gate_md: str, rc: int, fases_aceptadas: list[str]) -> dict:
+def puerta_entrega(repo: Path, proyecto: str, gate_md: str, rc: int, fases_aceptadas: list[str], unica: bool = False,
+                   video: bool = False, capturas: int = 0, tests_editados: int = 0) -> dict:
     filas = _filas_gate(gate_md)
     ok = sum(1 for f in filas if f["veredicto"] == "VERIFIED")
     if rc == 0:
@@ -279,9 +281,19 @@ def puerta_entrega(repo: Path, proyecto: str, gate_md: str, rc: int, fases_acept
     partes = [f"🎁 «{proyecto}» está terminado y listo para entregar.", cabeza]
     if filas:
         partes.append("\n".join(_lineas_veredictos(repo, filas)))
-    if fases_aceptadas:
-        partes.append(f"Fases aceptadas: {len(fases_aceptadas)}.")
-    partes.append("👉 Si lo das por bueno, pulsa ✅ Acepto la entrega.")
+    if unica:   # plan compacto: una sola fase, sin puerta propia; se acepta aquí con su demo
+        partes.append("🧩 Se hizo en una sola fase: al aceptar la entrega aceptas también esa fase.")
+        partes.append("🛡 No se ha tocado ningún test que ya existía." if not tests_editados else
+                      f"⚠️ {'Se ha cambiado 1 test que ya existía' if tests_editados == 1 else f'Se han cambiado {tests_editados} tests que ya existían'}: "
+                      "conviene saber por qué antes de aceptar.")
+        demo = [x for x in (("vídeo" if video else ""), (_plural(capturas, "captura", "capturas") if capturas else "")) if x]
+        partes.append(f"🎬 Demo: {' y '.join(demo)}." if demo else "🎬 No hay demo (ni vídeo ni capturas).")
+        if rc in (0, 3):
+            partes.append("👉 Pulsa ▶ Ver demo; después podrás aceptar la entrega, aceptarla con observaciones o rechazarla.")
+    else:
+        if fases_aceptadas:
+            partes.append(f"Fases aceptadas: {len(fases_aceptadas)}.")
+        partes.append("👉 Si lo das por bueno, pulsa ✅ Acepto la entrega.")
     return {"titulo": "Entrega final", "texto": "\n\n".join(partes)}
 
 
@@ -328,6 +340,7 @@ if __name__ == "__main__":
     ap.add_argument("--cambio", default=""); ap.add_argument("--anadidos", default=""); ap.add_argument("--quitados", default="")
     ap.add_argument("--adopcion", type=int, default=0); ap.add_argument("--fases-aceptadas", default="")
     ap.add_argument("--hallazgos", default=""); ap.add_argument("--opciones-ruta", default="")
+    ap.add_argument("--unica", type=int, default=0)
     a = ap.parse_args()
     repo = Path(a.repo)
     proyecto = a.proyecto or repo.name
@@ -345,7 +358,8 @@ if __name__ == "__main__":
     elif a.tipo == "fase":
         r = puerta_fase(repo, proyecto, a.fase, md, a.rc, a.tests_editados, bool(a.video), a.capturas)
     elif a.tipo == "entrega":
-        r = puerta_entrega(repo, proyecto, md, a.rc, a.fases_aceptadas.split())
+        r = puerta_entrega(repo, proyecto, md, a.rc, a.fases_aceptadas.split(), bool(a.unica), bool(a.video), a.capturas,
+                           a.tests_editados)
     elif a.tipo == "mantenimiento":
         r = puerta_mantenimiento(proyecto, json.loads(_leer(Path(a.hallazgos)) or "[]"))
     else:

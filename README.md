@@ -54,7 +54,9 @@ El recorrido de un proyecto (🚪 = puerta, donde decides tú):
 2. **Ruta:** qué pasos extra del método necesita *este* proyecto (especificaciones, auditoría, plan de pruebas,
    seguridad, diseño técnico, diseño visual, huecos entre especificación y código). Las rutas se configuran en
    **SDD → Configuración → Rutas** (de serie: Adaptativa, Ligera, Con diseño y Completa; puedes crear las tuyas) y en
-   la puerta cada una es un botón. La eliges tú o Jev; si la fijas al crear el proyecto, es la recomendada.
+   la puerta cada una es un botón. La eliges tú o Jev; si la fijas al crear el proyecto, es la recomendada. Cada ruta
+   lleva su granularidad: con **compacta** un proyecto pequeño se hace en una sola fase, con pocas tareas y una sola
+   puerta de aceptación (la de entrega, con la demo).
 3. **Plan y tareas:** el trabajo dividido en **FASEs**, y cada FASE en tareas de un commit cada una.
 4. **Implementar y aceptar, FASE a FASE:** el ejecutor programa con los tests primero y te enseña una demo con
    capturas y vídeo. Aceptas o rechazas. Si rechazas, vuelve a implementar con lo que pediste.

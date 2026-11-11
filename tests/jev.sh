@@ -91,6 +91,9 @@ TAB=; modo consejo local; puerta n1 requisitos; jevdecide n1 acepto 0.97; firmar
 [ $rc -ne 0 ] && echo "$out" | grep -q "Jev no puede decidir esta puerta: modo consejo" && ok "notario: en modo consejo no firma una decisión de Jev" || bad "notario consejo: $out"
 modo auto local; puerta n2 requisitos; jevdecide n2 acepto 0.5; firmar n2
 [ $rc -ne 0 ] && echo "$out" | grep -q "umbral" && ok "notario: no firma una decisión de Jev por debajo del umbral" || bad "notario umbral: $out"
+puerta n8 requisitos; jevdecide n8 acepto 0.83; firmar n8   # entre umbral_auto (0.8) y umbral (0.9): en auto vale
+[ $rc -eq 0 ] && ok "notario: en modo auto mide con umbral_auto, como quien decide (p 0.83)" || bad "notario umbral_auto: $out"
+git tag -l 'requirements-v*' | xargs -r git tag -d >/dev/null
 puerta n3 requisitos; jevdecide n3 acepto 0.97; firmar n3
 [ $rc -eq 0 ] && ok "notario: en modo auto firma la decisión de Jev ($out)" || bad "notario auto: $out"
 T3=$(git tag -l 'requirements-v*' | head -1)

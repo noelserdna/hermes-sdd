@@ -254,9 +254,11 @@ function crearSDD(E) {
 
   // Rutas: qué etapas extra del método se hacen. «auto» = las que proponga el método para cada proyecto
   const nombreRuta = (cfg, id) => ((cfg.rutas || []).find(r => r.id === id) || {}).nombre || id || '—'
-  const RUTA_VACIA = { id: '', nombre: '', descripcion: '', etapas: [] }
+  const RUTA_VACIA = { id: '', nombre: '', descripcion: '', etapas: [], granularidad: 'auto' }
+  const GRANULARIDADES = cfg => cfg.granularidades || [['auto', 'Según el tamaño del proyecto'], ['compacta', 'Compacta'], ['normal', 'Normal'], ['fina', 'Fina']]
+  const nombreGran = (cfg, g) => (Object.fromEntries(GRANULARIDADES(cfg))[g || 'auto'] || g).split(':')[0]
 
-  function EditorRuta({ inicial, esNuevo, etapas, alGuardar, alBorrar, alCancelar, ocupado, puedeBorrar }) {
+  function EditorRuta({ cfg, inicial, esNuevo, etapas, alGuardar, alBorrar, alCancelar, ocupado, puedeBorrar }) {
     const [r, setR] = useState(inicial)
     const auto = r.etapas === 'auto'
     const lista = auto ? [] : r.etapas
@@ -266,6 +268,8 @@ function crearSDD(E) {
         h(Campo, { etiqueta: 'Id (minúsculas y guiones)' }, h(C.Campo, { value: r.id, disabled: !esNuevo, onChange: e => setR({ ...r, id: e.target.value }) })),
         h(Campo, { etiqueta: 'Nombre' }, h(C.Campo, { value: r.nombre, onChange: e => setR({ ...r, nombre: e.target.value }) })),
         h(Campo, { etiqueta: 'Para qué sirve (lo lee Jev para elegir)' }, h(C.Campo, { value: r.descripcion, onChange: e => setR({ ...r, descripcion: e.target.value }) }))),
+      h(Campo, { etiqueta: 'Fases y tareas', ayuda: 'Compacta: una fase, pocas tareas y una sola puerta de aceptación (proyectos pequeños). Según el tamaño: compacta si el proyecto es pequeño, normal si no.' },
+        h(Selector, { valor: r.granularidad || 'auto', opciones: GRANULARIDADES(cfg), alCambiar: g => setR({ ...r, granularidad: g }) })),
       h(Campo, { etiqueta: 'Pasos extra, además de requisitos → plan → programación → aceptación' },
         h('span', { style: S.fila },
           h(C.Boton, { tono: auto ? 'principal' : 'borde', disabled: ocupado, onClick: () => setR({ ...r, etapas: auto ? [] : 'auto' }) }, '✨ Los que proponga el método'),
@@ -287,18 +291,18 @@ function crearSDD(E) {
       h('div', { style: S.meta }, 'Qué pasos extra del método se hacen en un proyecto. En la puerta de ruta salen todas como botones y la decide quien decida esa puerta (tú o Jev); la recomendada es la que fijes al crear el proyecto o, si no, la de por defecto.'),
       rutas.map(r => editando === r.id
         ? h(EditorRuta, {
-          key: r.id, inicial: r, esNuevo: false, etapas, ocupado, puedeBorrar: rutas.length > 1, alCancelar: () => setEditando(null),
+          key: r.id, cfg, inicial: r, esNuevo: false, etapas, ocupado, puedeBorrar: rutas.length > 1, alCancelar: () => setEditando(null),
           alGuardar: n => g({ rutas: rutas.map(x => (x.id === r.id ? n : x)) }, `Ruta ${n.nombre} guardada`),
           alBorrar: id => g({ rutas: sin(id) }, `Ruta ${r.nombre} borrada`)
         })
         : h('div', { key: r.id, style: S.fila },
           h('strong', { style: { fontSize: 13 } }, r.nombre),
           r.id === cfg.ruta_defecto ? h(C.Etiqueta, { tono: 'normal' }, 'por defecto') : null,
-          h('span', { style: S.meta }, `${r.descripcion} → ${r.etapas === 'auto' ? 'los pasos que proponga el método' : (r.etapas.map(k => nombres[k] || k).join(', ') || 'sin pasos extra')}`),
+          h('span', { style: S.meta }, `${r.descripcion} → ${r.etapas === 'auto' ? 'los pasos que proponga el método' : (r.etapas.map(k => nombres[k] || k).join(', ') || 'sin pasos extra')} · fases: ${nombreGran(cfg, r.granularidad).toLowerCase()}`),
           h(C.Boton, { tono: 'suave', disabled: ocupado, onClick: () => setEditando(r.id) }, 'Editar'),
           r.id !== cfg.ruta_defecto ? h(C.Boton, { tono: 'suave', disabled: ocupado, onClick: () => guardar({ ruta_defecto: r.id }, `${r.nombre}: ruta por defecto`) }, 'Usar por defecto') : null)),
       editando === '+'
-        ? h(EditorRuta, { inicial: RUTA_VACIA, esNuevo: true, etapas, ocupado, alCancelar: () => setEditando(null), alGuardar: n => g({ rutas: [...rutas, n] }, `Ruta ${n.nombre} añadida`) })
+        ? h(EditorRuta, { cfg, inicial: RUTA_VACIA, esNuevo: true, etapas, ocupado, alCancelar: () => setEditando(null), alGuardar: n => g({ rutas: [...rutas, n] }, `Ruta ${n.nombre} añadida`) })
         : h('div', { style: S.fila },
           h(C.Boton, { tono: 'borde', disabled: ocupado, onClick: () => setEditando('+') }, '＋ Añadir ruta'),
           h(C.Boton, { tono: 'suave', disabled: ocupado, onClick: () => g({ rutas: cfg.rutas_por_defecto }, 'Rutas como venían') }, 'Restaurar las de serie')))

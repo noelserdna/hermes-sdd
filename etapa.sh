@@ -103,6 +103,34 @@ claude_etapa() {  # claude_etapa <clave-de-estado> <prompt>
   RES=$res
 }
 puerta() { bash "$ROOT/puerta.sh" "$REPO" "$@"; }
+# Granularidad del plan (la fija la ruta firmada en .sdd/hermes/granularidad): compacta | normal | fina. «auto» se
+# resuelve aquí: compacta si el proyecto es pequeño (≤ 7 REQ-F, un tipo de usuario, sin integraciones,
+# datos delicados ni estado complejo), normal si no.
+granularidad() {
+  local g; g=$(cat .sdd/hermes/granularidad 2>/dev/null || echo auto)
+  case "$g" in compacta|normal|fina) echo "$g"; return ;; esac
+  # (Las necesidades no cuentan: el cliente enumera cada detalle como una; vasos tenía 7 y es una app mínima.)
+  if jq -e '(.facts.req_f // 99) <= 7
+            and ([.factors // {} | to_entries[] | select(.key | IN("multi_actor","integrations","sensitive_data","complex_state"))
+                  | select(.value.value == "yes")] | length == 0)' .sdd/hermes/ruta.json >/dev/null 2>&1; then
+    echo compacta
+  else echo normal; fi
+}
+GRAN=$(granularidad)
+# Lo que cambia con la granularidad, en las instrucciones al ejecutor (en inglés, como las skills)
+case "$GRAN" in
+  compacta) PLAN_G=" COMPACT PLAN (small project): exactly ONE FASE, FASE-0, that delivers every requirement and the whole user journey; no HARDENING FASE (measured NFRs are criteria of FASE-0); its demo walks the whole journey."
+            TAREAS_G=" COMPACT TASKS: 3 to 6 tasks per FASE, each a slice that is seen working: the scaffold with all its tooling (test runner and Playwright) in ONE task; the domain logic with its tests; the UI with its tests; the journey e2e with the demo captures. No separate tasks to 'verify criteria' or 'verify constraints' (the acceptance gate does that)." ;;
+  normal)   PLAN_G=" Keep the plan as small as the rules allow: one FASE per user journey, and no separate HARDENING FASE when a measured NFR fits in the FASE that delivers the journey it measures."
+            TAREAS_G=" Tasks are slices that are seen working (about 4 to 8 per FASE), not one task per function; no separate tasks to 'verify criteria' or 'verify constraints' (the acceptance gate does that)." ;;
+  *)        PLAN_G=""; TAREAS_G="" ;;
+esac
+# Política de tests (compacta y normal): cada criterio una vez, al nivel más barato, con su literal desde el principio
+# (coches: 5 líneas de test por línea de código y 4 de los 9 minutos de la FASE-0 retocando asserts)
+[ "$GRAN" = fina ] && TESTS_G="" || TESTS_G=" TEST POLICY: one test per acceptance criterion, at the cheapest level that proves it (unit for logic, DOM for rendering; a real browser only for what needs it and for the demo journey); never test the same criterion at several levels; test each REQ-C constraint once, not in every FASE. Name each test with its 'REQ-X-NNN ACn' and assert the literal example values of the criterion from the first version, so no later pass is needed to align them."
+# Una sola FASE compacta: la aceptación de la FASE y la entrega van en una sola puerta (la de entrega, con la demo)
+unica() { [ -f .sdd/hermes/granularidad-plan ] && [ "$(cat .sdd/hermes/granularidad-plan)" != fina ] && [ "$(ls plan/fases/FASE-*.md 2>/dev/null | wc -l | tr -d ' ')" = 1 ] && ! git tag -l 'fase-*-accepted' | grep -q .; }
+
 no_hecho() {  # la explicación del ejecutor cuando termina sin hacer la etapa (su primer párrafo tras la línea stage=…)
   echo "$RES" | jq -r '.resumen // .reason // ""' | grep -v '^stage=' | grep -v '^ *$' | head -1 | cut -c1-300
 }
@@ -171,14 +199,15 @@ case "$ETAPA" in
       case "$(bash "$STATE" get "$k" 2>/dev/null)" in done|skipped|running) ;;
         *) bash "$STATE" set "$k" skipped --reason "hermes-sdd no tiene esta etapa: el plan sale de requirements/" >/dev/null 2>&1 || true ;; esac
     done
-    claude_etapa plan-architect "/sdd-plan-architect --skip-clarify — $ARNES Generate plan/.$INC"
+    echo "$GRAN" > .sdd/hermes/granularidad-plan   # la que se usó: lanzar.sh la lee (una sola FASE compacta)
+    claude_etapa plan-architect "/sdd-plan-architect --skip-clarify — $ARNES Generate plan/.$INC$PLAN_G"
     ls plan/fases/FASE-*.md >/dev/null 2>&1 || falla "el plan no se generó: $(no_hecho)"
     node "$SDD" lint --plan >/dev/null 2>&1 || falla "sdd lint --plan encuentra errores: $(node "$SDD" lint --plan 2>&1 | tail -3 | tr '\n' ' ')"
     fin "$RES" "Plan generado ($(ls plan/fases/FASE-*.md 2>/dev/null | wc -l | tr -d ' ') FASEs)" ;;
 
   tareas)
     INC=""; git tag -l 'fase-*-accepted' | grep -q . && INC=" INCREMENTAL: generate task files only for the FASEs that do not have one yet; do not touch the task files of accepted FASEs."
-    claude_etapa task-generator "/sdd-task-generator — $ARNES Generate task/ for all FASEs.$INC"
+    claude_etapa task-generator "/sdd-task-generator — $ARNES Generate task/ for all FASEs.$INC$TAREAS_G$TESTS_G"
     ls task/TASK-FASE-*.md >/dev/null 2>&1 || falla "las tareas no se generaron: $(no_hecho)"
     node "$SDD" lint --dir task >/dev/null 2>&1 || falla "sdd lint de tareas encuentra errores: $(node "$SDD" lint --dir task 2>&1 | grep -v '^ *$' | tail -3 | tr '\n' ' ')"
     P=$(puerta plan) || falla "no se pudo abrir la puerta de plan"
@@ -224,7 +253,7 @@ PY
     # Un [PLAN GAP] pendiente no lo puede hacer el implementador: lo completa la etapa huecos (incidente hola-astro)
     ! grep -qE '^- \[ \] .*\[PLAN GAP\]' "task/TASK-FASE-$FASE.md" 2>/dev/null ||
       falla "la FASE-$FASE tiene tareas [PLAN GAP]: antes hay que completarlas (lanzar.sh rehacer $REPO $FASE)"
-    claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES Implement FASE-$FASE completely, test-first, one commit per task with Refs:/Task: trailers."
+    claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES Implement FASE-$FASE completely, test-first, one commit per task with Refs:/Task: trailers.$TESTS_G"
     st=$(node "$SDD" tasks status --fase "$FASE" --require-done 2>&1) || falla "quedan tareas de la FASE-$FASE sin hacer: $(echo "$st" | tail -1)"
     base=$(git describe --tags --abbrev=0 --match 'fase-*-accepted' 2>/dev/null || git describe --tags --abbrev=0 --match 'requirements-v*' 2>/dev/null || git rev-list --max-parents=0 HEAD)
     node "$SDD" verify --range "$base..HEAD" >/dev/null 2>&1 || falla "sdd verify --range $base..HEAD encuentra commits inválidos"
@@ -250,11 +279,14 @@ PY
     fin "$RES" "Línea base propuesta a partir del código" "$P" ;;
 
   cierre)
+    if unica; then   # una sola FASE compacta: aquí se hacen sus veredictos y su demo (no hubo puerta de FASE)
+      claude_etapa acceptance "/sdd-acceptance --fase 0 — $ARNES Produce the per-requirement verdicts with evidence and the FASE demo (captures and a short video in evidencias/FASE-0/). Do not sign off."
+    fi
     rc=0; node "$SDD" gate >/dev/null 2>&1 || rc=$?
     if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then
       HUECOS=$(node "$SDD" gate 2>/dev/null | grep -E 'MISSING|FAILING|STALE' | awk '{print $1" "$2}' | tr '\n' ';')
       ULT=$(ls plan/fases/FASE-*.md | sed -E 's/.*FASE-([0-9]+).*/\1/' | sort -n | tail -1)
-      claude_etapa task-implementer "/sdd-task-implementer --fase=$ULT — $ARNES The GLOBAL acceptance gate is not met. Requirements without evidence: $HUECOS. For each one, first append a task to task/TASK-FASE-$ULT.md (next TASK-F$ULT id, same grammar, Refs the requirement), then implement it test-first (the test name carries the requirement id and criterion, e.g. 'REQ-C-001 AC1'), one commit per task with Task:/Refs: trailers. Do not touch tests that already exist."
+      claude_etapa task-implementer "/sdd-task-implementer --fase=$ULT — $ARNES The GLOBAL acceptance gate is not met. Requirements without evidence: $HUECOS. For each one, first append a task to task/TASK-FASE-$ULT.md (next TASK-F$ULT id, same grammar, Refs the requirement), then implement it test-first (the test name carries the requirement id and criterion, e.g. 'REQ-C-001 AC1'), one commit per task with Task:/Refs: trailers. Do not touch tests that already exist.$TESTS_G"
       claude_etapa acceptance "/sdd-acceptance — $ARNES Compute the GLOBAL per-requirement verdicts (all FASEs) with evidence. Do not sign off."
     fi
     P=$(puerta entrega) || falla "no se pudo abrir la puerta de entrega"

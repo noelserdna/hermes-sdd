@@ -90,3 +90,20 @@ Las rutas se guardan en `~/.hermes/hermes-sdd/sdd.json` (`rutas`, `ruta_defecto`
 `etapas` es una lista de etapas opcionales o `"auto"` (la propuesta de `sdd route`, la ruta adaptativa). La puerta de
 ruta ofrece una por botón (`ruta-<id>`), con las etapas que hará guardadas en la propia puerta; el notario firma con
 `sdd route --write --set <etapa>=run|skip` por cada etapa opcional, así que se hace exactamente lo que se vio.
+
+### Granularidad del plan (≥ 0.3.1)
+
+Cada ruta lleva también su granularidad (`granularidad`): **compacta** (una sola FASE con 3-6 tareas gruesas; su
+aceptación va en la puerta de entrega, que trae la demo, y al aceptarla se etiquetan `fase-0-accepted` y `entrega-N`),
+**normal** (una FASE por recorrido, sin FASE de HARDENING aparte si el NFR cabe en la FASE de su recorrido, tareas de
+4-8), **fina** (como el método de siempre) o **auto** (compacta si hay ≤ 7 REQ-F, un solo tipo de
+usuario y sin integraciones, datos delicados ni estado complejo; normal si no). De serie: Adaptativa → auto, Ligera →
+compacta, Con diseño → normal, Completa → fina.
+
+Cuando el plan deja una sola FASE (en compacta o en normal; no en fina, que conserva su puerta de FASE), no hay puerta
+de FASE: tras implementarla viene el cierre, y la puerta de entrega trae la demo y acepta a la vez la FASE y la entrega.
+
+En compacta y normal rige además una política de tests: un test por criterio, al nivel más barato que lo demuestra
+(navegador solo para lo que lo necesita y para el recorrido de la demo), cada restricción REQ-C una vez, y el
+`REQ-X-NNN ACn` y los valores literales del criterio desde la primera versión del test. Motivo (coches, 11/11/2026):
+216 líneas de código con 1.089 de tests, 3 FASEs y 24 tareas, y 4 de los 9 minutos de la FASE-0 retocando asserts.

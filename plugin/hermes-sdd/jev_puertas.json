@@ -30,7 +30,7 @@
     "entrega": {
       "contexto": "ACCEPTANCE-REPORT.md holds the verdict per requirement for the whole project.",
       "verbos": {
-        "acepto": "Accept the delivery: every Must requirement is VERIFIED, there are no failing or missing requirements and no exemptions, and every FASE was accepted"
+        "acepto": "Accept the delivery: every Must requirement is VERIFIED, there are no failing or missing requirements and no exemptions, and every FASE was accepted (or the gate says the project was built in a single FASE, accepted together with this delivery, and no existing test was weakened)"
       }
     },
     "mantenimiento": {

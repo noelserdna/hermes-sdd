@@ -111,4 +111,55 @@ p["estado"] = "abierta"; p.pop("decision", None); N.escribir(N.indice("gz"), p)
 r = N.aplicar_jev("gz", {"choice": "ruta-ligera", "p": 0.83, "modelo": "jev"})
 assert not r["jev"]["decide"] and r["jev"]["umbral"] == 0.9, r["jev"]
 P
+# 7. granularidad: la de la ruta firmada, «auto» por tamaño, e instrucciones al ejecutor
+echo compacta > .sdd/hermes/granularidad 2>/dev/null || true
+grep -q '^compacta$' .sdd/hermes/granularidad || bad "firmar no guardó la granularidad"
+echo '{"ejecutor":"claude","ejecutores":{"plan":"../tests/ejecutor-falso","tareas":"../tests/ejecutor-falso","implementar":"../tests/ejecutor-falso"}}' > .sdd/hermes/hermes-sdd.json
+FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" plan >/dev/null
+grep -q 'COMPACT PLAN (small project): exactly ONE FASE' "$T/prompt" && [ "$(cat .sdd/hermes/granularidad-plan)" = compacta ] \
+  && ok "compacta: el plan pide una sola FASE y deja constancia de la granularidad usada" || bad "plan compacto: $(cat "$T/prompt")"
+FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" tareas >/dev/null
+grep -q 'COMPACT TASKS: 3 to 6 tasks' "$T/prompt" && grep -q 'TEST POLICY: one test per acceptance criterion' "$T/prompt" \
+  && ok "compacta: tareas gruesas y un test por criterio" || bad "tareas compactas: $(cat "$T/prompt")"
+echo fina > .sdd/hermes/granularidad; FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" tareas >/dev/null
+! grep -qE 'COMPACT|TEST POLICY' "$T/prompt" && ok "fina: como siempre (sin recortes)" || bad "fina: $(cat "$T/prompt")"
+echo auto > .sdd/hermes/granularidad
+echo '{"facts":{"req_f":6,"needs":7},"factors":{"integrations":{"value":"no"}}}' > .sdd/hermes/ruta.json   # vasos
+FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" plan >/dev/null; g1=$(cat .sdd/hermes/granularidad-plan)
+echo '{"facts":{"req_f":5,"needs":1},"factors":{"integrations":{"value":"yes"}}}' > .sdd/hermes/ruta.json
+FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" plan >/dev/null; g2=$(cat .sdd/hermes/granularidad-plan)
+echo '{"facts":{"req_f":12,"needs":4},"factors":{}}' > .sdd/hermes/ruta.json
+FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" plan >/dev/null; g3=$(cat .sdd/hermes/granularidad-plan)
+[ "$g1/$g2/$g3" = compacta/normal/normal ] && ok "auto: compacta si es pequeño (aunque enumere muchas necesidades), normal con integraciones o más de 7 REQ-F" || bad "auto: $g1/$g2/$g3"
+
+# 8. una sola FASE compacta: implementar → cierre (sin puerta de FASE); la entrega trae la demo y acepta la FASE
+echo compacta > .sdd/hermes/granularidad-plan; git tag -d fase-0-accepted >/dev/null 2>&1
+rm -f plan/fases/*; touch plan/fases/FASE-0-todo.md; rm -f "$T/cartas"
+jq '.route.stages["gap-detector"].run = false' pipeline-state.json > p.tmp && mv p.tmp pipeline-state.json
+echo '{"tipo":"plan"}' > .sdd/hermes/puertas/p9.json
+bash "$ROOT/lanzar.sh" siguiente "$R" p9 conforme >/dev/null
+o=$(cut -d'<' -f1 "$T/cartas" | tr '\n' ';')
+[ "$o" = "Implementar FASE-0;Cierre: demo, puerta global y entrega;" ] && ok "una FASE compacta: implementar → cierre con demo, sin puerta de FASE" || bad "única: $o"
+for g in normal fina; do
+  echo $g > .sdd/hermes/granularidad-plan; rm -f "$T/cartas"
+  bash "$ROOT/lanzar.sh" siguiente "$R" p9 conforme >/dev/null
+  eval "o_$g=\"$(cut -d'<' -f1 "$T/cartas" | tr '\n' ';')\""
+done
+[ "$o_normal" = "Implementar FASE-0;Cierre: demo, puerta global y entrega;" ] && [ "$o_fina" = "Implementar FASE-0;Aceptar FASE-0;" ] \
+  && ok "una sola FASE en normal también va a cierre; en fina conserva su puerta de FASE" || bad "única normal/fina: $o_normal | $o_fina"
+echo compacta > .sdd/hermes/granularidad-plan
+mkdir -p evidencias/FASE-0 && touch evidencias/FASE-0/a.png evidencias/FASE-0/b.png
+git add -A >/dev/null 2>&1; git commit -qm "chore: plan compacto" >/dev/null 2>&1
+G=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" entrega 2>/dev/null)
+P=".sdd/hermes/puertas/$G.json"
+# (el todo-app de ejemplo no pasa la puerta global: solo se puede rechazar, y el texto no promete aceptar)
+jq -e '.unica == true and [.opciones[].verbo] == ["rechazo"]' "$P" >/dev/null && jq -r .texto "$P" | grep -q 'al aceptar la entrega aceptas también esa fase' \
+  && ! jq -r .texto "$P" | grep -q 'podrás aceptar' \
+  && jq -r .texto "$P" | grep -q '🎬 Demo: 2 capturas.' && ok "la entrega de una FASE única trae la demo y lo dice" || bad "entrega única: $(jq -c '{unica, opciones}' "$P" 2>&1) $(jq -r .texto "$P" 2>&1)"
+python3 - "$ROOT/plugin/hermes-sdd" "$R" "$G" <<'P' && ok "los canales enseñan la demo de la FASE-0 en la entrega" || bad "evidencias en la entrega"
+import sys, json; sys.path.insert(0, sys.argv[1]); import hsdd_nucleo as N
+p = json.load(open(f"{sys.argv[2]}/.sdd/hermes/puertas/{sys.argv[3]}.json"))
+assert N.evidencias(p) == ["a.png", "b.png"], N.evidencias(p)
+P
+
 exit $fail

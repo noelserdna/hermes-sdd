@@ -4,6 +4,7 @@
 set -uo pipefail
 cd "$1"; D=acceptance/decisions.jsonl; mkdir -p acceptance
 med='{"type":"measurement","at":"2026-10-13T06:07:33Z","by":"command","role":"automated","req":"REQ-F-001","ac":1,"observed":0,"op":"eq","threshold":0,"command":"npm audit","extract":"x=(\\d+)"}'
+[ -n "${FALSO_PROMPT:-}" ] && printf '%s' "$3" > "$FALSO_PROMPT"   # lo que se le pidió (para comprobar instrucciones)
 case "${FALSO_MODO:-}" in
   medicion) echo "$med" >> "$D" ;;                                   # la CLI la escribió; el ejecutor no pudo commitear
   humano)   echo '{"type":"demo","by":"Ana","role":"Cliente","req":"REQ-F-001","ac":1,"pass":true}' >> "$D"

@@ -122,18 +122,23 @@ OPCIONALES_RUTA = [("specifications-engineer", "especificaciones"), ("spec-audit
                    ("test-planner", "plan de pruebas"), ("security-auditor", "revisión de seguridad"),
                    ("tech-designer", "diseño técnico"), ("ux-designer", "diseño visual y de uso"),
                    ("gap-detector", "huecos entre especificación y código")]
+# Granularidad del plan: cuántas fases y lo gruesas que son las tareas. «auto»: compacta si el proyecto es pequeño.
+GRANULARIDADES = [("auto", "Según el tamaño del proyecto"), ("compacta", "Compacta: una fase y pocas tareas"),
+                  ("normal", "Normal: una fase por recorrido"), ("fina", "Fina: fases y tareas pequeñas")]
 RUTAS_DEFECTO = [
-    {"id": "adaptativa", "nombre": "Adaptativa", "etapas": "auto",
+    {"id": "adaptativa", "nombre": "Adaptativa", "etapas": "auto", "granularidad": "auto",
      "descripcion": "El método elige las etapas según cómo es el proyecto (tamaño, datos sensibles, pantallas, integraciones…)."},
-    {"id": "ligera", "nombre": "Ligera", "etapas": [],
+    {"id": "ligera", "nombre": "Ligera", "etapas": [], "granularidad": "compacta",
      "descripcion": "Solo lo esencial: requisitos, plan, programación y aceptación. Para prototipos y proyectos pequeños."},
-    {"id": "con-diseno", "nombre": "Con diseño", "etapas": ["tech-designer", "ux-designer"],
+    {"id": "con-diseno", "nombre": "Con diseño", "etapas": ["tech-designer", "ux-designer"], "granularidad": "normal",
      "descripcion": "Lo esencial más el diseño visual y de uso y el diseño técnico. Para apps con pantallas cuidadas."},
-    {"id": "completa", "nombre": "Completa", "etapas": [k for k, _ in OPCIONALES_RUTA],
+    {"id": "completa", "nombre": "Completa", "etapas": [k for k, _ in OPCIONALES_RUTA], "granularidad": "fina",
      "descripcion": "Todas las etapas del método: especificaciones, auditoría, plan de pruebas, seguridad, diseño y huecos. "
                     "Más lenta y más cara; para proyectos serios o de un cliente externo."},
 ]
 RUTA_DEFECTO = "adaptativa"
+GRAN_EN = {"auto": "compact when the project is small, normal otherwise", "compacta": "compact (one FASE, few coarse tasks)",
+           "normal": "normal (one FASE per user journey)", "fina": "fine (small FASEs and tasks)"}
 
 
 def _ruta_valida(r: dict) -> dict:
@@ -151,8 +156,11 @@ def _ruta_valida(r: dict) -> dict:
         if not isinstance(etapas, list) or any(e not in validas for e in etapas):
             raise Rechazo(f"Las etapas de la ruta {rid} son «auto» o una lista de: {', '.join(validas)}")
         etapas = [k for k in validas if k in etapas]
+    gran = r.get("granularidad") or "auto"
+    if gran not in dict(GRANULARIDADES):
+        raise Rechazo(f"La granularidad de la ruta {rid} es una de: {', '.join(dict(GRANULARIDADES))}")
     return {"id": rid, "nombre": nombre[:40], "descripcion": " ".join(str(r.get("descripcion") or "").split())[:300],
-            "etapas": etapas}
+            "etapas": etapas, "granularidad": gran}
 
 
 def rutas(cfg: dict | None = None) -> list:
@@ -182,14 +190,16 @@ def opciones_ruta(tablero: str, propuesta: dict | None = None) -> list:
     for r in sorted(rutas(cfg), key=lambda r: r["id"] != rec):
         etapas = auto if r["etapas"] == "auto" else list(r["etapas"])
         hace = ", ".join(nombres[k] for k in etapas) or "ninguna etapa extra"
+        gran = r.get("granularidad") or "auto"
         criterio = (f"Use the route «{r['nombre']}» ({r['descripcion']}). Extra stages it runs besides the core "
-                    f"(requirements, plan, tasks, implementation, acceptance): {', '.join(etapas) or 'none'}.")
+                    f"(requirements, plan, tasks, implementation, acceptance): {', '.join(etapas) or 'none'}. "
+                    f"Plan granularity: {GRAN_EN[gran]}.")
         if r["id"] == rec:
             criterio += (" The customer fixed this route when creating the project: choose it unless the requirements "
                          "clearly need more rigor." if fijada else " This is the recommended route.")
         ops.append({"verbo": f"ruta-{r['id']}", "etiqueta": ("⭐ " if r["id"] == rec else "🧭 ") + r["nombre"],
                     "nombre": r["nombre"], "descripcion": r["descripcion"], "etapas": etapas, "auto": r["etapas"] == "auto",
-                    "hace": hace, "recomendada": r["id"] == rec, "fijada": fijada and r["id"] == rec, "criterio": criterio})
+                    "hace": hace, "granularidad": gran, "fases": dict(GRANULARIDADES)[gran], "recomendada": r["id"] == rec, "fijada": fijada and r["id"] == rec, "criterio": criterio})
     return ops
 
 
@@ -212,7 +222,7 @@ def config() -> dict:
             "modelos": modelos_efectivos(cfg), "perfiles": PERFILES, "nombres_perfil": NOMBRE_PERFIL,
             "etapas_modelo": ETAPAS_MODELO, "modelos_disponibles": modelos_disponibles(),
             "rutas": rutas(cfg), "ruta_defecto": ruta_de("", {**cfg, "rutas_proyecto": {}}),
-            "rutas_proyecto": cfg.get("rutas_proyecto") or {}, "etapas_ruta": OPCIONALES_RUTA,
+            "rutas_proyecto": cfg.get("rutas_proyecto") or {}, "etapas_ruta": OPCIONALES_RUTA, "granularidades": GRANULARIDADES,
             "rutas_por_defecto": RUTAS_DEFECTO}
 
 
