@@ -120,9 +120,22 @@ case "$CMD" in
     T=$(fase_n "$N")
     echo "FASE-$N de $BOARD otra vez: $T$(con_huecos "$N" && echo ' (primero completa los huecos del plan)')" ;;
 
+  limpiar)      # archiva las tarjetas de etapa ya resueltas: bloqueadas (o en espera de un padre bloqueado) cuya misma
+                # etapa (y FASE) se repitió después en otra tarjeta que terminó (o que está en marcha: etapa.sh al acabar bien)
+    "${K[@]}" list --json 2>/dev/null | jq -r '
+      [.[] | select(.assignee == "sdd-estacion") | . + {etapa: ((.body // "") | capture("etapa\\.sh (?<e>.+)$").e // "")}
+           | select(.etapa != "")] as $ts
+      | $ts[] | select(.status == "blocked" or .status == "todo") as $b
+      | ($ts | map(select(.etapa == $b.etapa and .created_at > $b.created_at and (.status == "done" or .status == "running")))
+             | sort_by(.created_at) | last) as $n
+      | select($n != null) | "\($b.id) \($n.id) \($n.title)"' | while read -r viejo nuevo titulo; do
+        "${K[@]}" comment "$viejo" "Obsoleta: esta etapa se repitió y se resolvió en $nuevo ($titulo). Archivada por el arnés; sigue consultable." >/dev/null 2>&1 || true
+        "${K[@]}" archive "$viejo" >/dev/null 2>&1 && echo "archivada $viejo (resuelta en $nuevo)"
+      done ;;
+
   reintentar)   # una etapa fallida se repite con una tarjeta NUEVA (nunca se desbloquea la vieja)
     ETAPA=$3; FASE=${4:-}
     tarjeta "Reintento: $ETAPA${FASE:+ FASE-$FASE}" - 120m "$ETAPA" $FASE ;;
 
-  *) echo "uso: lanzar.sh iniciar <repo> | siguiente <repo> <puerta> <resultado> | rehacer <repo> <N> | reintentar <repo> <etapa> [fase]" >&2; exit 2 ;;
+  *) echo "uso: lanzar.sh iniciar <repo> | siguiente <repo> <puerta> <resultado> | rehacer <repo> <N> | reintentar <repo> <etapa> [fase] | limpiar <repo>" >&2; exit 2 ;;
 esac

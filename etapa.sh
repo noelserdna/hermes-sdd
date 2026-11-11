@@ -33,6 +33,10 @@ modelo() {  # el del proyecto (.modelos[<etapa>]); si no fija ninguno, el del pe
   HERMES_SDD_HOME="${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}" python3 "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" modelo "$1" "$(ejecutor "$1")" 2>/dev/null
 }
 fin() {  # fin <json-del-ejecutor-o-propio> [resumen] [puerta]
+  # Etapa resuelta: las tarjetas bloqueadas de intentos anteriores de esta misma etapa quedan obsoletas y se archivan
+  if [ "$(echo "$1" | jq -r .outcome 2>/dev/null)" = done ] && [ -z "${HERMES_SDD_SIN_KANBAN:-}" ]; then
+    bash "$ROOT/lanzar.sh" limpiar "$REPO" >/dev/null 2>&1 || true
+  fi
   echo "$1" | jq -c --arg r "${2:-}" --arg p "${3:-}" '. + {resumen:$r} + (if $p != "" then {puerta:$p} else {} end)'
   exit 0
 }
