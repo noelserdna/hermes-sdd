@@ -283,6 +283,8 @@ def puede_jev(puerta: dict, cfg: dict | None = None) -> tuple[bool, str]:
     editados = puerta.get("tests_editados") if "tests_editados" in puerta else (int(m.group(1)) if m else 0)
     if editados:
         return False, "se modificaron tests que ya existían (lo revisa una persona)"
+    if (puerta.get("encargado") or {}).get("graves"):   # revisión mecánica del encargado (hsdd_revision.py)
+        return False, "el encargado marcó un aviso grave (lo decide una persona)"
     if not verbos_jev(puerta):
         return False, "ninguna opción de esta puerta se puede elegir sin escribir un motivo"
     return True, f"modo {modo}"

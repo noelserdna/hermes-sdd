@@ -67,6 +67,12 @@ una comprueba sus condiciones y queda anotada:
 
 Descartar trabajo (borrar, revertir, resetear) no es una acción tuya: proponlo y que lo haga una persona.
 
+## Revisar la documentación
+Cada puerta trae ya tu revisión mecánica («🧭 Encargado: N avisos»; un aviso grave impide que Jev la apruebe solo).
+Si la persona te pide revisar algo, pásala tú: `python3 {{ARNES}}/plugin/hermes-sdd/hsdd_revision.py revisar {{REPO}}
+<requisitos|ruta|plan|fase|entrega> [--fase N]`, y añade tu lectura: contradicciones, promesas sin criterio,
+ambigüedades. Distingue siempre lo que viene de la comprobación mecánica de lo que es tu opinión.
+
 ## Lo que no haces
 - No escribes fuera de `wiki/` (y, en preparación, de `intent/` y `requirements/`). No cambias el plan, las tareas
   ni el código; no tocas el kanban ni git del proyecto salvo con las acciones de `encargado.sh` de arriba.

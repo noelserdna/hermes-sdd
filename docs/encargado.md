@@ -1,7 +1,7 @@
 # El encargado del proyecto (diseño, v2)
 
 > Estado: revisado (11/11/2026) tras una revisión con cuatro enfoques: viabilidad en Hermes, integración con el arnés,
-> producto y método, y crítica y seguridad. Hechas las fases 0 a 3 (ver «Fases»).
+> producto y método, y crítica y seguridad. Hechas las fases 0 a 4 (ver «Fases»).
 
 ## Por qué
 
@@ -199,8 +199,14 @@ Cierre propuesto, por capas:
    etapa viva), `limpiar`, `apartar` (a un stash con nombre, nunca se borra) y `relanzar <N>`, que el guardia manda a
    la **aprobación humana** de Hermes (`{"action":"approve"}`; en una ronda del cron no hay nadie y se deniega).
    El gateway deja de mandar su aviso de etapa parada en los proyectos con encargado (un aviso, no dos).
-4. **Revisar la documentación**: comprobaciones mecánicas en `sdd gate`/puerta, después el revisor independiente, la
-   línea «🧭 Encargado» en la puerta y la regla para Jev.
+4. **Revisar la documentación** — ✅ hecha (12/11/2026): `hsdd_revision.py` (sin LLM) corre en cada puerta de
+   requisitos, ruta, plan, fase y entrega y pone arriba «🧭 Encargado: N avisos» (en el JSON de la puerta,
+   `encargado.avisos`): demo/inspección que un test podría leer, Must sin necesidad, requisito sin criterios (grave),
+   ruta que contradice el stack, criterio de una FASE posterior (grave), FASEs o tareas desproporcionadas, tests > 3×
+   código, la captura de un criterio que es la de otro. No bloquea; **un aviso grave impide que Jev apruebe solo**
+   (`puede_jev`, también en el notario). Revisor independiente con IA opcional (`nuevo.sh config --revision-ia
+   requisitos,plan`): una sesión de Claude aparte, en sandbox, sin el wiki del encargado, hasta 5 avisos «GRAVE/AVISO»
+   (en vasos encontró el redondeo sin fijar de 3/8, qué es «un día» y un guardado sin criterio).
 5. **Lecciones entre proyectos**, con evidencia, confirmadas y con caducidad.
 
 ## Cómo sabremos si aporta

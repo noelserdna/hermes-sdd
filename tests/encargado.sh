@@ -67,4 +67,6 @@ o=$(c "bash $A/encargado.sh relanzar $R 2" | python3 -I "$G" "$R" "$A"); rc=$?
 [ $rc = 0 ] && echo "$o" | jq -e '.action == "approve" and (.message | test("FASE-2"))' >/dev/null \
   && ok "relanzar: pide la aprobación de la persona (approve)" || bad "relanzar: $rc $o"
 o=$(c "bash $A/encargado.sh relanzar $R 2 --seco" | python3 -I "$G" "$R" "$A"); [ -z "$o" ] && ok "relanzar en seco: sin aprobación (no hace nada)" || bad "seco: $o"
+t 0 "$(c "python3 $A/plugin/hermes-sdd/hsdd_revision.py revisar $R plan")" "permite: la revisión mecánica"
+t 2 "$(c "python3 $A/plugin/hermes-sdd/hsdd_revision.py revisar $R plan --ia")" "deniega: la revisión con IA (cuesta; la pide la puerta)"
 exit $fail

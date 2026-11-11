@@ -116,12 +116,18 @@ esac
 T_JSON=$(python3 "$TEXTOS" puerta "$TIPO" "$REPO" --proyecto "${BOARD:-$(basename "$REPO")}" ${FASE:+--fase "$FASE"} ${EXTRA[@]+"${EXTRA[@]}"}) ||
   { echo "no se pudo escribir el texto de la puerta $TIPO" >&2; exit 1; }
 TITULO=$(echo "$T_JSON" | jq -r .titulo); TEXTO=$(echo "$T_JSON" | jq -r .texto)
-if [ "$TIPO" = plan ] && [ -s .sdd/hermes/plan-avisos.txt ]; then
-  TEXTO="$TEXTO
+# Revisión mecánica del encargado (hsdd_revision.py, sin LLM): «🧭 Encargado: N avisos» arriba del texto. No bloquea;
+# un aviso grave hace que Jev no pueda aprobar esta puerta solo (hsdd_nucleo.puede_jev lee .encargado.graves)
+ENC='{"avisos":[],"graves":0}'
+case "$TIPO" in requisitos|ruta|plan|fase|entrega)
+  IA=""; jq -e --arg t "$TIPO" '(.revision_ia // []) | index($t)' "$HOME_SDD/sdd.json" >/dev/null 2>&1 && IA=--ia
+  ENC=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_revision.py" revisar "$REPO" "$TIPO" ${FASE:+--fase "$FASE"} $IA 2>/dev/null) || ENC='{"avisos":[],"graves":0}'
+  jq -e '.avisos' <<< "$ENC" >/dev/null 2>&1 || ENC='{"avisos":[],"graves":0}'
+  LINEA=$(jq -r '.linea // ""' <<< "$ENC")
+  [ -z "$LINEA" ] || TEXTO="$LINEA
 
-⚠️ Estos criterios citan una pantalla que llega en una fase posterior: su fase no podrá aceptarse tal cual. Pide un cambio (✏️) para moverlos o adelantar esa pantalla:
-$(cat .sdd/hermes/plan-avisos.txt)"
-fi
+$TEXTO" ;;
+esac
 
 # Preguntas como datos, para que el canal pueda ofrecerlas como formulario (Q1: A/B/C…)
 PREGUNTAS=$(python3 - .sdd/questions-*.md <<'PY' 2>/dev/null || echo '[]'
@@ -147,8 +153,9 @@ jq -n --arg id "$ID" --arg t "$TIPO" --arg f "$FASE" --arg b "$BOARD" --arg s "$
   --argjson ad "$([ -f .sdd/hermes/adopcion ] && echo true || echo false)" \
   --argjson hz "$([ "$TIPO" = mantenimiento ] && cat .sdd/hermes/mantenimiento/hallazgos.json || echo null)" \
   --argjson te "${EDIT:-0}" --argjson bl "$BLOQUEO" --argjson un "${UNICA:-false}" --argjson rv "$(cat "$REV_JSON")" \
+  --argjson en "$(jq -c '{avisos, graves}' <<< "$ENC")" \
   '{id:$id, tipo:$t, fase:$f, tablero:$b, tarjeta:"", adopcion:$ad, sha:$s, creada:$c, repo:$r, titulo:$ti, texto:$tx,
     opciones:$o, demo:$v, preguntas:$q, hallazgos:$hz, tests_editados:$te, bloqueo:$bl, unica:$un,
-    revisar:(($rv // {}).revisar // []), estado:"abierta"}' > ".sdd/hermes/puertas/$ID.json"
+    revisar:(($rv // {}).revisar // []), encargado:$en, estado:"abierta"}' > ".sdd/hermes/puertas/$ID.json"
 cp ".sdd/hermes/puertas/$ID.json" "$HOME_SDD/puertas/$ID.json"   # índice global para los canales
 echo "$ID"

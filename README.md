@@ -288,6 +288,10 @@ reescribirlos, y la puerta te dice de cuántos partías y qué cambió.
 esperando, o si quedaron restos sin commit; solo si cambia algo despierta al encargado, que lo diagnostica, hace lo que
 le toca (reintentar una vez una etapa que falló por algo pasajero, archivar tarjetas obsoletas, apartar restos a un
 stash) y te lo cuenta en su tema. Rehacer una FASE ya hecha te lo pregunta antes; decidir puertas, nunca.
+**Revisa la documentación**: cada puerta llega con «🧭 Encargado: N avisos» arriba (un requisito que te tocará
+comprobar a mano aunque lo podría leer un test, un Must que no pediste, un criterio que depende de una pantalla de una
+fase posterior…). No bloquea, pero con un aviso grave Jev no aprueba solo. Si quieres además un revisor independiente
+con IA en algunas puertas: `bash nuevo.sh config --revision-ia requisitos,plan`.
 Diseño y fases siguientes: [docs/encargado.md](docs/encargado.md).
 
 ---

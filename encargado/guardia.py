@@ -99,9 +99,10 @@ def segmento(seg: list, cwd: str) -> str | None:
         script = next((a for a in args if a.endswith(".py")), "")
         nombre = os.path.basename(script)
         if dentro(ruta(script, cwd), ARNES) and ((nombre == "hsdd_proyectos.py" and "estado" in args)
-                                                 or (nombre == "hsdd_plan.py" and "dependencias" in args)):
+                                                 or (nombre == "hsdd_plan.py" and "dependencias" in args)
+                                                 or (nombre == "hsdd_revision.py" and "revisar" in args and "--ia" not in args)):
             return None
-        return "solo puede ejecutar hsdd_proyectos.py estado y hsdd_plan.py dependencias del arnés"
+        return "solo puede ejecutar hsdd_proyectos.py estado, hsdd_plan.py dependencias y hsdd_revision.py revisar (sin --ia)"
     if cmd == "node":
         script = next((a for a in args if a.endswith("sdd.mjs")), "")
         if not script or not dentro(ruta(script, cwd), ARNES):

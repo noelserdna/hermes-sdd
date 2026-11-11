@@ -244,12 +244,22 @@ def _stack_valido(s: dict) -> dict:
     return s
 
 
+REVISION_IA_TIPOS = ("requisitos", "ruta", "plan", "fase", "entrega")
+
+
 def guardar_config(carpeta: str | None = None, stack_defecto: str | None = None, stacks: list | None = None,
                    deshacer_s=None, perfil_modelos: str | None = None, modelos: dict | None = None,
-                   deshacer_jev_s=None, rutas_cfg: list | None = None, ruta_defecto: str | None = None) -> dict:
+                   deshacer_jev_s=None, rutas_cfg: list | None = None, ruta_defecto: str | None = None,
+                   revision_ia: list | None = None) -> dict:
     """Cambia lo que venga (lo demás se queda como está). Valida antes de escribir nada."""
     actual = N.leer(N.HOME / "sdd.json", {}) or {}
     nuevo = dict(actual)
+    if revision_ia is not None:   # puertas con revisor independiente con IA (encargado, fase 4; cuesta en cada puerta)
+        malos = [t for t in revision_ia if t not in REVISION_IA_TIPOS]
+        if malos:
+            raise Rechazo(f"Tipos de puerta desconocidos para la revisión con IA: {', '.join(malos)} "
+                          f"(valen: {', '.join(REVISION_IA_TIPOS)})")
+        nuevo["revision_ia"] = list(dict.fromkeys(revision_ia))
     if carpeta is not None:
         carpeta = carpeta.strip()
         if carpeta and not Path(carpeta).expanduser().is_absolute():
@@ -661,6 +671,7 @@ if __name__ == "__main__":   # CLI de nuevo.sh
     c = sub.add_parser("config"); c.add_argument("--carpeta"); c.add_argument("--stack-defecto")
     c.add_argument("--deshacer", metavar="SEGUNDOS")
     c.add_argument("--deshacer-jev", metavar="SEGUNDOS")
+    c.add_argument("--revision-ia", metavar="TIPOS", help="puertas con revisor independiente con IA: requisitos,plan,… o «ninguna»")
     sub.add_parser("stacks")
     mo = sub.add_parser("modelo"); mo.add_argument("etapa"); mo.add_argument("ejecutor", nargs="?", default="claude")
     mp = sub.add_parser("modelos"); mp.add_argument("--perfil")
@@ -679,12 +690,15 @@ if __name__ == "__main__":   # CLI de nuevo.sh
             if r["salida"]:
                 print(r["salida"])
         elif a.cmd == "config":
-            if any(v is not None for v in (a.carpeta, a.stack_defecto, a.deshacer, a.deshacer_jev)):
-                guardar_config(carpeta=a.carpeta, stack_defecto=a.stack_defecto, deshacer_s=a.deshacer, deshacer_jev_s=a.deshacer_jev)
+            ria = None if a.revision_ia is None else [t for t in a.revision_ia.replace(" ", "").split(",") if t and t != "ninguna"]
+            if any(v is not None for v in (a.carpeta, a.stack_defecto, a.deshacer, a.deshacer_jev, ria)):
+                guardar_config(carpeta=a.carpeta, stack_defecto=a.stack_defecto, deshacer_s=a.deshacer,
+                               deshacer_jev_s=a.deshacer_jev, revision_ia=ria)
             c = config()
             print(f"Carpeta por defecto: {c['carpeta']} ({c['carpeta_resuelta']})\nStack por defecto: {c['stack_defecto']}\n"
                   f"Ventana para deshacer: {c['deshacer_s']} s ({N.duracion(c['deshacer_s'])}); "
-                  f"las de Jev: {c['deshacer_jev_s']} s ({N.duracion(c['deshacer_jev_s'])})")
+                  f"las de Jev: {c['deshacer_jev_s']} s ({N.duracion(c['deshacer_jev_s'])})\n"
+                  f"Revisor independiente con IA en las puertas de: {', '.join((N.leer(N.HOME / 'sdd.json', {}) or {}).get('revision_ia') or []) or 'ninguna'}")
         elif a.cmd == "vigia":   # el monitor del cron del encargado: salida estable, vacía si todo va bien
             r = Path(a.repo).resolve()
             try:
