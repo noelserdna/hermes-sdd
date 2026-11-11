@@ -7,6 +7,10 @@
 #   encargado.sh borrar <repo>       borra el perfil (el wiki se queda en el repo)
 #   encargado.sh lanzar <repo>       lanza un proyecto preparado (lanzar.sh preparar) con la entrada que recogió
 #   encargado.sh tema <repo> <chat> <hilo>   enlaza un tema de Telegram con el encargado (lo usa /encargado)
+#   encargado.sh reintentar <repo> <tarjeta> [--seco]   repite UNA vez una etapa que falló (sus hijas pasan a la nueva)
+#   encargado.sh limpiar <repo> [--seco]     archiva tarjetas obsoletas
+#   encargado.sh apartar <repo> [--seco]     restos sin commit de una etapa cortada → stash con nombre (nunca se borran)
+#   encargado.sh relanzar <repo> <N> [--seco]   rehace la FASE N (el guardia pide antes la aprobación de la persona)
 #
 # Hablar con él: en el panel de Hermes, /chat?profile=sdd-p-<proyecto>, o `hermes -p sdd-p-<proyecto> chat`.
 #
@@ -17,7 +21,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 HH="$HOME/.hermes"; HOME_SDD="${HERMES_SDD_HOME:-$HH/hermes-sdd}"
-CMD=${1:-}; [ -n "${2:-}" ] || { sed -n '2,15p' "$0" >&2; exit 2; }
+CMD=${1:-}; [ -n "${2:-}" ] || { sed -n '2,19p' "$0" >&2; exit 2; }
 REPO=$(cd "$2" && pwd)
 BOARD=$(basename "$REPO" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')
 P="sdd-p-$BOARD"
@@ -69,6 +73,33 @@ wiki() {  # esqueleto del wiki (si no existe) como repositorio git propio, ignor
   fi
 }
 
+vigilante() {  # el cron del vigía en el perfil del encargado: cada 5 min un script sin LLM (hsdd_proyectos.py vigia);
+  # solo si su salida cambia se despierta el modelo, que diagnostica, actúa según su carta y avisa en su tema
+  local PD="$HH/profiles/$P" id destino
+  mkdir -p "$PD/scripts"
+  cat > "$PD/scripts/vigia.sh" <<V
+#!/usr/bin/env bash
+# Vigía de $BOARD (lo crea encargado.sh): una línea por asunto que mirar; vacío si todo va bien. Sin horas: el cron en
+# modo monitor solo despierta al encargado cuando esta salida cambia.
+export PATH="$(dirname "$(command -v hermes)"):/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+export HERMES_SDD_HOME="$HOME_SDD"
+exec python3 "$ARNES/plugin/hermes-sdd/hsdd_proyectos.py" vigia "$REPO"
+V
+  chmod +x "$PD/scripts/vigia.sh"
+  destino=$(hermes config get gateway.profile_routes --json 2>/dev/null | jq -r --arg n "encargado-$BOARD" \
+    '[.[]? | select(.name == $n)][0] | if . then "telegram:\(.chat_id):\(.thread_id)" else empty end' 2>/dev/null)
+  destino=${destino:-telegram}
+  local PROMPT="Eres el encargado de $BOARD y te despierta el vigía: cambió la lista de asuntos que mirar (va arriba, MONITOR CHANGE). Para cada asunto NUEVO, diagnostica (hsdd_proyectos.py estado, .sdd/hermes/etapas.jsonl, el motivo, git log) y actúa según tu carta, sección «Supervisar». En esta ronda no hay nadie para aprobar: no relances; si hace falta, recomiéndalo. Después escribe a la persona un mensaje breve en castellano: qué pasó, qué hiciste o qué recomiendas, y qué necesitas que decida. Si lo único que cambió es que algo se resolvió, una línea. Si no hay nada que contar, responde exactamente [SILENT]."
+  id=$(jq -r '(if type == "array" then . else (.jobs // []) end)[] | select(.name == "vigia") | .id' "$PD/cron/jobs.json" 2>/dev/null | head -1)
+  if [ -n "$id" ]; then
+    hermes -p "$P" cron edit "$id" --schedule "every 5m" --prompt "$PROMPT" --monitor-script vigia.sh --workdir "$REPO" --deliver "$destino" >/dev/null
+  else
+    hermes -p "$P" cron create "every 5m" "$PROMPT" --name vigia --monitor-script vigia.sh --workdir "$REPO" \
+      --deliver "$destino" --catch-up off >/dev/null
+  fi
+  echo "  Vigía: cada 5 min (sin LLM salvo si algo cambia), avisa en $destino"
+}
+
 modelo() {
   HERMES_SDD_HOME="$HOME_SDD" python3 "$ARNES/plugin/hermes-sdd/hsdd_proyectos.py" modelo-encargado 2>/dev/null || echo "anthropic/claude-sonnet-5.5"
 }
@@ -111,6 +142,7 @@ case "$CMD" in
       '{approvals: [{event: "pre_tool_call", command: $c, approved_at: $t}]}' > "$PD/shell-hooks-allowlist.json"
     registrar "$REPO"
     echo "Encargado de $BOARD listo: perfil $P, modelo $(modelo), wiki en $REPO/wiki"
+    vigilante
     echo "  Hablar con él: panel de Hermes → /chat?profile=$P   ·   hermes -p $P chat" ;;
 
   lanzar)   # el proyecto preparado (lanzar.sh preparar) arranca con la entrada que recogió el encargado. Es la única
@@ -126,6 +158,53 @@ case "$CMD" in
     [ -z "$(git status --porcelain)" ] || { echo "ERROR: quedan cambios sin commit fuera de intent/ y requirements/:" >&2; git status --short >&2; exit 1; }
     rm -f .sdd/hermes/preparando
     bash "$ROOT/lanzar.sh" iniciar "$REPO" ;;
+
+  # ── Acciones de supervisión (fase 3). Las únicas que el guardia le deja al encargado; cada una comprueba sus
+  #    condiciones, admite --seco (dice qué haría sin hacerlo) y queda en .sdd/hermes/encargado-acciones.jsonl ────────
+  reintentar|limpiar|apartar|relanzar)
+    SECO=false; ARGS=()
+    for a in "${@:3}"; do [ "$a" = --seco ] && SECO=true || ARGS+=("$a"); done
+    cd "$REPO"
+    K=(hermes kanban --board "$BOARD")
+    anotar() { mkdir -p .sdd/hermes; jq -nc --arg a "$CMD" --arg d "$1" --arg t "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+      '{ts:$t, accion:$a, detalle:$d, por:"encargado"}' >> .sdd/hermes/encargado-acciones.jsonl; echo "$1"; }
+    viva() { local pid; pid=$(cat .sdd/hermes/lock/pid 2>/dev/null || true); [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; }
+    # (con set -e: las comprobaciones van en if, no en «a && b», para que un falso no corte el script)
+    hecho() { if $SECO; then echo "(en seco) $1"; exit 0; fi; }
+    case "$CMD" in
+      reintentar)   # reintentar <tarjeta>: una etapa que falló se repite UNA vez (por tarjeta); sus hijas pasan a la nueva
+        T=${ARGS[0]:?falta la tarjeta}
+        J=$("${K[@]}" show "$T" --json 2>/dev/null) || { echo "ERROR: no encuentro la tarjeta $T" >&2; exit 1; }
+        [ "$(jq -r '.task.status' <<< "$J")" = blocked ] || { echo "ERROR: $T no está parada ($(jq -r '.task.status' <<< "$J"))" >&2; exit 1; }
+        CUERPO=$(jq -r '.task.body // ""' <<< "$J")
+        read -r ETAPA FASE < <(sed -nE 's/.*etapa\.sh [^ ]+ ([^ ]+)( ([^ ]+))?.*/\1 \3/p' <<< "$CUERPO" | head -1)
+        [ -n "${ETAPA:-}" ] || { echo "ERROR: $T no es una tarjeta de etapa" >&2; exit 1; }
+        grep -q "\"accion\":\"reintentar\".*\"detalle\":\"[^\"]*$T" .sdd/hermes/encargado-acciones.jsonl 2>/dev/null &&
+          { echo "ERROR: ya reintenté $T una vez; ahora decide la persona (relanzar o cambiar algo)" >&2; exit 1; }
+        if viva; then echo "ERROR: hay una etapa en marcha en $BOARD; espera a que acabe" >&2; exit 1; fi
+        if etapa_o_puerta; then echo "ERROR: hay una puerta pendiente en $BOARD: un commit ahora le impediría firmarse" >&2; exit 1; fi
+        hecho "reintentaría $ETAPA${FASE:+ FASE-$FASE} ($T) con una tarjeta nueva, pasándole sus hijas"
+        NUEVA=$(bash "$ROOT/lanzar.sh" reintentar "$REPO" "$ETAPA" ${FASE:-} | tail -1)
+        for h in $(jq -r '.children[]?' <<< "$J"); do
+          "${K[@]}" link "$NUEVA" "$h" >/dev/null 2>&1 && "${K[@]}" unlink "$T" "$h" >/dev/null 2>&1 || true
+        done
+        "${K[@]}" comment "$T" "El encargado la reintenta en $NUEVA (una vez)." >/dev/null 2>&1 || true
+        anotar "reintenta $ETAPA${FASE:+ FASE-$FASE}: $T → $NUEVA" ;;
+      limpiar)      # archiva tarjetas obsoletas (una etapa que se repitió y ya se resolvió)
+        hecho "archivaría las tarjetas obsoletas de $BOARD"
+        R=$(bash "$ROOT/lanzar.sh" limpiar "$REPO"); anotar "limpia: ${R:-nada que archivar}" ;;
+      apartar)      # restos sin commit de una etapa cortada: a un stash con nombre, nunca se borran
+        if viva; then echo "ERROR: hay una etapa en marcha: esos cambios son suyos" >&2; exit 1; fi
+        [ -n "$(git status --porcelain)" ] || { echo "No hay restos sin commit"; exit 0; }
+        hecho "apartaría a un stash: $(git status --porcelain | wc -l | tr -d ' ') fichero(s)"
+        git stash push -u -q -m "encargado: restos sin commit ($(date +%Y-%m-%d\ %H:%M))"
+        anotar "aparta restos sin commit a $(git stash list | head -1 | cut -d: -f1) (recuperables con git stash pop)" ;;
+      relanzar)     # relanzar <N>: rehacer una FASE ya hecha. El guardia pide antes la aprobación de la persona.
+        N=${ARGS[0]:?falta la FASE}
+        if viva; then echo "ERROR: hay una etapa en marcha en $BOARD" >&2; exit 1; fi
+        hecho "relanzaría la FASE-$N (huecos si quedan → implementar → aceptar)"
+        R=$(bash "$ROOT/lanzar.sh" rehacer "$REPO" "$N"); anotar "relanza FASE-$N: $R" ;;
+    esac ;;
 
   tema)   # encargado.sh tema <repo> <chat_id> <thread_id>: ese tema de Telegram habla con el encargado del proyecto.
           # Ruta por chat Y tema (si fuera solo por chat, todo el privado iría al encargado y se perderían los avisos);
@@ -143,7 +222,8 @@ case "$CMD" in
             else . end)' <<< "$TEMAS")
     hermes config set gateway.profile_routes "$RUTAS" >/dev/null
     hermes config set platforms.telegram.extra.dm_topics "$TEMAS" >/dev/null
-    echo "Tema «🧭 $BOARD» ($CHAT/$HILO) → $P (se activa al reiniciar el gateway)" ;;
+    echo "Tema «🧭 $BOARD» ($CHAT/$HILO) → $P (se activa al reiniciar el gateway)"
+    vigilante ;;   # el vigía avisa en el tema
 
   borrar)
     hermes profile delete -y "$P" >/dev/null 2>&1 || true
@@ -155,5 +235,5 @@ case "$CMD" in
     registrar ""
     echo "Perfil $P borrado (el wiki sigue en $REPO/wiki)" ;;
 
-  *) sed -n '2,15p' "$0" >&2; exit 2 ;;
+  *) sed -n '2,19p' "$0" >&2; exit 2 ;;
 esac

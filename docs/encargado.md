@@ -1,7 +1,7 @@
 # El encargado del proyecto (diseño, v2)
 
 > Estado: revisado (11/11/2026) tras una revisión con cuatro enfoques: viabilidad en Hermes, integración con el arnés,
-> producto y método, y crítica y seguridad. Hechas las fases 0, 1 y 2 (ver «Fases»).
+> producto y método, y crítica y seguridad. Hechas las fases 0 a 3 (ver «Fases»).
 
 ## Por qué
 
@@ -190,7 +190,15 @@ Cierre propuesto, por capas:
    dudoso como pregunta, sección «Depuración» con lo que cambió; la puerta dice «Partías de tus requisitos (N)»),
    **escribir** desde la petición más el intake y `wiki/raw/` (con `sdd-import` para Jira, CSV, OpenAPI o Notion, ya en
    `metodo/skills`), o los ya escritos.
-3. **Supervisar y arreglar**: cron con filtro, `encargado.sh`, hook con `approve`, un solo aviso.
+3. **Supervisar y arreglar** — ✅ hecha (11/11/2026): cada encargado tiene un cron **vigia** en su perfil (cada 5 min,
+   modo monitor de Hermes): `hsdd_proyectos.py vigia <repo>`, sin LLM, saca una línea estable por asunto (PARADA,
+   PUERTA CON ERROR, DECIDIDA SIN FIRMAR, PUERTA ESPERANDO >4 h / >24 h, LENTA >2× su mediana, CANDADO HUÉRFANO,
+   RESTOS SIN COMMIT); **solo si esa salida cambia** se despierta el modelo, que diagnostica, actúa y avisa en su tema
+   de Telegram. Acciones solo por `encargado.sh`, con `--seco` y anotadas en `.sdd/hermes/encargado-acciones.jsonl`:
+   `reintentar <tarjeta>` (una vez por tarjeta; sus hijas pasan a la nueva; no con una puerta pendiente ni con una
+   etapa viva), `limpiar`, `apartar` (a un stash con nombre, nunca se borra) y `relanzar <N>`, que el guardia manda a
+   la **aprobación humana** de Hermes (`{"action":"approve"}`; en una ronda del cron no hay nadie y se deniega).
+   El gateway deja de mandar su aviso de etapa parada en los proyectos con encargado (un aviso, no dos).
 4. **Revisar la documentación**: comprobaciones mecánicas en `sdd gate`/puerta, después el revisor independiente, la
    línea «🧭 Encargado» en la puerta y la regla para Jev.
 5. **Lecciones entre proyectos**, con evidencia, confirmadas y con caducidad.

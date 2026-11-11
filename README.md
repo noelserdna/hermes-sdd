@@ -284,6 +284,10 @@ proyecto con `/preparar <nombre> [stack] <qué>` o **🧭 Preparar con el encarg
 encargado te abre un tema, recoge lo que le pases, te pregunta lo que falte (con opciones y la recomendada primero) y,
 cuando le digas «lanza», arranca con todo eso. Si le diste requisitos, la etapa de requisitos los **depura** en vez de
 reescribirlos, y la puerta te dice de cuántos partías y qué cambió.
+**Vigila el proyecto**: cada 5 minutos un vigía sin IA mira si algo se paró, si una puerta da error o lleva horas
+esperando, o si quedaron restos sin commit; solo si cambia algo despierta al encargado, que lo diagnostica, hace lo que
+le toca (reintentar una vez una etapa que falló por algo pasajero, archivar tarjetas obsoletas, apartar restos a un
+stash) y te lo cuenta en su tema. Rehacer una FASE ya hecha te lo pregunta antes; decidir puertas, nunca.
 Diseño y fases siguientes: [docs/encargado.md](docs/encargado.md).
 
 ---

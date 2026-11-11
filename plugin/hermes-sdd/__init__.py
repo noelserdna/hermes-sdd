@@ -374,9 +374,12 @@ async def _avisar_fallos(bot) -> None:
                                                 env={**os.environ, "PATH": PATH_CMDS})
     out, _ = await asyncio.wait_for(proc.communicate(), 60)
     nuevos = []
+    # Un aviso, no dos: el proyecto con encargado (y su vigía) recibe el diagnóstico de él, en su tema
+    con_encargado = {r for pf, r in (_leer(HOME / "encargados.json", {}) or {}).items()
+                     if (Path.home() / ".hermes" / "profiles" / pf / "scripts" / "vigia.sh").exists()}
     for b in json.loads(out or b"[]"):
         wd = b.get("default_workdir") or ""
-        if not wd or not (Path(wd) / ".sdd" / "hermes").is_dir():
+        if not wd or not (Path(wd) / ".sdd" / "hermes").is_dir() or wd in con_encargado:
             continue
         proc = await asyncio.create_subprocess_exec("hermes", "kanban", "--board", b["slug"], "list", "--json",
                                                     stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.DEVNULL,

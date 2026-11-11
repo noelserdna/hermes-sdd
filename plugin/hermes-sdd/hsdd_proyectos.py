@@ -522,6 +522,64 @@ def estado(repo: str, tablero: str | None = None, tarjetas: list | None = None) 
 
 
 
+
+# ── vigía del encargado (fase 3): qué hay que mirar, sin LLM ──────────────────────────────────────────────────────────
+ESPERA_PUERTA_H = (4, 24)       # una puerta abierta más de esto se menciona (en tramos: la salida no cambia cada tick)
+FIRMA_RETRASO_S = 600           # decidida y sin firmar 10 min después de su hora
+LENTA_MIN, LENTA_X = 30, 2      # en marcha más de 30 min y más del doble de su mediana
+
+
+def _etapa_de(t: dict) -> tuple:
+    """(etapa, fase) de una tarjeta de etapa («Ejecuta: bash …/etapa.sh <repo> <etapa> [fase]»)."""
+    m = re.search(r"etapa\.sh\s+\S+\s+(\S+)(?:\s+(\S+))?", t.get("body") or "")
+    return (m.group(1), m.group(2)) if m else ("", None)
+
+
+def vigia(repo: str, tablero: str | None = None, tarjetas: list | None = None, ahora: float | None = None) -> list:
+    """Lo que el encargado debería mirar ahora, una línea estable por asunto (sin horas: el cron en modo monitor solo
+    despierta al modelo si la salida cambia). Vacía si todo va bien. Cada línea: «TIPO | asunto | detalle»."""
+    import statistics, time as _t
+    ahora = ahora or _t.time()
+    e = estado(repo, tablero, tarjetas)
+    tab = e["proyecto"]
+    out = []
+    for t in e["paradas"]:
+        motivo = re.sub(r"\s+", " ", (t.get("motivo") or "").strip())[:160]
+        out.append(f"PARADA | {t['titulo']} ({t['tarjeta']}) | {motivo or 'sin motivo'}")
+    for p in (N.leer(f) for f in sorted((N.HOME / "puertas").glob("*.json"))):
+        if not p or p.get("tablero") != tab:
+            continue
+        if p.get("estado") == "error":
+            out.append(f"PUERTA CON ERROR | {p.get('titulo')} ({p.get('id')}) | {(p.get('error') or '')[:160]}")
+        elif p.get("estado") == "decidida" and ahora > (p.get("firmar_en") or ahora) + FIRMA_RETRASO_S:
+            out.append(f"DECIDIDA SIN FIRMAR | {p.get('titulo')} ({p.get('id')}) | el notario no la ha firmado")
+        elif p.get("estado") == "abierta":
+            desde = _ts(p.get("publicada") or p.get("creada"))
+            h = (ahora - desde) / 3600 if desde else 0
+            tramo = next((x for x in reversed(ESPERA_PUERTA_H) if h >= x), None)
+            if tramo:
+                out.append(f"PUERTA ESPERANDO | {p.get('titulo')} ({p.get('id')}) | más de {tramo} h sin decidir")
+    hechas = {}
+    for x in _jsonl_cola(Path(repo) / ".sdd" / "hermes" / "etapas.jsonl", 500):
+        if x.get("resultado") == "done" and x.get("minutos") is not None:
+            hechas.setdefault(x.get("etapa"), []).append(x["minutos"])
+    for t in (tarjetas if tarjetas is not None else []):
+        if t.get("status") != "running" or not t.get("started_at"):
+            continue
+        etapa, _ = _etapa_de(t)
+        mins = (ahora - t["started_at"]) / 60
+        med = statistics.median(hechas[etapa]) if len(hechas.get(etapa, [])) >= 2 else None
+        if mins > LENTA_MIN and med and mins > LENTA_X * max(med, 1):
+            out.append(f"LENTA | {t.get('title')} ({t['id']}) | más del doble de lo normal ({round(med)} min)")
+    c = e.get("candado")
+    if c and not c.get("vivo") and not any(t.get("status") == "running" for t in (tarjetas or [])):
+        out.append(f"CANDADO HUÉRFANO | {c.get('run')} | la ejecución murió sin liberar el candado")
+    sucio = subprocess.run(["git", "-C", repo, "status", "--porcelain"], capture_output=True, text=True).stdout.strip()
+    if sucio and not (c and c.get("vivo")) and not any(t.get("status") == "running" for t in (tarjetas or [])):
+        n = len(sucio.splitlines())
+        out.append(f"RESTOS SIN COMMIT | {n} fichero(s) | sin ninguna etapa en marcha")
+    return out
+
 # ── el encargado del proyecto (docs/encargado.md) ──────────────────────────────────────────────────────────────────
 def modelo_encargado(cfg: dict | None = None) -> str:
     """Modelo del encargado en formato de Hermes (OpenRouter): `encargado_modelo` de sdd.json (alias o id), Sonnet por
@@ -609,6 +667,7 @@ if __name__ == "__main__":   # CLI de nuevo.sh
     ru = sub.add_parser("rutas"); ru.add_argument("--defecto")
     op = sub.add_parser("opciones-ruta"); op.add_argument("tablero"); op.add_argument("propuesta", nargs="?")
     es = sub.add_parser("estado"); es.add_argument("repo"); es.add_argument("--json", action="store_true")
+    vg = sub.add_parser("vigia"); vg.add_argument("repo")
     sub.add_parser("modelo-encargado")
     fo = sub.add_parser("foto-encargado"); fo.add_argument("perfil"); fo.add_argument("--sin-marcar", action="store_true")
     a = ap.parse_args()
@@ -626,6 +685,16 @@ if __name__ == "__main__":   # CLI de nuevo.sh
             print(f"Carpeta por defecto: {c['carpeta']} ({c['carpeta_resuelta']})\nStack por defecto: {c['stack_defecto']}\n"
                   f"Ventana para deshacer: {c['deshacer_s']} s ({N.duracion(c['deshacer_s'])}); "
                   f"las de Jev: {c['deshacer_jev_s']} s ({N.duracion(c['deshacer_jev_s'])})")
+        elif a.cmd == "vigia":   # el monitor del cron del encargado: salida estable, vacía si todo va bien
+            r = Path(a.repo).resolve()
+            try:
+                out_k = subprocess.run(["hermes", "kanban", "--board", slug(r.name), "list", "--json"], capture_output=True,
+                                       text=True, timeout=60).stdout
+                d = json.loads(out_k or "[]"); ts = d if isinstance(d, list) else d.get("tasks", [])
+            except Exception:
+                ts = []
+            for linea in vigia(str(r), None, ts):
+                print(linea)
         elif a.cmd == "modelo-encargado":
             print(modelo_encargado())
         elif a.cmd == "foto-encargado":

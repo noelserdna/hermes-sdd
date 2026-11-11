@@ -57,4 +57,14 @@ t 0 "$(c "bash $A/encargado.sh lanzar $R")" "en preparación: permite lanzar su 
 t 2 "$(c "bash $A/encargado.sh lanzar /otro/repo")" "deniega lanzar otro proyecto"
 t 2 "$(c "bash $A/encargado.sh borrar $R")" "deniega otras órdenes de encargado.sh"
 t 2 "$(c "bash $A/lanzar.sh iniciar $R")" "deniega lanzar.sh directamente"
+# fase 3: acciones de supervisión por encargado.sh, y relanzar con aprobación de la persona
+t 0 "$(c "bash $A/encargado.sh reintentar $R t_ab12cd")" "permite: reintentar una tarjeta"
+t 0 "$(c "bash $A/encargado.sh limpiar $R")" "permite: limpiar"
+t 0 "$(c "bash $A/encargado.sh apartar $R --seco")" "permite: apartar en seco"
+t 2 "$(c "bash $A/encargado.sh reintentar $R 'x; rm -rf /'")" "deniega: reintentar con algo que no es una tarjeta"
+t 2 "$(c "bash $A/encargado.sh limpiar /otro/repo")" "deniega: acciones sobre otro proyecto"
+o=$(c "bash $A/encargado.sh relanzar $R 2" | python3 -I "$G" "$R" "$A"); rc=$?
+[ $rc = 0 ] && echo "$o" | jq -e '.action == "approve" and (.message | test("FASE-2"))' >/dev/null \
+  && ok "relanzar: pide la aprobación de la persona (approve)" || bad "relanzar: $rc $o"
+o=$(c "bash $A/encargado.sh relanzar $R 2 --seco" | python3 -I "$G" "$R" "$A"); [ -z "$o" ] && ok "relanzar en seco: sin aprobación (no hace nada)" || bad "seco: $o"
 exit $fail

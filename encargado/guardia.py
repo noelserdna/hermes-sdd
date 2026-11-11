@@ -4,7 +4,8 @@
 
 - write_file / patch: dentro de <repo>/wiki/ (su memoria, un repositorio git propio). Mientras el proyecto está en
   preparación (<repo>/.sdd/hermes/preparando, lanzar.sh preparar), también intent/ y requirements/ (la entrada).
-- Su única acción: `bash <arnes>/encargado.sh lanzar <repo>`, y solo en preparación.
+- Sus acciones, solo por encargado.sh y solo con su proyecto: lanzar (en preparación), reintentar <tarjeta>, limpiar y
+  apartar; relanzar <N> se permite pidiendo antes la aprobación de la persona ({"action":"approve"}).
 - execute_code: nunca.
 - terminal: lista BLANCA de órdenes de solo lectura, segmento a segmento (; && || |). Sin redirecciones a ficheros,
   sin sustituciones ($( ) ni ``), nada de ~/.hermes salvo el propio arnés. Git del proyecto solo para leer; en el wiki,
@@ -25,6 +26,7 @@ ARNES_RUTAS = {ARNES, os.path.abspath(os.path.expanduser(sys.argv[2]))}   # la r
 WIKI = os.path.join(REPO, "wiki")
 PREPARANDO = os.path.exists(os.path.join(REPO, ".sdd", "hermes", "preparando"))
 ENTRADA = [os.path.join(REPO, "intent"), os.path.join(REPO, "requirements")] if PREPARANDO else []
+APROBAR: list = []   # acciones permitidas solo con la aprobación de la persona (relanzar): se piden con «approve»
 HOME = os.path.expanduser("~")
 
 
@@ -78,9 +80,21 @@ def segmento(seg: list, cwd: str) -> str | None:
             return None
         return f"git {sub} en el proyecto (solo lectura: log, show, diff, status…)"
     if cmd in ("bash", "sh") and args and os.path.basename(args[0]) == "encargado.sh":
-        if dentro(ruta(args[0], cwd), ARNES) and args[1:2] == ["lanzar"] and len(args) == 3 and ruta(args[2], cwd) == REPO:
+        if not dentro(ruta(args[0], cwd), ARNES) or len(args) < 3 or ruta(args[2], cwd) != REPO:
+            return "encargado.sh solo con su propio proyecto"
+        orden, resto = args[1], [a for a in args[3:] if a != "--seco"]
+        if orden == "lanzar" and not resto:
             return None if PREPARANDO else "el proyecto ya se lanzó"
-        return "de encargado.sh solo puede usar «lanzar» con su propio proyecto"
+        if orden in ("reintentar",) and len(resto) == 1 and re.fullmatch(r"t_[0-9a-f]+", resto[0]):
+            return None
+        if orden in ("limpiar", "apartar") and not resto:
+            return None
+        if orden == "relanzar" and len(resto) == 1 and resto[0].isdigit():
+            if "--seco" in args:
+                return None
+            APROBAR.append(f"El encargado quiere relanzar la FASE-{resto[0]} de {os.path.basename(REPO)} (rehace una fase ya hecha)")
+            return None
+        return f"encargado.sh {orden} no está entre sus acciones (lanzar en preparación, reintentar, limpiar, apartar, relanzar)"
     if cmd in ("python3", "python"):
         script = next((a for a in args if a.endswith(".py")), "")
         nombre = os.path.basename(script)
@@ -153,6 +167,9 @@ def main() -> None:
         sys.exit(0)
     if herramienta == "terminal":
         terminal(str(entrada.get("command") or ""), ruta(str(entrada.get("workdir") or entrada.get("cwd") or REPO)))
+        if APROBAR:   # Hermes la pasa a su aprobación humana; sin respuesta (o en el cron) se deniega
+            print(json.dumps({"action": "approve", "message": "; ".join(APROBAR), "rule_key": "hermes-sdd:relanzar"},
+                             ensure_ascii=False))
     sys.exit(0)
 
 
