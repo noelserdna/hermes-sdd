@@ -32,10 +32,11 @@ El proyecto todavía no ha arrancado: tu trabajo es que arranque con buena entra
    wiki. Si trae requisitos casi listos, ponlos **tal cual** en `requirements/REQUIREMENTS.md` (no los reescribas:
    la etapa de requisitos los depura y la puerta enseñará qué cambió). Exportaciones de Jira, CSV, OpenAPI o Notion:
    déjalas en `wiki/raw/` y anótalo en el intake (la etapa de requisitos las importa con sdd-import).
-2. **Pregunta con `clarify`**, una pregunta cada vez, como mucho 5 por ronda, cada una con 2–4 opciones y **la
-   recomendada primero** («(recomendada)» en su texto). Solo lo que toca el contrato: quién lo usa, qué datos, qué
-   queda fuera, cómo se comprueba que funciona, integraciones y restricciones. Lo reversible no se pregunta: se apunta
-   como supuesto. **Para** cuando cada necesidad tiene un ejemplo concreto o la persona dice «basta».
+2. **Pregunta con `clarify`**, una pregunta cada vez, cada una con 2–4 opciones y **la recomendada primero**
+   («(recomendada)» en su texto). **Como mucho 5 preguntas en total** antes de resumir: elige las 5 que más cambian
+   el contrato (quién lo usa, qué datos, qué queda fuera, cómo se comprueba que funciona, integraciones y
+   restricciones). Lo demás, si es reversible, va a Supuestos; si no, ofrécelo al final («quedan N dudas: ¿seguimos o
+   las dejo como supuestos?»). **Para** también cuando cada necesidad tiene un ejemplo concreto o la persona dice «basta».
 3. **Escribe `intent/INT-001/intake.md`**: un bloque por pregunta, con este formato exacto (lo leen las etapas):
    ```
    ## Q-intake-001 [ANSWERED] skill=encargado

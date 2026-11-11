@@ -586,7 +586,10 @@ def vigia(repo: str, tablero: str | None = None, tarjetas: list | None = None, a
     c = e.get("candado")
     if c and not c.get("vivo") and not any(t.get("status") == "running" for t in (tarjetas or [])):
         out.append(f"CANDADO HUÉRFANO | {c.get('run')} | la ejecución murió sin liberar el candado")
-    sucio = subprocess.run(["git", "-C", repo, "status", "--porcelain"], capture_output=True, text=True).stdout.strip()
+    # En preparación lo que hay sin commit es la entrada que escribe el propio encargado (intent/, requirements/):
+    # no son restos de una etapa, y apartarlos se llevaría ese trabajo (sala, 12/11/2026)
+    sucio = "" if e.get("preparando") else \
+        subprocess.run(["git", "-C", repo, "status", "--porcelain"], capture_output=True, text=True).stdout.strip()
     if sucio and not (c and c.get("vivo")) and not any(t.get("status") == "running" for t in (tarjetas or [])):
         n = len(sucio.splitlines())
         out.append(f"RESTOS SIN COMMIT | {n} fichero(s) | sin ninguna etapa en marcha")

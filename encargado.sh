@@ -196,6 +196,7 @@ case "$CMD" in
         hecho "archivaría las tarjetas obsoletas de $BOARD"
         R=$(bash "$ROOT/lanzar.sh" limpiar "$REPO"); anotar "limpia: ${R:-nada que archivar}" ;;
       apartar)      # restos sin commit de una etapa cortada: a un stash con nombre, nunca se borran
+        if [ -f .sdd/hermes/preparando ]; then echo "ERROR: $BOARD está en preparación: lo que hay sin commit es la entrada; se commitea al lanzar" >&2; exit 1; fi
         if viva; then echo "ERROR: hay una etapa en marcha: esos cambios son suyos" >&2; exit 1; fi
         [ -n "$(git status --porcelain)" ] || { echo "No hay restos sin commit"; exit 0; }
         hecho "apartaría a un stash: $(git status --porcelain | wc -l | tr -d ' ') fichero(s)"

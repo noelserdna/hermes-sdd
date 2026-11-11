@@ -51,4 +51,8 @@ o=$(bash "$ROOT/encargado.sh" apartar "$R" 2>&1)
 jq -n --arg r "$R" '{id:"g1", tablero:"demo", estado:"abierta", repo:$r, titulo:"Aceptar FASE-1"}' > "$HERMES_SDD_HOME/puertas/g1.json"
 sed -i.bak '/reintentar/d' .sdd/hermes/encargado-acciones.jsonl && rm -f .sdd/hermes/encargado-acciones.jsonl.bak
 o=$(bash "$ROOT/encargado.sh" reintentar "$R" t_1 2>&1) && bad "reintenta con una puerta abierta" || { echo "$o" | grep -q "puerta pendiente" && ok "con una puerta pendiente no reintenta" || bad "puerta: $o"; }
+# 5. en preparación, lo que hay sin commit es la entrada del encargado: ni es «restos» ni se aparta
+rm -f "$HERMES_SDD_HOME/puertas/g1.json"; touch .sdd/hermes/preparando; mkdir -p requirements; echo "1. algo" > requirements/REQUIREMENTS.md
+o=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" vigia "$R"); echo "$o" | grep -q "RESTOS" && bad "vigía: la entrada en preparación como restos" || ok "en preparación, la entrada sin commit no es «restos»"
+o=$(bash "$ROOT/encargado.sh" apartar "$R" 2>&1) && bad "aparta la entrada en preparación" || { [ -f requirements/REQUIREMENTS.md ] && ok "apartar en preparación: no (la entrada se queda)" || bad "apartó: $o"; }
 exit $fail
