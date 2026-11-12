@@ -33,6 +33,12 @@ VEREDICTOS = {
     "MISSING": ("⚠️", "sin comprobar todavía"), "WAIVED": ("🟡", "aceptado sin comprobar (exención)"),
     "STALE": ("⚠️", "comprobado con una versión anterior"), "PARTIAL": ("⚠️", "comprobado solo en parte"),
 }
+# Los motivos con los que el método deja un requisito sin comprobar, dichos para el cliente
+MOTIVOS = {
+    "no visual evidence": "falta la captura que lo enseña",
+    "bound test skipped": "sin comprobar: su prueba se saltó",
+    "test does not show the literal": "sin comprobar: la prueba no enseña el texto exacto",
+}
 
 
 def _leer(p: Path) -> str:
@@ -244,7 +250,12 @@ def _lineas_veredictos(repo: Path, filas: list[dict]) -> list[str]:
     plano = {r["id"]: _texto_req(r) for r in requisitos(repo)}
     out = []
     for f in filas:
-        ico, txt = VEREDICTOS.get(f["veredicto"], ("•", f["veredicto"].lower()))
+        # «MISSING (no visual evidence)»: el veredicto es la primera palabra; el motivo, entre paréntesis, se traduce
+        clave, _, motivo = f["veredicto"].partition(" ")
+        ico, txt = VEREDICTOS.get(clave, ("•", clave.lower()))
+        motivo = motivo.strip(" ()").lower()
+        if motivo:
+            txt = MOTIVOS.get(motivo, txt)
         crit = ""
         m = re.match(r"(\d+)\s*/\s*(\d+)", f["criterios"])
         if m:

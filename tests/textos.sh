@@ -173,4 +173,14 @@ PY
 echo "$o" | sed -n 1p | grep -q '^✅ FASE-0 aceptada por Ana (Cliente). | 🏷 Queda guardado en el historial como «fase-0-accepted». | Sigue solo' \
   && echo "$o" | sed -n 2p | grep -q '^✅ Ruta confirmada por Ana (Cliente).' && echo "$o" | sed -n 3p | grep -q '^↩️ .*Se rehace con lo que has pedido' \
   && echo "$o" | sed -n 4p | grep -q '^✅ Entrega 1 aceptada por Jev, en modo automático. | .*🎉 Proyecto entregado.' && ok "al firmar: qué quedó registrado y qué pasa ahora, sin «— tag» en medio" || bad "resultado: $o"
+# veredictos con motivo («missing (no visual evidence)») en castellano, y Jev dice qué regla le impide decidir
+o=$(python3 - "$ROOT/plugin/hermes-sdd" <<'PY2'
+import sys; sys.path.insert(0, sys.argv[1]); from pathlib import Path
+import hsdd_textos as X, hsdd_nucleo as N
+print(X._lineas_veredictos(Path("/nada"), X._filas_gate("| REQ-F-001 Reservar | Must | x | missing (no visual evidence) | 2/4 |"))[0])
+print(N.describir_jev({"jev": {"choice": "persona", "p": 1.0, "decide": False, "modo": "auto", "motivo": "la puerta no pasa la comprobación de calidad"}}))
+PY2
+)
+[ "$(sed -n 1p <<< "$o")" = "⚠️ Reservar: falta la captura que lo enseña (2 de 4 criterios)" ] && ok "veredicto con motivo: en castellano, sin «missing (no visual evidence)»" || bad "motivo: $o"
+[ "$(sed -n 2p <<< "$o")" = "🤖 Jev no puede decidirla: la puerta no pasa la comprobación de calidad." ] && ok "Jev: dice la regla que le impide decidir, no «seguro al 100 %»" || bad "jev: $o"
 exit $fail

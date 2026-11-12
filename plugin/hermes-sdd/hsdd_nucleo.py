@@ -419,7 +419,10 @@ def describir_jev(puerta: dict) -> str:
     if eleccion in verbos_jev(puerta):
         linea = f"🤖 Jev aprobaría esto ({verbos_jev(puerta)[eleccion]}), con un {seguro} de seguridad."
     else:
-        linea = f"🤖 Jev prefiere que lo mires tú (está seguro al {seguro})."
+        # Una regla le impide decidir (no pasa la comprobación, aviso grave…): eso, no «está seguro al 100 %»
+        regla = j.get("motivo") or ""
+        regla = "" if j.get("decide") or regla.startswith(("modo ", "Jev ", "la puerta ya")) else regla
+        linea = f"🤖 Jev no puede decidirla: {regla}." if regla else f"🤖 Jev prefiere que lo mires tú (está seguro al {seguro})."
     if not j.get("decide") and j.get("modo") in ("piloto", "auto") and eleccion in verbos_jev(puerta):
         umbral = f"{round(float(j.get('umbral') or 0.9) * 100)} %"
         linea += (f" No lo decide él: necesita al menos un {umbral}." if "seguro" in (j.get("motivo") or "")
