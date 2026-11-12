@@ -130,16 +130,14 @@ $TEXTO" ;;
 esac
 
 # Preguntas como datos, para que el canal pueda ofrecerlas como formulario (Q1: A/B/C…)
-PREGUNTAS=$(python3 - .sdd/questions-*.md <<'PY' 2>/dev/null || echo '[]'
-import json, re, sys
+PREGUNTAS=$(python3 - "$TEXTOS" .sdd/questions-*.md <<'PY' 2>/dev/null || echo '[]'
+import importlib.util, json, re, sys
+spec = importlib.util.spec_from_file_location("hsdd_textos", sys.argv[1]); X = importlib.util.module_from_spec(spec); spec.loader.exec_module(X)
 out, n = [], 0
-for p in sorted(a for a in sys.argv[1:] if not a.endswith("*.md")):
+for p in sorted(a for a in sys.argv[2:] if not a.endswith("*.md")):
     for b in re.findall(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", open(p, encoding="utf-8").read(), flags=re.M | re.S):
         n += 1
-        # «A)» u «A★)»: hay skills que marcan la recomendada con una estrella en vez de «(recommended)»
-        ops = re.findall(r"^\s+([A-Z])\s*[★⭐\ufe0f]*\s*\)", b, re.M)
-        rec = re.search(r"^\s+([A-Z])(?:\s*[★⭐]|\).*\(recommended\))", b, re.M)
-        out.append({"n": n, "id": b.split()[1], "opciones": ops, "recomendada": rec.group(1) if rec else (ops[0] if ops else "")})
+        out.append({"n": n, "id": b.split()[1], **X.opciones_json(b)})
 print(json.dumps(out))
 PY
 )

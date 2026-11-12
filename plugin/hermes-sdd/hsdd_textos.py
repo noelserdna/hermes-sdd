@@ -431,20 +431,41 @@ def puerta_mantenimiento(proyecto: str, hallazgos: list) -> dict:
     return {"titulo": "Mantenimiento", "texto": "\n\n".join(partes)}
 
 
+# Las skills escriben las opciones de varias formas; todas valen:
+#   «  A) texto (recommended)»   «  A★) texto»   «Options: [A] texto (recomendada)  [B] texto»
+_OP_LINEA = re.compile(r"^\s+([A-Z])\s*([★⭐\ufe0f]*)\s*\)\s*(.*)$", re.M)
+_OP_CORCHETE = re.compile(r"\[([A-Z])\]\s*(.*?)(?=\s+\[[A-Z]\]|$)")
+_RECOMENDADA = re.compile(r"\s*\((?:recommended|recomendada)\)", re.I)
+
+
+def opciones(bloque: str) -> list[tuple[str, str, bool]]:
+    """[(letra, texto, recomendada)] de una pregunta ## Q-… del método."""
+    ops = [(l, txt, bool(est) or bool(_RECOMENDADA.search(txt))) for l, est, txt in _OP_LINEA.findall(bloque)]
+    if not ops:
+        m = re.search(r"^Options:\s*(.*)$", bloque, re.M)
+        if m:
+            ops = [(l, txt, bool(_RECOMENDADA.search(txt))) for l, txt in _OP_CORCHETE.findall(m.group(1).strip())]
+    return [(l, _RECOMENDADA.sub("", txt).strip(), rec) for l, txt, rec in ops]
+
+
+def opciones_json(bloque: str) -> dict:
+    """{opciones: [letras], recomendada: letra} para los botones Q (sin marca, la primera)."""
+    ops = opciones(bloque)
+    rec = next((l for l, _, r in ops if r), ops[0][0] if ops else "")
+    return {"opciones": [l for l, _, _ in ops], "recomendada": rec}
+
+
 def preguntas(ficheros: list[Path]) -> str:
     """Las preguntas abiertas, numeradas como los botones Q1, Q2…, con la recomendada marcada."""
     bloques = []
     for f in sorted(ficheros):
         for b in re.findall(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", _leer(f), flags=re.M | re.S):
             q = re.search(r"^Question:\s*(.*)$", b, re.M)
-            ops = re.findall(r"^\s+([A-Z])\s*([★⭐\ufe0f]*)\s*\)\s*(.*)$", b, re.M)
             if not q:
                 continue
             n = len(bloques) + 1
             lineas = [f"{n}. {q.group(1).strip()}"]
-            for letra, estrella, txt in ops:
-                rec = "(recommended)" in txt or bool(estrella)
-                txt = txt.replace("(recommended)", "").strip()
+            for letra, txt, rec in opciones(b):
                 lineas.append(f"   {letra}) {txt}{'  ⭐ recomendada' if rec else ''}")
             bloques.append("\n".join(lineas))
     if not bloques:

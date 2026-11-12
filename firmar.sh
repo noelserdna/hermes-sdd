@@ -177,14 +177,15 @@ if ! hecho preguntas; then
   if printf '%s' "$TEXTO" | grep -qiE 'q[a-z]?[[:space:]]*[0-9]'; then MODO=elegidas
   elif [ "$VERBO" = acepto ] || [ "$VERBO" = conforme ]; then MODO=recomendada; fi
   if [ -n "$MODO" ]; then
-    python3 - "$MODO" "$NOMBRE ($ROL)" "$HOY" "$TEXTO" .sdd/questions-*.md <<'PY'
-import re, sys
-modo, quien, hoy, texto, *ficheros = sys.argv[1:]
+    python3 - "$ROOT/plugin/hermes-sdd/hsdd_textos.py" "$MODO" "$NOMBRE ($ROL)" "$HOY" "$TEXTO" .sdd/questions-*.md <<'PY'
+import importlib.util, re, sys
+spec = importlib.util.spec_from_file_location("hsdd_textos", sys.argv[1]); X = importlib.util.module_from_spec(spec); spec.loader.exec_module(X)
+modo, quien, hoy, texto, *ficheros = sys.argv[2:]
 elegidas = {int(n): l.upper() for n, l in re.findall(r"[Qq][A-Za-z]?\s*(\d+)\W{0,3}\s*([A-Ca-c])\b", texto)}
 n = 0
 for p in sorted(ficheros):
     try:
-        t = open(p).read()
+        t = open(p, encoding="utf-8").read()
     except OSError:
         continue
     def contestar(m):
@@ -196,8 +197,8 @@ for p in sorted(ficheros):
                 return b
             letra, como = elegidas[n], "elegida por"
         else:
-            rec = re.search(r"^\s+([A-Z])(?:\s*[★⭐]|\).*\(recommended\))", b, re.M)
-            letra, como = (rec.group(1) if rec else "?"), "opción recomendada, aceptada por"
+            rec = X.opciones_json(b)["recomendada"]
+            letra, como = (rec or "?"), "opción recomendada, aceptada por"
         b = b.replace("[OPEN]", "[ANSWERED]", 1)
         linea = f"Answer: {letra} — {como} {quien} ({hoy})"
         if re.search(r"^Answer:[ \t]*$", b, re.M):   # [ \t]: no comerse los saltos de línea que separan preguntas
@@ -205,7 +206,7 @@ for p in sorted(ficheros):
         cuerpo = b.rstrip("\n")                       # sin línea Answer: se añade, conservando la separación
         return cuerpo + "\n" + linea + b[len(cuerpo):] if b[len(cuerpo):] else cuerpo + "\n" + linea + "\n"
     t = re.sub(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", contestar, t, flags=re.M | re.S)
-    open(p, "w").write(t)
+    open(p, "w", encoding="utf-8").write(t)
 PY
   fi
   marcar preguntas

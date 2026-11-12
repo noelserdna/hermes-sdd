@@ -96,10 +96,15 @@ Question: ¿tres?
   A) a
   B★) b
 Answer:
+
+## Q-x-004 [OPEN]
+Question: ¿cuatro?
+Options: [A] a  [B] b (recomendada)
+Answer:
 Q
 puerta g8b plan
 decidir g8b conforme telegram 111; firmar g8b
-grep -q "^Answer: B — opción recomendada" .sdd/questions-x.md && ok "«B★)»: al firmar se contesta la recomendada (B)" || bad "firmada: $(tr '\n' '|' < .sdd/questions-x.md)"
+[ "$(grep -c "^Answer: B — opción recomendada" .sdd/questions-x.md)" = 2 ] && ok "«B★)» y «[B] … (recomendada)»: al firmar se contesta la recomendada (B)" || bad "firmada: $(tr '\n' '|' < .sdd/questions-x.md)"
 # 9. el motivo de "cambios" en el plan queda en el diario
 puerta g9 plan; decidir g9 cambios telegram 111 "FASE-2 antes que FASE-1"; firmar g9
 grep -q "FASE-2 antes que FASE-1" status/journal.jsonl && ok "el motivo de cambios queda en el diario" || bad "diario: $out"

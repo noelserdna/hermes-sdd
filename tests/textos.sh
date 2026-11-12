@@ -50,6 +50,11 @@ Question: ¿Pedimos confirmación al cancelar?
   A★) No, un clic
   B) Sí
 Answer:
+
+## Q-x-003 [OPEN]
+Question: ¿Qué driver de SQLite?
+Options: [A] el integrado (recomendada)  [B] better-sqlite3  [C] dejarlo
+Answer:
 Q
 
 # ── requisitos ──────────────────────────────────────────────────────────────────────────────────────────────────
@@ -64,6 +69,7 @@ sec '➕ Lo añade el método' | grep -q 'Un menú arriba' && sec '➕ Lo añade
 sec '🔧 Condiciones' | grep -q 'no necesita servidor' && ok "requisitos: las condiciones del proyecto, aparte" || bad "condiciones: $(sec '🔧')"
 ! echo "$o" | grep -q 'ya no vale' && ok "requisitos: no enseña los requisitos retirados" || bad "retirado aparece"
 echo "$o" | grep -q '⭐ recomendada' && echo "$o" | grep -q '^1. ¿Qué foto ponemos de portada?$' && ok "preguntas: numeradas como los botones y con la recomendada marcada" || bad "preguntas: $o"
+echo "$o" | grep -q '^   A) el integrado  ⭐ recomendada$' && echo "$o" | grep -q '^   C) dejarlo$' && ok "preguntas: opciones en una línea con [A] [B] [C], la recomendada marcada" || bad "corchetes: $o"
 echo "$o" | grep -q '^   A) No, un clic  ⭐ recomendada$' && ok "preguntas: «A★)» también es la recomendada (y la A no se pierde)" || bad "estrella: $o"
 echo "$o" | grep -qE "$JERGA" && bad "requisitos con jerga: $(echo "$o" | grep -E "$JERGA")" || ok "requisitos: sin jerga del método"
 echo "$o" | grep -q '(versión 1.2)' && ok "requisitos: dice qué versión se aprueba" || bad "versión"
@@ -157,6 +163,8 @@ git init -q -b main && git config user.email t@t && git config user.name t && gi
 g=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" requisitos)
 jq -e '.preguntas[1] | .opciones == ["A","B"] and .recomendada == "A"' "$HERMES_SDD_HOME/puertas/$g.json" >/dev/null \
   && ok "puerta.sh: «A★)» es una opción y la recomendada en los botones Q" || bad "estrella: $(jq -c .preguntas "$HERMES_SDD_HOME/puertas/$g.json")"
+jq -e '.preguntas[2] | .opciones == ["A","B","C"] and .recomendada == "A"' "$HERMES_SDD_HOME/puertas/$g.json" >/dev/null \
+  && ok "puerta.sh: «Options: [A] … (recomendada)  [B] …» en una línea también da botones Q" || bad "corchetes: $(jq -c .preguntas "$HERMES_SDD_HOME/puertas/$g.json")"
 jq -e '.titulo == "Requisitos" and (.texto | test("Lo que pediste")) and .tests_editados == 0 and .bloqueo == false and (.opciones[0].etiqueta == "✅ Apruebo")' \
   "$HERMES_SDD_HOME/puertas/$g.json" >/dev/null && ok "puerta.sh usa los textos nuevos y guarda los datos para Jev" || bad "puerta.sh: $(jq -c '{titulo, tests_editados, bloqueo}' "$HERMES_SDD_HOME/puertas/$g.json")"
 
