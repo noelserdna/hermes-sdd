@@ -456,7 +456,8 @@ async def _avisar_fallos(bot) -> None:
         except Exception:
             continue
         for t in tareas if isinstance(tareas, list) else tareas.get("tasks", []):
-            if t.get("assignee") == "sdd-estacion" and t.get("status") in ("blocked", "triage"):
+            if t.get("assignee") == "sdd-estacion" and t.get("status") in ("blocked", "triage") \
+                    and "esperando tus respuestas" not in (t.get("last_failure_error") or ""):
                 clave = f"{b['slug']}/{t['id']}/{t.get('status')}"
                 if clave not in avisados:
                     nuevos.append(clave)

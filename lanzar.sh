@@ -55,8 +55,17 @@ unica() {  # ¿plan de una sola FASE, aún sin aceptar (y no «fina»)? Entonces
     [ "$(ls "$REPO"/plan/fases/FASE-*.md 2>/dev/null | wc -l | tr -d ' ')" = 1 ] &&
     ! git -C "$REPO" tag -l 'fase-*-accepted' | grep -q .
 }
+viejas_de_fase() {  # archiva las tarjetas paradas o en espera de la FASE N (huecos, implementar, aceptar): se rehace
+  local l; l=$("${K[@]}" list --json 2>/dev/null) || return 0   # sin tablero legible no se archiva nada
+  printf '%s' "$l" | jq -r --arg n "$1" '.[]? | select(.assignee == "sdd-estacion" and (.status == "blocked" or .status == "todo" or .status == "triage" or .status == "ready"))
+    | select((.body // "") | test("etapa\\.sh \\S+ (huecos|implementar|aceptar) " + $n + "$")) | .id' 2>/dev/null | while read -r id; do
+    "${K[@]}" comment "$id" "Obsoleta: la FASE-$1 se vuelve a lanzar con tarjetas nuevas." >/dev/null 2>&1 || true
+    "${K[@]}" archive "$id" >/dev/null 2>&1 || true
+  done || true
+}
 fase_n() {  # fase_n <N> [sufijo]: (huecos →) implementar → aceptar la FASE N; imprime el id de la primera tarjeta
   local h="-" t primera=""
+  viejas_de_fase "$1"
   if con_huecos "$1"; then h=$(tarjeta "Completar huecos del plan FASE-$1" - 60m huecos "$1"); primera=$h; fi
   t=$(tarjeta "Implementar FASE-$1${2:-}" "$h" 120m implementar "$1"); primera=${primera:-$t}
   if unica; then   # una sola FASE: sus veredictos y su demo los hace el cierre, y se aceptan con la entrega
@@ -214,6 +223,7 @@ case "$CMD" in
       fase:rechazo)                   fase_n "$FASE" " (cambios)" ;;
       entrega:acepto|entrega:observaciones) echo "Proyecto entregado" ;;
       entrega:rechazo)                tarjeta "Cierre (otra vez)" - 120m cierre ;;
+      preguntas:respondo)             fase_n "$FASE" " (respuestas)" ;;
       mantenimiento:cambio)           bash "$ROOT/lanzar.sh" cambio "$REPO" "$(cat "$REPO/.sdd/hermes/mantenimiento/peticion-$GATE.txt")" ;;
       mantenimiento:ignoro)           echo "Hallazgos ignorados; no se vuelve a preguntar mientras no cambien" ;;
       *) echo "Sin tramo siguiente para $TIPO:$RESULTADO" ;;

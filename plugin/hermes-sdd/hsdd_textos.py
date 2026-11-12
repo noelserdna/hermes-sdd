@@ -436,6 +436,16 @@ def puerta_mantenimiento(proyecto: str, hallazgos: list) -> dict:
     return {"titulo": "Mantenimiento", "texto": "\n\n".join(partes)}
 
 
+def puerta_preguntas(proyecto: str, fase: str) -> dict:
+    """La implementación de una FASE se paró en preguntas abiertas: la persona las contesta aquí (las preguntas, con sus
+    botones Q, las añade el final de la puerta como en cualquier otra)."""
+    partes = [f"⏸ La FASE-{fase} de «{proyecto}» se ha parado: para seguir necesita que decidas esto.",
+              f"Al responder, la FASE-{fase} sigue con tus respuestas. Si alguna pide cambiar los requisitos, antes te "
+              "llega su puerta de requisitos con lo que cambia.",
+              "👉 Elige en los botones Q (la recomendada ya está marcada) y pulsa ✅ Responder."]
+    return {"titulo": f"Preguntas de la FASE-{fase}", "texto": "\n\n".join(partes)}
+
+
 # Las skills escriben las opciones de varias formas; todas valen:
 #   «  A) texto (recommended)»   «  A★) texto»   «Options: [A] texto (recomendada)  [B] texto»
 _OP_LINEA = re.compile(r"^\s+([A-Z])\s*([★⭐\ufe0f]*)\s*\)\s*(.*)$", re.M)
@@ -542,6 +552,8 @@ if __name__ == "__main__":
     elif a.tipo == "entrega":
         r = puerta_entrega(repo, proyecto, md, a.rc, a.fases_aceptadas.split(), bool(a.unica), bool(a.video), a.capturas,
                            a.tests_editados, rev)
+    elif a.tipo == "preguntas":
+        r = puerta_preguntas(proyecto, a.fase)
     elif a.tipo == "mantenimiento":
         r = puerta_mantenimiento(proyecto, json.loads(_leer(Path(a.hallazgos)) or "[]"))
     else:

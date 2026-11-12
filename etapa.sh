@@ -315,7 +315,16 @@ PY
     RECH=""; ANTES=$(git rev-parse HEAD)
     [ -s "$FB" ] && RECH=" This FASE comes back with a person's request (a rejection at its acceptance gate or newly approved requirements): all tasks being done does NOT finish it. Treat every point of the person's request above as new work: add the tasks it needs to task/TASK-FASE-$FASE.md and implement them (test-first, one commit each), including the missing captures and the literal letter of each criterion in its test. If a point needs a change to requirements/ or to the plan (outside your reach), do not skip it: write an [OPEN] question in .sdd/questions-task-implementer.md explaining what change is needed."
     claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES Implement FASE-$FASE completely, test-first, one commit per task with Refs:/Task: trailers.$TESTS_G$RECH"
-    st=$(node "$SDD" tasks status --fase "$FASE" --require-done 2>&1) || falla "quedan tareas de la FASE-$FASE sin hacer: $(echo "$st" | tail -1)"
+    if ! st=$(node "$SDD" tasks status --fase "$FASE" --require-done 2>&1); then
+      # Parada en preguntas [OPEN] (p. ej. un criterio que contradice otro): se abren a la persona en una puerta. La
+      # tarjeta queda parada para que no corra su hija (Aceptar); al firmar, la FASE se rehace con las respuestas o,
+      # si una pide cambiar los requisitos, primero se lanza ese cambio (sala, 12/11/2026: sin esto se quedaba atascada)
+      if grep -qs '^## Q-.*\[OPEN\]' .sdd/questions-*.md && P=$(puerta preguntas "$FASE"); then
+        fin "$(jq -nc --arg f "$FASE" '{outcome:"failed", reason:("esperando tus respuestas: puerta «Preguntas de la FASE-" + $f + "»")}')" \
+          "FASE-$FASE parada: preguntas para la persona" "$P"
+      fi
+      falla "quedan tareas de la FASE-$FASE sin hacer: $(echo "$st" | tail -1)"
+    fi
     # Un cambio de requisitos que no deja criterios fallando puede no necesitar ningún commit: solo se exige cambio
     # cuando la persona rechazó o hay criterios concretos que arreglar
     OBLIGA=""; [ -n "$RECH" ] && { ! head -1 "$FB.aplicado" 2>/dev/null | grep -q '^Los requisitos cambiaron' ||

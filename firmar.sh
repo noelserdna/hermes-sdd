@@ -111,7 +111,7 @@ if ! hecho validado; then
     requisitos:acepto|requisitos:cambios|ruta:acepto|ruta:completo|ruta:rechazo|plan:conforme|plan:cambios) ;;
     ruta:ruta-*) jq -e --arg v "$VERBO" 'any(.opciones[]; .verbo == $v)' "$PUERTA" >/dev/null || fallo "la puerta no ofrecía la ruta $VERBO" ;;
     fase:acepto|fase:observaciones|fase:rechazo|entrega:acepto|entrega:observaciones|entrega:rechazo) ;;
-    mantenimiento:cambio|mantenimiento:ignoro) ;;
+    mantenimiento:cambio|mantenimiento:ignoro|preguntas:respondo) ;;
     *) fallo "verbo '$VERBO' no vale para una puerta de tipo '$TIPO'" ;;
   esac
   case "$VERBO" in cambios|observaciones|rechazo|ignoro) [ -n "$TEXTO" ] || fallo "'$VERBO' necesita un texto" ;; esac
@@ -225,11 +225,11 @@ commit_si_hay() {  # commit_si_hay <mensaje> <rutas...> — solo las que existen
 if ! hecho preguntas; then
   MODO=""
   if printf '%s' "$TEXTO" | grep -qiE 'q[a-z]?[[:space:]]*[0-9]'; then MODO=elegidas
-  elif [ "$VERBO" = acepto ] || [ "$VERBO" = conforme ]; then MODO=recomendada; fi
+  elif [ "$VERBO" = acepto ] || [ "$VERBO" = conforme ] || [ "$VERBO" = respondo ]; then MODO=recomendada; fi
   # Respuestas que piden cambiar los requisitos (p. ej. «Añadir cuatro REQ con sdd-req-change»): al aprobar un plan,
   # una FASE o la entrega, se apuntan aquí y el paso 3 lanza el cambio en vez del tramo siguiente
   PIDEN=""
-  case "$TIPO:$VERBO" in plan:conforme|fase:acepto|fase:observaciones|entrega:acepto|entrega:observaciones)
+  case "$TIPO:$VERBO" in plan:conforme|preguntas:respondo|fase:acepto|fase:observaciones|entrega:acepto|entrega:observaciones)
     PIDEN=".sdd/hermes/cambio-por-respuestas-$GATE.txt" ;; esac
   if [ -n "$MODO" ]; then
     python3 - "$ROOT/plugin/hermes-sdd/hsdd_textos.py" "$MODO" "$NOMBRE ($ROL)" "$HOY" "$TEXTO" "$PIDEN" .sdd/questions-*.md <<'PY'
@@ -472,6 +472,15 @@ $(node "$SDD" gate --md 2>/dev/null)"
     fi
     if ! hecho commit; then commit_si_hay "docs(acceptance): delivery rejected by $NOMBRE" status/; marcar commit; fi
     RESULTADO="rechazo"; RESUMEN="Entrega rechazada por $NOMBRE ($ROL): $TEXTO" ;;
+
+  preguntas:respondo)
+    if ! hecho registrado; then
+      node "$SDD" journal add --stage task-implementer --kind decision --text "$NOMBRE respondió las preguntas de la FASE-$FASE${TEXTO:+ ($TEXTO)}" \
+        --by "$NOMBRE ($ROL)" >/dev/null
+      marcar registrado
+    fi
+    if ! hecho commit; then commit_si_hay "docs(status): FASE-$FASE questions answered by $NOMBRE" status/; marcar commit; fi
+    RESULTADO="respondo"; RESUMEN="Preguntas de la FASE-$FASE respondidas por $NOMBRE ($ROL)" ;;
 
   mantenimiento:cambio)
     # La petición del cambio sale de los hallazgos que la persona vio (están en la puerta), más su comentario

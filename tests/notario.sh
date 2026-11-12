@@ -164,6 +164,33 @@ puerta g8d plan; t=$(mktemp); jq '.tablero = "repo" | .tarjeta = "t_2"' .sdd/her
 decidir g8d conforme telegram 111 "Q1: B"; PATH="$T/bin:$PATH" firmar g8d
 [ $rc -eq 0 ] && [ "$(ls intent | wc -l)" = "$n0" ] && ! grep -q "Cambio INT-" "$T/klog" \
   && ok "eligiendo «dejarlo» no se lanza ningún cambio" || bad "sin cambio: $out $(cat "$T/klog")"
+# 8e. puerta «Preguntas de la FASE-N» (la implementación se paró en preguntas [OPEN]): responder con la recomendada
+# rehace la FASE con tarjetas nuevas; si la respuesta pide cambiar requisitos, se lanza el cambio
+cat > .sdd/questions-x.md <<'Q'
+## Q-x-007 [OPEN] skill=sdd-task-implementer
+Question: ¿Qué contraseña usa la demo?
+Options:
+  A) La de siempre (recommended)
+  B) Otra
+Answer:
+Q
+: > "$T/klog"; puerta g8e preguntas 5; t=$(mktemp); jq '.tablero = "repo" | .tarjeta = "t_5" | .titulo = "Preguntas de la FASE-5"' .sdd/hermes/puertas/g8e.json > "$t" && mv "$t" .sdd/hermes/puertas/g8e.json
+decidir g8e respondo telegram 111; PATH="$T/bin:$PATH" firmar g8e
+[ $rc -eq 0 ] && grep -q "^Answer: A — opción recomendada" .sdd/questions-x.md && grep -q "create Implementar FASE-5 (respuestas)" "$T/klog" \
+  && ok "preguntas de una FASE: responder contesta y rehace la FASE" || bad "preguntas: $out $(cat "$T/klog")"
+cat > .sdd/questions-x.md <<'Q'
+## Q-x-008 [OPEN] skill=sdd-task-implementer
+Question: «haya-27» no tiene 8 caracteres
+Options:
+  A) Enmendar el literal a «haya-027» (req-change) (recommended)
+  B) Dejarlo
+Answer:
+Q
+: > "$T/klog"; puerta g8f preguntas 5; t=$(mktemp); jq '.tablero = "repo" | .tarjeta = "t_6" | .titulo = "Preguntas de la FASE-5"' .sdd/hermes/puertas/g8f.json > "$t" && mv "$t" .sdd/hermes/puertas/g8f.json
+decidir g8f respondo telegram 111; PATH="$T/bin:$PATH" firmar g8f
+I=$(ls -t intent/INT-*.md | head -1)
+[ $rc -eq 0 ] && grep -q "haya-027" "$I" && grep -q "Cambio INT-" "$T/klog" && ! grep -q "Implementar FASE-5" "$T/klog" \
+  && ok "preguntas de una FASE: una respuesta (req-change) lanza el cambio, no la FASE" || bad "preguntas req-change: $out $(cat "$T/klog")"
 # 9. el motivo de "cambios" en el plan queda en el diario
 puerta g9 plan; decidir g9 cambios telegram 111 "FASE-2 antes que FASE-1"; firmar g9
 grep -q "FASE-2 antes que FASE-1" status/journal.jsonl && ok "el motivo de cambios queda en el diario" || bad "diario: $out"

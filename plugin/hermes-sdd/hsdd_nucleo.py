@@ -218,7 +218,7 @@ def poner_modo(modo: str, tablero: str | None = None) -> dict:
     return cfg
 
 
-TIPOS_PUERTA = ("requisitos", "ruta", "plan", "fase", "entrega", "mantenimiento")
+TIPOS_PUERTA = ("requisitos", "ruta", "plan", "fase", "entrega", "preguntas", "mantenimiento")
 
 
 def umbral_jev(modo: str, cfg: dict | None = None) -> float:
@@ -328,7 +328,9 @@ def estado_jev(puerta: dict, max_chars: int = 90000) -> dict:
                 "plan": sorted(str(p.relative_to(repo)) for p in (repo / "plan" / "fases").glob("FASE-*.md"))
                         if (repo / "plan" / "fases").is_dir() else [],
                 "fase": ["acceptance/ACCEPTANCE-REPORT.md"],
-                "entrega": ["acceptance/ACCEPTANCE-REPORT.md"]}.get(tipo, [])
+                "entrega": ["acceptance/ACCEPTANCE-REPORT.md"],
+                "preguntas": sorted(str(p.relative_to(repo)) for p in (repo / ".sdd").glob("questions-*.md"))
+                             if (repo / ".sdd").is_dir() else []}.get(tipo, [])
     contexto, resto = {}, max_chars
     for f in ficheros:
         try:

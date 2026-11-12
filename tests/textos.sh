@@ -159,6 +159,9 @@ v = N.verbos_jev({"opciones": [{"verbo": "ver"}, {"verbo": "revisado", "etiqueta
 assert list(v) == ["acepto"], v
 PY
 
+o=$($TX puerta preguntas "$R" --proyecto bar --fase 5 | jq -r '.titulo + "|" + .texto')
+echo "$o" | grep -q '^Preguntas de la FASE-5|⏸ La FASE-5 de «bar» se ha parado' && echo "$o" | grep -q '✅ Responder' && echo "$o" | grep -q '^1\. ' \
+  && ok "puerta de preguntas de una FASE: qué pasa al responder y las preguntas con sus opciones" || bad "preguntas: $o"
 # ── la puerta entera con puerta.sh (texto y datos para Jev) ──────────────────────────────────────────────────────
 git init -q -b main && git config user.email t@t && git config user.name t && git config commit.gpgsign false && git add -A && git commit -qm x
 g=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" requisitos)
