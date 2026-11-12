@@ -171,6 +171,12 @@ jq -e '.preguntas[2] | .opciones == ["A","B","C"] and .recomendada == "A"' "$HER
   && ok "puerta.sh: «Options: [A] … (recomendada)  [B] …» en una línea también da botones Q" || bad "corchetes: $(jq -c .preguntas "$HERMES_SDD_HOME/puertas/$g.json")"
 jq -e '.titulo == "Requisitos" and (.texto | test("Lo que pediste")) and .tests_editados == 0 and .bloqueo == false and (.opciones[0].etiqueta == "✅ Apruebo")' \
   "$HERMES_SDD_HOME/puertas/$g.json" >/dev/null && ok "puerta.sh usa los textos nuevos y guarda los datos para Jev" || bad "puerta.sh: $(jq -c '{titulo, tests_editados, bloqueo}' "$HERMES_SDD_HOME/puertas/$g.json")"
+# tests editados: cuenta el código de test que ya existía, no los documentos de test/ (TEST-PLAN.md, matrices)
+mkdir -p tests test; printf 'expect(a).toBe(1)\n' > tests/a.test.js; printf '# Plan\nviejo\n' > test/TEST-PLAN.md
+git add -A && git commit -qm t && git tag fase-0-accepted
+printf 'expect(a).toBe(2)\n' > tests/a.test.js; printf '# Plan\nnuevo\n' > test/TEST-PLAN.md; git commit -qam t2
+g=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" fase 1 2>/dev/null)
+[ "$(jq -r .tests_editados "$HERMES_SDD_HOME/puertas/$g.json")" = 1 ] && ok "tests editados: el .test.js cuenta, TEST-PLAN.md no" || bad "tests editados: $(jq -r .tests_editados "$HERMES_SDD_HOME/puertas/$g.json")"
 
 # ── lo que llega a Telegram al firmar ────────────────────────────────────────────────────────────────────────────
 o=$(python3 - "$ROOT" <<'PY'

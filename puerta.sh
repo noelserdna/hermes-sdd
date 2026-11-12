@@ -28,7 +28,10 @@ for l in sys.stdin.read().splitlines():
     elif actual and l.startswith("+") and not l.startswith("+++"):
         puestas[actual].add(l[1:].strip())
 trivial = re.compile(r"^(import\b|export \{|from\s|//|#|/\*|\*|\}?\)?;?$|\}\);?$)")
-print(sum(1 for f, q in quitadas.items() if any(x and not trivial.match(x) and x not in puestas[f] for x in q)))'
+# Solo código de test: los documentos de la carpeta test/ (TEST-PLAN.md, matrices, escenarios) no son tests (sala, FASE-5:
+# el plan de pruebas actualizó 8 .md y la puerta avisó de «8 tests cambiados»; Jev no la decidió por eso)
+doc = re.compile(r"\.(md|txt|csv|json|ya?ml)$", re.I)
+print(sum(1 for f, q in quitadas.items() if not doc.search(f) and any(x and not trivial.match(x) and x not in puestas[f] for x in q)))'
 }
 
 # Requisitos sin verificar que solo una persona puede comprobar (Verification: inspection o demo): la puerta los enseña y
