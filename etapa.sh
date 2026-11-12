@@ -229,7 +229,7 @@ case "$ETAPA" in
     fin "$RES" "$HECHO" ;;
 
   plan)
-    INC=""; git tag -l 'fase-*-accepted' | grep -q . && INC=" INCREMENTAL: the requirements changed after some FASEs were accepted (tags fase-N-accepted, see changes/). Keep every accepted FASE file untouched and add new FASE(s) after the last one, covering only the new or modified requirements."
+    INC=""; git tag -l 'fase-*-accepted' | grep -q . && INC=" INCREMENTAL: the requirements changed after some FASEs were accepted (tags fase-N-accepted, see changes/). Keep every accepted FASE file as it is (its scope, tasks and order) and add new FASE(s) after the last one, covering only the new or modified requirements. The one edit allowed in an accepted FASE file: a reference (scenario AC-…, requirement or use case id) that the approved requirements change removed or renumbered, so that sdd lint --plan passes."
     # Las etapas opcionales que el arnés no ejecuta quedan saltadas: si no, el plan se niega a arrancar esperando
     # especificaciones que nunca llegan (incidente coches, 11/11/2026). El plan sale de requirements/.
     # Desde 0.3.0 el arnés tiene todas; queda la red para una etapa cuya skill falte en metodo/skills.
@@ -241,7 +241,13 @@ case "$ETAPA" in
     echo "$GRAN" > .sdd/hermes/granularidad-plan   # la que se usó: lanzar.sh la lee (una sola FASE compacta)
     claude_etapa plan-architect "/sdd-plan-architect --skip-clarify — $ARNES Generate plan/.$INC$PLAN_G"
     ls plan/fases/FASE-*.md >/dev/null 2>&1 || falla "el plan no se generó: $(no_hecho)"
-    node "$SDD" lint --plan >/dev/null 2>&1 || falla "sdd lint --plan encuentra errores: $(node "$SDD" lint --plan 2>&1 | tail -3 | tr '\n' ' ')"
+    # Errores del lint: una pasada de reparación con sus líneas (sala, 12/11/2026: una FASE aceptada citaba un escenario
+    # que un cambio de requisitos había quitado, y el plan incremental no podía tocarla)
+    if ! node "$SDD" lint --plan >/dev/null 2>&1; then
+      ERR=$(node "$SDD" lint --plan 2>&1 | grep -v ' warning: ' | head -20 | tr '\n' ' ')
+      claude_etapa plan-architect "/sdd-plan-architect --skip-clarify — $ARNES Fix plan/ so that sdd lint --plan has no errors (do not change requirements/ or spec/; warnings may stay). In an accepted FASE file (tag fase-N-accepted) change only the stale references the error names. Errors: $ERR"
+      node "$SDD" lint --plan >/dev/null 2>&1 || falla "sdd lint --plan encuentra errores: $(node "$SDD" lint --plan 2>&1 | grep -v ' warning: ' | tail -3 | tr '\n' ' ')"
+    fi
     # Criterios que citan una pantalla que entrega una FASE posterior: esa FASE nunca pasaría su aceptación
     # (biblioteca, 11/11/2026). El plan se corrige una vez; lo que quede se avisa en la puerta del plan.
     DEP="$ROOT/plugin/hermes-sdd/hsdd_plan.py"
