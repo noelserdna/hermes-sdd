@@ -53,7 +53,7 @@ async def main():
     datos = [b.callback_data for f in bot.editados[-1][1].inline_keyboard for b in f]
     ok("g:acepto:t_1" in datos and "g:ver:t_1" not in datos, "tras ver la demo aparecen Aceptar/Rechazar")
     q = Query("g:rechazo:t_1", 111); await m._on_boton(NS(callback_query=q), ctx)
-    pid = max(m._RT["pendientes"]); ok(len(m._RT["pendientes"]) == 1, "Rechazar pide el motivo con respuesta forzada")
+    pend = m._pendientes(); pid = int(max(pend, key=int)) if pend else 0; ok(len(pend) == 1, "Rechazar pide el motivo con respuesta forzada (y lo guarda en disco)")
     msg = NS(text="falta el filtro", from_user=NS(id=111, username="u"), message_id=9, reply_to_message=NS(message_id=pid))
     async def rep(t): msg.r = t
     msg.reply_text = rep
