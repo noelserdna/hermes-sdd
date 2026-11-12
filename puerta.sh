@@ -134,10 +134,11 @@ PREGUNTAS=$(python3 - .sdd/questions-*.md <<'PY' 2>/dev/null || echo '[]'
 import json, re, sys
 out, n = [], 0
 for p in sorted(a for a in sys.argv[1:] if not a.endswith("*.md")):
-    for b in re.findall(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", open(p).read(), flags=re.M | re.S):
+    for b in re.findall(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", open(p, encoding="utf-8").read(), flags=re.M | re.S):
         n += 1
-        ops = re.findall(r"^\s+([A-Z])\)", b, re.M)
-        rec = re.search(r"^\s+([A-Z])\).*\(recommended\)", b, re.M)
+        # «A)» u «A★)»: hay skills que marcan la recomendada con una estrella en vez de «(recommended)»
+        ops = re.findall(r"^\s+([A-Z])\s*[★⭐\ufe0f]*\s*\)", b, re.M)
+        rec = re.search(r"^\s+([A-Z])(?:\s*[★⭐]|\).*\(recommended\))", b, re.M)
         out.append({"n": n, "id": b.split()[1], "opciones": ops, "recomendada": rec.group(1) if rec else (ops[0] if ops else "")})
 print(json.dumps(out))
 PY

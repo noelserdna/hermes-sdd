@@ -382,13 +382,13 @@ def preguntas(ficheros: list[Path]) -> str:
     for f in sorted(ficheros):
         for b in re.findall(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", _leer(f), flags=re.M | re.S):
             q = re.search(r"^Question:\s*(.*)$", b, re.M)
-            ops = re.findall(r"^\s+([A-Z])\)\s*(.*)$", b, re.M)
+            ops = re.findall(r"^\s+([A-Z])\s*([★⭐\ufe0f]*)\s*\)\s*(.*)$", b, re.M)
             if not q:
                 continue
             n = len(bloques) + 1
             lineas = [f"{n}. {q.group(1).strip()}"]
-            for letra, txt in ops:
-                rec = "(recommended)" in txt
+            for letra, estrella, txt in ops:
+                rec = "(recommended)" in txt or bool(estrella)
                 txt = txt.replace("(recommended)", "").strip()
                 lineas.append(f"   {letra}) {txt}{'  ⭐ recomendada' if rec else ''}")
             bloques.append("\n".join(lineas))

@@ -196,7 +196,7 @@ for p in sorted(ficheros):
                 return b
             letra, como = elegidas[n], "elegida por"
         else:
-            rec = re.search(r"^\s+([A-Z])\).*\(recommended\)", b, re.M)
+            rec = re.search(r"^\s+([A-Z])(?:\s*[★⭐]|\).*\(recommended\))", b, re.M)
             letra, como = (rec.group(1) if rec else "?"), "opción recomendada, aceptada por"
         b = b.replace("[OPEN]", "[ANSWERED]", 1)
         linea = f"Answer: {letra} — {como} {quien} ({hoy})"

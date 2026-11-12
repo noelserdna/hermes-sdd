@@ -89,6 +89,17 @@ puerta g8 plan; decidir g8 conforme telegram 111 "Q1: A, Q2: B"; firmar g8
 grep -q "^Answer: A — elegida" .sdd/questions-x.md && grep -q "^Answer: B — elegida" .sdd/questions-x.md \
   && [ "$(grep -c '^## Q-x-00[12] \[ANSWERED\]' .sdd/questions-x.md)" = 2 ] \
   && ok "escribe la respuesta elegida aunque falte la línea Answer:" || bad "preguntas: $(cat .sdd/questions-x.md | tr '\n' '|')"
+# 8b. hay skills que marcan la recomendada con una estrella («B★)») en vez de «(recommended)»
+cat > .sdd/questions-x.md <<'Q'
+## Q-x-003 [OPEN] skill=x
+Question: ¿tres?
+  A) a
+  B★) b
+Answer:
+Q
+puerta g8b plan
+decidir g8b conforme telegram 111; firmar g8b
+grep -q "^Answer: B — opción recomendada" .sdd/questions-x.md && ok "«B★)»: al firmar se contesta la recomendada (B)" || bad "firmada: $(tr '\n' '|' < .sdd/questions-x.md)"
 # 9. el motivo de "cambios" en el plan queda en el diario
 puerta g9 plan; decidir g9 cambios telegram 111 "FASE-2 antes que FASE-1"; firmar g9
 grep -q "FASE-2 antes que FASE-1" status/journal.jsonl && ok "el motivo de cambios queda en el diario" || bad "diario: $out"
