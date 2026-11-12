@@ -48,7 +48,7 @@ Answer:
 ## Q-x-002 [OPEN] skill=sdd-ux-designer
 Question: ¿Pedimos confirmación al cancelar?
   A★) No, un clic
-  B) Sí
+  B) Sí, y añadirlo como criterio (req-change)
 Answer:
 
 ## Q-x-003 [OPEN]
@@ -70,6 +70,7 @@ sec '🔧 Condiciones' | grep -q 'no necesita servidor' && ok "requisitos: las c
 ! echo "$o" | grep -q 'ya no vale' && ok "requisitos: no enseña los requisitos retirados" || bad "retirado aparece"
 echo "$o" | grep -q '⭐ recomendada' && echo "$o" | grep -q '^1. ¿Qué foto ponemos de portada?$' && ok "preguntas: numeradas como los botones y con la recomendada marcada" || bad "preguntas: $o"
 echo "$o" | grep -q '^   A) el integrado  ⭐ recomendada$' && echo "$o" | grep -q '^   C) dejarlo$' && ok "preguntas: opciones en una línea con [A] [B] [C], la recomendada marcada" || bad "corchetes: $o"
+echo "$o" | grep -q '^   B) Sí, y añadirlo como criterio  (📝 abre un cambio de requisitos)$' && ok "preguntas: la opción que pide cambiar requisitos lo avisa (sin la marca del método)" || bad "req-change: $o"
 echo "$o" | grep -q '^   A) No, un clic  ⭐ recomendada$' && ok "preguntas: «A★)» también es la recomendada (y la A no se pierde)" || bad "estrella: $o"
 echo "$o" | grep -qE "$JERGA" && bad "requisitos con jerga: $(echo "$o" | grep -E "$JERGA")" || ok "requisitos: sin jerga del método"
 echo "$o" | grep -q '(versión 1.2)' && ok "requisitos: dice qué versión se aprueba" || bad "versión"
@@ -151,7 +152,7 @@ echo "$o" | grep -q '^🔍 Solo falta tu revisión' && echo "$o" | grep -q '^•
 o=$($TX puerta entrega "$R" --proyecto bar --gate-md "$T/g.md" --rc 1 | jq -r .texto)
 echo "$o" | grep -q 'Pulsa ❌ Rechazar' && ! echo "$o" | grep -q 'Acepto la entrega' && ok "entrega bloqueada: no invita a aceptar" || bad "entrega bloqueada: $o"
 o=$($TX puerta fase "$R" --proyecto bar --fase 0 --gate-md "$T/g.md" --rc 1 | jq -r .texto)
-echo "$o" | grep -q 'solo podrás rechazarla' && ! echo "$o" | grep -q 'podrás aceptarla' && ok "fase bloqueada: no invita a aceptar" || bad "fase bloqueada: $o"
+echo "$o" | grep -q '❌ Rechazar y di qué hay que corregir, o 🟡 Aceptar sin lo que falta' && ! echo "$o" | grep -q 'podrás aceptarla' && ok "fase bloqueada: no invita a aceptar; rechazar o eximir lo que falta" || bad "fase bloqueada: $o"
 python3 - "$ROOT" <<'PY' && ok "Jev no puede elegir «revisado»: una inspección la confirma una persona" || bad "jev revisado"
 import sys; sys.path.insert(0, sys.argv[1] + "/plugin/hermes-sdd"); import hsdd_nucleo as N
 v = N.verbos_jev({"opciones": [{"verbo": "ver"}, {"verbo": "revisado", "etiqueta": "🔍"}, {"verbo": "acepto", "etiqueta": "✅"}]})

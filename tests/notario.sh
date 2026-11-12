@@ -66,6 +66,30 @@ nj=$(wc -l < status/journal.jsonl 2>/dev/null || echo 0); firmar g5; nj2=$(wc -l
 # 6. aceptar una FASE sin puerta de calidad cumplida → solo rechazo
 puerta g6 fase 0; decidir g6 acepto telegram 111; firmar g6
 [ $rc -ne 0 ] && echo "$out" | grep -q "solo se admite rechazo" && ok "no acepta FASE con gate≠0/3" || bad "gate: $out"
+# 6b. «🟡 Aceptar sin lo que falta»: exime los Must sin cumplir con el motivo de la persona y una referencia de
+# seguimiento (<PROYECTO>-N) en acceptance/PENDIENTES.md; la puerta de calidad sale entonces con 3 y se acepta
+exime() { t=$(mktemp); jq '.opciones = [{verbo:"eximo", etiqueta:"🟡 Aceptar sin lo que falta", texto:true}, {verbo:"rechazo", etiqueta:"❌", texto:true}]' \
+  ".sdd/hermes/puertas/$1.json" > "$t" && mv "$t" ".sdd/hermes/puertas/$1.json"; }
+puerta g6j fase 0; exime g6j; decidir g6j eximo telegram 111 "lo pruebo yo"
+gemelo g6j; t=$(mktemp); jq '.decision.actor = {persona:"jev", canal:"jev", id:"x"}' "$HERMES_SDD_HOME/puertas/g6j.json" > "$t" && mv "$t" "$HERMES_SDD_HOME/puertas/g6j.json"
+jq '.actor = {persona:"jev", canal:"jev", id:"x"}' .sdd/hermes/decisiones/g6j.json > "$t" && mv "$t" .sdd/hermes/decisiones/g6j.json
+out=$(bash "$ROOT/firmar.sh" "$R" g6j 2>&1); rc=$?
+[ $rc -ne 0 ] && echo "$out" | grep -q "la firma una persona, no Jev" && ok "una exención no la firma Jev" || bad "jev exime: $out"
+puerta g6s fase 0; decidir g6s eximo telegram 111 "x"; firmar g6s
+[ $rc -ne 0 ] && echo "$out" | grep -q "no ofrecía 🟡" && ok "eximir solo si la puerta lo ofrecía" || bad "sin opción: $out"
+puerta g6v fase 0; exime g6v; decidir g6v eximo telegram 111 "sin vídeo"; firmar g6v
+[ $rc -ne 0 ] && echo "$out" | grep -q "missing video" && [ -z "$(git status --porcelain --untracked-files=no)" ] && [ ! -f acceptance/PENDIENTES.md ] \
+  && ! grep -q '"followUp"' acceptance/decisions.jsonl 2>/dev/null \
+  && ok "si aun eximiendo falta algo (el vídeo de la demo), no deja nada registrado y solo cabe rechazar" || bad "sin vídeo: $out $(git status --short)"
+mkdir -p evidencias/FASE-0; head -c 2000 /dev/urandom > evidencias/FASE-0/FASE-0-demo.mp4
+puerta g6b fase 0; exime g6b; decidir g6b eximo telegram 111 "el login lo pruebo yo en la reunión"; firmar g6b
+P=acceptance/PENDIENTES.md
+[ $rc -eq 0 ] && echo "$out" | grep -q "FASE-0 aceptada" && echo "$out" | grep -q "con exenciones (REPO-1" \
+  && grep -q '^| REPO-1 | REQ-' "$P" && grep -q "el login lo pruebo yo en la reunión" "$P" && grep -q "| g6b | abierto |" "$P" \
+  && grep -q '"followUp":"REPO-1"' acceptance/decisions.jsonl && git tag -l | grep -q '^fase-0-accepted$' \
+  && ok "eximir: waiver con su seguimiento, PENDIENTES.md y la FASE aceptada" || bad "eximir: $out $(cat "$P" 2>/dev/null | tail -3)"
+n=$(grep -c '^| REPO-' "$P"); firmar g6b
+[ $rc -eq 0 ] && [ "$(grep -c '^| REPO-' "$P")" = "$n" ] && ok "repetir la firma no duplica exenciones" || bad "duplica: $out"
 # 7. verbo inválido y texto obligatorio
 puerta g7 fase 0; decidir g7 rechazo telegram 111; firmar g7
 [ $rc -ne 0 ] && echo "$out" | grep -q "necesita un texto" && ok "rechazo exige motivo" || bad "texto: $out"
@@ -105,6 +129,41 @@ Q
 puerta g8b plan
 decidir g8b conforme telegram 111; firmar g8b
 [ "$(grep -c "^Answer: B — opción recomendada" .sdd/questions-x.md)" = 2 ] && ok "«B★)» y «[B] … (recomendada)»: al firmar se contesta la recomendada (B)" || bad "firmada: $(tr '\n' '|' < .sdd/questions-x.md)"
+# 8c. una respuesta que pide cambiar los requisitos: al dar conformidad se lanza un cambio (/cambio) en vez del tramo
+# siguiente; con kanban falso para ver qué tarjetas se crean
+mkdir -p "$T/bin"; : > "$T/klog"
+cat > "$T/bin/hermes" <<H
+#!/usr/bin/env bash
+echo "\$*" >> "$T/klog"
+case "\$*" in *"boards list"*) echo '[{"slug":"repo"}]' ;; *" create "*) echo '{"id":"t_9"}' ;; esac
+H
+chmod +x "$T/bin/hermes"
+cat > .sdd/questions-x.md <<'Q'
+## Q-x-005 [OPEN] skill=x
+Question: Cuatro reglas del cliente no están en REQUIREMENTS.md
+Options:
+  A) Añadir cuatro REQ con `sdd-req-change` (recommended)
+  B) Quitarlas de `spec/`
+Answer:
+Q
+puerta g8c plan; t=$(mktemp); jq '.tablero = "repo" | .tarjeta = "t_1" | .titulo = "Plan por fases"' .sdd/hermes/puertas/g8c.json > "$t" && mv "$t" .sdd/hermes/puertas/g8c.json
+decidir g8c conforme telegram 111; PATH="$T/bin:$PATH" firmar g8c
+I=$(ls intent/INT-*.md 2>/dev/null | tail -1)
+[ $rc -eq 0 ] && [ -n "$I" ] && grep -q "Añadir cuatro REQ" "$I" && grep -q "Q-x-005" "$I" && grep -q "Cambio INT-" "$T/klog" \
+  && ! grep -q "Implementar FASE" "$T/klog" && echo "$out" | grep -q "lanza un cambio de requisitos" \
+  && ok "respuesta «Añadir REQ con sdd-req-change»: lanza un cambio de requisitos y no el tramo siguiente" || bad "cambio por respuesta: $out $(cat "$T/klog")"
+# … y una respuesta que no pide cambio sigue con el tramo de siempre
+cat > .sdd/questions-x.md <<'Q'
+## Q-x-006 [OPEN] skill=x
+Question: ¿Cómo se resuelve?
+Options: [A] enmendar el criterio (recomendada)  [B] dejarlo
+Answer:
+Q
+: > "$T/klog"; n0=$(ls intent | wc -l)
+puerta g8d plan; t=$(mktemp); jq '.tablero = "repo" | .tarjeta = "t_2"' .sdd/hermes/puertas/g8d.json > "$t" && mv "$t" .sdd/hermes/puertas/g8d.json
+decidir g8d conforme telegram 111 "Q1: B"; PATH="$T/bin:$PATH" firmar g8d
+[ $rc -eq 0 ] && [ "$(ls intent | wc -l)" = "$n0" ] && ! grep -q "Cambio INT-" "$T/klog" \
+  && ok "eligiendo «dejarlo» no se lanza ningún cambio" || bad "sin cambio: $out $(cat "$T/klog")"
 # 9. el motivo de "cambios" en el plan queda en el diario
 puerta g9 plan; decidir g9 cambios telegram 111 "FASE-2 antes que FASE-1"; firmar g9
 grep -q "FASE-2 antes que FASE-1" status/journal.jsonl && ok "el motivo de cambios queda en el diario" || bad "diario: $out"

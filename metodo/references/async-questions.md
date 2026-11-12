@@ -34,6 +34,7 @@ Answer:
 - `NNN`: three digits, `max(NNN present in the file, including [ANSWERED]) + 1`; `001` for a new file.
 - `skill`: the skill writing the question. `context`: where it comes from (`TASK-F1-004`, `Step 4.5 AUD-017`, `spec/adr/ADR-025.md:45`).
 - `Options`: letters, at least two, exactly one `(recommended)`. A PAUSE's `Question:` / `Options:` lines are copied verbatim.
+- `(req-change)` after an option that, once chosen, changes `requirements/` (add, amend or deprecate a requirement or one of its criteria). The harness turns the chosen one into a requirements change with its own human gate; no stage applies it by itself. Example: `A) Add four REQs for RN-001..006 (req-change) (recommended)`.
 - `Blocks`: what the station skips until the answer arrives (`TASK-F1-004, TASK-F1-007`, `pipeline gate`, `INV-023`).
 - `Answer:` empty. Only the lead writes it (Section 5).
 - Optional, written by the station after applying the answer: `Applied: <ISO-8601> <one line>`.

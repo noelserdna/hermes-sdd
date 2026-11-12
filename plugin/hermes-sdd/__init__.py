@@ -282,9 +282,13 @@ async def _on_boton(update, context) -> None:
     if opcion.get("texto"):
         from telegram import ForceReply
         await q.answer()
-        m = await bot.send_message(chat_id=q.message.chat_id,
-                                   text=f"{opcion['etiqueta']}: responde a este mensaje explicando qué quieres, con tus palabras.",
-                                   reply_markup=ForceReply(selective=True, input_field_placeholder="Qué falta o qué cambiar…"))
+        if verbo == "eximo":
+            pide, hueco = ("🟡 Aceptar sin lo que falta: responde a este mensaje con por qué puede esperar. Lo que falta "
+                           "queda apuntado como pendiente, con su número de seguimiento, a tu nombre."), "Por qué puede esperar…"
+        else:
+            pide, hueco = f"{opcion['etiqueta']}: responde a este mensaje explicando qué quieres, con tus palabras.", "Qué falta o qué cambiar…"
+        m = await bot.send_message(chat_id=q.message.chat_id, text=pide,
+                                   reply_markup=ForceReply(selective=True, input_field_placeholder=hueco))
         _pendientes_guardar(m.message_id, (gid, verbo, persona))
         return
     aviso = await _decidir(bot, gid, verbo, "", q.from_user, persona,

@@ -140,7 +140,7 @@
         if (opciones.length) {
           if (pideMotivo)
             hijos.push(h(C.Campo, {
-              key: 'm', value: motivo, placeholder: 'Motivo (obligatorio para cambios, observaciones o rechazo)',
+              key: 'm', value: motivo, placeholder: 'Motivo (obligatorio para cambios, observaciones, rechazo o aceptar sin lo que falta)',
               onChange: e => setMotivo(e.target.value)
             }))
           hijos.push(h('div', { key: 'b', style: S.fila }, opciones.map(o => h(C.Boton, {

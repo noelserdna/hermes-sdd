@@ -387,7 +387,12 @@ def _que_pulsar(rc: int, rev: dict | None, aceptar: str, obs: str, rechazar: str
         return f"👉 {antes or 'Puedes '}{'podrás ' if demo else ''}{aceptar}, {obs} o {rechazar}.{extra}"
     if hay_rev and rev.get("solo"):
         return f"👉 {antes}{revisado if demo else revisado[0].upper() + revisado[1:]}; si algo no está bien, ❌ Rechazar y di qué."
-    return f"👉 {antes}solo podrás rechazarla: di qué hay que corregir." if demo else "👉 Pulsa ❌ Rechazar y di qué hay que corregir."
+    # Bloqueada: rechazar (se corrige) o, si lo que falta puede esperar, eximirlo con un motivo (queda como pendiente)
+    eximir = ("🟡 Aceptar sin lo que falta si puede esperar (di por qué; queda apuntado como pendiente con su número "
+              "de seguimiento)")
+    if demo:
+        return f"👉 {antes}❌ Rechazar y di qué hay que corregir, o {eximir}."
+    return f"👉 Pulsa ❌ Rechazar y di qué hay que corregir, o {eximir}."
 
 
 def puerta_entrega(repo: Path, proyecto: str, gate_md: str, rc: int, fases_aceptadas: list[str], unica: bool = False,
@@ -455,6 +460,33 @@ def opciones_json(bloque: str) -> dict:
     return {"opciones": [l for l, _, _ in ops], "recomendada": rec}
 
 
+# Una opción que pide cambiar los requisitos: la marca explícita del método «(req-change)» o, en preguntas escritas
+# sin ella, un verbo de cambio junto a REQ/requisito/criterio («Añadir cuatro REQ con sdd-req-change», «enmendar el
+# criterio…»). Elegirla y aprobar la puerta lanza un cambio (/cambio): nada cambia sin su propia puerta de requisitos.
+_MARCA_CAMBIO = re.compile(r"\s*\(req-change\)", re.I)
+_PIDE_CAMBIO = re.compile(
+    r"sdd-req-change|\b(?:enmendar|añadir|agregar|modificar|cambiar|quitar|eliminar|deprecar|incorporar|amend|add|modify"
+    r"|change|remove|deprecate)\b[^.;]{0,50}?\b(?:REQ|requisitos?|criterios?|requirements?|criteri(?:on|a))\b", re.I)
+_NEGACION = re.compile(r"\b(?:no|sin|nada|ning[uú]n|nothing|without|not)\b", re.I)
+
+
+def pide_cambio(texto: str) -> bool:
+    if _MARCA_CAMBIO.search(texto):
+        return True
+    return bool(_PIDE_CAMBIO.search(texto)) and not _NEGACION.search(texto)
+
+
+def peticion_cambio(bloque: str, letra: str) -> str:
+    """Si la opción <letra> de la pregunta pide cambiar los requisitos, la petición para /cambio (si no, "")."""
+    txt = next((t for l, t, _ in opciones(bloque) if l == letra.upper()), "")
+    if not txt or not pide_cambio(txt):
+        return ""
+    q = re.search(r"^Question:\s*(.*)$", bloque, re.M)
+    qid = bloque.split()[1] if len(bloque.split()) > 1 else "?"
+    return (f"{qid}: {q.group(1).strip() if q else ''}\nRespuesta elegida: {letra.upper()}) "
+            f"{_MARCA_CAMBIO.sub('', txt).strip()}")
+
+
 def preguntas(ficheros: list[Path]) -> str:
     """Las preguntas abiertas, numeradas como los botones Q1, Q2…, con la recomendada marcada."""
     bloques = []
@@ -466,7 +498,8 @@ def preguntas(ficheros: list[Path]) -> str:
             n = len(bloques) + 1
             lineas = [f"{n}. {q.group(1).strip()}"]
             for letra, txt, rec in opciones(b):
-                lineas.append(f"   {letra}) {txt}{'  ⭐ recomendada' if rec else ''}")
+                aviso = "  (📝 abre un cambio de requisitos)" if pide_cambio(txt) else ""
+                lineas.append(f"   {letra}) {_MARCA_CAMBIO.sub('', txt).strip()}{'  ⭐ recomendada' if rec else ''}{aviso}")
             bloques.append("\n".join(lineas))
     if not bloques:
         return ""

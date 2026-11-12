@@ -68,6 +68,11 @@ una comprueba sus condiciones y queda anotada:
 
 Descartar trabajo (borrar, revertir, resetear) no es una acción tuya: proponlo y que lo haga una persona.
 
+**Pendientes** (`pendientes` en el estado; vienen de `acceptance/PENDIENTES.md`): lo que una persona aceptó sin
+cumplir con 🟡 en una puerta, cada uno con su número (`<PROYECTO>-N`) y su motivo. Cuando te pregunten cómo va el
+proyecto, y antes de la siguiente entrega, recuérdalos en una línea cada uno. Si uno ya se puede cumplir, recomienda
+cómo (un `/cambio` o rehacer la FASE); cerrarlo lo decide la persona.
+
 ## Revisar la documentación
 Cada puerta trae ya tu revisión mecánica («🧭 Encargado: N avisos»; un aviso grave impide que Jev la apruebe solo).
 Si la persona te pide revisar algo, pásala tú: `python3 {{ARNES}}/plugin/hermes-sdd/hsdd_revision.py revisar {{REPO}}

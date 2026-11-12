@@ -50,6 +50,16 @@ if [ "$VERBO" = revisado ]; then
   [ "$CANAL" != jev ] || { echo "NOTARIO: rechazado — una inspección la confirma una persona, no Jev" >&2; exit 1; }
   REVISADO=true; VERBO=acepto
 fi
+# «🟡 Aceptar sin lo que falta»: la persona exime los imprescindibles sin cumplir, con su motivo (paso 1c), y lo demás es
+# una aceptación normal. Solo una persona: Jev nunca exime.
+EXIMO=false
+if [ "$VERBO" = eximo ]; then
+  { [ "$TIPO" = fase ] || [ "$TIPO" = entrega ]; } || { echo "NOTARIO: rechazado — 'eximo' no vale para una puerta de tipo '$TIPO'" >&2; exit 1; }
+  jq -e 'any(.opciones[]; .verbo == "eximo")' "$PUERTA" >/dev/null || { echo "NOTARIO: rechazado — la puerta no ofrecía 🟡 Aceptar sin lo que falta" >&2; exit 1; }
+  [ "$CANAL" != jev ] || { echo "NOTARIO: rechazado — una exención la firma una persona, no Jev" >&2; exit 1; }
+  [ -n "$TEXTO" ] || { echo "NOTARIO: rechazado — una exención necesita su motivo" >&2; exit 1; }
+  EXIMO=true; VERBO=acepto
+fi
 
 # Aprobar requisitos o plan eligiendo en alguna pregunta una opción distinta de la recomendada: el texto que la
 # persona vio está escrito con la recomendada, así que firmarlo dejaría aprobado algo distinto de lo que eligió.
@@ -119,6 +129,46 @@ if ! hecho validado; then
     git add acceptance/decisions.jsonl 2>/dev/null || true
     git diff --cached --quiet || git commit -q -m "docs(acceptance): inspection by $NOMBRE" --trailer "Refs: $(jq -r '[.revisar[]?.id] | join(", ")' "$PUERTA")" --trailer "Gate-Id: $GATE"
   fi
+  # 1c. exenciones: cada imprescindible sin cumplir del alcance (la FASE o todo) queda eximido con el motivo de la
+  # persona y una referencia de seguimiento <PROYECTO>-N, apuntada en acceptance/PENDIENTES.md (el método la exige para
+  # eximir un Must). Idempotente: una por requisito y puerta.
+  if [ "$EXIMO" = true ]; then
+    KEY=$(printf '%s' "${BOARD:-$(basename "$REPO")}" | tr '[:lower:]' '[:upper:]' | tr -cd 'A-Z0-9')
+    case "$KEY" in [A-Z]*) ;; *) KEY="P$KEY" ;; esac; [ "${#KEY}" -ge 2 ] || KEY="${KEY}X"
+    PEND=acceptance/PENDIENTES.md; mkdir -p acceptance
+    [ -f "$PEND" ] || printf '%s\n' "# Pendientes" "" \
+      "Lo que se aceptó sin cumplir del todo. Cada fila es una exención firmada en una puerta (acceptance/decisions.jsonl) y su número es la referencia de seguimiento que pide el método; se cierra cuando un cambio o una FASE posterior lo cumple." "" \
+      "| Id | Requisito | Qué falta | Motivo | Quién | Fecha | Puerta | Estado |" "|---|---|---|---|---|---|---|---|" > "$PEND"
+    if [ "$TIPO" = fase ]; then ACC=$(node "$SDD" accept --fase "$FASE" --json 2>/dev/null || true); else ACC=$(node "$SDD" accept --json 2>/dev/null || true); fi
+    FALTAN=$(printf '%s' "$ACC" | jq -r '(.scope.requirements // null) as $s | .requirements[]?
+      | select(.priority == "Must" and ((.verdict | IN("VERIFIED", "WAIVED")) | not) and ($s == null or (.id as $i | $s | index($i))))
+      | [.id, (.title // ""), ([.criteria[]? | select(.state != "pass") | "AC\(.n // .index) (\(.state))"] | join(", "))] | @tsv' 2>/dev/null || true)
+    [ -n "$FALTAN" ] || grep -qF "| $GATE |" "$PEND" || fallo "no hay ningún imprescindible sin cumplir que eximir"
+    MOTIVO=$(printf '%s' "$TEXTO" | tr '|\n' '/ ')
+    BK=$(mktemp -d); cp "$PEND" "$BK/p"; [ -f acceptance/decisions.jsonl ] && cp acceptance/decisions.jsonl "$BK/d"
+    while IFS=$'\t' read -r REQ TIT QUE; do
+      [ -n "$REQ" ] || continue
+      grep -F "| $REQ " "$PEND" | grep -qF "| $GATE |" && continue
+      FU="$KEY-$(( $(grep -cE "^\| $KEY-[0-9]+ " "$PEND" || true) + 1 ))"   # grep -c sin filas sale con 1 (set -e)
+      node "$SDD" accept record waiver --req "$REQ" --reason "$TEXTO (puerta $GATE)" --follow-up "$FU" --by "$NOMBRE" --role "$ROL" >/dev/null ||
+        fallo "no se pudo registrar la exención de $REQ"
+      printf '| %s | %s %s | %s | %s | %s (%s) | %s | %s | abierto |\n' "$FU" "$REQ" "$TIT" "${QUE:-—}" "$MOTIVO" "$NOMBRE" "$ROL" "$(date +%Y-%m-%d)" "$GATE" >> "$PEND"
+    done <<< "$FALTAN"
+    # Si con las exenciones la puerta sigue sin cumplirse (p. ej. falta el vídeo de la demo, que no se exime), no queda
+    # nada registrado: se deshace y solo cabe rechazar
+    rc=0
+    if [ "$TIPO" = fase ]; then node "$SDD" gate --fase "$FASE" > "$BK/g" 2>&1 || rc=$?; else node "$SDD" gate > "$BK/g" 2>&1 || rc=$?; fi
+    if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then
+      cp "$BK/p" "$PEND"; if [ -f "$BK/d" ]; then cp "$BK/d" acceptance/decisions.jsonl; else rm -f acceptance/decisions.jsonl; fi
+      git ls-files --error-unmatch "$PEND" >/dev/null 2>&1 || rm -f "$PEND"
+      QUEDA=$(grep -E '^missing video|^FAILING|exit [0-9]' "$BK/g" | grep -v WAIVED | head -2 | paste -sd';' -)
+      rm -rf "$BK"; fallo "aun eximiendo los imprescindibles, la puerta de calidad sigue sin cumplirse ($QUEDA): solo se admite rechazo"
+    fi
+    rm -rf "$BK"
+    git add acceptance/ 2>/dev/null || true
+    git diff --cached --quiet || git commit -q -m "docs(acceptance): waiver by $NOMBRE" \
+      --trailer "Refs: $(grep -F "| $GATE |" "$PEND" | awk -F'|' '{print $3}' | awk '{print $1}' | paste -sd, - | sed 's/,/, /g')" --trailer "Gate-Id: $GATE"
+  fi
   # Aceptar una FASE exige la puerta de calidad cumplida (0) o cumplida con exenciones (3); rechazar, no
   if { [ "$TIPO" = fase ] || [ "$TIPO" = entrega ]; } && [ "$VERBO" != rechazo ]; then
     rc=0
@@ -176,11 +226,17 @@ if ! hecho preguntas; then
   MODO=""
   if printf '%s' "$TEXTO" | grep -qiE 'q[a-z]?[[:space:]]*[0-9]'; then MODO=elegidas
   elif [ "$VERBO" = acepto ] || [ "$VERBO" = conforme ]; then MODO=recomendada; fi
+  # Respuestas que piden cambiar los requisitos (p. ej. «Añadir cuatro REQ con sdd-req-change»): al aprobar un plan,
+  # una FASE o la entrega, se apuntan aquí y el paso 3 lanza el cambio en vez del tramo siguiente
+  PIDEN=""
+  case "$TIPO:$VERBO" in plan:conforme|fase:acepto|fase:observaciones|entrega:acepto|entrega:observaciones)
+    PIDEN=".sdd/hermes/cambio-por-respuestas-$GATE.txt" ;; esac
   if [ -n "$MODO" ]; then
-    python3 - "$ROOT/plugin/hermes-sdd/hsdd_textos.py" "$MODO" "$NOMBRE ($ROL)" "$HOY" "$TEXTO" .sdd/questions-*.md <<'PY'
+    python3 - "$ROOT/plugin/hermes-sdd/hsdd_textos.py" "$MODO" "$NOMBRE ($ROL)" "$HOY" "$TEXTO" "$PIDEN" .sdd/questions-*.md <<'PY'
 import importlib.util, re, sys
 spec = importlib.util.spec_from_file_location("hsdd_textos", sys.argv[1]); X = importlib.util.module_from_spec(spec); spec.loader.exec_module(X)
-modo, quien, hoy, texto, *ficheros = sys.argv[2:]
+modo, quien, hoy, texto, piden, *ficheros = sys.argv[2:]
+peticiones = []
 elegidas = {int(n): l.upper() for n, l in re.findall(r"[Qq][A-Za-z]?\s*(\d+)\W{0,3}\s*([A-Ca-c])\b", texto)}
 n = 0
 for p in sorted(ficheros):
@@ -199,6 +255,10 @@ for p in sorted(ficheros):
         else:
             rec = X.opciones_json(b)["recomendada"]
             letra, como = (rec or "?"), "opción recomendada, aceptada por"
+        if piden and letra != "?":
+            pet = X.peticion_cambio(b, letra)
+            if pet:
+                peticiones.append(pet)
         b = b.replace("[OPEN]", "[ANSWERED]", 1)
         linea = f"Answer: {letra} — {como} {quien} ({hoy})"
         if re.search(r"^Answer:[ \t]*$", b, re.M):   # [ \t]: no comerse los saltos de línea que separan preguntas
@@ -207,6 +267,9 @@ for p in sorted(ficheros):
         return cuerpo + "\n" + linea + b[len(cuerpo):] if b[len(cuerpo):] else cuerpo + "\n" + linea + "\n"
     t = re.sub(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", contestar, t, flags=re.M | re.S)
     open(p, "w", encoding="utf-8").write(t)
+if peticiones:
+    with open(piden, "w", encoding="utf-8") as f:
+        f.write("\n\n".join(peticiones) + "\n")
 PY
   fi
   marcar preguntas
@@ -447,13 +510,28 @@ $(node "$SDD" gate --md 2>/dev/null)"
     RESULTADO="$VERBO"; RESUMEN="$NOMBRE ($ROL) pide cambios en $TIPO: $TEXTO" ;;
 esac
 
+if [ "$EXIMO" = true ]; then
+  PEN=$(grep -F "| $GATE |" acceptance/PENDIENTES.md 2>/dev/null | awk -F'|' '{gsub(/ /, "", $2); print $2}' | paste -sd, - | sed 's/,/, /g')
+  RESUMEN="$RESUMEN · con exenciones ($PEN, en acceptance/PENDIENTES.md)"
+fi
+
 # ── 3. cerrar la puerta en el tablero y encadenar lo siguiente ────────────────────────────────────────────────────
 if [ -n "$BOARD" ] && ! hecho completado; then
   hermes kanban --board "$BOARD" complete "$TASK" --result "$RESUMEN" >/dev/null
   marcar completado
 fi
 if ! hecho encadenado; then
-  [ -n "$BOARD" ] && [ -x "$ROOT/lanzar.sh" ] && "$ROOT/lanzar.sh" siguiente "$REPO" "$GATE" "$RESULTADO" >/dev/null
+  PC=".sdd/hermes/cambio-por-respuestas-$GATE.txt"
+  if [ -s "$PC" ] && [ -n "$BOARD" ] && [ -x "$ROOT/lanzar.sh" ]; then
+    # Primero el cambio de requisitos que pidieron las respuestas: cuando se apruebe, lanzar.sh sigue desde ahí (rehace
+    # la FASE en curso o vuelve a planificar con los requisitos nuevos), así que el tramo siguiente no se lanza ahora
+    { echo "En la puerta «$(p .titulo)», $NOMBRE ($ROL) eligió respuestas que piden cambiar los requisitos:"; echo; cat "$PC"; } > "$PC.peticion"
+    "$ROOT/lanzar.sh" cambio "$REPO" "$(cat "$PC.peticion")" >/dev/null
+    rm -f "$PC.peticion"
+    RESUMEN="$RESUMEN · lanza un cambio de requisitos por las respuestas ($(grep -c '^Respuesta elegida:' "$PC"))"
+  else
+    [ -n "$BOARD" ] && [ -x "$ROOT/lanzar.sh" ] && "$ROOT/lanzar.sh" siguiente "$REPO" "$GATE" "$RESULTADO" >/dev/null
+  fi
   marcar encadenado
 fi
 t=$(mktemp); jq --arg r "$RESUMEN" '.resultado = $r | del(.error)' "$ACTA" > "$t" && mv "$t" "$ACTA"

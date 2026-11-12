@@ -157,8 +157,8 @@ mkdir -p evidencias/FASE-0 && touch evidencias/FASE-0/a.png evidencias/FASE-0/b.
 git add -A >/dev/null 2>&1; git commit -qm "chore: plan compacto" >/dev/null 2>&1
 G=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" entrega 2>/dev/null)
 P=".sdd/hermes/puertas/$G.json"
-# (el todo-app de ejemplo no pasa la puerta global: solo se puede rechazar, y el texto no promete aceptar)
-jq -e '.unica == true and [.opciones[].verbo] == ["rechazo"]' "$P" >/dev/null && jq -r .texto "$P" | grep -q 'al aceptar la entrega aceptas también esa fase' \
+# (el todo-app de ejemplo no pasa la puerta global: rechazar o eximir lo que falta tras ver la demo, y el texto no promete aceptar)
+jq -e '.unica == true and [.opciones[].verbo] == ["ver","eximo","rechazo"]' "$P" >/dev/null && jq -r .texto "$P" | grep -q 'al aceptar la entrega aceptas también esa fase' \
   && ! jq -r .texto "$P" | grep -q 'podrás aceptar' \
   && jq -r .texto "$P" | grep -q '🎬 Demo: 2 capturas.' && ok "la entrega de una FASE única trae la demo y lo dice" || bad "entrega única: $(jq -c '{unica, opciones}' "$P" 2>&1) $(jq -r .texto "$P" 2>&1)"
 python3 - "$ROOT/plugin/hermes-sdd" "$R" "$G" <<'P' && ok "los canales enseñan la demo de la FASE-0 en la entrega" || bad "evidencias en la entrega"

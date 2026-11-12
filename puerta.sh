@@ -39,6 +39,9 @@ revisar() { { node "$SDD" gate "$@" --json 2>/dev/null || true; } | python3 "$RO
 hay_rev() { jq -e '(.revisar // []) | length > 0' "$REV_JSON" >/dev/null; }
 solo_rev() { jq -e '.solo == true' "$REV_JSON" >/dev/null; }
 REVISADO='{"verbo":"revisado","etiqueta":"🔍 Lo he revisado y acepto"}'
+# Con imprescindibles sin cumplir: rechazar, o eximirlos con un motivo (🟡). Solo una persona: el notario lo registra como
+# exención del método con una referencia de seguimiento (acceptance/PENDIENTES.md). Jev nunca la elige (lleva texto).
+EXIMO='{"verbo":"eximo","etiqueta":"🟡 Aceptar sin lo que falta","texto":true}'
 
 # ── Texto de la puerta: lo escribe hsdd_textos.py en castellano llano (lo que pediste, lo que se añadió, qué decidir) ─
 TEXTOS="$ROOT/plugin/hermes-sdd/hsdd_textos.py"
@@ -83,7 +86,7 @@ case "$TIPO" in
       if solo_rev; then   # solo faltan inspecciones: se confirman aquí mismo
         OPCIONES=$(jq -nc --argjson r "$REVISADO" '[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1}, ($r + {paso:2}), {"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]')
       else BLOQUEO=true
-        OPCIONES='[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'; fi
+        OPCIONES=$(jq -nc --argjson x "$EXIMO" '[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1}, ($x + {paso:2}), {"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'); fi
     elif hay_rev; then OPCIONES=$(echo "$OPCIONES" | jq -c --argjson r "$REVISADO" '.[0:1] + [$r + {paso:2}] + .[1:]'); fi ;;
   entrega)
     node "$SDD" gate --md > "$GATE_MD" 2>/dev/null || rc=$?
@@ -105,7 +108,8 @@ case "$TIPO" in
     if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then
       if solo_rev; then   # solo faltan inspecciones: se confirman aquí mismo
         OPCIONES=$(echo "$OPCIONES" | jq -c --argjson r "$REVISADO" "[.[] | select(.verbo == \"ver\")] + [\$r + $PASO] + [.[] | select(.verbo == \"rechazo\")]")
-      else BLOQUEO=true; OPCIONES='[{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]'; fi
+      else BLOQUEO=true
+        OPCIONES=$(echo "$OPCIONES" | jq -c --argjson x "$EXIMO" "[.[] | select(.verbo == \"ver\")] + [\$x + $PASO] + [.[] | select(.verbo == \"rechazo\")]"); fi
     elif hay_rev; then
       OPCIONES=$(echo "$OPCIONES" | jq -c --argjson r "$REVISADO" "[.[] | select(.verbo == \"ver\")] + [\$r + $PASO] + [.[] | select(.verbo != \"ver\")]"); fi ;;
   mantenimiento)   # lo abre vigilar.sh con .sdd/hermes/mantenimiento/hallazgos.json

@@ -513,6 +513,13 @@ def estado(repo: str, tablero: str | None = None, tarjetas: list | None = None) 
     for f in (r / ".sdd" / "hermes" / "runs").glob("*.json"):
         coste += float((N.leer(f, {}) or {}).get("total_cost_usd") or 0)
     req = sorted((t for t in tags if t.startswith("requirements-v")), key=lambda t: [int(x) for x in re.findall(r"\d+", t)])
+    # Lo aceptado sin cumplir (🟡 en una puerta): acceptance/PENDIENTES.md, filas aún abiertas
+    pendientes = []
+    pf = r / "acceptance" / "PENDIENTES.md"
+    for linea in (pf.read_text(encoding="utf-8").splitlines() if pf.exists() else []):
+        c = [x.strip() for x in linea.strip().strip("|").split("|")]
+        if len(c) >= 8 and re.match(r"^[A-Z][A-Z0-9]+-\d+$", c[0]) and c[7] == "abierto":
+            pendientes.append({"id": c[0], "requisito": c[1], "falta": c[2], "motivo": c[3], "quien": c[4], "fecha": c[5]})
     return {
         "proyecto": tablero, "repo": str(r),
         "pausado": (N.HOME / "pausa" / tablero).exists() or (N.HOME / "pausa" / "_todo").exists(),
@@ -528,6 +535,7 @@ def estado(repo: str, tablero: str | None = None, tarjetas: list | None = None) 
         "requisitos": req[-1] if req else None,
         "fases": fases,
         "coste_usd": round(coste, 2),
+        "pendientes": pendientes,
         "ultimas_etapas": _jsonl_cola(r / ".sdd" / "hermes" / "etapas.jsonl", 5),
         "ultimas_puertas": _jsonl_cola(r / ".sdd" / "hermes" / "puertas.jsonl", 5),
     }
