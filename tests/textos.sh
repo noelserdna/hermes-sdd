@@ -183,4 +183,15 @@ PY2
 )
 [ "$(sed -n 1p <<< "$o")" = "⚠️ Reservar: falta la captura que lo enseña (2 de 4 criterios)" ] && ok "veredicto con motivo: en castellano, sin «missing (no visual evidence)»" || bad "motivo: $o"
 [ "$(sed -n 2p <<< "$o")" = "🤖 Jev no puede decidirla: la puerta no pasa la comprobación de calidad." ] && ok "Jev: dice la regla que le impide decidir, no «seguro al 100 %»" || bad "jev: $o"
+
+# puerta de un cambio que solo ajusta criterios: dice cuáles, comparando con la última versión aprobada (tag requirements-v*)
+C="$T/cambio"; mkdir -p "$C/requirements" "$C/intent"; cd "$C"; git init -q; git config user.email t@t; git config user.name t
+printf '### REQ-F-001: Antelación\n- **Para el cliente:** Hasta 30 días antes.\n- **Acceptance criteria:**\n  - GIVEN hoy WHEN reserva a 30 días THEN se crea\n  - GIVEN hoy WHEN reserva en enero de 2027 THEN no se crea\n' > requirements/REQUIREMENTS.md
+git add -A; git commit -qm v1; git tag requirements-v1.0
+sed -i.bak '/enero de 2027/d' requirements/REQUIREMENTS.md; rm -f requirements/REQUIREMENTS.md.bak
+printf '# INT-002\n\n> quita el criterio de enero\n' > intent/INT-002.md
+o=$($TX puerta requisitos "$C" --proyecto sala --version 1.1 --cambio INT-002 | jq -r .texto)
+echo "$o" | grep -q '^➖ Antelación: se quita el criterio «GIVEN hoy WHEN reserva en enero de 2027 THEN no se crea»$' \
+  && ok "cambio de criterios: la puerta dice cuál se quita (no «el detalle está en changes/»)" || bad "ajustes: $o"
+cd "$R"
 exit $fail

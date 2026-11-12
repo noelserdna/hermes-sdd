@@ -112,6 +112,48 @@ def _es_extra(r: dict) -> bool:
     return (not r["necesidades"]) or p.startswith(("should", "could", "nice", "debería", "deseable", "opcional"))
 
 
+def _criterios(texto: str) -> dict:
+    """{REQ-id: [criterios]} de un REQUIREMENTS.md: las líneas «- GIVEN …» bajo cada ### REQ-…"""
+    res, actual = {}, None
+    for l in texto.splitlines():
+        m = re.match(r"^###\s+(REQ-[A-Z]+-[0-9A-Za-z]+)", l)
+        if m:
+            actual = res.setdefault(m.group(1), [])
+        elif l.startswith("#"):
+            actual = None
+        elif actual is not None and re.match(r"^\s+[-*]\s+GIVEN\b", l):
+            actual.append(re.sub(r"^\s+[-*]\s+", "", l).strip())
+    return res
+
+
+def _ajustes(repo: Path) -> list[str]:
+    """Qué criterios cambian respecto a la última versión aprobada (tag requirements-v*), para la puerta de un cambio."""
+    import subprocess
+    try:
+        tags = subprocess.run(["git", "-C", str(repo), "tag", "-l", "requirements-v*", "--sort=-v:refname"],
+                              capture_output=True, text=True, timeout=10).stdout.split()
+        if not tags:
+            return []
+        antes = subprocess.run(["git", "-C", str(repo), "show", f"{tags[0]}:requirements/REQUIREMENTS.md"],
+                               capture_output=True, text=True, timeout=10).stdout
+    except (OSError, subprocess.SubprocessError):
+        return []
+    viejo, nuevo = _criterios(antes), _criterios(_leer(repo / "requirements" / "REQUIREMENTS.md"))
+    nombres = {r["id"]: r["titulo"] or _texto_req(r) for r in requisitos(repo)}
+    out = []
+    for rid, crits in nuevo.items():
+        previos = viejo.get(rid)
+        if previos is None or previos == crits:
+            continue
+        for c in previos:
+            if c not in crits:
+                out.append(f"➖ {nombres.get(rid, rid)}: se quita el criterio «{_corta(c, 180)}»")
+        for c in crits:
+            if c not in previos:
+                out.append(f"➕ {nombres.get(rid, rid)}: nuevo criterio «{_corta(c, 180)}»")
+    return out[:8]
+
+
 # ── puertas ──────────────────────────────────────────────────────────────────────────────────────────────────────
 def _partida(texto: str) -> int:
     """Cuántos requisitos traía el documento de partida (cabeceras REQ-…, si no, puntos de lista o apartados)."""
@@ -141,7 +183,9 @@ def puerta_requisitos(repo: Path, proyecto: str, version: str = "", cambio: dict
             partes.append("Qué cambia" + v + ":\n" + "\n".join(
                 [f"➕ {_texto_req(r)}" for r in nuevos] + [f"➖ Se quita: {q}" for q in quitados]))
         else:
-            partes.append(f"Qué cambia{v}: los mismos requisitos, con criterios ajustados (el detalle está en changes/).")
+            aj = _ajustes(repo)
+            partes.append(f"Qué cambia{v}: los mismos requisitos, con criterios ajustados" +
+                          (":\n" + "\n".join(aj) if aj else " (el detalle está en changes/)."))
         partes.append("Si lo apruebas, solo se replanifica lo nuevo: las fases ya aceptadas no se tocan.")
         return {"titulo": titulo, "texto": "\n\n".join(partes) + _cierre_requisitos(extras)}
     else:
