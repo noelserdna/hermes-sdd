@@ -157,7 +157,17 @@ async def superada():
     ok(len(bot.editados) == 1 and bot.editados[0][1] is None and "ya no vale: texto de la puerta corregido" in bot.editados[0][0],
        f"una puerta superada se edita sin botones y dice por qué ({bot.editados})")
 
+async def firmada_fuera():
+    # decidida y firmada desde el ordenador: el mensaje de Telegram deja de ofrecer «Deshacer»
+    p = {"id": "f_1", "tipo": "plan", "titulo": "Plan", "tablero": "demo", "estado": "firmada",
+         "resultado": "Plan conforme (Andrés León, Cliente)", "texto": "x", "opciones": [],
+         "telegram": [{"chat": 111, "msg": 6}], "tg_vista": "decidida|1|2026|{}"}
+    (HOME / "puertas/f_1.json").write_text(json.dumps(p))
+    bot = Bot(); await m._sincronizar(bot, p)
+    ok(len(bot.editados) == 1 and bot.editados[0][1] is None and "Plan conforme" in bot.editados[0][0],
+       f"firmada desde otro canal: el mensaje se pone al día y sin botones ({bot.editados})")
+
 async def todo():
-    await main(); await formulario_y_operacion(); await jev(); await superada()
+    await main(); await formulario_y_operacion(); await jev(); await superada(); await firmada_fuera()
 
 asyncio.run(todo()); sys.exit(1 if fallos else 0)

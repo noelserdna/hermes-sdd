@@ -240,6 +240,8 @@ case "$CMD" in
         if [ -n "$N" ]; then fase_n "$N"
         else cierre; fi ;;
       fase:rechazo)                   fase_n "$FASE" " (cambios)" ;;
+      fase:descarto)                  bash "$ROOT/puerta.sh" "$REPO" fase "$FASE" ;;   # la misma puerta, sin lo descartado
+      entrega:descarto)               bash "$ROOT/puerta.sh" "$REPO" entrega ;;
       entrega:acepto|entrega:observaciones) rm -f "$REPO/.sdd/hermes/mantenimiento/en-curso.txt"; echo "Proyecto entregado" ;;
       entrega:rechazo)                tarjeta "Cierre (otra vez)" - 120m cierre ;;
       preguntas:respondo)             if [ -n "$FASE" ]; then fase_n "$FASE" " (respuestas)"; else mantener; fi ;;

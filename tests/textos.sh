@@ -162,6 +162,12 @@ PY
 o=$($TX puerta preguntas "$R" --proyecto bar --fase 5 | jq -r '.titulo + "|" + .texto')
 echo "$o" | grep -q '^Preguntas de la FASE-5|⏸ La FASE-5 de «bar» se ha parado' && echo "$o" | grep -q '✅ Responder' && echo "$o" | grep -q '^1\. ' \
   && ok "puerta de preguntas de una FASE: qué pasa al responder y las preguntas con sus opciones" || bad "preguntas: $o"
+# puerta de FASE con impugnaciones abiertas (gate 4): las enseña en castellano y ofrece descartarlas, no eximir
+echo '[{"id":"CH-005","req":"REQ-F-001","ac":3,"category":"WRONG-CAPTURE","quote":"GIVEN el formulario de lucia"}]' > "$T/imp.json"
+o=$($TX puerta fase "$R" --proyecto bar --fase 0 --rc 4 --impugnaciones "$T/imp.json" | jq -r .texto)
+echo "$o" | grep -q 'la revisión independiente ha encontrado algo que no prueban' && echo "$o" | grep -q '• CH-005 · .*(criterio 3): la captura no enseña lo que dice el criterio' \
+  && echo "$o" | grep -q '🗑 Descartar las que no sean un fallo' && ! echo "$o" | grep -q '🟡' && ! echo "$o" | grep -q 'fallan o sin comprobar' \
+  && ok "puerta con impugnaciones: las enseña, ofrece 🗑 descartar y no promete 🟡" || bad "impugnaciones: $o"
 # ── la puerta entera con puerta.sh (texto y datos para Jev) ──────────────────────────────────────────────────────
 git init -q -b main && git config user.email t@t && git config user.name t && git config commit.gpgsign false && git add -A && git commit -qm x
 g=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" requisitos)

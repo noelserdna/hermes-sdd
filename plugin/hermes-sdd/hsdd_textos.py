@@ -396,14 +396,36 @@ def _bloque_revisar(rev: dict | None) -> list[str]:
     return ["🔍 Esto no lo puede comprobar un test, lo compruebas tú:\n" + "\n".join(lineas)]
 
 
+CATEGORIAS = {"WEAKENED-ASSERT": "el test comprueba menos de lo que pide el criterio",
+              "MOCK-ONLY": "solo pasa contra una simulación, no contra lo de verdad",
+              "UNWIRED": "está hecho, pero ninguna pantalla lo usa",
+              "BYPASS-PATH": "hay otro camino que se salta la regla",
+              "CROSSING": "falla al repetirlo o con dos personas a la vez",
+              "NOT-IMPLEMENTED": "no está hecho",
+              "SPEC-QUESTION": "es una duda sobre el propio criterio: decides tú",
+              "WRONG-CAPTURE": "la captura no enseña lo que dice el criterio"}
+
+
+def _bloque_impugnaciones(repo: Path, imp: list | None) -> list[str]:
+    """Lo que encontró la revisión independiente y sigue abierto (gate 4): cada una con su número, para descartarla."""
+    if not imp:
+        return []
+    nombres = {r["id"]: r["titulo"] or _texto_req(r) for r in requisitos(repo)}
+    lineas = [f"• {c['id']} · {nombres.get(c.get('req'), c.get('req'))} (criterio {c.get('ac')}): "
+              f"{CATEGORIAS.get(c.get('category'), c.get('category', ''))} — «{_corta(c.get('quote') or '', 140)}»" for c in imp]
+    return ["🔎 La revisión independiente encontró cosas que los tests no prueban:\n" + "\n".join(lineas)]
+
+
 def puerta_fase(repo: Path, proyecto: str, fase: str, gate_md: str, rc: int, tests_editados: int,
-                video: bool, capturas: int, rev: dict | None = None) -> dict:
+                video: bool, capturas: int, rev: dict | None = None, imp: list | None = None) -> dict:
     filas = _filas_gate(gate_md)
     ok = sum(1 for f in filas if f["veredicto"] == "VERIFIED")
     if rc == 0:
         cabeza = _cabeza_ok(filas, True)
     elif rc == 3:
         cabeza = "⚠️ Cumple, pero con exenciones: algo se aceptó sin comprobar."
+    elif rc == 4:
+        cabeza = "⛔ Los requisitos pasan sus tests, pero la revisión independiente ha encontrado algo que no prueban."
     elif rev and rev.get("solo"):
         cabeza = "🔍 Solo falta tu revisión: lo que queda por comprobar no lo puede comprobar un test."
     else:
@@ -412,6 +434,7 @@ def puerta_fase(repo: Path, proyecto: str, fase: str, gate_md: str, rc: int, tes
     partes = [f"🧪 La FASE-{fase} de «{proyecto}» está lista para revisar.", cabeza]
     if filas:
         partes.append("\n".join(_lineas_veredictos(repo, filas)))
+    partes += _bloque_impugnaciones(repo, imp)
     partes += _bloque_revisar(rev)
     partes.append("🛡 No se ha tocado ningún test que ya existía." if not tests_editados else
                   f"⚠️ {'Se ha cambiado 1 test que ya existía' if tests_editados == 1 else f'Se han cambiado {tests_editados} tests que ya existían'}: "
@@ -433,6 +456,9 @@ def _que_pulsar(rc: int, rev: dict | None, aceptar: str, obs: str, rechazar: str
         return f"👉 {antes or 'Puedes '}{'podrás ' if demo else ''}{aceptar}, {obs} o {rechazar}.{extra}"
     if hay_rev and rev.get("solo"):
         return f"👉 {antes}{revisado if demo else revisado[0].upper() + revisado[1:]}; si algo no está bien, ❌ Rechazar y di qué."
+    if rc == 4:   # impugnaciones abiertas: se arreglan (rechazar) o una persona descarta las que no son un fallo
+        descartar = "🗑 Descartar las que no sean un fallo (escribe su número, p. ej. CH-005, y por qué; la puerta vuelve sin ellas)"
+        return f"👉 {antes}❌ Rechazar para que se arregle, o {descartar}."
     # Bloqueada: rechazar (se corrige) o, si lo que falta puede esperar, eximirlo con un motivo (queda como pendiente)
     eximir = ("🟡 Aceptar sin lo que falta si puede esperar (di por qué; queda apuntado como pendiente con su número "
               "de seguimiento)")
@@ -442,7 +468,8 @@ def _que_pulsar(rc: int, rev: dict | None, aceptar: str, obs: str, rechazar: str
 
 
 def puerta_entrega(repo: Path, proyecto: str, gate_md: str, rc: int, fases_aceptadas: list[str], unica: bool = False,
-                   video: bool = False, capturas: int = 0, tests_editados: int = 0, rev: dict | None = None) -> dict:
+                   video: bool = False, capturas: int = 0, tests_editados: int = 0, rev: dict | None = None,
+                   imp: list | None = None) -> dict:
     filas = _filas_gate(gate_md)
     ok = sum(1 for f in filas if f["veredicto"] == "VERIFIED")
     if rc == 0:
@@ -451,11 +478,14 @@ def puerta_entrega(repo: Path, proyecto: str, gate_md: str, rc: int, fases_acept
         cabeza = "⚠️ Cumple, pero con exenciones: algo se aceptó sin comprobar."
     elif rev and rev.get("solo"):
         cabeza = "🔍 Solo falta tu revisión: lo que queda por comprobar no lo puede comprobar un test."
+    elif rc == 4:
+        cabeza = "⛔ Los requisitos pasan sus tests, pero la revisión independiente ha encontrado algo que no prueban."
     else:
         cabeza = "⛔ No pasa la comprobación final: solo puedes rechazarla para que se corrija."
     partes = [f"🎁 «{proyecto}» está terminado y listo para entregar.", cabeza]
     if filas:
         partes.append("\n".join(_lineas_veredictos(repo, filas)))
+    partes += _bloque_impugnaciones(repo, imp)
     partes += _bloque_revisar(rev)
     if unica:   # plan compacto: una sola fase, sin puerta propia; se acepta aquí con su demo
         partes.append("🧩 Se hizo en una sola fase: al aceptar la entrega aceptas también esa fase.")
@@ -595,10 +625,12 @@ if __name__ == "__main__":
     ap.add_argument("--adopcion", type=int, default=0); ap.add_argument("--fases-aceptadas", default="")
     ap.add_argument("--hallazgos", default=""); ap.add_argument("--opciones-ruta", default="")
     ap.add_argument("--unica", type=int, default=0); ap.add_argument("--revisar", default="")
+    ap.add_argument("--impugnaciones", default="", help="fichero JSON con las impugnaciones abiertas (gate 4)")
     if sys.argv[1:2] == ["revisar"]:   # revisar <repo>  (gate --json por stdin) → {"revisar": [...], "solo": bool}
         print(json.dumps(revisar(Path(sys.argv[2]), json.loads(sys.stdin.read() or "{}")), ensure_ascii=False)); sys.exit(0)
     a = ap.parse_args()
     rev = json.loads(_leer(Path(a.revisar)) or "null") if a.revisar else None
+    imp = json.loads(_leer(Path(a.impugnaciones)) or "[]") if a.impugnaciones else None
     repo = Path(a.repo)
     proyecto = a.proyecto or repo.name
     md = _leer(Path(a.gate_md)) if a.gate_md else ""
@@ -613,10 +645,10 @@ if __name__ == "__main__":
     elif a.tipo == "plan":
         r = puerta_plan(repo, proyecto)
     elif a.tipo == "fase":
-        r = puerta_fase(repo, proyecto, a.fase, md, a.rc, a.tests_editados, bool(a.video), a.capturas, rev)
+        r = puerta_fase(repo, proyecto, a.fase, md, a.rc, a.tests_editados, bool(a.video), a.capturas, rev, imp)
     elif a.tipo == "entrega":
         r = puerta_entrega(repo, proyecto, md, a.rc, a.fases_aceptadas.split(), bool(a.unica), bool(a.video), a.capturas,
-                           a.tests_editados, rev)
+                           a.tests_editados, rev, imp)
     elif a.tipo == "preguntas":
         r = puerta_preguntas(proyecto, a.fase)
     elif a.tipo == "mantenimiento":

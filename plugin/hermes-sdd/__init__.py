@@ -160,6 +160,8 @@ def _cabecera(puerta: dict) -> str:
 def _render(puerta: dict):
     """Texto y botones que corresponden al estado de la puerta, venga el cambio del canal que venga."""
     from telegram import InlineKeyboardButton as B, InlineKeyboardMarkup as M
+    if puerta.get("estado") == "firmada" and puerta.get("resultado"):   # firmada por otro canal (p. ej. el ordenador)
+        return (f"{_cabecera(puerta)}\n{_resultado_claro(puerta['resultado'])}", None)
     if puerta.get("estado") == "superada":   # otra puerta la sustituye (un cambio, una reapertura): sin botones
         por = puerta.get("superada_por") or ""
         motivo = por.split(":", 1)[1].strip() if por.startswith("reapertura:") else "la sustituye una puerta más reciente"
@@ -212,7 +214,7 @@ async def _editar(bot, puerta: dict, texto: str, teclado=None) -> None:
 
 async def _sincronizar(bot, puerta: dict) -> None:
     """Pone el mensaje de Telegram al día con la puerta (decidida o deshecha aquí o en otro canal)."""
-    if not puerta.get("telegram") or puerta.get("estado") not in ("abierta", "decidida", "superada"):
+    if not puerta.get("telegram") or puerta.get("estado") not in ("abierta", "decidida", "superada", "firmada"):
         return
     clave = N.clave_vista(puerta)
     if puerta.get("tg_vista") == clave:
@@ -286,7 +288,10 @@ async def _on_boton(update, context) -> None:
     if opcion.get("texto"):
         from telegram import ForceReply
         await q.answer()
-        if verbo == "eximo":
+        if verbo == "descarto":
+            pide, hueco = ("🗑 Descartar: responde a este mensaje con el número de la impugnación que no es un fallo "
+                           "(p. ej. CH-005) y por qué. Queda registrado a tu nombre y la puerta vuelve sin ella."), "CH-… porque…"
+        elif verbo == "eximo":
             pide, hueco = ("🟡 Aceptar sin lo que falta: responde a este mensaje con por qué puede esperar. Lo que falta "
                            "queda apuntado como pendiente, con su número de seguimiento, a tu nombre."), "Por qué puede esperar…"
         else:

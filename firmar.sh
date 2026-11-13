@@ -50,6 +50,13 @@ if [ "$VERBO" = revisado ]; then
   [ "$CANAL" != jev ] || { echo "NOTARIO: rechazado — una inspección la confirma una persona, no Jev" >&2; exit 1; }
   REVISADO=true; VERBO=acepto
 fi
+# «🗑 Descartar una impugnación»: la persona dice que un hallazgo de la revisión independiente no es un fallo (nombra
+# CH-NNN y por qué). Se registra como challenge-dismissal a su nombre y la puerta se vuelve a abrir sin él.
+if [ "$VERBO" = descarto ]; then
+  { [ "$TIPO" = fase ] || [ "$TIPO" = entrega ]; } || { echo "NOTARIO: rechazado — 'descarto' no vale para una puerta de tipo '$TIPO'" >&2; exit 1; }
+  [ "$CANAL" != jev ] || { echo "NOTARIO: rechazado — una impugnación la descarta una persona, no Jev" >&2; exit 1; }
+  printf '%s' "$TEXTO" | grep -qE 'CH-[0-9]+' || { echo "NOTARIO: rechazado — di qué impugnación descartas (su número, p. ej. CH-005) y por qué" >&2; exit 1; }
+fi
 # «🟡 Aceptar sin lo que falta»: la persona exime los imprescindibles sin cumplir, con su motivo (paso 1c), y lo demás es
 # una aceptación normal. Solo una persona: Jev nunca exime.
 EXIMO=false
@@ -111,6 +118,7 @@ if ! hecho validado; then
     requisitos:acepto|requisitos:cambios|ruta:acepto|ruta:completo|ruta:rechazo|plan:conforme|plan:cambios) ;;
     ruta:ruta-*) jq -e --arg v "$VERBO" 'any(.opciones[]; .verbo == $v)' "$PUERTA" >/dev/null || fallo "la puerta no ofrecía la ruta $VERBO" ;;
     fase:acepto|fase:observaciones|fase:rechazo|entrega:acepto|entrega:observaciones|entrega:rechazo) ;;
+    fase:descarto|entrega:descarto) jq -e 'any(.opciones[]; .verbo == "descarto")' "$PUERTA" >/dev/null || fallo "la puerta no ofrecía 🗑 Descartar" ;;
     mantenimiento:cambio|mantenimiento:ignoro|preguntas:respondo) ;;
     *) fallo "verbo '$VERBO' no vale para una puerta de tipo '$TIPO'" ;;
   esac
@@ -170,7 +178,7 @@ if ! hecho validado; then
       --trailer "Refs: $(grep -F "| $GATE |" "$PEND" | awk -F'|' '{print $3}' | awk '{print $1}' | paste -sd, - | sed 's/,/, /g')" --trailer "Gate-Id: $GATE"
   fi
   # Aceptar una FASE exige la puerta de calidad cumplida (0) o cumplida con exenciones (3); rechazar, no
-  if { [ "$TIPO" = fase ] || [ "$TIPO" = entrega ]; } && [ "$VERBO" != rechazo ]; then
+  if { [ "$TIPO" = fase ] || [ "$TIPO" = entrega ]; } && [ "$VERBO" != rechazo ] && [ "$VERBO" != descarto ]; then
     rc=0
     if [ "$TIPO" = fase ]; then node "$SDD" gate --fase "$FASE" >/dev/null 2>&1 || rc=$?
     else node "$SDD" gate >/dev/null 2>&1 || rc=$?; fi
@@ -486,6 +494,23 @@ $(node "$SDD" gate --md 2>/dev/null)"
     if ! hecho fusion; then fusionar "delivery $N accepted"; marcar fusion; fi
     RESULTADO="$VERBO"; RESUMEN="Entrega $N aceptada por $NOMBRE ($ROL) — tag entrega-$N$FUSION"
     [ "$UNICA" = true ] && RESUMEN="Entrega $N (y su única fase) aceptada por $NOMBRE ($ROL) — tag entrega-$N$FUSION" ;;
+
+  fase:descarto|entrega:descarto)
+    if ! hecho registrado; then
+      ABIERTAS=$(node "$SDD" accept challenge list --open ${FASE:+--fase "$FASE"} --json 2>/dev/null | jq -r '.challenges[]? | select(.state == "open") | .id')
+      HECHAS=""
+      for ch in $(printf '%s' "$TEXTO" | grep -oE 'CH-[0-9]+' | sort -u); do
+        printf '%s\n' "$ABIERTAS" | grep -qx "$ch" || continue
+        node "$SDD" accept record challenge-dismissal --challenge "$ch" --reason "$TEXTO" --by "$NOMBRE" --role "$ROL" >/dev/null ||
+          fallo "no se pudo registrar el descarte de $ch"
+        HECHAS="$HECHAS $ch"
+      done
+      [ -n "$HECHAS" ] || fallo "ninguna de las impugnaciones nombradas está abierta"
+      printf '%s\n' "$HECHAS" > "$ACTA.descartadas"
+      marcar registrado
+    fi
+    if ! hecho commit; then commit_si_hay "docs(acceptance): challenges dismissed by $NOMBRE" acceptance/; marcar commit; fi
+    RESULTADO="descarto"; RESUMEN="Impugnaciones descartadas por $NOMBRE ($ROL):$(cat "$ACTA.descartadas" 2>/dev/null) — la puerta vuelve sin ellas" ;;
 
   entrega:rechazo)
     mkdir -p .sdd/hermes/feedback; printf '%s\n' "$TEXTO" > ".sdd/hermes/feedback/cierre.txt"
