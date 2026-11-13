@@ -37,8 +37,9 @@ def git(repo: Path, *a: str) -> str:
     return subprocess.run(["git", "-C", str(repo), *a], capture_output=True, text=True).stdout
 
 
-def aceptacion(repo: Path) -> dict:
-    out = subprocess.run(["node", str(SDD), "accept", "--json"], cwd=repo, capture_output=True, text=True).stdout
+def aceptacion(repo: Path, fase: str | None = None) -> dict:
+    out = subprocess.run(["node", str(SDD), "accept", "--json", *(["--fase", str(fase)] if fase else [])],
+                         cwd=repo, capture_output=True, text=True).stdout
     try:
         return json.loads(out or "{}")
     except json.JSONDecodeError:
@@ -92,8 +93,10 @@ def _autorizada(repo: Path, mensaje: str) -> tuple[bool, str]:
     return False, f"{', '.join(ids)} sin respuesta de una persona"
 
 
-def congelados(repo: Path) -> list[dict]:
+def congelados(repo: Path, desde: str | None = None) -> list[dict]:
+    """`desde`: solo commits posteriores a esa referencia (en una puerta, lo hecho desde la última aceptación)."""
     out = []
+    ya = set(git(repo, "rev-list", desde).split()) if desde else set()
     tags = [t for t in git(repo, "tag", "-l", "fase-*-accepted", "--sort=creatordate").split() if t]
     vistos = set()
     for tag in tags:
@@ -103,7 +106,7 @@ def congelados(repo: Path) -> list[dict]:
             continue
         for linea in git(repo, "log", "--format=%H%x09%s", f"{tag}..HEAD", "--", *ficheros).splitlines():
             sha, asunto = linea.split("\t", 1)
-            if sha.startswith("Merge") or (sha in vistos):
+            if sha.startswith("Merge") or (sha in vistos) or sha in ya:
                 continue
             if len(git(repo, "rev-list", "--parents", "-n1", sha).split()) > 2:   # merge: los cambios ya están en sus commits
                 continue
@@ -201,9 +204,16 @@ def ocr(img: Path) -> str:
     return _CACHE_OCR[k]
 
 
+def _en_alcance(acc: dict, r: dict) -> bool:
+    s = (acc.get("scope") or {}).get("requirements")
+    return not s or r.get("id") in s
+
+
 def capturas(repo: Path, acc: dict) -> list[dict]:
     out = []
     for r in acc.get("requirements", []):
+        if not _en_alcance(acc, r):
+            continue
         for c in r.get("criteria", []):
             _, then = partes((c.get("text") or ""))
             # Solo lo que el criterio dice que se VE: los textos «…» desde «ve», «mensaje», «etiqueta», «aparece»…
@@ -314,7 +324,7 @@ def mutantes(repo: Path, copia: Path, acc: dict, solo_must: bool = True) -> list
     out, cache = [], {}
     fuentes = [p for p in (copia / "src").rglob("*") if p.is_file() and p.suffix in (".js", ".ts", ".jsx", ".tsx", ".html", ".vue", ".svelte", ".mjs")]
     for r in acc.get("requirements", []):
-        if solo_must and r.get("priority") != "Must":
+        if (solo_must and r.get("priority") != "Must") or not _en_alcance(acc, r):
             continue
         for c in r.get("criteria", []):
             e2e, uni = _ficheros_test(copia, c)
@@ -351,6 +361,42 @@ def mutantes(repo: Path, copia: Path, acc: dict, solo_must: bool = True) -> list
                             "grave": not (muere_e2e or muere_uni or muere_suelto),
                             "solo_unitario": muere_uni and not (muere_e2e or muere_suelto)})
     return out
+
+
+def _ultima_aceptacion(repo: Path) -> str | None:
+    """La aceptación más reciente (fase-N-accepted o entrega-N) alcanzable desde HEAD."""
+    r = subprocess.run(["git", "-C", str(repo), "describe", "--tags", "--abbrev=0", "--match", "fase-*-accepted",
+                        "--match", "entrega-*"], capture_output=True, text=True)
+    return r.stdout.strip() or None
+
+
+def de_aceptacion(repo: Path, fase: str | None, con_mutantes: bool = True) -> dict:
+    """Lo que corre la etapa de aceptación de una FASE (o el cierre, sin FASE): todo, con mutantes en una copia
+    temporal (git worktree con los node_modules del repo), y lo deja en .sdd/hermes/fidelidad-<N|global>.json."""
+    import shutil, tempfile
+    acc = aceptacion(repo, fase)
+    res = {"repo": str(repo), "fase": fase, "sha": git(repo, "rev-parse", "--short", "HEAD").strip(),
+           "congelados": congelados(repo, _ultima_aceptacion(repo)), "capturas": capturas(repo, acc), "coherencia": coherencia(repo),
+           "vinculos": [x for x in vinculos(repo, acc) if x.get("grave")]}
+    if con_mutantes and (repo / "src").is_dir():
+        copia = Path(tempfile.mkdtemp(prefix="hsdd-mut-")) / "c"
+        try:
+            subprocess.run(["git", "-C", str(repo), "worktree", "add", "-q", "--detach", str(copia), "HEAD"], check=True,
+                           capture_output=True)
+            if (repo / "node_modules").is_dir():
+                (copia / "node_modules").symlink_to(repo / "node_modules")
+            res["mutantes"] = mutantes(repo, copia, acc)
+        except Exception as e:   # sin copia no hay mutantes: se dice, no se inventa
+            res["mutantes_error"] = str(e)[:300]
+        finally:
+            subprocess.run(["git", "-C", str(repo), "worktree", "remove", "--force", str(copia)], capture_output=True)
+            shutil.rmtree(copia.parent, ignore_errors=True)
+    res["graves"] = sum(1 for k in ("congelados", "capturas", "mutantes", "vinculos") for x in res.get(k, []) if x.get("grave")) \
+        + sum(1 for x in res["coherencia"] if x.get("grave"))
+    f = repo / ".sdd" / "hermes" / f"fidelidad-{fase or 'global'}.json"
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding="utf-8")
+    return res
 
 
 # ── informe ─────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -405,6 +451,9 @@ if __name__ == "__main__":
     cmd, repo = sys.argv[1], Path(sys.argv[2]).resolve()
     if cmd == "todo":
         res = todo(repo)
+    elif cmd == "aceptacion":   # aceptacion <repo> [--fase N] [--sin-mutantes]
+        fa = sys.argv[sys.argv.index("--fase") + 1] if "--fase" in sys.argv else None
+        res = de_aceptacion(repo, fa, "--sin-mutantes" not in sys.argv)
     elif cmd in ("vinculos", "capturas"):
         res = {"repo": str(repo), "sha": git(repo, "rev-parse", "--short", "HEAD").strip(), cmd: globals()[cmd](repo, aceptacion(repo))}
     elif cmd == "mutantes":   # mutantes <repo> <copia>: la copia es un worktree con node_modules (se modifica y se restaura)

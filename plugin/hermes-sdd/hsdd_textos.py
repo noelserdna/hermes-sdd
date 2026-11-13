@@ -253,7 +253,8 @@ def puerta_requisitos(repo: Path, proyecto: str, version: str = "", cambio: dict
 def _cierre_requisitos(extras: list) -> str:
     quitar = " Si algo de lo añadido te sobra, dilo ahí y se quita." if extras else ""
     return ("\n\n👉 Si es esto, pulsa ✅ Apruebo. Si falta o sobra algo, pulsa ✏️ y explícalo con tus palabras." + quitar
-            + "\nAl aprobar, esta versión queda guardada como punto de partida.")
+            + "\nAl aprobar, esta versión queda guardada como punto de partida, y confirmas que los ejemplos de cada criterio "
+              "(nombres, fechas, horas, textos) son correctos: quedan firmados a tu nombre.")
 
 
 def puerta_ruta(repo: Path, proyecto: str, opciones: list | None = None) -> dict:

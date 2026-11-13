@@ -131,6 +131,28 @@ claude_etapa() {  # claude_etapa <clave-de-estado> <prompt>
   RES=$res
 }
 puerta() { bash "$ROOT/puerta.sh" "$REPO" "$@"; }
+fidelidad() {  # ronda adversarial del método + hsdd_fidelidad de la FASE (deja .sdd/hermes/fidelidad-<N>.json)
+  claude_etapa acceptance "/sdd-acceptance --adversarial --fase $FASE — $ARNES Independent verifiers read each criterion of FASE-$FASE against production code, tests and captures: the GIVEN situation with its own data and actor, the WHEN, the whole THEN with its exact text, and whether each capture shows it. Record confirmed or inconclusive findings with accept challenge add. Do not fix anything and do not sign off."
+  python3 "$ROOT/plugin/hermes-sdd/hsdd_fidelidad.py" aceptacion "$REPO" --fase "$FASE" >/dev/null 2>&1 || true
+}
+hay_hallazgos() {  # impugnaciones abiertas sobre un Must o hallazgos graves de fidelidad
+  [ "$(node "$SDD" accept challenge list --open --fase "$FASE" --json 2>/dev/null | jq -r '.must_open // ([.challenges[]? | select(.state == "open")] | length)')" != 0 ] && return 0
+  [ "$(jq -r '.graves // 0' ".sdd/hermes/fidelidad-$FASE.json" 2>/dev/null || echo 0)" -gt 0 ]
+}
+hallazgos() {  # en una línea por hallazgo, para el implementador
+  node "$SDD" accept challenge list --open --fase "$FASE" --json 2>/dev/null | jq -r '.challenges[]? | select(.state == "open")
+    | "- \(.id) \(.req) AC\(.ac) [\(.category)]: «\(.quote)» — evidencia: \((.evidence // []) | join(", "))"' 2>/dev/null
+  python3 - ".sdd/hermes/fidelidad-$FASE.json" <<'PY' 2>/dev/null
+import json, sys
+r = json.load(open(sys.argv[1]))
+for x in r.get("congelados", []):
+    if x.get("grave"): print(f"- test ya aceptado cambiado ({x['fichero']}, {x['commit']}): {x['autorizacion']}; {', '.join(x['debilitamiento'])}")
+for x in r.get("capturas", []):
+    if x.get("grave"): print(f"- {x['req']} AC{x['ac']}: la captura {', '.join(x['capturas'])} no enseña {', '.join(x['no_se_ve'])}")
+for x in r.get("mutantes", []):
+    if x.get("grave"): print(f"- {x['req']} AC{x['ac']}: si «{x['texto']}» cambia en {', '.join(x.get('en', []))}, ningún test lo nota")
+PY
+}
 # Granularidad del plan (la fija la ruta firmada en .sdd/hermes/granularidad): compacta | normal | fina. «auto» se
 # resuelve aquí: compacta si el proyecto es pequeño (≤ 7 REQ-F, un tipo de usuario, sin integraciones,
 # datos delicados ni estado complejo), normal si no.
@@ -174,6 +196,16 @@ $errs"
   errs=$(node "$SDD" lint --needs 2>&1 | grep '^error' | head -5) || true
   [ -z "$errs" ] || falla "sdd lint --needs sigue con errores: $(echo "$errs" | tr '\n' ' ')"
 }
+ejemplos_coherentes() {  # ejemplos_coherentes <clave-de-estado> <skill>: un ejemplo que contradice lo que dice de sí
+  # mismo («haya-27» (8 caracteres), «jueves …» que no es jueves) se corrige una vez; lo que quede lo ve la persona
+  # en la puerta como aviso grave del encargado (sala: «haya-27» llegó aprobado hasta la implementación)
+  local malos
+  malos=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_fidelidad.py" coherencia "$REPO" --json 2>/dev/null |
+          jq -r '.coherencia[]? | select(.tipo == "ejemplo") | "- " + .detalle' 2>/dev/null) || true
+  [ -z "$malos" ] && return 0
+  claude_etapa "$1" "/$2 — $ARNES Some examples in requirements/REQUIREMENTS.md contradict themselves. Fix ONLY these examples (the data of the example, keeping the rule and the meaning of the criterion), and nothing else:
+$malos"
+}
 
 case "$ETAPA" in
   requisitos)
@@ -192,6 +224,7 @@ case "$ETAPA" in
       touch .sdd/hermes/requisitos-depurados
     else RES='{"outcome":"done","reason":"requisitos ya escritos"}'; fi
     requisitos_legibles requirements-engineer sdd-requirements-engineer
+    ejemplos_coherentes requirements-engineer sdd-requirements-engineer
     { sed -i.bak -E 's/^> \*\*Status:\*\* *Approved.*/> **Status:** Review/' requirements/REQUIREMENTS.md && rm -f requirements/REQUIREMENTS.md.bak; } 2>/dev/null || true
     git add requirements/ && { git diff --cached --quiet || git commit -qm "docs(requirements): requirements ready for review"; }
     P=$(puerta requisitos) || falla "no se pudo abrir la puerta de requisitos"
@@ -350,6 +383,7 @@ PY
     # Tras un rechazo, que todas las tareas estén hechas no termina la FASE: cada punto del rechazo es trabajo nuevo
     # (tareas nuevas en task/TASK-FASE-N.md, test primero, un commit cada una). Lo que exige tocar requirements/ no
     # lo puede hacer: deja una pregunta [OPEN] en vez de saltárselo. Sin ningún commit nuevo la etapa falla.
+    rm -f ".sdd/hermes/fidelidad-arreglo-$FASE"
     RECH=""; ANTES=$(git rev-parse HEAD)
     [ -s "$FB" ] && RECH=" This FASE comes back with a person's request (a rejection at its acceptance gate or newly approved requirements): all tasks being done does NOT finish it. Treat every point of the person's request above as new work: add the tasks it needs to task/TASK-FASE-$FASE.md and implement them (test-first, one commit each), including the missing captures and the literal letter of each criterion in its test. If a point needs a change to requirements/ or to the plan (outside your reach), do not skip it: write an [OPEN] question in .sdd/questions-task-implementer.md explaining what change is needed."
     claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES Implement FASE-$FASE completely, test-first, one commit per task with Refs:/Task: trailers.$TESTS_G$RECH"
@@ -377,6 +411,18 @@ PY
   aceptar)
     [ -n "$FASE" ] || falla "falta la FASE"
     claude_etapa acceptance "/sdd-acceptance --fase $FASE — $ARNES Produce the per-requirement verdicts with evidence and the FASE demo (captures and a short video in evidencias/FASE-$FASE/). Do not sign off."
+    # ¿Los tests y las capturas prueban de verdad cada criterio? (sala: un e2e citaba REQ-F-003 AC3 y ejecutaba otro
+    # escenario, con otra vivienda; capturas de otra semana; tests ya aceptados editados sin autorizar). Dos miradas:
+    # la ronda adversarial del método (verificadores independientes: el GIVEN con sus datos, el THEN entero, las
+    # capturas) y hsdd_fidelidad (determinista: tests congelados, OCR de capturas, mutantes, coherencia).
+    fidelidad
+    if hay_hallazgos && [ ! -f ".sdd/hermes/fidelidad-arreglo-$FASE" ]; then
+      # Una pasada de arreglo, una sola vez por implementación de la FASE; lo que quede llega a la persona en la puerta
+      touch ".sdd/hermes/fidelidad-arreglo-$FASE"
+      claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES An independent review of FASE-$FASE found tests or captures that do not prove their criterion, listed below. For each one, add a task to task/TASK-FASE-$FASE.md and fix it (one commit each): the test must do the criterion's GIVEN with its own data and actor, its WHEN, and assert its whole THEN with the exact text; the capture must show the screen where that THEN is visible. Fix the code when it is the code that fails. A test that already existed when an earlier FASE was accepted is NOT edited: write an [OPEN] question in .sdd/questions-task-implementer.md instead. Findings: $(hallazgos)"
+      claude_etapa acceptance "/sdd-acceptance --fase $FASE — $ARNES Recompute the verdicts, captures and demo of FASE-$FASE after the fixes. Do not sign off."
+      fidelidad
+    fi
     P=$(puerta fase "$FASE") || falla "no se pudo abrir la puerta de la FASE-$FASE"
     fin "$RES" "Veredictos y demo de la FASE-$FASE listos" "$P" ;;
 
@@ -384,6 +430,7 @@ PY
     INT=$(cat .sdd/hermes/cambio-actual 2>/dev/null) || falla "no hay ningún cambio en curso (.sdd/hermes/cambio-actual)"
     claude_etapa req-change "/sdd-req-change --batch --cascade=manual --file intent/$INT.md — $ARNES Apply this change request to requirements/ as the next version (Version +1, Status: Review)."
     requisitos_legibles req-change sdd-req-change
+    ejemplos_coherentes req-change sdd-req-change
     P=$(puerta requisitos) || falla "no se pudo abrir la puerta de requisitos"
     fin "$RES" "Cambio $INT aplicado a los requisitos (pendiente de aprobar)" "$P" ;;
 
@@ -404,6 +451,8 @@ PY
       claude_etapa task-implementer "/sdd-task-implementer --fase=$ULT — $ARNES The GLOBAL acceptance gate is not met. Requirements without evidence: $HUECOS. For each one, first append a task to task/TASK-FASE-$ULT.md (next TASK-F$ULT id, same grammar, Refs the requirement), then implement it test-first (the test name carries the requirement id and criterion, e.g. 'REQ-C-001 AC1'), one commit per task with Task:/Refs: trailers. Do not touch tests that already exist.$TESTS_G"
       claude_etapa acceptance "/sdd-acceptance — $ARNES Compute the GLOBAL per-requirement verdicts (all FASEs) with evidence. Do not sign off."
     fi
+    # Fidelidad global antes de entregar: tests congelados, capturas, mutantes de todos los Must y coherencia
+    python3 "$ROOT/plugin/hermes-sdd/hsdd_fidelidad.py" aceptacion "$REPO" >/dev/null 2>&1 || true
     P=$(puerta entrega) || falla "no se pudo abrir la puerta de entrega"
     [ -n "${RES:-}" ] || RES='{"outcome":"done","reason":"ok"}'
     fin "$RES" "Cierre: puerta de calidad global calculada" "$P" ;;

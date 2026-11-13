@@ -51,6 +51,8 @@ git tag -n20 -l 'requirements-v*' | grep -q "Approved-by: Andrés León" && ok "
 git tag -n20 -l 'requirements-v*' | grep -q "Channel: telegram:111 msg:42" && ok "tag con el canal y la prueba" || bad "tag sin canal"
 grep -q '^> \*\*Status:\*\* Approved' requirements/REQUIREMENTS.md && ok "REQUIREMENTS.md en Approved" || bad "Status no cambia"
 grep -q "^> \*\*Approved by:\*\* Andrés León (Cliente)" requirements/REQUIREMENTS.md && ok "Approved by sustituye al anterior" || bad "Approved by no se sustituye"
+[ "$(grep -c '^> \*\*Ejemplos revisados por:\*\* Andrés León (Cliente)' requirements/REQUIREMENTS.md)" = 1 ] \
+  && ok "al aprobar una persona, los ejemplos quedan revisados a su nombre (una sola línea)" || bad "ejemplos revisados: $(grep -n 'Ejemplos' requirements/REQUIREMENTS.md)"
 git log -1 --format=%B | grep -q "Gate-Id: g3" && ok "commit con trailer Gate-Id" || bad "commit sin Gate-Id"
 e=$(grep '"puerta":"g3"' .sdd/hermes/puertas.jsonl 2>/dev/null | tail -1)
 echo "$e" | jq -e '.tipo == "requisitos" and .verbo == "acepto" and .persona == "andres" and .canal == "telegram" and (.segundos_hasta_decidir > 0)' >/dev/null \

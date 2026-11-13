@@ -25,6 +25,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 import hsdd_plan  # noqa: E402
+import hsdd_fidelidad  # noqa: E402
 
 SDD = Path(__file__).resolve().parents[2] / "metodo" / "scripts" / "sdd.mjs"
 WEB = re.compile(r"\b(web|vite|astro|react|vue|svelte|next|html|frontend|pwa)\b", re.I)
@@ -81,6 +82,10 @@ def requisitos(repo: Path) -> list:
                                  "criterio lo podría leer un test; así te tocará comprobarlo a mano en la puerta"))
         if r["prioridad"].lower().startswith("must") and r["tipo"] != "C" and not r["necesidades"]:
             av.append(_aviso("sin-necesidad", f"{r['id']} «{r['titulo']}» es Must y no sale de ninguna necesidad tuya (Needs vacío)"))
+    # Ejemplos que se contradicen a sí mismos (sala: «haya-27» (8 caracteres) llegó aprobado hasta la implementación)
+    for h in hsdd_fidelidad.coherencia(repo):
+        if h["tipo"] == "ejemplo":
+            av.append(_aviso("ejemplo-incoherente", f"Un ejemplo no cuadra: {h['detalle']}", True))
     return av
 
 
@@ -103,6 +108,10 @@ def plan(repo: Path) -> list:
         av.append(_aviso("fases-de-mas", f"{len(fases)} FASEs para {n_f} requisitos funcionales: más fases son más puertas y más espera"))
     if n_f and tareas > max(8, 4 * n_f):
         av.append(_aviso("tareas-de-mas", f"{tareas} tareas para {n_f} requisitos funcionales: parece más trabajo del necesario"))
+    # Referencias a escenarios o requisitos que ya no existen (sala: un cambio quitó AC-004-03 y el plan lo seguía citando)
+    for h in hsdd_fidelidad.coherencia(repo):
+        if h["tipo"] == "referencia" and h["donde"].startswith(("plan/", "task/")):
+            av.append(_aviso("referencia-caducada", f"{h['donde']} {h['detalle']}"))
     return av
 
 
@@ -134,7 +143,32 @@ def fase(repo: Path, n: str | None) -> list:
         if tc.get("codigo", 0) > 0 and tc.get("tests", 0) > 3 * tc["codigo"]:
             av.append(_aviso("tests-de-mas", f"La FASE-{n} añadió {tc['tests']} líneas de tests para {tc['codigo']} de código "
                              f"({round(tc['tests'] / tc['codigo'], 1)}×): revisa si los tests prueban lo que piden los criterios"))
-    return av + _capturas_ajenas(repo, n)
+    return av + _capturas_ajenas(repo, n) + _fidelidad(repo, n)
+
+
+def _fidelidad(repo: Path, n: str | None) -> list:
+    """Lo que dejó la etapa de aceptación en .sdd/hermes/fidelidad-<N>.json (hsdd_fidelidad): tests congelados cambiados
+    sin autorizar o debilitados, capturas que no enseñan su criterio y textos que ningún test comprueba."""
+    f = repo / ".sdd" / "hermes" / f"fidelidad-{n or 'global'}.json"
+    try:
+        r = json.loads(f.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return []
+    av = []
+    for x in r.get("congelados", []):
+        if x.get("grave"):
+            que = "sin que una persona lo autorizara" if not x.get("autorizado") else "debilitándolo"
+            av.append(_aviso("test-congelado", f"Se cambió un test ya aceptado ({x['fichero']}, {x['commit']}) {que}"
+                             + (f": {', '.join(x['debilitamiento'])}" if x.get("debilitamiento") else ""), True))
+    for x in r.get("capturas", []):
+        if x.get("grave"):
+            av.append(_aviso("captura-no-ensena", f"La captura de {x['req']} AC{x['ac']} no enseña {', '.join('«' + s + '»' for s in x['no_se_ve'])}", True))
+    for x in r.get("mutantes", []):
+        if x.get("grave"):
+            av.append(_aviso("sin-comprobar", f"{x['req']} AC{x['ac']}: si «{x['texto']}» cambia en el código, ningún test lo nota", True))
+        elif x.get("e2e_sueltos"):
+            av.append(_aviso("e2e-sin-enlazar", f"{x['req']} AC{x['ac']}: lo comprueba un e2e que no lo cita ({', '.join(Path(e).name for e in x['e2e_sueltos'])})"))
+    return av
 
 
 def hsdd_plan_etapas(repo: Path) -> list:
@@ -185,7 +219,7 @@ def revisor_ia(repo: Path, tipo: str, fase_n: str | None = None) -> list:
 def revisar(repo, tipo: str, fase_n: str | None = None, ia: bool = False) -> dict:
     repo = Path(repo)
     av = {"requisitos": lambda: requisitos(repo), "ruta": lambda: ruta(repo), "plan": lambda: plan(repo),
-          "fase": lambda: fase(repo, fase_n), "entrega": lambda: requisitos(repo) + _capturas_ajenas(repo, None)
+          "fase": lambda: fase(repo, fase_n), "entrega": lambda: requisitos(repo) + _capturas_ajenas(repo, None) + _fidelidad(repo, None)
           }.get(tipo, lambda: [])()
     if ia:
         av += revisor_ia(repo, tipo, fase_n)

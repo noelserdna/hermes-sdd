@@ -298,6 +298,13 @@ case "$TIPO:$VERBO" in
         sed -i.bak -E "/^> \*\*Status:\*\*/a\\
 > **Approved by:** $NOMBRE ($ROL), $HOY" requirements/REQUIREMENTS.md
       fi
+      # Ejemplos revisados (lint --needs: examples-not-reviewed): los firma la persona que aprueba; si aprueba Jev, nadie
+      # los ha revisado y la firma anterior (de otra versión) se quita
+      sed -i.bak -E '/^> \*\*(Ejemplos revisados por|Examples reviewed by):?\*\*/d' requirements/REQUIREMENTS.md
+      if [ "$CANAL" != jev ]; then
+        sed -i.bak -E "/^> \*\*Approved by:\*\*/a\\
+> **Ejemplos revisados por:** $NOMBRE ($ROL), $HOY" requirements/REQUIREMENTS.md
+      fi
       rm -f requirements/REQUIREMENTS.md.bak
       node "$SDD" journal add --stage requirements-engineer --kind decision \
         --text "$NOMBRE aprobó los requisitos (versión $V) el $HOY" --by "$NOMBRE ($ROL)" --refs "requirements-v$V" >/dev/null
@@ -423,6 +430,9 @@ PY
              + (if ((.literal_gaps // []) | length) > 0 then " — el test no lleva la letra literal: " + ([.literal_gaps[].literal] | unique | join(", ")) else "" end)
              + (if .visual == "missing" then " — falta su captura en evidencias/FASE-'"$FASE"'/" else "" end)]
         | if length > 0 then "Criterios de la FASE que no pasan la aceptación (corrígelos todos):", .[] else empty end' || true
+      node "$SDD" accept challenge list --open --fase "$FASE" --json 2>/dev/null | jq -r '[.challenges[]? | select(.state == "open")
+        | "- \(.id) \(.req) AC\(.ac) [\(.category)]: «\(.quote)» — \((.evidence // []) | join(", "))"]
+        | if length > 0 then "Hallazgos de la revisión independiente (el test o la captura no prueban el criterio):", .[] else empty end' 2>/dev/null || true
     } > ".sdd/hermes/feedback/implementar-$FASE.txt"
     if ! hecho registrado; then
       grep -qF "${BOARD}/${TASK}" acceptance/decisions.jsonl 2>/dev/null ||

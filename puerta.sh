@@ -89,7 +89,8 @@ case "$TIPO" in
       if solo_rev; then   # solo faltan inspecciones: se confirman aquí mismo
         OPCIONES=$(jq -nc --argjson r "$REVISADO" '[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1}, ($r + {paso:2}), {"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]')
       else BLOQUEO=true
-        OPCIONES=$(jq -nc --argjson x "$EXIMO" '[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1}, ($x + {paso:2}), {"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'); fi
+        X=$EXIMO; [ "$rc" = 4 ] && X=null   # impugnación abierta: se arregla (rechazar) o una persona la descarta
+        OPCIONES=$(jq -nc --argjson x "$X" '[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1}] + (if $x then [$x + {paso:2}] else [] end) + [{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'); fi
     elif hay_rev; then OPCIONES=$(echo "$OPCIONES" | jq -c --argjson r "$REVISADO" '.[0:1] + [$r + {paso:2}] + .[1:]'); fi ;;
   entrega)
     node "$SDD" gate --md > "$GATE_MD" 2>/dev/null || rc=$?
