@@ -433,7 +433,7 @@ PY
              + (if .visual == "missing" then " — falta su captura en evidencias/FASE-'"$FASE"'/" else "" end)]
         | if length > 0 then "Criterios de la FASE que no pasan la aceptación (corrígelos todos):", .[] else empty end' || true
       node "$SDD" accept challenge list --open --fase "$FASE" --json 2>/dev/null | jq -r '[.challenges[]? | select(.state == "open")
-        | "- \(.id) \(.req) AC\(.ac) [\(.category)]: «\(.quote)» — \((.evidence // []) | join(", "))"]
+        | "- \(.id) \(.req) AC\(.ac) [\(.category)]: «\(.quote)» — \((.evidence // []) | map(if type == "object" then (.path + (if .line then ":\(.line)" else "" end)) else tostring end) | join(", "))"]
         | if length > 0 then "Hallazgos de la revisión independiente (el test o la captura no prueban el criterio):", .[] else empty end' 2>/dev/null || true
     } > ".sdd/hermes/feedback/implementar-$FASE.txt"
     if ! hecho registrado; then
@@ -549,7 +549,8 @@ fi
 
 # ── 3. cerrar la puerta en el tablero y encadenar lo siguiente ────────────────────────────────────────────────────
 if [ -n "$BOARD" ] && ! hecho completado; then
-  hermes kanban --board "$BOARD" complete "$TASK" --result "$RESUMEN" >/dev/null
+  # Sin tarjeta todavía (decidida desde el ordenador antes de que el gateway la creara): no hay nada que cerrar
+  [ -n "$TASK" ] && hermes kanban --board "$BOARD" complete "$TASK" --result "$RESUMEN" >/dev/null
   marcar completado
 fi
 if ! hecho encadenado; then

@@ -56,7 +56,18 @@ def norm(t: str) -> str:
 
 
 def literales(texto: str) -> list[str]:
-    return [x.strip() for x in re.findall(r"«([^»]+)»", texto) if x.strip()]
+    """Textos exactos de un criterio: entre «…», “…” o "…" (los criterios en inglés del club usan comillas rectas)."""
+    xs = re.findall(r"«([^»]+)»", texto) + re.findall(r"“([^”]+)”", texto) + re.findall(r'"([^"]+)"', texto)
+    vistos, out = set(), []
+    for x in (x.strip() for x in xs):
+        if x and x not in vistos:
+            vistos.add(x); out.append(x)
+    return out
+
+
+# Desde dónde un criterio dice lo que se VE (en castellano o en inglés)
+VERBOS_VER = (r"\b(ve|ven|ver|vea|muestra|muestran|aparece|aparecen|mensaje|etiqueta|figura|lee|leen|pone|"
+              r"sees|see|shows|show|displays|display|message|label|appears|appear|reads|lists|listed|row)\b")
 
 
 def partes(texto: str) -> tuple[str, str]:
@@ -218,10 +229,7 @@ def capturas(repo: Path, acc: dict) -> list[dict]:
             _, then = partes((c.get("text") or ""))
             # Solo lo que el criterio dice que se VE: los textos «…» desde «ve», «mensaje», «etiqueta», «aparece»…
             # («la reserva queda guardada para «2ºB»» no promete enseñar «2ºB»; «ve … como «Tuya»» sí promete «Tuya»)
-            m = re.search(r"\b(ve|ven|ver|vea|muestra|muestran|aparece|aparecen|mensaje|etiqueta|figura|lee|leen|pone)\b", then)
-            if not m:
-                continue
-            lit = literales(then[m.start():])
+            lit = _visibles(c.get("text") or "")
             imgs = [a["path"] for e in c.get("evidence", []) if e.get("kind") == "capture"
                     for a in e.get("attachments", []) if a.get("kind") == "image" and a.get("present")]
             if not lit or not imgs:
@@ -278,10 +286,14 @@ def coherencia(repo: Path) -> list[dict]:
 
 # ── 5. mutantes ─────────────────────────────────────────────────────────────────────────────────────────────────────
 def _visibles(texto: str) -> list[str]:
-    """Los textos «…» que el criterio dice que se VEN (desde «ve», «mensaje», «etiqueta»…)."""
+    """Los textos «…» que el criterio dice que se VEN: solo los de las frases del THEN que tienen un verbo de ver
+    («ve el mensaje "x" y "pista-2026" sigue sirviendo para entrar» promete ver "x", no la contraseña)."""
     _, then = partes(texto)
-    m = re.search(r"\b(ve|ven|ver|vea|muestra|muestran|aparece|aparecen|mensaje|etiqueta|figura|lee|leen|pone)\b", then)
-    return literales(then[m.start():]) if m else []
+    out = []
+    for frase in re.split(r"\s+(?:and|y|e)\s+(?=[^\"«“]*(?:[\"«“][^\"»”]*[\"»”][^\"«“]*)*$)", then):
+        if re.search(VERBOS_VER, frase):
+            out += [x for x in literales(frase) if x not in out]
+    return out
 
 
 def _ficheros_test(copia: Path, c: dict) -> tuple[list[str], list[str]]:

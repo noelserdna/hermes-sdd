@@ -141,7 +141,7 @@ hay_hallazgos() {  # impugnaciones abiertas sobre un Must o hallazgos graves de 
 }
 hallazgos() {  # en una línea por hallazgo, para el implementador
   node "$SDD" accept challenge list --open --fase "$FASE" --json 2>/dev/null | jq -r '.challenges[]? | select(.state == "open")
-    | "- \(.id) \(.req) AC\(.ac) [\(.category)]: «\(.quote)» — evidencia: \((.evidence // []) | join(", "))"' 2>/dev/null
+    | "- \(.id) \(.req) AC\(.ac) [\(.category)]: «\(.quote)» — evidencia: \((.evidence // []) | map(if type == "object" then (.path + (if .line then ":\(.line)" else "" end)) else tostring end) | join(", "))"' 2>/dev/null
   python3 - ".sdd/hermes/fidelidad-$FASE.json" <<'PY' 2>/dev/null
 import json, sys
 r = json.load(open(sys.argv[1]))
