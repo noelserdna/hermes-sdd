@@ -382,6 +382,11 @@ Kanban-Task: $BOARD/$TASK"
           --channel "$CHANNEL" --by "$NOMBRE" --role "$ROL" >/dev/null
       fi
       [ -n "$TEXTO" ] && node "$SDD" journal add --stage acceptance --kind feedback --text "$TEXTO" --by "$NOMBRE ($ROL)" >/dev/null
+      # Las observaciones no se quedan en el diario: la siguiente implementación las hace (club: «la captura de AC4
+      # tiene que enseñar también al socio» se aceptó con observaciones y nadie la habría arreglado)
+      if [ "$VERBO" = observaciones ] && [ -n "$TEXTO" ]; then
+        mkdir -p .sdd/hermes/feedback; printf -- '- FASE-%s (%s, %s): %s\n' "$FASE" "$NOMBRE" "$HOY" "$TEXTO" >> .sdd/hermes/feedback/observaciones.txt
+      fi
       node "$SDD" accept --report acceptance/ACCEPTANCE-REPORT.md --fase "$FASE" >/dev/null 2>&1 || true
       marcar registrado
     fi

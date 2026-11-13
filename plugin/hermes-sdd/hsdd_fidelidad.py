@@ -180,17 +180,18 @@ def vinculos(repo: Path, acc: dict) -> list[dict]:
             lit_todo = literales(texto) + fechas
             if not lit_todo:
                 continue
-            for t in c.get("tests", []):
-                cuerpo = _cuerpo_test(repo, t.get("file", ""), t.get("name", ""))
-                if not cuerpo:
-                    continue
-                n = norm(cuerpo)
+            cuerpos = [(t, _cuerpo_test(repo, t.get("file", ""), t.get("name", ""))) for t in c.get("tests", [])]
+            cuerpos = [(t, norm(b)) for t, b in cuerpos if b]
+            # grave solo si NINGÚN test del criterio comprueba el texto del THEN (club: los de integración comprueban el
+            # código de error y el e2e del mismo criterio el texto en pantalla; eso está bien)
+            sin_nadie = [x for x in lit_then if cuerpos and not any(norm(x) in n for _, n in cuerpos)]
+            for t, n in cuerpos:
                 falta_then = [x for x in lit_then if norm(x) not in n]
                 falta = [x for x in lit_todo if norm(x) not in n and x not in falta_then]
                 if falta_then or falta:
                     out.append({"req": r["id"], "ac": c.get("n"), "prioridad": r.get("priority"), "test": t.get("name", "")[:120],
                                 "fichero": t.get("file"), "via": t.get("via"), "faltan_then": falta_then, "faltan_datos": falta,
-                                "grave": bool(falta_then) and r.get("priority") == "Must"})
+                                "grave": bool(set(falta_then) & set(sin_nadie)) and r.get("priority") == "Must"})
     return out
 
 
