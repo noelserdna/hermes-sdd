@@ -87,9 +87,17 @@ DEBIL = [  # (patrón en líneas añadidas, qué indica)
 ]
 
 
-def _autorizada(repo: Path, mensaje: str) -> tuple[bool, str]:
-    """¿El commit cita una pregunta contestada por una persona? (Jev no puede autorizar editar tests: art. 12)"""
+def _autorizada(repo: Path, mensaje: str, fichero: str = "") -> tuple[bool, str]:
+    """¿El commit cita una pregunta contestada por una persona? (Jev no puede autorizar editar tests: art. 12). Si no
+    cita ninguna, vale una pregunta contestada por una persona que nombre ese fichero (club: Q-012 autorizaba editar
+    reservas.test.js y el commit no lo decía)."""
     ids = re.findall(r"(?<![A-Za-z0-9-])Q-[a-z][A-Za-z0-9-]*-\d{3}\b", mensaje)   # Q-task-implementer-007, no REQ-F-003
+    if not ids and fichero:
+        for f in (repo / ".sdd").glob("questions-*.md"):
+            for b in re.findall(r"^## Q-.*?(?=^## |\Z)", f.read_text(encoding="utf-8", errors="replace"), re.M | re.S):
+                a = re.search(r"^Answer:[ \t]*([^\n]*)", b, re.M)
+                if Path(fichero).name in b and a and "elegida por" in a.group(1) and not re.search(r"\bjev\b", a.group(1), re.I):
+                    return True, f"{b.split()[1]} (nombra {Path(fichero).name}): {a.group(1).strip()}"
     if not ids:
         return False, "el commit no cita ninguna pregunta que lo autorice"
     for qid in ids:
@@ -143,7 +151,7 @@ def congelados(repo: Path, desde: str | None = None) -> list[dict]:
                     senales.append("deja de citar " + ", ".join(quitadas_citas[:6]) + ("…" if len(quitadas_citas) > 6 else ""))
                 if not cambiadas and not senales:
                     continue
-                ok, por = _autorizada(repo, git(repo, "log", "-1", "--format=%B", sha))
+                ok, por = _autorizada(repo, git(repo, "log", "-1", "--format=%B", sha), f)
                 vistos.add(sha)
                 out.append({"commit": sha[:7], "asunto": asunto, "fichero": f, "congelado_en": tag,
                             "lineas_cambiadas": len(cambiadas), "debilitamiento": senales,
@@ -353,6 +361,17 @@ def mutantes(repo: Path, copia: Path, acc: dict, solo_must: bool = True) -> list
                     out.append({**base, "resultado": "no está en el código", "grave": False})
                     continue
                 clave = (lit, tuple(e2e), tuple(uni), tuple(sueltos))
+                # Línea base: si los tests del criterio ya fallan sin mutar nada, cualquier mutante «muere» y no dice nada
+                # (club, FASE-3: dos e2e rotos daban «lo detecta un e2e» a todo y la aceptación tardó 45 min)
+                bkey = ("base", tuple(e2e), tuple(uni))
+                if bkey not in cache:
+                    cache[bkey] = ((not e2e or _ejecuta(copia, ["npx", "playwright", "test", *e2e])),
+                                   (not uni or _ejecuta(copia, ["npx", "vitest", "run", *uni], 5)))
+                base_e2e, base_uni = cache[bkey]
+                if not (base_e2e and base_uni):
+                    out.append({**base, "resultado": "sus tests ya fallan sin mutar nada", "grave": True,
+                                "fallan": ([*e2e] if not base_e2e else []) + ([*uni] if not base_uni else [])})
+                    continue
                 if clave not in cache:
                     originales = {p: p.read_text(encoding="utf-8", errors="replace") for p in con}
                     try:
@@ -447,7 +466,8 @@ def texto(res: dict) -> str:
                  f"{sum(1 for x in xs if x['resultado'] == 'lo detecta un e2e')} los detecta un e2e, "
                  f"{sum(1 for x in xs if x.get('e2e_sueltos'))} un e2e no enlazado, "
                  f"{sum(1 for x in xs if x.get('solo_unitario'))} solo un unitario, "
-                 f"{sum(1 for x in xs if x.get('grave'))} ningún test, "
+                 f"{sum(1 for x in xs if x.get('grave') and x['resultado'] != 'sus tests ya fallan sin mutar nada')} ningún test, "
+                 f"{sum(1 for x in xs if x['resultado'] == 'sus tests ya fallan sin mutar nada')} con sus tests ya rotos, "
                  f"{sum(1 for x in xs if x['resultado'] == 'no está en el código')} no están en el código")
         for x in xs:
             if x["resultado"] != "lo detecta un e2e":

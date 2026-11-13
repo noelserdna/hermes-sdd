@@ -164,7 +164,9 @@ def _fidelidad(repo: Path, n: str | None) -> list:
         if x.get("grave"):
             av.append(_aviso("captura-no-ensena", f"La captura de {x['req']} AC{x['ac']} no enseña {', '.join('«' + s + '»' for s in x['no_se_ve'])}", True))
     for x in r.get("mutantes", []):
-        if x.get("grave"):
+        if x.get("grave") and x.get("fallan"):
+            av.append(_aviso("tests-rotos", f"{x['req']} AC{x['ac']}: sus tests ya fallan ({', '.join(Path(e).name for e in x['fallan'])})", True))
+        elif x.get("grave"):
             av.append(_aviso("sin-comprobar", f"{x['req']} AC{x['ac']}: si «{x['texto']}» cambia en el código, ningún test lo nota", True))
         elif x.get("e2e_sueltos"):
             av.append(_aviso("e2e-sin-enlazar", f"{x['req']} AC{x['ac']}: lo comprueba un e2e que no lo cita ({', '.join(Path(e).name for e in x['e2e_sueltos'])})"))
