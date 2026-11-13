@@ -486,12 +486,12 @@ $(node "$SDD" gate --md 2>/dev/null)"
 
   preguntas:respondo)
     if ! hecho registrado; then
-      node "$SDD" journal add --stage task-implementer --kind decision --text "$NOMBRE respondió las preguntas de la FASE-$FASE${TEXTO:+ ($TEXTO)}" \
+      node "$SDD" journal add --stage task-implementer --kind decision --text "$NOMBRE respondió las preguntas ${FASE:+de la FASE-$FASE}${FASE:-del mantenimiento}${TEXTO:+ ($TEXTO)}" \
         --by "$NOMBRE ($ROL)" >/dev/null
       marcar registrado
     fi
-    if ! hecho commit; then commit_si_hay "docs(status): FASE-$FASE questions answered by $NOMBRE" status/; marcar commit; fi
-    RESULTADO="respondo"; RESUMEN="Preguntas de la FASE-$FASE respondidas por $NOMBRE ($ROL)" ;;
+    if ! hecho commit; then commit_si_hay "docs(status): ${FASE:+FASE-$FASE}${FASE:-maintenance} questions answered by $NOMBRE" status/; marcar commit; fi
+    RESULTADO="respondo"; RESUMEN="Preguntas ${FASE:+de la FASE-$FASE}${FASE:-del mantenimiento} respondidas por $NOMBRE ($ROL)" ;;
 
   mantenimiento:cambio)
     # La petición del cambio sale de los hallazgos que la persona vio (están en la puerta), más su comentario

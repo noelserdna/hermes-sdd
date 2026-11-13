@@ -104,7 +104,7 @@ claude_etapa() {  # claude_etapa <clave-de-estado> <prompt>
   local clave=$1 res st head0 malo
   head0=$(git rev-parse HEAD)
   # Sandbox de Claude Code en las etapas que no abren un navegador (en macOS no puede arrancar Chromium)
-  local sb=1; case "$ETAPA" in implementar|aceptar|cierre|brechas|adoptar|respuestas) sb=0 ;; esac
+  local sb=1; case "$ETAPA" in implementar|aceptar|cierre|brechas|adoptar|respuestas|mantener) sb=0 ;; esac
   res=$(SDD_SANDBOX=$sb bash "$ROOT/executors/$EJEC.sh" "$REPO" "$ETAPA${FASE:+-$FASE}" "$2" "$(modelo "$ETAPA")" | tail -1)
   EJECUCIONES=$(jq -c --argjson r "$(echo "$res" | jq -c . 2>/dev/null || echo '{}')" '. + [$r]' <<< "$EJECUCIONES")
   [ "$(echo "$res" | jq -r .outcome)" = done ] || fin "$res" "$(echo "$res" | jq -r .reason)"
@@ -262,10 +262,16 @@ case "$ETAPA" in
     fin "$RES" "Plan generado ($(ls plan/fases/FASE-*.md 2>/dev/null | wc -l | tr -d ' ') FASEs)" ;;
 
   tareas)
-    INC=""; git tag -l 'fase-*-accepted' | grep -q . && INC=" INCREMENTAL: generate task files only for the FASEs that do not have one yet; do not touch the task files of accepted FASEs."
+    INC=""; git tag -l 'fase-*-accepted' | grep -q . && INC=" INCREMENTAL: generate task files only for the FASEs that do not have one yet; do not touch the task files of accepted FASEs (except to fix what sdd lint --dir task reports as an error)."
     claude_etapa task-generator "/sdd-task-generator — $ARNES Generate task/ for all FASEs.$INC$TAREAS_G$TESTS_G"
     ls task/TASK-FASE-*.md >/dev/null 2>&1 || falla "las tareas no se generaron: $(no_hecho)"
-    node "$SDD" lint --dir task >/dev/null 2>&1 || falla "sdd lint de tareas encuentra errores: $(node "$SDD" lint --dir task 2>&1 | grep -v '^ *$' | tail -3 | tr '\n' ' ')"
+    # Errores del lint: una pasada de reparación con sus líneas (sala, 13/11/2026: una tarea añadida al rehacer la FASE-5,
+    # ya aceptada, faltaba en su «Stream Ownership» y el lint paraba las tareas del cambio siguiente)
+    if ! node "$SDD" lint --dir task >/dev/null 2>&1; then
+      ERR=$(node "$SDD" lint --dir task 2>&1 | grep -E ' [A-Z]-?[0-9]+ ' | grep -v ' warning' | head -20 | tr '\n' ' ')
+      claude_etapa task-generator "/sdd-task-generator — $ARNES Fix task/ so that sdd lint --dir task has no errors (do not change plan/, requirements/ or spec/; do not change any task's status, scope or commit). In the task file of an accepted FASE change only what the error names. Errors: $ERR"
+      node "$SDD" lint --dir task >/dev/null 2>&1 || falla "sdd lint de tareas encuentra errores: $(node "$SDD" lint --dir task 2>&1 | grep -v '^ *$' | tail -3 | tr '\n' ' ')"
+    fi
     P=$(puerta plan) || falla "no se pudo abrir la puerta de plan"
     fin "$RES" "Tareas generadas: $(node "$SDD" tasks status 2>/dev/null | tail -1)" "$P" ;;
 
@@ -285,6 +291,21 @@ case "$ETAPA" in
     fi
     mv "$F" "$F.aplicado"
     fin "$RES" "Respuestas de la puerta $FASE aplicadas" ;;
+
+  mantener)   # mantenimiento de un proyecto entregado que pidió una persona (puerta de mantenimiento): sin cambiar el
+              # comportamiento; después el cierre (puerta global → entrega). No pasa por el plan: no es trabajo de una FASE
+    F=.sdd/hermes/mantenimiento/en-curso.txt
+    [ -s "$F" ] || falla "no hay ningún mantenimiento en curso ($F)"
+    claude_etapa task-implementer "$ARNES Maintenance of a delivered project, requested by a person: $(cat "$F")
+Do it without changing behaviour: requirements/ and spec/ stay as they are and existing tests are not edited (art. 12). Run every test suite (unit and e2e) and keep them green; one commit per logical step, following the repository commit conventions. If something cannot be done without changing a requirement or editing an existing test, do not do it: write an [OPEN] question in .sdd/questions-task-implementer.md and mark with (req-change) any option that needs a requirements change."
+    if grep -qs '^## Q-.*\[OPEN\]' .sdd/questions-*.md && P=$(puerta preguntas); then
+      fin "$(jq -nc '{outcome:"failed", reason:"esperando tus respuestas: puerta «Preguntas del mantenimiento»"}')" "Mantenimiento parado: preguntas para la persona" "$P"
+    fi
+    # El código cambió: la evidencia se vuelve a sacar y la puerta global tiene que seguir cumpliéndose
+    claude_etapa acceptance "/sdd-acceptance — $ARNES Code changed by maintenance after the last delivery. Re-run the test suites with their JUnit reports and refresh the evidence so the GLOBAL acceptance ledger is current. Do not sign off."
+    grc=0; node "$SDD" gate >/dev/null 2>&1 || grc=$?
+    [ "$grc" = 0 ] || [ "$grc" = 3 ] || falla "tras el mantenimiento, la puerta de calidad global sale con $grc: $(node "$SDD" gate 2>&1 | tail -1)"
+    fin "$RES" "Mantenimiento aplicado; la puerta global se cumple" ;;
 
   huecos)   # tareas [PLAN GAP] de la FASE cuyas preguntas ya se contestaron en una puerta (lanzar.sh la encadena)
     [ -n "$FASE" ] || falla "falta la FASE"

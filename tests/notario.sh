@@ -206,6 +206,19 @@ I=$(ls -t intent/INT-*.md | head -1)
 PATH="$T/bin:$PATH" bash "$ROOT/lanzar.sh" respuestas "$R" g8g acepto >/dev/null 2>&1
 head -1 "$T/klog" | grep -q "create Aplicar respuestas (Aceptar FASE-0)" && [ "$(sed -n 2p "$T/klog" | grep -c -- '--parent t_9')" = 1 ] \
   && ok "respuestas: se aplican antes y el tramo siguiente las espera" || bad "lanzar respuestas: $(cat "$T/klog")"
+# 8h. mantenimiento: «🛠 Lanzar cambio» → etapa de mantenimiento y después el cierre (no pasa por requisitos ni plan)
+: > "$T/klog"; puerta g8h mantenimiento; mkdir -p .sdd/hermes/mantenimiento; echo "sube vite" > .sdd/hermes/mantenimiento/peticion-g8h.txt
+PATH="$T/bin:$PATH" bash "$ROOT/lanzar.sh" siguiente "$R" g8h cambio >/dev/null 2>&1
+grep -q "create Mantenimiento " "$T/klog" && grep "create Cierre: puerta global y entrega (mantenimiento)" "$T/klog" | grep -q -- "--parent t_9" \
+  && ! grep -q "Cambio INT-" "$T/klog" && grep -q "sube vite" .sdd/hermes/mantenimiento/en-curso.txt \
+  && ok "mantenimiento: etapa propia y cierre, sin cambio de requisitos" || bad "mantenimiento: $(cat "$T/klog")"
+# … un cambio de requisitos aprobado durante un mantenimiento vuelve al mantenimiento (no a Ruta)
+: > "$T/klog"; puerta g8i requisitos; PATH="$T/bin:$PATH" bash "$ROOT/lanzar.sh" siguiente "$R" g8i aprobado >/dev/null 2>&1
+grep -q "create Mantenimiento " "$T/klog" && ! grep -q "create Ruta" "$T/klog" && ok "requisitos aprobados en un mantenimiento: sigue el mantenimiento" || bad "req en mantenimiento: $(cat "$T/klog")"
+rm -f .sdd/hermes/mantenimiento/en-curso.txt
+# 8j. plan conforme sin FASEs por aceptar (un cambio que no necesitó FASE nueva): al cierre, no a la FASE-0
+: > "$T/klog"; puerta g8j plan; PATH="$T/bin:$PATH" bash "$ROOT/lanzar.sh" siguiente "$R" g8j conforme >/dev/null 2>&1
+grep -q "create Cierre" "$T/klog" && ! grep -q "Implementar FASE-0" "$T/klog" && ok "plan conforme sin FASEs pendientes: al cierre" || bad "plan sin fases: $(cat "$T/klog")"
 # 9. el motivo de "cambios" en el plan queda en el diario
 puerta g9 plan; decidir g9 cambios telegram 111 "FASE-2 antes que FASE-1"; firmar g9
 grep -q "FASE-2 antes que FASE-1" status/journal.jsonl && ok "el motivo de cambios queda en el diario" || bad "diario: $out"

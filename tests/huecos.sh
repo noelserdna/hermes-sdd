@@ -37,6 +37,7 @@ cat > task/TASK-FASE-0.md <<'M'
   - **Acceptance:**
     - Verify: `npm test` → 0
 M
+mkdir -p plan/fases; printf '# FASE-0\n' > plan/fases/FASE-0-INICIO.md
 git add -A && git commit -qm init
 echo '{"tipo":"plan","fase":""}' > .sdd/hermes/puertas/gp.json
 cartas() { cat "$T/cartas" 2>/dev/null; }
@@ -108,7 +109,7 @@ grep -q '^## Q-plan-architect-001 \[OPEN\]' .sdd/questions-plan-architect.md && 
 #    por un --full que el arnés no ejecuta). Plan y Tareas sin ficheros fallan con su explicación, no pasan a la siguiente
 echo '{"ejecutor":"claude","ejecutores":{"plan":"../tests/ejecutor-falso","tareas":"../tests/ejecutor-falso"}}' > .sdd/hermes/hermes-sdd.json
 dice=$'stage=plan-architect status=blocked questions=0 artifacts=0\n\nNo generé `plan/`, porque faltan las especificaciones.'
-cp "$ROOT/metodo/templates/pipeline-state.template.json" pipeline-state.json
+cp "$ROOT/metodo/templates/pipeline-state.template.json" pipeline-state.json; rm -rf plan
 o=$(FALSO_RESUMEN="$dice" bash "$ROOT/etapa.sh" "$R" plan | tail -1)
 [ "$(bash "$ROOT/metodo/scripts/sdd-state.sh" get specifications-engineer)" = pending ] \
   && ok "plan: con todas las skills en el arnés no salta etapas por su cuenta (las decide la ruta)" || bad "estado: $(cat pipeline-state.json | head -c 400)"

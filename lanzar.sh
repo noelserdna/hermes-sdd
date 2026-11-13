@@ -130,6 +130,11 @@ tras_ruta() {  # las etapas opcionales que pide la ruta → Plan → Tareas, enc
   tarjeta "Tareas" "$t" 60m tareas >/dev/null
   echo "$primera"
 }
+mantener() {  # el mantenimiento en curso (.sdd/hermes/mantenimiento/en-curso.txt) → cierre (puerta global → entrega)
+  local t; t=$(tarjeta "Mantenimiento" - 120m mantener)
+  cierre "$t" "Cierre: puerta global y entrega (mantenimiento)" >/dev/null
+  echo "$t"
+}
 cierre() {  # cierre [padre] [título]: (huecos entre especificación y código, si la ruta los pide →) cierre
   local p=${1:--}
   toca gap-detector && p=$(tarjeta "Huecos entre especificación y código" "$p" 60m brechas)
@@ -181,6 +186,10 @@ case "$CMD" in
           rm -f "$REPO/.sdd/hermes/adopcion"; echo "Línea base aprobada: los cambios entran con /cambio"
         else
           rm -f "$REPO/.sdd/hermes/cambio-actual"
+          if [ -s "$REPO/.sdd/hermes/mantenimiento/en-curso.txt" ]; then
+            # El cambio lo pidió un mantenimiento en curso (para poder hacerlo): se sigue con él, no se replanifica
+            mantener; exit 0
+          fi
           RF=$(cambio_corto)
           N=$(primera_sin_aceptar)
           if [ -n "$RF" ] && [ -n "$N" ] && [ "${RF%% *}" -ge "$N" ]; then
@@ -214,18 +223,21 @@ case "$CMD" in
       requisitos:cambios)             tarjeta "Requisitos (cambios)" - 40m requisitos ;;
       ruta:acepto|ruta:completo|ruta:ruta-*) tras_ruta ;;
       ruta:rechazo)                   tarjeta "Ruta (otra vez)" - 20m ruta ;;
-      plan:conforme)
-        N=$(primera_sin_aceptar); fase_n "${N:-0}" ;;
+      plan:conforme)   # sin FASEs por aceptar (un cambio que no necesitó FASE nueva): directamente al cierre
+        N=$(primera_sin_aceptar); if [ -n "$N" ]; then fase_n "$N"; else cierre; fi ;;
       plan:cambios)                   t=$(tarjeta "Plan (cambios)" - 60m plan); tarjeta "Tareas" "$t" 60m tareas ;;
       fase:acepto|fase:observaciones)
         N=$(primera_sin_aceptar)
         if [ -n "$N" ]; then fase_n "$N"
         else cierre; fi ;;
       fase:rechazo)                   fase_n "$FASE" " (cambios)" ;;
-      entrega:acepto|entrega:observaciones) echo "Proyecto entregado" ;;
+      entrega:acepto|entrega:observaciones) rm -f "$REPO/.sdd/hermes/mantenimiento/en-curso.txt"; echo "Proyecto entregado" ;;
       entrega:rechazo)                tarjeta "Cierre (otra vez)" - 120m cierre ;;
-      preguntas:respondo)             fase_n "$FASE" " (respuestas)" ;;
-      mantenimiento:cambio)           bash "$ROOT/lanzar.sh" cambio "$REPO" "$(cat "$REPO/.sdd/hermes/mantenimiento/peticion-$GATE.txt")" ;;
+      preguntas:respondo)             if [ -n "$FASE" ]; then fase_n "$FASE" " (respuestas)"; else mantener; fi ;;
+      mantenimiento:cambio)   # se arregla sin cambiar el comportamiento y se entrega otra vez (no pasa por requisitos ni plan;
+                              # si hiciera falta cambiar un requisito, la etapa lo pregunta)
+        cp "$REPO/.sdd/hermes/mantenimiento/peticion-$GATE.txt" "$REPO/.sdd/hermes/mantenimiento/en-curso.txt"
+        mantener ;;
       mantenimiento:ignoro)           echo "Hallazgos ignorados; no se vuelve a preguntar mientras no cambien" ;;
       *) echo "Sin tramo siguiente para $TIPO:$RESULTADO" ;;
     esac ;;

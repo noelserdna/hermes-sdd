@@ -465,13 +465,14 @@ def puerta_mantenimiento(proyecto: str, hallazgos: list) -> dict:
 
 
 def puerta_preguntas(proyecto: str, fase: str) -> dict:
-    """La implementación de una FASE se paró en preguntas abiertas: la persona las contesta aquí (las preguntas, con sus
-    botones Q, las añade el final de la puerta como en cualquier otra)."""
-    partes = [f"⏸ La FASE-{fase} de «{proyecto}» se ha parado: para seguir necesita que decidas esto.",
-              f"Al responder, la FASE-{fase} sigue con tus respuestas. Si alguna pide cambiar los requisitos, antes te "
-              "llega su puerta de requisitos con lo que cambia.",
+    """La implementación de una FASE (o un mantenimiento, sin FASE) se paró en preguntas abiertas: la persona las
+    contesta aquí (las preguntas, con sus botones Q, las añade el final de la puerta como en cualquier otra)."""
+    que = f"La FASE-{fase}" if fase else "El mantenimiento"
+    partes = [f"⏸ {que} de «{proyecto}» se ha parado: para seguir necesita que decidas esto.",
+              f"Al responder, {que[0].lower() + que[1:]} sigue con tus respuestas. Si alguna pide cambiar los requisitos, "
+              "antes te llega su puerta de requisitos con lo que cambia.",
               "👉 Elige en los botones Q (la recomendada ya está marcada) y pulsa ✅ Responder."]
-    return {"titulo": f"Preguntas de la FASE-{fase}", "texto": "\n\n".join(partes)}
+    return {"titulo": f"Preguntas de la FASE-{fase}" if fase else "Preguntas del mantenimiento", "texto": "\n\n".join(partes)}
 
 
 # Las skills escriben las opciones de varias formas; todas valen:
