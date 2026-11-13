@@ -165,6 +165,9 @@ def _ajustes(repo: Path) -> list[str]:
     cv, cn = _campos(antes), _campos(ahora)
     for rid, campos in cn.items():
         for k, v in campos.items():
+            # solo lo que la persona lee: el resto (Statement en inglés, Source, Dependencies…) es interno del método
+            if k.lower() not in ("para el cliente", "verification", "priority"):
+                continue
             if rid in cv and k in cv[rid] and cv[rid][k] != v:
                 k = _NOMBRE_CAMPO.get(k.lower(), k)
                 v = _corta(re.sub(r"^(test|demo|inspection|analysis)\s+—\s+", "", v), 180)
@@ -213,8 +216,11 @@ def puerta_requisitos(repo: Path, proyecto: str, version: str = "", cambio: dict
         nuevos = [r for r in reqs if r["id"] in cambio.get("anadidos", [])]
         quitados = cambio.get("quitados", [])
         if nuevos or quitados:
+            # también lo que cambia en los que ya estaban (club, INT-002: la regla de los choques clase/torneo era una
+            # modificación de dos requisitos y la puerta solo enseñaba los nuevos)
+            aj = _ajustes(repo)
             partes.append("Qué cambia" + v + ":\n" + "\n".join(
-                [f"➕ {_texto_req(r)}" for r in nuevos] + [f"➖ Se quita: {q}" for q in quitados]))
+                [f"➕ {_texto_req(r)}" for r in nuevos] + [f"➖ Se quita: {q}" for q in quitados] + aj))
         else:
             aj = _ajustes(repo)
             partes.append(f"Qué cambia{v}: los mismos requisitos, con ajustes" +

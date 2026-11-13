@@ -231,7 +231,9 @@ if ! hecho preguntas; then
   # … y, al aceptar una FASE o la entrega, las que piden otra cosa (ajustar un test, editar el plan): las aplica la
   # etapa «respuestas» antes del tramo siguiente
   PIDEN=""; ACCIONES=""
-  case "$TIPO:$VERBO" in plan:conforme|preguntas:respondo|fase:acepto|fase:observaciones|entrega:acepto|entrega:observaciones)
+  # (también al pedir cambios al plan o rechazar una FASE: lo pedido queda en feedback/ y se aplica tras el cambio, al
+  # replanificar o al rehacer la FASE; antes esas respuestas se guardaban y el cambio no se lanzaba nunca)
+  case "$TIPO:$VERBO" in plan:conforme|plan:cambios|preguntas:respondo|fase:acepto|fase:observaciones|fase:rechazo|entrega:acepto|entrega:observaciones)
     PIDEN=".sdd/hermes/cambio-por-respuestas-$GATE.txt" ;; esac
   case "$TIPO:$VERBO" in fase:acepto|fase:observaciones|entrega:acepto|entrega:observaciones)
     ACCIONES=".sdd/hermes/respuestas-por-aplicar-$GATE.txt" ;; esac
