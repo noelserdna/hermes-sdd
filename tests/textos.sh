@@ -211,5 +211,13 @@ printf '# INT-002\n\n> quita el criterio de enero\n' > intent/INT-002.md
 o=$($TX puerta requisitos "$C" --proyecto sala --version 1.1 --cambio INT-002 | jq -r .texto)
 echo "$o" | grep -q '^➖ Antelación: se quita el criterio «GIVEN hoy WHEN reserva en enero de 2027 THEN no se crea»$' \
   && ok "cambio de criterios: la puerta dice cuál se quita (no «el detalle está en changes/»)" || bad "ajustes: $o"
+# … y si solo cambia cómo se verifica (sala, INT-005), también lo dice, en castellano
+git checkout -q requirements/REQUIREMENTS.md; printf -- '- **Verification:** test — sin versión fija\n' >> requirements/REQUIREMENTS.md
+sed -i.bak 's/^- \*\*Para el cliente:\*\*.*/&/' requirements/REQUIREMENTS.md; rm -f requirements/REQUIREMENTS.md.bak
+git commit -qam v1b; git tag -d requirements-v1.0 >/dev/null; git tag requirements-v1.0
+sed -i.bak 's/sin versión fija/la versión mayor no queda fijada/' requirements/REQUIREMENTS.md; rm -f requirements/REQUIREMENTS.md.bak
+o=$($TX puerta requisitos "$C" --proyecto sala --version 1.1 --cambio INT-002 | jq -r .texto)
+echo "$o" | grep -q '^✏️ Antelación: cómo se comprueba pasa a «la versión mayor no queda fijada»$' && ! echo "$o" | grep -q 'changes/' \
+  && ok "cambio que solo toca la verificación: la puerta lo dice (no «el detalle está en changes/»)" || bad "verificación: $o"
 cd "$R"
 exit $fail

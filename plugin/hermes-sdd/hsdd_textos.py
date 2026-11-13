@@ -126,6 +126,24 @@ def _criterios(texto: str) -> dict:
     return res
 
 
+_NOMBRE_CAMPO = {"verification": "cómo se comprueba", "priority": "la prioridad", "para el cliente": "la frase para el cliente",
+                 "needs": "las necesidades de las que sale", "status": "el estado", "rationale": "el porqué"}
+
+
+def _campos(texto: str) -> dict:
+    """{REQ-id: {campo: valor}} de un REQUIREMENTS.md: las líneas «- **Campo:** valor» bajo cada ### REQ-…"""
+    res, actual = {}, None
+    for l in texto.splitlines():
+        m = re.match(r"^###\s+(REQ-[A-Z]+-[0-9A-Za-z]+)", l)
+        if m:
+            actual = res.setdefault(m.group(1), {})
+        elif l.startswith("#"):
+            actual = None
+        elif actual is not None and (c := re.match(r"^\s*[-*]\s+\*\*([^*:]+):\*\*\s*(.*)$", l)):
+            actual[c.group(1).strip()] = c.group(2).strip()
+    return res
+
+
 def _ajustes(repo: Path) -> list[str]:
     """Qué criterios cambian respecto a la última versión aprobada (tag requirements-v*), para la puerta de un cambio."""
     import subprocess
@@ -138,9 +156,19 @@ def _ajustes(repo: Path) -> list[str]:
                                capture_output=True, text=True, timeout=10).stdout
     except (OSError, subprocess.SubprocessError):
         return []
-    viejo, nuevo = _criterios(antes), _criterios(_leer(repo / "requirements" / "REQUIREMENTS.md"))
+    ahora = _leer(repo / "requirements" / "REQUIREMENTS.md")
+    viejo, nuevo = _criterios(antes), _criterios(ahora)
     nombres = {r["id"]: r["titulo"] or _texto_req(r) for r in requisitos(repo)}
     out = []
+    # Otras líneas del requisito que cambian (cómo se verifica, prioridad, la frase para el cliente…): sala, INT-005,
+    # solo cambiaba la verificación de REQ-C-001 y la puerta decía «el detalle está en changes/»
+    cv, cn = _campos(antes), _campos(ahora)
+    for rid, campos in cn.items():
+        for k, v in campos.items():
+            if rid in cv and k in cv[rid] and cv[rid][k] != v:
+                k = _NOMBRE_CAMPO.get(k.lower(), k)
+                v = _corta(re.sub(r"^(test|demo|inspection|analysis)\s+—\s+", "", v), 180)
+                out.append(f"✏️ {nombres.get(rid, rid)}: {k} pasa a «{v}»")
     for rid, crits in nuevo.items():
         previos = viejo.get(rid)
         if previos is None or previos == crits:
@@ -184,7 +212,7 @@ def puerta_requisitos(repo: Path, proyecto: str, version: str = "", cambio: dict
                 [f"➕ {_texto_req(r)}" for r in nuevos] + [f"➖ Se quita: {q}" for q in quitados]))
         else:
             aj = _ajustes(repo)
-            partes.append(f"Qué cambia{v}: los mismos requisitos, con criterios ajustados" +
+            partes.append(f"Qué cambia{v}: los mismos requisitos, con ajustes" +
                           (":\n" + "\n".join(aj) if aj else " (el detalle está en changes/)."))
         partes.append("Si lo apruebas, solo se replanifica lo nuevo: las fases ya aceptadas no se tocan.")
         return {"titulo": titulo, "texto": "\n\n".join(partes) + _cierre_requisitos(extras)}
