@@ -421,6 +421,7 @@ def de_aceptacion(repo: Path, fase: str | None, con_mutantes: bool = True) -> di
         except Exception as e:   # sin copia no hay mutantes: se dice, no se inventa
             res["mutantes_error"] = str(e)[:300]
         finally:
+            subprocess.run(["pkill", "-f", f"{copia}/node_modules/"], capture_output=True)   # servidores que dejaron los e2e
             subprocess.run(["git", "-C", str(repo), "worktree", "remove", "--force", str(copia)], capture_output=True)
             shutil.rmtree(copia.parent, ignore_errors=True)
     res["graves"] = sum(1 for k in ("congelados", "capturas", "mutantes", "vinculos") for x in res.get(k, []) if x.get("grave")) \

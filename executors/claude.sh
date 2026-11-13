@@ -54,6 +54,20 @@ for b in "$BIN" "$(command -v node || true)"; do
   [ -n "$b" ] || continue; d=$(dirname "$b")
   case ":$PATH_LIMPIO:" in *":$d:"*) ;; *) PATH_LIMPIO="$d:$PATH_LIMPIO";; esac
 done
+# Versión de Node de las etapas: la de «node_mayor» en sdd.json (por defecto 24) si está instalada y no es la primera
+# del PATH. Con Node 26 los e2e fallaban al azar con «setTypeOfService EINVAL» (sala y club); con 24, estables. Se
+# antepone una carpeta propia con node, npm y npx de esa versión.
+QUIERO=$(jq -r '.node_mayor // 24' "${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}/sdd.json" 2>/dev/null || echo 24)
+mayor() { "$1" -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0; }
+NODE1=$(PATH="$PATH_LIMPIO" command -v node || true)
+if [ -n "$NODE1" ] && [ "$(mayor "$NODE1")" != "$QUIERO" ]; then
+  for n in $(PATH="$PATH_LIMPIO" which -a node 2>/dev/null); do
+    [ "$(mayor "$n")" = "$QUIERO" ] || continue
+    LTS="${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}/node-$QUIERO"; mkdir -p "$LTS"
+    for x in node npm npx; do [ -e "$(dirname "$n")/$x" ] && ln -sf "$(dirname "$n")/$x" "$LTS/$x"; done
+    PATH_LIMPIO="$LTS:$PATH_LIMPIO"; break
+  done
+fi
 # Las decisiones, las puertas y el estado de Hermes no se escriben desde una etapa: una decisión «humana» fabricada la
 # firmaría el notario. Las herramientas de edición lo tienen denegado siempre. Las etapas sin navegador (SDD_SANDBOX=1,
 # lo decide etapa.sh) corren además con el sandbox de Claude Code: su Bash solo escribe en el repo (menos

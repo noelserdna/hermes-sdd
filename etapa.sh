@@ -56,7 +56,12 @@ registrar_etapa() {  # una línea por etapa en .sdd/hermes/etapas.jsonl: la lín
      ejecuciones: [$ej[] | .run], coste_usd: ([$ej[] | .cost_usd // 0] | add // 0), turnos: ([$ej[] | .turns // 0] | add // 0),
      head_antes: $h0, head_despues: $h1, tests_codigo: $r}' >> .sdd/hermes/etapas.jsonl 2>/dev/null || true
 }
+huerfanos() {  # servidores de este proyecto que dejó una ejecución (vite, el de las pruebas): ocupan el puerto y la
+  # siguiente etapa se pelea con ellos (club, FASE-3: 30 min de e2e colgados hasta matarlos). Solo los de su node_modules.
+  pkill -f "$REPO/node_modules/" >/dev/null 2>&1 || true
+}
 fin() {  # fin <json-del-ejecutor-o-propio> [resumen] [puerta]
+  huerfanos
   registrar_etapa "$1" "${2:-}" "${3:-}"
   # Etapa resuelta: las tarjetas bloqueadas de intentos anteriores de esta misma etapa quedan obsoletas y se archivan
   if [ "$(echo "$1" | jq -r .outcome 2>/dev/null)" = done ] && [ -z "${HERMES_SDD_SIN_KANBAN:-}" ]; then
@@ -67,6 +72,7 @@ fin() {  # fin <json-del-ejecutor-o-propio> [resumen] [puerta]
 }
 falla() { fin "$(jq -nc --arg r "$1" '{outcome:"failed", reason:$r}')"; }
 
+huerfanos   # restos de una etapa anterior (antes de empezar)
 # ── Antes de gastar nada: ¿el proyecto está en pausa? ¿la cuota de Claude está agotada? ────────────────────────────
 HOME_SDD=${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}
 BOARD=$(basename "$REPO" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')
