@@ -283,6 +283,11 @@ def puede_jev(puerta: dict, cfg: dict | None = None) -> tuple[bool, str]:
     editados = puerta.get("tests_editados") if "tests_editados" in puerta else (int(m.group(1)) if m else 0)
     if editados:
         return False, "se modificaron tests que ya existían (lo revisa una persona)"
+    # Una pregunta que el método reserva a una persona (editar un test que ya existía, art. 12): la contesta una persona
+    # aunque el modo sea auto (sala, mantenimiento: Jev autorizó editar un test e2e y el implementador, con razón, no lo
+    # aplicó porque la opción decía «una persona autoriza»)
+    if puerta.get("preguntas") and re.search(r"art\.?\s*12\b|decisi[oó]n humana|una persona autoriza|human decision", texto, re.I):
+        return False, "una pregunta la reserva el método a una persona (editar tests que ya existían)"
     if (puerta.get("encargado") or {}).get("graves"):   # revisión mecánica del encargado (hsdd_revision.py)
         return False, "el encargado marcó un aviso grave (lo decide una persona)"
     if not verbos_jev(puerta):

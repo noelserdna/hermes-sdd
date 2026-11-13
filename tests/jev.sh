@@ -53,6 +53,10 @@ o=$(aplicar g7 acepto 0.99); [[ "$o" == abierta* ]] && echo "$o" | grep -q "no p
 puerta g8 fase "✅ Sin alertas
 Tests existentes con líneas borradas o cambiadas: 2"
 o=$(aplicar g8 acepto 0.99); [[ "$o" == abierta* ]] && echo "$o" | grep -q "tests que ya existían" && ok "auto: tests existentes modificados → una persona" || bad "art 12: $o"
+# una pregunta que el método reserva a una persona (art. 12): ni en auto la contesta Jev
+puerta g8q preguntas "1. Editar un test que ya existía es decisión humana (art. 12). ¿Qué se hace?" '[{"verbo":"respondo","etiqueta":"✅ Responder"}]'
+t=$(mktemp); jq '.preguntas = [{n:1, id:"Q-x-1", opciones:["A","B"], recomendada:"A"}]' "$HERMES_SDD_HOME/puertas/g8q.json" > "$t" && cp "$t" "$HERMES_SDD_HOME/puertas/g8q.json" && cp "$t" .sdd/hermes/puertas/g8q.json
+o=$(aplicar g8q respondo 0.99); [[ "$o" == abierta* ]] && echo "$o" | grep -q "la reserva el método a una persona" && ok "auto: una pregunta de art. 12 la contesta una persona" || bad "art 12 pregunta: $o"
 
 # ── 2. decisión de Jev, ventana y veto ──────────────────────────────────────────────────────────────────────────
 puerta g9 requisitos
