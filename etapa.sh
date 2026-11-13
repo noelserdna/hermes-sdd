@@ -274,6 +274,15 @@ case "$ETAPA" in
     [ -s "$F" ] || fin '{"outcome":"done","reason":"ok (no quedan respuestas por aplicar)"}' "Sin respuestas por aplicar"
     claude_etapa task-implementer "$ARNES A person answered these questions at a gate. Apply each chosen answer exactly: it is the person's decision, so it authorizes what it says (for example editing or removing an existing test, or editing the plan). Change only plan/, task/, tests/ and, if an answer requires it, code; never requirements/ or spec/. Keep every existing test passing (run them). One commit per answer, following the repository commit conventions. If an answer turns out to need nothing, change nothing for it. Answers: $(cat "$F")"
     node "$SDD" lint --plan >/dev/null 2>&1 || falla "sdd lint --plan encuentra errores tras aplicar las respuestas: $(node "$SDD" lint --plan 2>&1 | grep -v ' warning: ' | tail -3 | tr '\n' ' ')"
+    # Si cambiaron tests o código, la evidencia de la aceptación caduca: se vuelve a sacar (sin firmar nada) y la puerta
+    # de calidad tiene que seguir cumpliéndose (la de esa FASE, o la global si las respuestas vienen de la entrega)
+    ULT=$(git describe --tags --abbrev=0 --match 'entrega-*' --match 'fase-*-accepted' 2>/dev/null || echo "$HEAD0")
+    if git diff --name-only "$ULT" HEAD | grep -vqE '^(plan|task|docs|status|acceptance)/|\.md$'; then
+      PF=$(jq -r 'select(.tipo == "fase") | .fase // empty' ".sdd/hermes/puertas/$FASE.json" 2>/dev/null || true)
+      claude_etapa acceptance "/sdd-acceptance${PF:+ --fase $PF} — $ARNES Tests or code changed after the last acceptance (a person's answers were applied). Re-run the test suites with their JUnit reports and refresh the evidence so the acceptance ledger is current. Do not sign off."
+      grc=0; if [ -n "$PF" ]; then node "$SDD" gate --fase "$PF" >/dev/null 2>&1 || grc=$?; else node "$SDD" gate >/dev/null 2>&1 || grc=$?; fi
+      [ "$grc" = 0 ] || [ "$grc" = 3 ] || falla "tras aplicar las respuestas, la puerta de calidad${PF:+ de la FASE-$PF} sale con $grc"
+    fi
     mv "$F" "$F.aplicado"
     fin "$RES" "Respuestas de la puerta $FASE aplicadas" ;;
 
