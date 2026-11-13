@@ -131,7 +131,16 @@ tras_ruta() {  # las etapas opcionales que pide la ruta → Plan → Tareas, enc
   echo "$primera"
 }
 mantener() {  # el mantenimiento en curso (.sdd/hermes/mantenimiento/en-curso.txt) → cierre (puerta global → entrega)
-  local t; t=$(tarjeta "Mantenimiento" - 120m mantener)
+  local t l
+  # las tarjetas de un mantenimiento anterior paradas o en espera (y su cierre) quedan obsoletas
+  if l=$("${K[@]}" list --json 2>/dev/null); then
+    printf '%s' "$l" | jq -r '.[]? | select(.assignee == "sdd-estacion" and (.status == "blocked" or .status == "todo" or .status == "triage" or .status == "ready"))
+      | select((.body // "") | test("etapa\\.sh \\S+ (mantener|cierre)$")) | .id' 2>/dev/null | while read -r id; do
+      "${K[@]}" comment "$id" "Obsoleta: el mantenimiento se vuelve a lanzar con tarjetas nuevas." >/dev/null 2>&1 || true
+      "${K[@]}" archive "$id" >/dev/null 2>&1 || true
+    done || true
+  fi
+  t=$(tarjeta "Mantenimiento" - 120m mantener)
   cierre "$t" "Cierre: puerta global y entrega (mantenimiento)" >/dev/null
   echo "$t"
 }

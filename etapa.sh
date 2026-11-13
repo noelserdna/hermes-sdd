@@ -297,7 +297,7 @@ case "$ETAPA" in
     F=.sdd/hermes/mantenimiento/en-curso.txt
     [ -s "$F" ] || falla "no hay ningún mantenimiento en curso ($F)"
     claude_etapa task-implementer "$ARNES Maintenance of a delivered project, requested by a person: $(cat "$F")
-Do it without changing behaviour: requirements/ and spec/ stay as they are and existing tests are not edited (art. 12). Run every test suite (unit and e2e) and keep them green; one commit per logical step, following the repository commit conventions. If something cannot be done without changing a requirement or editing an existing test, do not do it: write an [OPEN] question in .sdd/questions-task-implementer.md and mark with (req-change) any option that needs a requirements change."
+Do it without changing behaviour: requirements/ and spec/ stay as they are and existing tests are not edited (art. 12), except where an [ANSWERED] question in .sdd/questions-*.md says otherwise: those answers are the person's decisions and authorize exactly what they say (apply them, do not ask again). Run every test suite (unit and e2e) and keep them green; one commit per logical step, following the repository commit conventions. If something cannot be done without changing a requirement or editing an existing test, do not do it: write an [OPEN] question in .sdd/questions-task-implementer.md and mark with (req-change) any option that needs a requirements change."
     if grep -qs '^## Q-.*\[OPEN\]' .sdd/questions-*.md && P=$(puerta preguntas); then
       fin "$(jq -nc '{outcome:"failed", reason:"esperando tus respuestas: puerta «Preguntas del mantenimiento»"}')" "Mantenimiento parado: preguntas para la persona" "$P"
     fi
