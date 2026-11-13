@@ -332,6 +332,7 @@ case "$ETAPA" in
     [ -s "$F" ] || falla "no hay ningún mantenimiento en curso ($F)"
     claude_etapa task-implementer "$ARNES Maintenance of a delivered project, requested by a person: $(cat "$F")
 Do it without changing behaviour: requirements/ and spec/ stay as they are and existing tests are not edited (art. 12), except where an [ANSWERED] question in .sdd/questions-*.md says otherwise: those answers are the person's decisions and authorize exactly what they say (apply them, do not ask again). Run every test suite (unit and e2e) and keep them green; one commit per logical step, following the repository commit conventions. If something cannot be done without changing a requirement or editing an existing test, do not do it: write an [OPEN] question in .sdd/questions-task-implementer.md and mark with (req-change) any option that needs a requirements change."
+    python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" normalizar-preguntas "$REPO" >/dev/null 2>&1 || true
     if grep -qs '^## Q-.*\[OPEN\]' .sdd/questions-*.md && P=$(puerta preguntas); then
       fin "$(jq -nc '{outcome:"failed", reason:"esperando tus respuestas: puerta «Preguntas del mantenimiento»"}')" "Mantenimiento parado: preguntas para la persona" "$P"
     fi
@@ -388,13 +389,14 @@ PY
     RECH=""; ANTES=$(git rev-parse HEAD)
     [ -s "$FB" ] && RECH=" This FASE comes back with a person's request (a rejection at its acceptance gate or newly approved requirements): all tasks being done does NOT finish it. Treat every point of the person's request above as new work: add the tasks it needs to task/TASK-FASE-$FASE.md and implement them (test-first, one commit each), including the missing captures and the literal letter of each criterion in its test. If a point needs a change to requirements/ or to the plan (outside your reach), do not skip it: write an [OPEN] question in .sdd/questions-task-implementer.md explaining what change is needed."
     OBS=""; [ -s .sdd/hermes/feedback/observaciones.txt ] && OBS=" The person accepted earlier FASEs with these observations, still pending: add a task for each one to task/TASK-FASE-$FASE.md and do it in this FASE too (they may touch earlier FASEs' captures or screens; tests that already existed are not edited — write an [OPEN] question if one would need it): $(cat .sdd/hermes/feedback/observaciones.txt | tr '\n' ' ')"
-    claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES Implement FASE-$FASE completely, test-first, one commit per task with Refs:/Task: trailers.$TESTS_G$RECH$OBS"
+    claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES Implement FASE-$FASE completely, test-first, one commit per task with Refs:/Task: trailers. [ANSWERED] questions in .sdd/questions-*.md are the person's decisions: apply them and they authorize exactly what they say (for example editing an existing test); do not ask them again. Write any new question as a block that starts with a line «## Q-task-implementer-NNN [OPEN]» (next free NNN) followed by Question:, Options: and Blocks: lines, as references/async-questions.md says.$TESTS_G$RECH$OBS"
     [ -n "$OBS" ] && mv .sdd/hermes/feedback/observaciones.txt ".sdd/hermes/feedback/observaciones.aplicadas-$FASE.txt"
     if ! st=$(node "$SDD" tasks status --fase "$FASE" --require-done 2>&1); then
       # Parada en preguntas [OPEN] (p. ej. un criterio que contradice otro): se abren a la persona en una puerta. La
       # tarjeta queda parada para que no corra su hija (Aceptar); al firmar, la FASE se rehace con las respuestas o,
       # si una pide cambiar los requisitos, primero se lanza ese cambio (sala, 12/11/2026: sin esto se quedaba atascada)
-      if grep -qs '^## Q-.*\[OPEN\]' .sdd/questions-*.md && P=$(puerta preguntas "$FASE"); then
+      python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" normalizar-preguntas "$REPO" >/dev/null 2>&1 || true
+    if grep -qs '^## Q-.*\[OPEN\]' .sdd/questions-*.md && P=$(puerta preguntas "$FASE"); then
         fin "$(jq -nc --arg f "$FASE" '{outcome:"failed", reason:("esperando tus respuestas: puerta «Preguntas de la FASE-" + $f + "»")}')" \
           "FASE-$FASE parada: preguntas para la persona" "$P"
       fi

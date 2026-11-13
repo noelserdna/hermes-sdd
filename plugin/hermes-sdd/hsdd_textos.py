@@ -532,7 +532,7 @@ def puerta_preguntas(proyecto: str, fase: str) -> dict:
 #   «  A) texto (recommended)»   «  A★) texto»   «Options: [A] texto (recomendada)  [B] texto»
 _OP_LINEA = re.compile(r"^\s+([A-Z])\s*([★⭐\ufe0f]*)\s*\)\s*(.*)$", re.M)
 _OP_CORCHETE = re.compile(r"\[([A-Z])\]\s*(.*?)(?=\s+\[[A-Z]\]|$)")
-_RECOMENDADA = re.compile(r"\s*\((?:recommended|recomendada)\)", re.I)
+_RECOMENDADA = re.compile(r"\s*\((?:recommended|recomendada)\b[^)]*\)", re.I)   # también «(recomendada, implementada)»
 
 
 def opciones(bloque: str) -> list[tuple[str, str, bool]]:
@@ -617,7 +617,34 @@ def preguntas(ficheros: list[Path]) -> str:
             + " (la recomendada ya está marcada en los botones Q; si te vale, no toques nada):\n\n" + "\n\n".join(bloques))
 
 
+def normalizar_preguntas(repo: Path) -> int:
+    """Las preguntas que una etapa escribió sin la cabecera del método («Q-x-001 [OPEN]» en vez de «## Q-x-001 [OPEN]») o
+    con un número repetido: se les pone la cabecera y se renumeran, para que las vean las puertas y el notario (club:
+    14 preguntas del implementador sin «## » se acumularon desde la FASE-0 sin llegar a nadie). Devuelve cuántos ficheros tocó."""
+    n = 0
+    cab = re.compile(r"^(?:## )?(Q-[A-Za-z][\w-]*-)(\d{3})(\s+\[(?:OPEN|ANSWERED)\])", re.M)
+    for f in sorted((repo / ".sdd").glob("questions-*.md")):
+        t = _leer(f)
+        maximo: dict = {}
+        for m in cab.finditer(t):
+            maximo[m.group(1)] = max(maximo.get(m.group(1), 0), int(m.group(2)))
+        vistos = set()
+        def poner(m):
+            pre, num = m.group(1), m.group(2)
+            if pre + num in vistos:
+                maximo[pre] += 1
+                num = f"{maximo[pre]:03d}"
+            vistos.add(pre + num)
+            return f"## {pre}{num}{m.group(3)}"
+        nuevo = cab.sub(poner, t)
+        if nuevo != t:
+            f.write_text(nuevo, encoding="utf-8"); n += 1
+    return n
+
+
 if __name__ == "__main__":
+    if sys.argv[1:2] == ["normalizar-preguntas"]:   # normalizar-preguntas <repo>
+        print(normalizar_preguntas(Path(sys.argv[2]))); sys.exit(0)
     import argparse
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["puerta"]); ap.add_argument("tipo"); ap.add_argument("repo")

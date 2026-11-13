@@ -173,6 +173,17 @@ o=$($TX puerta fase "$R" --proyecto bar --fase 2 --rc 4 --impugnaciones "$T/imp2
 echo "$o" | grep -q 'es una duda sobre el propio criterio' && echo "$o" | grep -q '✏️ Corregir el requisito' \
   && ! ($TX puerta fase "$R" --proyecto bar --fase 0 --rc 4 --impugnaciones "$T/imp.json" | jq -r .texto | grep -q 'Corregir el requisito') \
   && ok "con una duda del criterio ofrece ✏️ Corregir el requisito (y solo entonces)" || bad "corregir: $o"
+# preguntas escritas sin la cabecera «## » y con números repetidos (club, FASE-0..3): se normalizan y se ven
+N="$T/norm"; mkdir -p "$N/.sdd"; printf '# P\n\nQ-task-implementer-001 [OPEN]\nQuestion: ¿uno?\nOptions: [A] sí (recomendada, implementada) [B] no\n\nQ-task-implementer-001 [OPEN]\nQuestion: ¿dos?\nOptions: [A] a [B] b (recomendada)\n' > "$N/.sdd/questions-task-implementer.md"
+python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" normalizar-preguntas "$N" >/dev/null
+o=$(python3 - "$ROOT/plugin/hermes-sdd" "$N" <<'PY'
+import sys, re; sys.path.insert(0, sys.argv[1]); import hsdd_textos as X
+t = open(sys.argv[2] + "/.sdd/questions-task-implementer.md").read()
+bs = re.findall(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", t, flags=re.M | re.S)
+print(" ".join(b.split()[1] + "=" + X.opciones_json(b)["recomendada"] for b in bs))
+PY
+)
+[ "$o" = "Q-task-implementer-001=A Q-task-implementer-002=B" ] && ok "preguntas sin «## » y repetidas: cabecera, renumeradas y con su recomendada" || bad "normalizar: $o"
 # ── la puerta entera con puerta.sh (texto y datos para Jev) ──────────────────────────────────────────────────────
 git init -q -b main && git config user.email t@t && git config user.name t && git config commit.gpgsign false && git add -A && git commit -qm x
 g=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" requisitos)

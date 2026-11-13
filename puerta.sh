@@ -153,6 +153,7 @@ $TEXTO" ;;
 esac
 
 # Preguntas como datos, para que el canal pueda ofrecerlas como formulario (Q1: A/B/C…)
+python3 "$TEXTOS" normalizar-preguntas "$REPO" >/dev/null 2>&1 || true   # cabeceras «## » y números repetidos
 PREGUNTAS=$(python3 - "$TEXTOS" .sdd/questions-*.md <<'PY' 2>/dev/null || echo '[]'
 import importlib.util, json, re, sys
 spec = importlib.util.spec_from_file_location("hsdd_textos", sys.argv[1]); X = importlib.util.module_from_spec(spec); spec.loader.exec_module(X)
