@@ -133,7 +133,8 @@ claude_etapa() {  # claude_etapa <clave-de-estado> <prompt>
 puerta() { bash "$ROOT/puerta.sh" "$REPO" "$@"; }
 fidelidad() {  # ronda adversarial del método + hsdd_fidelidad de la FASE (deja .sdd/hermes/fidelidad-<N>.json)
   claude_etapa acceptance "/sdd-acceptance --adversarial --fase $FASE — $ARNES Independent verifiers read each criterion of FASE-$FASE against production code, tests and captures: the GIVEN situation with its own data and actor, the WHEN, the whole THEN with its exact text, and whether each capture shows it. Record confirmed or inconclusive findings with accept challenge add. Do not fix anything and do not sign off."
-  python3 "$ROOT/plugin/hermes-sdd/hsdd_fidelidad.py" aceptacion "$REPO" --fase "$FASE" >/dev/null 2>&1 || true
+  # Rápida (sin mutantes): decide si hace falta la pasada de arreglo. Los mutantes, una sola vez, antes de la puerta
+  python3 "$ROOT/plugin/hermes-sdd/hsdd_fidelidad.py" aceptacion "$REPO" --fase "$FASE" --sin-mutantes >/dev/null 2>&1 || true
 }
 hay_hallazgos() {  # impugnaciones abiertas sobre un Must o hallazgos graves de fidelidad
   [ "$(node "$SDD" accept challenge list --open --fase "$FASE" --json 2>/dev/null | jq -r '.must_open // ([.challenges[]? | select(.state == "open")] | length)')" != 0 ] && return 0
@@ -425,6 +426,8 @@ PY
       claude_etapa acceptance "/sdd-acceptance --fase $FASE — $ARNES Recompute the verdicts, captures and demo of FASE-$FASE after the fixes. Do not sign off."
       fidelidad
     fi
+    # Mutantes de los Must de la FASE (una vez, sobre lo que verá la persona): lo que encuentren llega a la puerta
+    python3 "$ROOT/plugin/hermes-sdd/hsdd_fidelidad.py" aceptacion "$REPO" --fase "$FASE" >/dev/null 2>&1 || true
     P=$(puerta fase "$FASE") || falla "no se pudo abrir la puerta de la FASE-$FASE"
     fin "$RES" "Veredictos y demo de la FASE-$FASE listos" "$P" ;;
 
