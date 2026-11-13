@@ -184,6 +184,13 @@ print(" ".join(b.split()[1] + "=" + X.opciones_json(b)["recomendada"] for b in b
 PY
 )
 [ "$o" = "Q-task-implementer-001=A Q-task-implementer-002=B" ] && ok "preguntas sin «## » y repetidas: cabecera, renumeradas y con su recomendada" || bad "normalizar: $o"
+o=$(python3 - "$ROOT/plugin/hermes-sdd" <<'PY'
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_textos as X
+b = "## Q-x-007 [OPEN]\nQuestion: ¿Se cambia UC-005?\nOptions: [A] Sí: reordenar (recomendada; requiere sdd-req-change) [B] No\n"
+print(X.opciones_json(b)["recomendada"], bool(X.peticion_cambio(b, "A")), X.opciones(b)[0][1])
+PY
+)
+[ "$o" = "A True Sí: reordenar (requiere sdd-req-change)" ] && ok "«(recomendada; requiere sdd-req-change)»: es la recomendada y sigue pidiendo un cambio" || bad "paréntesis: $o"
 # ── la puerta entera con puerta.sh (texto y datos para Jev) ──────────────────────────────────────────────────────
 git init -q -b main && git config user.email t@t && git config user.name t && git config commit.gpgsign false && git add -A && git commit -qm x
 g=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" requisitos)

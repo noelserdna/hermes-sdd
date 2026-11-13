@@ -234,7 +234,7 @@ fusionar() {  # fusionar <qué>: la rama de trabajo (fase-N-…, cambio…) entr
   [ -n "$def" ] && [ "$rama" != HEAD ] && [ "$rama" != "$def" ] || return 0
   git merge-base --is-ancestor "$rama" "$def" && { git switch -q "$def"; return 0; }   # ya fusionada
   git switch -q "$def" || { FUSION=" (no se pudo pasar a $def: queda en $rama)"; return 0; }
-  if git merge --no-ff -q "$rama" -m "Merge $rama: $1" -m "Refs: ${FASE:+FASE-$FASE}${FASE:-$TIPO}
+  if git merge --no-ff -q "$rama" -m "Merge $rama: $1" -m "Refs: $([ -n "$FASE" ] && echo "FASE-$FASE" || echo "$TIPO")
 Gate-Id: $GATE" >/dev/null 2>&1; then
     FUSION=" · $rama fusionada en $def"
   else
@@ -548,12 +548,12 @@ $(node "$SDD" gate --md 2>/dev/null)"
 
   preguntas:respondo)
     if ! hecho registrado; then
-      node "$SDD" journal add --stage task-implementer --kind decision --text "$NOMBRE respondió las preguntas ${FASE:+de la FASE-$FASE}${FASE:-del mantenimiento}${TEXTO:+ ($TEXTO)}" \
+      node "$SDD" journal add --stage task-implementer --kind decision --text "$NOMBRE respondió las preguntas $([ -n "$FASE" ] && echo "de la FASE-$FASE" || echo "del mantenimiento")${TEXTO:+ ($TEXTO)}" \
         --by "$NOMBRE ($ROL)" >/dev/null
       marcar registrado
     fi
-    if ! hecho commit; then commit_si_hay "docs(status): ${FASE:+FASE-$FASE}${FASE:-maintenance} questions answered by $NOMBRE" status/; marcar commit; fi
-    RESULTADO="respondo"; RESUMEN="Preguntas ${FASE:+de la FASE-$FASE}${FASE:-del mantenimiento} respondidas por $NOMBRE ($ROL)" ;;
+    if ! hecho commit; then commit_si_hay "docs(status): $([ -n "$FASE" ] && echo "FASE-$FASE" || echo maintenance) questions answered by $NOMBRE" status/; marcar commit; fi
+    RESULTADO="respondo"; RESUMEN="Preguntas $([ -n "$FASE" ] && echo "de la FASE-$FASE" || echo "del mantenimiento") respondidas por $NOMBRE ($ROL)" ;;
 
   mantenimiento:cambio)
     # La petición del cambio sale de los hallazgos que la persona vio (están en la puerta), más su comentario

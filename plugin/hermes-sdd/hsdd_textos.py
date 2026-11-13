@@ -532,7 +532,11 @@ def puerta_preguntas(proyecto: str, fase: str) -> dict:
 #   «  A) texto (recommended)»   «  A★) texto»   «Options: [A] texto (recomendada)  [B] texto»
 _OP_LINEA = re.compile(r"^\s+([A-Z])\s*([★⭐\ufe0f]*)\s*\)\s*(.*)$", re.M)
 _OP_CORCHETE = re.compile(r"\[([A-Z])\]\s*(.*?)(?=\s+\[[A-Z]\]|$)")
-_RECOMENDADA = re.compile(r"\s*\((?:recommended|recomendada)\b[^)]*\)", re.I)   # también «(recomendada, implementada)»
+_RECOMENDADA = re.compile(r"\((?:recommended|recomendada)\b", re.I)   # marca la recomendada (también «(recomendada, …)»)
+# Al quitar la marca para enseñar el texto, se conserva lo demás del paréntesis («(recomendada; requiere sdd-req-change)»
+# → «(requiere sdd-req-change)»: si se borraba entero, se perdía que esa opción pide un cambio de requisitos)
+_RECOMENDADA_SOLA = re.compile(r"\s*\((?:recommended|recomendada)(?:[,;]\s*(?:implementada|implemented))?\)", re.I)
+_RECOMENDADA_DENTRO = re.compile(r"\((?:recommended|recomendada)[,;]\s*", re.I)
 
 
 def opciones(bloque: str) -> list[tuple[str, str, bool]]:
@@ -542,7 +546,7 @@ def opciones(bloque: str) -> list[tuple[str, str, bool]]:
         m = re.search(r"^Options:\s*(.*)$", bloque, re.M)
         if m:
             ops = [(l, txt, bool(_RECOMENDADA.search(txt))) for l, txt in _OP_CORCHETE.findall(m.group(1).strip())]
-    return [(l, _RECOMENDADA.sub("", txt).strip(), rec) for l, txt, rec in ops]
+    return [(l, _RECOMENDADA_DENTRO.sub("(", _RECOMENDADA_SOLA.sub("", txt)).strip(), rec) for l, txt, rec in ops]
 
 
 def opciones_json(bloque: str) -> dict:
