@@ -5,6 +5,7 @@
 #   · caffeinate mientras dura (el Mac no se duerme a mitad de etapa; en Linux/WSL no existe y se salta)
 #   · entorno limpio: Claude no hereda tokens del bot ni claves de proveedor de Hermes
 #   · cuota de la suscripción agotada → outcome "scheduled" con la hora de reinicio, no un fallo
+#   · Claude sin sesión (error de autenticación) → "scheduled", se reintenta cada 15 min hasta que alguien haga /login
 #   · cada ejecución en su propio fichero .sdd/hermes/runs/<run>.json (nunca se sobrescribe)
 #
 #   executors/claude.sh <repo> <nombre> <prompt> [modelo]
@@ -22,7 +23,7 @@ salir() {  # salir <outcome> <reason> [extra-json]
   if [ "$1" = scheduled ]; then   # cuota agotada: todos los proyectos esperan hasta el reinicio (o 1 h si no se sabe)
     local r; r=$(echo "$x" | jq -r '.reset_at // empty'); [ -n "$r" ] || r=$(( $(date +%s) + 3600 ))
     mkdir -p "${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}"
-    jq -n --arg r "$r" '{reset_at: ($r|tonumber)}' > "${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}/cuota.json"
+    jq -n --arg r "$r" --arg m "$(echo "$x" | jq -r '.motivo // "cuota"')" '{reset_at: ($r|tonumber), motivo: $m}' > "${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}/cuota.json"
   fi
   jq -nc --arg o "$1" --arg r "$2" --arg run "$RUN" --argjson x "$x" '{outcome:$o, reason:$r, run:$run} + $x'
   exit 0
@@ -90,11 +91,16 @@ wait "$CPID"; RC=$?; CPID=""
 MIN=$(( ($(date +%s) - INICIO) / 60 ))
 
 # ── Clasificar el resultado ───────────────────────────────────────────────────────────────────────────────────────
+# Sin sesión: no es un fallo de la etapa (sala, 13/11/2026: «Failed to authenticate. API Error: 403 … Cloudflare» gastó
+# el único reintento del encargado). Se aparca y se reintenta cada 15 min.
+SESION='failed to authenticate|authentication_error|invalid api key|please run /login|oauth token (has )?expired|not logged in'
+sin_sesion() { salir scheduled "Claude sin sesión: entra con /login" "$(echo "$1" | jq -c --arg r "$(( $(date +%s) + 900 ))" '. + {reset_at:$r, motivo:"sesion"}')"; }
 if ! jq -e . "$OUT" >/dev/null 2>&1; then
   if grep -qiE "usage limit|rate limit|limit reached|resets? at" "$ERR" "$OUT" 2>/dev/null; then
     RESET=$(grep -oE '\|[0-9]{10}' "$OUT" "$ERR" 2>/dev/null | head -1 | tr -d '|' || true)
     salir scheduled "cuota de Claude agotada" "$(jq -nc --arg r "${RESET:-}" '{reset_at:$r}')"
   fi
+  grep -qiE "$SESION" "$ERR" "$OUT" 2>/dev/null && sin_sesion '{}'
   salir failed "Claude Code no devolvió JSON (rc=$RC): $(tail -c 300 "$ERR" | tr '\n' ' ')"
 fi
 TEXTO=$(jq -r '.result // ""' "$OUT")
@@ -105,6 +111,7 @@ if [ "$(jq -r .is_error "$OUT")" = true ] || [ "$RC" -ne 0 ]; then
     RESET=$(echo "$TEXTO" | grep -oE '\|[0-9]{10}' | head -1 | tr -d '|' || true)
     salir scheduled "cuota de Claude agotada" "$(echo "$EXTRA" | jq -c --arg r "${RESET:-}" '. + {reset_at:$r}')"
   fi
+  echo "$TEXTO" | grep -qiE "$SESION" && sin_sesion "$EXTRA"
   salir failed "la etapa terminó con error: $(echo "$TEXTO" | tail -c 300 | tr '\n' ' ')" "$EXTRA"
 fi
 salir done "ok" "$EXTRA"

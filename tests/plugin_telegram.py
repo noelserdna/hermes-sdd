@@ -147,7 +147,17 @@ async def jev():
     ok(j1["estado"] == "abierta" and j1.get("jev_vetado", {}).get("por") == "andres", "tú deshaces a Jev desde Telegram y la puerta vuelve a ti")
     (HOME / "jev.json").write_text(json.dumps({"defecto": "humano"}))
 
+async def superada():
+    # una puerta superada (un cambio la sustituyó o se reabrió) se queda sin botones en Telegram
+    p = {"id": "s_1", "tipo": "requisitos", "titulo": "Requisitos", "tablero": "demo", "estado": "superada",
+         "superada_por": "reapertura: texto de la puerta corregido", "texto": "x", "opciones": [],
+         "telegram": [{"chat": 111, "msg": 5}], "tg_vista": "abierta|1||{}"}
+    (HOME / "puertas/s_1.json").write_text(json.dumps(p))
+    bot = Bot(); await m._sincronizar(bot, p)
+    ok(len(bot.editados) == 1 and bot.editados[0][1] is None and "ya no vale: texto de la puerta corregido" in bot.editados[0][0],
+       f"una puerta superada se edita sin botones y dice por qué ({bot.editados})")
+
 async def todo():
-    await main(); await formulario_y_operacion(); await jev()
+    await main(); await formulario_y_operacion(); await jev(); await superada()
 
 asyncio.run(todo()); sys.exit(1 if fallos else 0)

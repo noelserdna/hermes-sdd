@@ -219,5 +219,12 @@ sed -i.bak 's/sin versión fija/la versión mayor no queda fijada/' requirements
 o=$($TX puerta requisitos "$C" --proyecto sala --version 1.1 --cambio INT-002 | jq -r .texto)
 echo "$o" | grep -q '^✏️ Antelación: cómo se comprueba pasa a «la versión mayor no queda fijada»$' && ! echo "$o" | grep -q 'changes/' \
   && ok "cambio que solo toca la verificación: la puerta lo dice (no «el detalle está en changes/»)" || bad "verificación: $o"
+# … si lo pidió un mantenimiento en curso, lo dice así y no promete replanificar
+printf '# INT-003\n\n> Mantenimiento detectado el 2026-11-13 por la revisión periódica: sube vite\n' > intent/INT-003.md
+mkdir -p .sdd/hermes/mantenimiento; echo x > .sdd/hermes/mantenimiento/en-curso.txt
+o=$($TX puerta requisitos "$C" --proyecto sala --version 1.1 --cambio INT-003 | jq -r .texto)
+echo "$o" | grep -q '^✏️ Cambio que pide el mantenimiento de «sala»:' && echo "$o" | grep -q 'el mantenimiento sigue con esta versión' && ! echo "$o" | grep -q 'pediste' \
+  && ok "cambio de un mantenimiento: dice de dónde viene y qué pasa al aprobar" || bad "origen: $o"
+rm -rf .sdd/hermes/mantenimiento
 cd "$R"
 exit $fail

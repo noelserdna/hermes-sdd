@@ -160,6 +160,10 @@ def _cabecera(puerta: dict) -> str:
 def _render(puerta: dict):
     """Texto y botones que corresponden al estado de la puerta, venga el cambio del canal que venga."""
     from telegram import InlineKeyboardButton as B, InlineKeyboardMarkup as M
+    if puerta.get("estado") == "superada":   # otra puerta la sustituye (un cambio, una reapertura): sin botones
+        por = puerta.get("superada_por") or ""
+        motivo = por.split(":", 1)[1].strip() if por.startswith("reapertura:") else "la sustituye una puerta más reciente"
+        return (f"{_cabecera(puerta)}\n⏭ Esta puerta ya no vale: {motivo}. Decide en la nueva.", None)
     if puerta.get("estado") == "decidida":
         dec = puerta.get("decision") or {}
         verbo, texto = dec.get("verbo", ""), dec.get("texto", "")
@@ -208,7 +212,7 @@ async def _editar(bot, puerta: dict, texto: str, teclado=None) -> None:
 
 async def _sincronizar(bot, puerta: dict) -> None:
     """Pone el mensaje de Telegram al día con la puerta (decidida o deshecha aquí o en otro canal)."""
-    if not puerta.get("telegram") or puerta.get("estado") not in ("abierta", "decidida"):
+    if not puerta.get("telegram") or puerta.get("estado") not in ("abierta", "decidida", "superada"):
         return
     clave = N.clave_vista(puerta)
     if puerta.get("tg_vista") == clave:
@@ -529,6 +533,21 @@ async def _jev_en_puerta(idx: Path, p: dict) -> dict:
     return p
 
 
+async def _limpiar_tableros() -> None:
+    """Archiva las tarjetas de etapa ya resueltas (lanzar.sh limpiar). Lo hace el gateway: desde una etapa no se puede,
+    porque Hermes no deja que los procesos de un worker modifiquen el tablero (las tarjetas viejas se quedaban)."""
+    for b, repo in (await _proyectos()).items():
+        try:
+            proc = await asyncio.create_subprocess_exec("bash", str(_root() / "lanzar.sh"), "limpiar", repo,
+                                                        stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.DEVNULL,
+                                                        env={**os.environ, "PATH": PATH_CMDS})
+            out, _ = await asyncio.wait_for(proc.communicate(), 120)
+            if out.strip():
+                log.info("hermes-sdd: %s: %s", b, out.decode("utf-8", errors="replace").strip().replace("\n", " · "))
+        except Exception as e:
+            log.warning("hermes-sdd: no se pudo limpiar %s: %s", b, e)
+
+
 async def _vuelta(ciclo: int) -> None:
     bot = _RT["app"].bot   # la app puede reconstruirse tras un fallo de conexión: siempre la actual
     for idx in sorted((HOME / "puertas").glob("*.json")):
@@ -564,6 +583,7 @@ async def _vuelta(ciclo: int) -> None:
     if ciclo % 6 == 0:
         await asyncio.wait_for(_avisar_lecciones(bot), 60)
     if ciclo % 12 == 0:
+        await asyncio.wait_for(_limpiar_tableros(), 300)
         await asyncio.wait_for(_avisar_fallos(bot), 180)
         await asyncio.wait_for(_vigia(bot), 180)
 
@@ -661,7 +681,9 @@ async def _estado_texto(filtro: str = "") -> str:
     cuota = _leer(HOME / "cuota.json")
     pie = "💓 Todo conectado" if lat.get("ts") else "⚠️ El gateway no da señales: no se registrarán decisiones hasta que vuelva"
     if cuota:
-        pie += f"\n⛔ Se ha agotado la cuota de Claude: se sigue a las {datetime.fromtimestamp(cuota['reset_at']).strftime('%H:%M')}"
+        hora = datetime.fromtimestamp(cuota['reset_at']).strftime('%H:%M')
+        pie += (f"\n⛔ Claude no tiene sesión (entra con /login en Claude Code): se reintenta a las {hora}"
+                if cuota.get("motivo") == "sesion" else f"\n⛔ Se ha agotado la cuota de Claude: se sigue a las {hora}")
     return "\n\n".join(partes) + "\n\n" + pie
 
 
@@ -714,6 +736,16 @@ async def _reanudar_aparcadas(boards) -> int:
 async def _vigia(bot) -> None:
     """Cada minuto: cuota que ya se reinició, mensaje vivo por proyecto y resúmenes programados."""
     cuota = _leer(HOME / "cuota.json")
+    if cuota and cuota.get("motivo") == "sesion" and not cuota.get("avisado"):   # un aviso, no uno por reintento
+        for chat in _chats():
+            try:
+                await bot.send_message(chat_id=int(chat), text=(
+                    "⛔ Claude no tiene sesión: las etapas están aparcadas y se reintentan cada 15 min.\n"
+                    "Entra con /login en Claude Code (en esta máquina) y siguen solas."))
+            except Exception as e:
+                log.warning("hermes-sdd: aviso de sesión: %s", e)
+        cuota["avisado"] = True
+        _escribir(HOME / "cuota.json", cuota)
     if cuota and time.time() >= cuota.get("reset_at", 0):
         (HOME / "cuota.json").unlink(missing_ok=True)
         proys = await _proyectos()

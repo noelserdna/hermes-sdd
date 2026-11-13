@@ -23,6 +23,17 @@ jq '.ejecutor="claude"' "$R/.sdd/hermes/hermes-sdd.json" > "$T/c" && cp "$T/c" "
 o=$(outcome plan); [ "$(echo "$o" | jq -r .outcome)" = scheduled ] && [ -n "$(echo "$o" | jq -r .reset_at)" ] && ok "cuota agotada → se aparca con la hora de reinicio" || bad "cuota: $o"
 jq '.ejecutor="replay"' "$R/.sdd/hermes/hermes-sdd.json" > "$T/c" && cp "$T/c" "$R/.sdd/hermes/hermes-sdd.json"
 rm "$HERMES_SDD_HOME/cuota.json"
+# Claude sin sesión (error de autenticación): se aparca 15 min y queda anotado como «sesion», no es un fallo de la etapa
+FB=$(mktemp -d); cat > "$FB/claude" <<'C'
+#!/usr/bin/env bash
+echo '{"type":"result","is_error":true,"result":"Failed to authenticate. API Error: 403 Attention Required! | Cloudflare","total_cost_usd":0,"num_turns":0}'
+exit 1
+C
+chmod +x "$FB/claude"; SB=$(mktemp -d); git -C "$SB" init -q
+o=$(CLAUDE_BIN="$FB/claude" bash "$ROOT/executors/claude.sh" "$SB" prueba "hola" 2>/dev/null | tail -1)
+[ "$(echo "$o" | jq -r .outcome)" = scheduled ] && [ "$(jq -r .motivo "$HERMES_SDD_HOME/cuota.json")" = sesion ] \
+  && ok "Claude sin sesión → se aparca (no gasta el reintento) y queda anotado para avisar de /login" || bad "sin sesión: $o"
+rm -rf "$FB" "$SB" "$HERMES_SDD_HOME/cuota.json"
 
 # Llegar a la FASE-0 aceptada y anularla
 paso() { local o p; o=$(outcome "$@" | tail -1); p=$(echo "$o" | jq -r '.puerta // empty'); [ -n "$p" ] && bash "$ROOT/decidir.sh" "$p" "${V:-acepto}" >/dev/null; }

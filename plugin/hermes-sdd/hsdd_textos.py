@@ -204,7 +204,12 @@ def puerta_requisitos(repo: Path, proyecto: str, version: str = "", cambio: dict
                       "Corrige lo que no sea como lo quieres: lo que apruebes será el punto de partida.")
     elif cambio:
         titulo = f"Requisitos (cambio {cambio['id']})"
-        partes.append(f"✏️ Cambio que pediste para «{proyecto}»:\n«{_corta(cambio['peticion'], 400)}»")
+        pet = cambio["peticion"]
+        # De dónde viene: el mantenimiento, unas respuestas elegidas en otra puerta o la persona (/cambio)
+        origen = ("Cambio que pide el mantenimiento de" if pet.startswith("Mantenimiento detectado")
+                  else "Cambio que piden las respuestas de una puerta de" if "eligió respuestas que piden cambiar los requisitos" in pet
+                  else "Cambio que pediste para")
+        partes.append(f"✏️ {origen} «{proyecto}»:\n«{_corta(pet, 400)}»")
         nuevos = [r for r in reqs if r["id"] in cambio.get("anadidos", [])]
         quitados = cambio.get("quitados", [])
         if nuevos or quitados:
@@ -214,7 +219,13 @@ def puerta_requisitos(repo: Path, proyecto: str, version: str = "", cambio: dict
             aj = _ajustes(repo)
             partes.append(f"Qué cambia{v}: los mismos requisitos, con ajustes" +
                           (":\n" + "\n".join(aj) if aj else " (el detalle está en changes/)."))
-        partes.append("Si lo apruebas, solo se replanifica lo nuevo: las fases ya aceptadas no se tocan.")
+        if (repo / ".sdd" / "hermes" / "mantenimiento" / "en-curso.txt").exists():
+            partes.append("Si lo apruebas, el mantenimiento sigue con esta versión (no se replanifica nada).")
+        elif nuevos or quitados:
+            partes.append("Si lo apruebas, solo se replanifica lo nuevo: las fases ya aceptadas no se tocan.")
+        else:
+            partes.append("Si lo apruebas, se ajusta lo afectado: una fase aún sin aceptar se rehace con los criterios "
+                          "nuevos; si ya estaba aceptada, se revisa el plan. Las fases aceptadas no se tocan.")
         return {"titulo": titulo, "texto": "\n\n".join(partes) + _cierre_requisitos(extras)}
     else:
         titulo = "Requisitos"
@@ -502,7 +513,8 @@ def opciones_json(bloque: str) -> dict:
 # Una opción que pide cambiar los requisitos: la marca explícita del método «(req-change)» o, en preguntas escritas
 # sin ella, un verbo de cambio junto a REQ/requisito/criterio («Añadir cuatro REQ con sdd-req-change», «enmendar el
 # criterio…»). Elegirla y aprobar la puerta lanza un cambio (/cambio): nada cambia sin su propia puerta de requisitos.
-_MARCA_CAMBIO = re.compile(r"\s*\(req-change\)", re.I)
+# «(req-change)» sola, o al principio de un paréntesis más largo: «(req-change; contradice AC1…)»
+_MARCA_CAMBIO = re.compile(r"\s*\(req-change\)|(?<=\()req-change[;,:]\s*", re.I)
 _PIDE_CAMBIO = re.compile(
     r"sdd-req-change|\b(?:enmendar|añadir|agregar|modificar|cambiar|quitar|eliminar|deprecar|incorporar|amend|add|modify"
     r"|change|remove|deprecate)\b[^.;]{0,50}?\b(?:REQ|requisitos?|criterios?|requirements?|criteri(?:on|a))\b", re.I)
