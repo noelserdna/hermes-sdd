@@ -288,7 +288,10 @@ async def _on_boton(update, context) -> None:
     if opcion.get("texto"):
         from telegram import ForceReply
         await q.answer()
-        if verbo == "descarto":
+        if verbo == "corrijo":
+            pide, hueco = ("✏️ Corregir el requisito: responde a este mensaje con cómo tiene que quedar el criterio. Se lanza "
+                           "un cambio de requisitos (te llegará su puerta) y la fase se rehace con el criterio bueno."), "El criterio tiene que decir…"
+        elif verbo == "descarto":
             pide, hueco = ("🗑 Descartar: responde a este mensaje con el número de la impugnación que no es un fallo "
                            "(p. ej. CH-005) y por qué. Queda registrado a tu nombre y la puerta vuelve sin ella."), "CH-… porque…"
         elif verbo == "eximo":

@@ -406,6 +406,10 @@ CATEGORIAS = {"WEAKENED-ASSERT": "el test comprueba menos de lo que pide el crit
               "WRONG-CAPTURE": "la captura no enseña lo que dice el criterio"}
 
 
+CORREGIR = ("✏️ Si una duda es del propio criterio (está mal escrito o contradice otro), pulsa ✏️ Corregir el requisito "
+            "y di cómo tiene que quedar: se lanza un cambio de requisitos y la fase se rehace con el criterio bueno.")
+
+
 def _bloque_impugnaciones(repo: Path, imp: list | None) -> list[str]:
     """Lo que encontró la revisión independiente y sigue abierto (gate 4): cada una con su número, para descartarla."""
     if not imp:
@@ -413,7 +417,8 @@ def _bloque_impugnaciones(repo: Path, imp: list | None) -> list[str]:
     nombres = {r["id"]: r["titulo"] or _texto_req(r) for r in requisitos(repo)}
     lineas = [f"• {c['id']} · {nombres.get(c.get('req'), c.get('req'))} (criterio {c.get('ac')}): "
               f"{CATEGORIAS.get(c.get('category'), c.get('category', ''))} — «{_corta(c.get('quote') or '', 140)}»" for c in imp]
-    return ["🔎 La revisión independiente encontró cosas que los tests no prueban:\n" + "\n".join(lineas)]
+    return (["🔎 La revisión independiente encontró cosas que los tests no prueban:\n" + "\n".join(lineas)]
+            + ([CORREGIR] if any(c.get("category") == "SPEC-QUESTION" for c in imp) else []))
 
 
 def puerta_fase(repo: Path, proyecto: str, fase: str, gate_md: str, rc: int, tests_editados: int,

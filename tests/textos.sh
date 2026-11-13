@@ -168,6 +168,11 @@ o=$($TX puerta fase "$R" --proyecto bar --fase 0 --rc 4 --impugnaciones "$T/imp.
 echo "$o" | grep -q 'la revisión independiente ha encontrado algo que no prueban' && echo "$o" | grep -q '• CH-005 · .*(criterio 3): la captura no enseña lo que dice el criterio' \
   && echo "$o" | grep -q '🗑 Descartar las que no sean un fallo' && ! echo "$o" | grep -q '🟡' && ! echo "$o" | grep -q 'fallan o sin comprobar' \
   && ok "puerta con impugnaciones: las enseña, ofrece 🗑 descartar y no promete 🟡" || bad "impugnaciones: $o"
+echo '[{"id":"CH-017","req":"REQ-F-001","ac":5,"category":"SPEC-QUESTION","quote":"el 2027-01-03 sigue Moroso"}]' > "$T/imp2.json"
+o=$($TX puerta fase "$R" --proyecto bar --fase 2 --rc 4 --impugnaciones "$T/imp2.json" | jq -r .texto)
+echo "$o" | grep -q 'es una duda sobre el propio criterio' && echo "$o" | grep -q '✏️ Corregir el requisito' \
+  && ! ($TX puerta fase "$R" --proyecto bar --fase 0 --rc 4 --impugnaciones "$T/imp.json" | jq -r .texto | grep -q 'Corregir el requisito') \
+  && ok "con una duda del criterio ofrece ✏️ Corregir el requisito (y solo entonces)" || bad "corregir: $o"
 # ── la puerta entera con puerta.sh (texto y datos para Jev) ──────────────────────────────────────────────────────
 git init -q -b main && git config user.email t@t && git config user.name t && git config commit.gpgsign false && git add -A && git commit -qm x
 g=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" requisitos)

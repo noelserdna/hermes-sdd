@@ -44,7 +44,10 @@ hay_rev() { jq -e '(.revisar // []) | length > 0' "$REV_JSON" >/dev/null; }
 IMP_JSON=$(mktemp); echo '[]' > "$IMP_JSON"
 impugnaciones() { { node "$SDD" accept challenge list --open "$@" --json 2>/dev/null || echo '{}'; } |
   jq -c '[.challenges[]? | select(.state == "open") | {id, req, ac, category, quote}]' > "$IMP_JSON" 2>/dev/null || echo '[]' > "$IMP_JSON"; }
-DESCARTO='{"verbo":"descarto","etiqueta":"🗑 Descartar una impugnación","texto":true}' 
+DESCARTO='{"verbo":"descarto","etiqueta":"🗑 Descartar una impugnación","texto":true}'
+# Una duda sobre el propio criterio (SPEC-QUESTION) se resuelve corrigiendo el requisito: lanza un cambio con ella
+CORRIJO='{"verbo":"corrijo","etiqueta":"✏️ Corregir el requisito","texto":true}'
+con_duda() { jq -e 'any(.[]; .category == "SPEC-QUESTION")' "$IMP_JSON" >/dev/null 2>&1; }
 solo_rev() { jq -e '.solo == true' "$REV_JSON" >/dev/null; }
 REVISADO='{"verbo":"revisado","etiqueta":"🔍 Lo he revisado y acepto"}'
 # Con imprescindibles sin cumplir: rechazar, o eximirlos con un motivo (🟡). Solo una persona: el notario lo registra como
@@ -96,7 +99,8 @@ case "$TIPO" in
         OPCIONES=$(jq -nc --argjson r "$REVISADO" '[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1}, ($r + {paso:2}), {"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]')
       else BLOQUEO=true
         X=$EXIMO; [ "$rc" = 4 ] && X=$DESCARTO   # impugnación abierta: se arregla (rechazar) o una persona la descarta
-        OPCIONES=$(jq -nc --argjson x "$X" '[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1}] + (if $x then [$x + {paso:2}] else [] end) + [{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'); fi
+        C=null; [ "$rc" = 4 ] && con_duda && C=$CORRIJO
+        OPCIONES=$(jq -nc --argjson x "$X" --argjson c "$C" '[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1}] + (if $c then [$c + {paso:2}] else [] end) + (if $x then [$x + {paso:2}] else [] end) + [{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'); fi
     elif hay_rev; then OPCIONES=$(echo "$OPCIONES" | jq -c --argjson r "$REVISADO" '.[0:1] + [$r + {paso:2}] + .[1:]'); fi ;;
   entrega)
     node "$SDD" gate --md > "$GATE_MD" 2>/dev/null || rc=$?
@@ -121,7 +125,8 @@ case "$TIPO" in
         OPCIONES=$(echo "$OPCIONES" | jq -c --argjson r "$REVISADO" "[.[] | select(.verbo == \"ver\")] + [\$r + $PASO] + [.[] | select(.verbo == \"rechazo\")]")
       else BLOQUEO=true
         X=$EXIMO; [ "$rc" = 4 ] && X=$DESCARTO
-        OPCIONES=$(echo "$OPCIONES" | jq -c --argjson x "$X" "[.[] | select(.verbo == \"ver\")] + [\$x + $PASO] + [.[] | select(.verbo == \"rechazo\")]"); fi
+        C=null; [ "$rc" = 4 ] && con_duda && C=$CORRIJO
+        OPCIONES=$(echo "$OPCIONES" | jq -c --argjson x "$X" --argjson c "$C" "[.[] | select(.verbo == \"ver\")] + (if \$c then [\$c + $PASO] else [] end) + [\$x + $PASO] + [.[] | select(.verbo == \"rechazo\")]"); fi
     elif hay_rev; then
       OPCIONES=$(echo "$OPCIONES" | jq -c --argjson r "$REVISADO" "[.[] | select(.verbo == \"ver\")] + [\$r + $PASO] + [.[] | select(.verbo != \"ver\")]"); fi ;;
   preguntas)       # lo abre etapa.sh implementar cuando la FASE se para en preguntas [OPEN]

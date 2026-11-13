@@ -50,6 +50,12 @@ if [ "$VERBO" = revisado ]; then
   [ "$CANAL" != jev ] || { echo "NOTARIO: rechazado — una inspección la confirma una persona, no Jev" >&2; exit 1; }
   REVISADO=true; VERBO=acepto
 fi
+# «✏️ Corregir el requisito»: la duda de la revisión es del propio criterio; se lanza un cambio de requisitos con lo
+# que pide la persona y las dudas abiertas (al aprobarse, la FASE se rehace con el criterio bueno)
+if [ "$VERBO" = corrijo ]; then
+  { [ "$TIPO" = fase ] || [ "$TIPO" = entrega ]; } || { echo "NOTARIO: rechazado — 'corrijo' no vale para una puerta de tipo '$TIPO'" >&2; exit 1; }
+  [ "$CANAL" != jev ] || { echo "NOTARIO: rechazado — corregir un requisito lo decide una persona, no Jev" >&2; exit 1; }
+fi
 # «🗑 Descartar una impugnación»: la persona dice que un hallazgo de la revisión independiente no es un fallo (nombra
 # CH-NNN y por qué). Se registra como challenge-dismissal a su nombre y la puerta se vuelve a abrir sin él.
 if [ "$VERBO" = descarto ]; then
@@ -118,11 +124,25 @@ if ! hecho validado; then
     requisitos:acepto|requisitos:cambios|ruta:acepto|ruta:completo|ruta:rechazo|plan:conforme|plan:cambios) ;;
     ruta:ruta-*) jq -e --arg v "$VERBO" 'any(.opciones[]; .verbo == $v)' "$PUERTA" >/dev/null || fallo "la puerta no ofrecía la ruta $VERBO" ;;
     fase:acepto|fase:observaciones|fase:rechazo|entrega:acepto|entrega:observaciones|entrega:rechazo) ;;
-    fase:descarto|entrega:descarto) jq -e 'any(.opciones[]; .verbo == "descarto")' "$PUERTA" >/dev/null || fallo "la puerta no ofrecía 🗑 Descartar" ;;
+    fase:corrijo|entrega:corrijo)
+    if ! hecho registrado; then
+      node "$SDD" journal add --stage acceptance --kind decision --text "$NOMBRE pide corregir el requisito: $TEXTO" --by "$NOMBRE ($ROL)" >/dev/null
+      mkdir -p .sdd/hermes
+      { echo "En la puerta «$(p .titulo)», $NOMBRE ($ROL) pide corregir el requisito: $TEXTO"; echo
+        node "$SDD" accept challenge list --open ${FASE:+--fase "$FASE"} --json 2>/dev/null | jq -r '[.challenges[]? | select(.state == "open" and .category == "SPEC-QUESTION")
+          | "- \(.id) \(.req) AC\(.ac): «\(.quote)»"] | if length > 0 then "Dudas de la revisión independiente sobre el criterio:", .[] else empty end' 2>/dev/null || true
+      } > ".sdd/hermes/cambio-por-respuestas-$GATE.txt"
+      marcar registrado
+    fi
+    if ! hecho commit; then commit_si_hay "docs(status): requirement correction requested by $NOMBRE" status/; marcar commit; fi
+    RESULTADO="corrijo"; RESUMEN="$NOMBRE ($ROL) pide corregir el requisito: $TEXTO" ;;
+
+  fase:descarto|entrega:descarto) jq -e 'any(.opciones[]; .verbo == "descarto")' "$PUERTA" >/dev/null || fallo "la puerta no ofrecía 🗑 Descartar" ;;
+    fase:corrijo|entrega:corrijo) jq -e 'any(.opciones[]; .verbo == "corrijo")' "$PUERTA" >/dev/null || fallo "la puerta no ofrecía ✏️ Corregir el requisito" ;;
     mantenimiento:cambio|mantenimiento:ignoro|preguntas:respondo) ;;
     *) fallo "verbo '$VERBO' no vale para una puerta de tipo '$TIPO'" ;;
   esac
-  case "$VERBO" in cambios|observaciones|rechazo|ignoro) [ -n "$TEXTO" ] || fallo "'$VERBO' necesita un texto" ;; esac
+  case "$VERBO" in cambios|observaciones|rechazo|ignoro|corrijo|descarto) [ -n "$TEXTO" ] || fallo "'$VERBO' necesita un texto" ;; esac
   # 1b. inspecciones confirmadas en la puerta (idempotente: una por requisito y puerta)
   if [ "$REVISADO" = true ]; then
     for r in $(jq -r '.revisar[]?.id' "$PUERTA"); do
@@ -178,7 +198,7 @@ if ! hecho validado; then
       --trailer "Refs: $(grep -F "| $GATE |" "$PEND" | awk -F'|' '{print $3}' | awk '{print $1}' | paste -sd, - | sed 's/,/, /g')" --trailer "Gate-Id: $GATE"
   fi
   # Aceptar una FASE exige la puerta de calidad cumplida (0) o cumplida con exenciones (3); rechazar, no
-  if { [ "$TIPO" = fase ] || [ "$TIPO" = entrega ]; } && [ "$VERBO" != rechazo ] && [ "$VERBO" != descarto ]; then
+  if { [ "$TIPO" = fase ] || [ "$TIPO" = entrega ]; } && [ "$VERBO" != rechazo ] && [ "$VERBO" != descarto ] && [ "$VERBO" != corrijo ]; then
     rc=0
     if [ "$TIPO" = fase ]; then node "$SDD" gate --fase "$FASE" >/dev/null 2>&1 || rc=$?
     else node "$SDD" gate >/dev/null 2>&1 || rc=$?; fi
@@ -588,10 +608,12 @@ if ! hecho encadenado; then
   if [ -s "$PC" ] && [ -n "$BOARD" ] && [ -x "$ROOT/lanzar.sh" ]; then
     # Primero el cambio de requisitos que pidieron las respuestas: cuando se apruebe, lanzar.sh sigue desde ahí (rehace
     # la FASE en curso o vuelve a planificar con los requisitos nuevos), así que el tramo siguiente no se lanza ahora
-    { echo "En la puerta «$(p .titulo)», $NOMBRE ($ROL) eligió respuestas que piden cambiar los requisitos:"; echo; cat "$PC"; } > "$PC.peticion"
+    if [ "$VERBO" = corrijo ]; then cp "$PC" "$PC.peticion"   # ya dice quién pide qué
+    else { echo "En la puerta «$(p .titulo)», $NOMBRE ($ROL) eligió respuestas que piden cambiar los requisitos:"; echo; cat "$PC"; } > "$PC.peticion"; fi
     "$ROOT/lanzar.sh" cambio "$REPO" "$(cat "$PC.peticion")" >/dev/null
     rm -f "$PC.peticion"
-    RESUMEN="$RESUMEN · lanza un cambio de requisitos por las respuestas ($(grep -c '^Respuesta elegida:' "$PC"))"
+    if [ "$VERBO" = corrijo ]; then RESUMEN="$RESUMEN · lanza un cambio de requisitos"
+    else RESUMEN="$RESUMEN · lanza un cambio de requisitos por las respuestas ($(grep -c '^Respuesta elegida:' "$PC" || true))"; fi
   elif [ -s ".sdd/hermes/respuestas-por-aplicar-$GATE.txt" ] && [ -n "$BOARD" ] && [ -x "$ROOT/lanzar.sh" ]; then
     "$ROOT/lanzar.sh" respuestas "$REPO" "$GATE" "$RESULTADO" >/dev/null
     RESUMEN="$RESUMEN · aplica las respuestas elegidas ($(grep -c '^Respuesta elegida:' ".sdd/hermes/respuestas-por-aplicar-$GATE.txt"))"
