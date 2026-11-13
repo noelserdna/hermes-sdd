@@ -269,6 +269,14 @@ case "$ETAPA" in
     P=$(puerta plan) || falla "no se pudo abrir la puerta de plan"
     fin "$RES" "Tareas generadas: $(node "$SDD" tasks status 2>/dev/null | tail -1)" "$P" ;;
 
+  respuestas)   # lo que una persona eligió en una puerta y pide un ajuste (no de requisitos): aquí FASE es el id de la puerta
+    F=".sdd/hermes/respuestas-por-aplicar-$FASE.txt"
+    [ -s "$F" ] || fin '{"outcome":"done","reason":"ok (no quedan respuestas por aplicar)"}' "Sin respuestas por aplicar"
+    claude_etapa task-implementer "$ARNES A person answered these questions at a gate. Apply each chosen answer exactly: it is the person's decision, so it authorizes what it says (for example editing or removing an existing test, or editing the plan). Change only plan/, task/, tests/ and, if an answer requires it, code; never requirements/ or spec/. Keep every existing test passing (run them). One commit per answer, following the repository commit conventions. If an answer turns out to need nothing, change nothing for it. Answers: $(cat "$F")"
+    node "$SDD" lint --plan >/dev/null 2>&1 || falla "sdd lint --plan encuentra errores tras aplicar las respuestas: $(node "$SDD" lint --plan 2>&1 | grep -v ' warning: ' | tail -3 | tr '\n' ' ')"
+    mv "$F" "$F.aplicado"
+    fin "$RES" "Respuestas de la puerta $FASE aplicadas" ;;
+
   huecos)   # tareas [PLAN GAP] de la FASE cuyas preguntas ya se contestaron en una puerta (lanzar.sh la encadena)
     [ -n "$FASE" ] || falla "falta la FASE"
     HUECOS=$(grep -oE '^- \[ \] TASK-[A-Za-z0-9-]+ .*\[PLAN GAP\]' "task/TASK-FASE-$FASE.md" 2>/dev/null | awk '{print $4}' | tr '\n' ' ')

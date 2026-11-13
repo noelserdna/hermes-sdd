@@ -82,12 +82,22 @@ puerta g6v fase 0; exime g6v; decidir g6v eximo telegram 111 "sin vídeo"; firma
   && ! grep -q '"followUp"' acceptance/decisions.jsonl 2>/dev/null \
   && ok "si aun eximiendo falta algo (el vídeo de la demo), no deja nada registrado y solo cabe rechazar" || bad "sin vídeo: $out $(git status --short)"
 mkdir -p evidencias/FASE-0; head -c 2000 /dev/urandom > evidencias/FASE-0/FASE-0-demo.mp4
+cat > .sdd/questions-x.md <<'Q'
+## Q-x-020 [OPEN] skill=sdd-task-implementer
+Question: El test antiguo no lleva los literales
+Options:
+  A) Una persona lo ajusta o lo retira por duplicado (recommended)
+  B) Dejarlo como está
+Answer:
+Q
 puerta g6b fase 0; exime g6b; decidir g6b eximo telegram 111 "el login lo pruebo yo en la reunión"; firmar g6b
 P=acceptance/PENDIENTES.md
 [ $rc -eq 0 ] && echo "$out" | grep -q "FASE-0 aceptada" && echo "$out" | grep -q "con exenciones (REPO-1" \
   && grep -q '^| REPO-1 | REQ-' "$P" && grep -q "el login lo pruebo yo en la reunión" "$P" && grep -q "| g6b | abierto |" "$P" \
   && grep -q '"followUp":"REPO-1"' acceptance/decisions.jsonl && git tag -l | grep -q '^fase-0-accepted$' \
   && ok "eximir: waiver con su seguimiento, PENDIENTES.md y la FASE aceptada" || bad "eximir: $out $(cat "$P" 2>/dev/null | tail -3)"
+grep -q "Respuesta elegida: A) Una persona lo ajusta" .sdd/hermes/respuestas-por-aplicar-g6b.txt 2>/dev/null \
+  && ok "aceptar una FASE con una respuesta que pide un ajuste: queda apartada para aplicarla" || bad "respuestas por aplicar: $(cat .sdd/hermes/respuestas-por-aplicar-g6b.txt 2>&1)"
 n=$(grep -c '^| REPO-' "$P"); firmar g6b
 [ $rc -eq 0 ] && [ "$(grep -c '^| REPO-' "$P")" = "$n" ] && ok "repetir la firma no duplica exenciones" || bad "duplica: $out"
 # 7. verbo inválido y texto obligatorio
@@ -191,6 +201,11 @@ decidir g8f respondo telegram 111; PATH="$T/bin:$PATH" firmar g8f
 I=$(ls -t intent/INT-*.md | head -1)
 [ $rc -eq 0 ] && grep -q "haya-027" "$I" && grep -q "Cambio INT-" "$T/klog" && ! grep -q "Implementar FASE-5" "$T/klog" \
   && ok "preguntas de una FASE: una respuesta (req-change) lanza el cambio, no la FASE" || bad "preguntas req-change: $out $(cat "$T/klog")"
+# 8g. lanzar.sh respuestas: primero la tarjeta que aplica las respuestas; el tramo siguiente cuelga de ella
+: > "$T/klog"; puerta g8g fase 0; t=$(mktemp); jq '.titulo = "Aceptar FASE-0"' .sdd/hermes/puertas/g8g.json > "$t" && mv "$t" .sdd/hermes/puertas/g8g.json
+PATH="$T/bin:$PATH" bash "$ROOT/lanzar.sh" respuestas "$R" g8g acepto >/dev/null 2>&1
+head -1 "$T/klog" | grep -q "create Aplicar respuestas (Aceptar FASE-0)" && [ "$(sed -n 2p "$T/klog" | grep -c -- '--parent t_9')" = 1 ] \
+  && ok "respuestas: se aplican antes y el tramo siguiente las espera" || bad "lanzar respuestas: $(cat "$T/klog")"
 # 9. el motivo de "cambios" en el plan queda en el diario
 puerta g9 plan; decidir g9 cambios telegram 111 "FASE-2 antes que FASE-1"; firmar g9
 grep -q "FASE-2 antes que FASE-1" status/journal.jsonl && ok "el motivo de cambios queda en el diario" || bad "diario: $out"

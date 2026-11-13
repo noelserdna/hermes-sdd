@@ -228,15 +228,19 @@ if ! hecho preguntas; then
   elif [ "$VERBO" = acepto ] || [ "$VERBO" = conforme ] || [ "$VERBO" = respondo ]; then MODO=recomendada; fi
   # Respuestas que piden cambiar los requisitos (p. ej. «Añadir cuatro REQ con sdd-req-change»): al aprobar un plan,
   # una FASE o la entrega, se apuntan aquí y el paso 3 lanza el cambio en vez del tramo siguiente
-  PIDEN=""
+  # … y, al aceptar una FASE o la entrega, las que piden otra cosa (ajustar un test, editar el plan): las aplica la
+  # etapa «respuestas» antes del tramo siguiente
+  PIDEN=""; ACCIONES=""
   case "$TIPO:$VERBO" in plan:conforme|preguntas:respondo|fase:acepto|fase:observaciones|entrega:acepto|entrega:observaciones)
     PIDEN=".sdd/hermes/cambio-por-respuestas-$GATE.txt" ;; esac
+  case "$TIPO:$VERBO" in fase:acepto|fase:observaciones|entrega:acepto|entrega:observaciones)
+    ACCIONES=".sdd/hermes/respuestas-por-aplicar-$GATE.txt" ;; esac
   if [ -n "$MODO" ]; then
-    python3 - "$ROOT/plugin/hermes-sdd/hsdd_textos.py" "$MODO" "$NOMBRE ($ROL)" "$HOY" "$TEXTO" "$PIDEN" .sdd/questions-*.md <<'PY'
+    python3 - "$ROOT/plugin/hermes-sdd/hsdd_textos.py" "$MODO" "$NOMBRE ($ROL)" "$HOY" "$TEXTO" "$PIDEN" "$ACCIONES" .sdd/questions-*.md <<'PY'
 import importlib.util, re, sys
 spec = importlib.util.spec_from_file_location("hsdd_textos", sys.argv[1]); X = importlib.util.module_from_spec(spec); spec.loader.exec_module(X)
-modo, quien, hoy, texto, piden, *ficheros = sys.argv[2:]
-peticiones = []
+modo, quien, hoy, texto, piden, acciones, *ficheros = sys.argv[2:]
+peticiones, por_aplicar = [], []
 elegidas = {int(n): l.upper() for n, l in re.findall(r"[Qq][A-Za-z]?\s*(\d+)\W{0,3}\s*([A-Ca-c])\b", texto)}
 n = 0
 for p in sorted(ficheros):
@@ -259,6 +263,10 @@ for p in sorted(ficheros):
             pet = X.peticion_cambio(b, letra)
             if pet:
                 peticiones.append(pet)
+        if acciones and letra != "?":
+            acc = X.accion_respuesta(b, letra)
+            if acc:
+                por_aplicar.append(acc)
         b = b.replace("[OPEN]", "[ANSWERED]", 1)
         linea = f"Answer: {letra} — {como} {quien} ({hoy})"
         if re.search(r"^Answer:[ \t]*$", b, re.M):   # [ \t]: no comerse los saltos de línea que separan preguntas
@@ -270,6 +278,9 @@ for p in sorted(ficheros):
 if peticiones:
     with open(piden, "w", encoding="utf-8") as f:
         f.write("\n\n".join(peticiones) + "\n")
+if por_aplicar:
+    with open(acciones, "w", encoding="utf-8") as f:
+        f.write("\n\n".join(por_aplicar) + "\n")
 PY
   fi
   marcar preguntas
@@ -538,6 +549,9 @@ if ! hecho encadenado; then
     "$ROOT/lanzar.sh" cambio "$REPO" "$(cat "$PC.peticion")" >/dev/null
     rm -f "$PC.peticion"
     RESUMEN="$RESUMEN · lanza un cambio de requisitos por las respuestas ($(grep -c '^Respuesta elegida:' "$PC"))"
+  elif [ -s ".sdd/hermes/respuestas-por-aplicar-$GATE.txt" ] && [ -n "$BOARD" ] && [ -x "$ROOT/lanzar.sh" ]; then
+    "$ROOT/lanzar.sh" respuestas "$REPO" "$GATE" "$RESULTADO" >/dev/null
+    RESUMEN="$RESUMEN · aplica las respuestas elegidas ($(grep -c '^Respuesta elegida:' ".sdd/hermes/respuestas-por-aplicar-$GATE.txt"))"
   else
     [ -n "$BOARD" ] && [ -x "$ROOT/lanzar.sh" ] && "$ROOT/lanzar.sh" siguiente "$REPO" "$GATE" "$RESULTADO" >/dev/null
   fi

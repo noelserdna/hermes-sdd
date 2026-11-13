@@ -139,7 +139,8 @@ cierre() {  # cierre [padre] [título]: (huecos entre especificación y código,
 tarjeta() {  # tarjeta <título> <padre|-> <runtime> <etapa> [fase] — imprime el id
   local args=("$1" --assignee sdd-estacion --workspace "dir:$REPO" --max-runtime "$3" --max-retries 1
               --body "Ejecuta: bash $ROOT/etapa.sh $REPO $4${5:+ $5}" --json)
-  [ "$2" = - ] || args+=(--parent "$2")
+  if [ "$2" != - ]; then args+=(--parent "$2")
+  elif [ -n "${RAIZ:-}" ]; then args+=(--parent "$RAIZ"); fi   # el tramo espera a una tarjeta previa (respuestas)
   "${K[@]}" create "${args[@]}" | jq -r .id
 }
 
@@ -228,6 +229,13 @@ case "$CMD" in
       mantenimiento:ignoro)           echo "Hallazgos ignorados; no se vuelve a preguntar mientras no cambien" ;;
       *) echo "Sin tramo siguiente para $TIPO:$RESULTADO" ;;
     esac ;;
+
+  respuestas)   # respuestas elegidas en una puerta que piden ajustar plan, tareas o tests: se aplican primero y el tramo
+                # siguiente de esa puerta espera a que terminen
+    GATE=$3; RESULTADO=$4
+    T=$(tarjeta "Aplicar respuestas ($(jq -r '.titulo // .tipo' "$REPO/.sdd/hermes/puertas/$GATE.json"))" - 60m respuestas "$GATE")
+    RAIZ="$T" bash "$0" siguiente "$REPO" "$GATE" "$RESULTADO" >/dev/null
+    echo "$T" ;;
 
   rehacer)      # la FASE N otra vez, con tarjetas NUEVAS: huecos (si quedan [PLAN GAP]) → implementar → aceptar
     N=$3; [ -f "$REPO/task/TASK-FASE-$N.md" ] || { echo "no existe task/TASK-FASE-$N.md" >&2; exit 2; }

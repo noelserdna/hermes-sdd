@@ -486,15 +486,32 @@ def pide_cambio(texto: str) -> bool:
     return bool(_PIDE_CAMBIO.search(texto)) and not _NEGACION.search(texto)
 
 
-def peticion_cambio(bloque: str, letra: str) -> str:
-    """Si la opción <letra> de la pregunta pide cambiar los requisitos, la petición para /cambio (si no, "")."""
+# Una opción que no pide hacer nada («Dejarlo como está», «Mantener…», «No…»)
+_SIN_ACCION = re.compile(r"^\s*(?:dejar|mantener|no\b|nada|sin cambios|aceptar(?:lo)? (?:tal|como)|keep|leave|do nothing)", re.I)
+
+
+def respuesta(bloque: str, letra: str) -> str:
+    """«Q-…: pregunta\nRespuesta elegida: L) texto» (sin la marca del método), o "" si la letra no es una opción."""
     txt = next((t for l, t, _ in opciones(bloque) if l == letra.upper()), "")
-    if not txt or not pide_cambio(txt):
+    if not txt:
         return ""
     q = re.search(r"^Question:\s*(.*)$", bloque, re.M)
     qid = bloque.split()[1] if len(bloque.split()) > 1 else "?"
     return (f"{qid}: {q.group(1).strip() if q else ''}\nRespuesta elegida: {letra.upper()}) "
             f"{_MARCA_CAMBIO.sub('', txt).strip()}")
+
+
+def peticion_cambio(bloque: str, letra: str) -> str:
+    """Si la opción <letra> de la pregunta pide cambiar los requisitos, la petición para /cambio (si no, "")."""
+    txt = next((t for l, t, _ in opciones(bloque) if l == letra.upper()), "")
+    return respuesta(bloque, letra) if txt and pide_cambio(txt) else ""
+
+
+def accion_respuesta(bloque: str, letra: str) -> str:
+    """Si la opción elegida pide hacer algo que no es cambiar requisitos (ajustar un test, editar el plan…), la
+    respuesta para la etapa que la aplica (si no, "")."""
+    txt = next((t for l, t, _ in opciones(bloque) if l == letra.upper()), "")
+    return respuesta(bloque, letra) if txt and not pide_cambio(txt) and not _SIN_ACCION.search(txt) else ""
 
 
 def preguntas(ficheros: list[Path]) -> str:
