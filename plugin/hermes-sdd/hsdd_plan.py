@@ -38,7 +38,7 @@ def _fases(repo: Path) -> dict:
         cab = f.read_text().split("\n## ", 1)[0]
         titulo = next((l.lstrip("# ").strip() for l in cab.splitlines() if l.startswith("# ")), f.stem)
         linea = next((l for l in cab.splitlines() if re.search(r"\b(Requisitos|Requirements)\b[*\s]*:", l, re.I)), "")
-        out[int(m.group(1))] = {"titulo": titulo, "requisitos": REQ.findall(linea)}
+        out[int(m.group(1))] = {"titulo": titulo, "requisitos": REQ.findall(linea), "texto": f.read_text()}
     return out
 
 
@@ -62,7 +62,9 @@ def dependencias(repo) -> list:
     for r, n in sorted(primera.items(), key=lambda x: (x[1], x[0])):
         if r not in reqs:
             continue
-        antes = " | ".join(t for m in fases if m <= n for t in titulos[m]).lower()
+        # lo que entregan esa FASE y las anteriores: títulos y también su texto (club, 13/11/2026: el plan adelantó una
+        # vista mínima de «Mis reservas» a la FASE-0 en el cuerpo, y solo mirar títulos daba un aviso grave falso)
+        antes = " | ".join([t for m in fases if m <= n for t in titulos[m]] + [fases[m]["texto"] for m in fases if m <= n]).lower()
         for i, c in enumerate(reqs[r]["criterios"], 1):
             for cita in _citas(c):
                 k = cita.lower()
