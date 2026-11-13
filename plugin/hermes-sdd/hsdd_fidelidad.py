@@ -266,6 +266,93 @@ def coherencia(repo: Path) -> list[dict]:
     return out
 
 
+# ── 5. mutantes ─────────────────────────────────────────────────────────────────────────────────────────────────────
+def _visibles(texto: str) -> list[str]:
+    """Los textos «…» que el criterio dice que se VEN (desde «ve», «mensaje», «etiqueta»…)."""
+    _, then = partes(texto)
+    m = re.search(r"\b(ve|ven|ver|vea|muestra|muestran|aparece|aparecen|mensaje|etiqueta|figura|lee|leen|pone)\b", then)
+    return literales(then[m.start():]) if m else []
+
+
+def _ficheros_test(copia: Path, c: dict) -> tuple[list[str], list[str]]:
+    """(e2e, unitarios) que el método enlaza a un criterio, como rutas relativas de la copia."""
+    e2e, uni = set(), set()
+    for t in c.get("tests", []):
+        f = t.get("file") or ""
+        p = copia / f if (copia / f).exists() else next((x for x in copia.joinpath("tests").rglob(Path(f).name)), None)
+        if not p:
+            continue
+        rel = str(p.relative_to(copia))
+        (e2e if "e2e" in (t.get("report") or "") or "/e2e/" in rel else uni).add(rel)
+    return sorted(e2e), sorted(uni)
+
+
+_COMENTARIO = re.compile(r"^\s*(//|\*|/\*|<!--)")
+
+
+def _codigo(p: Path) -> list[str]:
+    return [l for l in p.read_text(encoding="utf-8", errors="replace").splitlines() if not _COMENTARIO.match(l)]
+
+
+def _muta(texto: str, lit: str) -> str:
+    """Cambia el texto en las líneas de código (no en los comentarios)."""
+    return "\n".join(l if _COMENTARIO.match(l) else l.replace(lit, "MUTANTE") for l in texto.split("\n"))
+
+
+def _ejecuta(copia: Path, cmd: list[str], minutos: int = 10) -> bool:
+    """True si la suite pasa."""
+    try:
+        return subprocess.run(cmd, cwd=copia, capture_output=True, text=True, timeout=minutos * 60).returncode == 0
+    except subprocess.TimeoutExpired:
+        return False
+
+
+def mutantes(repo: Path, copia: Path, acc: dict, solo_must: bool = True) -> list[dict]:
+    """Para cada texto que un criterio dice que se ve: se cambia en el código de la app (src/) de la copia y se
+    ejecutan los tests que el método enlaza a ese criterio. Si todos siguen pasando, el criterio está «verificado»
+    sin que ningún test lo compruebe. Se separa si lo detecta un e2e (lo que se ve en el vídeo) o solo un unitario."""
+    out, cache = [], {}
+    fuentes = [p for p in (copia / "src").rglob("*") if p.is_file() and p.suffix in (".js", ".ts", ".jsx", ".tsx", ".html", ".vue", ".svelte", ".mjs")]
+    for r in acc.get("requirements", []):
+        if solo_must and r.get("priority") != "Must":
+            continue
+        for c in r.get("criteria", []):
+            e2e, uni = _ficheros_test(copia, c)
+            for lit in _visibles(c.get("text") or ""):
+                # solo en código, no en comentarios (sala: «5ºC» solo estaba en un comentario de account-rules.js)
+                con = [p for p in fuentes if any(lit in l for l in _codigo(p))]
+                # e2e que contienen el texto aunque el método no los enlace a este criterio
+                sueltos = sorted(str(x.relative_to(copia)) for x in (copia / "tests").rglob("*.spec.*")
+                                 if "node_modules" not in x.parts and str(x.relative_to(copia)) not in e2e
+                                 and norm(lit) in norm(x.read_text(encoding="utf-8", errors="replace")))
+                base = {"req": r["id"], "ac": c.get("n"), "texto": lit, "e2e": e2e, "unitarios": uni}
+                if not con:
+                    out.append({**base, "resultado": "no está en el código", "grave": False})
+                    continue
+                clave = (lit, tuple(e2e), tuple(uni), tuple(sueltos))
+                if clave not in cache:
+                    originales = {p: p.read_text(encoding="utf-8", errors="replace") for p in con}
+                    try:
+                        for p, t in originales.items():
+                            p.write_text(_muta(t, lit), encoding="utf-8")
+                        muere_e2e = bool(e2e) and not _ejecuta(copia, ["npx", "playwright", "test", *e2e])
+                        muere_uni = bool(uni) and not _ejecuta(copia, ["npx", "vitest", "run", *uni], 5)
+                        muere_suelto = (not muere_e2e) and bool(sueltos) and not _ejecuta(copia, ["npx", "playwright", "test", *sueltos])
+                    finally:
+                        for p, t in originales.items():
+                            p.write_text(t, encoding="utf-8")
+                    cache[clave] = (muere_e2e, muere_uni, muere_suelto)
+                muere_e2e, muere_uni, muere_suelto = cache[clave]
+                res = ("lo detecta un e2e" if muere_e2e
+                       else "lo detecta un e2e que el método no enlaza a este criterio" if muere_suelto
+                       else "solo lo detecta un unitario" if muere_uni
+                       else "sin tests que lo comprueben" if not (e2e or uni) else "NINGÚN test lo detecta")
+                out.append({**base, "resultado": res, "en": [str(p.relative_to(copia)) for p in con], "e2e_sueltos": sueltos if muere_suelto else [],
+                            "grave": not (muere_e2e or muere_uni or muere_suelto),
+                            "solo_unitario": muere_uni and not (muere_e2e or muere_suelto)})
+    return out
+
+
 # ── informe ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 def todo(repo: Path) -> dict:
     acc = aceptacion(repo)
@@ -295,6 +382,18 @@ def texto(res: dict) -> str:
     if "capturas" in res:
         bloque("capturas", "Capturas que no enseñan su criterio", lambda x:
                f"{x['req']} AC{x['ac']}: no se ve {', '.join('«'+s+'»' for s in x['no_se_ve'])} en {', '.join(x['capturas'])}")
+    if "mutantes" in res:
+        xs = res["mutantes"]
+        L.append(f"\nMutantes (texto que se ve, cambiado en el código): {len(xs)} — "
+                 f"{sum(1 for x in xs if x['resultado'] == 'lo detecta un e2e')} los detecta un e2e, "
+                 f"{sum(1 for x in xs if x.get('e2e_sueltos'))} un e2e no enlazado, "
+                 f"{sum(1 for x in xs if x.get('solo_unitario'))} solo un unitario, "
+                 f"{sum(1 for x in xs if x.get('grave'))} ningún test, "
+                 f"{sum(1 for x in xs if x['resultado'] == 'no está en el código')} no están en el código")
+        for x in xs:
+            if x["resultado"] != "lo detecta un e2e":
+                L.append(("  ⛔ " if x.get("grave") else "  ⚠️ ") + f"{x['req']} AC{x['ac']} «{x['texto']}»: {x['resultado']}"
+                         + (f" (e2e: {', '.join(Path(e).name for e in x['e2e']) or 'ninguno'})" if x['resultado'] != 'no está en el código' else ""))
     if "coherencia" in res:
         bloque("coherencia", "Coherencia de los artefactos", lambda x: f"{x['donde']}: {x['detalle']}")
     return "\n".join(L)
@@ -308,6 +407,10 @@ if __name__ == "__main__":
         res = todo(repo)
     elif cmd in ("vinculos", "capturas"):
         res = {"repo": str(repo), "sha": git(repo, "rev-parse", "--short", "HEAD").strip(), cmd: globals()[cmd](repo, aceptacion(repo))}
+    elif cmd == "mutantes":   # mutantes <repo> <copia>: la copia es un worktree con node_modules (se modifica y se restaura)
+        copia = Path(sys.argv[3]).resolve()
+        res = {"repo": str(repo), "sha": git(repo, "rev-parse", "--short", "HEAD").strip(),
+               "mutantes": mutantes(repo, copia, aceptacion(repo), solo_must="--todos" not in sys.argv)}
     elif cmd in ("congelados", "coherencia"):
         res = {"repo": str(repo), "sha": git(repo, "rev-parse", "--short", "HEAD").strip(), cmd: globals()[cmd](repo)}
     else:

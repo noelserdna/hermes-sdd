@@ -58,6 +58,15 @@ assert F.norm("18:00–19:00") == F.norm("18:00-19:00")
 assert F.norm("Día Cancelada") == "dia cancelada"
 PY
 
+# 4b. mutantes: el texto se cambia en el código, nunca en los comentarios (sala: «5ºC» solo estaba en un comentario)
+python3 - "$ROOT/plugin/hermes-sdd" <<'PY' && ok "mutantes: cambian el texto en el código y no en los comentarios" || bad "mutar"
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_fidelidad as F
+src = "// «5ºC» y «5ºc» son distintas\nconst t = 'Ocupada';\n  * Ocupada en el comentario\n"
+m = F._muta(src, "Ocupada")
+assert "const t = 'MUTANTE'" in m and "* Ocupada en el comentario" in m, m
+assert F._visibles("GIVEN «4ºA» WHEN «2ºB» abre esa semana THEN el usuario ve la celda con la etiqueta «Ocupada»") == ["Ocupada"]
+PY
+
 # 5. OCR de verdad (solo en macOS): una imagen con texto
 if command -v swiftc >/dev/null && command -v sips >/dev/null; then
   cat > "$T/img.swift" <<'S'
