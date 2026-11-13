@@ -1082,8 +1082,17 @@ def register(ctx):
         except N.Rechazo as e:
             return f"No se creó el proyecto: {e}"
         log.info("hermes-sdd: %s crea el proyecto %s en %s", persona, r["tablero"], r["repo"])
+        # Cada proyecto con su encargado y su tema «🧭 nombre» desde el principio (antes había que pedirlo con /encargado
+        # y el proyecto podía arrancar sin nadie que lo supervisara: club, 13/11/2026)
+        enc = ""
+        try:
+            await _cli("bash", str(_root() / "encargado.sh"), "crear", r["repo"], timeout=300)
+            _, uid = _autorizado_en_sesion()
+            enc = "\n" + (await _tema_encargado(r["tablero"], r["repo"], uid) or f"🧭 Su encargado te espera en el tema «🧭 {r['tablero']}».")
+        except Exception as e:
+            enc = f"\n⚠️ No se pudo crear su encargado ({e}); pídelo con /encargado {r['tablero']}"
         return (f"🚀 Proyecto {r['tablero']} en marcha\n📁 {r['repo']}\n🧱 {r['stack']} · 🤖 Jev {r['jev']}\n"
-                "Te llegará la puerta de Requisitos cuando el ejecutor los tenga.")
+                "Te llegará la puerta de Requisitos cuando el ejecutor los tenga." + enc)
 
     ctx.register_telegram_handler(_wire)
     # args_hint siempre entre [ ]: Hermes deja fuera del menú de Telegram las órdenes cuya ayuda empieza por «<»
