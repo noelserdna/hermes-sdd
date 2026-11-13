@@ -93,6 +93,8 @@ ahora = bloques((repo / "requirements/REQUIREMENTS.md").read_text())
 if not antes or set(antes) != set(ahora):
     sys.exit(0)
 cambiados = [r for r in ahora if antes[r] != ahora[r]]
+if not cambiados:   # los requisitos no cambian (un cambio que solo corrige la especificación): se sigue donde se estaba
+    print("IGUAL"); sys.exit(0)
 fases = {}
 for f in sorted((repo / "plan/fases").glob("FASE-*.md")):
     n = re.match(r"FASE-0*(\d+)", f.name).group(1)
@@ -201,7 +203,11 @@ case "$CMD" in
           fi
           RF=$(cambio_corto)
           N=$(primera_sin_aceptar)
-          if [ -n "$RF" ] && [ -n "$N" ] && [ "${RF%% *}" -ge "$N" ]; then
+          if [ "$RF" = IGUAL ]; then
+            # Mismos requisitos (el cambio solo tocó la especificación): sin replanificar, sigue la FASE en curso
+            echo "Cambio sin cambios en los requisitos: se sigue con ${N:+la FASE-$N}${N:-el cierre}"
+            if [ -n "$N" ]; then fase_n "$N" " (especificación corregida)"; else cierre; fi
+          elif [ -n "$RF" ] && [ -n "$N" ] && [ "${RF%% *}" -ge "$N" ]; then
             # Cambio sin replanificar: el plan sigue valiendo; la FASE en curso se rehace con los requisitos nuevos
             # (las FASEs posteriores ya los leerán al implementarse)
             mkdir -p "$REPO/.sdd/hermes/feedback"

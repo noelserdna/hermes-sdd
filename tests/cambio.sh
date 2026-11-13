@@ -37,6 +37,8 @@ o=$(cambio_corto); [ -z "$o" ] && ok "un requisito de una FASE ya aceptada: casc
 git reset -q --hard requirements-v1.0; printf '### REQ-F-004: Nuevo\n- **Statement:** d\n' >> requirements/REQUIREMENTS.md
 g commit -qam nuevo; git tag -d requirements-v1.1 >/dev/null; g tag requirements-v1.1
 o=$(cambio_corto); [ -z "$o" ] && ok "un requisito nuevo: cascada completa (hay que planificarlo)" || bad "nuevo: [$o]"
+git reset -q --hard requirements-v1.0; echo "ajuste" >> plan/fases/FASE-1-UNO.md; g commit -qam spec; git tag -d requirements-v1.1 >/dev/null; g tag requirements-v1.1
+o=$(cambio_corto); [ "$o" = IGUAL ] && ok "un cambio que no toca los requisitos (solo la especificación): sigue la FASE en curso" || bad "igual: [$o]"
 
 # ── plan: criterios que citan una pantalla de una FASE posterior ───────────────────────────────────────────────────
 D="$T/d"; mkdir -p "$D/requirements" "$D/plan/fases"
