@@ -33,6 +33,16 @@ chmod +x "$FB/claude"; SB=$(mktemp -d); git -C "$SB" init -q
 o=$(CLAUDE_BIN="$FB/claude" bash "$ROOT/executors/claude.sh" "$SB" prueba "hola" 2>/dev/null | tail -1)
 [ "$(echo "$o" | jq -r .outcome)" = scheduled ] && [ "$(jq -r .motivo "$HERMES_SDD_HOME/cuota.json")" = sesion ] \
   && ok "Claude sin sesión → se aparca (no gasta el reintento) y queda anotado para avisar de /login" || bad "sin sesión: $o"
+# límite semanal con la hora en texto («resets 6pm»): se aparca hasta esa hora, no es un fallo de la etapa
+cat > "$FB/claude" <<'C'
+#!/usr/bin/env bash
+echo '{"type":"result","is_error":true,"result":"You have hit your weekly limit · resets 6pm (Europe/Madrid)","total_cost_usd":0,"num_turns":0}'
+exit 1
+C
+rm -f "$HERMES_SDD_HOME/cuota.json"
+o=$(CLAUDE_BIN="$FB/claude" bash "$ROOT/executors/claude.sh" "$SB" prueba "hola" 2>/dev/null | tail -1)
+h=$(date -r "$(jq -r .reset_at "$HERMES_SDD_HOME/cuota.json")" +%H:%M 2>/dev/null || date -d "@$(jq -r .reset_at "$HERMES_SDD_HOME/cuota.json")" +%H:%M)
+[ "$(echo "$o" | jq -r .outcome)" = scheduled ] && [ "$h" = 18:00 ] && ok "límite semanal «resets 6pm» → se aparca hasta las 18:00" || bad "semanal: $o $h"
 rm -rf "$FB" "$SB" "$HERMES_SDD_HOME/cuota.json"
 
 # Llegar a la FASE-0 aceptada y anularla

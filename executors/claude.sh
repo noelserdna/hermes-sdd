@@ -109,9 +109,26 @@ MIN=$(( ($(date +%s) - INICIO) / 60 ))
 # el único reintento del encargado). Se aparca y se reintenta cada 15 min.
 SESION='failed to authenticate|authentication_error|invalid api key|please run /login|oauth token (has )?expired|not logged in'
 sin_sesion() { salir scheduled "Claude sin sesión: entra con /login" "$(echo "$1" | jq -c --arg r "$(( $(date +%s) + 900 ))" '. + {reset_at:$r, motivo:"sesion"}')"; }
+# Cuota agotada: «usage limit», «rate limit», «limit reached», «weekly limit · resets 6pm (Europe/Madrid)» (club,
+# 14/11/2026: el semanal no se reconocía y la etapa se daba por fallida). La hora de reinicio sale del «|epoch» o de
+# «resets 6pm» / «resets 18:00» (hoy, o mañana si ya pasó); si no se sabe, se reintenta en 1 h.
+CUOTA='usage limit|rate limit|limit reached|weekly limit|daily limit|session limit|resets? at|resets [0-9]'
+hora_reinicio() {  # hora_reinicio <texto> → epoch o vacío
+  local t=$1 e h m ap
+  e=$(printf '%s' "$t" | grep -oE '\|[0-9]{10}' | head -1 | tr -d '|' || true); [ -n "$e" ] && { echo "$e"; return; }
+  h=$(printf '%s' "$t" | grep -oiE 'resets( at)? [0-9]{1,2}(:[0-9]{2})? ?(am|pm)?' | head -1 | grep -oiE '[0-9]{1,2}(:[0-9]{2})? ?(am|pm)?$' || true)
+  [ -n "$h" ] || return 0
+  m=$(printf '%s' "$h" | grep -oE ':[0-9]{2}' | tr -d ':' || true); m=${m:-0}
+  ap=$(printf '%s' "$h" | grep -oiE '(am|pm)$' | tr '[:upper:]' '[:lower:]' || true)
+  h=$(printf '%s' "$h" | grep -oE '^[0-9]{1,2}'); h=$((10#$h))
+  [ "$ap" = pm ] && [ "$h" -lt 12 ] && h=$((h + 12)); [ "$ap" = am ] && [ "$h" = 12 ] && h=0
+  e=$(date -j -f "%Y-%m-%d %H:%M:%S" "$(date +%Y-%m-%d) $(printf '%02d:%02d:00' "$h" "$((10#$m))")" +%s 2>/dev/null || date -d "$(printf '%02d:%02d' "$h" "$((10#$m))")" +%s 2>/dev/null || true)
+  [ -n "$e" ] && [ "$e" -le "$(date +%s)" ] && e=$((e + 86400))
+  echo "$e"
+}
 if ! jq -e . "$OUT" >/dev/null 2>&1; then
-  if grep -qiE "usage limit|rate limit|limit reached|resets? at" "$ERR" "$OUT" 2>/dev/null; then
-    RESET=$(grep -oE '\|[0-9]{10}' "$OUT" "$ERR" 2>/dev/null | head -1 | tr -d '|' || true)
+  if grep -qiE "$CUOTA" "$ERR" "$OUT" 2>/dev/null; then
+    RESET=$(hora_reinicio "$(cat "$OUT" "$ERR" 2>/dev/null)")
     salir scheduled "cuota de Claude agotada" "$(jq -nc --arg r "${RESET:-}" '{reset_at:$r}')"
   fi
   grep -qiE "$SESION" "$ERR" "$OUT" 2>/dev/null && sin_sesion '{}'
@@ -121,8 +138,8 @@ TEXTO=$(jq -r '.result // ""' "$OUT")
 EXTRA=$(jq -c --argjson m "$MIN" '{session_id, cost_usd: .total_cost_usd, turns: .num_turns, minutes: $m,
   resumen: ((.result // "") | .[0:800])}' "$OUT")
 if [ "$(jq -r .is_error "$OUT")" = true ] || [ "$RC" -ne 0 ]; then
-  if echo "$TEXTO" | grep -qiE "usage limit|rate limit|limit reached"; then
-    RESET=$(echo "$TEXTO" | grep -oE '\|[0-9]{10}' | head -1 | tr -d '|' || true)
+  if echo "$TEXTO" | grep -qiE "$CUOTA"; then
+    RESET=$(hora_reinicio "$TEXTO")
     salir scheduled "cuota de Claude agotada" "$(echo "$EXTRA" | jq -c --arg r "${RESET:-}" '. + {reset_at:$r}')"
   fi
   echo "$TEXTO" | grep -qiE "$SESION" && sin_sesion "$EXTRA"
