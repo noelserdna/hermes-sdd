@@ -593,7 +593,7 @@ def pide_cambio(texto: str) -> bool:
 
 
 # Una opción que no pide hacer nada («Dejarlo como está», «Mantener…», «No…»)
-_SIN_ACCION = re.compile(r"^\s*(?:dejar|mantener|no\b|nada|sin cambios|aceptar(?:lo)? (?:tal|como)|keep|leave|do nothing)", re.I)
+_SIN_ACCION = re.compile(r"^\s*(?:dejar|mantener|no\b|nada|sin cambios|aceptar(?:lo)? (?:tal|como)|ratific|confirmar (?:tal|como|lo hecho)|validar lo hecho|keep|leave|do nothing|ratify)", re.I)
 
 
 def respuesta(bloque: str, letra: str) -> str:

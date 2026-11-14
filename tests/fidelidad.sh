@@ -65,6 +65,8 @@ src = "// «5ºC» y «5ºc» son distintas\nconst t = 'Ocupada';\n  * Ocupada e
 m = F._muta(src, "Ocupada")
 assert "const t = 'MUTANTE'" in m and "* Ocupada en el comentario" in m, m
 assert F._visibles("GIVEN «4ºA» WHEN «2ºB» abre esa semana THEN el usuario ve la celda con la etiqueta «Ocupada»") == ["Ocupada"]
+v = F._visibles('GIVEN "Iniciación" has 3 socios WHEN the socio "pablo" signs up THEN the user sees "Te has apuntado a Iniciación" (the same text as for "lucia"), and WHEN "pablo" signs up again THEN the user sees the message "Ya te habías apuntado a esta clase"')
+assert v == ["Te has apuntado a Iniciación", "Ya te habías apuntado a esta clase"], v
 PY
 
 # 5. OCR de verdad (solo en macOS): una imagen con texto

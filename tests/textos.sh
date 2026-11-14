@@ -298,5 +298,11 @@ assert "| CLUB-1 | REQ-F-012 Clases | AC7 | m | Ana | 2026-11-14 | g1 | cerrado:
 assert "| g2 | abierto |" in t, t
 assert P.cerrar_pendientes(r, {"requirements": [{"id": "REQ-F-012", "verdict": "VERIFIED"}]}, "2026-11-15") == []
 PYT
+# «Ratificar ambas ediciones tal cual» no pide hacer nada: no lanza «aplicar respuestas» (club, FASE-8)
+python3 - "$ROOT/plugin/hermes-sdd" <<'PYT' && ok "una respuesta que ratifica lo hecho no pide ninguna acción" || bad "ratificar"
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_textos as T
+assert T._SIN_ACCION.match("Ratificar ambas ediciones tal cual") and T._SIN_ACCION.match("Ratify both edits")
+assert not T._SIN_ACCION.match("Revertirlas: el test del catálogo queda en rojo")
+PYT
 cd "$R"
 exit $fail

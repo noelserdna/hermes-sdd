@@ -303,6 +303,10 @@ def _visibles(texto: str) -> list[str]:
     _, then = partes(texto)
     out = []
     for frase in re.split(r"\s+(?:and|y|e)\s+(?=[^\"«“]*(?:[\"«“][^\"»”]*[\"»”][^\"«“]*)*$)", then):
+        # «… WHEN "pablo" signs up again THEN the user sees "x"»: "pablo" es quien actúa, no lo que se ve; y «(the same text
+        # as for "lucia")» compara, no promete verlo (club, FASE-8: la captura de REQ-F-013 AC6 se daba por mala)
+        frase = re.split(r"\b(?:THEN|ENTONCES)\b", frase)[-1] if re.search(r"\b(?:WHEN|GIVEN|CUANDO|DADO)\b", frase) else frase
+        frase = re.sub(r"\([^()]*\)", " ", frase)
         if re.search(VERBOS_VER, frase):
             out += [x for x in literales(frase) if x not in out]
     return out
