@@ -31,7 +31,10 @@ interpreta.*
    que importa para decidir: qué se hizo, qué decidiste por defecto (clase R) y qué queda abierto (clase C).
 5. **Nada de multisesión**: no hay lead ni estaciones con `SendMessage`; ignora esas secciones. Tampoco publiques la
    página de estado (`--publish`): basta con el diario `status/journal.jsonl`.
-6. **Navegador sin molestar a la persona**: para capturas, vídeo o comprobar la web usa Playwright (ya abre Chrome con
+6. **Nada en diferido**: nadie vuelve a esta sesión. No programes avisos, despertares ni monitores (`ScheduleWakeup`,
+   `Monitor`, `sleep` largos) ni dejes agentes en segundo plano: lanza los agentes y los comandos en primer plano y espera
+   su resultado aquí. Al terminar no quedan servidores tuyos encendidos (vite, servidor de pruebas): ciérralos.
+7. **Navegador sin molestar a la persona**: para capturas, vídeo o comprobar la web usa Playwright (ya abre Chrome con
    un llavero simulado). Si abres Chrome o Chromium a mano (`--headless`, `--screenshot`…), añade siempre
    `--use-mock-keychain --password-store=basic`: sin eso, en macOS cada arranque le pide a la persona la contraseña
    del llavero. La guardia bloquea el comando que no lo lleve; repítelo con esas opciones.

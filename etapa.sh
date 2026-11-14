@@ -138,7 +138,7 @@ claude_etapa() {  # claude_etapa <clave-de-estado> <prompt>
 }
 puerta() { bash "$ROOT/puerta.sh" "$REPO" "$@"; }
 fidelidad() {  # ronda adversarial del método + hsdd_fidelidad de la FASE (deja .sdd/hermes/fidelidad-<N>.json)
-  claude_etapa acceptance "/sdd-acceptance --adversarial --fase $FASE — $ARNES Independent verifiers read each criterion of FASE-$FASE against production code, tests and captures: the GIVEN situation with its own data and actor, the WHEN, the whole THEN with its exact text, and whether each capture shows it. Record confirmed or inconclusive findings with accept challenge add. Do not fix anything and do not sign off."
+  claude_etapa acceptance "/sdd-acceptance --adversarial --fase $FASE — $ARNES Independent verifiers read each criterion of FASE-$FASE against production code, tests and captures: the GIVEN situation with its own data and actor, the WHEN, the whole THEN with its exact text, and whether each capture shows it. Record confirmed or inconclusive findings with accept challenge add. Do not fix anything and do not sign off. Run the verifier and counter-verification agents in the foreground and wait for their answers in this same session: never schedule reminders, wake-ups, monitors or background waits (nobody will come back to this session), and close the acceptance stage state before you finish."
   # Rápida (sin mutantes): decide si hace falta la pasada de arreglo. Los mutantes, una sola vez, antes de la puerta
   python3 "$ROOT/plugin/hermes-sdd/hsdd_fidelidad.py" aceptacion "$REPO" --fase "$FASE" --sin-mutantes >/dev/null 2>&1 || true
 }
