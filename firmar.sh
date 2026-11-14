@@ -16,6 +16,18 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 SDD="$ROOT/metodo/scripts/sdd.mjs"
+# El diario del método admite notas de hasta 600 caracteres; el texto de una persona puede ser más largo (club,
+# FASE-7: un rechazo de 755 dejó la decisión escrita a medias). Al diario va recortado; entero queda en la decisión.
+diario() {
+  local a=()
+  while [ $# -gt 0 ]; do
+    if [ "$1" = --text ]; then
+      local t="$2"; [ "${#t}" -gt 590 ] && t="${t:0:560}… (sigue en la decisión)"
+      a+=(--text "$t"); shift 2
+    else a+=("$1"); shift; fi
+  done
+  node "$SDD" journal add "${a[@]}"
+}
 SDD_STATE="$ROOT/metodo/scripts/sdd-state.sh"
 HOME_SDD="${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}"
 REPO=$(cd "$1" && pwd); GATE=$2
@@ -126,7 +138,7 @@ if ! hecho validado; then
     fase:acepto|fase:observaciones|fase:rechazo|entrega:acepto|entrega:observaciones|entrega:rechazo) ;;
     fase:corrijo|entrega:corrijo)
     if ! hecho registrado; then
-      node "$SDD" journal add --stage acceptance --kind decision --text "$NOMBRE pide corregir el requisito: $TEXTO" --by "$NOMBRE ($ROL)" >/dev/null
+      diario --stage acceptance --kind decision --text "$NOMBRE pide corregir el requisito: $TEXTO" --by "$NOMBRE ($ROL)" >/dev/null
       mkdir -p .sdd/hermes
       { echo "En la puerta «$(p .titulo)», $NOMBRE ($ROL) pide corregir el requisito: $TEXTO"; echo
         node "$SDD" accept challenge list --open ${FASE:+--fase "$FASE"} --json 2>/dev/null | jq -r '[.challenges[]? | select(.state == "open" and .category == "SPEC-QUESTION")
@@ -336,7 +348,7 @@ case "$TIPO:$VERBO" in
 > **Ejemplos revisados por:** $NOMBRE ($ROL), $HOY" requirements/REQUIREMENTS.md
       fi
       rm -f requirements/REQUIREMENTS.md.bak
-      node "$SDD" journal add --stage requirements-engineer --kind decision \
+      diario --stage requirements-engineer --kind decision \
         --text "$NOMBRE aprobó los requisitos (versión $V) el $HOY" --by "$NOMBRE ($ROL)" --refs "requirements-v$V" >/dev/null
       marcar registrado
     fi
@@ -386,7 +398,7 @@ Kanban-Task: $BOARD/$TASK"
 
   plan:conforme)
     if ! hecho registrado; then
-      node "$SDD" journal add --stage plan-architect --kind gate --text "$NOMBRE dio conformidad al plan" \
+      diario --stage plan-architect --kind gate --text "$NOMBRE dio conformidad al plan" \
         --by "$NOMBRE ($ROL)" >/dev/null
       marcar registrado
     fi
@@ -401,7 +413,7 @@ Kanban-Task: $BOARD/$TASK"
         node "$SDD" accept record fase-acceptance --fase "$FASE" --result "$RES" \
           --channel "$CHANNEL" --by "$NOMBRE" --role "$ROL" >/dev/null
       fi
-      [ -n "$TEXTO" ] && node "$SDD" journal add --stage acceptance --kind feedback --text "$TEXTO" --by "$NOMBRE ($ROL)" >/dev/null
+      [ -n "$TEXTO" ] && diario --stage acceptance --kind feedback --text "$TEXTO" --by "$NOMBRE ($ROL)" >/dev/null
       # Las observaciones no se quedan en el diario: la siguiente implementación las hace (club: «la captura de AC4
       # tiene que enseñar también al socio» se aceptó con observaciones y nadie la habría arreglado)
       if [ "$VERBO" = observaciones ] && [ -n "$TEXTO" ]; then
@@ -473,7 +485,7 @@ PY
       grep -qF "${BOARD}/${TASK}" acceptance/decisions.jsonl 2>/dev/null ||
         node "$SDD" accept record fase-acceptance --fase "$FASE" --result rejected \
           --channel "$CHANNEL" --by "$NOMBRE" --role "$ROL" >/dev/null
-      node "$SDD" journal add --stage acceptance --kind feedback --text "$TEXTO" --by "$NOMBRE ($ROL)" >/dev/null
+      diario --stage acceptance --kind feedback --text "$TEXTO" --by "$NOMBRE ($ROL)" >/dev/null
       marcar registrado
     fi
     if ! hecho commit; then commit_si_hay "docs(acceptance): reject FASE-$FASE" acceptance/ status/; marcar commit; fi
@@ -490,7 +502,7 @@ PY
       node "$SDD" accept --report acceptance/ACCEPTANCE-REPORT.md --fase 0 >/dev/null 2>&1 || true
     fi
     if ! hecho registrado; then
-      node "$SDD" journal add --stage acceptance --kind decision --text "$NOMBRE aceptó la entrega $N${TEXTO:+ con observaciones: $TEXTO}" \
+      diario --stage acceptance --kind decision --text "$NOMBRE aceptó la entrega $N${TEXTO:+ con observaciones: $TEXTO}" \
         --by "$NOMBRE ($ROL)" --refs "entrega-$N" >/dev/null
       marcar registrado
     fi
@@ -540,7 +552,7 @@ $(node "$SDD" gate --md 2>/dev/null)"
   entrega:rechazo)
     mkdir -p .sdd/hermes/feedback; printf '%s\n' "$TEXTO" > ".sdd/hermes/feedback/cierre.txt"
     if ! hecho registrado; then
-      node "$SDD" journal add --stage acceptance --kind feedback --text "$TEXTO" --by "$NOMBRE ($ROL)" >/dev/null
+      diario --stage acceptance --kind feedback --text "$TEXTO" --by "$NOMBRE ($ROL)" >/dev/null
       marcar registrado
     fi
     if ! hecho commit; then commit_si_hay "docs(acceptance): delivery rejected by $NOMBRE" status/; marcar commit; fi
@@ -548,7 +560,7 @@ $(node "$SDD" gate --md 2>/dev/null)"
 
   preguntas:respondo)
     if ! hecho registrado; then
-      node "$SDD" journal add --stage task-implementer --kind decision --text "$NOMBRE respondió las preguntas $([ -n "$FASE" ] && echo "de la FASE-$FASE" || echo "del mantenimiento")${TEXTO:+ ($TEXTO)}" \
+      diario --stage task-implementer --kind decision --text "$NOMBRE respondió las preguntas $([ -n "$FASE" ] && echo "de la FASE-$FASE" || echo "del mantenimiento")${TEXTO:+ ($TEXTO)}" \
         --by "$NOMBRE ($ROL)" >/dev/null
       marcar registrado
     fi
@@ -562,7 +574,7 @@ $(node "$SDD" gate --md 2>/dev/null)"
       { echo "Mantenimiento detectado el $(jq -r '.creada[0:10]' "$PUERTA") por la revisión periódica:"
         jq -r '.hallazgos[] | "- \(.titulo): \(.propuesta)"' "$PUERTA"
         [ -n "$TEXTO" ] && echo "Comentario de $NOMBRE: $TEXTO"; } > ".sdd/hermes/mantenimiento/peticion-$GATE.txt"
-      node "$SDD" journal add --stage maintenance --kind decision \
+      diario --stage maintenance --kind decision \
         --text "$NOMBRE pidió un cambio de mantenimiento: $(jq -r '[.hallazgos[].titulo] | join("; ")' "$PUERTA")" --by "$NOMBRE ($ROL)" >/dev/null
       marcar registrado
     fi
@@ -574,7 +586,7 @@ $(node "$SDD" gate --md 2>/dev/null)"
       mkdir -p .sdd/hermes/mantenimiento; SIL=.sdd/hermes/mantenimiento/silenciados.json; [ -f "$SIL" ] || echo '{}' > "$SIL"
       t=$(mktemp); jq --slurpfile p "$PUERTA" --arg m "$TEXTO" --arg q "$NOMBRE" --arg h "$HOY" \
         '. + ([$p[0].hallazgos[] | {(.clave): {titulo, motivo:$m, por:$q, el:$h}}] | add // {})' "$SIL" > "$t" && mv "$t" "$SIL"
-      node "$SDD" journal add --stage maintenance --kind feedback \
+      diario --stage maintenance --kind feedback \
         --text "$NOMBRE ignoró: $(jq -r '[.hallazgos[].titulo] | join("; ")' "$PUERTA"). Motivo: $TEXTO" --by "$NOMBRE ($ROL)" >/dev/null
       marcar registrado
     fi
@@ -585,7 +597,7 @@ $(node "$SDD" gate --md 2>/dev/null)"
     mkdir -p .sdd/hermes/feedback; printf '%s\n' "$TEXTO" > ".sdd/hermes/feedback/$TIPO.txt"
     if ! hecho registrado; then
       case "$TIPO" in requisitos) ST=requirements-engineer;; plan) ST=plan-architect;; *) ST=route;; esac
-      node "$SDD" journal add --stage "$ST" --kind feedback --text "$TEXTO" --by "$NOMBRE ($ROL)" >/dev/null
+      diario --stage "$ST" --kind feedback --text "$TEXTO" --by "$NOMBRE ($ROL)" >/dev/null
       marcar registrado
     fi
     if ! hecho commit; then commit_si_hay "docs(status): $TIPO changes requested by $NOMBRE" status/; marcar commit; fi

@@ -105,6 +105,10 @@ n=$(grep -c '^| REPO-' "$P"); firmar g6b
 # 7. verbo inválido y texto obligatorio
 puerta g7 fase 0; decidir g7 rechazo telegram 111; firmar g7
 [ $rc -ne 0 ] && echo "$out" | grep -q "necesita un texto" && ok "rechazo exige motivo" || bad "texto: $out"
+# 7b. un motivo de rechazo largo (club FASE-7: 755 caracteres) se firma entero; al diario va recortado
+puerta g7b fase 0; largo=$(printf 'La captura no enseña lo que dice el criterio. %.0s' $(seq 1 18)); decidir g7b rechazo telegram 111 "$largo"; firmar g7b
+[ $rc -eq 0 ] && [ "${#largo}" -gt 600 ] && tail -1 status/journal.jsonl | jq -e '(.text | length) < 600' >/dev/null \
+  && ok "rechazo con un motivo de más de 600 caracteres: se firma y el diario lo recorta" || bad "largo: $out"
 # 8. preguntas: la elegida se escribe aunque falte la línea Answer: y sin pegar una pregunta con la siguiente
 cat > .sdd/questions-x.md <<'Q'
 # Questions
