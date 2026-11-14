@@ -594,4 +594,25 @@ a = "GIVEN 2 plazas WHEN Pablo se da de baja THEN hay 1 persona apuntada y 1 pla
 b = "GIVEN 2 plazas WHEN Pablo se da de baja THEN hay 1 persona apuntada de 2 plazas, y una persona nueva recibe plaza"
 assert T._n_cambios(a, b) > 1 and T._n_cambios(a, a.replace("libre", "vacía")) == 1
 PY
+# un efecto mal escrito («efecto: --adversarial …») no invalida la decisión (antes la puerta de entrega del taller quedó
+# en error al descartar impugnaciones): se aplica como trabajo y nunca autoriza editar tests
+f="$T/q-raro.md"; cat > "$f" <<'Q'
+## Q-x-003 [OPEN] skill=sdd-acceptance
+Question: ¿Verificar de nuevo?
+Para el cliente: ¿Lo vuelve a mirar la revisión independiente?
+Options:
+  A) Verificar de nuevo (recomendada)
+     efecto: --adversarial --fase 0 (agentes de verificación)
+  B) Descartar
+     efecto: ninguno
+Q
+python3 - "$ROOT/plugin/hermes-sdd" "$f" <<'PY' && ok "efecto mal escrito: no invalida la decisión, se aplica como trabajo y no autoriza tests" || bad "efecto mal escrito"
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_textos as T
+from pathlib import Path
+f = Path(sys.argv[2]); b = T.bloques_preguntas([f])["Q-x-003"]
+p = {"preguntas": [{"n": 1, "id": "Q-x-003", **T.opciones_json(b)}]}
+for verbo in ("acepto", "descarto", "rechazo"):
+    assert T.validar_respuestas(p, [f], "Q1: A" if verbo == "rechazo" else "", verbo, True) == [], verbo
+assert T.accion_respuesta(b, "A") and T.efecto(b, "A")["efecto"] != "editar-test"
+PY
 exit $fail

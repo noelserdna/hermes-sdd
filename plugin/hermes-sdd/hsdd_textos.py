@@ -951,7 +951,7 @@ def accion_respuesta(bloque: str, letra: str) -> str:
     """Si la opción elegida pide trabajo que no es cambiar requisitos (ajustar un test, editar el plan…), la respuesta
     para la etapa que la aplica (si no, ""). Con editar-test, dice qué tests autorizó la persona, y solo esos."""
     e = efecto(bloque, letra)
-    if e["efecto"] not in ("accion", "editar-test"):
+    if e["efecto"] not in ("accion", "editar-test", "?"):   # «?»: un efecto mal escrito, se aplica como trabajo
         return ""
     r = respuesta(bloque, letra)
     if r and e["efecto"] == "editar-test":
@@ -1049,8 +1049,9 @@ def validar_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str, per
                 errs.append(f"{qn}: editar un test que ya existía lo autoriza una persona, no Jev (art. 12)")
             elif not e.get("ficheros"):
                 errs.append(f"{qn}: la opción {r['letra']} autoriza editar tests sin decir cuáles")
-        elif e.get("efecto") == "?":
-            errs.append(f"{qn}: la opción {r['letra']} tiene un efecto desconocido; no se puede saber qué lanzaría")
+        # Un efecto desconocido («efecto: --adversarial …», texto libre) ya sale en la puerta como «⚠️ Pregunta mal
+        # escrita» y se trata como trabajo (accion): nunca autoriza editar un test, que exige «editar-test <ficheros>».
+        # Antes rechazaba la decisión entera, aunque fuera descartar impugnaciones (taller, entrega: la puerta en error)
     return errs
 
 
