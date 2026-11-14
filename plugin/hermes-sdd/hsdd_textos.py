@@ -1025,7 +1025,10 @@ def plan_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str) -> tup
     if el:
         modo = "elegidas"
         res = [{"q": q, "letra": el[q["n"]], "como": "elegida por"} for q in qs if q["n"] in el]
-    elif verbo in ("acepto", "conforme", "respondo"):
+    elif verbo in ("acepto", "observaciones", "conforme", "respondo") or (
+            verbo == "rechazo" and puerta.get("tipo") in ("fase", "entrega")):
+        # (en una FASE o entrega bloqueada rechazar es la única salida: sus preguntas se contestan al rechazar, con la
+        # recomendada si no se marcó otra; pero esa recomendada no autoriza editar tests: ver aplicar_respuestas)
         modo = "recomendada"
         res = [{"q": q, "letra": q.get("recomendada") or "", "como": "opción recomendada, aceptada por"} for q in qs]
         res = [r for r in res if r["letra"]]

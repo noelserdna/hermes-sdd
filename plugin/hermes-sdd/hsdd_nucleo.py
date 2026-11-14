@@ -185,11 +185,17 @@ def superar(repo: str, tipo: str, fase: str, por: str, excepto: str = "") -> lis
 
 def _registrar(idx: Path, puerta: dict, verbo: str, texto: str, actor: dict, prueba: dict, ventana_s: int | None = None) -> dict:
     """Guarda la decisión normalizada (la lee el notario) y abre la ventana de deshacer. Con el cerrojo tomado."""
-    # En una FASE o entrega bloqueada rechazar es la única salida: sus preguntas se contestan al rechazar
-    if puerta.get("preguntas") and (verbo != "rechazo" or puerta.get("tipo") in ("fase", "entrega")):
-        # El canal local (decidir.sh) escribe las respuestas en el texto («Q1: B»): esas no se repiten con la recomendada
-        ya = {n for n in re.findall(r"[Qq][A-Za-z]?\s*(\d+)\W{0,3}\s*[A-Ca-c]\b", texto or "")} if actor.get("canal") == "local" else set()
-        resp = ", ".join(f"Q{n}: {l}" for n, l in respuestas(puerta).items() if l and str(n) not in ya)
+    # Solo lo que la persona MARCÓ en los botones Q va al texto («Q1: B»): las recomendadas las aplica el notario según
+    # el verbo, y así distingue lo elegido de lo aceptado por defecto. Antes se escribían también las recomendadas, con
+    # cualquier verbo: al descartar impugnaciones en el taller, «Q1: A» por defecto se firmó como una autorización
+    # explícita de editar tests que nadie había dado. Descartar o ver la demo no contestan preguntas.
+    # (rechazar unos requisitos o un plan no contesta sus preguntas; rechazar una FASE o entrega bloqueada, sí: es la
+    # única salida)
+    if puerta.get("preguntas") and verbo not in ("descarto", "ver", "deshacer") and (
+            verbo != "rechazo" or puerta.get("tipo") in ("fase", "entrega")):
+        marcadas = {str(k): v for k, v in (puerta.get("respuestas") or {}).items() if v}
+        ya = {n for n in re.findall(r"[Qq][A-Za-z]?\s*(\d+)\W{0,3}\s*[A-Za-z]\b", texto or "")}
+        resp = ", ".join(f"Q{n}: {l}" for n, l in sorted(marcadas.items(), key=lambda x: int(x[0])) if n not in ya)
         texto = (f"{texto}. {resp}" if texto else resp) if resp else texto
     decision = {"verbo": verbo, "texto": texto, "actor": actor, "prueba": prueba, "at": ahora()}
     dirdec = Path(puerta["repo"]) / ".sdd" / "hermes" / "decisiones"

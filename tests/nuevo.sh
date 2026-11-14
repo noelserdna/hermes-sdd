@@ -115,6 +115,23 @@ print(N.decidir("f1", "rechazo", "faltan capturas", "yo", "local", "u", {})["dec
 PY2
 )
 [ "$o" = "faltan capturas. Q1: C | no" ] && ok "rechazar una FASE lleva las respuestas marcadas a sus preguntas" || bad "rechazo con preguntas: $o"
+# descartar impugnaciones no contesta preguntas, y aceptar sin tocar los botones no escribe las recomendadas como si se
+# hubieran elegido (taller: «Q1: A» por defecto se firmó como autorización explícita de editar tests)
+o=$(python3 - "$ROOT/plugin/hermes-sdd" "$T" <<'PY2'
+import importlib.util, json, sys
+from pathlib import Path
+spec = importlib.util.spec_from_file_location("hsdd_nucleo", Path(sys.argv[1]) / "hsdd_nucleo.py"); N = importlib.util.module_from_spec(spec); spec.loader.exec_module(N)
+repo = Path(sys.argv[2]) / "r"
+q = [{"n": 1, "id": "Q-x", "opciones": ["A", "B"], "recomendada": "A"}]
+op = [{"verbo": "descarto", "etiqueta": "Descartar", "texto": True}, {"verbo": "acepto", "etiqueta": "Aceptar"}]
+for gid in ("d1", "d2"):
+    (N.HOME / "puertas" / f"{gid}.json").write_text(json.dumps({"id": gid, "tipo": "entrega", "repo": str(repo), "estado": "abierta",
+        "preguntas": q, "opciones": op}))
+print(N.decidir("d1", "descarto", "CH-001: no es un fallo", "yo", "local", "u", {})["decision"]["texto"], "|",
+      N.decidir("d2", "acepto", "", "yo", "local", "u", {})["decision"]["texto"])
+PY2
+)
+[ "$o" = "CH-001: no es un fallo | " ] && ok "descartar no contesta preguntas; aceptar sin tocar no escribe las recomendadas como elegidas" || bad "descarto/acepto: «$o»"
 
 o=$($NUEVO config --deshacer-jev 30 2>&1); echo "$o" | grep -q "las de Jev: 30 s" && ok "nuevo.sh config --deshacer-jev guarda la ventana de Jev" || bad "deshacer-jev: $o"
 o=$(python3 - "$ROOT/plugin/hermes-sdd/hsdd_nucleo.py" "$T" <<'PY2'

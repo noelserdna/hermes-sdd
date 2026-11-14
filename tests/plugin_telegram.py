@@ -87,7 +87,8 @@ async def formulario_y_operacion():
     ok(json.loads((HOME / "puertas/t_2.json").read_text())["respuestas"] == {"2": "C"}, "un toque cambia la respuesta de Q2 a C")
     q = Query("g:conforme:t_2", 111); await m._on_boton(NS(callback_query=q), ctx)
     d = json.loads((R / ".sdd/hermes/decisiones/t_2.json").read_text())
-    ok(d["texto"] == "Q1: A, Q2: C", f"la decisión lleva las respuestas del formulario ({d['texto']})")
+    # solo lo marcado: la recomendada de Q1 la aplica el notario al dar conformidad (así distingue lo elegido)
+    ok(d["texto"] == "Q2: C", f"la decisión lleva solo las respuestas que se marcaron en el formulario ({d['texto']})")
     # «👉 … esto lanzará» se recalcula con lo marcado en los botones Q (era fijo con las recomendadas)
     sin = {"efecto": "ninguno", "ficheros": []}
     pl = {"id": "t_3", "tipo": "requisitos", "tablero": "demo", "repo": str(R), "titulo": "Requisitos",

@@ -281,10 +281,11 @@ Answer:
 Q
 # 12c. rechazar una FASE sin tocar la pregunta NO autoriza editar el test de la opción recomendada (antes sí: un
 #      rechazo dejaba registrado un test-edit que la persona no había elegido)
+cp .sdd/questions-x.md "$T/questions-x.md"
 puerta g12c fase 9; decidir g12c rechazo telegram 111 "no me convence"; firmar g12c
 [ $rc -eq 0 ] && ! jq -se '[.[] | select(.type == "test-edit" and .gate == "g12c")] | length > 0' acceptance/decisions.jsonl >/dev/null 2>&1 \
   && ok "un rechazo sin elegir la opción no autoriza editar tests" || bad "rechazo autorizó: $out $(grep g12c acceptance/decisions.jsonl | head -2)"
-git checkout -q -- .sdd/questions-x.md 2>/dev/null || true
+cp "$T/questions-x.md" .sdd/questions-x.md   # el rechazo la contestó con la recomendada (sin autorizar): vuelve abierta
 puerta g13 preguntas 9; decidir g13 respondo telegram 111; firmar g13
 [ $rc -eq 0 ] && jq -se '[.[] | select(.type == "test-edit")] | length == 1 and .[0].files == ["tests/a.test.js"] and .[0].question == "Q-x-030" and .[0].gate == "g13" and .[0].by == "Andrés León"' acceptance/decisions.jsonl >/dev/null \
   && jq -e '.autorizaciones == [{pregunta:"Q-x-030", ficheros:["tests/a.test.js"]}]' "$HERMES_SDD_HOME/actas/local/g13.json" >/dev/null \
