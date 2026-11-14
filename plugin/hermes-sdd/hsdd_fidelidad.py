@@ -146,7 +146,9 @@ def congelados(repo: Path, desde: str | None = None) -> list[dict]:
                 if asercion_q > asercion_p:
                     senales.append(f"quita {asercion_q - asercion_p} aserción(es)")
                 cita = lambda xs: set(re.findall(r"REQ-[A-Z]+-\d{3}(?: AC\d+)?|AC-\d{3}-\d{2}", " ".join(xs)))
-                quitadas_citas = sorted(cita(q) - cita(p))
+                # una cita sustituida por otra más concreta del mismo requisito («REQ-F-001» → «REQ-F-001 AC5») no se quita
+                puestas_c = cita(p)
+                quitadas_citas = sorted(c for c in cita(q) - puestas_c if not any(x.startswith(c) for x in puestas_c))
                 if quitadas_citas:
                     senales.append("deja de citar " + ", ".join(quitadas_citas[:6]) + ("…" if len(quitadas_citas) > 6 else ""))
                 if not cambiadas and not senales:
@@ -156,7 +158,8 @@ def congelados(repo: Path, desde: str | None = None) -> list[dict]:
                 out.append({"commit": sha[:7], "asunto": asunto, "fichero": f, "congelado_en": tag,
                             "lineas_cambiadas": len(cambiadas), "debilitamiento": senales,
                             "autorizado": ok, "autorizacion": por,
-                            "grave": (not ok) or bool(senales)})
+                            # autorizado por una persona: lo que hizo es lo que se pidió; las señales quedan a la vista, sin grave
+                            "grave": not ok})
     return out
 
 

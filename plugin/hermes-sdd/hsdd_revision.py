@@ -156,6 +156,8 @@ def _fidelidad(repo: Path, n: str | None) -> list:
         return []
     av = []
     for x in r.get("congelados", []):
+        if not x.get("grave") and x.get("debilitamiento"):
+            av.append(_aviso("test-congelado-autorizado", f"Test ya aceptado cambiado con autorización ({x['fichero']}): {', '.join(x['debilitamiento'])} — {x['autorizacion']}"))
         if x.get("grave"):
             que = "sin que una persona lo autorizara" if not x.get("autorizado") else "debilitándolo"
             av.append(_aviso("test-congelado", f"Se cambió un test ya aceptado ({x['fichero']}, {x['commit']}) {que}"
