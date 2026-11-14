@@ -286,6 +286,12 @@ case "$CMD" in
 
   reintentar)   # una etapa fallida se repite con una tarjeta NUEVA (nunca se desbloquea la vieja)
     ETAPA=$3; FASE=${4:-}
+    # Si Hermes ya la está repitiendo (cada tarjeta tiene un reintento automático) o hay otra en cola, no se duplica:
+    # dos a la vez chocan en el candado del repo (club, FASE-3: la vieja se reintentó sola y la nueva quedó «ocupada»)
+    if "${K[@]}" list --json 2>/dev/null | jq -e --arg e "etapa.sh $REPO $ETAPA${FASE:+ $FASE}" \
+        'any(.[]?; (.status == "running" or .status == "ready" or .status == "todo") and ((.body // "") | endswith($e)))' >/dev/null; then
+      echo "ya hay una tarjeta de $ETAPA${FASE:+ $FASE} en marcha o en cola: no se duplica" >&2; exit 1
+    fi
     tarjeta "Reintento: $ETAPA${FASE:+ FASE-$FASE}" - 120m "$ETAPA" $FASE ;;
 
   *) echo "uso: lanzar.sh iniciar <repo> | siguiente <repo> <puerta> <resultado> | rehacer <repo> <N> | reintentar <repo> <etapa> [fase] | limpiar <repo>" >&2; exit 2 ;;
