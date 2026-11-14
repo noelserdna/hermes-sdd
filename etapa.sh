@@ -354,7 +354,8 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
     PREG="the open questions they waited for are answered in .sdd/questions-*.md (Answer: lines, approved at the plan gate)"
     claude_etapa plan-architect "/sdd-plan-architect --fase $FASE --skip-clarify — $ARNES Some tasks of FASE-$FASE are [PLAN GAP] and $PREG. Update ONLY the plan of FASE-$FASE (plan/fase-plans/, plan/fases/ and the SDD Stack Profile of AGENTS.md if an answer requires it) so that it follows those answers. Do not reopen or change any answer."
     claude_etapa task-generator "/sdd-task-generator --fase=$FASE --incremental — $ARNES Replace every [PLAN GAP] task of task/TASK-FASE-$FASE.md with concrete tasks that follow the updated plan. Keep every other task (done or pending) exactly as it is."
-    node "$SDD" lint --dir task >/dev/null 2>&1 || falla "sdd lint de tareas encuentra errores tras completar los huecos"
+    # solo las tareas de esta FASE (club: 41 errores de FASEs ya aceptadas paraban los huecos de la FASE-6)
+    node "$SDD" lint --dir task --fase "$FASE" >/dev/null 2>&1 || falla "sdd lint de tareas de la FASE-$FASE encuentra errores tras completar los huecos: $(node "$SDD" lint --dir task --fase "$FASE" 2>&1 | grep -v warning | tail -3 | tr '\n' ' ')"
     ! grep -qE '^- \[ \] .*\[PLAN GAP\]' "task/TASK-FASE-$FASE.md" 2>/dev/null || falla "siguen tareas [PLAN GAP] en la FASE-$FASE"
     git add -A plan/ task/ AGENTS.md 2>/dev/null; git diff --cached --quiet || git commit -qm "docs(tasks): FASE-$FASE gaps filled with the approved answers"
     # Las preguntas que dejó el implementador porque no podía hacer esos huecos ya no tienen sentido: las cierra el
