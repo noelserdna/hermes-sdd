@@ -255,5 +255,14 @@ o=$($TX puerta requisitos "$C" --proyecto sala --version 1.1 --cambio INT-003 | 
 echo "$o" | grep -q '^✏️ Cambio que pide el mantenimiento de «sala»:' && echo "$o" | grep -q 'el mantenimiento sigue con esta versión' && ! echo "$o" | grep -q 'pediste' \
   && ok "cambio de un mantenimiento: dice de dónde viene y qué pasa al aprobar" || bad "origen: $o"
 rm -rf .sdd/hermes/mantenimiento
+# un requisito que pasa sus tests pero tiene una impugnación abierta no sale en verde (club FASE-7, CH-047)
+python3 - "$ROOT/plugin/hermes-sdd" <<'PYT' && ok "impugnado: ⚠️ con su CH y la cabecera dice que hay duda, no «sin comprobar»" || bad "impugnado"
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_textos as T
+from pathlib import Path
+f = T._filas_gate("| REQ-F-001 A | Must | test | VERIFIED | 2/2 | x |\n| REQ-F-002 Plazo | Should | test | VERIFIED · challenged CH-047 | 3/3 | x |\n")
+c = T._cabeza_ok(f, True); l = T._lineas_veredictos(Path("/nonexistent"), f)
+assert "duda" in c and "sin comprobar" not in c, c
+assert l[1].startswith("⚠️ Plazo: pasa sus pruebas") and "CH-047" in l[1] and l[0].startswith("✅"), l
+PYT
 cd "$R"
 exit $fail

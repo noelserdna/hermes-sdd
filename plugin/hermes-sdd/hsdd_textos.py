@@ -344,7 +344,12 @@ def _lineas_veredictos(repo: Path, filas: list[dict]) -> list[str]:
         clave, _, motivo = f["veredicto"].partition(" ")
         ico, txt = VEREDICTOS.get(clave, ("•", clave.lower()))
         motivo = motivo.strip(" ()").lower()
-        if motivo:
+        impugnado = re.search(r"challenged\s+((?:ch-\d+[,\s]*)+)", motivo)
+        if impugnado:
+            # «VERIFIED · challenged CH-047»: pasa sus tests, pero la revisión independiente duda de lo que enseñan (club)
+            ids = ", ".join(x.upper() for x in re.findall(r"ch-\d+", impugnado.group(1)))
+            ico, txt = "⚠️", f"pasa sus pruebas, pero la revisión independiente duda de que lo comprueben ({ids})"
+        elif motivo:
             txt = MOTIVOS.get(motivo, txt)
         crit = ""
         m = re.match(r"(\d+)\s*/\s*(\d+)", f["criterios"])
@@ -358,7 +363,12 @@ def _cabeza_ok(filas: list[dict], de_fase: bool) -> str:
     """Puerta de calidad cumplida (rc 0): todo lo imprescindible está comprobado. Si queda algo no imprescindible sin
     comprobar se dice, para no anunciar «todo en orden» con requisitos en ⚠️ (coches, entrega 1)."""
     ok, total = sum(1 for f in filas if f["veredicto"] == "VERIFIED"), len(filas)
+    duda = sum(1 for f in filas if f["veredicto"].startswith("VERIFIED") and "CHALLENGED" in f["veredicto"])
     donde = " de esta fase" if de_fase else ""
+    if duda and ok + duda == total:
+        return (f"✅ Lo imprescindible{donde} está comprobado. "
+                f"{'De 1 requisito que no es imprescindible' if duda == 1 else f'De {duda} requisitos que no son imprescindibles'} "
+                f"la revisión independiente duda de que sus pruebas lo comprueben (⚠️ en la lista): míralo en la demo.")
     if ok == total:
         if total == 1:
             return f"✅ Todo en orden: el requisito{donde} funciona y está comprobado."
