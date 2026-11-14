@@ -252,6 +252,20 @@ sed -i.bak 's/sin versión fija/la versión mayor no queda fijada/' requirements
 o=$($TX puerta requisitos "$C" --proyecto sala --version 1.1 --cambio INT-002 | jq -r .texto)
 echo "$o" | grep -q '^✏️ Antelación: cómo se comprueba pasa a «la versión mayor no queda fijada»$' && ! echo "$o" | grep -q 'changes/' \
   && ok "cambio que solo toca la verificación: la puerta lo dice (no «el detalle está en changes/»)" || bad "verificación: $o"
+# … y si cambia el enunciado sin tocar la frase para el cliente, también (club, INT-004: REQ-F-012 «4 plazas fijas»)
+git checkout -q requirements/REQUIREMENTS.md; printf -- '- **Statement:** THE system SHALL accept bookings up to 30 days ahead\n' >> requirements/REQUIREMENTS.md
+git commit -qam v1c; git tag -d requirements-v1.0 >/dev/null; git tag requirements-v1.0
+sed -i.bak 's/up to 30 days ahead/up to 30 days ahead with 4 places/' requirements/REQUIREMENTS.md; rm -f requirements/REQUIREMENTS.md.bak
+o=$($TX puerta requisitos "$C" --proyecto sala --version 1.1 --cambio INT-002 | jq -r .texto)
+echo "$o" | grep -q '^✏️ Antelación: cambia lo que exige el requisito; ahora dice «THE system SHALL accept bookings up to 30 days ahead with 4 places»$' \
+  && ok "cambio del enunciado sin tocar la frase para el cliente: la puerta lo enseña" || bad "enunciado: $o"
+# la ruta de un cambio sobre un proyecto ya entregado recomienda la ligera
+git checkout -q requirements/REQUIREMENTS.md
+o=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" opciones-ruta sala | jq -r '.[0].verbo + " " + (.[0].tras_entrega | tostring)')
+git tag entrega-1
+o2=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" opciones-ruta sala | jq -r '.[0].verbo + " " + (.[0].tras_entrega | tostring)')
+git tag -d entrega-1 >/dev/null
+[ "$o2" = "ruta-ligera true" ] && [ "$o" != "ruta-ligera true" ] && ok "ruta tras una entrega: recomienda la ligera (antes, la del proyecto)" || bad "ruta tras entrega: $o / $o2"
 # … si lo pidió un mantenimiento en curso, lo dice así y no promete replanificar
 printf '# INT-003\n\n> Mantenimiento detectado el 2026-11-13 por la revisión periódica: sube vite\n' > intent/INT-003.md
 mkdir -p .sdd/hermes/mantenimiento; echo x > .sdd/hermes/mantenimiento/en-curso.txt

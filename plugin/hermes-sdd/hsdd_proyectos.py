@@ -178,12 +178,24 @@ def ruta_de(tablero: str, cfg: dict | None = None) -> str:
     return ids[0]
 
 
-def opciones_ruta(tablero: str, propuesta: dict | None = None) -> list:
+def cambio_tras_entrega(repo) -> bool:
+    """¿Es un cambio de requisitos sobre un proyecto ya entregado (tag entrega-N)? Entonces lo proporcionado es la ruta
+    ligera: las especificaciones y los diseños ya existen y el cambio los ajusta (club, INT-004: tres correcciones de
+    texto y la puerta volvía a recomendar la ruta adaptativa con todas sus etapas)."""
+    r = Path(repo)   # una puerta de ruta después de una entrega solo puede venir de un cambio
+    t = subprocess.run(["git", "-C", str(r), "tag", "-l", "entrega-*"], capture_output=True, text=True).stdout
+    return bool(t.strip())
+
+
+def opciones_ruta(tablero: str, propuesta: dict | None = None, repo=None) -> list:
     """Los botones de la puerta de ruta: una opción por ruta (la recomendada primero), cada una con las etapas que
     hará (para «auto», las de la propuesta del método) y un criterio para Jev."""
     cfg = N.leer(N.HOME / "sdd.json", {}) or {}
     rec = ruta_de(tablero, cfg)
     fijada = (cfg.get("rutas_proyecto") or {}).get(tablero) == rec
+    tras_entrega = repo is not None and cambio_tras_entrega(repo) and any(r["id"] == "ligera" for r in rutas(cfg))
+    if tras_entrega:
+        rec, fijada = "ligera", False
     nombres = dict(OPCIONALES_RUTA)
     auto = [k for k, e in ((propuesta or {}).get("stages") or {}).items() if e.get("run") and k in nombres]
     ops = []
@@ -194,12 +206,15 @@ def opciones_ruta(tablero: str, propuesta: dict | None = None) -> list:
         criterio = (f"Use the route «{r['nombre']}» ({r['descripcion']}). Extra stages it runs besides the core "
                     f"(requirements, plan, tasks, implementation, acceptance): {', '.join(etapas) or 'none'}. "
                     f"Plan granularity: {GRAN_EN[gran]}.")
-        if r["id"] == rec:
+        if r["id"] == rec and tras_entrega:
+            criterio += (" This is a requirements change on a project already delivered: specifications and designs "
+                         "exist and the change adjusts them, so the light route is the proportionate one.")
+        elif r["id"] == rec:
             criterio += (" The customer fixed this route when creating the project: choose it unless the requirements "
                          "clearly need more rigor." if fijada else " This is the recommended route.")
         ops.append({"verbo": f"ruta-{r['id']}", "etiqueta": ("⭐ " if r["id"] == rec else "🧭 ") + r["nombre"],
                     "nombre": r["nombre"], "descripcion": r["descripcion"], "etapas": etapas, "auto": r["etapas"] == "auto",
-                    "hace": hace, "granularidad": gran, "fases": dict(GRANULARIDADES)[gran], "recomendada": r["id"] == rec, "fijada": fijada and r["id"] == rec, "criterio": criterio})
+                    "hace": hace, "granularidad": gran, "fases": dict(GRANULARIDADES)[gran], "recomendada": r["id"] == rec, "fijada": fijada and r["id"] == rec, "tras_entrega": tras_entrega and r["id"] == rec, "criterio": criterio})
     return ops
 
 
@@ -772,7 +787,7 @@ if __name__ == "__main__":   # CLI de nuevo.sh
                 print(f"{'*' if r['id'] == c['ruta_defecto'] else ' '} {r['id']:12} {r['nombre']}: {et}")
         elif a.cmd == "opciones-ruta":   # lo usa puerta.sh: los botones de la puerta de ruta
             prop = N.leer(Path(a.propuesta), {}) if a.propuesta else {}
-            print(json.dumps(opciones_ruta(a.tablero, prop), ensure_ascii=False))
+            print(json.dumps(opciones_ruta(a.tablero, prop, Path.cwd()), ensure_ascii=False))
         elif a.cmd == "modelos":
             if a.perfil:
                 guardar_config(perfil_modelos=a.perfil)

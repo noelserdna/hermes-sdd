@@ -164,6 +164,12 @@ def _ajustes(repo: Path) -> list[str]:
     # solo cambiaba la verificación de REQ-C-001 y la puerta decía «el detalle está en changes/»
     cv, cn = _campos(antes), _campos(ahora)
     for rid, campos in cn.items():
+        # El enunciado es interno, pero si cambia y la frase para el cliente no, la persona no vería el cambio de lo que
+        # se exige (club, INT-004: REQ-F-012 pasó a «4 plazas fijas» y la puerta solo enseñaba los ejemplos)
+        a, b = (cv.get(rid) or {}), campos
+        if a.get("Statement") and b.get("Statement") and a["Statement"] != b["Statement"] \
+                and a.get("Para el cliente") == b.get("Para el cliente"):
+            out.append(f"✏️ {nombres.get(rid, rid)}: cambia lo que exige el requisito; ahora dice «{_corta(b['Statement'], 240)}»")
         for k, v in campos.items():
             # solo lo que la persona lee: el resto (Statement en inglés, Source, Dependencies…) es interno del método
             if k.lower() not in ("para el cliente", "verification", "priority"):
@@ -281,7 +287,8 @@ def puerta_ruta(repo: Path, proyecto: str, opciones: list | None = None) -> dict
         lineas = []
         for o in opciones:
             extra = "pasos extra: " + o["hace"] if o.get("etapas") else "sin pasos extra"
-            marca = " (la fijaste al crear el proyecto)" if o.get("fijada") else (" (recomendada)" if o.get("recomendada") else "")
+            marca = (" (recomendada: es un cambio sobre lo ya entregado; las especificaciones y diseños ya existen)" if o.get("tras_entrega")
+                     else " (la fijaste al crear el proyecto)" if o.get("fijada") else (" (recomendada)" if o.get("recomendada") else ""))
             fases = f"; fases: {o['fases'][0].lower() + o['fases'][1:]}" if o.get("fases") else ""
             lineas.append(f"{o['etiqueta']}{marca}: {o['descripcion']} → {extra}{fases}.")
         partes.append("\n".join(lineas))
