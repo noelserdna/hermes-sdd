@@ -568,7 +568,9 @@ _NEGACION = re.compile(r"\b(?:no|sin|nada|ning[uú]n|nothing|without|not)\b", re
 
 
 def pide_cambio(texto: str) -> bool:
-    if _MARCA_CAMBIO.search(texto):
+    # La marca explícita o nombrar sdd-req-change decide, aunque la opción empiece por «No» (club, FASE-4: «No: las
+    # plazas son siempre 4 y se enmienda el enunciado de REQ-F-012 vía sdd-req-change» no lanzaba el cambio)
+    if _MARCA_CAMBIO.search(texto) or re.search(r"sdd-req-change|\breq-change\b", texto, re.I):
         return True
     return bool(_PIDE_CAMBIO.search(texto)) and not _NEGACION.search(texto)
 
