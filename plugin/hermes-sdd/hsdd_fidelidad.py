@@ -307,6 +307,12 @@ def _visibles(texto: str) -> list[str]:
         # as for "lucia")» compara, no promete verlo (club, FASE-8: la captura de REQ-F-013 AC6 se daba por mala)
         frase = re.split(r"\b(?:THEN|ENTONCES)\b", frase)[-1] if re.search(r"\b(?:WHEN|GIVEN|CUANDO|DADO)\b", frase) else frase
         frase = re.sub(r"\([^()]*\)", " ", frase)
+        # «"carmen" does not appear», «ya no sale»: lo que el criterio promete que NO se ve no se exige en la captura
+        # (club, entrega 2: REQ-F-018 AC2 se daba por mal capturado)
+        if re.search(r"\b(?:does not|doesn't|do not|no longer|not|never|ya no|no|nunca|ni)\s+(?:\w+\s+){0,2}?"
+                     r"(?:appear|show|see|list|contain|aparece|sale|se ve|ve|muestra|figura|lista)",
+                     re.sub(r"[\"«“][^\"»”]*[\"»”]", " ", frase), re.I):
+            continue
         if re.search(VERBOS_VER, frase):
             out += [x for x in literales(frase) if x not in out]
     return out
