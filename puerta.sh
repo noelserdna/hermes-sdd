@@ -188,5 +188,15 @@ jq -n --arg id "$ID" --arg t "$TIPO" --arg f "$FASE" --arg b "$BOARD" --arg s "$
   '{id:$id, tipo:$t, fase:$f, tablero:$b, tarjeta:"", adopcion:$ad, sha:$s, creada:$c, repo:$r, titulo:$ti, texto:$tx,
     opciones:$o, demo:$v, preguntas:$q, hallazgos:$hz, tests_editados:$te, bloqueo:$bl, unica:$un,
     revisar:(($rv // {}).revisar // []), encargado:$en, estado:"abierta"}' > ".sdd/hermes/puertas/$ID.json"
+# Una puerta nueva del mismo proyecto, tipo y FASE sustituye a la que siguiera abierta (club: reabrir la entrega dejaba
+# dos puertas de entrega abiertas a la vez): la vieja queda «superada» sin botones y su tarjeta se archiva
+for f in "$HOME_SDD"/puertas/*.json; do
+  [ -f "$f" ] || continue
+  jq -e --arg r "$REPO" --arg t "$TIPO" --arg n "$FASE" --arg id "$ID" \
+    '.repo == $r and .tipo == $t and ((.fase // "") | tostring) == $n and .estado == "abierta" and .id != $id' "$f" >/dev/null 2>&1 || continue
+  jq --arg g "$ID" '.estado = "superada" | .superada_por = $g' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
+  tj=$(jq -r '.tarjeta // empty' "$f")
+  [ -n "$tj" ] && [ -n "$BOARD" ] && hermes kanban --board "$BOARD" archive "$tj" >/dev/null 2>&1 || true
+done
 cp ".sdd/hermes/puertas/$ID.json" "$HOME_SDD/puertas/$ID.json"   # índice global para los canales
 echo "$ID"

@@ -206,6 +206,10 @@ git add -A && git commit -qm t && git tag fase-0-accepted
 printf 'expect(a).toBe(2)\n' > tests/a.test.js; printf '# Plan\nnuevo\n' > test/TEST-PLAN.md; git commit -qam t2
 g=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" fase 1 2>/dev/null)
 [ "$(jq -r .tests_editados "$HERMES_SDD_HOME/puertas/$g.json")" = 1 ] && ok "tests editados: el .test.js cuenta, TEST-PLAN.md no" || bad "tests editados: $(jq -r .tests_editados "$HERMES_SDD_HOME/puertas/$g.json")"
+# reabrir la puerta de la misma FASE deja la anterior «superada», no dos abiertas a la vez (club: entrega reabierta)
+g2=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" fase 1 2>/dev/null)
+[ "$(jq -r '.estado + " " + .superada_por' "$HERMES_SDD_HOME/puertas/$g.json")" = "superada $g2" ] && [ "$(jq -r .estado "$HERMES_SDD_HOME/puertas/$g2.json")" = abierta ] \
+  && ok "reabrir una puerta de la misma FASE supera la anterior" || bad "superada: $(jq -c '{estado, superada_por}' "$HERMES_SDD_HOME/puertas/$g.json")"
 
 # ── lo que llega a Telegram al firmar ────────────────────────────────────────────────────────────────────────────
 o=$(python3 - "$ROOT" <<'PY'
