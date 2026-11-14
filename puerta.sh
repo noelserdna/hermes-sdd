@@ -166,6 +166,14 @@ print(json.dumps(out))
 PY
 )
 
+# Exenciones que ya se cumplen: su fila de PENDIENTES.md se cierra antes de enseñar la puerta (y va en su commit, así
+# el commit que se muestra es el que se firma)
+if [ "$TIPO" = fase ] || [ "$TIPO" = entrega ]; then
+  CERR=$(node "$SDD" accept --json 2>/dev/null | python3 "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" cerrar-pendientes "$REPO" 2>/dev/null || true)
+  if [ -n "$CERR" ]; then
+    git add acceptance/PENDIENTES.md && git commit -qm "docs(acceptance): pendientes cerrados ($CERR): ya se cumplen" >/dev/null 2>&1 || true
+  fi
+fi
 SHA=$(git rev-parse HEAD)
 ID="g$(date +%s)$(openssl rand -hex 2)"
 

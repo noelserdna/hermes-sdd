@@ -786,7 +786,11 @@ export function evaluate(opts) {
     }
     const passing = criteria.filter((c) => c.state === "pass").length;
     let verdict;
-    if (waiver?.valid) verdict = "WAIVED";
+    // A waiver covers what is not met yet: once every criterion passes with its evidence, the requirement is VERIFIED
+    // and the waiver is superseded (kept in the ledger as `waiver.superseded`, so its follow-up can be closed).
+    const met = method && passing === criteria.length && criteria.length > 0;
+    if (waiver?.valid && met) waiver.superseded = true;
+    if (waiver?.valid && !met) verdict = "WAIVED";
     else if (criteria.some((c) => c.state === "fail")) verdict = "FAILING";
     else if (!method || passing < criteria.length) verdict = "MISSING";
     else verdict = "VERIFIED";

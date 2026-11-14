@@ -947,7 +947,9 @@ run gate --fase 1; expect "enforce: 0 once no Must challenge is open" "$rc" 0
 run loop next --fase 1; expect "loop: goal once no Must challenge is open" "$(js 'j.stop')" goal
 # waived Must (3) vs an open challenge (4): the challenge outranks the waiver
 run accept record waiver --req REQ-F-002 --reason "deferred" --follow-up "#7" --by Laura --role "product owner"
-run gate --fase 1; expect "waived Must, no open challenge → 3" "$rc" 3
+run gate --fase 1; expect "a waiver on a Must that already meets every criterion is superseded → 0" "$rc" 0
+run accept --fase 1
+expect "superseded waiver: VERIFIED and marked in the ledger" "$(ledger 'v("REQ-F-002") + "/" + L.requirements.find((r)=>r.id==="REQ-F-002").waiver.superseded')" "VERIFIED/true"
 add_ok
 run gate --fase 1; expect "precedence: open challenge (4) over waivers (3)" "$rc" 4
 run accept record challenge-dismissal --challenge CH-004 --reason r --by Laura --role "product owner"

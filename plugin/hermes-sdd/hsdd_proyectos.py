@@ -674,6 +674,29 @@ def foto_encargado(perfil: str, marcar: bool = True) -> str:
     return "\n".join(l)[:3900]
 
 
+def cerrar_pendientes(repo, ledger: dict, hoy: str) -> list[str]:
+    """Cierra las filas abiertas de acceptance/PENDIENTES.md cuyo requisito ya se cumple (el método da la exención por
+    superada: VERIFIED con todos sus criterios). club: CLUB-1 seguía «abierto» y la entrega decía «con exenciones» con
+    REQ-F-012 ya 8/8. → los ids cerrados."""
+    pf = Path(repo) / "acceptance" / "PENDIENTES.md"
+    if not pf.exists():
+        return []
+    hechos = {r.get("id") for r in (ledger.get("requirements") or []) if r.get("verdict") == "VERIFIED"}
+    cerrados, out = [], []
+    for linea in pf.read_text(encoding="utf-8").splitlines():
+        c = [x.strip() for x in linea.strip().strip("|").split("|")]
+        if len(c) >= 8 and re.match(r"^[A-Z][A-Z0-9]+-\d+$", c[0]) and c[7] == "abierto":
+            rid = c[1].split(" ")[0]
+            if rid in hechos:
+                c[7] = f"cerrado: se cumple desde el {hoy}"
+                linea = "| " + " | ".join(c) + " |"
+                cerrados.append(c[0])
+        out.append(linea)
+    if cerrados:
+        pf.write_text("\n".join(out) + "\n", encoding="utf-8")
+    return cerrados
+
+
 if __name__ == "__main__":   # CLI de nuevo.sh
     import argparse
     ap = argparse.ArgumentParser(prog="nuevo.sh", description="Crea y lanza un proyecto SDD nuevo")
@@ -693,6 +716,7 @@ if __name__ == "__main__":   # CLI de nuevo.sh
     es = sub.add_parser("estado"); es.add_argument("repo"); es.add_argument("--json", action="store_true")
     vg = sub.add_parser("vigia"); vg.add_argument("repo")
     sub.add_parser("modelo-encargado")
+    cp = sub.add_parser("cerrar-pendientes"); cp.add_argument("repo")
     fo = sub.add_parser("foto-encargado"); fo.add_argument("perfil"); fo.add_argument("--sin-marcar", action="store_true")
     a = ap.parse_args()
     try:
@@ -712,6 +736,9 @@ if __name__ == "__main__":   # CLI de nuevo.sh
                   f"Ventana para deshacer: {c['deshacer_s']} s ({N.duracion(c['deshacer_s'])}); "
                   f"las de Jev: {c['deshacer_jev_s']} s ({N.duracion(c['deshacer_jev_s'])})\n"
                   f"Revisor independiente con IA en las puertas de: {', '.join((N.leer(N.HOME / 'sdd.json', {}) or {}).get('revision_ia') or []) or 'ninguna'}")
+        elif a.cmd == "cerrar-pendientes":   # el ledger de `sdd accept --json` por la entrada estándar
+            import datetime
+            print(" ".join(cerrar_pendientes(a.repo, json.loads(sys.stdin.read() or "{}"), datetime.date.today().isoformat())))
         elif a.cmd == "vigia":   # el monitor del cron del encargado: salida estable, vacía si todo va bien
             r = Path(a.repo).resolve()
             try:

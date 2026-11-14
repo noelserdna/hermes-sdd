@@ -264,5 +264,21 @@ c = T._cabeza_ok(f, True); l = T._lineas_veredictos(Path("/nonexistent"), f)
 assert "duda" in c and "sin comprobar" not in c, c
 assert l[1].startswith("⚠️ Plazo: pasa sus pruebas") and "CH-047" in l[1] and l[0].startswith("✅"), l
 PYT
+# una exención cuyo requisito ya se cumple se cierra en PENDIENTES.md (club: CLUB-1 con REQ-F-012 ya 8/8)
+python3 - "$ROOT/plugin/hermes-sdd" "$T" <<'PYT' && ok "PENDIENTES: se cierra la fila de un requisito que ya se cumple; la otra sigue abierta" || bad "cerrar pendientes"
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_proyectos as P
+from pathlib import Path
+r = Path(sys.argv[2]) / "pend"; (r / "acceptance").mkdir(parents=True)
+f = r / "acceptance" / "PENDIENTES.md"
+f.write_text("| Id | Requisito | Qué falta | Motivo | Quién | Fecha | Puerta | Estado |\n|---|---|---|---|---|---|---|---|\n"
+             "| CLUB-1 | REQ-F-012 Clases | AC7 | m | Ana | 2026-11-14 | g1 | abierto |\n"
+             "| CLUB-2 | REQ-F-013 Otra | AC1 | m | Ana | 2026-11-14 | g2 | abierto |\n")
+c = P.cerrar_pendientes(r, {"requirements": [{"id": "REQ-F-012", "verdict": "VERIFIED"}, {"id": "REQ-F-013", "verdict": "WAIVED"}]}, "2026-11-14")
+t = f.read_text()
+assert c == ["CLUB-1"], c
+assert "| CLUB-1 | REQ-F-012 Clases | AC7 | m | Ana | 2026-11-14 | g1 | cerrado: se cumple desde el 2026-11-14 |" in t, t
+assert "| g2 | abierto |" in t, t
+assert P.cerrar_pendientes(r, {"requirements": [{"id": "REQ-F-012", "verdict": "VERIFIED"}]}, "2026-11-15") == []
+PYT
 cd "$R"
 exit $fail
