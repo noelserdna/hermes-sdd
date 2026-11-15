@@ -125,7 +125,7 @@ if { [ "$TIPO:$VERBO" = requisitos:acepto ] || [ "$TIPO:$VERBO" = plan:conforme 
   fi
 fi
 
-CLAVE_NOTARIO=$(jq -r '.clave_notario // empty' "$HOME_SDD/sdd.json" 2>/dev/null); CLAVE_NOTARIO=${CLAVE_NOTARIO:-$HOME/.ssh/hermes-notario}
+CLAVE_NOTARIO=$(jq -r '.clave_notario // empty' "$HOME_SDD/sdd.json" 2>/dev/null || true); CLAVE_NOTARIO=${CLAVE_NOTARIO:-$HOME/.ssh/hermes-notario}
 CLAVE_NOTARIO=${CLAVE_NOTARIO/#\~/$HOME}
 [ -f "$CLAVE_NOTARIO" ] && [ -f "$CLAVE_NOTARIO.pub" ] || CLAVE_NOTARIO=""
 ACTA="$HOME_SDD/actas/${BOARD:-local}/$GATE.json"
