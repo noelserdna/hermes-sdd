@@ -251,7 +251,12 @@ DI=$(hermes config get kanban.dispatch_interval_seconds 2>/dev/null | tail -1 ||
   echo "  AVISO: kanban.auto_decompose está activo; desactívalo con: hermes config set kanban.auto_decompose false"
 echo "· Ajustes cambiados: $CAMBIOS"
 if $PLUGIN_CAMBIA || [ "$ANTES_ACTUAL" != "$DEST" ]; then
-  echo "Listo. Reinicia el gateway (hermes gateway restart) y el panel (hermes dashboard) para cargar el plugin"
+  # Lo que el plugin usa de Hermes sin ser API pública: si una actualización de Hermes lo cambió, se dice aquí
+if ! COMP=$(bash "$DEST/lib/comprobar-hermes.sh" --plugin "$DEST/plugin/hermes-sdd" 2>&1); then
+  echo "AVISO: este Hermes no ofrece todo lo que usa el plugin (¿se actualizó Hermes?):" >&2
+  echo "$COMP" | grep '^FALTA' | sed 's/^/  /' >&2
+fi
+echo "Listo. Reinicia el gateway (hermes gateway restart) y el panel (hermes dashboard) para cargar el plugin"
   echo "  Hermes Desktop: Capabilities → Plugins → Rescan y activa «SDD» (la primera vez está apagada)."
 else
   echo "Listo. Nada nuevo que cargar: no hace falta reiniciar el gateway."
