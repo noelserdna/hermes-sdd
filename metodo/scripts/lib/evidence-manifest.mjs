@@ -9,7 +9,11 @@
 // Content: the in-scope criteria's evidence attachments that are present (from the ledger just written), plus every
 // file under {evidence_dir}/FASE-N/ (all of the evidence dir without --fase). Sorted, without timestamps: running the
 // acceptance twice on the same evidence rewrites the same bytes, so it never dirties the tree for nothing.
-import { existsSync, readFileSync, writeFileSync, mkdirSync, readdirSync, statSync } from "node:fs";
+//
+// Written once (taller, 11/2026: two manifests of 1 882 lines each for a project of one FASE): one line per file, and
+// without --fase no -all.json when every file is already in one FASE's manifest with the same hashes and criteria
+// (a project of one FASE): the report names that manifest instead, and a stale -all.json that repeats it is removed.
+import { existsSync, readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, unlinkSync } from "node:fs";
 import path from "node:path";
 import { describeFile, evidenceSettings } from "./acceptance.mjs";
 
@@ -58,13 +62,38 @@ export function buildManifest(root, { fase, ledger = null } = {}) {
   };
 }
 
-/** Writes the manifest when it changed; returns its relative path, or null when there was nothing to write. */
+/** The manifest as text: the header indented, one line per file (a diff shows which capture changed). */
+export function manifestText(m) {
+  const { files, ...head } = m;
+  const top = JSON.stringify(head, null, 2).replace(/\n}$/, "");
+  const rows = files.map((f) => `    ${JSON.stringify(f)}`).join(",\n");
+  return `${top},\n  "files": [${files.length ? `\n${rows}\n  ` : ""}]\n}\n`;
+}
+
+/** Without --fase: the FASE manifest that already holds exactly these files (same paths, hashes and criteria), or
+ *  null. Only when every file sits under one {evidence_dir}/FASE-N/. */
+function sameAsFase(root, m) {
+  const ns = new Set(m.files.map((f) => (f.path.slice(m.evidence_dir.length + 1).match(/^FASE-(\d+)\//) || [])[1]));
+  if (ns.size !== 1 || ns.has(undefined)) return null;
+  const rel = manifestPath(Number([...ns][0]));
+  try {
+    const other = JSON.parse(readFileSync(path.join(root, rel), "utf8"));
+    return JSON.stringify(other.files) === JSON.stringify(m.files) ? rel : null;
+  } catch { return null; }
+}
+
+/** Writes the manifest when it changed; returns its relative path (or that of the FASE manifest that already holds
+ *  the same files), or null when there was nothing to write. */
 export function writeManifest(root, opts = {}) {
   const m = buildManifest(root, opts);
   if (!m) return null;
   const rel = manifestPath(opts.fase);
   const abs = path.join(root, rel);
-  const text = JSON.stringify(m, null, 2) + "\n";
+  if (opts.fase === undefined || opts.fase === null) {
+    const twin = sameAsFase(root, m);
+    if (twin) { try { unlinkSync(abs); } catch { /* none */ } return twin; }
+  }
+  const text = manifestText(m);
   let prev = null;
   try { prev = readFileSync(abs, "utf8"); } catch { /* new */ }
   if (prev !== text) { mkdirSync(path.dirname(abs), { recursive: true }); writeFileSync(abs, text); }

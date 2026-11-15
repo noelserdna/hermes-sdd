@@ -133,6 +133,17 @@ cp "$m" "$tmp/m1"; run accept --fase 1 --report acceptance/ACCEPTANCE-REPORT.md
 cmp -s "$m" "$tmp/m1" && pass "same evidence, same bytes (no timestamps)" || bad "manifest changed between two runs"
 run accept record waiver --req REQ-F-001 --reason x --follow-up "#1" --by Ana --role cliente
 [ "$(ls "$repo/acceptance" | grep -c manifest)" = 1 ] && pass "accept subcommands write no manifest" || bad "a subcommand wrote a manifest"
+[ "$(grep -c '"path":' "$m")" = 2 ] && [ "$(wc -l < "$m" | tr -d ' ')" -le 12 ] && pass "one line per file (taller: 1 882 lines for 222 files)" || bad "manifest not one line per file: $(cat "$m")"
+# Without --fase and with every file in one FASE's manifest (a project of one FASE): no -all.json that repeats it
+mv "$repo/evidencias/notas.png" "$tmp/notas.png"
+run accept --fase 1 --report acceptance/ACCEPTANCE-REPORT.md
+run accept --report acceptance/ACCEPTANCE-REPORT.md
+[ ! -f "$repo/acceptance/evidence-manifest-all.json" ] && pass "one FASE: no evidence-manifest-all.json repeating FASE-1's" || bad "duplicated manifest: $(ls "$repo/acceptance")"
+tail -1 "$repo/acceptance/ACCEPTANCE-REPORT.md" | grep -q 'evidence-manifest-FASE-1.json' && pass "…and the report names the FASE manifest" || bad "report: $(tail -1 "$repo/acceptance/ACCEPTANCE-REPORT.md")"
+mv "$tmp/notas.png" "$repo/evidencias/notas.png"
+run accept --report acceptance/ACCEPTANCE-REPORT.md
+[ -f "$repo/acceptance/evidence-manifest-all.json" ] && pass "evidence outside the FASE: evidence-manifest-all.json is written" || bad "no -all manifest with extra evidence ($out)"
+rm -f "$repo/acceptance/evidence-manifest-all.json"
 
 # ---------------------------------------------------------------- 4. trace matrix
 mkdir -p "$repo/task" "$repo/tests"
