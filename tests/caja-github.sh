@@ -105,14 +105,21 @@ grep -q 'repo create yo/proyecto-caja --public' "$T/gh2.log" && ok "crea el repo
 [ "$(git -C "$T/nuevo.git" rev-parse main 2>/dev/null)" = "$(git rev-parse HEAD)" ] && ok "y subido a la rama por defecto (el workflow tiene que estar ahí)" || bad "push"
 echo "$o" | grep -q 'falta el token de Claude en yo/proyecto-caja' && echo "$o" | grep -q 'pbpaste' && ok "avisa de que falta el token y cómo ponerlo" || bad "aviso: $o"
 # con el token en el llavero, el repo nuevo lo recibe solo (sin mostrarlo)
-printf '#!/usr/bin/env bash\ncase "$*" in *"-s hermes-sdd-caja -w"*) echo " sk-ant-oat01-falso " ;; *) exit 44 ;; esac\n' > "$T/bin2/security"
+printf '#!/usr/bin/env bash\ncase "$*" in *"-s hermes-sdd-caja -w"*) echo " sk-ant-oat01-falsofalsofalsofalsofalsofalsofalsofalso " ;; *) exit 44 ;; esac\n' > "$T/bin2/security"
 cat >> "$T/bin2/gh" <<G
 case "\$1 \$2" in "secret set") cat > "$T/secreto-puesto" ;; esac
 G
 P3="$T/Otro"; mkdir -p "$P3"; cd "$P3"; git init -q -b main; git config user.email t@t; git config user.name t
 echo x > README.md; git add -A; git commit -qm init; rm -rf "$T/nuevo.git"
 o=$(PATH="$T/bin2:$PATH" bash "$ROOT/lanzar.sh" preparar "$P3" 2>&1)
-[ "$(cat "$T/secreto-puesto" 2>/dev/null)" = "sk-ant-oat01-falso" ] && echo "$o" | grep -q 'desde el llavero' && ! echo "$o" | grep -q 'sk-ant' \
+[ "$(cat "$T/secreto-puesto" 2>/dev/null)" = "sk-ant-oat01-falsofalsofalsofalsofalsofalsofalsofalso" ] && echo "$o" | grep -q 'desde el llavero' && ! echo "$o" | grep -q 'sk-ant' \
   && ok "con el token en el llavero, el repo nuevo lo recibe solo y sin mostrarlo" || bad "llavero: $o / $(cat "$T/secreto-puesto" 2>&1)"
+# lo del llavero no tiene forma de token (taller2: otra cosa del portapapeles): no se pone, se avisa
+printf '#!/usr/bin/env bash\ncase "$*" in *"-s hermes-sdd-caja -w"*) echo "https://otra-cosa-del-portapapeles" ;; *) exit 44 ;; esac\n' > "$T/bin2/security"
+rm -f "$T/secreto-puesto"; P4="$T/Tercero"; mkdir -p "$P4"; cd "$P4"; git init -q -b main; git config user.email t@t; git config user.name t
+echo x > README.md; git add -A; git commit -qm init; rm -rf "$T/nuevo.git"
+o=$(PATH="$T/bin2:$PATH" bash "$ROOT/lanzar.sh" preparar "$P4" 2>&1)
+[ ! -f "$T/secreto-puesto" ] && echo "$o" | grep -q 'no tiene forma de token' && ! echo "$o" | grep -q 'otra-cosa' \
+  && ok "lo del llavero sin forma de token no se pone en el repo (y no se muestra)" || bad "token malo: $o"
 rm -f "$HERMES_SDD_HOME/sdd.json"; cd "$R"
 exit $fail

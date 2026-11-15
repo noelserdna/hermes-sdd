@@ -70,8 +70,14 @@ caja_github() {  # el proyecto trabaja en la caja de GitHub (executors/github.sh
     # El token de la caja se guarda UNA vez en el llavero de macOS (servicio «hermes-sdd-caja»): cada repo nuevo lo
     # recibe de ahí, sin que se muestre (GitHub no deja leer un secreto ya guardado para copiarlo a otro repo)
     if command -v security >/dev/null && security find-generic-password -s hermes-sdd-caja -w >/dev/null 2>&1; then
-      security find-generic-password -s hermes-sdd-caja -w | tr -d '[:space:]' | gh secret set CLAUDE_CODE_OAUTH_TOKEN -R "$gh_repo" >/dev/null &&
-        echo "Token de la caja puesto en $gh_repo (desde el llavero)" >&2
+      # Solo si tiene forma de token de Claude Code (taller2: el llavero guardaba otra cosa del portapapeles y la caja
+      # falló con 401); el valor no se muestra nunca
+      if security find-generic-password -s hermes-sdd-caja -w | tr -d '[:space:]' | grep -qE '^sk-ant-oat[0-9]+-[A-Za-z0-9_-]{40,}$'; then
+        security find-generic-password -s hermes-sdd-caja -w | tr -d '[:space:]' | gh secret set CLAUDE_CODE_OAUTH_TOKEN -R "$gh_repo" >/dev/null &&
+          echo "Token de la caja puesto en $gh_repo (desde el llavero)" >&2
+      else
+        echo "AVISO: lo guardado en el llavero (hermes-sdd-caja) no tiene forma de token de Claude Code (sk-ant-oat01-…): no se pone en $gh_repo. Vuelve a guardarlo." >&2
+      fi
     else
       echo "AVISO: falta el token de Claude en $gh_repo. Para que los próximos repos lo reciban solos, guárdalo una vez en" >&2
       echo "el llavero (copia el token y ejecuta): security add-generic-password -U -s hermes-sdd-caja -a claude -w \"\$(pbpaste | tr -d '[:space:]')\"" >&2
