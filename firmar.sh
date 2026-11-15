@@ -125,6 +125,9 @@ if { [ "$TIPO:$VERBO" = requisitos:acepto ] || [ "$TIPO:$VERBO" = plan:conforme 
   fi
 fi
 
+CLAVE_NOTARIO=$(jq -r '.clave_notario // empty' "$HOME_SDD/sdd.json" 2>/dev/null); CLAVE_NOTARIO=${CLAVE_NOTARIO:-$HOME/.ssh/hermes-notario}
+CLAVE_NOTARIO=${CLAVE_NOTARIO/#\~/$HOME}
+[ -f "$CLAVE_NOTARIO" ] && [ -f "$CLAVE_NOTARIO.pub" ] || CLAVE_NOTARIO=""
 ACTA="$HOME_SDD/actas/${BOARD:-local}/$GATE.json"
 mkdir -p "$(dirname "$ACTA")"
 [ -f "$ACTA" ] || jq -n --arg g "$GATE" '{puerta:$g, pasos:[]}' > "$ACTA"
@@ -266,8 +269,20 @@ etiquetar() {  # etiquetar <tag> <mensaje> — idempotente: si existe y apunta a
     [ "$(git rev-parse "$tag^{commit}")" = "$(git rev-parse HEAD)" ] || fallo "el tag $tag ya existe en otro commit"
     return
   fi
+  # Con la clave del notario (sdd.json «clave_notario», por defecto ~/.ssh/hermes-notario) el tag va firmado con ella:
+  # `git tag -v` demuestra que lo puso el notario, no un agente (la clave vive donde el notario, nunca en la caja donde
+  # trabaja el agente). Sin ella, la del usuario si la tiene; si no, anotado.
+  if [ -n "$CLAVE_NOTARIO" ]; then
+    git -c gpg.format=ssh -c user.signingkey="$CLAVE_NOTARIO.pub" tag -s "$tag" -F - <<<"$msg" || fallo "no se pudo firmar el tag $tag con la clave del notario"
+    return
+  fi
   local sign=-a; [ -n "$(git config user.signingkey || true)" ] && sign=-s
   git tag $sign "$tag" -F - <<<"$msg"
+}
+firmar_acta() {  # el acta firmada con la clave del notario (<acta>.sig, ssh-keygen -Y sign, espacio «hermes-sdd-acta»)
+  [ -n "$CLAVE_NOTARIO" ] || return 0
+  rm -f "$ACTA.sig"
+  ssh-keygen -Y sign -q -f "$CLAVE_NOTARIO" -n hermes-sdd-acta "$ACTA" >/dev/null 2>&1 || echo "NOTARIO: aviso — no se pudo firmar el acta" >&2
 }
 rama_defecto() {  # la del Stack Profile (default_branch en AGENTS.md), si no main o master
   local d; d=$(grep -oE '^- *default_branch: *[A-Za-z0-9._/-]+' AGENTS.md 2>/dev/null | head -1 | sed -E 's/.*: *//')
@@ -685,4 +700,5 @@ if [ -f "$IDX" ]; then   # por la tabla de transiciones del núcleo, con su cerr
   HERMES_SDD_HOME="$HOME_SDD" python3 "$ROOT/plugin/hermes-sdd/hsdd_nucleo.py" transicion "$GATE" firmada \
     resultado="$RESUMEN" verbo="$VERBO" -error >&2 || echo "NOTARIO: aviso — firmada, pero el índice no se pudo poner al día" >&2
 fi
+firmar_acta   # al final: el acta ya no cambia (pasos, historial, resultado)
 echo "$RESUMEN"

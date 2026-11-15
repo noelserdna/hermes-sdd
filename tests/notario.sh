@@ -11,6 +11,9 @@ git init -q -b main && git config user.email t@t && git config user.name t && gi
 cp "$ROOT/metodo/templates/pipeline-state.template.json" pipeline-state.json; printf "pipeline-state.json\n.sdd/\n" >> .gitignore
 sed -i.bak -E 's/^> \*\*Status:\*\*.*/> **Status:** Review/' requirements/REQUIREMENTS.md && rm -f requirements/REQUIREMENTS.md.bak
 git add -A && git commit -qm "chore: toy project"
+# La clave del notario de las pruebas (no la de verdad de ~/.ssh): los tags y las actas salen firmados con ella
+ssh-keygen -q -t ed25519 -N "" -C notario-prueba -f "$T/notario"
+echo "{\"clave_notario\": \"$T/notario\"}" > "$HERMES_SDD_HOME/sdd.json"
 cat > "$HERMES_SDD_HOME/aprobadores.json" <<J
 {"andres": {"nombre": "Andrés León", "rol": "Cliente", "canales": {"telegram": "111", "local": "tester"}}}
 J
@@ -118,6 +121,16 @@ P=acceptance/PENDIENTES.md
   && grep -q '^| REPO-1 | REQ-' "$P" && grep -q "el login lo pruebo yo en la reunión" "$P" && grep -q "| g6b | abierto |" "$P" \
   && grep -q '"followUp":"REPO-1"' acceptance/decisions.jsonl && git tag -l | grep -q '^fase-0-accepted$' \
   && ok "eximir: waiver con su seguimiento, PENDIENTES.md y la FASE aceptada" || bad "eximir: $out $(cat "$P" 2>/dev/null | tail -3)"
+o=$(bash "$ROOT/verificar.sh" "$R" 2>&1); rcv=$?
+[ $rcv -eq 0 ] && echo "$o" | grep -q '^OK         tag fase-0-accepted$' && echo "$o" | grep -q '^OK         acta g6b$' \
+  && ok "el tag y el acta salen firmados con la clave del notario (verificar.sh)" || bad "firma: $rcv $o"
+cp "$HERMES_SDD_HOME/actas/local/g6b.json" "$T/acta.bak"; jq '.resultado = "otra cosa"' "$T/acta.bak" > "$HERMES_SDD_HOME/actas/local/g6b.json"
+o=$(bash "$ROOT/verificar.sh" "$R" 2>&1); rcv=$?
+[ $rcv -eq 1 ] && echo "$o" | grep -q '^FIRMA MALA acta g6b' && ok "un acta retocada después de firmarla se detecta" || bad "acta retocada: $rcv $o"
+cp "$T/acta.bak" "$HERMES_SDD_HOME/actas/local/g6b.json"
+ssh-keygen -q -t ed25519 -N "" -C otra -f "$T/otra"
+o=$(bash "$ROOT/verificar.sh" "$R" --clave "$T/otra.pub" 2>&1); rcv=$?
+[ $rcv -eq 1 ] && echo "$o" | grep -q '^FIRMA MALA tag fase-0-accepted' && ok "con otra clave, la firma no vale (no la puso este notario)" || bad "otra clave: $rcv $o"
 grep -q "Respuesta elegida: A) Una persona lo ajusta" .sdd/hermes/respuestas-por-aplicar-g6b.txt 2>/dev/null \
   && ok "aceptar una FASE con una respuesta que pide un ajuste: queda apartada para aplicarla" || bad "respuestas por aplicar: $(cat .sdd/hermes/respuestas-por-aplicar-g6b.txt 2>&1)"
 n=$(grep -c '^| REPO-' "$P"); firmar g6b
