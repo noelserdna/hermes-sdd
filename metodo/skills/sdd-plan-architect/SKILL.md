@@ -63,6 +63,7 @@ Indicative for a ~10-requirement project (7 UC, 2-3 FASEs); scale with FASE/UC c
 | `fases/README.md` | ≤ 4 000 | "how to use" / "principle" boilerplate |
 | `fase-plans/PLAN-FASE-N.md` | ≤ 9 000, +4 000 per work Stream beyond the first | pseudo-code bodies, test assertions already in `test/`, restated FASE criteria |
 | **Total `plan/`** | **≤ 34 000 + 17 000 per FASE + 4 000 per work Stream beyond the first in any FASE** (68 k for 2 FASEs, 89 k for 3 when one FASE has two Streams) | |
+| **Compact plan** (one FASE) | **≤ 14 000 in two files**: `PLAN.md` + `fases/FASE-0-SKELETON.md` (Compact plan, under Phase 1) | the other five files |
 
 `design/OPERATION-MAPPING.md` (when written here) is outside the `plan/` total: one row per operation, no prose.
 
@@ -134,6 +135,16 @@ The route judged that formal specs add little to this project (few functional re
 - **Architecture** — `ARCHITECTURE.md` is still written, minimal: context, containers, components and data views drawn from the requirements, the Stack Profile and the Phase 2 decisions (`D-PA-NNN`, or `ADR-DRAFT-*` from `design/`). Phase 4b has no contracts to map.
 - **Validation** — V2, V3, V4 and V7 are N/A (no `spec/adr`, `spec/nfr`, invariants or contracts): list them in the Validation Report with the status `N/A — specifications skipped by the route`. V1 reads "every requirement group of the FASE files has guidance in a plan"; V8 checks scenarios against the requirement criteria; V9 is unchanged. REQ-NF targets still get a strategy in PLAN.md §Cross-FASE.
 - **Header** — PLAN.md and ARCHITECTURE.md carry `Inputs: requirements v{N} (specifications skipped by the route) · design/ {yes|no} · ux/ {yes|no}`.
+
+### Compact plan (one FASE)
+
+When the plan has a single FASE because the project is small (the harness asks for a `COMPACT PLAN`), the seven files of Output Artifacts are ceremony: the taller wrote 675 lines of `plan/` for one FASE. The plan is then **two files, ≤ 14 000 chars in total**, and `plan/PLAN.md` carries `> **Plan-Size:** compact` next to `> **Plan-Style:** vertical`:
+
+- `plan/PLAN.md` — the header lines; the Technical Context as `aspect · decision · ref` rows; a `## Decisiones` table with the `D-PA-NNN` decisions taken without asking (what CLARIFY-LOG.md would hold; class C questions still go to `.sdd/questions-plan-architect.md`); the architecture in ≤ 15 lines (one ASCII diagram or one table: components, data, where it runs); REQ-NF strategies; a quickstart ≤ 10 lines; the Validation Report.
+- `plan/fases/FASE-0-SKELETON.md` — the FASE file of `references/fase-template.md` (header, Criterios de Éxito, Módulos y Conjuntos de Escritura, Demo…) ending with `## Plan de la FASE`: the per-FASE plan sections the next stages read — the Test Coverage Map (§7.4 format), `Puertos con doble` (only when the FASE calls an external system) and the UI deliverables when the FASE file does not list them.
+- Not written: `ARCHITECTURE.md`, `RESEARCH.md` (Phase 3 runs only with `--research`), `CLARIFY-LOG.md`, `fases/README.md`, `fase-plans/`. V1 and V5 read `## Plan de la FASE` instead of `PLAN-FASE-0.md`; `sdd lint --plan` (V8, V9, V-21) works the same, since it reads `PLAN.md`, the FASE file and, for the ports, that section when `fase-plans/PLAN-FASE-0.md` does not exist.
+
+A later change that adds a second FASE (incremental plan) leaves the compact files as they are and writes the new FASE in the normal format: its `fase-plans/PLAN-FASE-1.md`, plus `ARCHITECTURE.md` only if the change needs it.
 
 ### Phase 1B: FASE Generation
 
@@ -289,7 +300,7 @@ Budget ≤ 12 000 chars: technical-context rows are `aspect · decision · ADR i
 | V2: ADR Compliance | every ADR decision reflected in the architecture | `spec/adr/` ↔ ARCHITECTURE.md |
 | V3: NFR Strategies | every NFR has a strategy | `spec/nfr/` ↔ PLAN.md §Cross-FASE |
 | V4: INV Enforcement | every invariant has an enforcement mechanism | `05-INVARIANTS.md` ↔ PLAN.md |
-| V5: FASE Completeness | every FASE has its plan file | `plan/fases/` ↔ `plan/fase-plans/` |
+| V5: FASE Completeness | every FASE has its plan file (compact plan: its `## Plan de la FASE` section) | `plan/fases/` ↔ `plan/fase-plans/` |
 | V6: No Orphan Decisions | every CLARIFY-LOG decision is used | CLARIFY-LOG.md ↔ PLAN.md |
 | V7: Operation Mapping | every operation of a `Style: operations` contract has a mapping row | `spec/contracts/` ↔ `design/OPERATION-MAPPING.md` |
 | V8: Backed increments | every FASE header has `Requisitos` and `Escenarios`, its criteria cite REQ/scenario ids, and its `## Demo` has 1-10 steps each citing a scenario that exists in `spec/tests/BDD-*.md` | `plan/fases/` ↔ `spec/tests/` |
@@ -317,7 +328,7 @@ design/
 └── OPERATION-MAPPING.md       ← only when missing and a contract is Style: operations (Phase 4b)
 ```
 
-Per-FASE mode writes only `plan/fase-plans/PLAN-FASE-{N}.md`; research-only mode only `plan/RESEARCH.md`.
+Per-FASE mode writes only `plan/fase-plans/PLAN-FASE-{N}.md` (in a compact plan, the `## Plan de la FASE` section of the FASE file); research-only mode only `plan/RESEARCH.md`. A compact plan writes only `plan/PLAN.md` and `plan/fases/FASE-0-SKELETON.md` (Compact plan, under Phase 1).
 
 ## Constraints
 

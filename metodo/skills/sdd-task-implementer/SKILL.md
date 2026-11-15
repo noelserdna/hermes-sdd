@@ -100,7 +100,7 @@ Never modified: `spec/`, `plan/`, `audits/`, `task/TASK-INDEX.md`, `task/TASK-OR
 ### Phase 0: Context Loading
 
 1. Read the project `CLAUDE.md` and resolve the **Stack Profile** (section Stack Profile): commands, `app_dir`, `task_state`, `task_format`.
-2. Always load: `task/TASK-FASE-{N}.md` (if it has `## Stream Ownership`, parse Stream → tasks, write-set, "Runs in"), `plan/fase-plans/PLAN-FASE-{N}.md`, `plan/fases/FASE-{N}-*.md` (Criterios de Exito; in a vertical plan also `Requisitos`, `Escenarios` and `## Demo`), `spec/domain/01-GLOSSARY.md`, and the plan style (`grep -m1 -i 'Plan-Style' plan/PLAN.md`: `vertical`, `vertical (from FASE-N)` for FASE-N on, or absent = horizontal).
+2. Always load: `task/TASK-FASE-{N}.md` (if it has `## Stream Ownership`, parse Stream → tasks, write-set, "Runs in"), `plan/fase-plans/PLAN-FASE-{N}.md` (in a compact plan, `Plan-Size: compact` in PLAN.md, there is none: the FASE file's `## Plan de la FASE` holds its Coverage Map and ports), `plan/fases/FASE-{N}-*.md` (Criterios de Exito; in a vertical plan also `Requisitos`, `Escenarios` and `## Demo`), `spec/domain/01-GLOSSARY.md`, and the plan style (`grep -m1 -i 'Plan-Style' plan/PLAN.md`: `vertical`, `vertical (from FASE-N)` for FASE-N on, or absent = horizontal).
 3. Load on demand, when a task's **Refs** point there: the referenced UC/contract/ADR files, `spec/domain/02-ENTITIES.md`, `03-VALUE-OBJECTS.md`, `04-STATES.md`, `05-INVARIANTS.md`, `design/OPERATION-MAPPING.md`. For every `REQ-*` the task cites (Refs, Acceptance, or through its scenario ids), its statement and criteria verbatim: `node "${SDD_PLUGIN_ROOT:-$CLAUDE_PLUGIN_ROOT}/scripts/sdd.mjs" req show <REQ-ID> [--ac N]` (without the command, that requirement's section of `requirements/REQUIREMENTS.md`). The task, the FASE and the BDD scenario paraphrase the criterion; the tests quote its letter (`references/tdd-workflow.md` → The criterion's letter sits above its assert).
 4. Build the context map:
 
@@ -117,7 +117,7 @@ FASE-0 Context Map:
 | Gate | Condition | Action if failed |
 |------|-----------|------------------|
 | G-01 | `task/TASK-FASE-{N}.md` exists | HALT: run `sdd-task-generator` |
-| G-02 | `plan/fase-plans/PLAN-FASE-{N}.md` exists | HALT: run `sdd-plan-architect` |
+| G-02 | `plan/fase-plans/PLAN-FASE-{N}.md` exists, or the plan is compact (`Plan-Size: compact` in PLAN.md) and the FASE file has `## Plan de la FASE` | HALT: run `sdd-plan-architect` |
 | G-03 | `plan/fases/FASE-{N}-*.md` exists | HALT: run `sdd-plan-architect` |
 | G-04 | `spec/domain/01-GLOSSARY.md` exists | WARN |
 | G-05 | Every spec referenced in Refs exists | HALT: missing spec files |

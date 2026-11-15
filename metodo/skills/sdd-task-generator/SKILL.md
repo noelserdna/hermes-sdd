@@ -78,7 +78,7 @@ Default: fan-out with 2 or more FASEs; sequential with one FASE, `--fase N` or `
 ```
 task/
   TASK-FASE-{N}.md   ← one per FASE (regenerated)
-  TASK-ORDER.md      ← implementation order, Waves, Streams (regenerated)
+  TASK-ORDER.md      ← implementation order, Waves, Streams (regenerated; not written for a compact plan of one FASE)
   TASK-INDEX.md      ← full format only; derived by `$SDD_CLI tasks index`, never hand-written
 ```
 
@@ -116,12 +116,14 @@ INPUTS:
                                          | absent (horizontal)
 ```
 
+**Compact plan.** With `> **Plan-Size:** compact` in PLAN.md (one FASE, small project: `sdd-plan-architect` § Compact plan) the plan is `plan/PLAN.md` + `plan/fases/FASE-0-*.md`, and what a `PLAN-FASE-0.md` would hold (Coverage Map §7.4, `Puertos con doble`) is the FASE file's `## Plan de la FASE`: read it wherever this skill says PLAN-FASE. There is no `ARCHITECTURE.md`; PLAN.md says the architecture in a few lines. Write the compact task format (`--compact`) and only `task/TASK-FASE-0.md`: no `TASK-ORDER.md` (with one FASE it would repeat the task file's `> **Critical path:**` line and `## Stream Ownership`, which V-11 reads there). If a later change adds a FASE, write `TASK-ORDER.md` then.
+
 **Plan style.** With `Plan-Style: vertical` each FASE is an increment (one user journey, `sdd-plan-architect/references/phase-assignment-rules.md`) and the rules marked *vertical* below apply; `vertical (from FASE-N)` applies them from FASE-N on. Without the marker the plan is horizontal: generate as before (Foundation may hold everything shared, Slices ungrouped). Pass the style to every FASE agent in the cross-cutting contract.
 
 | Gate | Condition | If failed |
 |------|-----------|-----------|
 | G-01 | At least one FASE file exists | HALT: run `sdd-plan-architect` |
-| G-02 | Plan artifacts exist for the target FASE(s) | HALT: run `sdd-plan-architect` |
+| G-02 | Plan artifacts exist for the target FASE(s): `plan/fase-plans/PLAN-FASE-{N}.md`, or in a compact plan (`Plan-Size: compact` in PLAN.md) the FASE file's `## Plan de la FASE` | HALT: run `sdd-plan-architect` |
 | G-03 | Glossary exists | WARN |
 | G-04 | `stages["plan-architect"].status != "stale"` in `pipeline-state.json` | HALT: run `sdd-plan-architect` (plan is stale: `{staleReason}`) — tasks from a stale plan would publish write-sets and Streams that no longer match the specs |
 | G-05 | FASE files newer than `spec/` (mtime; only without `pipeline-state.json`) | WARN: consider `sdd-plan-architect --audit-fases` |
@@ -279,7 +281,7 @@ A FASE agent writes only its own `TASK-FASE-{N}.md`: never the global files, `pi
 | V-08 | No task touches more than 8 files | WARN |
 | V-09 | Task IDs follow `TASK-F{N}-{SEQ}` and are unique | ERROR |
 | V-10 | 5-80 tasks per FASE | WARN |
-| V-11 | Critical path identified in TASK-ORDER.md | ERROR |
+| V-11 | Critical path identified in TASK-ORDER.md (compact plan of one FASE: the `> **Critical path:**` line of TASK-FASE-0.md) | ERROR |
 | V-12 | File paths follow the CLAUDE.md conventions | WARN |
 | V-13 | Every source file in Coverage Map §7.4 has its test inside the implementing task, in a cross-Stream test task, or an exclusion | ERROR |
 | V-14 | Every Coverage Map exclusion has a reason | WARN |
