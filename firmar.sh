@@ -497,7 +497,12 @@ Kanban-Task: $BOARD/$TASK"
     RESULTADO="rechazo"; RESUMEN="FASE-$FASE rechazada por $NOMBRE ($ROL): $TEXTO" ;;
 
   entrega:acepto|entrega:observaciones)
-    N=$(( $(git tag -l 'entrega-*' | wc -l) + 1 ))
+    # El número de la entrega se fija en el acta la primera vez: al reanudar tras un corte, contar tags daría N+1
+    N=$(jq -r '.entrega_n // empty' "$ACTA")
+    if [ -z "$N" ]; then
+      N=$(( $(git tag -l 'entrega-*' | wc -l) + 1 ))
+      t=$(mktemp); jq --argjson n "$N" '.entrega_n = $n' "$ACTA" > "$t" && mv "$t" "$ACTA"
+    fi
     # Plan compacto de una sola FASE: esta puerta traía su demo y aceptarla acepta también la FASE-0 (una decisión, dos
     # registros: el de la FASE y el de la entrega)
     UNICA=$(p .unica); RES=accepted; [ "$VERBO" = observaciones ] && RES=observations
@@ -648,15 +653,15 @@ if ! hecho encadenado; then
     # la FASE en curso o vuelve a planificar con los requisitos nuevos), así que el tramo siguiente no se lanza ahora
     if [ "$VERBO" = corrijo ]; then cp "$PC" "$PC.peticion"   # ya dice quién pide qué
     else { echo "En la puerta «$(p .titulo)», $NOMBRE ($ROL) eligió respuestas que piden cambiar los requisitos:"; echo; cat "$PC"; } > "$PC.peticion"; fi
-    "$ROOT/lanzar.sh" cambio "$REPO" "$(cat "$PC.peticion")" >/dev/null
+    ORIGEN="puerta $GATE" "$ROOT/lanzar.sh" cambio "$REPO" "$(cat "$PC.peticion")" >/dev/null
     rm -f "$PC.peticion"
     if [ "$VERBO" = corrijo ]; then RESUMEN="$RESUMEN · lanza un cambio de requisitos"
     else RESUMEN="$RESUMEN · lanza un cambio de requisitos por las respuestas ($(grep -c '^Respuesta elegida:' "$PC" || true))"; fi
   elif [ -s ".sdd/hermes/respuestas-por-aplicar-$GATE.txt" ] && [ -n "$BOARD" ] && [ -x "$ROOT/lanzar.sh" ]; then
-    "$ROOT/lanzar.sh" respuestas "$REPO" "$GATE" "$RESULTADO" >/dev/null
+    ORIGEN="puerta $GATE" "$ROOT/lanzar.sh" respuestas "$REPO" "$GATE" "$RESULTADO" >/dev/null
     RESUMEN="$RESUMEN · aplica las respuestas elegidas ($(grep -c '^Respuesta elegida:' ".sdd/hermes/respuestas-por-aplicar-$GATE.txt"))"
   else
-    [ -n "$BOARD" ] && [ -x "$ROOT/lanzar.sh" ] && "$ROOT/lanzar.sh" siguiente "$REPO" "$GATE" "$RESULTADO" >/dev/null
+    [ -n "$BOARD" ] && [ -x "$ROOT/lanzar.sh" ] && ORIGEN="puerta $GATE" "$ROOT/lanzar.sh" siguiente "$REPO" "$GATE" "$RESULTADO" >/dev/null
   fi
   marcar encadenado
 fi

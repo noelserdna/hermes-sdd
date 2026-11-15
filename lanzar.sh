@@ -155,8 +155,19 @@ cierre() {  # cierre [padre] [título]: (huecos entre especificación y código,
 }
 
 tarjeta() {  # tarjeta <título> <padre|-> <runtime> <etapa> [fase] — imprime el id
+  # Con ORIGEN (lo pone el notario: «puerta <id>»), la tarjeta lleva la línea «Origen: <origen> · <título>» y, si ya
+  # existe una tarjeta viva con esa línea, se devuelve esa en vez de crear otra: el notario puede repetir el encadenado
+  # tras caerse entre crear las tarjetas y apuntarlo en el acta, y antes eso duplicaba el tramo (dos agentes, dos costes)
+  local origen="" ya
+  if [ -n "${ORIGEN:-}" ]; then
+    origen="Origen: $ORIGEN · $1"
+    ya=$("${K[@]}" list --json 2>/dev/null | jq -r --arg o "$origen" \
+      '[.[]? | select(.status != "archived" and ((.body // "") | split("\n") | index($o)))][0].id // empty' 2>/dev/null || true)
+    if [ -n "$ya" ]; then echo "$ya"; return 0; fi
+  fi
   local args=("$1" --assignee sdd-estacion --workspace "dir:$REPO" --max-runtime "$3" --max-retries 1
-              --body "Ejecuta: bash $ROOT/etapa.sh $REPO $4${5:+ $5}" --json)
+              --body "${origen:+$origen
+}Ejecuta: bash $ROOT/etapa.sh $REPO $4${5:+ $5}" --json)
   if [ "$2" != - ]; then args+=(--parent "$2")
   elif [ -n "${RAIZ:-}" ]; then args+=(--parent "$RAIZ"); fi   # el tramo espera a una tarjeta previa (respuestas)
   "${K[@]}" create "${args[@]}" | jq -r .id
@@ -183,9 +194,17 @@ case "$CMD" in
     PETICION=$3
     asegurar_tablero
     cd "$REPO"; mkdir -p intent .sdd/hermes
-    N=$(( $(find intent -name 'INT-*.md' | wc -l) + 1 )); INT=$(printf 'INT-%03d' "$N")
-    { echo "# $INT"; echo; echo "Petición literal ($(date +%Y-%m-%d)):"; echo; printf '%s\n' "$PETICION" | sed 's/^/> /'; } > "intent/$INT.md"
-    git add "intent/$INT.md" && git commit -qm "docs(intent): $INT" && echo "$INT" > .sdd/hermes/cambio-actual
+    # El mismo origen (una puerta que el notario vuelve a encadenar) no abre otro cambio: se reutiliza su INT
+    YA=""; [ -z "${ORIGEN:-}" ] || YA=$(grep -lxF "Origen: $ORIGEN" intent/INT-*.md 2>/dev/null | head -1 || true)
+    if [ -n "$YA" ]; then
+      INT=$(basename "$YA" .md)
+    else
+      N=$(( $(find intent -name 'INT-*.md' | wc -l) + 1 )); INT=$(printf 'INT-%03d' "$N")
+      { echo "# $INT"; echo; echo "Petición literal ($(date +%Y-%m-%d)):"; echo; printf '%s\n' "$PETICION" | sed 's/^/> /'
+        [ -z "${ORIGEN:-}" ] || { echo; echo "Origen: $ORIGEN"; }; } > "intent/$INT.md"
+      git add "intent/$INT.md" && git commit -qm "docs(intent): $INT"
+    fi
+    echo "$INT" > .sdd/hermes/cambio-actual
     T=$(tarjeta "Cambio $INT" - 60m cambio)
     echo "Cambio $INT en marcha en $BOARD: $T" ;;
 
