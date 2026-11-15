@@ -148,6 +148,61 @@ def actualizar(p: Path, fn, defecto=None):
         return nuevo
 
 
+def _arranque(pid: int) -> str:
+    """Hora de arranque de `pid` como la escribe lib/candado.sh (ps -o lstart, en UTC y C). "" si no se sabe."""
+    import subprocess
+    try:
+        out = subprocess.run(["ps", "-o", "lstart=", "-p", str(pid)], capture_output=True, text=True, timeout=10,
+                             env={**os.environ, "TZ": "UTC", "LC_ALL": "C"}).stdout
+    except Exception:
+        return ""
+    return " ".join(out.split())
+
+
+def candado_vivo(repo) -> bool:
+    """¿Alguien vivo tiene el candado del repo (<repo>/.sdd/hermes/lock)? La misma regla que lib/candado.sh: el pid
+    vive y, si el candado guardó su hora de arranque, coincide (tras un reinicio el pid puede ser de otro proceso y
+    el candado quedaba vivo para siempre); recién creado sin pid, 60 s de gracia; más de HERMES_SDD_CANDADO_MAX_S
+    (24 h por defecto, 0 = sin tope) se da por abandonado."""
+    lock = Path(repo) / ".sdd" / "hermes" / "lock"
+    if not lock.is_dir():
+        return False
+    try:
+        pid = int((lock / "pid").read_text().strip())
+    except (OSError, ValueError):
+        try:
+            return (time.time() - lock.stat().st_mtime) < 60   # recién creado, sin pid aún
+        except OSError:
+            return False
+    try:
+        os.kill(pid, 0)
+    except PermissionError:
+        pass   # existe, de otro usuario
+    except OSError:
+        return False
+    try:
+        guardado = " ".join((lock / "arranque").read_text().split())
+    except OSError:
+        guardado = ""
+    if guardado:
+        ahora = _arranque(pid)
+        if ahora and ahora != guardado:
+            return False
+    try:
+        maximo = int(os.environ.get("HERMES_SDD_CANDADO_MAX_S") or 86400)
+    except ValueError:
+        maximo = 86400
+    if maximo > 0:
+        try:
+            desde = int((lock / "desde").read_text().strip())
+        except (OSError, ValueError):
+            desde = int(lock.stat().st_mtime)
+        if time.time() - desde > maximo:
+            log.warning("hermes-sdd: el candado de %s (pid %s) tiene más de %s s: se da por abandonado", repo, pid, maximo)
+            return False
+    return True
+
+
 def indice(gid: str) -> Path:
     if not gid or "/" in gid or gid.startswith("."):
         raise ValueError("id de puerta no válido")

@@ -72,6 +72,48 @@ sleep 0.5; ! pgrep -f "$FB/claude" >/dev/null && [ ! -d "$R/.sdd/hermes/lock" ] 
 rm -f "$R/.sdd/hermes/feedback/plan.txt"; pkill -f "$FB/claude" 2>/dev/null; rm -rf "$FB"
 jq '.ejecutor="replay"' "$R/.sdd/hermes/hermes-sdd.json" > "$T/c" && cp "$T/c" "$R/.sdd/hermes/hermes-sdd.json"
 
+# Candado (lib/candado.sh) tras un reinicio: el pid del dueño lo puede tener otro proceso. Antes «vivo» era solo
+# kill -0 y la etapa quedaba «busy» (y el notario con 75) para siempre.
+C="$T/cand"; L="$C/.sdd/hermes/lock"; mkdir -p "$C/.sdd/hermes"
+sleep 60 & AJENO=$!   # un proceso vivo que no es el dueño del candado
+cand() { ( . "$ROOT/lib/candado.sh"; "$@" ); }
+mkdir -p "$L"; echo "$AJENO" > "$L/pid"; echo etapa > "$L/quien"; date +%s > "$L/desde"
+echo "Thu Jan 1 00:00:00 1970" > "$L/arranque"
+! cand candado_vivo "$C" && ok "candado: pid vivo pero con otra hora de arranque (pid reutilizado) → huérfano" || bad "pid reutilizado cuenta como vivo"
+o=$(bash -c '. "$1/lib/candado.sh"; candado_tomar "$2" firma g1 && cat "$3/pid" "$3/arranque"' _ "$ROOT" "$C" "$L" 2>&1)
+[ "$(echo "$o" | head -1)" != "$AJENO" ] && [ -n "$(echo "$o" | sed -n 2p)" ] \
+  && ok "candado: se roba el huérfano y el nuevo guarda pid y hora de arranque" || bad "robo del huérfano: $o"
+rm -rf "$L"; mkdir -p "$L"; echo "$AJENO" > "$L/pid"; date +%s > "$L/desde"
+TZ=UTC LC_ALL=C ps -o lstart= -p "$AJENO" | tr -s ' ' | sed 's/^ //; s/ $//' > "$L/arranque"
+cand candado_vivo "$C" && ok "candado: pid vivo con su misma hora de arranque → vivo" || bad "dueño vivo dado por muerto"
+! cand candado_tomar "$C" etapa plan && ok "candado: con el dueño vivo, otro no lo toma" || bad "se robó un candado vivo"
+rm "$L/arranque"
+cand candado_vivo "$C" && ok "candado de un arnés anterior (sin arranque): manda el pid" || bad "candado viejo con pid vivo dado por muerto"
+TZ=UTC LC_ALL=C ps -o lstart= -p "$AJENO" > "$L/arranque"; echo $(( $(date +%s) - 100 )) > "$L/desde"
+e=$(HERMES_SDD_CANDADO_MAX_S=50 bash -c '. "$1/lib/candado.sh"; candado_vivo "$2"' _ "$ROOT" "$C" 2>&1) \
+  && bad "candado más viejo que la edad máxima sigue vivo" \
+  || { echo "$e" | grep -q "se da por abandonado" && ok "candado: más viejo que HERMES_SDD_CANDADO_MAX_S → abandonado, con aviso" || bad "sin aviso: $e"; }
+HERMES_SDD_CANDADO_MAX_S=0 cand candado_vivo "$C" 2>/dev/null && ok "candado: HERMES_SDD_CANDADO_MAX_S=0 quita el tope" || bad "tope 0"
+# el plugin y el encargado aplican la misma regla (hsdd_nucleo.candado_vivo)
+py() { HERMES_SDD_CANDADO_MAX_S=${1} python3 -c 'import sys; sys.path.insert(0, sys.argv[1]); import hsdd_nucleo as N; print(N.candado_vivo(sys.argv[2]))' "$ROOT/plugin/hermes-sdd" "$C" 2>/dev/null; }
+a=$(py 0); echo "Thu Jan 1 00:00:00 1970" > "$L/arranque"; b=$(py 0); echo $(( $(date +%s) - 100 )) > "$L/desde"
+TZ=UTC LC_ALL=C ps -o lstart= -p "$AJENO" > "$L/arranque"; c=$(py 50)
+[ "$a/$b/$c" = "True/False/False" ] && ok "Python (plugin, encargado): misma regla que lib/candado.sh" || bad "Python: $a/$b/$c"
+{ kill "$AJENO"; wait "$AJENO"; } 2>/dev/null
+# mtime portable: con un stat GNU («-f» es el estado del sistema de ficheros) la edad salía de restar un texto
+mkdir -p "$T/gnu"; cat > "$T/gnu/stat" <<'S'
+#!/usr/bin/env bash
+case "$1" in
+  -c) [ "$2" = %Y ] && /usr/bin/stat -f %m "$3" 2>/dev/null || command -p stat -c %Y "$3" ;;
+  -f) echo "  File: \"$3\""; echo "    ID: 0 Namelen: 255 Type: apfs" ;;
+esac
+S
+chmod +x "$T/gnu/stat"; rm -rf "$L"; mkdir -p "$L"
+e=$(PATH="$T/gnu:$PATH" bash -c '. "$1/lib/candado.sh"; _candado_edad "$2"' _ "$ROOT" "$L" 2>&1)
+[[ "$e" =~ ^[0-9]+$ ]] && [ "$e" -lt 30 ] && ok "candado: la edad se calcula también con stat de GNU (Linux)" || bad "edad con stat GNU: $e"
+e=$(cand _candado_edad "$L"); [[ "$e" =~ ^[0-9]+$ ]] && [ "$e" -lt 30 ] && ok "candado: y con el stat de este sistema" || bad "edad: $e"
+rm -rf "$C"
+
 # Llegar a la FASE-0 aceptada y anularla
 paso() { local o p v; o=$(outcome "$@" | tail -1); p=$(echo "$o" | jq -r '.puerta // empty'); [ -n "$p" ] || return 0
   v=${V:-acepto}; [ "$1" = ruta ] && v=$(jq -r '[.opciones[] | select(.auto == true) | .verbo][0] // [.opciones[] | select(.verbo | startswith("ruta-")) | .verbo][0]' "$HERMES_SDD_HOME/puertas/$p.json")   # un botón que la puerta ofrece

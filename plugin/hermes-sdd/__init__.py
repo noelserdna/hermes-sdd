@@ -579,15 +579,7 @@ REINTENTOS_MAX = 2
 
 
 def _candado_vivo(repo: str) -> bool:
-    lock = Path(repo) / ".sdd" / "hermes" / "lock"
-    if not lock.is_dir():
-        return False
-    try:
-        pid = int((lock / "pid").read_text().strip())
-        os.kill(pid, 0)
-        return True
-    except (OSError, ValueError):
-        return (time.time() - lock.stat().st_mtime) < 60   # recién creado, sin pid aún
+    return N.candado_vivo(repo)   # la misma regla que lib/candado.sh (pid + hora de arranque + edad máxima)
 
 
 async def _reintentar_perdidos(bot=None) -> list:

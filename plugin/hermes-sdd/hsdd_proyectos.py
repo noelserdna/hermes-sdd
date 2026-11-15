@@ -527,13 +527,7 @@ def estado(repo: str, tablero: str | None = None, tarjetas: list | None = None) 
     candado = None
     lock = r / ".sdd" / "hermes" / "lock"
     if lock.is_dir():
-        pid = (lock / "pid").read_text().strip() if (lock / "pid").exists() else ""
-        vivo = False
-        if pid.isdigit():
-            try:
-                os.kill(int(pid), 0); vivo = True
-            except OSError:
-                pass
+        vivo = N.candado_vivo(r)   # pid + hora de arranque (un pid reutilizado tras reiniciar no cuenta)
         candado = {"run": (lock / "run").read_text().strip() if (lock / "run").exists() else None, "vivo": vivo}
     def git(*a):
         return subprocess.run(["git", "-C", str(r), *a], capture_output=True, text=True).stdout.strip()
