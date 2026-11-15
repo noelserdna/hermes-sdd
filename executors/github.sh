@@ -123,7 +123,10 @@ fi
 [ -s "$S/ignorados.tgz" ] && tar xzf "$S/ignorados.tgz" -C "$REPO"
 
 # ── 4. Resultado (como executors/claude.sh) ───────────────────────────────────────────────────────────────────────
-gh api -X DELETE "repos/$GH/actions/runs/$ID/artifacts" >/dev/null 2>&1 || true
+# El artefacto se borra ya (en un repo público lo podría descargar cualquiera durante su día de vida)
+for a in $(gh api "repos/$GH/actions/runs/$ID/artifacts" -q '.artifacts[].id' 2>/dev/null); do
+  gh api -X DELETE "repos/$GH/actions/artifacts/$a" >/dev/null 2>&1 || echo "no se pudo borrar el artefacto $a" >> "$ERR"
+done
 CUOTA='usage limit|rate limit|limit reached|weekly limit|daily limit|session limit'
 if ! jq -e . "$OUT" >/dev/null 2>&1; then
   grep -qiE "$CUOTA" "$ERR" 2>/dev/null && salir scheduled "cuota de Claude agotada" "{\"minutes\":$MIN}"
@@ -135,6 +138,11 @@ if jq -e '(.subtype // "") | test("budget")' "$OUT" >/dev/null 2>&1; then
   salir failed "la ejecución llegó a su tope de gasto (${SDD_TOPE_USD:-?} \$): para seguir, sube topes.etapa_usd o topes.proyecto_usd" "$(jq -c '. + {tope:"gasto"}' <<< "$EXTRA")"
 fi
 TEXTO=$(jq -r '.result // ""' "$OUT")
+# Token de la caja inválido o caducado: no se arregla reintentando (en local se aparca hasta /login; aquí lo arregla
+# quien pone el secreto)
+if echo "$TEXTO" | grep -qiE 'failed to authenticate|oauth (access )?token (is )?(invalid|expired)|invalid api key|401'; then
+  salir failed "Claude no acepta el token de la caja: vuelve a ponerlo con «claude setup-token» y «gh secret set CLAUDE_CODE_OAUTH_TOKEN -R $GH»" "$EXTRA"
+fi
 if [ "$(jq -r .is_error "$OUT")" = true ] || [ "$(cat "$S/rc" 2>/dev/null || echo 0)" != 0 ]; then
   echo "$TEXTO" | grep -qiE "$CUOTA" && salir scheduled "cuota de Claude agotada" "$EXTRA"
   [ "$(cat "$S/rc" 2>/dev/null)" = 124 ] && salir failed "la ejecución superó su tope de tiempo (${SDD_TOPE_MIN:-60} min)" "$(jq -c '. + {tope:"tiempo"}' <<< "$EXTRA")"
