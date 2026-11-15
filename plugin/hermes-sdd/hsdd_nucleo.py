@@ -8,15 +8,20 @@ de fichero, no con un lock de asyncio.
 from __future__ import annotations
 
 import contextlib
+import copy
 import fcntl
 import json
+import logging
 import os
 import re
+import secrets
+import threading
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 
 HOME = Path(os.environ.get("HERMES_SDD_HOME", Path.home() / ".hermes" / "hermes-sdd"))
+log = logging.getLogger("hermes_plugins.hermes_sdd.nucleo")   # hijo del logger del plugin: llega a gateway.log
 DESHACER_DEFECTO_S = 180
 DESHACER_JEV_DEFECTO_S = 60   # Jev decide en piloto y auto: su ventana es aparte (más corta, para no frenar el pipeline)
 DESHACER_MIN_S, DESHACER_MAX_S = 10, 86400
@@ -52,33 +57,150 @@ def duracion(s: int) -> str:
     return " ".join(partes) or "0 s"
 
 
+_ROTOS_AVISADOS: set = set()   # (ruta, mtime) de los JSON ilegibles ya avisados: un aviso por versión del fichero
+
+
 def leer(p: Path, defecto=None):
+    """El JSON de `p`, o `defecto` si no existe. Uno que existe pero no se puede leer (JSON roto, permisos) también
+    devuelve `defecto`, pero ya no en silencio: antes una puerta del índice con el JSON roto se saltaba en cada vuelta
+    del bucle sin dejar rastro, y la persona esperaba una decisión que nunca le llegaba."""
     try:
         return json.loads(p.read_text())
-    except Exception:
+    except FileNotFoundError:
+        return defecto
+    except Exception as e:
+        try:
+            marca = (str(p), p.stat().st_mtime_ns)
+        except OSError:
+            marca = (str(p), 0)
+        if marca not in _ROTOS_AVISADOS:
+            _ROTOS_AVISADOS.add(marca)
+            log.warning("hermes-sdd: no se puede leer %s (%s): se trata como vacío hasta que se arregle", p, e)
         return defecto
 
 
 def escribir(p: Path, datos) -> None:
-    tmp = p.with_suffix(f".{os.getpid()}.tmp")
-    tmp.write_text(json.dumps(datos, ensure_ascii=False, indent=2))
-    tmp.replace(p)
+    """Escritura atómica: temporal único y rename. El temporal lleva pid, hilo y un aleatorio: con solo el pid, el
+    bucle sin Telegram (en su hilo) y el loop del gateway (mismo proceso) compartían temporal y uno podía renombrar
+    a medio escribir el del otro. fsync antes del rename: un apagón no deja el índice vacío con el nombre bueno."""
+    tmp = p.with_name(f".{p.name}.{os.getpid()}.{threading.get_ident()}.{secrets.token_hex(4)}.tmp")
+    try:
+        with open(tmp, "w") as f:
+            f.write(json.dumps(datos, ensure_ascii=False, indent=2))
+            f.flush()
+            os.fsync(f.fileno())
+        tmp.replace(p)
+    except BaseException:
+        tmp.unlink(missing_ok=True)
+        raise
+    with contextlib.suppress(OSError):   # el rename también, en el directorio (best effort: no todo FS lo permite)
+        fd = os.open(p.parent, os.O_RDONLY)
+        try:
+            os.fsync(fd)
+        finally:
+            os.close(fd)
 
 
 def ahora() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+_CERROJO_LOCAL = threading.local()   # cuántas veces lo tiene ya este hilo (reentrante)
+
+
 @contextlib.contextmanager
 def cerrojo():
-    """Exclusión entre procesos para leer-modificar-escribir el índice de puertas. Sección corta y sin esperas."""
-    (HOME / "puertas").mkdir(parents=True, exist_ok=True)
-    with open(HOME / "puertas" / ".cerrojo", "w") as f:
-        fcntl.flock(f, fcntl.LOCK_EX)
+    """Exclusión entre procesos (y entre hilos: cada uno abre su descriptor) para leer-modificar-escribir el índice de
+    puertas y los ficheros de estado del plugin. Sección corta y sin esperas. Reentrante en el mismo hilo: flock sobre
+    un segundo descriptor del mismo proceso se bloquearía a sí mismo (actualizar() dentro de un `with cerrojo()`)."""
+    if getattr(_CERROJO_LOCAL, "n", 0):
+        _CERROJO_LOCAL.n += 1
         try:
             yield
         finally:
+            _CERROJO_LOCAL.n -= 1
+        return
+    (HOME / "puertas").mkdir(parents=True, exist_ok=True)
+    with open(HOME / "puertas" / ".cerrojo", "w") as f:
+        fcntl.flock(f, fcntl.LOCK_EX)
+        _CERROJO_LOCAL.n = 1
+        try:
+            yield
+        finally:
+            _CERROJO_LOCAL.n = 0
             fcntl.flock(f, fcntl.LOCK_UN)
+
+
+def actualizar(p: Path, fn, defecto=None):
+    """Lee-modifica-escribe `p` bajo el cerrojo: fn(valor actual o copia de `defecto`) devuelve el valor nuevo, o None
+    para no escribir nada. Devuelve lo que queda en disco. Es el único camino para cambiar un fichero que tocan a la
+    vez varios hilos o procesos (índice de puertas, pendientes.json, avisos.json, reintentos.json): antes /puertas
+    reescribía las abiertas enteras sin cerrojo y una decisión que entraba a la vez se pisaba (el índice volvía a
+    «abierta» con la decisión ya escrita en el repo)."""
+    with cerrojo():
+        actual = leer(p, None)
+        if actual is None:
+            actual = copy.deepcopy(defecto)
+        nuevo = fn(actual)
+        if nuevo is None:
+            return actual
+        escribir(p, nuevo)
+        return nuevo
+
+
+def _arranque(pid: int) -> str:
+    """Hora de arranque de `pid` como la escribe lib/candado.sh (ps -o lstart, en UTC y C). "" si no se sabe."""
+    import subprocess
+    try:
+        out = subprocess.run(["ps", "-o", "lstart=", "-p", str(pid)], capture_output=True, text=True, timeout=10,
+                             env={**os.environ, "TZ": "UTC", "LC_ALL": "C"}).stdout
+    except Exception:
+        return ""
+    return " ".join(out.split())
+
+
+def candado_vivo(repo) -> bool:
+    """¿Alguien vivo tiene el candado del repo (<repo>/.sdd/hermes/lock)? La misma regla que lib/candado.sh: el pid
+    vive y, si el candado guardó su hora de arranque, coincide (tras un reinicio el pid puede ser de otro proceso y
+    el candado quedaba vivo para siempre); recién creado sin pid, 60 s de gracia; más de HERMES_SDD_CANDADO_MAX_S
+    (24 h por defecto, 0 = sin tope) se da por abandonado."""
+    lock = Path(repo) / ".sdd" / "hermes" / "lock"
+    if not lock.is_dir():
+        return False
+    try:
+        pid = int((lock / "pid").read_text().strip())
+    except (OSError, ValueError):
+        try:
+            return (time.time() - lock.stat().st_mtime) < 60   # recién creado, sin pid aún
+        except OSError:
+            return False
+    try:
+        os.kill(pid, 0)
+    except PermissionError:
+        pass   # existe, de otro usuario
+    except OSError:
+        return False
+    try:
+        guardado = " ".join((lock / "arranque").read_text().split())
+    except OSError:
+        guardado = ""
+    if guardado:
+        ahora = _arranque(pid)
+        if ahora and ahora != guardado:
+            return False
+    try:
+        maximo = int(os.environ.get("HERMES_SDD_CANDADO_MAX_S") or 86400)
+    except ValueError:
+        maximo = 86400
+    if maximo > 0:
+        try:
+            desde = int((lock / "desde").read_text().strip())
+        except (OSError, ValueError):
+            desde = int(lock.stat().st_mtime)
+        if time.time() - desde > maximo:
+            log.warning("hermes-sdd: el candado de %s (pid %s) tiene más de %s s: se da por abandonado", repo, pid, maximo)
+            return False
+    return True
 
 
 def indice(gid: str) -> Path:

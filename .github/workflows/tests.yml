@@ -2,14 +2,25 @@ name: tests
 on: [push, pull_request]
 jobs:
   todo:
-    runs-on: macos-latest
+    # macOS es donde corre el arnés hoy; Linux (y WSL, windows/instalar.ps1) también debe servir: lib/candado.sh ya no
+    # usa «stat -f» de BSD. Linux entra a prueba (continue-on-error) hasta que una ejecución en verde confirme que
+    # todas las baterías son portables; entonces se quita esa línea y pasa a bloquear como macOS.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.os == 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: '22' }
       - uses: actions/setup-python@v5
         with: { python-version: '3.12' }
-      - run: brew install jq coreutils || true
+      - if: runner.os == 'macOS'
+        run: brew install jq coreutils || true
+      - if: runner.os == 'Linux'
+        run: command -v jq >/dev/null || { sudo apt-get update -q && sudo apt-get install -y -q jq; }
       - name: Python del plugin (sin Hermes)
         run: |
           python -m pip install -q -r tests/requirements-plugin.txt

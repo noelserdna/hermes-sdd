@@ -9,6 +9,9 @@ Estado en disco, compartido con el resto del arnés (``$HERMES_SDD_HOME``, por d
   aprobadores.json      personas autorizadas y su id por canal
   instalacion.json      {"root": "<ruta del arnés instalado>"}
   avisos.json           fallos de etapa ya avisados (para avisar una sola vez)
+  pendientes.json       respuestas de texto que se esperan (motivo de ❌ Rechazar…)
+  reintentos.json       reintentos automáticos de etapas perdidas por el kanban
+Todo lo que se lee-modifica-escribe pasa por ``N.actualizar`` (cerrojo entre hilos y procesos).
 """
 from __future__ import annotations
 
@@ -375,30 +378,42 @@ def _pendientes() -> dict:
     return N.leer(HOME / "pendientes.json", {}) or {}
 
 
-# El disco es la única fuente: borrar una entrada (o que la puerta ya no esté abierta) anula la espera.
+# El disco es la única fuente: borrar una entrada (o que la puerta ya no esté abierta) anula la espera. Se cambia con
+# N.actualizar (cerrojo): dos «responde a este mensaje» casi a la vez se pisaban y uno de los dos se perdía.
 def _pendientes_guardar(msg_id, valor) -> None:
-    d = _pendientes()
-    d[str(msg_id)] = list(valor)
-    N.escribir(HOME / "pendientes.json", d)
+    N.actualizar(HOME / "pendientes.json", lambda d: {**(d or {}), str(msg_id): list(valor)}, {})
 
 
 def _pendientes_hay(msg_id) -> bool:
     return str(msg_id) in _pendientes()
 
 
-def _pendientes_sacar(msg_id) -> tuple:
-    d = _pendientes()
-    valor = d.pop(str(msg_id), None)
-    N.escribir(HOME / "pendientes.json", d)
-    return tuple(valor)
+def _pendientes_sacar(msg_id, persona) -> tuple | None:
+    """Consume la espera de `msg_id` solo si responde `persona` (quien pulsó el botón). Antes se consumía y luego se
+    miraba quién respondía: si contestaba otra persona del grupo, la espera se borraba y el motivo del autorizado ya
+    no llegaba a ninguna parte. None: no es suya o ya la consumió otra respuesta (dos a la vez: solo una decide)."""
+    sacado = []
+
+    def fn(d):
+        valor = (d or {}).get(str(msg_id))
+        if not valor or valor[2] != persona:
+            return None   # no se toca el disco
+        sacado.append(tuple(valor))
+        return {k: v for k, v in d.items() if k != str(msg_id)}
+
+    N.actualizar(HOME / "pendientes.json", fn, {})
+    return sacado[0] if sacado else None
 
 
 async def _on_respuesta(update, context) -> None:
     m = update.message
-    gid, verbo, persona = _pendientes_sacar(m.reply_to_message.message_id)
-    if _persona_de(m.from_user.id)[0] != persona:
-        await m.reply_text("Solo puede responder quien pulsó el botón.")
+    quien = _persona_de(m.from_user.id)[0]
+    sacado = _pendientes_sacar(m.reply_to_message.message_id, quien) if quien else None
+    if sacado is None:
+        if _pendientes_hay(m.reply_to_message.message_id):   # sigue esperando a quien pulsó: no se pierde
+            await m.reply_text("Solo puede responder quien pulsó el botón.")
         return
+    gid, verbo, persona = sacado
     aviso = await _decidir(context.bot, gid, verbo, m.text.strip(), m.from_user, persona, {"msg": str(m.message_id)})
     await m.reply_text(aviso)
 
@@ -552,8 +567,8 @@ async def _avisar_fallos(bot) -> None:
                             + (f"Motivo: {motivo}\n" if motivo else "")
                             + "No sigue solo: hay que revisarlo y relanzar ese paso.\n"
                             f"(Detalle técnico: hermes kanban --board {b['slug']} show {t['id']})"))
-    if nuevos:
-        _escribir(HOME / "avisos.json", sorted(avisados | set(nuevos)))
+    if nuevos:   # con cerrojo y sobre lo que haya ahora en disco: lo leído al empezar puede tener minutos
+        N.actualizar(HOME / "avisos.json", lambda a: sorted(set(a or []) | set(nuevos)), [])
 
 
 # Etapas cuyo worker perdió el kanban (no fallaron ellas): se reintentan solas, como mucho REINTENTOS_MAX veces por
@@ -564,20 +579,11 @@ REINTENTOS_MAX = 2
 
 
 def _candado_vivo(repo: str) -> bool:
-    lock = Path(repo) / ".sdd" / "hermes" / "lock"
-    if not lock.is_dir():
-        return False
-    try:
-        pid = int((lock / "pid").read_text().strip())
-        os.kill(pid, 0)
-        return True
-    except (OSError, ValueError):
-        return (time.time() - lock.stat().st_mtime) < 60   # recién creado, sin pid aún
+    return N.candado_vivo(repo)   # la misma regla que lib/candado.sh (pid + hora de arranque + edad máxima)
 
 
 async def _reintentar_perdidos(bot=None) -> list:
     hechos = []
-    registro = _leer(HOME / "reintentos.json", {}) or {}
     for b, repo in (await _proyectos()).items():
         if (HOME / "pausa" / b).exists() or (HOME / "pausa" / "_todo").exists() or _candado_vivo(repo):
             continue
@@ -593,30 +599,48 @@ async def _reintentar_perdidos(bot=None) -> list:
             except Exception:
                 head = ""
             clave = f"{b}|{etapa}|{fase or ''}|{head}"
-            if registro.get(clave, 0) >= REINTENTOS_MAX:
+            vez = _reintento_reservar(clave)
+            if not vez:
                 continue
             try:
                 out = await _cli("bash", str(_root() / "lanzar.sh"), "reintentar", repo, etapa, *([fase] if fase else []),
                                  "--de", t["id"], timeout=120)
             except Exception as e:
                 log.warning("hermes-sdd: no se pudo reintentar %s/%s: %s", b, t["id"], e)
+                _reintento_reservar(clave, -1)   # no llegó a lanzarse: no gasta uno de los REINTENTOS_MAX
                 continue
-            registro[clave] = registro.get(clave, 0) + 1
             nueva = out.strip().splitlines()[-1] if out.strip() else "?"
-            hechos.append({"tablero": b, "tarjeta": t["id"], "nueva": nueva, "etapa": etapa, "fase": fase, "vez": registro[clave]})
+            hechos.append({"tablero": b, "tarjeta": t["id"], "nueva": nueva, "etapa": etapa, "fase": fase, "vez": vez})
             log.info("hermes-sdd: %s: %s se perdió (%s); reintento %d en %s", b, t["id"],
-                     _corta_linea(t.get("last_failure_error") or "", 80), registro[clave], nueva)
+                     _corta_linea(t.get("last_failure_error") or "", 80), vez, nueva)
             if bot is not None:
                 for chat in _chats():
                     try:
                         await bot.send_message(chat_id=int(chat), disable_notification=True, text=(
                             f"🔁 «{b}»: el kanban perdió el paso «{t.get('title')}» (no falló él); lo repito solo "
-                            f"({registro[clave]} de {REINTENTOS_MAX})."))
+                            f"({vez} de {REINTENTOS_MAX})."))
                     except Exception as e:
                         log.debug("hermes-sdd: aviso de reintento: %s", e)
-    if hechos:
-        _escribir(HOME / "reintentos.json", registro)
     return hechos
+
+
+def _reintento_reservar(clave: str, delta: int = 1) -> int:
+    """Cuenta un reintento de `clave` (o lo devuelve, con delta -1) bajo el cerrojo y da la vez que es. 0 si ya se
+    gastaron los REINTENTOS_MAX. Comprobar y contar es un solo paso: antes el registro se leía al empezar la vuelta y
+    se escribía entero al final, y el bucle sin Telegram (su hilo) y el del gateway podían relanzar la misma etapa."""
+    hecho = []
+
+    def fn(r):
+        r = r or {}
+        n = r.get(clave, 0)
+        if delta > 0 and n >= REINTENTOS_MAX:
+            return None
+        r[clave] = max(n + delta, 0)
+        hecho.append(r[clave])
+        return r
+
+    N.actualizar(HOME / "reintentos.json", fn, {})
+    return hecho[0] if hecho else 0
 
 
 async def _crear_tarjeta(puerta: dict) -> str:
@@ -694,7 +718,7 @@ async def _vuelta_puerta(bot, idx: Path) -> None:
     """Una puerta del índice: su tarjeta, Jev, publicarla, firmarla al acabar la ventana o poner su mensaje al día.
     Sin bot (Telegram no conectado) se hace todo menos lo que es de Telegram."""
     p = _leer(idx)
-    if not p:
+    if not p:   # JSON roto: lo avisa N.leer en el log (una vez por versión del fichero) y /puertas lo cuenta
         return
     if p.get("estado") == "abierta" and not p.get("tarjeta") and p.get("tablero"):
         tarjeta = await _crear_tarjeta(p)
@@ -1180,6 +1204,27 @@ async def _resumen_periodico() -> str:
         partes.append(f"Esta semana aceptaste {_plural(len(dwell), 'fase', 'fases')}; normalmente mirando la demo {med} s antes de decidir.{aviso}")
     return "\n\n".join(partes)
 
+def _republicar_abiertas() -> str:
+    """/puertas: las abiertas pierden su mensaje de Telegram y el bucle las vuelve a publicar con sus botones."""
+    # Cada una se reescribe bajo el cerrojo y solo si SIGUE abierta: antes se leían todas, se quitaba «telegram» y
+    # se reescribían enteras sin cerrojo, y una decisión que entraba entre medias se pisaba (el índice volvía a
+    # «abierta» con la decisión ya escrita en el repo).
+    def sin_telegram(p):
+        if not p or p.get("estado") != "abierta":
+            return None
+        p.pop("telegram", None)   # el bucle la vuelve a publicar con sus botones
+        return p
+    todas = [(f, N.actualizar(f, sin_telegram)) for f in sorted((HOME / "puertas").glob("*.json"))]
+    abiertas = [p for _, p in todas if p and p.get("estado") == "abierta"]
+    # una puerta con el JSON roto no se puede enseñar, pero tampoco se calla: la persona sabe que hay algo
+    rotas = [f.stem for f, p in todas if p is None]
+    nota = (f"\n⚠️ {_plural(len(rotas), 'puerta no se puede leer', 'puertas no se pueden leer')} "
+            f"({', '.join(rotas)}): mira gateway.log.") if rotas else ""
+    if not abiertas:
+        return "No tienes nada pendiente de decidir." + nota
+    return f"Tienes {_plural(len(abiertas), 'decisión pendiente', 'decisiones pendientes')}: te las reenvío con sus botones." + nota
+
+
 # ── registro ────────────────────────────────────────────────────────────────────────────────────────────────────
 def register(ctx):
     def _wire(application, adapter):
@@ -1203,13 +1248,7 @@ def register(ctx):
             _asegurar_bucle()
         except RuntimeError:
             pass
-        abiertas = [p for p in (_leer(f) for f in sorted((HOME / "puertas").glob("*.json"))) if p and p.get("estado") == "abierta"]
-        if not abiertas:
-            return "No tienes nada pendiente de decidir."
-        for p in abiertas:   # el bucle las vuelve a publicar con sus botones
-            p.pop("telegram", None)
-            _escribir(HOME / "puertas" / f"{p['id']}.json", p)
-        return f"Tienes {_plural(len(abiertas), 'decisión pendiente', 'decisiones pendientes')}: te las reenvío con sus botones."
+        return _republicar_abiertas()
 
     async def _cmd_estado(raw_args: str = "") -> str:
         return await _estado_texto(raw_args.strip())
