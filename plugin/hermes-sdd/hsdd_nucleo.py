@@ -375,9 +375,12 @@ def puede_jev(puerta: dict, cfg: dict | None = None) -> tuple[bool, str]:
     # aplicó porque la opción decía «una persona autoriza»)
     # Formato nuevo: una opción con «efecto: editar-test» (la puerta la enseña con ✏️ autoriza editar). El notario rechaza
     # que Jev la elija; mejor no intentarlo y dejar la puerta a una persona desde el principio.
-    if puerta.get("preguntas") and "✏️ autoriza editar" in texto:
+    # Preguntas antiguas, sin efectos declarados: solo queda su texto para saber si una opción es de una persona. Con
+    # efectos (puerta.sh ≥ 0.3.2) manda el dato de arriba: una frase del texto no da ni quita permisos a Jev
+    antiguas = [q for q in puerta.get("preguntas") or [] if not any((e or {}).get("declarado") for e in (q.get("efectos") or {}).values())]
+    if antiguas and "✏️ autoriza editar" in texto:
         return False, "una opción autoriza editar tests que ya existían: la elige una persona"
-    if puerta.get("preguntas") and re.search(r"art\.?\s*12\b|decisi[oó]n humana|una persona autoriza|human decision", texto, re.I):
+    if antiguas and re.search(r"art\.?\s*12\b|decisi[oó]n humana|una persona autoriza|human decision", texto, re.I):
         return False, "una pregunta la reserva el método a una persona (editar tests que ya existían)"
     if (puerta.get("encargado") or {}).get("graves"):   # revisión mecánica del encargado (hsdd_revision.py)
         return False, "el encargado marcó un aviso grave (lo decide una persona)"

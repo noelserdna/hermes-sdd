@@ -118,4 +118,16 @@ print(json.dumps(r))
 PY
 )
 [ "$o" = '[["desplegable-sin-comprobar"], [["no-desplegable", true]], []]' ] && ok "entrega: no desplegable es aviso grave; sin comprobar, leve; desplegable, nada" || bad "desplegable: $o"
+# Con efectos declarados manda el dato: una frase del texto («decisión humana») no le quita la puerta a Jev; en
+# preguntas antiguas, sin efectos, el texto sigue contando
+o=$(python3 - "$ROOT/plugin/hermes-sdd/hsdd_nucleo.py" <<'PY'
+import importlib.util, sys
+spec = importlib.util.spec_from_file_location("hsdd_nucleo", sys.argv[1]); N = importlib.util.module_from_spec(spec); spec.loader.exec_module(N)
+N.poner_modo("auto", "demo")
+base = {"tablero": "demo", "tipo": "plan", "opciones": [{"verbo": "conforme", "etiqueta": "✅"}], "texto": "es una decisión humana"}
+q = lambda decl: [{"n": 1, "id": "Q-1", "opciones": ["A"], "efectos": {"A": {"efecto": "accion", "declarado": decl}}}]
+print(N.puede_jev({**base, "preguntas": q(True)})[0], N.puede_jev({**base, "preguntas": q(False)})[0])
+PY
+)
+[ "$o" = "True False" ] && ok "Jev: con efectos declarados manda el dato, no las frases del texto" || bad "vetos por texto: $o"
 exit $fail
