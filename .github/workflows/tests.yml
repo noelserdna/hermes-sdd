@@ -2,15 +2,13 @@ name: tests
 on: [push, pull_request]
 jobs:
   todo:
-    # macOS es donde corre el arnés hoy; Linux (y WSL, windows/instalar.ps1) también debe servir: lib/candado.sh ya no
-    # usa «stat -f» de BSD. Linux entra a prueba (continue-on-error) hasta que una ejecución en verde confirme que
-    # todas las baterías son portables; entonces se quita esa línea y pasa a bloquear como macOS.
+    # macOS es donde corre el arnés hoy; Linux (y WSL, windows/instalar.ps1) también debe servir, y bloquea igual
+    # (en verde desde e42bcdc). Sin identidad de git global a propósito: destapa commits del arnés que dependen de ella.
     strategy:
       fail-fast: false
       matrix:
         os: [macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.os == 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
