@@ -473,7 +473,7 @@ python3 - "$ROOT/plugin/hermes-sdd" "$W" <<'PYT' && ok "«Esto dirá la web» co
 import sys; sys.path.insert(0, sys.argv[1]); import hsdd_textos as T
 from pathlib import Path
 md = "### REQ-F-001: x\n- **Acceptance criteria:**\n" + "".join(
-    f'  - GIVEN a WHEN b THEN the user sees "Texto {i}"\n    - Se ve: "Texto {i}" en Inicio\n' for i in range(15))
+    f'  - GIVEN a WHEN b THEN the user sees "Texto {chr(65 + i)}"\n    - Se ve: "Texto {chr(65 + i)}" en Inicio\n' for i in range(15))   # letras: textos que solo cambian en un número se juntan en una plantilla
 R = Path(sys.argv[2]); viejo = (R / "requirements/REQUIREMENTS.md").read_text()
 (R / "requirements/REQUIREMENTS.md").write_text(md)
 b = T._bloque_web(R, cambio=False)
@@ -664,5 +664,29 @@ p = {"preguntas": [{"n": 1, "id": "Q-x-003", **T.opciones_json(b)}]}
 for verbo in ("acepto", "descarto", "rechazo"):
     assert T.validar_respuestas(p, [f], "Q1: A" if verbo == "rechazo" else "", verbo, True) == [], verbo
 assert T.accion_respuesta(b, "A") and T.efecto(b, "A")["efecto"] != "editar-test"
+PY
+# taller2: retirados por el título, casos numéricos juntos en una plantilla y «1. Marta» fuera de la web, lo hecho
+# antes del plan por el estado de cada etapa, y al aceptar con una Q cambiada las demás valen con su recomendada
+python3 - "$ROOT/plugin/hermes-sdd" "$T" <<'PY' && ok "taller2: retirados, plantillas numéricas, «hecho antes» por estado y recomendadas al aceptar" || bad "arreglos de taller2"
+import sys, json; sys.path.insert(0, sys.argv[1]); import hsdd_textos as T
+from pathlib import Path
+assert T.retirado("(deprecated) Sin red") and T.retirado("[obsoleto] x") and T.retirado("x", "- **Status:** Deprecated")
+assert not T.retirado("Sin red", "- **Statement:** a")
+md = """### REQ-F-001: x
+  - GIVEN "Marta" waits WHEN x THEN the user sees "Apuntados (0 de 2 plazas)"
+    - Se ve: "Apuntados (0 de 2 plazas)", "1. Marta" en Organización
+  - GIVEN "Sergio" waits WHEN x THEN the user sees "Apuntados (2 de 2 plazas)"
+    - Se ve: "Apuntados (2 de 2 plazas)", "Lista de espera" en Organización
+"""
+w = [(x["texto"], x["ejemplo"]) for x in T.textos_web(md)]
+assert w == [("Apuntados ({n} de {n} plazas)", "Apuntados (0 de 2 plazas)"), ("Lista de espera", "")], w
+R = Path(sys.argv[2]) / "hecho"; (R / "design").mkdir(parents=True); (R / "spec/use-cases").mkdir(parents=True)
+(R / "pipeline-state.json").write_text(json.dumps({"stages": {"specifications-engineer": {"status": "done"}, "tech-designer": {"status": "skipped"}}}))
+assert T._hecho_antes(R) == "📐 Antes del plan se hizo: especificaciones. El plan parte de esos documentos.", T._hecho_antes(R)
+qs = [{"n": 1, "id": "Q-1", "opciones": ["A", "B"], "recomendada": "A", "efectos": {}}, {"n": 2, "id": "Q-2", "opciones": ["A", "B"], "recomendada": "A", "efectos": {}}]
+res, errs, modo = T.plan_respuestas({"tipo": "requisitos", "preguntas": qs}, [], "", "acepto", {"1": "B"})
+assert sorted((r["q"]["n"], r["letra"], r["como"]) for r in res) == [(1, "B", "elegida por"), (2, "A", "opción recomendada, aceptada por")], res
+res, _, _ = T.plan_respuestas({"tipo": "requisitos", "preguntas": qs}, [], "", "cambios", {"1": "B"})
+assert [r["q"]["n"] for r in res] == [1], res
 PY
 exit $fail

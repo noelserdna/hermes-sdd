@@ -110,7 +110,9 @@ EXIMO=false; [ "$VERBO_DECIDIDO" = eximo ] && [ "$VERBO" != eximo ] && EXIMO=tru
 TEXTOS="$ROOT/plugin/hermes-sdd/hsdd_textos.py"
 # (con su .json, la fuente de verdad de las preguntas nuevas: efectos, recomendada y respuesta salen de ahí)
 QFILES=(); for f in .sdd/questions-*.md .sdd/questions-*.json; do [ -f "$f" ] && QFILES+=("$f"); done
-respuestas() { python3 "$TEXTOS" respuestas "$1" --puerta "$PUERTA" --texto "$TEXTO" --respuestas "$RESPUESTAS" --verbo "$VERBO" "${@:2}" ${QFILES[@]+"${QFILES[@]}"}; }
+# Las respuestas se contestan con el botón que se PULSÓ (VERBO_PULSADO), aunque luego el notario convierta «Apruebo»
+# en «cambios» por unas respuestas distintas: las preguntas que no se tocaron valen con la recomendada que se veía
+respuestas() { python3 "$TEXTOS" respuestas "$1" --puerta "$PUERTA" --texto "$TEXTO" --respuestas "$RESPUESTAS" --verbo "${VERBO_PULSADO:-$VERBO}" "${@:2}" ${QFILES[@]+"${QFILES[@]}"}; }
 if ! jq -e '.pasos | index("validado")' "$HOME_SDD/actas/${BOARD:-local}/$GATE.json" >/dev/null 2>&1 &&
    ! ERR=$(respuestas validar --persona "$([ "$CANAL" = jev ] && echo 0 || echo 1)" 2>&1); then
   echo "NOTARIO: rechazado — las respuestas no valen: $(printf '%s' "$ERR" | paste -sd';' - | sed 's/;/; /g')" >&2; exit 1
@@ -124,7 +126,7 @@ SI_DISTINTAS=$(trans_campo "$TIPO" "$VERBO" si_distintas)
 if [ -n "$SI_DISTINTAS" ] && { [ -n "$TEXTO" ] || [ "$RESPUESTAS" != "{}" ]; }; then
   DISTINTAS=$(respuestas distintas)
   if [ -n "$DISTINTAS" ]; then
-    VERBO=$SI_DISTINTAS
+    VERBO_PULSADO=$VERBO; VERBO=$SI_DISTINTAS
     TEXTO="${TEXTO:+$TEXTO. }Respuestas distintas de la recomendada ($DISTINTAS): reescribe lo afectado según esas respuestas (están en .sdd/questions-*.md)."
   fi
 fi

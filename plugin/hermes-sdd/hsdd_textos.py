@@ -64,14 +64,28 @@ def _plural(n: int, uno: str, varios: str) -> str:
 CAMPO = re.compile(r"^\s*[-*]?\s*\*\*([^*]+?)\s*:?\s*\*\*\s*:?\s*(.*)$")
 
 
+_RETIRADO_TITULO = re.compile(r"\[deprecated\]|\(deprecated\)|\[obsoleto\]|^~~", re.I)
+
+
+def retirado(titulo: str, cuerpo: str = "") -> bool:
+    """¿Requisito retirado? La misma regla que el método (sdd-jev.mjs): «(deprecated)», «[deprecated]», «[obsoleto]» o
+    tachado en el título, o «Status: deprecated|obsoleto» en el cuerpo. La usan la puerta y la revisión del encargado
+    (taller2: «REQ-C-003: (deprecated) Sin red» salía como condición y el encargado avisaba de él)."""
+    return bool(_RETIRADO_TITULO.search(titulo.strip())) or bool(
+        re.search(r"^\s*[-*]?\s*\*\*(?:status|estado):?\*\*:?\s*.*(?:deprecat|obsolet)", cuerpo, re.M | re.I))
+
+
 def requisitos(repo: Path) -> list[dict]:
     """[{id, titulo, cliente, prioridad, necesidades, tipo}] de requirements/REQUIREMENTS.md (bloques ### REQ-…)."""
     res, actual = [], None
     for linea in _leer(repo / "requirements" / "REQUIREMENTS.md").splitlines():
         m = re.match(r"^###\s+(REQ-([A-Z]+)-[0-9A-Za-z]+)\s*:?\s*(.*)$", linea)
         if m:
+            # Retirado, con la misma regla que el método (sdd-jev.mjs): «(deprecated)», «[deprecated]», «[obsoleto]» o
+            # tachado en el título, o la línea Status (taller2: «REQ-C-003: (deprecated) Sin red» salía en la puerta)
             actual = {"id": m.group(1), "tipo": m.group(2), "titulo": m.group(3).strip(), "cliente": "", "prioridad": "",
-                      "necesidades": None, "obsoleto": False, "verificacion": "", "origen": ""}
+                      "necesidades": None, "verificacion": "", "origen": "",
+                      "obsoleto": retirado(m.group(3))}
             res.append(actual)
             continue
         if linea.startswith("#"):
@@ -208,6 +222,11 @@ def _sin_parentesis(linea: str) -> str:
     return re.sub(r"\s+", " ", "".join(out)).strip()
 
 
+def _criterios_planos(texto: str) -> list[str]:
+    """Las líneas «- GIVEN …» de todos los requisitos REQ-F (para saber qué datos cita cada ejemplo)."""
+    return [l.strip() for l in texto.replace("“", '"').replace("”", '"').splitlines() if re.match(r"^\s+[-*]\s+GIVEN\b", l)]
+
+
 def textos_web(texto: str) -> list[dict]:
     """[{pantalla, texto, ejemplo}] de las líneas «Se ve:» de los criterios REQ-F, en orden y sin repetir
     (`- Se ve: "a", "b" en <pantalla>; "c" en <otra>`)."""
@@ -247,8 +266,30 @@ def textos_web(texto: str) -> list[dict]:
     # sale, y lo que es un caso de una plantilla que también se enseña («Añadido por Lucía» de «Añadido por {nombre}»)
     plantillas = [re.compile("^" + ".+".join(re.escape(p) for p in re.split(r"\{[^{}]+\}", x["texto"])) + "$")
                   for x in out if re.search(r"\{[^{}]+\}", x["texto"])]
-    return [x for x in out if "{" in x["texto"]
-            or not (all(datos.get(x["texto"], [False])) or any(p.match(x["texto"]) for p in plantillas))]
+    out = [x for x in out if "{" in x["texto"]
+           or not (all(datos.get(x["texto"], [False])) or any(p.match(x["texto"]) for p in plantillas))]
+    # Un dato del ejemplo con un número de lista delante («1. Marta», «2. Sergio»): sin el número es un dato (taller2)
+    dato_del_ejemplo = set().union(*[set(_COMILLAS.findall(re.split(r"\b(?:THEN|ENTONCES)\b", c)[0])) for c in _criterios_planos(texto)]) \
+        if texto else set()
+    out = [x for x in out if not (re.fullmatch(r"\s*\d+[.)º°]?\s*(.+)", x["texto"])
+                                  and re.fullmatch(r"\s*\d+[.)º°]?\s*(.+)", x["texto"]).group(1).strip() in dato_del_ejemplo)]
+    # Casos del mismo texto que solo cambian en los números («Apuntados (0 de 2 plazas)», «(2 de 2 plazas)»…): uno solo,
+    # como plantilla con su primer caso de ejemplo (taller2: seis variantes ocupaban «Esto dirá la web»)
+    grupos: dict = {}
+    for x in out:
+        if "{" in x["texto"] or not re.search(r"\d", x["texto"]):
+            continue
+        grupos.setdefault((x["pantalla"].lower(), re.sub(r"\d+", "{n}", x["texto"])), []).append(x)
+    juntar = {id(x): k for k, xs in grupos.items() if len(xs) > 1 for x in xs}
+    res, hechos = [], set()
+    for x in out:
+        k = juntar.get(id(x))
+        if k is None:
+            res.append(x)
+        elif k not in hechos:
+            hechos.add(k)
+            res.append({**x, "texto": k[1], "ejemplo": x["texto"]})
+    return res
 
 
 def _bloque_web(repo: Path, cambio: bool, maximo: int = 12) -> str:
@@ -525,10 +566,18 @@ def puerta_ruta(repo: Path, proyecto: str, opciones: list | None = None) -> dict
 
 def _hecho_antes(repo: Path) -> str:
     """Los pasos extra de la ruta que ya dejaron documentos (el plan sale de ellos), dichos en castellano."""
-    hechos = [(repo / "spec" / "use-cases", "especificaciones"), (repo / "audits" / "AUDIT-BASELINE.md", "auditoría de especificaciones"),
-              (repo / "test" / "TEST-PLAN.md", "plan de pruebas"), (repo / "audits" / "SECURITY-AUDIT-BASELINE.md", "revisión de seguridad"),
-              (repo / "design", "diseño técnico"), (repo / "ux", "diseño visual y de uso")]
-    nombres = [n for p, n in hechos if p.exists()]
+    hechos = [("specifications-engineer", repo / "spec" / "use-cases", "especificaciones"),
+              ("spec-auditor", repo / "audits" / "AUDIT-BASELINE.md", "auditoría de especificaciones"),
+              ("test-planner", repo / "test" / "TEST-PLAN.md", "plan de pruebas"),
+              ("security-auditor", repo / "audits" / "SECURITY-AUDIT-BASELINE.md", "revisión de seguridad"),
+              ("tech-designer", repo / "design", "diseño técnico"), ("ux-designer", repo / "ux", "diseño visual y de uso")]
+    # Manda el estado del método: una carpeta puede existir sin que su etapa se hiciera (taller2: especificaciones dejó
+    # design/OPERATION-MAPPING.md y la puerta decía «diseño técnico», una etapa que se archivó sin correr)
+    try:
+        etapas = json.loads(_leer(repo / "pipeline-state.json") or "{}").get("stages") or {}
+    except ValueError:
+        etapas = {}
+    nombres = [n for k, p, n in hechos if ((etapas.get(k) or {}).get("status") == "done" if k in etapas else p.exists())]
     return ("📐 Antes del plan se hizo: " + ", ".join(nombres) + ". El plan parte de esos documentos.") if nombres else ""
 
 
@@ -1265,6 +1314,11 @@ def plan_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str,
     if el:
         modo = "elegidas"
         res = [{"q": q, "letra": el[q["n"]], "como": "elegida por"} for q in qs if q["n"] in el]
+        # Al aceptar, las que no se tocaron valen con su recomendada, que es lo que la puerta enseñaba marcado (taller2:
+        # aprobar con Q1 cambiada dejaba Q2 sin contestar y la puerta siguiente la volvía a preguntar)
+        if verbo in ("acepto", "observaciones", "conforme", "respondo"):
+            res += [{"q": q, "letra": q["recomendada"], "como": "opción recomendada, aceptada por"}
+                    for q in qs if q["n"] not in el and q.get("recomendada")]
     elif verbo in ("acepto", "observaciones", "conforme", "respondo") or (
             verbo == "rechazo" and puerta.get("tipo") in ("fase", "entrega")):
         # (en una FASE o entrega bloqueada rechazar es la única salida: sus preguntas se contestan al rechazar, con la

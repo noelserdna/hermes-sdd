@@ -26,6 +26,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import hsdd_plan  # noqa: E402
 import hsdd_fidelidad  # noqa: E402
+import hsdd_textos  # noqa: E402
 
 SDD = Path(__file__).resolve().parents[2] / "metodo" / "scripts" / "sdd.mjs"
 WEB = re.compile(r"\b(web|vite|astro|react|vue|svelte|next|html|frontend|pwa)\b", re.I)
@@ -50,7 +51,7 @@ def _requisitos(repo: Path, texto: str | None = None) -> list:
     for m in re.finditer(r"^### (REQ-([A-Z]+)-\d+):?\s*(.*?)\n(.*?)(?=^### |^## |\Z)", texto, re.M | re.S):
         cuerpo = m.group(4)
         campo = lambda k: (re.search(rf"^\s*-\s*\*\*{k}:\*\*\s*(.*)$", cuerpo, re.M | re.I) or [None, ""])[1].strip()
-        if re.search(r"^\s*-\s*\*\*Status:\*\*\s*Deprecated", cuerpo, re.M | re.I):
+        if hsdd_textos.retirado(m.group(3), cuerpo):
             continue
         out.append({"id": m.group(1), "tipo": m.group(2), "titulo": m.group(3).strip(),
                     "verificacion": (re.findall(r"[a-z]+", campo("Verification").lower()) or [""])[0],
