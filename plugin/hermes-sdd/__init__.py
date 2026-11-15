@@ -626,8 +626,8 @@ async def _reintentar_perdidos(bot=None) -> list:
 
 def _reintento_reservar(clave: str, delta: int = 1) -> int:
     """Cuenta un reintento de `clave` (o lo devuelve, con delta -1) bajo el cerrojo y da la vez que es. 0 si ya se
-    gastaron los REINTENTOS_MAX. Comprobar y contar es un solo paso: antes el registro se leía al empezar la vuelta y se escribía
-    entero al final, y el bucle sin Telegram (su hilo) y el del gateway podían relanzar la misma etapa los dos."""
+    gastaron los REINTENTOS_MAX. Comprobar y contar es un solo paso: antes el registro se leía al empezar la vuelta y
+    se escribía entero al final, y el bucle sin Telegram (su hilo) y el del gateway podían relanzar la misma etapa."""
     hecho = []
 
     def fn(r):

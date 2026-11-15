@@ -104,7 +104,7 @@ TZ=UTC LC_ALL=C ps -o lstart= -p "$AJENO" > "$L/arranque"; c=$(py 50)
 mkdir -p "$T/gnu"; cat > "$T/gnu/stat" <<'S'
 #!/usr/bin/env bash
 case "$1" in
-  -c) [ "$2" = %Y ] && /usr/bin/stat -f %m "$3" 2>/dev/null || command -p stat -c %Y "$3" ;;
+  -c) python3 -c 'import os, sys; print(int(os.stat(sys.argv[1]).st_mtime))' "$3" ;;
   -f) echo "  File: \"$3\""; echo "    ID: 0 Namelen: 255 Type: apfs" ;;
 esac
 S
