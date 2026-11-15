@@ -28,3 +28,5 @@ jobs:
         run: |
           bash tests/replay-e2e.sh 2>&1 | tail -15 || true
           bash tests/jev.sh 2>&1 | grep -v '^ok' | head -20 || true
+          # textos.sh falló una vez solo en macOS (plan fino, preguntas de la FASE-7) y pasó al relanzar: salida entera
+          bash tests/textos.sh 2>&1 | grep -v '^ok' | head -80 || true
