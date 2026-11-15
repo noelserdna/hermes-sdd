@@ -11,10 +11,12 @@ sup() { bash "$ROOT/executors/claude.sh" "$R" prueba "haz algo" | tail -1; }
 
 modo ok; o=$(sup); [ "$(echo "$o" | jq -r .outcome)" = done ] && [ "$(echo "$o" | jq -r .session_id)" = s-1 ] && ok "done con session_id y coste" || bad "ok: $o"
 ls "$R/.sdd/hermes/runs/"*-prueba.json >/dev/null 2>&1 && ok "guarda el run en su propio fichero" || bad "sin fichero de run"
+ls "$R/.sdd/hermes/runs/"*-prueba.err >/dev/null 2>&1 && bad "deja un .err vacío" || ok "sin nada en stderr no deja un .err vacío (el taller acumuló 37)"
 modo cuota; o=$(sup); [ "$(echo "$o" | jq -r .outcome)" = scheduled ] && [ "$(echo "$o" | jq -r .reset_at)" = 1791800000 ] && ok "cuota → scheduled con reset_at" || bad "cuota: $o"
 [ "$(jq -r .reset_at "$HERMES_SDD_HOME/cuota.json" 2>/dev/null)" = 1791800000 ] && ok "anota la cuota para que esperen todos los proyectos" || bad "sin cuota.json"
 modo error; o=$(sup); [ "$(echo "$o" | jq -r .outcome)" = failed ] && ok "error → failed" || bad "error: $o"
 modo sinjson; o=$(sup); [ "$(echo "$o" | jq -r .outcome)" = failed ] && echo "$o" | grep -q "no auth" && ok "sin JSON → failed con el motivo" || bad "sinjson: $o"
+grep -qs "no auth" "$R"/.sdd/hermes/runs/*-prueba.err && ok "con algo en stderr, el .err se queda" || bad "se borró un .err con contenido"
 [ ! -d "$R/.sdd/hermes/lock" ] && ok "libera el candado al terminar" || bad "candado sin liberar"
 
 # Candado: con una ejecución viva, la segunda sale "busy"

@@ -6,7 +6,7 @@
 #   · entorno limpio: Claude no hereda tokens del bot ni claves de proveedor de Hermes
 #   · cuota de la suscripción agotada → outcome "scheduled" con la hora de reinicio, no un fallo
 #   · Claude sin sesión (error de autenticación) → "scheduled", se reintenta cada 15 min hasta que alguien haga /login
-#   · cada ejecución en su propio fichero .sdd/hermes/runs/<run>.json (nunca se sobrescribe)
+#   · cada ejecución en su propio fichero .sdd/hermes/runs/<run>.json (nunca se sobrescribe); su <run>.err, solo si no queda vacío
 #
 #   executors/claude.sh <repo> <nombre> <prompt> [modelo]
 #
@@ -36,6 +36,7 @@ CPID=""
 limpiar() {
   [ -n "$CPID" ] && kill -TERM -- "-$CPID" 2>/dev/null
   rm -f "$LOCK/claude" 2>/dev/null
+  [ -s "$ERR" ] || rm -f "$ERR"   # un .err vacío no dice nada (el taller acumuló 37): solo queda si Claude escribió algo
   candado_soltar
 }
 trap limpiar EXIT
