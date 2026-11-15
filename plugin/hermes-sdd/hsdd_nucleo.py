@@ -693,13 +693,22 @@ def puertas(estados=("abierta", "decidida")) -> list:
     return [p for p in (leer(f) for f in sorted((HOME / "puertas").glob("*.json"))) if p and p.get("estado") in estados]
 
 
+def fase_demo(puerta: dict) -> str:
+    """La FASE cuya demo enseña la puerta: la suya o, en la entrega de una sola FASE, la FASE-0 ("" si ninguna). Un solo
+    sitio: el canal de Telegram buscaba «evidencias/FASE-» en la entrega única y decía que no había demo (taller2)."""
+    return str(puerta.get("fase") or ("0" if puerta.get("unica") else ""))
+
+
+def carpeta_demo(puerta: dict) -> Path | None:
+    fase = fase_demo(puerta)
+    carpeta = Path(puerta["repo"]) / "evidencias" / f"FASE-{fase}" if fase else None
+    return carpeta if carpeta is not None and carpeta.is_dir() else None
+
+
 def evidencias(puerta: dict) -> list:
     """Ficheros de la demo de una FASE (nombres; el canal decide cómo enseñarlos)."""
-    fase = puerta.get("fase") or ("0" if puerta.get("unica") else "")   # entrega de una sola FASE: su demo
-    if not fase:
-        return []
-    carpeta = Path(puerta["repo"]) / "evidencias" / f"FASE-{fase}"
-    if not carpeta.is_dir():
+    carpeta = carpeta_demo(puerta)
+    if carpeta is None:
         return []
     return sorted(p.name for p in carpeta.iterdir() if p.suffix.lower() in (".png", ".jpg", ".jpeg", ".mp4", ".webm", ".mov"))
 
@@ -707,7 +716,7 @@ def evidencias(puerta: dict) -> list:
 def fichero_evidencia(puerta: dict, nombre: str) -> Path:
     if nombre not in evidencias(puerta):
         raise Rechazo("No existe esa evidencia")
-    return Path(puerta["repo"]) / "evidencias" / f"FASE-{puerta.get('fase') or '0'}" / nombre
+    return carpeta_demo(puerta) / nombre
 
 
 # ── nombres y forma del plan, comunes a bash y Python ─────────────────────────────────────────────────────────────

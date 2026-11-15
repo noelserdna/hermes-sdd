@@ -52,6 +52,12 @@ async def main():
     ok(any(t == "fotos" for t, _ in bot.enviados), "Ver demo envía las capturas")
     datos = [b.callback_data for f in bot.editados[-1][1].inline_keyboard for b in f]
     ok("g:acepto:t_1" in datos and "g:ver:t_1" not in datos, "tras ver la demo aparecen Aceptar/Rechazar")
+    # entrega de una sola FASE (sin «fase», con «unica»): su demo es la de la FASE-0 (taller2: «Esta fase no trae demo»)
+    n0 = len(bot.enviados)
+    await m._enviar_demo(bot, 111, {**puerta, "tipo": "entrega", "fase": "", "unica": True})
+    nuevos = bot.enviados[n0:]
+    ok(any(t == "fotos" for t, _ in nuevos) and not any("no trae demo" in str(x) for _, x in nuevos),
+       f"entrega de una sola FASE: envía la demo de la FASE-0 ({nuevos})")
     q = Query("g:rechazo:t_1", 111); await m._on_boton(NS(callback_query=q), ctx)
     pend = m._pendientes(); pid = int(max(pend, key=int)) if pend else 0; ok(len(pend) == 1, "Rechazar pide el motivo con respuesta forzada (y lo guarda en disco)")
     msg = NS(text="falta el filtro", from_user=NS(id=111, username="u"), message_id=9, reply_to_message=NS(message_id=pid))
