@@ -148,6 +148,13 @@ v21 p4d; sub "$P/$T0" 's/`e2e\/fase-0\.journey\.spec\.ts`/`tests\/fase-0.spec.ts
 run lint --plan --repo "$P"; expect "x.spec.ts sin .e2e/.journey no es ruta e2e (8)" "$(lines 'journey task')" 8
 rm "$P/CLAUDE.md"
 run lint --plan --repo "$P"; expect "sin suite de aceptación ni ruta e2e: sin avisos de journey" "$(lines 'journey task')" 0
+# Plan compacto (una FASE, sin plan/fase-plans/): los puertos están en «## Plan de la FASE» del fichero de la FASE
+v21 p6; sub "$P/$T0" 's/`CONTRACT-SyncClient REQ-F-006 AC1`/`SyncClient REQ-F-006 AC1`/'
+{ printf '\n## Plan de la FASE\n\n'; sed -n '/^### 4.2 Puertos con doble/,/^## 7/p' "$P/plan/fase-plans/PLAN-FASE-0.md" | sed '$d'; } >> "$P/plan/fases/FASE-0-SKELETON.md"
+rm -r "$P/plan/fase-plans"
+run lint --plan --repo "$P"; expect "compacto: sale 0 (avisos)" "$rc" 0
+has "compacto: el puerto del fichero de la FASE sin CONTRACT- → V-21" "V-21 warning: port SyncClient (plan/fases/FASE-0-SKELETON.md:"
+run lint --plan --repo "$P" --json; expect "compacto --json: FASE-0 con 1 puerto" "$(js 'j.fases[0].ports')" 1
 fresh p5 todo; printf '## SDD Stack Profile\n\n- acceptance: npx playwright test\n' > "$P/CLAUDE.md"
 run lint --plan --repo "$P"; expect "todo con suite: V-21 por los 8 AC de REQ-F de FASE-0 (etiquetas BDD)" "$(lines 'journey task')" 8
 has "todo con suite: AC-001-01 de REQ-F-001" "V-21 warning: scenario AC-001-01 of REQ-F-001 (Escenarios of plan/fases/FASE-0-SKELETON.md)"
@@ -181,6 +188,10 @@ grepf skills/sdd-task-generator/SKILL.md "### UC-NNN" "task-generator: Slices po
 grepf skills/sdd-task-generator/SKILL.md "| V-20 |" "task-generator: V-20"
 grepf skills/sdd-task-implementer/SKILL.md "accept --junit-sha \"\$SHA\" --fase {N} --report acceptance/ACCEPTANCE-REPORT.md" "implementer Phase 9: sdd accept --junit-sha --fase"
 grepf skills/sdd-task-implementer/SKILL.md "Plan-Style" "implementer lee la marca"
+grepf skills/sdd-plan-architect/SKILL.md "### Compact plan (one FASE)" "plan-architect: plan compacto en dos ficheros"
+grepf skills/sdd-plan-architect/SKILL.md '> **Plan-Size:** compact' "plan-architect: marca Plan-Size del plan compacto"
+grepf skills/sdd-task-generator/SKILL.md "**Compact plan.** With \`> **Plan-Size:** compact\`" "task-generator: lee el plan compacto (sin PLAN-FASE ni TASK-ORDER)"
+grepf skills/sdd-task-implementer/SKILL.md "or the plan is compact (\`Plan-Size: compact\` in PLAN.md)" "implementer G-02: el plan compacto no tiene PLAN-FASE"
 grepf skills/sdd-task-implementer/references/tdd-workflow.md "AC-001-03 rejects an empty title" "tdd-workflow: nombres con AC id"
 # hermes-sdd: test-planner, orchestrator y lead no forman parte del arnés (los sustituyen Hermes y el kanban)
 [ ! -e "$ROOT/skills/sdd-plan-architect/references/phase-assignment-rules.example.md" ] && pass "phase-assignment-rules.example.md eliminado" || bad "phase-assignment-rules.example.md sigue existiendo"

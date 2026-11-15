@@ -123,9 +123,13 @@ echo '{"ejecutor":"claude","ejecutores":{"plan":"../tests/ejecutor-falso","tarea
 FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" plan >/dev/null
 grep -q 'COMPACT PLAN (small project): exactly ONE FASE' "$T/prompt" && [ "$(cat .sdd/hermes/granularidad-plan)" = compacta ] \
   && ok "compacta: el plan pide una sola FASE y deja constancia de la granularidad usada" || bad "plan compacto: $(cat "$T/prompt")"
+grep -q "Plan-Size:\*\* compact" "$T/prompt" && grep -q 'no ARCHITECTURE.md, RESEARCH.md, CLARIFY-LOG.md, fases/README.md nor fase-plans/' "$T/prompt" \
+  && ok "compacta: el plan en dos ficheros (PLAN.md y el de la FASE), sin los otros cinco" || bad "plan compacto en dos ficheros: $(cat "$T/prompt")"
 FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" tareas >/dev/null
 grep -q 'COMPACT TASKS: 3 to 6 tasks' "$T/prompt" && grep -q 'TEST POLICY: one test per acceptance criterion' "$T/prompt" \
   && ok "compacta: tareas gruesas y un test por criterio" || bad "tareas compactas: $(cat "$T/prompt")"
+grep -q 'write only task/TASK-FASE-0.md' "$T/prompt" && grep -q -- '--compact task format' "$T/prompt" \
+  && ok "compacta: las tareas en un solo fichero, formato compacto y sin TASK-ORDER.md" || bad "tareas en un fichero: $(cat "$T/prompt")"
 echo fina > .sdd/hermes/granularidad; FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" tareas >/dev/null
 ! grep -qE 'COMPACT|TEST POLICY' "$T/prompt" && ok "fina: como siempre (sin recortes)" || bad "fina: $(cat "$T/prompt")"
 echo auto > .sdd/hermes/granularidad

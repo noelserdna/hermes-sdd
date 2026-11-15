@@ -36,8 +36,8 @@ the current directory.
    | specifications-engineer | `spec/` with `domain/`, `use-cases/UC-*.md`, `contracts/`, `nfr/`, and `workflows/WF-*.md` when the requirements define user journeys |
    | spec-auditor | `audits/AUDIT-BASELINE.md` |
    | test-planner | `test/TEST-PLAN.md`, `test/TEST-MATRIX-*.md` |
-   | plan-architect | `plan/PLAN.md`, `plan/ARCHITECTURE.md`, `plan/fases/FASE-*.md` |
-   | task-generator | `task/TASK-FASE-*.md`, `task/TASK-ORDER.md` (`task/TASK-INDEX.md` optional: absent with `task_format: compact`) |
+   | plan-architect | `plan/PLAN.md`, `plan/ARCHITECTURE.md` (not in a compact plan, `Plan-Size: compact`), `plan/fases/FASE-*.md` |
+   | task-generator | `task/TASK-FASE-*.md`, `task/TASK-ORDER.md` (absent for a compact plan of one FASE; `task/TASK-INDEX.md` optional: absent with `task_format: compact`) |
    | task-implementer | files under the SDD Stack Profile `code_paths`/`test_paths` (default `src/`, `tests/`) |
 
 3. **Staleness.** Report stages with `status: "stale"` and their `staleReason` (the hooks and `sdd-req-change`

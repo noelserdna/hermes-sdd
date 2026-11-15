@@ -105,7 +105,8 @@
 //              [--report acceptance/ACCEPTANCE-REPORT.md] [--remeasure] [--json]
 //       With --report it also writes acceptance/evidence-manifest-FASE-N.json (-all.json without --fase; versioned,
 //       scripts/lib/evidence-manifest.mjs): path, sha256, bytes and criteria of every capture and video used, since
-//       the evidence dir is not versioned; and runs `questions sync`.
+//       the evidence dir is not versioned (one line per file; no -all.json when one FASE's manifest already holds the
+//       same files); and runs `questions sync`.
 //       Acceptance ledger: verdict per requirement (DEPRECATED, WAIVED, FAILING, MISSING, VERIFIED) from JUnit tests
 //       named with their scenario id (AC-NNN-NN, or `REQ-X-NNN ACn`), the BDD tags of spec/tests/BDD-*.md and the records
 //       of acceptance/decisions.jsonl. JUnit default: Stack Profile test_report_path, else .sdd/junit/. PATH may be a

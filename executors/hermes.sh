@@ -21,7 +21,7 @@ salir() { local x=${3:-}; [ -n "$x" ] || x='{}'
 # Candado (lib/candado.sh): el de la etapa que nos lanzó o, a mano, uno propio
 . "$ROOT/lib/candado.sh"
 candado_tomar "$REPO" ejecutor "$RUN" || salir busy "ya hay una ejecución viva en este repo ($CANDADO_OTRO)"
-trap candado_soltar EXIT
+trap '[ -s "$ERR" ] || rm -f "$ERR"; candado_soltar' EXIT   # sin .err vacíos en runs/
 
 SKILL=$(printf '%s' "$PROMPT" | sed -nE '1s#^/(sdd-[a-z-]+).*#\1#p')
 TEXTO=$(printf '%s' "$PROMPT" | sed -E '1s#^/sdd-[a-z-]+[^—]*— *##')

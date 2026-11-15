@@ -124,6 +124,16 @@ compacta, Con diseño → normal, Completa → fina.
 Cuando el plan deja una sola FASE (en compacta o en normal; no en fina, que conserva su puerta de FASE), no hay puerta
 de FASE: tras implementarla viene el cierre, y la puerta de entrega trae la demo y acepta a la vez la FASE y la entrega.
 
+En compacta los papeles también son menos (taller, 14/11/2026: 7 ficheros y 675 líneas de plan para una sola FASE):
+el plan son dos ficheros, `plan/PLAN.md` (con `Plan-Size: compact`, las decisiones y la arquitectura en pocas líneas)
+y `plan/fases/FASE-0-SKELETON.md`, que acaba con `## Plan de la FASE` (mapa de cobertura y puertos); las tareas, en
+formato compacto y solo en `task/TASK-FASE-0.md`. No se pueden juntar más: el lint, `lanzar.sh`, `puerta.sh`, el
+plugin y las skills leen `plan/PLAN.md` (la marca), `plan/fases/FASE-*.md` y `task/TASK-FASE-N.md` por separado.
+Fuera de la granularidad: una petición escrita se anota en CUSTOMER-NEEDS.md con quién y cuándo una sola vez (una
+necesidad por frase sigue haciendo falta: `sdd lint --needs` comprueba que cada una la cubre un requisito), el
+manifiesto de evidencias no se repite en `-all.json` cuando es el de la única FASE, y los ejecutores no dejan
+`runs/*.err` vacíos.
+
 En compacta y normal rige además una política de tests: un test por criterio, al nivel más barato que lo demuestra
 (navegador solo para lo que lo necesita y para el recorrido de la demo), cada restricción REQ-C una vez, y el
 `REQ-X-NNN ACn` y los valores literales del criterio desde la primera versión del test. Motivo (coches, 11/11/2026):

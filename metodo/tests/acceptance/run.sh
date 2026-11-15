@@ -127,6 +127,12 @@ sed -i.bak 's/^- \*\*Needs:\*\* N-001$/- **Needs:** N-099/' "$tmp/needs/requirem
 repo="$tmp/needs"
 run lint --needs; expect "lint --needs: unknown need → exit 1" "$rc" 1
 has "lint --needs: names the unknown need" "REQ-F-001 cites N-099"
+# Compact form (one written request): Who and When once in the header, each block only Quote and Status
+cp "$tmp/needs/requirements/REQUIREMENTS.md.bak" "$tmp/needs/requirements/REQUIREMENTS.md"
+node -e 'const fs=require("fs"),f=process.argv[1];let t=fs.readFileSync(f,"utf8");
+t=t.replace(/^- \*\*(Who|When):\*\*.*\n/gm,"").replace(/^(# .*\n)/,"$1\n> **Who:** cliente — intent/INT-001.md\n> **When:** 2026-11-14\n");fs.writeFileSync(f,t)' "$tmp/needs/requirements/CUSTOMER-NEEDS.md"
+grep -q '^- \*\*Who:' "$tmp/needs/requirements/CUSTOMER-NEEDS.md" && bad "compact needs: Who still per block" || true
+run lint --needs --json; expect "lint --needs: compact form (Who/When once in the header) → 0 errors" "$rc/$(js 'j.errors.length')/$(js 'j.needs')" "0/0/6"
 
 # ---------------------------------------------------------------- 4. ledger: every verdict
 repo="$tmp/todo"

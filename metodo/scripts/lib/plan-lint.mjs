@@ -15,7 +15,8 @@
 //   V-20      (task file present) warning for each scenario of `Escenarios:` that no task of task/TASK-FASE-N.md cites
 //             (sdd-task-generator treats it as an error in its own validation).
 //   V-21      (task file present; warnings only, never an error) a port of `Puertos con doble` in
-//             plan/fase-plans/PLAN-FASE-N.md with no task whose Acceptance cites `CONTRACT-<port>`; and, when the project
+//             plan/fase-plans/PLAN-FASE-N.md (or, in a compact plan without it, of the FASE file) with no task whose
+//             Acceptance cites `CONTRACT-<port>`; and, when the project
 //             has an acceptance suite (Stack Profile `acceptance`, e2e/, test/system/, acceptance/playwright.config.*, or
 //             a task writing an e2e path), a REQ-F scenario of `Escenarios:` that no task with an e2e path cites (the
 //             FASE journey task of sdd-task-generator).
@@ -301,8 +302,10 @@ export function lintPlan(root, { dir = "plan", requirements } = {}) {
 
       // V-21: contract task per port, journey task per REQ-F scenario (warnings only)
       const blocks = taskBlocks(tf.text);
-      const pfile = path.join(planDir, "fase-plans", `PLAN-FASE-${fz.fase}.md`);
-      const ports = existsSync(pfile) ? parsePorts(readFileSync(pfile, "utf8")) || [] : [];
+      // A compact plan (one FASE) has no fase-plans/: its ports sit in the FASE file's `## Plan de la FASE`
+      const pfile = existsSync(path.join(planDir, "fase-plans", `PLAN-FASE-${fz.fase}.md`))
+        ? path.join(planDir, "fase-plans", `PLAN-FASE-${fz.fase}.md`) : abs;
+      const ports = parsePorts(readFileSync(pfile, "utf8")) || [];
       summary.ports = ports.length;
       for (const p of ports) {
         const re = new RegExp(`CONTRACT-${escapeRe(p.name)}(?![A-Za-z0-9_-])`);
