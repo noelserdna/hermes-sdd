@@ -14,6 +14,8 @@ case "${FALSO_MODO:-}" in
   huecos)   # completa los [PLAN GAP] (como harían plan-architect y task-generator con las respuestas aprobadas)
             for f in task/TASK-FASE-*.md; do sed -i.bak -E 's/^- \[ \] (TASK-[A-Za-z0-9-]+) \[PLAN GAP\] (.*)$/- [ ] \1 \2 | `tests\/e2e\/journey.spec.ts`/' "$f" && rm -f "$f.bak"; done
             git add task && { git diff --cached --quiet || git commit -qm "docs(tasks): gaps"; } ;;
+  resuelve) # da por resuelta una impugnación fuera de la ronda adversarial (como lo haría el implementador)
+            echo '{"type":"resolution","challenge":"CH-001","req":"REQ-F-001","ac":1,"reason":"arreglado","verifier":"yo"}' >> acceptance/challenges.jsonl ;;
   borra)    sed 's/"observed":0/"observed":1/' "$D" > "$D.tmp" && mv "$D.tmp" "$D" ;;  # reescribe un registro anterior
 esac
 jq -nc --arg r "${FALSO_RESUMEN:-}" '{outcome:"done", reason:"ok", run:"falso", cost_usd:0, resumen:$r}'  # FALSO_RESUMEN: lo que «dice» el ejecutor

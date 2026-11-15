@@ -1117,5 +1117,55 @@ printf '{"x":1}' > "$repo/.sdd/bad.json"
 run accept adversarial plan --fase 1 --since .sdd/bad.json; expect "inc: --since a JSON that is not a plan → 2" "$rc" 2
 run --help; has "--help documents --since" "accept adversarial plan [--fase N] [--since PLAN.json|SHA]"
 
+# ---------------------------------------------------------------- 21. challenge resolve (a later round, on new evidence)
+# The independent verifier of a later round resolves an open challenge that no longer holds, only when something of
+# the criterion's evidence changed since the challenge's HEAD (taller: CH-010/CH-011 were fixed with new tests, the
+# incremental round re-checked them and they stayed open until a person dismissed them by hand).
+run gate --fase 1; expect "resolve: CH-001 open on a Must → gate 4" "$rc" 4
+run accept challenge resolve --challenge CH-001 --reason "the test still asserts the same" --evidence tests/todo.test.js:17 --verifier v2
+expect "resolve with nothing changed → 2" "$rc" 2; has "resolve: says nothing changed" "nada cambió desde CH-001"
+has "resolve: a person dismisses it" "descártala una persona"
+run accept challenge resolve --challenge CH-001 --evidence tests/todo.test.js:17 --verifier v2
+expect "resolve without --reason → 2" "$rc" 2
+run accept challenge resolve --challenge CH-001 --reason r --evidence tests/todo.test.js:17
+expect "resolve without --verifier → 2" "$rc" 2
+run accept challenge resolve --challenge CH-001 --reason r --verifier v2
+expect "resolve without --evidence → 2" "$rc" 2
+run accept challenge resolve --challenge CH-099 --reason r --evidence tests/todo.test.js:17 --verifier v2
+expect "resolve an unknown challenge → 2" "$rc" 2
+# the fix: a new test that cites the criterion (the cited test file stays as it was, so CH-001 stays open)
+printf 'import { list } from "../src/api.js";\ntest("REQ-F-002 AC2 prints No tasks", () => {\n  expect(list([])).toEqual("No tasks");\n});\n' > "$repo/tests/empty.test.js"
+commitT "test(todo): empty list prints No tasks" "Task: TASK-F1-006" "Refs: REQ-F-002"
+run accept challenge list --json
+expect "resolve: CH-001 still open after the fix" "$(js 'j.challenges.find(x=>x.id==="CH-001").state')" open
+# the plan of the round that re-checks it (CH-001 open there): the baseline of the round after
+runo accept adversarial plan --fase 1 --json; printf '%s' "$out" > "$repo/.sdd/base2.json"
+expect "resolve: the round's plan lists CH-001 open" "$(js 'j.fases[0].requirements.find(r=>r.id==="REQ-F-002").challenges_open.join()')" CH-001
+run accept challenge resolve --challenge CH-001 --reason r --evidence src/api.js:2 --verifier v2
+expect "resolve citing evidence that did not change → 2" "$rc" 2; has "resolve: names what changed" "tests/empty.test.js (test)"
+runo accept challenge resolve --challenge CH-001 --reason "tests/empty.test.js asserts the whole THEN" --evidence tests/empty.test.js:3 --verifier v2 --json
+expect "resolve on changed evidence → 0" "$rc" 0
+expect "resolve: line with type, challenge, req, ac, verifier, head, changed" "$(js 'const r=j.resolution; [r.type,r.challenge,r.req,r.ac,r.verifier,r.head===j.resolution.head&&r.head.length,r.changed.map(c=>c.kind+":"+c.path).join()].join("|")')" "resolution|CH-001|REQ-F-002|2|v2|40|test:tests/empty.test.js"
+expect "resolve: since = the challenge's HEAD" "$(js 'j.resolution.since !== j.resolution.head')" true
+run accept challenge list --json
+expect "list: resolved counts apart" "$(js 'j.total + "/" + j.open + "/" + j.resolved + "/" + j.dismissed')" "1/0/1/0"
+expect "list: resolution with verifier and reason" "$(js 'const c=j.challenges[0]; c.state + "|" + c.resolution.verifier')" "resolved|v2"
+run accept challenge list; has "list text: resolved counter" "open 0 · stale 0 · resolved 1"
+run accept challenge resolve --challenge CH-001 --reason again --evidence tests/empty.test.js:3 --verifier v2
+expect "resolving twice → 2" "$rc" 2; has "resolve twice: not open" "CH-001 is resolved, not open"
+run gate --fase 1; expect "resolved: gate no longer exits 4" "$rc" 0
+run accept --fase 1 --report acceptance/ACCEPTANCE-REPORT.md
+expect "ledger: CH-001 resolved, not counted" "$(ledger 'R("REQ-F-002").challenges.map(c=>c.id+":"+c.state).join() + "|" + L.summary.must_challenged + "|" + L.summary.challenges_open')" "CH-001:resolved|0|0"
+grep -q '| CH-001 | REQ-F-002 | AC2 | WEAKENED-ASSERT | confirmed | resolved by v2' "$repo/acceptance/ACCEPTANCE-REPORT.md" && pass "report: resolved row" || bad "report: resolved row"
+# the next incremental round: a challenge resolved in the previous one does not force a recheck
+runo accept adversarial plan --fase 1 --since .sdd/base2.json --json
+expect "plan --since: a resolved challenge does not force a recheck" "$(js 'j.incremental.recheck')" 0
+# reopened: a later verifier confirms it again → a new challenge on the same criterion
+run accept challenge add --req REQ-F-002 --ac 2 --category WEAKENED-ASSERT --quote 'No tasks' --evidence tests/empty.test.js:3 --verifier v3 --counter confirmed
+expect "confirmed again → new challenge CH-002" "$(lastch 'r.id + "|" + r.ac')" "CH-002|2"
+run gate --fase 1; expect "reopened: gate 4 again" "$rc" 4
+run accept challenge; has "accept challenge without a subcommand names resolve" "add\`, \`resolve\` or \`list\`"
+run --help; has "--help documents challenge resolve" "sdd accept challenge resolve --challenge CH-NNN"
+
 [ "$fail" -eq 0 ] && echo "tests/acceptance: all passed" || echo "tests/acceptance: FAILURES"
 exit "$fail"

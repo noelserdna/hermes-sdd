@@ -141,7 +141,13 @@ registros_ajenos() {  # registros_ajenos <head-antes> → imprime qué está mal
     # cada línea que había antes de la etapa sigue ahí (lo nuevo puede quedar en medio: merge=union en el replay)
     d=$(diff <(git show "$1:$f" 2>/dev/null) "$f" || true)
     printf '%s\n' "$d" | grep -q '^<' && { echo "$f: líneas borradas o cambiadas"; return 0; }
-    [ "$f" = acceptance/challenges.jsonl ] && continue
+    if [ "$f" = acceptance/challenges.jsonl ]; then
+      # Resolver una impugnación (`accept challenge resolve`) es de la ronda adversarial, no del implementador
+      if [ "${SUBPASO:-}" != acceptance ] && printf '%s\n' "$d" | sed -n 's/^> //p' | jq -e -s 'any(.[]; .type == "resolution")' >/dev/null 2>&1; then
+        echo "$f: impugnaciones dadas por resueltas fuera de la ronda adversarial (paso ${SUBPASO:-?})"; return 0
+      fi
+      continue
+    fi
     m=$(printf '%s\n' "$d" | sed -n 's/^> //p' | jq -rs '[.[] | select((.type == "measurement" and .by == "command"
       and .role == "automated" and (.command | type) == "string") | not) | "\(.type) por \(.by)"] | unique | join(", ")' 2>/dev/null) ||
       m="líneas que no son JSON"
@@ -156,7 +162,9 @@ claude_etapa() {  # claude_etapa <clave-de-estado> <prompt>
   local sb=1; case "$ETAPA" in implementar|aceptar|cierre|brechas|adoptar|respuestas|mantener) sb=0 ;; esac
   SUBPASO=$clave
   local sal t1; sal=$(mktemp); t1=$(date +%s)
-  SDD_SANDBOX=$sb bash "$ROOT/executors/$EJEC.sh" "$REPO" "$ETAPA${FASE:+-$FASE}" "$2" "${MODELO_PASO:-$(modelo "$ETAPA")}" > "$sal" &
+  # SDD_PASO: el paso que corre (acceptance, task-implementer…). La guardia del ejecutor deja `accept challenge
+  # resolve` solo a la ronda adversarial (acceptance): el implementador nunca da por resuelto lo que le impugnaron
+  SDD_PASO=$clave SDD_SANDBOX=$sb bash "$ROOT/executors/$EJEC.sh" "$REPO" "$ETAPA${FASE:+-$FASE}" "$2" "${MODELO_PASO:-$(modelo "$ETAPA")}" > "$sal" &
   wait $!   # en segundo plano y con wait: un TERM se atiende ya, no cuando acabe Claude
   res=$(tail -1 "$sal"); rm -f "$sal"
   S_LLM=$(( S_LLM + $(date +%s) - t1 ))
@@ -198,7 +206,7 @@ fidelidad() {  # ronda adversarial del método + hsdd_fidelidad de la FASE (deja
   if [ -s "$base" ] && ! jq -e '.ronda_incremental == false' .sdd/hermes/hermes-sdd.json >/dev/null 2>&1 &&
      node "$SDD" accept adversarial plan --fase "$FASE" --since "$base" --json > "$plan" 2>/dev/null && jq -e .incremental "$plan" >/dev/null 2>&1; then
     tipo=incremental; n=$(jq .incremental.criteria "$plan"); v=$(jq .incremental.recheck "$plan")
-    inc=" INCREMENTAL ROUND: an adversarial round of FASE-$FASE already ran. Its plan is ready in $plan (made with \`accept adversarial plan --fase $FASE --since\`): use it instead of making a new one. Only the $v criteria with \"recheck\": true out of $n changed since that round (code, tests, captures or text) or have an open challenge (\"recheck_reasons\" says why): send ONLY those to the verifiers, ONLY their rows to the capture verifier, and take the clean-verdict sample among them. The other criteria keep their previous adversarial verdict: do not re-read them and do not report them as a coverage gap."
+    inc=" INCREMENTAL ROUND: an adversarial round of FASE-$FASE already ran. Its plan is ready in $plan (made with \`accept adversarial plan --fase $FASE --since\`): use it instead of making a new one. Only the $v criteria with \"recheck\": true out of $n changed since that round (code, tests, captures or text) or have an open challenge (\"recheck_reasons\" says why): send ONLY those to the verifiers, ONLY their rows to the capture verifier, and take the clean-verdict sample among them. The other criteria keep their previous adversarial verdict: do not re-read them and do not report them as a coverage gap. Each open challenge of a re-checked criterion gets an answer: confirmed, it stays open; when the counter-verifier agrees that the new evidence meets the criterion, resolve it with accept challenge resolve --challenge CH-NNN --reason … --evidence <the test, code or capture that changed> --verifier … (references/adversarial-protocol.md §7b)."
   elif node "$SDD" accept adversarial plan --fase "$FASE" --json > "$plan" 2>/dev/null; then
     n=$(jq '[.fases[].requirements[].criteria[]] | length' "$plan" 2>/dev/null || echo null); v=$n
   else rm -f "$plan"; fi

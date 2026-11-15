@@ -82,7 +82,7 @@ ARGS=(-p "$PROMPT" --output-format json --plugin-dir "$ROOT/metodo" --settings "
 cd "$REPO"
 env -i HOME="$HOME" USER="$USER" LOGNAME="${LOGNAME:-$USER}" TMPDIR="${TMPDIR:-/tmp}" LANG="${LANG:-es_ES.UTF-8}" \
   PATH="$PATH_LIMPIO" TERM=dumb \
-  SDD_EXECUTOR=hermes SDD_RUN="$RUN" DISABLE_AUTOUPDATER=1 NODE_USE_ENV_PROXY=1 \
+  SDD_EXECUTOR=hermes SDD_PASO="${SDD_PASO:-}" SDD_RUN="$RUN" DISABLE_AUTOUPDATER=1 NODE_USE_ENV_PROXY=1 \
   perl -e 'setpgrp(0,0); exec @ARGV' "$BIN" "${ARGS[@]}" > "$OUT" 2> "$ERR" &
 CPID=$!
 echo "$CPID" > "$LOCK/claude"

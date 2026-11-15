@@ -167,9 +167,18 @@
 //       Never under acceptance/, feedback/, spec/, requirements/, plan/, task/, audits/, changes/, .sdd/, nor test/
 //       unless inside the Stack Profile's test_paths (Rails Minitest). --counter refuted is not recorded. Exit 2 on
 //       any invalid field.
+//   sdd accept challenge resolve --challenge CH-NNN --reason TEXT --evidence path:line... --verifier NAME [--json]
+//       The independent verifier of a later adversarial round records that an open challenge no longer holds: a line
+//       {"type":"resolution",…} appended to acceptance/challenges.jsonl with HEAD, reason, evidence and what changed.
+//       Exit 2 unless something of the criterion's evidence changed since the challenge's HEAD (its bound tests or the
+//       test files that cite it, its captures, code that commits with Refs: <its requirement> touched, its text) and
+//       --evidence cites one of those changes ("nada cambió desde CH-NNN": only a person dismisses it). Reserved to
+//       the adversarial round: the implementer never resolves (the harness denies it outside that step). Confirmed
+//       again later, it is a new challenge (challenge add).
 //   sdd accept challenge list [--open] [--fase N] [--json]
 //       Challenges with their state: open · stale (a cited file changed since the challenge's HEAD, or the requirement
-//       text changed) · dismissed (a challenge-dismissal record). JSON: counts, must_open, challenges[].
+//       text changed) · resolved (challenge resolve) · dismissed (a challenge-dismissal record). Only open ones count
+//       for the gate (exit 4) and the loop. JSON: counts (open, stale, resolved, dismissed), must_open, challenges[].
 //   sdd accept adversarial plan [--fase N] [--since PLAN.json|SHA] [--json]
 //       Mechanical coverage critic for the adversarial round: per FASE, requirements with their literal statement and
 //       criteria, the tests bound to each criterion (with file), captures (with capture_sha256) and candidate files

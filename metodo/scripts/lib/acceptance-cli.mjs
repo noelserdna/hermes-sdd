@@ -1,5 +1,5 @@
 // acceptance-cli.mjs — `sdd lint --needs`, `sdd lint --quotes`, `sdd accept`, `sdd accept record`, `sdd accept measure`, `sdd accept pack`,
-// `sdd accept challenge add|list`, `sdd accept adversarial plan`, `sdd gate`, `sdd loop next`.
+// `sdd accept challenge add|resolve|list`, `sdd accept adversarial plan`, `sdd gate`, `sdd loop next`.
 // Node >= 18, no dependencies. Called from scripts/sdd.mjs; returns an exit code (never calls process.exit).
 import { existsSync, readFileSync, writeFileSync, mkdirSync, appendFileSync, readdirSync, statSync, mkdtempSync, rmSync } from "node:fs";
 import { spawnSync } from "node:child_process";
@@ -11,7 +11,7 @@ import {
   SCHEMA, RECORD_TYPES, DECISIONS_FILE, ROUTES, evaluate, gitContext, loadScenarios, readDecisions,
   validateRecord, reqHash, faseScope, renderReport, renderPrBlock, routeHint, criterionHint, unchangedSince, acNumber,
   compareMeasurement, dirtyUnder, evidenceSettings, describeFile, CHALLENGES_FILE, CHALLENGE_CATEGORIES, readChallenges,
-  validateChallenge, challengeStates, nextChallengeId, adversarialGate, effectivePriority, testKeys,
+  validateChallenge, challengeStates, nextChallengeId, adversarialGate, effectivePriority, testKeys, validateEvidenceRefs,
 } from "./acceptance.mjs";
 import { parseRequirements, parseNeeds, checkNeedCoverage } from "../sdd-jev.mjs";
 import { lintQuotes, testPathsOf } from "./quotes.mjs";
@@ -500,8 +500,9 @@ function headOf(root) {
 function cmdChallenge(o) {
   const sub = o._.shift();
   if (sub === "add") return challengeAdd(o);
+  if (sub === "resolve") return challengeResolve(o);
   if (sub === "list") return challengeList(o);
-  usage("accept challenge needs `add` or `list`");
+  usage("accept challenge needs `add`, `resolve` or `list`");
 }
 
 function challengeAdd(o) {
@@ -532,18 +533,133 @@ function challengeAdd(o) {
   return 0;
 }
 
+// A later adversarial round re-verifies the criteria whose evidence moved; when an open challenge no longer holds, its
+// independent verifier records a resolution (a line `{"type":"resolution",…}` appended to challenges.jsonl, never
+// rewriting the challenge). Only when something of the criterion's evidence changed since the challenge's HEAD: its
+// bound tests (JUnit binding, or test files that cite `REQ-X-NNN ACn` or one of its scenario ids), its captures, the
+// code that commits since then attribute to its requirement (Refs), or the requirement text. With nothing changed
+// the finding still stands on the same evidence: only a person may dismiss it. The implementer never resolves (the
+// harness denies it outside the adversarial round). A verifier that confirms it again later records a new challenge.
+const TEST_FILE = /\.(m?[jt]sx?|cjs|py|rb|go|java|kt|cs|php|rs|swift|feature)$/i;
+function testFilesUnder(root, dirs) {
+  const found = [];
+  const walk = (rel) => {
+    let entries;
+    try { entries = readdirSync(path.join(root, rel), { withFileTypes: true }); } catch { return; }
+    for (const e of entries) {
+      if (e.name === "node_modules" || e.name.startsWith(".")) continue;
+      const r = `${rel}/${e.name}`;
+      if (e.isDirectory()) walk(r);
+      else if (e.isFile() && TEST_FILE.test(e.name)) found.push(r);
+    }
+  };
+  for (const d of dirs) {
+    let st = null;
+    try { st = statSync(path.join(root, d)); } catch { /* absent */ }
+    if (st?.isFile()) found.push(d); else if (st?.isDirectory()) walk(d);
+  }
+  return [...new Set(found)];
+}
+
+/** What of the criterion's evidence changed since `ch.head`: [{ kind: requirement|test|capture|code, path }]. */
+export function criterionChanges(root, ch, { req, criterion, testPaths, codePaths }) {
+  const changes = [];
+  const cache = new Map();
+  const within = (p, dirs) => dirs.some((d) => p === d || p.startsWith(d + "/"));
+  if (req && ch.reqHash && ch.reqHash !== reqHash(req)) changes.push({ kind: "requirement", path: "requirements/REQUIREMENTS.md" });
+  // tests: the files of the bound JUnit cases and the test files that cite the criterion (REQ-X-NNN ACn, scenario id)
+  const files = new Set();
+  for (const t of criterion?.tests || []) {
+    const f = t.file || (looksLikeFile(t.classname) ? t.classname : null);
+    if (f && existsSync(path.join(root, f))) files.add(String(f).replace(/^\.\//, ""));
+  }
+  const scen = new Set(criterion?.scenarios || []);
+  for (const f of testFilesUnder(root, testPaths)) {
+    let text = "";
+    try { if (statSync(path.join(root, f)).size < 2e6) text = readFileSync(path.join(root, f), "utf8"); } catch { continue; }
+    const k = testKeys(text);
+    if (k.reqAcs.some((x) => x.req === ch.req && x.ac === Number(ch.ac)) || k.scenarios.some((x) => scen.has(x))) files.add(f);
+  }
+  for (const f of [...files].sort()) if (!unchangedSince(root, ch.head, [f], cache)) changes.push({ kind: "test", path: f });
+  // captures bound to the criterion: a versioned one against the challenge's HEAD, the others by their mtime
+  const t0 = (Number(git(root, ["show", "-s", "--format=%ct", ch.head]).stdout.trim()) * 1000) || Infinity;
+  const caps = new Set([...(criterion?.evidence || []), ...(criterion?.tests || [])].flatMap((e) => e.attachments || [])
+    .filter((a) => a.kind === "image" && a.present).map((a) => a.path));
+  for (const c of [...caps].sort()) {
+    let moved;
+    if (git(root, ["ls-files", "--error-unmatch", "--", c]).status === 0) moved = !unchangedSince(root, ch.head, [c], cache);
+    else { try { moved = statSync(path.join(root, c)).mtimeMs > t0; } catch { moved = false; } }
+    if (moved) changes.push({ kind: "capture", path: c });
+  }
+  // code of the requirement: files under code_paths touched by the commits since the challenge whose Refs name it
+  let commits = [];
+  try { commits = readCommits(root, { rev: `${ch.head}..HEAD`, files: true }); } catch { commits = []; }
+  const code = new Set(commits.filter((c) => c.ids.includes(ch.req)).flatMap((c) => c.files).filter((p) => within(p, codePaths)));
+  for (const p of [...code].sort()) if (!unchangedSince(root, ch.head, [p], cache)) changes.push({ kind: "code", path: p });
+  const seen = new Set();
+  return changes.filter((c) => !seen.has(c.path) && seen.add(c.path));
+}
+
+function challengeResolve(o) {
+  if (o._.length) usage(`unexpected argument ${o._[0]}`);
+  const root = rootOf(o);
+  const reqs = readReqs(root, o);
+  const file = challengesPath(root, o);
+  const { challenges, resolutions, errors: bad } = readChallenges(file);
+  const id = String(o.challenge || "").toUpperCase();
+  const fail = (msgs) => { for (const e of msgs) console.error(`${PROG}: accept challenge resolve: ${e}`); return 2; };
+  const errors = [];
+  if (!id) errors.push("--challenge CH-NNN is required");
+  if (!String(o.reason || "").trim()) errors.push("--reason is required (why the finding no longer holds, on the new evidence)");
+  if (!String(o.verifier || "").trim()) errors.push("--verifier is required (the independent verifier of this round)");
+  if (!o.evidence.length) errors.push("--evidence path:line is required (the new evidence: the test, code or capture that changed)");
+  if (bad.length) errors.push(`${CHALLENGES_FILE} has unreadable lines (${bad.map((e) => e.line).join(", ")}); it is written only by the CLI`);
+  const head = headOf(root);
+  if (!head) errors.push("no HEAD commit: resolve challenges in a git repository with at least one commit");
+  if (errors.length) return fail(errors);
+  const ch = challenges.find((c) => c.id === id);
+  if (!ch) return fail([`${id} is not in ${CHALLENGES_FILE}`]);
+  const records = readDecisions(decisionsPath(root, o)).records;
+  const { dir: evidenceDir } = evidenceSettings(root);
+  const [state] = challengeStates(root, [ch], reqs, records, { repo: true, evidenceDir, resolutions });
+  if (state.state !== "open") return fail([`${id} is ${state.state}, not open: only an open challenge is resolved`]);
+  const prof = stackProfile(root);
+  const testPaths = listOf(prof.test_paths, ["tests"]), codePaths = listOf(prof.code_paths, ["src"]);
+  const ev = validateEvidenceRefs(o.evidence, { root, testPaths, evidenceDir });
+  if (ev.errors.length) return fail(ev.errors);
+  const { ledger } = buildLedger({ ...o, fase: undefined });
+  const req = reqs.find((r) => r.id === ch.req);
+  const criterion = ledger.requirements.find((r) => r.id === ch.req)?.criteria?.find((c) => c.n === Number(ch.ac));
+  const changed = criterionChanges(root, ch, { req, criterion, testPaths, codePaths });
+  if (!changed.length)
+    return fail([`nada cambió desde ${id} (${String(ch.head).slice(0, 7)}) en la evidencia de ${ch.req} AC${ch.ac} (tests ligados, capturas, código del requisito, texto): no se puede dar por resuelta; descártala una persona (accept record challenge-dismissal)`]);
+  const moved = new Set(changed.map((c) => c.path));
+  if (!ev.evidence.some((e) => moved.has(e.path)))
+    return fail([`--evidence must cite what changed since ${id}: ${changed.map((c) => `${c.path} (${c.kind})`).join(", ")}`]);
+  const rec = { type: "resolution", challenge: id, req: ch.req, ac: ch.ac, reason: String(o.reason).trim(), evidence: ev.evidence,
+    verifier: String(o.verifier).trim(), head, since: ch.head, changed, at: new Date().toISOString() };
+  const prev = existsSync(file) ? readFileSync(file, "utf8") : "";
+  appendFileSync(file, (prev && !prev.endsWith("\n") ? "\n" : "") + JSON.stringify(rec) + "\n");
+  const line = (prev ? prev.replace(/\n$/, "").split("\n").length : 0) + 1;
+  const shown = path.relative(root, file);
+  if (o.json) out(JSON.stringify({ file: shown, line, resolution: rec }, null, 2));
+  else out(`resolved challenge ${id} ${ch.req} AC${ch.ac} at ${shown}:${line} (changed since ${String(ch.head).slice(0, 7)}: ${changed.map((c) => c.path).join(", ")})`);
+  return 0;
+}
+
 function challengeList(o) {
   if (o._.length) usage(`unexpected argument ${o._[0]}`);
   const root = rootOf(o);
   const reqs = readReqs(root, o);
   const file = challengesPath(root, o);
-  const { challenges, errors } = readChallenges(file);
+  const { challenges, resolutions, errors } = readChallenges(file);
   const records = readDecisions(decisionsPath(root, o)).records;
   const prio = new Map(reqs.map((r) => [r.id, effectivePriority(r)]));
   const scope = scopeFor(root, reqs, o.fase);
-  let all = challengeStates(root, challenges, reqs, records, { repo: isRepo(root), evidenceDir: evidenceSettings(root).dir })
+  let all = challengeStates(root, challenges, reqs, records, { repo: isRepo(root), evidenceDir: evidenceSettings(root).dir, resolutions })
     .map((c) => ({ id: c.id, req: c.req, ac: c.ac, priority: prio.get(c.req) ?? null, category: c.category, counter: c.counter, state: c.state,
       ...(c.stale_reason ? { stale_reason: c.stale_reason } : {}), ...(c.dismissal ? { dismissal: c.dismissal } : {}),
+      ...(c.resolution ? { resolution: c.resolution } : {}),
       quote: c.quote, evidence: c.evidence, verifier: c.verifier, head: c.head, at: c.at || null, line: c.line }));
   if (scope) all = all.filter((c) => scope.set.has(c.req));
   const count = (st) => all.filter((c) => c.state === st).length;
@@ -551,16 +667,17 @@ function challengeList(o) {
   const list = o.open ? all.filter((c) => c.state === "open") : all;
   const shown = path.relative(root, file);
   if (o.json) {
-    out(JSON.stringify({ file: shown, total: all.length, open: count("open"), stale: count("stale"), dismissed: count("dismissed"),
+    out(JSON.stringify({ file: shown, total: all.length, open: count("open"), stale: count("stale"), resolved: count("resolved"), dismissed: count("dismissed"),
       must_open: mustOpen, ...(scope ? { fase: o.fase } : {}), challenges: list, errors }, null, 2));
     return 0;
   }
   for (const c of list) {
-    const why = c.state === "stale" ? ` — ${c.stale_reason}` : c.state === "dismissed" ? ` — by ${c.dismissal.by} (${c.dismissal.role}): ${c.dismissal.reason}` : "";
+    const why = c.state === "stale" ? ` — ${c.stale_reason}` : c.state === "dismissed" ? ` — by ${c.dismissal.by} (${c.dismissal.role}): ${c.dismissal.reason}`
+      : c.state === "resolved" ? ` — by ${c.resolution.verifier} at ${String(c.resolution.head || "?").slice(0, 7)}: ${c.resolution.reason}` : "";
     out(`${c.id}  ${c.state.padEnd(9)} ${c.req} AC${c.ac}  ${c.category} (${c.counter})  "${c.quote}"  ${(c.evidence || []).map((e) => e.line ? `${e.path}:${e.line}` : e.path).join(", ")}${why}`);
   }
   for (const e of errors) out(`${shown}:${e.line}: ${e.msg}`);
-  out(`challenges: ${all.length} · open ${count("open")} · stale ${count("stale")} · dismissed ${count("dismissed")} · Musts with an open challenge: ${mustOpen.join(", ") || "none"}`);
+  out(`challenges: ${all.length} · open ${count("open")} · stale ${count("stale")} · resolved ${count("resolved")} · dismissed ${count("dismissed")} · Musts with an open challenge: ${mustOpen.join(", ") || "none"}`);
   return 0;
 }
 
