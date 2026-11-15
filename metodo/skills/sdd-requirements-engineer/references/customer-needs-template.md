@@ -18,6 +18,25 @@
 - **Status:** captured | confirmed | out-of-scope (decision: {what was decided, by whom, date})
 ```
 
+### One written request (compact form)
+
+When every need comes from one written request (the literal request of `intent/INT-001.md`, captured without an interview, as in harness mode), Who and When are the same for all of them: write them once, in the header, and each block carries only its Quote and Status.
+
+```markdown
+# Customer Needs
+
+> **Project:** {project name}
+> **Captured by:** literal request of intent/INT-001.md (no interview)
+> **Who:** {name, role} — intent/INT-001.md
+> **When:** {YYYY-MM-DD}
+
+### N-001: {short title}
+- **Quote:** "{one sentence of the request, verbatim}"
+- **Status:** captured
+```
+
+A need answered later at a gate (another person or date) keeps its own **Who** and **When** lines. Still one need per thing the customer asked for, at most one per sentence: `sdd lint --needs` checks that every need is covered by some requirement, so the whole paragraph in a single need would let a requirement that covers one sentence hide the others, and the plan's `Necesidades` and the status page show progress per need. A clause that only qualifies what the same sentence asks stays in that need.
+
 ## Rules
 
 - **IDs** `N-NNN`, unique, never renumbered or reused (requirements, FASE demos and acceptance reports cite them).
