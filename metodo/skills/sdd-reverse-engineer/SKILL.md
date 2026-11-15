@@ -10,7 +10,7 @@ description: "Bootstraps SDD from existing code and tests: generates requirement
 > En este arnés se usa para **adoptar** un repo existente: extrae del código las necesidades, los requisitos (con
 > sus criterios y ejemplos), FASEs retroactivas y hallazgos, deja `REQUIREMENTS.md` en `Status: Review` y termina.
 > La pregunta "¿son estos tus requisitos?" es la **puerta de requisitos**; lo que no puedas deducir del código va a
-> `.sdd/questions-reverse-engineer.md` (clase C), nunca inventado.
+> `.sdd/questions-reverse-engineer.json` (clase C), nunca inventado.
 
 # Skill: sdd-reverse-engineer — Code → SDD Artifact Generator
 

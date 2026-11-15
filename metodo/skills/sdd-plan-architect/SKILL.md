@@ -8,7 +8,7 @@ description: "Generates implementation plans from specs: FASEs, architecture, pe
 > ni registres decisiones humanas, deja la etapa en `done` y termina con el resumen de una línea `stage=… status=…`.
 >
 > En este arnés trabaja siempre como con `--skip-clarify`: las aclaraciones de clase R se deciden con la opción
-> recomendada (y se anotan en `plan/CLARIFY-LOG.md`); las de clase C van a `.sdd/questions-plan-architect.md`.
+> recomendada (y se anotan en `plan/CLARIFY-LOG.md`); las de clase C van a `.sdd/questions-plan-architect.json`.
 > La conformidad con las FASEs la da una persona en la **puerta de plan** después de `sdd-task-generator`.
 
 # SDD Plan Architect Skill
@@ -140,7 +140,7 @@ The route judged that formal specs add little to this project (few functional re
 
 When the plan has a single FASE because the project is small (the harness asks for a `COMPACT PLAN`), the seven files of Output Artifacts are ceremony: the taller wrote 675 lines of `plan/` for one FASE. The plan is then **two files, ≤ 14 000 chars in total**, and `plan/PLAN.md` carries `> **Plan-Size:** compact` next to `> **Plan-Style:** vertical`:
 
-- `plan/PLAN.md` — the header lines; the Technical Context as `aspect · decision · ref` rows; a `## Decisiones` table with the `D-PA-NNN` decisions taken without asking (what CLARIFY-LOG.md would hold; class C questions still go to `.sdd/questions-plan-architect.md`); the architecture in ≤ 15 lines (one ASCII diagram or one table: components, data, where it runs); REQ-NF strategies; a quickstart ≤ 10 lines; the Validation Report.
+- `plan/PLAN.md` — the header lines; the Technical Context as `aspect · decision · ref` rows; a `## Decisiones` table with the `D-PA-NNN` decisions taken without asking (what CLARIFY-LOG.md would hold; class C questions still go to `.sdd/questions-plan-architect.json`); the architecture in ≤ 15 lines (one ASCII diagram or one table: components, data, where it runs); REQ-NF strategies; a quickstart ≤ 10 lines; the Validation Report.
 - `plan/fases/FASE-0-SKELETON.md` — the FASE file of `references/fase-template.md` (header, Criterios de Éxito, Módulos y Conjuntos de Escritura, Demo…) ending with `## Plan de la FASE`: the per-FASE plan sections the next stages read — the Test Coverage Map (§7.4 format), `Puertos con doble` (only when the FASE calls an external system) and the UI deliverables when the FASE file does not list them.
 - Not written: `ARCHITECTURE.md`, `RESEARCH.md` (Phase 3 runs only with `--research`), `CLARIFY-LOG.md`, `fases/README.md`, `fase-plans/`. V1 and V5 read `## Plan de la FASE` instead of `PLAN-FASE-0.md`; `sdd lint --plan` (V8, V9, V-21) works the same, since it reads `PLAN.md`, the FASE file and, for the ports, that section when `fase-plans/PLAN-FASE-0.md` does not exist.
 

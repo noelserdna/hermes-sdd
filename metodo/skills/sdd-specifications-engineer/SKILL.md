@@ -8,7 +8,7 @@ description: "Transforms requirements into formal specs (SRS) per SWEBOK v4: ana
 > ni registres decisiones humanas, deja la etapa en `done` y termina con el resumen de una línea `stage=… status=…`.
 > Donde esta skill diga `AskUserQuestion`, aplica esas clases en su lugar.
 >
-> Formato fijo, sin preguntar: el árbol modular `spec/` con casos de uso (el recomendado). Un requisito deficiente o ambiguo es clase C (a `.sdd/questions-specifications-engineer.md`): no cambies `requirements/`, que ya están aprobados.
+> Formato fijo, sin preguntar: el árbol modular `spec/` con casos de uso (el recomendado). Un requisito deficiente o ambiguo es clase C (a `.sdd/questions-specifications-engineer.json`): no cambies `requirements/`, que ya están aprobados.
 
 # Specifications Engineer (SWEBOK v4)
 
@@ -21,7 +21,7 @@ Second stage of the SDD pipeline: turns `requirements/REQUIREMENTS.md` into the 
 Decisions belong to the user; the skill never settles an ambiguity silently.
 
 - **Interactive session:** `AskUserQuestion`, at most 4 questions per call, in severity order (BLOCKER → CRITICAL → MAJOR → MINOR), each with 2–4 options and the recommended one first. Only the main thread asks.
-- **Station** (`SDD_ROLE` set, or a role resolved from `.claude/sdd-sessions.json`, and the role is not `sdd-lead`): follow the plugin-root `references/async-questions.md` — write each decision as a `Q-<role>-NNN [OPEN]` block, keep generating what does not depend on it (unresolved spots get an `NC` marker, Tier 1 items stay `[PENDING REQ]` in `DERIVED-SPECS.md`), and hand off `status=blocked` when nothing unblocked remains.
+- **Station** (`SDD_ROLE` set, or a role resolved from `.claude/sdd-sessions.json`, and the role is not `sdd-lead`): follow the plugin-root `references/async-questions.md` — write each decision with `sdd questions add --role <role>` (an OPEN `Q-<role>-NNN` question), keep generating what does not depend on it (unresolved spots get an `NC` marker, Tier 1 items stay `[PENDING REQ]` in `DERIVED-SPECS.md`), and hand off `status=blocked` when nothing unblocked remains.
 - **Non-interactive run with no role** (`claude -p` with nobody to answer): leave each open decision as an `NC` marker listed in `CLARIFICATIONS-PENDING.md`, Tier 1 items as `[PENDING REQ]`, continue, and list them in `summary.highlights`.
 
 **Lane contract** (fan-out mode). A lane never asks the user, never decides an open question, never writes outside its own files (`spec/domain/`, `spec/contracts/`, `spec/workflows/` and `pipeline-state.json` are off limits), never runs Persist Summary or Handoff and never launches subagents. What it cannot settle it returns in its JSON: an ambiguity as an `NC-{L}NN` marker in `gaps`, a missing glossary term as `{"term","def"}` in `gaps`, uncovered behaviour in `tier1`, new invariants in `inv_new`, operations and error codes in `ops` / `errs`. The main thread raises all of it once, in phase D. Every decision a lane needs must therefore be taken in Mode 1 / phase A, before the lanes start.

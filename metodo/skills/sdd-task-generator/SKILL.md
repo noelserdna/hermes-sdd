@@ -7,7 +7,7 @@ description: "Generates implementation task documents from FASE files and plans:
 > `${CLAUDE_PLUGIN_ROOT}/references/modo-arnes.md` y sigue sus reglas: no preguntes nunca (clases R/C/H), no firmes
 > ni registres decisiones humanas, deja la etapa en `done` y termina con el resumen de una línea `stage=… status=…`.
 >
-> En este arnés no hay preguntas: lo que falte en el plan es clase C (a `.sdd/questions-task-generator.md`).
+> En este arnés no hay preguntas: lo que falte en el plan es clase C (a `.sdd/questions-task-generator.json`).
 
 # SDD Task Generator Skill
 

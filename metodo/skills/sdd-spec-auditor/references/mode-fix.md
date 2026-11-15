@@ -159,9 +159,9 @@ When Tier 1 items exist, ask:
   justification.
 
 **Station mode** (`SDD_ROLE` set, or a role resolved from `.claude/sdd-sessions.json`, and the role is not
-`sdd-lead`): do not pick an option. Write the Upstream Impact table, leave Tier 1 items as `[PENDING REQ]`, append the
-decision as a `Q-<role>-NNN [OPEN]` block (Options 1/2/3 as A/B/C, A recommended; `Blocks:` = pipeline gate to
-sdd-test-planner) to `$STATE_ROOT/.sdd/questions-<role>.md` following the plugin-root `references/async-questions.md`,
+`sdd-lead`): do not pick an option. Write the Upstream Impact table, leave Tier 1 items as `[PENDING REQ]`, write the
+decision with `sdd questions add --role <role>` (Options 1/2/3 as A/B/C, A recommended; `bloquea` = pipeline gate to
+sdd-test-planner) into `$STATE_ROOT/.sdd/questions-<role>.json` following the plugin-root `references/async-questions.md`,
 finish the report and Persist Summary, then hand off with `status=blocked questions=<n> file=<path>` and end the turn.
 On resume, apply the `[ANSWERED]` option exactly as if the user had chosen it.
 
