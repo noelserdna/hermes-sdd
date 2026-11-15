@@ -355,6 +355,11 @@ def puede_jev(puerta: dict, cfg: dict | None = None) -> tuple[bool, str]:
         return False, f"en modo piloto las puertas de {tipo} las decide una persona"
     if puerta.get("jev_vetado"):
         return False, "una persona deshizo la decisión de Jev"
+    if puerta.get("preguntas_error"):
+        return False, "no se pudieron leer las preguntas de esta puerta (lo decide una persona)"
+    # Una opción con efecto editar-test (dato de la puerta, no su texto): la elige una persona
+    if any((e or {}).get("efecto") == "editar-test" for q in puerta.get("preguntas") or [] for e in (q.get("efectos") or {}).values()):
+        return False, "una opción autoriza editar tests que ya existían: la elige una persona"
     if modo == "piloto" and puerta.get("preguntas"):
         return False, "hay preguntas abiertas (clase C): en modo piloto las contesta una persona"
     # Campos de la puerta (puerta.sh ≥ 0.3.1); en puertas anteriores, lo que decía su texto

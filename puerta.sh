@@ -178,13 +178,18 @@ esac
 T_JSON=$(python3 "$TEXTOS" puerta "$TIPO" "$REPO" --proyecto "${BOARD:-$(basename "$REPO")}" ${FASE:+--fase "$FASE"} ${EXTRA[@]+"${EXTRA[@]}"}) ||
   { echo "no se pudo escribir el texto de la puerta $TIPO" >&2; exit 1; }
 TITULO=$(echo "$T_JSON" | jq -r .titulo); TEXTO=$(echo "$T_JSON" | jq -r .texto)
+mkdir -p .sdd/hermes
 # Revisión mecánica del encargado (hsdd_revision.py, sin LLM): «🧭 Encargado: N avisos» arriba del texto. No bloquea;
 # un aviso grave hace que Jev no pueda aprobar esta puerta solo (hsdd_nucleo.puede_jev lee .encargado.graves)
 ENC='{"avisos":[],"graves":0}'
 case "$TIPO" in requisitos|ruta|plan|fase|entrega)
   IA=""; jq -e --arg t "$TIPO" '(.revision_ia // []) | index($t)' "$HOME_SDD/sdd.json" >/dev/null 2>&1 && IA=--ia
-  ENC=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_revision.py" revisar "$REPO" "$TIPO" ${FASE:+--fase "$FASE"} $IA 2>/dev/null) || ENC='{"avisos":[],"graves":0}'
-  jq -e '.avisos' <<< "$ENC" >/dev/null 2>&1 || ENC='{"avisos":[],"graves":0}'
+  # Si la revisión no se puede hacer, Jev no tiene con qué decidir: la puerta escala a una persona (antes, un fallo de
+  # la revisión dejaba la puerta «sin avisos» y Jev podía aprobarla a ciegas)
+  FALLO_REV='{"avisos":[{"grave":true,"codigo":"revision-fallida","texto":"La revisión automática de esta puerta no se pudo hacer: sin ella Jev no decide, la decide una persona"}],"graves":1}'
+  ENC=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_revision.py" revisar "$REPO" "$TIPO" ${FASE:+--fase "$FASE"} $IA 2>".sdd/hermes/revision.err") || ENC=$FALLO_REV
+  jq -e '.avisos' <<< "$ENC" >/dev/null 2>&1 || ENC=$FALLO_REV
+  [ "$ENC" != "$FALLO_REV" ] || ENC=$(jq -c --arg l "🧭 Encargado: ‼️ la revisión automática falló (.sdd/hermes/revision.err); esta puerta la decide una persona" '. + {linea: $l}' <<< "$ENC")
   LINEA=$(jq -r '.linea // ""' <<< "$ENC")
   [ -z "$LINEA" ] || TEXTO="$LINEA
 
@@ -193,7 +198,8 @@ esac
 
 # Preguntas como datos, para que el canal pueda ofrecerlas como formulario (Q1: A/B/C…)
 python3 "$TEXTOS" normalizar-preguntas "$REPO" >/dev/null 2>&1 || true   # cabeceras «## » y números repetidos
-PREGUNTAS=$(python3 - "$TEXTOS" .sdd/questions-*.md <<'PY' 2>/dev/null || echo '[]'
+PREG_ERROR=false
+PREGUNTAS=$(python3 - "$TEXTOS" .sdd/questions-*.md <<'PY' 2>".sdd/hermes/preguntas.err" || echo ERROR
 import importlib.util, json, re, sys
 spec = importlib.util.spec_from_file_location("hsdd_textos", sys.argv[1]); X = importlib.util.module_from_spec(spec); spec.loader.exec_module(X)
 out, n = [], 0
@@ -204,6 +210,9 @@ for p in sorted(a for a in sys.argv[2:] if not a.endswith("*.md")):
 print(json.dumps(out))
 PY
 )
+
+# Preguntas ilegibles: la puerta sale sin botones Q, pero Jev no decide sobre preguntas que no ha podido leer
+if [ "$PREGUNTAS" = ERROR ] || ! jq -e 'type == "array"' <<< "$PREGUNTAS" >/dev/null 2>&1; then PREGUNTAS='[]'; PREG_ERROR=true; fi
 
 # Exenciones que ya se cumplen: su fila de PENDIENTES.md se cierra antes de enseñar la puerta (y va en su commit, así
 # el commit que se muestra es el que se firma)
@@ -223,9 +232,9 @@ jq -n --arg id "$ID" --arg t "$TIPO" --arg f "$FASE" --arg b "$BOARD" --arg s "$
   --argjson ad "$([ -f .sdd/hermes/adopcion ] && echo true || echo false)" \
   --argjson hz "$([ "$TIPO" = mantenimiento ] && cat .sdd/hermes/mantenimiento/hallazgos.json || echo null)" \
   --argjson te "${EDIT:-0}" --argjson bl "$BLOQUEO" --argjson un "${UNICA:-false}" --argjson rv "$(cat "$REV_JSON")" \
-  --argjson en "$(jq -c '{avisos, graves}' <<< "$ENC")" \
+  --argjson en "$(jq -c '{avisos, graves}' <<< "$ENC")" --argjson pe "$PREG_ERROR" \
   '{id:$id, tipo:$t, fase:$f, tablero:$b, tarjeta:"", adopcion:$ad, sha:$s, creada:$c, repo:$r, titulo:$ti, texto:$tx,
-    opciones:$o, demo:$v, preguntas:$q, hallazgos:$hz, tests_editados:$te, bloqueo:$bl, unica:$un,
+    opciones:$o, demo:$v, preguntas:$q, preguntas_error:$pe, hallazgos:$hz, tests_editados:$te, bloqueo:$bl, unica:$un,
     revisar:(($rv // {}).revisar // []), encargado:$en}' > ".sdd/hermes/puertas/$ID.json"
 # La copia del repo es lo que se mostró (la lee el notario) y no lleva estado: el estado vive solo en el índice global
 # y solo cambia por las transiciones del núcleo (hsdd_nucleo.py transicion). Una puerta nueva del mismo proyecto, tipo y

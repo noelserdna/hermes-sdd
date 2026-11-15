@@ -90,4 +90,18 @@ print(N.puede_jev({**base, "encargado": {"avisos": [{}], "graves": 1}})[0], N.pu
 PY
 )
 [ "$o" = "False True" ] && ok "Jev: con un aviso grave del encargado no puede aprobar solo; con avisos leves sí" || bad "jev: $o"
+# Jev escala a una persona cuando le falta información o la opción es de una persona (datos de la puerta, no su texto)
+o=$(python3 - "$ROOT/plugin/hermes-sdd/hsdd_nucleo.py" <<'PY'
+import importlib.util, sys
+spec = importlib.util.spec_from_file_location("hsdd_nucleo", sys.argv[1]); N = importlib.util.module_from_spec(spec); spec.loader.exec_module(N)
+N.poner_modo("auto", "demo")
+base = {"tablero": "demo", "tipo": "plan", "opciones": [{"verbo": "conforme", "etiqueta": "✅"}]}
+q = lambda ef: [{"n": 1, "id": "Q-1", "opciones": ["A", "B"], "recomendada": "A", "efectos": {"A": {"efecto": ef}, "B": {"efecto": "ninguno"}}}]
+print(N.puede_jev({**base, "preguntas_error": True})[0], N.puede_jev({**base, "preguntas": q("editar-test"), "texto": "sin marcas"})[0],
+      N.puede_jev({**base, "preguntas": q("accion")})[0])
+PY
+)
+[ "$o" = "False False True" ] && ok "Jev: preguntas ilegibles o una opción editar-test (por dato) escalan a una persona; una acción no" || bad "jev escala: $o"
+# puerta.sh: si la revisión del encargado falla, la puerta sale con un aviso grave (Jev no decide a ciegas)
+grep -q 'FALLO_REV=.*"graves":1' "$ROOT/puerta.sh" && grep -q 'PREG_ERROR=true' "$ROOT/puerta.sh" && ok "puerta.sh: revisión o preguntas caídas cierran a Jev" || bad "puerta.sh sin cierre ante fallo"
 exit $fail
