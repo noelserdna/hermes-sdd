@@ -7,8 +7,11 @@ lo técnico (ids, tags, comandos) solo cuando ayuda a encontrar algo, y nunca co
 from __future__ import annotations
 
 import json
+import os
 import re
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 # ── vocabulario: del método al castellano ────────────────────────────────────────────────────────────────────────
@@ -460,7 +463,10 @@ def _peticion_por_respuestas(repo: Path, proyecto: str, pet: str) -> str:
     if not m:
         return ""
     puerta, quien, resto = m.groups()
-    bloques = bloques_preguntas(list(repo.glob(".sdd/questions-*.md")))
+    try:
+        bloques = bloques_preguntas(ficheros_preguntas(repo))
+    except ValueError:   # un JSON ilegible: la petición se enseña con lo que dejó el notario en ella
+        bloques = {}
     lineas = []
     for qid, pregunta, letra, opcion in re.findall(
             r"(Q-[\w-]+-\d{3}):\s*(.*?)\s*Respuesta elegida:\s*([A-Z])\)\s*(.*?)(?=\s*(?:Q-[\w-]+-\d{3}:|Para el cliente:|$))",
@@ -849,9 +855,114 @@ _RECOMENDADA_SOLA = re.compile(r"\s*\((?:recommended|recomendad[ao])(?:[,;]\s*(?
 _RECOMENDADA_DENTRO = re.compile(r"\((?:recommended|recomendad[ao])[,;]\s*", re.I)
 
 
-def opciones(bloque: str) -> list[tuple[str, str, bool]]:
-    """[(letra, texto, recomendada)] de una pregunta ## Q-… del método."""
-    ops = [(l, txt, bool(est) or bool(_RECOMENDADA.search(txt))) for l, est, txt in _OP_LINEA.findall(bloque)]
+# ── preguntas en JSON (.sdd/questions-<rol>.json, esquema en metodo/templates/questions.schema.json) ────────────────
+# Desde 11/2026 la fuente de verdad de una pregunta es el JSON que escribe `sdd questions add` (validado con el
+# esquema) y el .md de al lado es una vista que regenera esa misma CLI. Antes, que una respuesta lanzara un cambio de
+# requisitos o autorizara editar un test dependía de leer el Markdown con expresiones regulares (tres sintaxis de
+# opción, la recomendada por ★ o «(recomendada…)», el efecto adivinado por verbos). Aquí un «bloque» es o el texto de
+# un bloque ## Q-… (pregunta antigua, solo en el .md: se lee como siempre) o el dict de su pregunta en el JSON
+# (efecto, ficheros y recomendada son campos: no se adivina nada). Si una pregunta está en los dos, manda el JSON.
+SDD_CLI = Path(__file__).resolve().parents[2] / "metodo" / "scripts" / "sdd.mjs"
+
+
+def _es_json(b) -> bool:
+    return isinstance(b, dict)
+
+
+def _qid(b) -> str:
+    if _es_json(b):
+        return str(b.get("id") or "?")
+    return b.split()[1] if len(b.split()) > 1 else "?"
+
+
+def _texto_pregunta(b) -> str:
+    """La pregunta técnica («Question:» del bloque, «pregunta» del JSON)."""
+    if _es_json(b):
+        return str(b.get("pregunta") or "").strip()
+    q = re.search(r"^Question:\s*(.*)$", b, re.M)
+    return q.group(1).strip() if q else ""
+
+
+def _abierta(b) -> bool:
+    return b.get("estado") == "OPEN" if _es_json(b) else bool(re.match(r"^## Q-[^\n]*\[OPEN\]", b))
+
+
+def _cargar_json(p: Path) -> list[dict]:
+    """Las preguntas de un questions-<rol>.json, cada una con «_json» (su fichero). Un JSON ilegible es un error, no
+    una vuelta al .md: la vista podría estar desfasada y con ella volverían las reglas adivinadas."""
+    try:
+        d = json.loads(p.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as e:
+        raise ValueError(f"{p} no es un JSON de preguntas legible ({e})")
+    qs = d.get("preguntas") if isinstance(d, dict) else None
+    if not isinstance(qs, list):
+        raise ValueError(f"{p} no tiene «preguntas»")
+    return [{**q, "_json": str(p)} for q in qs if isinstance(q, dict) and q.get("id")]
+
+
+def _rutas_md(ficheros) -> list[Path]:
+    """Las vistas .md de los ficheros dados (.md o .json, un patrón sin expandir se ignora), ordenadas: un rol cuenta
+    una vez aunque lleguen sus dos ficheros."""
+    rutas = {str(Path(str(f)).with_suffix(".md")) for f in ficheros if not str(f).endswith(("*.md", "*.json"))}
+    return [Path(r) for r in sorted(rutas) if Path(r).exists() or Path(r).with_suffix(".json").exists()]
+
+
+def ficheros_preguntas(repo: Path) -> list[Path]:
+    return sorted(set(repo.glob(".sdd/questions-*.md")) | set(repo.glob(".sdd/questions-*.json")))
+
+
+def preguntas_fichero(md: Path) -> list[tuple[str, object]]:
+    """[(id, bloque)] de un rol en el orden de su vista (el de los botones Q): los bloques del .md, con el dict del
+    JSON en lugar del texto cuando el JSON la tiene, y al final las del JSON que la vista aún no enseña."""
+    js = md.with_suffix(".json")
+    dq = _cargar_json(js) if js.exists() else []
+    por_id = {q["id"]: q for q in dq}
+    out, vistos = [], set()
+    for b in re.findall(r"^## Q-.*?(?=^## |\Z)", _leer(md), flags=re.M | re.S):
+        qid = b.split()[1]
+        if qid in vistos:
+            continue
+        out.append((qid, por_id.get(qid, b)))
+        vistos.add(qid)
+    return out + [(q["id"], q) for q in dq if q["id"] not in vistos]
+
+
+def _escribir_atomico(p: Path, texto: str) -> None:
+    """Temporal en el mismo directorio y rename: quien lea a la vez nunca ve medio fichero."""
+    fd, tmp = tempfile.mkstemp(dir=str(p.parent), prefix=f".{p.name}.", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            fh.write(texto)
+        os.replace(tmp, p)
+    except BaseException:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+
+
+def _responder_json(b: dict, como: str, quien: str, hoy: str, letra: str = "", texto: str = "") -> None:
+    """La respuesta de una pregunta del JSON la escribe `sdd questions answer` (el único que escribe ese JSON: valida
+    con el esquema, escribe atómicamente y regenera la vista). Falla con ValueError si no puede."""
+    repo = Path(b["_json"]).resolve().parent.parent
+    cmd = ["node", str(SDD_CLI), "questions", "answer", b["id"], "--repo", str(repo), "--how", como,
+           "--by", quien or "(sin nombre)"] + (["--date", hoy] if hoy else []) + (["--letter", letra] if letra else []) \
+        + (["--text", texto] if texto else [])
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+    except (OSError, subprocess.SubprocessError) as e:
+        raise ValueError(f"no se pudo escribir la respuesta de {b['id']}: {e}")
+    if r.returncode != 0:
+        raise ValueError(f"no se pudo escribir la respuesta de {b['id']}: {(r.stderr or r.stdout).strip()}")
+
+
+def opciones(bloque) -> list[tuple[str, str, bool]]:
+    """[(letra, texto, recomendada)] de una pregunta ## Q-… del método (o de su JSON)."""
+    if _es_json(bloque):
+        return [(str(o.get("letra") or ""), str(o.get("texto") or "").strip(), bool(o.get("recomendada")))
+                for o in bloque.get("opciones") or [] if isinstance(o, dict) and o.get("letra")]
+    ops =[(l, txt, bool(est) or bool(_RECOMENDADA.search(txt))) for l, est, txt in _OP_LINEA.findall(bloque)]
     if not ops:
         m = re.search(r"^Options:\s*(.*)$", bloque, re.M)
         if m:
@@ -886,13 +997,26 @@ _CLIENTE_OP = re.compile(r"^\s+(?:cliente|para el cliente|customer)\s*:\s*(.*\S)
 _OP_UNA = re.compile(r"^\s+([A-Z])\s*[★⭐️]*\s*\)\s*(.*)$")
 
 
-def para_cliente(bloque: str) -> str:
+def para_cliente(bloque) -> str:
+    if _es_json(bloque):
+        return str(bloque.get("para_cliente") or "").strip()
     m = _CLIENTE_Q.search(bloque)
     return m.group(1).strip() if m else ""
 
 
-def efectos(bloque: str) -> dict:
-    """{letra: {efecto|None|"?", ficheros, cliente, crudo}} de las líneas «efecto:» y «cliente:» bajo cada opción."""
+def efectos(bloque) -> dict:
+    """{letra: {efecto|None|"?", ficheros, cliente, crudo}} de las líneas «efecto:» y «cliente:» bajo cada opción (en
+    el JSON, de sus campos «efecto», «ficheros» y «cliente»)."""
+    if _es_json(bloque):
+        out = {}
+        for o in bloque.get("opciones") or []:
+            if not isinstance(o, dict) or not o.get("letra"):
+                continue
+            crudo = str(o.get("efecto") or "").strip().lower()
+            out[str(o["letra"])] = {"efecto": EFECTOS.get(crudo, "?") if crudo else None, "crudo": crudo,
+                                    "ficheros": [str(f) for f in o.get("ficheros") or [] if str(f).strip()],
+                                    "cliente": str(o.get("cliente") or "").strip()}
+        return out
     out, actual = {}, None
     for l in bloque.splitlines():
         m = _OP_UNA.match(l)
@@ -917,9 +1041,14 @@ def efectos(bloque: str) -> dict:
     return out
 
 
-def efecto(bloque: str, letra: str) -> dict:
-    """{efecto, ficheros, declarado, cliente} de la opción <letra>. Sin «efecto:» se adivina (preguntas antiguas)."""
+def efecto(bloque, letra: str) -> dict:
+    """{efecto, ficheros, declarado, cliente} de la opción <letra>. Sin «efecto:» se adivina (preguntas antiguas, solo
+    en el .md); en una pregunta del JSON nunca se adivina: sin efecto válido es «?» (trabajo, nunca permiso)."""
     d = efectos(bloque).get(letra.upper())
+    if _es_json(bloque):
+        if not d:
+            return {"efecto": "?", "ficheros": [], "declarado": False, "cliente": ""}
+        return {"efecto": d["efecto"] or "?", "ficheros": d["ficheros"], "declarado": bool(d["efecto"]), "cliente": d["cliente"]}
     if d and d["efecto"]:
         return {"efecto": d["efecto"], "ficheros": d["ficheros"], "declarado": True, "cliente": d["cliente"]}
     txt = next((t for l, t, _ in opciones(bloque) if l == letra.upper()), "")
@@ -927,12 +1056,20 @@ def efecto(bloque: str, letra: str) -> dict:
     return {"efecto": adivinado if txt else "?", "ficheros": [], "declarado": False, "cliente": (d or {}).get("cliente", "")}
 
 
-def errores_pregunta(bloque: str) -> list[str]:
-    """Lo que le falta a una pregunta del formato nuevo (alguna opción declara efecto). Las antiguas no se juzgan."""
+def errores_pregunta(bloque) -> list[str]:
+    """Lo que le falta a una pregunta del formato nuevo (alguna opción declara efecto, o está en el JSON: esa siempre
+    se juzga, con las reglas de su esquema que importan al decidir). Las antiguas del .md no se juzgan."""
     ef = efectos(bloque)
-    if not any(d["efecto"] for d in ef.values()):
+    if not _es_json(bloque) and not any(d["efecto"] for d in ef.values()):
         return []
     errs = [] if para_cliente(bloque) else ["le falta «Para el cliente:»"]
+    if _es_json(bloque):
+        ops = opciones(bloque)
+        if len(ops) < 2:
+            errs.append("tiene menos de dos opciones")
+        n_rec = sum(1 for _, _, r in ops if r)
+        if n_rec != 1:
+            errs.append("no marca ninguna opción como recomendada" if not n_rec else f"marca {n_rec} opciones como recomendadas")
     for l, d in ef.items():
         if not d["efecto"]:
             errs.append(f"la opción {l} no dice su efecto")
@@ -966,16 +1103,15 @@ def pide_cambio(texto: str) -> bool:
 _SIN_ACCION = re.compile(r"^\s*(?:dejar|mantener|no\b|nada|sin cambios|aceptar(?:lo)? (?:tal|como)|ratific|confirmar (?:tal|como|lo hecho)|validar lo hecho|keep|leave|do nothing|ratify)", re.I)
 
 
-def respuesta(bloque: str, letra: str) -> str:
+def respuesta(bloque, letra: str) -> str:
     """«Q-…: pregunta\nRespuesta elegida: L) texto» (sin la marca del método), o "" si la letra no es una opción."""
     txt = next((t for l, t, _ in opciones(bloque) if l == letra.upper()), "")
     if not txt:
         return ""
-    q = re.search(r"^Question:\s*(.*)$", bloque, re.M)
-    qid = bloque.split()[1] if len(bloque.split()) > 1 else "?"
+    qid = _qid(bloque)
     cli, op = para_cliente(bloque), efecto(bloque, letra).get("cliente") or _MARCA_CAMBIO.sub("", txt).strip()
     # con la versión para el cliente al final: la puerta del cambio que lancen estas respuestas la enseña en castellano
-    return (f"{qid}: {q.group(1).strip() if q else ''}\nRespuesta elegida: {letra.upper()}) "
+    return (f"{qid}: {_texto_pregunta(bloque)}\nRespuesta elegida: {letra.upper()}) "
             f"{_MARCA_CAMBIO.sub('', txt).strip()}" + (f"\nPara el cliente: {cli} → {letra.upper()}) {op}".rstrip() if cli else ""))
 
 
@@ -1012,12 +1148,59 @@ def _letras(xs: list) -> str:
 
 
 def bloques_preguntas(ficheros: list) -> dict:
-    """{Q-id: bloque} de todas las preguntas (abiertas o no) de .sdd/questions-*.md."""
+    """{Q-id: bloque} de todas las preguntas (abiertas o no) de .sdd/questions-*: el dict del JSON si lo tiene, si no
+    el texto de su bloque en el .md."""
     out = {}
-    for f in sorted(str(x) for x in ficheros):
-        for b in re.findall(r"^## Q-.*?(?=^## |\Z)", _leer(Path(f)), flags=re.M | re.S):
-            out.setdefault(b.split()[1], b)
+    for md in _rutas_md(ficheros):
+        for qid, b in preguntas_fichero(md):
+            out.setdefault(qid, b)
     return out
+
+
+def abiertas(ficheros: list) -> list[tuple[str, object]]:
+    """[(id, bloque)] de las preguntas abiertas en el orden de los botones Q1, Q2…: lo usan puerta.sh (las preguntas
+    que congela la puerta) y el texto de la puerta, así los dos numeran igual."""
+    return [(qid, b) for md in _rutas_md(ficheros) for qid, b in preguntas_fichero(md) if _abierta(b)]
+
+
+def preguntas_json(ficheros: list) -> list[dict]:
+    """Las preguntas abiertas como datos para la puerta: [{n, id, opciones, recomendada, efectos, cliente}]."""
+    return [{"n": n, "id": qid, **opciones_json(b)} for n, (qid, b) in enumerate(abiertas(ficheros), 1)]
+
+
+def cerrar_preguntas_huecos(ficheros: list, hoy: str, huecos: list[str]) -> int:
+    """Las preguntas abiertas del implementador sobre tareas [PLAN GAP] que la etapa huecos ya completó: las cierra el
+    arnés (no el ejecutor), solo las del implementador y solo si su cabecera nombra una de esas tareas. Devuelve
+    cuántas cerró."""
+    n = 0
+    def linea(cab: str) -> str:
+        return (f"las tareas [PLAN GAP] {', '.join(h for h in huecos if h in cab)} se completaron con las respuestas "
+                "aprobadas en la puerta del plan")
+    for md in _rutas_md(ficheros):
+        bl = preguntas_fichero(md)
+        del_json = {qid for qid, b in bl if _es_json(b)}
+        t = _leer(md)
+        def cerrar(m):
+            nonlocal n
+            b = m.group(0); cab = b.split("\n", 1)[0]
+            if b.split()[1] in del_json or "skill=sdd-task-implementer" not in cab or not any(h in cab for h in huecos):
+                return b
+            n += 1
+            nueva = f"Answer: resuelta por el arnés ({hoy}): {linea(cab)}"
+            b = b.replace("[OPEN]", "[ANSWERED]", 1)
+            if re.search(r"^Answer:[ \t]*$", b, re.M):
+                return re.sub(r"^Answer:[ \t]*$", nueva, b, count=1, flags=re.M)
+            cuerpo = b.rstrip("\n")
+            return cuerpo + "\n" + nueva + b[len(cuerpo):]
+        nuevo = re.sub(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", cerrar, t, flags=re.M | re.S) if t else t
+        if nuevo != t:
+            _escribir_atomico(md, nuevo)
+        for qid, b in preguntas_fichero(md):
+            cab = f"{qid} skill={b.get('skill', '')} context={b.get('contexto', '')}" if _es_json(b) else ""
+            if _es_json(b) and b.get("estado") == "OPEN" and b.get("skill") == "sdd-task-implementer" and any(h in cab for h in huecos):
+                _responder_json(b, "resuelta por", "el arnés", hoy, texto=linea(cab))
+                n += 1
+    return n
 
 
 def preguntas_de(puerta: dict, ficheros: list) -> list[dict]:
@@ -1033,7 +1216,7 @@ def preguntas_de(puerta: dict, ficheros: list) -> list[dict]:
     else:
         n = 0
         for qid, b in bloques.items():
-            if re.match(r"^## Q-\S+\s+\[OPEN\]", b):
+            if b.get("estado") == "OPEN" if _es_json(b) else re.match(r"^## Q-\S+\s+\[OPEN\]", b):
                 n += 1
                 qs.append({**opciones_json(b), "n": n, "id": qid, "bloque": b})
     return qs
@@ -1120,47 +1303,58 @@ def validar_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str, per
 
 def aplicar_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str, quien: str, hoy: str,
                        marcadas: dict | None = None) -> dict:
-    """Escribe «Answer: L — …» en cada pregunta contestada y devuelve {peticiones, por_aplicar, autorizaciones}."""
+    """Escribe la respuesta de cada pregunta contestada y devuelve {peticiones, por_aplicar, autorizaciones}. Las del
+    JSON, con `sdd questions answer` (atómico, valida y regenera la vista); las antiguas (solo en el .md), «Answer: L —
+    …» en su bloque, como siempre, pero también con escritura atómica."""
     res, errs, _ = plan_respuestas(puerta, ficheros, texto, verbo, marcadas)
     if errs:
         raise ValueError("; ".join(errs))
     out = {"peticiones": [], "por_aplicar": [], "autorizaciones": []}
     por_id = {r["q"]["id"]: r for r in res}
-    for f in sorted(str(x) for x in ficheros):
-        t = _leer(Path(f))
-        if not t:
-            continue
+
+    def anotar(b, r) -> None:
+        letra = r["letra"]
+        pet, acc = peticion_cambio(b, letra), accion_respuesta(b, letra)
+        if pet:
+            out["peticiones"].append(pet)
+        if acc:
+            out["por_aplicar"].append(acc)
+        e = efecto(b, letra)
+        # Editar un test ya aceptado: o la persona eligió esa opción (Qn: L), o la aceptó por defecto al ACEPTAR viendo
+        # «esto lanzará: ✏️ autoriza editar…». Un rechazo o una petición de cambios sin tocar la pregunta no autoriza
+        # nada (notario 13: rechazar una FASE autorizaba la recomendada de una pregunta que seguía abierta).
+        explicita = r["como"] == "elegida por"
+        if e["efecto"] in PERMISO_TEST and e["ficheros"] and (explicita or verbo in ("acepto", "observaciones", "respondo", "conforme")):
+            op = next((x for l, x, _ in opciones(b) if l == letra), "")
+            out["autorizaciones"].append({"pregunta": _qid(b), "letra": letra, "ficheros": e["ficheros"],
+                                          "endurecer": e["efecto"] == "endurecer-test",
+                                          "motivo": _corta(f"{_texto_pregunta(b)} → {letra}) {op}", 560)})
+
+    for md in _rutas_md(ficheros):
+        del_json = {qid for qid, b in preguntas_fichero(md) if _es_json(b)}
+        t = _leer(md)
         def contestar(m):
             b = m.group(0)
             r = por_id.get(b.split()[1])
-            if not r:
+            if not r or b.split()[1] in del_json:   # la de un JSON no se escribe en su vista: abajo, en el JSON
                 return b
             letra = r["letra"]
-            pet, acc = peticion_cambio(b, letra), accion_respuesta(b, letra)
-            if pet:
-                out["peticiones"].append(pet)
-            if acc:
-                out["por_aplicar"].append(acc)
-            e = efecto(b, letra)
-            # Editar un test ya aceptado: o la persona eligió esa opción (Qn: L), o la aceptó por defecto al ACEPTAR viendo
-            # «esto lanzará: ✏️ autoriza editar…». Un rechazo o una petición de cambios sin tocar la pregunta no autoriza
-            # nada (notario 13: rechazar una FASE autorizaba la recomendada de una pregunta que seguía abierta).
-            explicita = r["como"] == "elegida por"
-            if e["efecto"] in PERMISO_TEST and e["ficheros"] and (explicita or verbo in ("acepto", "observaciones", "respondo", "conforme")):
-                q = re.search(r"^Question:\s*(.*)$", b, re.M)
-                op = next((x for l, x, _ in opciones(b) if l == letra), "")
-                out["autorizaciones"].append({"pregunta": b.split()[1], "letra": letra, "ficheros": e["ficheros"],
-                                              "endurecer": e["efecto"] == "endurecer-test",
-                                              "motivo": _corta(f"{q.group(1) if q else ''} → {letra}) {op}", 560)})
+            anotar(b, r)
             b = b.replace("[OPEN]", "[ANSWERED]", 1)
             linea = f"Answer: {letra} — {r['como']} {quien} ({hoy})"
             if re.search(r"^Answer:[ \t]*$", b, re.M):   # [ \t]: no comerse los saltos de línea que separan preguntas
                 return re.sub(r"^Answer:[ \t]*$", linea, b, count=1, flags=re.M)
             cuerpo = b.rstrip("\n")                       # sin línea Answer: se añade, conservando la separación
             return cuerpo + "\n" + linea + b[len(cuerpo):] if b[len(cuerpo):] else cuerpo + "\n" + linea + "\n"
-        nuevo = re.sub(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", contestar, t, flags=re.M | re.S)
+        nuevo = re.sub(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", contestar, t, flags=re.M | re.S) if t else t
         if nuevo != t:
-            Path(f).write_text(nuevo, encoding="utf-8")
+            _escribir_atomico(md, nuevo)
+        # Las del JSON, después: la CLI regenera la vista conservando tal cual las antiguas que se acaban de contestar
+        for qid, b in preguntas_fichero(md):
+            r = por_id.get(qid)
+            if r and _es_json(b) and b.get("estado") == "OPEN":
+                anotar(b, r)
+                _responder_json(b, r["como"], quien, hoy, letra=r["letra"])
     return out
 
 
@@ -1170,9 +1364,8 @@ def lineas_respuestas(puerta: dict, ficheros: list, texto: str, marcadas: dict |
     out = []
     for r in res:
         b = r["q"].get("bloque") or ""
-        q = re.search(r"^Question:\s*(.*)$", b, re.M)
         op = next((x for l, x, _ in opciones(b) if l == r["letra"]), "?")
-        out.append(f"Q{r['q']['n']} ({r['q'].get('id', '?')}): {q.group(1) if q else ''} → elegida {r['letra']}: {op}")
+        out.append(f"Q{r['q']['n']} ({r['q'].get('id', '?')}): {_texto_pregunta(b)} → elegida {r['letra']}: {op}")
     return out
 
 
@@ -1244,28 +1437,30 @@ def preguntas(ficheros: list[Path]) -> str:
     «Para el cliente» delante y lo técnico plegado en una línea; cada opción dice qué lanza (su efecto); al final, qué
     lanzará firmar sin tocar nada (club: un plan firmó 21 recomendadas de golpe sin ver que tres lanzaban trabajo)."""
     bloques, recomendadas = [], []
-    for f in sorted(ficheros):
-        for b in re.findall(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", _leer(f), flags=re.M | re.S):
-            n = len(bloques) + 1   # mismo número que el botón Q (puerta.sh cuenta todas las abiertas)
-            q = re.search(r"^Question:\s*(.*)$", b, re.M)
-            tecnica = q.group(1).strip() if q else b.split("\n", 1)[0].lstrip("# ").strip()
-            cli = para_cliente(b)
-            lineas = [f"{n}. {cli}", f"   🔧 Detalle técnico: {_corta(tecnica, 160)}"] if cli else [f"{n}. {tecnica}"]
-            ops = opciones(b)
-            # Sin marca de recomendada, la primera: lo mismo que los botones Q y el notario (opciones_json)
-            if ops and not any(r for _, _, r in ops):
-                ops = [(l, t, i == 0) for i, (l, t, _) in enumerate(ops)]
-            for letra, txt, rec in ops:
-                e = efecto(b, letra)
-                marca = _efecto_txt(e)
-                lineas.append(f"   {letra}) {e.get('cliente') or _MARCA_CAMBIO.sub('', txt).strip()}{'  ⭐ recomendada' if rec else ''}"
-                              + (f"  ({marca})" if marca else ""))
-                if rec:
-                    recomendadas.append((n, e))
-            errs = errores_pregunta(b)
-            if errs:
-                lineas.append("   ⚠️ Pregunta mal escrita: " + "; ".join(errs))
-            bloques.append("\n".join(lineas))
+    try:
+        todas = abiertas(ficheros)
+    except ValueError as e:   # un questions-*.json ilegible: se dice (puerta.sh además deja la puerta sin botones Q)
+        return f"\n\n⚠️ No se pudieron leer las preguntas: {e}"
+    for _, b in todas:
+        n = len(bloques) + 1   # mismo número que el botón Q (puerta.sh numera con abiertas() también)
+        tecnica = _texto_pregunta(b) or (b.split("\n", 1)[0].lstrip("# ").strip() if not _es_json(b) else _qid(b))
+        cli = para_cliente(b)
+        lineas = [f"{n}. {cli}", f"   🔧 Detalle técnico: {_corta(tecnica, 160)}"] if cli else [f"{n}. {tecnica}"]
+        ops = opciones(b)
+        # Sin marca de recomendada, la primera: lo mismo que los botones Q y el notario (opciones_json)
+        if ops and not any(r for _, _, r in ops):
+            ops = [(l, t, i == 0) for i, (l, t, _) in enumerate(ops)]
+        for letra, txt, rec in ops:
+            e = efecto(b, letra)
+            marca = _efecto_txt(e)
+            lineas.append(f"   {letra}) {e.get('cliente') or _MARCA_CAMBIO.sub('', txt).strip()}{'  ⭐ recomendada' if rec else ''}"
+                          + (f"  ({marca})" if marca else ""))
+            if rec:
+                recomendadas.append((n, e))
+        errs = errores_pregunta(b)
+        if errs:
+            lineas.append("   ⚠️ Pregunta mal escrita: " + "; ".join(errs))
+        bloques.append("\n".join(lineas))
     if not bloques:
         return ""
     resumen = _lanzara(recomendadas)
@@ -1294,7 +1489,7 @@ def normalizar_preguntas(repo: Path) -> int:
             return f"## {pre}{num}{m.group(3)}"
         nuevo = cab.sub(poner, t)
         if nuevo != t:
-            f.write_text(nuevo, encoding="utf-8"); n += 1
+            _escribir_atomico(f, nuevo); n += 1
     return n
 
 
@@ -1312,7 +1507,7 @@ def _cli_respuestas(argv: list) -> int:
     ap.add_argument("ficheros", nargs="*")
     a = ap.parse_intermixed_args(argv)
     puerta = json.loads(_leer(Path(a.puerta)) or "{}")
-    fs = [f for f in a.ficheros if not f.endswith("*.md") and Path(f).exists()]
+    fs = [f for f in a.ficheros if not f.endswith(("*.md", "*.json")) and Path(f).exists()]
     try:
         marcadas = json.loads(a.respuestas) if a.respuestas else {}
     except ValueError:
@@ -1320,19 +1515,19 @@ def _cli_respuestas(argv: list) -> int:
     if not isinstance(marcadas, dict):   # un campo que no es {n: letra}: no se adivina, se rechaza la decisión
         print("el campo «respuestas» de la decisión no es {pregunta: letra}", file=sys.stderr)
         return 1
-    if a.accion == "validar":
-        errs = validar_respuestas(puerta, fs, a.texto, a.verbo, bool(a.persona), marcadas)
-        for e in errs:
-            print(e, file=sys.stderr)
-        return 1 if errs else 0
-    if a.accion == "distintas":   # respuestas distintas de la recomendada: «Q-id = L; …»
-        res, _, modo = plan_respuestas(puerta, fs, a.texto, a.verbo, marcadas)
-        print("; ".join(f"{r['q']['id']} = {r['letra']}" for r in res if modo == "elegidas" and r["letra"] != r["q"].get("recomendada")))
-        return 0
-    if a.accion == "lineas":
-        print("\n".join(lineas_respuestas(puerta, fs, a.texto, marcadas)))
-        return 0
-    try:
+    try:   # ValueError: respuestas que no valen, o un questions-*.json ilegible (no se firma sobre lo que no se leyó)
+        if a.accion == "validar":
+            errs = validar_respuestas(puerta, fs, a.texto, a.verbo, bool(a.persona), marcadas)
+            for e in errs:
+                print(e, file=sys.stderr)
+            return 1 if errs else 0
+        if a.accion == "distintas":   # respuestas distintas de la recomendada: «Q-id = L; …»
+            res, _, modo = plan_respuestas(puerta, fs, a.texto, a.verbo, marcadas)
+            print("; ".join(f"{r['q']['id']} = {r['letra']}" for r in res if modo == "elegidas" and r["letra"] != r["q"].get("recomendada")))
+            return 0
+        if a.accion == "lineas":
+            print("\n".join(lineas_respuestas(puerta, fs, a.texto, marcadas)))
+            return 0
         out = aplicar_respuestas(puerta, fs, a.texto, a.verbo, a.quien, a.hoy, marcadas)
     except ValueError as e:
         print(e, file=sys.stderr)
@@ -1349,6 +1544,10 @@ if __name__ == "__main__":
         print(normalizar_preguntas(Path(sys.argv[2]))); sys.exit(0)
     if sys.argv[1:2] == ["respuestas"]:
         sys.exit(_cli_respuestas(sys.argv[2:]))
+    if sys.argv[1:2] == ["preguntas-json"]:   # preguntas-json <ficheros questions-*.md|json…>  (puerta.sh: los botones Q)
+        print(json.dumps(preguntas_json(sys.argv[2:]), ensure_ascii=False)); sys.exit(0)
+    if sys.argv[1:2] == ["cerrar-huecos"]:    # cerrar-huecos <hoy> "<TASK-…>" <ficheros…>  (etapa.sh huecos)
+        print(cerrar_preguntas_huecos(sys.argv[4:], sys.argv[2], sys.argv[3].split())); sys.exit(0)
     import argparse
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["puerta"]); ap.add_argument("tipo"); ap.add_argument("repo")
@@ -1391,5 +1590,5 @@ if __name__ == "__main__":
         r = puerta_mantenimiento(proyecto, json.loads(_leer(Path(a.hallazgos)) or "[]"))
     else:
         sys.exit(f"tipo de puerta desconocido: {a.tipo}")
-    r["texto"] += preguntas(list(repo.glob(".sdd/questions-*.md")))
+    r["texto"] += preguntas(ficheros_preguntas(repo))
     print(json.dumps(r, ensure_ascii=False))

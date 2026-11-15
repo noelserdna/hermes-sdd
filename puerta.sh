@@ -176,6 +176,9 @@ case "$TIPO" in
     OPCIONES='[{"verbo":"cambio","etiqueta":"🛠 Lanzar cambio"},{"verbo":"ignoro","etiqueta":"🔕 Ignorar","texto":true}]' ;;
   *) echo "tipo de puerta desconocido: $TIPO" >&2; exit 2 ;;
 esac
+# Las preguntas en JSON (.sdd/questions-<rol>.json) son la verdad y su .md una vista: si una etapa escribió el JSON a
+# mano, la vista se regenera antes de enseñarla (la leen Jev y las etapas). El texto y los botones Q leen el JSON.
+node "$SDD" questions render >/dev/null 2>&1 || true
 T_JSON=$(python3 "$TEXTOS" puerta "$TIPO" "$REPO" --proyecto "${BOARD:-$(basename "$REPO")}" ${FASE:+--fase "$FASE"} ${EXTRA[@]+"${EXTRA[@]}"}) ||
   { echo "no se pudo escribir el texto de la puerta $TIPO" >&2; exit 1; }
 TITULO=$(echo "$T_JSON" | jq -r .titulo); TEXTO=$(echo "$T_JSON" | jq -r .texto)
@@ -200,17 +203,8 @@ esac
 # Preguntas como datos, para que el canal pueda ofrecerlas como formulario (Q1: A/B/C…)
 python3 "$TEXTOS" normalizar-preguntas "$REPO" >/dev/null 2>&1 || true   # cabeceras «## » y números repetidos
 PREG_ERROR=false
-PREGUNTAS=$(python3 - "$TEXTOS" .sdd/questions-*.md <<'PY' 2>".sdd/hermes/preguntas.err" || echo ERROR
-import importlib.util, json, re, sys
-spec = importlib.util.spec_from_file_location("hsdd_textos", sys.argv[1]); X = importlib.util.module_from_spec(spec); spec.loader.exec_module(X)
-out, n = [], 0
-for p in sorted(a for a in sys.argv[2:] if not a.endswith("*.md")):
-    for b in re.findall(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", open(p, encoding="utf-8").read(), flags=re.M | re.S):
-        n += 1
-        out.append({"n": n, "id": b.split()[1], **X.opciones_json(b)})
-print(json.dumps(out))
-PY
-)
+# (hsdd_textos.preguntas_json: el JSON si lo hay, el .md en las preguntas antiguas; numera igual que el texto)
+PREGUNTAS=$(python3 "$TEXTOS" preguntas-json .sdd/questions-*.md .sdd/questions-*.json 2>".sdd/hermes/preguntas.err" || echo ERROR)
 
 # Preguntas ilegibles: la puerta sale sin botones Q, pero Jev no decide sobre preguntas que no ha podido leer
 if [ "$PREGUNTAS" = ERROR ] || ! jq -e 'type == "array"' <<< "$PREGUNTAS" >/dev/null 2>&1; then PREGUNTAS='[]'; PREG_ERROR=true; fi

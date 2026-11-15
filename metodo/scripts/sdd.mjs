@@ -20,11 +20,18 @@
 //       The traceability matrix, generated (scripts/lib/trace-matrix.mjs): per requirement of REQUIREMENTS.md, the spec
 //       ids or files that cite it, its FASEs (plan/fases), tasks (task/), test files (Stack Profile test_paths) and
 //       effective commits. Without --out it prints the Markdown. Never write spec/TRACEABILITY-MATRIX.md by hand.
-//   sdd questions sync | list [--open] [--json] | view [--out FILE]
-//       Async questions (references/async-questions.md; scripts/lib/questions.mjs). sync copies each
-//       .sdd/questions-*.md (git-ignored) into status/questions/ (versioned) when it changed; `journal add --by` and
-//       `accept --report` run it too, so the answers travel with the gate's commit and the tag. list prints them (from
-//       .sdd/, else from the versioned copy); view renders the generated «pending and decided» Markdown view.
+//   sdd questions add --role R [--file F|-] | answer Q-ID (--letter L | --text T) --by WHO [--how H] [--date D]
+//                 | validate [--json] | render | sync | list [--open] [--json] | view [--out FILE]
+//       Async questions (references/async-questions.md; scripts/lib/questions.mjs). The source is
+//       .sdd/questions-<role>.json (templates/questions.schema.json); .sdd/questions-<role>.md is its view. add appends
+//       an OPEN question read as JSON from stdin or --file (a stage writes questions only this way; the next free
+//       Q-<role>-NNN), validated against the schema; answer writes the answer (the notary when a person signs a gate,
+//       or the lead; a stage never: the executor guard denies it); both write atomically and regenerate the view.
+//       validate checks every JSON; render regenerates the views (a JSON edited by hand). Questions only in a .md
+//       (written before the JSON) are still read. sync copies each .sdd/questions-* (git-ignored) into
+//       status/questions/ (versioned) when it changed; `journal add --by` and `accept --report` run it too, so the
+//       answers travel with the gate's commit and the tag. list prints them (from .sdd/, else from the versioned
+//       copy); view renders the generated «pending and decided» Markdown view.
 //   sdd verify --message FILE|- [--json]                       validate one commit message (the commit-msg hook)
 //   sdd verify --range A..B [--json]                           validate every commit in a range + squash detection
 //       + Prove-It: a `fix` commit (not exempt, not a merge) that changes files under code_paths and no test file

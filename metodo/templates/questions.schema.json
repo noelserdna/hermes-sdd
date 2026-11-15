@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "questions.schema.json",
+  "title": "Preguntas de una etapa: .sdd/questions-<rol>.json",
+  "description": "Fuente de verdad de las preguntas asíncronas (references/async-questions.md). El .md de al lado es una vista que regenera `sdd questions`. Lo escriben `sdd questions add` (una etapa: solo preguntas OPEN) y `sdd questions answer` (el notario o el lead: la respuesta). Lo validan `sdd questions validate` y cada escritura; lo leen las puertas, el notario y hsdd_textos.",
+  "type": "object",
+  "required": ["rol", "preguntas"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": { "const": 1 },
+    "rol": { "type": "string", "pattern": "^[A-Za-z0-9._-]+$" },
+    "preguntas": { "type": "array", "items": { "$ref": "#/$defs/pregunta" } }
+  },
+  "$defs": {
+    "pregunta": {
+      "type": "object",
+      "required": ["id", "skill", "estado", "pregunta", "para_cliente", "opciones"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^Q-[A-Za-z][A-Za-z0-9_-]*-[0-9]{3}$" },
+        "skill": { "type": "string", "minLength": 1 },
+        "contexto": { "type": "string" },
+        "estado": { "enum": ["OPEN", "ANSWERED"] },
+        "pregunta": { "type": "string", "minLength": 1 },
+        "para_cliente": { "type": "string", "minLength": 1 },
+        "opciones": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/opcion" },
+          "contains": { "type": "object", "required": ["recomendada"], "properties": { "recomendada": { "const": true } } },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        "bloquea": { "type": "string" },
+        "respuesta": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/respuesta" }] },
+        "aplicada": { "type": "string" }
+      },
+      "if": { "type": "object", "required": ["estado"], "properties": { "estado": { "const": "ANSWERED" } } },
+      "then": { "required": ["respuesta"], "properties": { "respuesta": { "type": "object" } } },
+      "else": { "properties": { "respuesta": { "type": "null" } } }
+    },
+    "opcion": {
+      "type": "object",
+      "required": ["letra", "texto", "efecto"],
+      "additionalProperties": false,
+      "properties": {
+        "letra": { "type": "string", "pattern": "^[A-Z]$" },
+        "texto": { "type": "string", "minLength": 1 },
+        "recomendada": { "type": "boolean" },
+        "efecto": { "enum": ["ninguno", "accion", "req-change", "editar-test", "endurecer-test"] },
+        "ficheros": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "cliente": { "type": "string" }
+      },
+      "if": { "type": "object", "required": ["efecto"], "properties": { "efecto": { "enum": ["editar-test", "endurecer-test"] } } },
+      "then": { "required": ["ficheros"], "properties": { "ficheros": { "minItems": 1 } } }
+    },
+    "respuesta": {
+      "type": "object",
+      "required": ["como", "quien", "fecha"],
+      "additionalProperties": false,
+      "anyOf": [{ "required": ["letra"] }, { "required": ["texto"] }],
+      "properties": {
+        "letra": { "type": "string", "pattern": "^[A-Z]$" },
+        "texto": { "type": "string", "minLength": 1 },
+        "como": { "type": "string", "minLength": 1 },
+        "quien": { "type": "string", "minLength": 1 },
+        "fecha": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

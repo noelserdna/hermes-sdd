@@ -318,7 +318,7 @@ revision_independiente() {  # ronda adversarial + hsdd_fidelidad de la FASE $FAS
   n=$(cat ".sdd/hermes/fidelidad-arreglo-$FASE" 2>/dev/null || echo 0)
   case "$n" in ''|*[!0-9]*) n=1 ;; esac   # la marca antigua (vacía) era «ya hubo una»
   while [ "$n" -lt "$max" ] && hay_hallazgos; do
-    claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES An independent review of FASE-$FASE found tests or captures that do not prove their criterion, listed below. For each one, add a task to task/TASK-FASE-$FASE.md and fix it (one commit each): the test must do the criterion's GIVEN with its own data and actor, its WHEN, and assert its whole THEN with the exact text; the capture must show the screen where that THEN is visible. Each WRONG-CAPTURE (or capture finding) is a rule, not a single case: apply it to ALL the captures of the FASE, not only to the one cited, and run «sdd lint --captures --fase ${FASE}» before you finish. Fix the code when it is the code that fails. A test that already existed when an earlier FASE was accepted is NOT edited: write an [OPEN] question in .sdd/questions-task-implementer.md instead. Findings: $(hallazgos)"
+    claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES An independent review of FASE-$FASE found tests or captures that do not prove their criterion, listed below. For each one, add a task to task/TASK-FASE-$FASE.md and fix it (one commit each): the test must do the criterion's GIVEN with its own data and actor, its WHEN, and assert its whole THEN with the exact text; the capture must show the screen where that THEN is visible. Each WRONG-CAPTURE (or capture finding) is a rule, not a single case: apply it to ALL the captures of the FASE, not only to the one cited, and run «sdd lint --captures --fase ${FASE}» before you finish. Fix the code when it is the code that fails. A test that already existed when an earlier FASE was accepted is NOT edited: write an [OPEN] question with «sdd questions add --role task-implementer» instead. Findings: $(hallazgos)"
     MODELO_PASO=$MV claude_etapa acceptance "/sdd-acceptance --fase $FASE — $ARNES Recompute the verdicts, captures and demo of FASE-$FASE after the fixes. Do not sign off."
     fidelidad
     n=$((n + 1)); echo "$n" > ".sdd/hermes/fidelidad-arreglo-$FASE"   # hecha: si se cortaba a mitad, el reintento la repite
@@ -364,7 +364,7 @@ case "$ETAPA" in
       claude_etapa requirements-engineer "/sdd-requirements-engineer — $ARNES Escribe las necesidades y los requisitos a partir de la petición literal de intent/ (y de lo que ya haya en requirements/). $VERIF$INTAKE"
     elif [ -f "$PARTIDA" ] && [ ! -f .sdd/hermes/requisitos-depurados ]; then
       # Requisitos casi listos de la persona: se DEPURAN (Mode 2 auditar + Mode 3 formato), no se reescriben
-      claude_etapa requirements-engineer "/sdd-requirements-engineer — $ARNES La persona trajo sus requisitos casi listos en requirements/REQUIREMENTS.md (copia del original en $PARTIDA). DEPÚRALOS, no los reescribas (Mode 2, audit, y Mode 3, format): conserva cada requisito, su intención y sus ids (si no tienen, asigna REQ-F-NNN, REQ-NF-NNN, REQ-C-NNN) y llévalos al formato del método (EARS, Para el cliente, Needs, Verification, prioridad, criterios con datos concretos), y escribe requirements/CUSTOMER-NEEDS.md a partir de intent/ y del intake. Lo vago, contradictorio o sin criterio comprobable NO lo inventes: deja una pregunta [OPEN] con opciones (la recomendada primero) en .sdd/questions-requirements-engineer.md. Al final de REQUIREMENTS.md añade «## Depuración»: por requisito, qué cambió respecto al original (formato, criterio añadido, partido en dos, dudoso → pregunta). $VERIF$INTAKE"
+      claude_etapa requirements-engineer "/sdd-requirements-engineer — $ARNES La persona trajo sus requisitos casi listos en requirements/REQUIREMENTS.md (copia del original en $PARTIDA). DEPÚRALOS, no los reescribas (Mode 2, audit, y Mode 3, format): conserva cada requisito, su intención y sus ids (si no tienen, asigna REQ-F-NNN, REQ-NF-NNN, REQ-C-NNN) y llévalos al formato del método (EARS, Para el cliente, Needs, Verification, prioridad, criterios con datos concretos), y escribe requirements/CUSTOMER-NEEDS.md a partir de intent/ y del intake. Lo vago, contradictorio o sin criterio comprobable NO lo inventes: deja una pregunta [OPEN] con opciones (una marcada como recomendada, cada una con su efecto) con «sdd questions add --role requirements-engineer» (references/async-questions.md). Al final de REQUIREMENTS.md añade «## Depuración»: por requisito, qué cambió respecto al original (formato, criterio añadido, partido en dos, dudoso → pregunta). $VERIF$INTAKE"
       touch .sdd/hermes/requisitos-depurados
     else RES='{"outcome":"done","reason":"requisitos ya escritos"}'; fi
     requisitos_legibles requirements-engineer sdd-requirements-engineer
@@ -474,8 +474,9 @@ case "$ETAPA" in
     F=.sdd/hermes/mantenimiento/en-curso.txt
     [ -s "$F" ] || falla "no hay ningún mantenimiento en curso ($F)"
     claude_etapa task-implementer "$ARNES Maintenance of a delivered project, requested by a person: $(cat "$F")
-Do it without changing behaviour: requirements/ and spec/ stay as they are and existing tests are not edited (art. 12), except the exact files that a person authorized (a test-edit record in acceptance/decisions.jsonl, written by the notary when a person picked an option with «efecto: editar-test»); other [ANSWERED] questions in .sdd/questions-*.md are the person's decisions: apply them, do not ask again, but they never authorize editing an existing test. Run every test suite (unit and e2e) and keep them green; one commit per logical step, following the repository commit conventions. If something cannot be done without changing a requirement or editing an existing test, do not do it: write an [OPEN] question in .sdd/questions-task-implementer.md and mark with (req-change) any option that needs a requirements change."
+Do it without changing behaviour: requirements/ and spec/ stay as they are and existing tests are not edited (art. 12), except the exact files that a person authorized (a test-edit record in acceptance/decisions.jsonl, written by the notary when a person picked an option with «efecto: editar-test»); other [ANSWERED] questions in .sdd/questions-*.md are the person's decisions: apply them, do not ask again, but they never authorize editing an existing test. Run every test suite (unit and e2e) and keep them green; one commit per logical step, following the repository commit conventions. If something cannot be done without changing a requirement or editing an existing test, do not do it: write an [OPEN] question with «sdd questions add --role task-implementer» and give «efecto: req-change» to any option that needs a requirements change."
     python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" normalizar-preguntas "$REPO" >/dev/null 2>&1 || true
+    node "$SDD" questions render >/dev/null 2>&1 || true   # la vista .md de un questions-*.json escrito a mano
     if grep -qs '^## Q-.*\[OPEN\]' .sdd/questions-*.md && P=$(puerta preguntas); then
       fin "$(jq -nc '{outcome:"failed", reason:"esperando tus respuestas: puerta «Preguntas del mantenimiento»"}')" "Mantenimiento parado: preguntas para la persona" "$P"
     fi
@@ -496,29 +497,9 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
     ! grep -qE '^- \[ \] .*\[PLAN GAP\]' "task/TASK-FASE-$FASE.md" 2>/dev/null || falla "siguen tareas [PLAN GAP] en la FASE-$FASE"
     git add -A plan/ task/ AGENTS.md 2>/dev/null; git diff --cached --quiet || git commit -qm "docs(tasks): FASE-$FASE gaps filled with the approved answers"
     # Las preguntas que dejó el implementador porque no podía hacer esos huecos ya no tienen sentido: las cierra el
-    # arnés (no el ejecutor), solo las del implementador y solo si su cabecera nombra una de esas tareas
-    python3 - "$(date +%Y-%m-%d)" "$HUECOS" .sdd/questions-*.md <<'PY' 2>/dev/null || true
-import re, sys
-hoy, huecos, ficheros = sys.argv[1], sys.argv[2].split(), sys.argv[3:]
-for f in ficheros:
-    try:
-        t = open(f).read()
-    except OSError:
-        continue
-    def cerrar(m):
-        b = m.group(0); cab = b.split("\n", 1)[0]
-        if "skill=sdd-task-implementer" not in cab or not any(h in cab for h in huecos):
-            return b
-        linea = f"Answer: resuelta por el arnés ({hoy}): las tareas [PLAN GAP] {', '.join(h for h in huecos if h in cab)} se completaron con las respuestas aprobadas en la puerta del plan"
-        b = b.replace("[OPEN]", "[ANSWERED]", 1)
-        if re.search(r"^Answer:[ \t]*$", b, re.M):
-            return re.sub(r"^Answer:[ \t]*$", linea, b, count=1, flags=re.M)
-        cuerpo = b.rstrip("\n")
-        return cuerpo + "\n" + linea + b[len(cuerpo):]
-    nuevo = re.sub(r"^## Q-[^\n]*\[OPEN\].*?(?=^## |\Z)", cerrar, t, flags=re.M | re.S)
-    if nuevo != t:
-        open(f, "w").write(nuevo)
-PY
+    # arnés (no el ejecutor), solo las del implementador y solo si su cabecera nombra una de esas tareas (en el JSON de
+    # preguntas con `sdd questions answer`; en las antiguas, solo en el .md, en su bloque)
+    python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" cerrar-huecos "$(date +%Y-%m-%d)" "$HUECOS" .sdd/questions-*.md .sdd/questions-*.json >/dev/null 2>&1 || true
     fin "$RES" "Huecos de la FASE-$FASE completados con las respuestas aprobadas" ;;
 
   implementar)
@@ -531,15 +512,16 @@ PY
     # lo puede hacer: deja una pregunta [OPEN] en vez de saltárselo. Sin ningún commit nuevo la etapa falla.
     rm -f ".sdd/hermes/fidelidad-arreglo-$FASE"
     RECH=""; ANTES=$(git rev-parse HEAD)
-    [ -s "$FB" ] && RECH=" This FASE comes back with a person's request (a rejection at its acceptance gate or newly approved requirements): all tasks being done does NOT finish it. Treat every point of the person's request above as new work: add the tasks it needs to task/TASK-FASE-$FASE.md and implement them (test-first, one commit each), including the missing captures and the literal letter of each criterion in its test. If a point needs a change to requirements/ or to the plan (outside your reach), do not skip it: write an [OPEN] question in .sdd/questions-task-implementer.md explaining what change is needed."
+    [ -s "$FB" ] && RECH=" This FASE comes back with a person's request (a rejection at its acceptance gate or newly approved requirements): all tasks being done does NOT finish it. Treat every point of the person's request above as new work: add the tasks it needs to task/TASK-FASE-$FASE.md and implement them (test-first, one commit each), including the missing captures and the literal letter of each criterion in its test. If a point needs a change to requirements/ or to the plan (outside your reach), do not skip it: write an [OPEN] question with «sdd questions add --role task-implementer» explaining what change is needed."
     OBS=""; [ -s .sdd/hermes/feedback/observaciones.txt ] && OBS=" The person accepted earlier FASEs with these observations, still pending: add a task for each one to task/TASK-FASE-$FASE.md and do it in this FASE too (they may touch earlier FASEs' captures or screens; tests that already existed are not edited — write an [OPEN] question if one would need it): $(cat .sdd/hermes/feedback/observaciones.txt | tr '\n' ' ')"
-    claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES Implement FASE-$FASE completely, test-first, one commit per task with Refs:/Task: trailers. Before you finish, check every criterion of the FASE: its test does that criterion's own GIVEN (same actor, same dates and data) and WHEN, and asserts its whole THEN with the exact text; its capture shows the screen where that THEN is visible, with the GIVEN's data on screen: take it with the capture helper passing the criterion's «Se ve:» texts (captura(page, testInfo, id, { ve: [...] })), inside the test whose title cites that criterion, after asserting on screen (never right after an API or CSV check); run «sdd lint --captures --fase ${FASE}» and leave it without errors; the e2e suites (old and new) are green. [ANSWERED] questions in .sdd/questions-*.md are the person's decisions: apply them and do not ask them again; an existing test may be edited only in the exact files a person authorized (a test-edit record in acceptance/decisions.jsonl, written by the notary), and the commit cites that question («Autoriza: Q-…»). Write any new question as a block that starts with a line «## Q-task-implementer-NNN [OPEN]» (next free NNN) followed by Question:, «Para el cliente:» (one plain sentence, no code or ids), Options: with an «efecto: ninguno|accion|req-change|editar-test <files>» line under each option, and Blocks:, as references/async-questions.md says.$TESTS_G$RECH$OBS"
+    claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES Implement FASE-$FASE completely, test-first, one commit per task with Refs:/Task: trailers. Before you finish, check every criterion of the FASE: its test does that criterion's own GIVEN (same actor, same dates and data) and WHEN, and asserts its whole THEN with the exact text; its capture shows the screen where that THEN is visible, with the GIVEN's data on screen: take it with the capture helper passing the criterion's «Se ve:» texts (captura(page, testInfo, id, { ve: [...] })), inside the test whose title cites that criterion, after asserting on screen (never right after an API or CSV check); run «sdd lint --captures --fase ${FASE}» and leave it without errors; the e2e suites (old and new) are green. [ANSWERED] questions in .sdd/questions-*.md are the person's decisions: apply them and do not ask them again; an existing test may be edited only in the exact files a person authorized (a test-edit record in acceptance/decisions.jsonl, written by the notary), and the commit cites that question («Autoriza: Q-…»). Write any new question with «sdd questions add --role task-implementer» (a JSON object on stdin: skill, contexto, pregunta, para_cliente — one plain sentence, no code or ids —, opciones [{letra, texto, efecto: ninguno|accion|req-change|editar-test|endurecer-test, ficheros, recomendada}] with exactly one recommended, and bloquea), as references/async-questions.md says; never write .sdd/questions-* by hand.$TESTS_G$RECH$OBS"
     [ -n "$OBS" ] && AL_TERMINAR+=(".sdd/hermes/feedback/observaciones.txt|.sdd/hermes/feedback/observaciones.aplicadas-$FASE.txt")
     if ! st=$(node "$SDD" tasks status --fase "$FASE" --require-done 2>&1); then
       # Parada en preguntas [OPEN] (p. ej. un criterio que contradice otro): se abren a la persona en una puerta. La
       # tarjeta queda parada para que no corra su hija (Aceptar); al firmar, la FASE se rehace con las respuestas o,
       # si una pide cambiar los requisitos, primero se lanza ese cambio (sala, 12/11/2026: sin esto se quedaba atascada)
       python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" normalizar-preguntas "$REPO" >/dev/null 2>&1 || true
+      node "$SDD" questions render >/dev/null 2>&1 || true   # la vista .md de un questions-*.json escrito a mano
     if grep -qs '^## Q-.*\[OPEN\]' .sdd/questions-*.md && P=$(puerta preguntas "$FASE"); then
         fin "$(jq -nc --arg f "$FASE" '{outcome:"failed", reason:("esperando tus respuestas: puerta «Preguntas de la FASE-" + $f + "»")}')" \
           "FASE-$FASE parada: preguntas para la persona" "$P"

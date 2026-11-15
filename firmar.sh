@@ -108,7 +108,8 @@ EXIMO=false; [ "$VERBO_DECIDIDO" = eximo ] && [ "$VERBO" != eximo ] && EXIMO=tru
 # rechazan la decisión con su motivo (antes «Q1: D» se ignoraba en silencio y «De Q1 a Q3…» se leía como Q1 = A). Y
 # una opción que autoriza editar tests que ya existían (efecto: editar-test) solo la puede elegir una persona.
 TEXTOS="$ROOT/plugin/hermes-sdd/hsdd_textos.py"
-QFILES=(); for f in .sdd/questions-*.md; do [ -f "$f" ] && QFILES+=("$f"); done
+# (con su .json, la fuente de verdad de las preguntas nuevas: efectos, recomendada y respuesta salen de ahí)
+QFILES=(); for f in .sdd/questions-*.md .sdd/questions-*.json; do [ -f "$f" ] && QFILES+=("$f"); done
 respuestas() { python3 "$TEXTOS" respuestas "$1" --puerta "$PUERTA" --texto "$TEXTO" --respuestas "$RESPUESTAS" --verbo "$VERBO" "${@:2}" ${QFILES[@]+"${QFILES[@]}"}; }
 if ! jq -e '.pasos | index("validado")' "$HOME_SDD/actas/${BOARD:-local}/$GATE.json" >/dev/null 2>&1 &&
    ! ERR=$(respuestas validar --persona "$([ "$CANAL" = jev ] && echo 0 || echo 1)" 2>&1); then
