@@ -6,6 +6,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
 fail=0; ok() { echo "ok   $1"; }; bad() { echo "FAIL $1"; fail=1; }
 R="$T/repo"; mkdir -p "$R/plan/fases" "$R/.sdd/hermes/puertas"; cd "$R"; git init -q -b main
+git config user.email t@t; git config user.name t   # lanzar.sh commitea el INT con la identidad del repo (Linux sin global)
 g() { git -c user.email=t@t -c user.name=t "$@"; }
 touch plan/fases/FASE-0-x.md plan/fases/FASE-1-y.md; echo fina > .sdd/hermes/granularidad-plan
 g add -A >/dev/null; g commit -qm init

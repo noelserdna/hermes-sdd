@@ -15,6 +15,8 @@ git checkout -q -B main "$(cat "$G/base.txt")"
 git branch -q -D master 2>/dev/null || true
 T=$(git tag -l); [ -z "$T" ] || git tag -d $T >/dev/null   # las decisiones de la grabación no son las de quien practica
 git remote remove origin
+# Sin identidad de git (un Linux recién instalado, el CI) los commits del arnés fallan: una de práctica, solo en este repo
+[ -n "$(git config user.email || true)" ] || { git config user.email practica@hermes-sdd.local; git config user.name "Práctica hermes-sdd"; }
 mkdir -p .sdd/hermes
 jq -n --arg g "$G" '{ejecutor:"replay", grabacion:$g, canales:["telegram"], modelos:{}}' > .sdd/hermes/hermes-sdd.json
 cp "$ROOT/metodo/templates/pipeline-state.template.json" pipeline-state.json
