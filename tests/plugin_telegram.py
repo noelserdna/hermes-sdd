@@ -249,8 +249,97 @@ async def puerta_rota():
     ok(json.loads((HOME / "puertas/r_2.json").read_text())["estado"] == "firmada",
        "una puerta que falla no bloquea a las demás, y sin Telegram se firma igual")
 
+async def cerrojos():
+    # Escrituras del índice y del estado del plugin: todas leen-modifican-escriben con N.actualizar (bajo el cerrojo)
+    import threading, logging
+    N = m.N
+    # 1) sin perder escrituras: 4 hilos de este proceso y 2 procesos suman a la vez en el mismo fichero
+    cont = HOME / "contador.json"; cont.unlink(missing_ok=True)
+    def suma(d): d["n"] = d.get("n", 0) + 1; return d
+    hilos = [threading.Thread(target=lambda: [N.actualizar(cont, suma, {}) for _ in range(50)]) for _ in range(4)]
+    codigo = ("import sys; sys.path.insert(0, sys.argv[1]); import hsdd_nucleo as N; from pathlib import Path\n"
+              "for _ in range(50): N.actualizar(Path(sys.argv[2]), lambda d: {**d, 'n': d.get('n', 0) + 1}, {})")
+    procs = [subprocess.Popen([sys.executable, "-c", codigo, str(ROOT / "plugin/hermes-sdd"), str(cont)]) for _ in range(2)]
+    for h in hilos: h.start()
+    for h in hilos: h.join()
+    for pr in procs: pr.wait()
+    ok(json.loads(cont.read_text()).get("n") == 300, f"actualizar no pierde escrituras entre hilos y procesos ({json.loads(cont.read_text()).get('n')} de 300)")
+    ok(not [f for f in HOME.iterdir() if f.name.endswith(".tmp")], "y no deja temporales (únicos por pid, hilo y aleatorio)")
+    cont.unlink()
+    # 2) /puertas contra una decisión a la vez: /puertas lee la puerta abierta, la decisión entra mientras tanto y
+    #    /puertas escribe. Antes (sin cerrojo) volvía a dejar «abierta» con la decisión ya escrita en el repo.
+    for f in HOME.glob("puertas/*.json"): f.unlink()
+    pz = {"id": "z_1", "tipo": "plan", "tablero": "demo", "repo": str(R), "titulo": "Plan", "estado": "abierta",
+          "opciones": [{"verbo": "conforme", "etiqueta": "✅ Conforme"}], "telegram": {"chat": 111, "msg": 5}}
+    (HOME / "puertas/z_1.json").write_text(json.dumps(pz))
+    leido, decidida = threading.Event(), threading.Event()
+    leer_real = N.leer
+    def leer_lento(p, defecto=None):
+        v = leer_real(p, defecto)
+        if threading.current_thread().name == "puertas" and Path(p).name == "z_1.json" and not leido.is_set():
+            leido.set(); decidida.wait(0.5)   # con cerrojo, la decisión espera a que /puertas acabe (no llega a tiempo)
+        return v
+    def decide():
+        leido.wait(2); N.decidir("z_1", "conforme", "", "andres", "telegram", "111", {}); decidida.set()
+    N.leer = leer_lento
+    try:
+        t1 = threading.Thread(target=m._republicar_abiertas, name="puertas"); t2 = threading.Thread(target=decide)
+        t1.start(); t2.start(); t1.join(); t2.join()
+    finally:
+        N.leer = leer_real
+    z = json.loads((HOME / "puertas/z_1.json").read_text())
+    ok(z["estado"] == "decidida" and z["decision"]["verbo"] == "conforme",
+       f"/puertas a la vez que una decisión no la pisa (índice «{z['estado']}»)")
+    # 3) un JSON roto en el índice no se salta en silencio: aviso en el log y /puertas lo cuenta
+    (HOME / "puertas/z_roto.json").write_text("{roto")
+    avisos = []
+    class H(logging.Handler):
+        def emit(s, r): avisos.append(r.getMessage())
+    h = H(); logging.getLogger("hermes_plugins.hermes_sdd").addHandler(h)
+    try:
+        await m._vuelta_puerta(None, HOME / "puertas/z_roto.json")
+        txt = m._republicar_abiertas()
+    finally:
+        logging.getLogger("hermes_plugins.hermes_sdd").removeHandler(h)
+    ok(len([a for a in avisos if "z_roto.json" in a]) == 1, f"un JSON roto deja un aviso en el log, una vez ({len(avisos)})")
+    ok("z_roto" in txt and "no se puede leer" in txt, "y /puertas dice que hay una puerta que no se puede leer")
+    (HOME / "puertas/z_roto.json").unlink(); (HOME / "puertas/z_1.json").unlink()
+    # 4) el motivo pendiente es de quien pulsó: si responde otra persona autorizada no se consume
+    (HOME / "aprobadores.json").write_text(json.dumps({
+        "andres": {"nombre": "Andrés", "rol": "Cliente", "canales": {"telegram": "111"}},
+        "bea": {"nombre": "Bea", "rol": "Cliente", "canales": {"telegram": "222"}}}))
+    pr = {"id": "z_2", "tipo": "plan", "tablero": "demo", "repo": str(R), "titulo": "Plan", "estado": "abierta",
+          "opciones": [{"verbo": "rechazo", "etiqueta": "❌ Rechazar", "texto": True}]}
+    (HOME / "puertas/z_2.json").write_text(json.dumps(pr))
+    m._pendientes_guardar(555, ("z_2", "rechazo", "andres"))
+    def respuesta(uid, texto):
+        r = NS(text=texto, from_user=NS(id=uid, username="u"), message_id=600 + uid, reply_to_message=NS(message_id=555), r=None)
+        async def rep(t): r.r = t
+        r.reply_text = rep
+        return r
+    otra = respuesta(222, "lo rechazo yo"); await m._on_respuesta(NS(message=otra), ctx)
+    ok("Solo puede responder quien pulsó" in (otra.r or "") and m._pendientes_hay(555),
+       "si responde otra persona, se le dice y la espera sigue (no se pierde)")
+    suya = respuesta(111, "falta el mapa"); await m._on_respuesta(NS(message=suya), ctx)
+    z2 = json.loads((HOME / "puertas/z_2.json").read_text())
+    ok(z2["estado"] == "decidida" and z2["decision"]["texto"] == "falta el mapa" and not m._pendientes_hay(555),
+       "y quien pulsó responde después: su motivo decide la puerta")
+    tarde = respuesta(111, "otra vez"); await m._on_respuesta(NS(message=tarde), ctx)
+    ok(tarde.r is None, "una segunda respuesta a la misma espera ya no hace nada")
+    (HOME / "puertas/z_2.json").unlink()
+    # 5) reintentos: comprobar y contar es un paso; si el lanzamiento falla, no gasta la vez
+    (HOME / "reintentos.json").unlink(missing_ok=True)
+    vistos = []
+    hs = [threading.Thread(target=lambda: vistos.append(m._reintento_reservar("x|implementar|2|h"))) for _ in range(6)]
+    for h in hs: h.start()
+    for h in hs: h.join()
+    ok(sorted(vistos) == [0, 0, 0, 0, 1, 2], f"seis vueltas a la vez reservan solo REINTENTOS_MAX reintentos ({sorted(vistos)})")
+    m._reintento_reservar("x|implementar|2|h", -1)
+    ok(m._reintento_reservar("x|implementar|2|h") == 2, "un reintento que no llegó a lanzarse se devuelve")
+    (HOME / "reintentos.json").unlink()
+
 async def todo():
     await main(); await formulario_y_operacion(); await jev(); await superada(); await firmada_fuera()
-    await reintentos(); await puerta_rota()
+    await reintentos(); await puerta_rota(); await cerrojos()
 
 asyncio.run(todo()); sys.exit(1 if fallos else 0)
