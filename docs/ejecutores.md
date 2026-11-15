@@ -91,8 +91,13 @@ Chromium funciona sin pelearse con ningún sandbox.
 
 Con `"ejecutor": "github"` en `~/.hermes/hermes-sdd/sdd.json`, los proyectos nuevos (y los adoptados) se preparan
 solos: repo **público** en GitHub (en tu cuenta, o en `github.dueno`), el workflow commiteado y subido a la rama por
-defecto. Lo único que no se puede hacer solo es el token: si falta, `lanzar.sh` avisa con la orden para ponerlo desde
-el portapapeles (`pbpaste | tr -d '[:space:]' | gh secret set CLAUDE_CODE_OAUTH_TOKEN -R dueño/nombre`).
+defecto. El token también, si lo guardas una vez en el llavero de macOS (GitHub no deja leer un secreto ya guardado para
+copiarlo a otro repo):
+
+    security add-generic-password -U -s hermes-sdd-caja -a claude -w "$(pbpaste | tr -d '[:space:]')"
+
+Desde entonces, cada repo nuevo lo recibe del llavero sin que se muestre. Sin él, `lanzar.sh` avisa con la orden para
+ponerlo desde el portapapeles.
 
 A mano, el proyecto necesita:
 - su repo en GitHub (`origin`, o `"github": {"repo": "dueño/nombre"}` en `.sdd/hermes/hermes-sdd.json`);

@@ -93,7 +93,8 @@ cat > "$T/bin2/hermes" <<'H'
 #!/usr/bin/env bash
 case "$*" in *"boards list"*) echo '[]' ;; esac
 H
-chmod +x "$T/bin2/gh" "$T/bin2/hermes"
+printf '#!/usr/bin/env bash\nexit 44\n' > "$T/bin2/security"   # sin token en el llavero
+chmod +x "$T/bin2/gh" "$T/bin2/hermes" "$T/bin2/security"
 echo '{"ejecutor": "github"}' > "$HERMES_SDD_HOME/sdd.json"
 P2="$T/Proyecto-Caja"; mkdir -p "$P2"; cd "$P2"; git init -q -b main; git config user.email t@t; git config user.name t
 echo x > README.md; git add -A; git commit -qm init
@@ -103,5 +104,15 @@ grep -q 'repo create yo/proyecto-caja --public' "$T/gh2.log" && ok "crea el repo
   && ok "el proyecto queda con ejecutor github y el workflow de la caja commiteado" || bad "workflow: $(git ls-files | head)"
 [ "$(git -C "$T/nuevo.git" rev-parse main 2>/dev/null)" = "$(git rev-parse HEAD)" ] && ok "y subido a la rama por defecto (el workflow tiene que estar ahí)" || bad "push"
 echo "$o" | grep -q 'falta el token de Claude en yo/proyecto-caja' && echo "$o" | grep -q 'pbpaste' && ok "avisa de que falta el token y cómo ponerlo" || bad "aviso: $o"
+# con el token en el llavero, el repo nuevo lo recibe solo (sin mostrarlo)
+printf '#!/usr/bin/env bash\ncase "$*" in *"-s hermes-sdd-caja -w"*) echo " sk-ant-oat01-falso " ;; *) exit 44 ;; esac\n' > "$T/bin2/security"
+cat >> "$T/bin2/gh" <<G
+case "\$1 \$2" in "secret set") cat > "$T/secreto-puesto" ;; esac
+G
+P3="$T/Otro"; mkdir -p "$P3"; cd "$P3"; git init -q -b main; git config user.email t@t; git config user.name t
+echo x > README.md; git add -A; git commit -qm init; rm -rf "$T/nuevo.git"
+o=$(PATH="$T/bin2:$PATH" bash "$ROOT/lanzar.sh" preparar "$P3" 2>&1)
+[ "$(cat "$T/secreto-puesto" 2>/dev/null)" = "sk-ant-oat01-falso" ] && echo "$o" | grep -q 'desde el llavero' && ! echo "$o" | grep -q 'sk-ant' \
+  && ok "con el token en el llavero, el repo nuevo lo recibe solo y sin mostrarlo" || bad "llavero: $o / $(cat "$T/secreto-puesto" 2>&1)"
 rm -f "$HERMES_SDD_HOME/sdd.json"; cd "$R"
 exit $fail
