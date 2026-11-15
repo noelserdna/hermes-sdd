@@ -47,6 +47,12 @@ jq -e --arg repo "$REPO" --slurpfile d "$DECISION" '
   and (.decision.at == $d[0].at) and (.decision.verbo == $d[0].verbo) and ((.decision.texto // "") == ($d[0].texto // ""))
   and (.decision.actor.persona == $d[0].actor.persona) and (.decision.actor.canal == $d[0].actor.canal)' "$IDX" >/dev/null ||
   { echo "NOTARIO: rechazado — la decisión de $GATE no coincide con la que registró un canal" >&2; exit 1; }
+# Lo que se firma es la puerta que vio quien decidió (persona o Jev): la del índice, fuera del alcance de las etapas. La
+# copia del repo, de la que se leen tipo, sha, opciones, preguntas, bloqueo y tests editados, tiene que ser idéntica en
+# todo lo que se mostró; una etapa que la retocara (p. ej. «tests_editados: 0» o un sha distinto) no engaña al notario.
+DIF=$(jq -r --slurpfile r "$PUERTA" '. as $i | $r[0] | del(.tarjeta, .estado) | keys[] | select($i[.] != $r[0][.])' "$IDX" 2>/dev/null) ||
+  { echo "NOTARIO: rechazado — no se pudo comparar la puerta $GATE con el índice" >&2; exit 1; }
+[ -z "$DIF" ] || { echo "NOTARIO: rechazado — la copia de la puerta $GATE en el proyecto no es la que se mostró (cambió: $(echo $DIF | tr ' ' ','))" >&2; exit 1; }
 
 # Candado del repo (lib/candado.sh): no se firma con una etapa en marcha (sus commits y los del notario se pisarían).
 # Ocupado por una etapa → sale con 75 y quien llama reintenta más tarde (no es un rechazo); por otra firma, se espera.

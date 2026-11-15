@@ -15,8 +15,8 @@ cat > "$HERMES_SDD_HOME/aprobadores.json" <<J
 {"andres": {"nombre": "Andrés León", "rol": "Cliente", "canales": {"telegram": "111", "local": "tester"}}}
 J
 ahora() { date -u +%Y-%m-%dT%H:%M:%SZ; }
-puerta() {  # puerta <id> <tipo> [fase]
-  mkdir -p .sdd/hermes/puertas
+puerta() {  # puerta <id> <tipo> [fase]   (como puerta.sh: puerta nueva = original del índice nuevo, sin el de otra vez)
+  mkdir -p .sdd/hermes/puertas; rm -f "$HERMES_SDD_HOME/puertas/$1.json"
   jq -n --arg t "$2" --arg f "${3:-}" --arg s "$(git rev-parse HEAD)" --arg c "2000-01-01T00:00:00Z" \
     '{tipo:$t, fase:$f, tablero:"", tarjeta:"", sha:$s, creada:$c}' > ".sdd/hermes/puertas/$1.json"; }
 decidir() {  # decidir <id> <verbo> <canal> <idcanal> [texto]
@@ -35,6 +35,11 @@ puerta f1 requisitos; decidir f1 acepto telegram 111; out=$(bash "$ROOT/firmar.s
 puerta f2 requisitos; decidir f2 cambios telegram 111 "otra"; gemelo f2; decidir f2 acepto telegram 111
 out=$(bash "$ROOT/firmar.sh" "$R" f2 2>&1); rc=$?
 [ $rc -ne 0 ] && echo "$out" | grep -q "no coincide con la que registró un canal" && ok "no firma si la decisión del repo no es la que registró el canal" || bad "cambiada: $out"
+# la copia de la puerta en el proyecto (de la que lee el notario) retocada después de mostrarla: no se firma
+puerta f3 fase 1; decidir f3 acepto telegram 111; gemelo f3
+t=$(mktemp); jq '.tests_editados = 0 | .sha = "0000000"' .sdd/hermes/puertas/f3.json > "$t" && mv "$t" .sdd/hermes/puertas/f3.json
+out=$(bash "$ROOT/firmar.sh" "$R" f3 2>&1); rc=$?
+[ $rc -ne 0 ] && echo "$out" | grep -q "no es la que se mostró (cambió: sha,tests_editados)" && ok "no firma si la copia de la puerta del proyecto no es la del índice" || bad "copia retocada: $out"
 rm -f .sdd/hermes/decisiones/f1.json .sdd/hermes/decisiones/f2.json
 # 1. identidad no autorizada
 puerta g1 requisitos; decidir g1 acepto telegram 999; firmar g1

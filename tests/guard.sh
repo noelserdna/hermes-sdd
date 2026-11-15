@@ -54,6 +54,11 @@ deny  'python3 ~/.hermes/hermes-sdd/actual/plugin/hermes-sdd/hsdd_nucleo.py modo
 deny  'echo "{\"defecto\":\"auto\"}" > ~/.hermes/hermes-sdd/jev.json'
 deny  'jq ".yo.canales.local = \"x\"" ~/.hermes/hermes-sdd/aprobadores.json > t && mv t ~/.hermes/hermes-sdd/aprobadores.json'
 allow 'node "/Users/x/.hermes/hermes-sdd/0.2.3/metodo/scripts/sdd-jev.mjs" req-lint'
+# el estado del arnés (índice de puertas, actas) no: solo su código instalado
+deny  'cat ~/.hermes/hermes-sdd/puertas/g1.json'
+deny  "python3 -c 'import json;json.dump({},open(\"/Users/x/.hermes/hermes-sdd/puertas/g1.json\",\"w\"))'"
+deny  'ls ~/.hermes/hermes-sdd/actas'
+allow 'node ~/.hermes/hermes-sdd/actual/metodo/scripts/sdd.mjs lint --quotes'
 deny  'git push origin main'
 deny  '"/Users/x/Library/Caches/ms-playwright/chromium-1254/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing" --headless=new --screenshot=evidencias/FASE-0/a.png http://127.0.0.1:4321/'
 allow '"/Users/x/Library/Caches/ms-playwright/chromium-1254/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing" --headless=new --use-mock-keychain --password-store=basic --screenshot=evidencias/FASE-0/a.png http://127.0.0.1:4321/'

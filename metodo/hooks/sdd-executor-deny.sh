@@ -48,7 +48,10 @@ esac
 . "$(dirname "${BASH_SOURCE[0]}")/lib/sdd-common.sh"
 
 motivo=""
-CMD_SIN_ARNES=${CMD//.hermes\/hermes-sdd\//}   # las rutas del propio arnés (plugin, CLI) sí están permitidas
+# Las rutas del código instalado del arnés (la CLI del método, el plugin, sus binarios) sí están permitidas; el ESTADO
+# (~/.hermes/hermes-sdd/puertas, actas, jev.json, aprobadores.json…) no: antes se permitía todo ~/.hermes/hermes-sdd/ y
+# con ello el índice de puertas y las actas, lo que justo tiene que quedar fuera del alcance de una etapa.
+CMD_SIN_ARNES=$(printf '%s' "$CMD" | perl -pe 's{\.hermes/hermes-sdd/(?:(?:actual|[0-9][0-9A-Za-z.+-]*)/(?:metodo|plugin)/|bin/|node-[0-9]+/)}{}g')
 check() { [ -z "$motivo" ] && printf '%s' "$2" | grep -qE "$1" && motivo=$3; }
 # Segmentos del comando (separados por ; && || | $( `): las reglas de tags miran solo los que EMPIEZAN por git.
 SEGMENTOS=$(printf '%s\n' "$CMD_SIN_ARNES" | perl -pe 's/(;|&&|\|\||\||\$\(|`)/\n/g')
