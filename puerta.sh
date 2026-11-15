@@ -10,6 +10,7 @@
 # global que leen los canales). Imprime el id de la puerta.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
+. "$ROOT/lib/comun.sh"   # slug
 SDD="$ROOT/metodo/scripts/sdd.mjs"
 HOME_SDD="${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}"
 
@@ -52,7 +53,7 @@ if [ "${1:-}" = recuperar ]; then
 fi
 
 REPO=$(cd "$1" && pwd); TIPO=$2; FASE=${3:-}
-[ -n "${HERMES_SDD_SIN_KANBAN:-}" ] && BOARD="" || BOARD=${HERMES_KANBAN_BOARD:-$(basename "$REPO" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')}
+[ -n "${HERMES_SDD_SIN_KANBAN:-}" ] && BOARD="" || BOARD=${HERMES_KANBAN_BOARD:-$(slug "$(basename "$REPO")")}
 cd "$REPO"
 
 tests_editados() {  # tests_editados <base> → nº de ficheros de test existentes con líneas que cambian lo que se comprueba

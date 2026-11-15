@@ -21,10 +21,11 @@
 # el HEAD que muestran las puertas.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
+. "$ROOT/lib/comun.sh"   # slug
 HH="$HOME/.hermes"; HOME_SDD="${HERMES_SDD_HOME:-$HH/hermes-sdd}"
 CMD=${1:-}; [ -n "${2:-}" ] || { sed -n '2,20p' "$0" >&2; exit 2; }
 REPO=$(cd "$2" && pwd)
-BOARD=$(basename "$REPO" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')
+BOARD=$(slug "$(basename "$REPO")")   # lib/comun.sh: el mismo nombre que da el plugin
 P="sdd-p-$BOARD"
 ARNES="$HOME_SDD/actual"; [ -d "$ARNES" ] || ARNES=$ROOT   # instalado o, en pruebas, el propio repo
 

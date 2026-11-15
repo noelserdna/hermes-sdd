@@ -1,0 +1,109 @@
+{
+  "_que_es": "La tabla de transiciones de las puertas: por tipo, qué verbos valen, a qué resultado lleva cada uno y qué tramo lanza cada resultado. La leen firmar.sh (valida el verbo y fija el resultado), lanzar.sh siguiente (elige el tramo: cada tramo es su función tramo_<nombre>) y tests/transiciones.sh (la recorre entera). Antes era un contrato de cadenas mágicas repartido entre los case de esos dos scripts.",
+  "_verbos": {
+    "resultado": "lo que el notario pasa a lanzar.sh; «{verbo}» = el propio verbo (rutas configuradas, ruta-*)",
+    "texto": "true: el verbo necesita un texto de la persona",
+    "opcion": "mensaje si la puerta no ofrecía esa opción (el verbo solo vale si la puerta lo enseñó)",
+    "persona": "mensaje si lo decide Jev: solo una persona puede elegir ese verbo",
+    "como": "se firma como este otro verbo (revisado y eximo son una aceptación con algo más registrado): desde ahí, sus respuestas y su resultado son los de ese verbo",
+    "respuestas": "qué hacen las respuestas elegidas a las preguntas de la puerta con este verbo: «cambio» (las que piden cambiar requisitos lanzan /cambio antes del tramo siguiente) y «aplicar» (las que piden trabajo las aplica la etapa respuestas antes del tramo siguiente)",
+    "si_distintas": "si la persona eligió en alguna pregunta una opción distinta de la recomendada, el verbo pasa a ser este (el texto que vio está escrito con la recomendada)",
+    "clave *": "un verbo que acaba en * vale para todos los que empiezan así (ruta-normal, ruta-rapida…)"
+  },
+  "_resultados": {
+    "tramo": "la función tramo_<nombre> de lanzar.sh, o «fin» (no se lanza nada más)",
+    "mensaje": "con «fin»: lo que dice lanzar.sh",
+    "negativo": "true: la persona no dio por buena la puerta (se rehace o se descarta); lo enseñan los canales (↩️)"
+  },
+  "_encadenado": "Al firmar, el notario encadena en este orden: 1) si las respuestas (o «corrijo») piden cambiar requisitos, lanzar.sh cambio; 2) si piden trabajo, lanzar.sh respuestas (que hace el tramo cuando terminan); 3) si no, lanzar.sh siguiente con el resultado.",
+  "puertas": {
+    "requisitos": {
+      "verbos": {
+        "acepto": {"resultado": "aprobado", "respuestas": ["cambio"], "si_distintas": "cambios"},
+        "cambios": {"resultado": "cambios", "texto": true}
+      },
+      "resultados": {
+        "aprobado": {"tramo": "requisitos_aprobados"},
+        "cambios": {"tramo": "requisitos_otra_vez", "negativo": true}
+      }
+    },
+    "ruta": {
+      "verbos": {
+        "acepto": {"resultado": "acepto"},
+        "completo": {"resultado": "completo"},
+        "ruta-*": {"resultado": "{verbo}", "opcion": "la puerta no ofrecía la ruta {verbo}"},
+        "rechazo": {"resultado": "rechazo", "texto": true}
+      },
+      "resultados": {
+        "acepto": {"tramo": "tras_ruta"},
+        "completo": {"tramo": "tras_ruta"},
+        "ruta-*": {"tramo": "tras_ruta"},
+        "rechazo": {"tramo": "ruta_otra_vez", "negativo": true}
+      }
+    },
+    "plan": {
+      "verbos": {
+        "conforme": {"resultado": "conforme", "respuestas": ["cambio"], "si_distintas": "cambios"},
+        "cambios": {"resultado": "cambios", "texto": true, "respuestas": ["cambio"]}
+      },
+      "resultados": {
+        "conforme": {"tramo": "fases_o_cierre"},
+        "cambios": {"tramo": "plan_otra_vez", "negativo": true}
+      }
+    },
+    "fase": {
+      "verbos": {
+        "acepto": {"resultado": "acepto", "respuestas": ["cambio", "aplicar"]},
+        "observaciones": {"resultado": "observaciones", "texto": true, "respuestas": ["cambio", "aplicar"]},
+        "rechazo": {"resultado": "rechazo", "texto": true, "respuestas": ["cambio"]},
+        "revisado": {"resultado": "acepto", "como": "acepto", "opcion": "la puerta no ofrecía 🔍 Lo he revisado", "persona": "una inspección la confirma una persona, no Jev"},
+        "eximo": {"resultado": "acepto", "como": "acepto", "texto": true, "opcion": "la puerta no ofrecía 🟡 Aceptar sin lo que falta", "persona": "una exención la firma una persona, no Jev"},
+        "corrijo": {"resultado": "corrijo", "texto": true, "opcion": "la puerta no ofrecía ✏️ Corregir el requisito", "persona": "corregir un requisito lo decide una persona, no Jev"},
+        "descarto": {"resultado": "descarto", "texto": true, "opcion": "la puerta no ofrecía 🗑 Descartar", "persona": "una impugnación la descarta una persona, no Jev"}
+      },
+      "resultados": {
+        "acepto": {"tramo": "fases_o_cierre"},
+        "observaciones": {"tramo": "fases_o_cierre"},
+        "rechazo": {"tramo": "rehacer_fase", "negativo": true},
+        "corrijo": {"tramo": "fin", "negativo": true, "mensaje": "El cambio de requisitos lo lanza el notario (lanzar.sh cambio): al aprobarse, se sigue desde ahí"},
+        "descarto": {"tramo": "reabrir_puerta"}
+      }
+    },
+    "entrega": {
+      "verbos": {
+        "acepto": {"resultado": "acepto", "respuestas": ["cambio", "aplicar"]},
+        "observaciones": {"resultado": "observaciones", "texto": true, "respuestas": ["cambio", "aplicar"]},
+        "rechazo": {"resultado": "rechazo", "texto": true, "respuestas": ["cambio"]},
+        "revisado": {"resultado": "acepto", "como": "acepto", "opcion": "la puerta no ofrecía 🔍 Lo he revisado", "persona": "una inspección la confirma una persona, no Jev"},
+        "eximo": {"resultado": "acepto", "como": "acepto", "texto": true, "opcion": "la puerta no ofrecía 🟡 Aceptar sin lo que falta", "persona": "una exención la firma una persona, no Jev"},
+        "corrijo": {"resultado": "corrijo", "texto": true, "opcion": "la puerta no ofrecía ✏️ Corregir el requisito", "persona": "corregir un requisito lo decide una persona, no Jev"},
+        "descarto": {"resultado": "descarto", "texto": true, "opcion": "la puerta no ofrecía 🗑 Descartar", "persona": "una impugnación la descarta una persona, no Jev"}
+      },
+      "resultados": {
+        "acepto": {"tramo": "entregado"},
+        "observaciones": {"tramo": "entregado"},
+        "rechazo": {"tramo": "rehacer_entrega", "negativo": true},
+        "corrijo": {"tramo": "fin", "negativo": true, "mensaje": "El cambio de requisitos lo lanza el notario (lanzar.sh cambio): al aprobarse, se sigue desde ahí"},
+        "descarto": {"tramo": "reabrir_puerta"}
+      }
+    },
+    "preguntas": {
+      "verbos": {
+        "respondo": {"resultado": "respondo", "respuestas": ["cambio"]}
+      },
+      "resultados": {
+        "respondo": {"tramo": "tras_preguntas"}
+      }
+    },
+    "mantenimiento": {
+      "verbos": {
+        "cambio": {"resultado": "cambio"},
+        "ignoro": {"resultado": "ignoro", "texto": true}
+      },
+      "resultados": {
+        "cambio": {"tramo": "mantenimiento_cambio"},
+        "ignoro": {"tramo": "fin", "negativo": true, "mensaje": "Hallazgos ignorados; no se vuelve a preguntar mientras no cambien"}
+      }
+    }
+  }
+}

@@ -49,7 +49,10 @@ for _ in $(seq 1 720); do
 done
 if [ "$rc" = 0 ]; then
   printf '%s\n' "$OUT"
-  "${NUCLEO[@]}" transicion "$GATE" firmada resultado="$(printf '%s\n' "$OUT" | tail -1)"
+  # Lo firmado lo deja el notario estructurado en el índice («firma»: resultado, negativo, tag, resumen); la última línea
+  # de su salida solo cuenta si falta (un notario anterior a ese campo)
+  RES=$(jq -r '.firma.resumen // empty' "$IDX" 2>/dev/null || true)
+  "${NUCLEO[@]}" transicion "$GATE" firmada resultado="${RES:-$(printf '%s\n' "$OUT" | tail -1)}"
 else
   "${NUCLEO[@]}" transicion "$GATE" error error="el notario rechazó la decisión local" || true
   exit "$rc"

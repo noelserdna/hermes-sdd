@@ -514,10 +514,19 @@ def _hecho_antes(repo: Path) -> str:
     return ("📐 Antes del plan se hizo: " + ", ".join(nombres) + ". El plan parte de esos documentos.") if nombres else ""
 
 
+def _nucleo():
+    """hsdd_nucleo, cargado una vez (este módulo se usa también suelto, como CLI del notario y de puerta.sh)."""
+    if "hsdd_nucleo" not in sys.modules:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("hsdd_nucleo", Path(__file__).with_name("hsdd_nucleo.py"))
+        mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod); sys.modules["hsdd_nucleo"] = mod
+    return sys.modules["hsdd_nucleo"]
+
+
 def _unica_plan(repo: Path, fases: int) -> bool:
-    """Plan de una sola FASE que no es «fina»: no tendrá puerta de FASE, se acepta con la entrega (lanzar.sh unica)."""
-    g = _leer(repo / ".sdd" / "hermes" / "granularidad-plan").strip()
-    return fases == 1 and bool(g) and g != "fina"
+    """Plan de una sola FASE que no es «fina»: no tendrá puerta de FASE, se acepta con la entrega. La misma regla que
+    usan lanzar.sh y etapa.sh (hsdd_nucleo.unica): lo que se le dice a la persona es lo que luego pasa."""
+    return fases == 1 and _nucleo().unica(repo)
 
 
 def puerta_plan(repo: Path, proyecto: str) -> dict:
@@ -1011,11 +1020,26 @@ def preguntas_de(puerta: dict, ficheros: list) -> list[dict]:
     return qs
 
 
-def elegidas(texto: str, qs: list[dict]) -> tuple[dict, list[str]]:
-    """({n: letra}, errores) de «Q1: A, Q2: B» frente a las preguntas de la puerta."""
+def _pares_marcados(marcadas) -> list[tuple[str, str]]:
+    """[(n, letra)] del campo «respuestas» de la decisión ({"1": "B"}): lo que la persona marcó en los botones Q, sin
+    pasar por el texto libre. Una clave que no es un número sale como «Q0» (una pregunta que no existe) y una letra que
+    no es opción, tal cual: las dos rechazan la decisión en vez de ignorarse."""
+    out = []
+    for k, v in sorted((marcadas or {}).items(), key=lambda kv: (len(str(kv[0])), str(kv[0]))):
+        if v in (None, ""):
+            continue
+        out.append((str(k) if str(k).isdigit() else "0", str(v)))
+    return out
+
+
+def elegidas(texto: str, qs: list[dict], marcadas: dict | None = None) -> tuple[dict, list[str]]:
+    """({n: letra}, errores) de lo que marcó la persona frente a las preguntas de la puerta: el campo «respuestas» de la
+    decisión ({"1": "A"}) y, por las decisiones anteriores a ese campo o lo escrito a mano, «Q1: A, Q2: B» en el texto.
+    Las dos fuentes se validan igual: una letra que no es opción, una pregunta que no existe o dos letras distintas para
+    la misma pregunta (aunque vengan una de cada sitio) rechazan la decisión."""
     por_n = {int(q["n"]): q for q in qs}
     out, errs = {}, []
-    for n, l in _PAR_Q.findall(texto or ""):
+    for n, l in _pares_marcados(marcadas) + _PAR_Q.findall(texto or ""):
         n = int(n)
         q = por_n.get(n)
         if q is None:
@@ -1029,11 +1053,13 @@ def elegidas(texto: str, qs: list[dict]) -> tuple[dict, list[str]]:
     return out, errs
 
 
-def plan_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str) -> tuple[list[dict], list[str], str]:
-    """(respuestas [{q, letra, como, efecto}], errores, modo). Con «Qn: L» en el texto, esas; si no, aceptar, dar
-    conformidad o responder contestan todas con la recomendada (como enseña la puerta: «si te vale, no toques nada»)."""
+def plan_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str,
+                    marcadas: dict | None = None) -> tuple[list[dict], list[str], str]:
+    """(respuestas [{q, letra, como, efecto}], errores, modo). Con respuestas marcadas (el campo de la decisión o «Qn: L»
+    en el texto), esas; si no, aceptar, dar conformidad o responder contestan todas con la recomendada (como enseña la
+    puerta: «si te vale, no toques nada»)."""
     qs = preguntas_de(puerta, ficheros)
-    el, errs = elegidas(texto, qs)
+    el, errs = elegidas(texto, qs, marcadas)
     if el:
         modo = "elegidas"
         res = [{"q": q, "letra": el[q["n"]], "como": "elegida por"} for q in qs if q["n"] in el]
@@ -1054,9 +1080,10 @@ def plan_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str) -> tup
     return res, errs, modo
 
 
-def validar_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str, persona: bool) -> list[str]:
+def validar_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str, persona: bool,
+                       marcadas: dict | None = None) -> list[str]:
     """Lo que hace inválida una decisión antes de firmar nada: letras que no existen y permisos que no caben."""
-    res, errs, _ = plan_respuestas(puerta, ficheros, texto, verbo)
+    res, errs, _ = plan_respuestas(puerta, ficheros, texto, verbo, marcadas)
     for r in res:
         e, qn = r["efecto"], f"Q{r['q']['n']} ({r['q'].get('id')})"
         if e.get("efecto") == "editar-test":
@@ -1070,9 +1097,10 @@ def validar_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str, per
     return errs
 
 
-def aplicar_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str, quien: str, hoy: str) -> dict:
+def aplicar_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str, quien: str, hoy: str,
+                       marcadas: dict | None = None) -> dict:
     """Escribe «Answer: L — …» en cada pregunta contestada y devuelve {peticiones, por_aplicar, autorizaciones}."""
-    res, errs, _ = plan_respuestas(puerta, ficheros, texto, verbo)
+    res, errs, _ = plan_respuestas(puerta, ficheros, texto, verbo, marcadas)
     if errs:
         raise ValueError("; ".join(errs))
     out = {"peticiones": [], "por_aplicar": [], "autorizaciones": []}
@@ -1114,9 +1142,9 @@ def aplicar_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str, qui
     return out
 
 
-def lineas_respuestas(puerta: dict, ficheros: list, texto: str) -> list[str]:
+def lineas_respuestas(puerta: dict, ficheros: list, texto: str, marcadas: dict | None = None) -> list[str]:
     """«Qn (Q-id): pregunta → elegida L: texto» de lo que la persona eligió (para el feedback de un rechazo)."""
-    res, _, _ = plan_respuestas(puerta, ficheros, texto, "rechazo")
+    res, _, _ = plan_respuestas(puerta, ficheros, texto, "rechazo", marcadas)
     out = []
     for r in res:
         b = r["q"].get("bloque") or ""
@@ -1244,32 +1272,41 @@ def normalizar_preguntas(repo: Path) -> int:
 
 
 def _cli_respuestas(argv: list) -> int:
-    """respuestas <validar|distintas|aplicar|lineas> --puerta P --texto T --verbo V [--persona 0|1] [--quien Q --hoy D
-    --salida F] <ficheros questions-*.md…>  (lo usa el notario: el parseo de respuestas vive aquí y no en firmar.sh)"""
+    """respuestas <validar|distintas|aplicar|lineas> --puerta P --texto T [--respuestas JSON] --verbo V [--persona 0|1]
+    [--quien Q --hoy D --salida F] <ficheros questions-*.md…>  (lo usa el notario: el parseo de respuestas vive aquí y no
+    en firmar.sh). --respuestas: el campo «respuestas» de la decisión ({"1": "B"}, lo que la persona marcó)."""
     import argparse
     ap = argparse.ArgumentParser(prog="hsdd_textos.py respuestas")
     ap.add_argument("accion", choices=["validar", "distintas", "aplicar", "lineas"])
     ap.add_argument("--puerta", required=True); ap.add_argument("--texto", default=""); ap.add_argument("--verbo", default="")
+    ap.add_argument("--respuestas", default="", help="JSON {n: letra} con lo que marcó la persona")
     ap.add_argument("--persona", type=int, default=1); ap.add_argument("--quien", default=""); ap.add_argument("--hoy", default="")
     ap.add_argument("--salida", default="", help="aplicar: JSON {peticiones, por_aplicar, autorizaciones}")
     ap.add_argument("ficheros", nargs="*")
     a = ap.parse_intermixed_args(argv)
     puerta = json.loads(_leer(Path(a.puerta)) or "{}")
     fs = [f for f in a.ficheros if not f.endswith("*.md") and Path(f).exists()]
+    try:
+        marcadas = json.loads(a.respuestas) if a.respuestas else {}
+    except ValueError:
+        marcadas = None
+    if not isinstance(marcadas, dict):   # un campo que no es {n: letra}: no se adivina, se rechaza la decisión
+        print("el campo «respuestas» de la decisión no es {pregunta: letra}", file=sys.stderr)
+        return 1
     if a.accion == "validar":
-        errs = validar_respuestas(puerta, fs, a.texto, a.verbo, bool(a.persona))
+        errs = validar_respuestas(puerta, fs, a.texto, a.verbo, bool(a.persona), marcadas)
         for e in errs:
             print(e, file=sys.stderr)
         return 1 if errs else 0
     if a.accion == "distintas":   # respuestas distintas de la recomendada: «Q-id = L; …»
-        res, _, modo = plan_respuestas(puerta, fs, a.texto, a.verbo)
+        res, _, modo = plan_respuestas(puerta, fs, a.texto, a.verbo, marcadas)
         print("; ".join(f"{r['q']['id']} = {r['letra']}" for r in res if modo == "elegidas" and r["letra"] != r["q"].get("recomendada")))
         return 0
     if a.accion == "lineas":
-        print("\n".join(lineas_respuestas(puerta, fs, a.texto)))
+        print("\n".join(lineas_respuestas(puerta, fs, a.texto, marcadas)))
         return 0
     try:
-        out = aplicar_respuestas(puerta, fs, a.texto, a.verbo, a.quien, a.hoy)
+        out = aplicar_respuestas(puerta, fs, a.texto, a.verbo, a.quien, a.hoy, marcadas)
     except ValueError as e:
         print(e, file=sys.stderr)
         return 1

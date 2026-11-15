@@ -11,7 +11,8 @@
 #   lanzar.sh esperar <repo> [--tag T] [--max S]      bloquea hasta un evento (etapa terminada, puerta abierta…): una línea
 #
 # Cada tarjeta de etapa la toma el perfil sdd-estacion y ejecuta `etapa.sh`. Las puertas las abre la propia etapa
-# (puerta.sh) y las cierra el notario; después, este script crea el tramo siguiente:
+# (puerta.sh) y las cierra el notario; después, este script crea el tramo siguiente (qué tramo toca a cada tipo de
+# puerta y resultado lo dice lib/transiciones.json; aquí, cada tramo es una función tramo_<nombre>):
 #   inicio            → requisitos
 #   requisitos ok     → ruta                      requisitos cambios → requisitos (con lo pedido)
 #   ruta ok           → plan → tareas             ruta rechazo       → ruta
@@ -22,8 +23,10 @@
 #   entrega rechazada → cierre (con lo pedido)
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
+. "$ROOT/lib/comun.sh"   # slug, unica
+. "$ROOT/lib/transiciones.sh"   # siguiente: qué tramo lanza cada resultado
 CMD=$1; REPO=$(cd "$2" && pwd)
-BOARD=$(basename "$REPO" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')
+BOARD=$(slug "$(basename "$REPO")")   # lib/comun.sh: el mismo nombre que da el plugin
 K=(hermes kanban --board "$BOARD")
 
 primera_sin_aceptar() {  # primera FASE del plan sin tag fase-N-accepted (vacío si todas lo tienen)
@@ -84,11 +87,6 @@ asegurar_tablero() {
 con_huecos() {  # ¿quedan tareas [PLAN GAP] sin hacer en la FASE N? (sus preguntas se contestaron en la puerta del plan)
   grep -qE '^- \[ \] .*\[PLAN GAP\]' "$REPO/task/TASK-FASE-$1.md" 2>/dev/null
 }
-unica() {  # ¿plan de una sola FASE, aún sin aceptar (y no «fina»)? Entonces su aceptación va en la puerta de entrega
-  [ -f "$REPO/.sdd/hermes/granularidad-plan" ] && [ "$(cat "$REPO/.sdd/hermes/granularidad-plan")" != fina ] &&
-    [ "$(ls "$REPO"/plan/fases/FASE-*.md 2>/dev/null | wc -l | tr -d ' ')" = 1 ] &&
-    ! git -C "$REPO" tag -l 'fase-*-accepted' | grep -q .
-}
 viejas_de_fase() {  # archiva las tarjetas paradas o en espera de la FASE N (huecos, implementar, aceptar): se rehace
   local l; l=$("${K[@]}" list --json 2>/dev/null) || return 0   # sin tablero legible no se archiva nada
   printf '%s' "$l" | jq -r --arg n "$1" '.[]? | select(.assignee == "sdd-estacion" and (.status == "blocked" or .status == "todo" or .status == "triage" or .status == "ready"))
@@ -102,7 +100,7 @@ fase_n() {  # fase_n <N> [sufijo]: (huecos →) implementar → aceptar la FASE 
   viejas_de_fase "$1"
   if con_huecos "$1"; then h=$(tarjeta "Completar huecos del plan FASE-$1" - 60m huecos "$1"); primera=$h; fi
   t=$(tarjeta "Implementar FASE-$1${2:-}" "$h" 120m implementar "$1"); primera=${primera:-$t}
-  if unica; then   # una sola FASE: sus veredictos y su demo los hace el cierre, y se aceptan con la entrega
+  if unica "$REPO"; then   # una sola FASE: sus veredictos y su demo los hace el cierre, y se aceptan con la entrega
     cierre "$t" "Cierre: demo, puerta global y entrega" >/dev/null
   else
     tarjeta "Aceptar FASE-$1" "$t" 60m aceptar "$1" >/dev/null
@@ -205,6 +203,75 @@ tarjeta() {  # tarjeta <título> <padre|-> <runtime> <etapa> [fase] — imprime 
   "${K[@]}" create "${args[@]}" | jq -r .id
 }
 
+# ── Tramos que encadena «siguiente» tras firmar una puerta ─────────────────────────────────────────────────────────
+# Cuál toca a cada tipo de puerta y resultado lo dice lib/transiciones.json (tests/transiciones.sh comprueba que cada
+# tramo de la tabla existe aquí y que aquí no sobra ninguno). Leen GATE, P (la puerta), TIPO y FASE.
+tramo_requisitos_aprobados() {
+  if [ "$(jq -r '.adopcion // false' "$P")" = true ]; then
+    rm -f "$REPO/.sdd/hermes/adopcion"; echo "Línea base aprobada: los cambios entran con /cambio"; return 0
+  fi
+  rm -f "$REPO/.sdd/hermes/cambio-actual"
+  if [ -s "$REPO/.sdd/hermes/mantenimiento/en-curso.txt" ]; then
+    # El cambio lo pidió un mantenimiento en curso (para poder hacerlo): se sigue con él, no se replanifica
+    mantener; return 0
+  fi
+  local RF N
+  RF=$(cambio_corto)
+  N=$(primera_sin_aceptar)
+  if ! ls "$REPO"/plan/fases/FASE-*.md >/dev/null 2>&1; then
+    # Aún no hay plan (un cambio pedido al aprobar los primeros requisitos): se sigue por la ruta, como siempre
+    tarjeta "Ruta" - 20m ruta
+  elif [ "$RF" = IGUAL ]; then
+    # Mismos requisitos (el cambio solo tocó la especificación): sin replanificar, sigue la FASE en curso
+    echo "Cambio sin cambios en los requisitos: se sigue con ${N:+la FASE-$N}${N:-el cierre}"
+    if [ -n "$N" ]; then fase_n "$N" " (especificación corregida)"; else cierre; fi
+  elif [ -n "$RF" ] && [ -n "$N" ] && [ "${RF%% *}" -ge "$N" ]; then
+    # Cambio sin replanificar: el plan sigue valiendo; la FASE en curso se rehace con los requisitos nuevos
+    # (las FASEs posteriores ya los leerán al implementarse)
+    mkdir -p "$REPO/.sdd/hermes/feedback"
+    { echo "Los requisitos cambiaron (aprobados en $(git -C "$REPO" tag -l 'requirements-v*' --sort=-v:refname | head -1)): ajusta el código y los tests de la FASE-$N a los criterios actuales (sus números pueden haber cambiado)."
+      (cd "$REPO" && node "$ROOT/metodo/scripts/sdd.mjs" accept --fase "$N" --json 2>/dev/null) | jq -r '
+        (.scope.requirements // []) as $s
+        | [.requirements[] | select(.verdict != "VERIFIED" and (($s | length) == 0 or (.id as $i | $s | index($i))))
+           | .id as $id | .criteria[]? | select(.state != "pass")
+           | "- \($id) AC\(.n // .index): \(.state)"
+             + (if ((.literal_gaps // []) | length) > 0 then " — el test no lleva la letra literal: " + ([.literal_gaps[].literal] | unique | join(", ")) else "" end)
+             + (if .visual == "missing" then " — falta su captura" else "" end)]
+        | if length > 0 then "Criterios de la FASE que no pasan la aceptación (corrígelos todos):", .[] else empty end' || true
+    } >> "$REPO/.sdd/hermes/feedback/implementar-$N.txt" 2>/dev/null || true   # >>: sin borrar lo que pidió la persona al rechazar
+    # La puerta de esa FASE que quedó abierta (bloqueada por lo que este cambio resuelve) ya no tiene sentido
+    # (la misma regla que puerta.sh, en el núcleo: transición abierta → superada con el cerrojo del índice)
+    for tj in $(HERMES_SDD_HOME="${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}" python3 "$ROOT/plugin/hermes-sdd/hsdd_nucleo.py" superar "$REPO" fase "$N" "$GATE"); do
+      "${K[@]}" archive "$tj" >/dev/null 2>&1 || true
+    done
+    echo "Cambio sin replanificar (requisitos de las FASEs $RF): se rehace la FASE-$N"
+    fase_n "$N" " (requisitos nuevos)"
+  else
+    tarjeta "Ruta" - 20m ruta
+  fi
+}
+tramo_requisitos_otra_vez() { tarjeta "Requisitos (cambios)" - 40m requisitos; }
+tramo_tras_ruta() { tras_ruta; }
+tramo_ruta_otra_vez() { tarjeta "Ruta (otra vez)" - 20m ruta; }
+tramo_fases_o_cierre() {  # la primera FASE sin aceptar o, si no queda ninguna (un cambio sin FASE nueva), el cierre
+  local N; N=$(primera_sin_aceptar)
+  if [ -n "$N" ]; then fase_n "$N"; else cierre; fi
+}
+tramo_plan_otra_vez() { local t; t=$(tarjeta "Plan (cambios)" - 60m plan); tarjeta "Tareas" "$t" 60m tareas; }
+tramo_rehacer_fase() { fase_n "$FASE" " (cambios)"; }
+tramo_reabrir_puerta() { bash "$ROOT/puerta.sh" "$REPO" "$TIPO" ${FASE:+"$FASE"}; }   # la misma puerta, sin lo descartado
+tramo_entregado() { rm -f "$REPO/.sdd/hermes/mantenimiento/en-curso.txt"; echo "Proyecto entregado"; }
+tramo_rehacer_entrega() {  # una sola FASE: se rehace (implementar con lo pedido → cierre); si no, solo el cierre
+  if [ "$(jq -r '.unica // false' "$P")" = true ]; then fase_n 0 " (cambios)" >/dev/null
+  else tarjeta "Cierre (otra vez)" - 120m cierre; fi
+}
+tramo_tras_preguntas() { if [ -n "$FASE" ]; then fase_n "$FASE" " (respuestas)"; else mantener; fi; }
+tramo_mantenimiento_cambio() {  # se arregla sin cambiar el comportamiento y se entrega otra vez (no pasa por requisitos
+  # ni plan; si hiciera falta cambiar un requisito, la etapa lo pregunta)
+  cp "$REPO/.sdd/hermes/mantenimiento/peticion-$GATE.txt" "$REPO/.sdd/hermes/mantenimiento/en-curso.txt"
+  mantener
+}
+
 case "$CMD" in
   preparar)     # repo y tablero listos, SIN tarjetas: el encargado prepara la entrada y lo lanza (encargado.sh lanzar)
     preparar
@@ -244,75 +311,13 @@ case "$CMD" in
     GATE=$3; RESULTADO=$4
     P="$REPO/.sdd/hermes/puertas/$GATE.json"
     TIPO=$(jq -r .tipo "$P"); FASE=$(jq -r '.fase // empty' "$P")
-    case "$TIPO:$RESULTADO" in
-      requisitos:aprobado)
-        if [ "$(jq -r '.adopcion // false' "$P")" = true ]; then
-          rm -f "$REPO/.sdd/hermes/adopcion"; echo "Línea base aprobada: los cambios entran con /cambio"
-        else
-          rm -f "$REPO/.sdd/hermes/cambio-actual"
-          if [ -s "$REPO/.sdd/hermes/mantenimiento/en-curso.txt" ]; then
-            # El cambio lo pidió un mantenimiento en curso (para poder hacerlo): se sigue con él, no se replanifica
-            mantener; exit 0
-          fi
-          RF=$(cambio_corto)
-          N=$(primera_sin_aceptar)
-          if ! ls "$REPO"/plan/fases/FASE-*.md >/dev/null 2>&1; then
-            # Aún no hay plan (un cambio pedido al aprobar los primeros requisitos): se sigue por la ruta, como siempre
-            tarjeta "Ruta" - 20m ruta
-          elif [ "$RF" = IGUAL ]; then
-            # Mismos requisitos (el cambio solo tocó la especificación): sin replanificar, sigue la FASE en curso
-            echo "Cambio sin cambios en los requisitos: se sigue con ${N:+la FASE-$N}${N:-el cierre}"
-            if [ -n "$N" ]; then fase_n "$N" " (especificación corregida)"; else cierre; fi
-          elif [ -n "$RF" ] && [ -n "$N" ] && [ "${RF%% *}" -ge "$N" ]; then
-            # Cambio sin replanificar: el plan sigue valiendo; la FASE en curso se rehace con los requisitos nuevos
-            # (las FASEs posteriores ya los leerán al implementarse)
-            mkdir -p "$REPO/.sdd/hermes/feedback"
-            { echo "Los requisitos cambiaron (aprobados en $(git -C "$REPO" tag -l 'requirements-v*' --sort=-v:refname | head -1)): ajusta el código y los tests de la FASE-$N a los criterios actuales (sus números pueden haber cambiado)."
-              (cd "$REPO" && node "$ROOT/metodo/scripts/sdd.mjs" accept --fase "$N" --json 2>/dev/null) | jq -r '
-                (.scope.requirements // []) as $s
-                | [.requirements[] | select(.verdict != "VERIFIED" and (($s | length) == 0 or (.id as $i | $s | index($i))))
-                   | .id as $id | .criteria[]? | select(.state != "pass")
-                   | "- \($id) AC\(.n // .index): \(.state)"
-                     + (if ((.literal_gaps // []) | length) > 0 then " — el test no lleva la letra literal: " + ([.literal_gaps[].literal] | unique | join(", ")) else "" end)
-                     + (if .visual == "missing" then " — falta su captura" else "" end)]
-                | if length > 0 then "Criterios de la FASE que no pasan la aceptación (corrígelos todos):", .[] else empty end' || true
-            } >> "$REPO/.sdd/hermes/feedback/implementar-$N.txt" 2>/dev/null || true   # >>: sin borrar lo que pidió la persona al rechazar
-            # La puerta de esa FASE que quedó abierta (bloqueada por lo que este cambio resuelve) ya no tiene sentido
-            # (la misma regla que puerta.sh, en el núcleo: transición abierta → superada con el cerrojo del índice)
-            for tj in $(HERMES_SDD_HOME="${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}" python3 "$ROOT/plugin/hermes-sdd/hsdd_nucleo.py" superar "$REPO" fase "$N" "$GATE"); do
-              "${K[@]}" archive "$tj" >/dev/null 2>&1 || true
-            done
-            echo "Cambio sin replanificar (requisitos de las FASEs $RF): se rehace la FASE-$N"
-            fase_n "$N" " (requisitos nuevos)"
-          else
-            tarjeta "Ruta" - 20m ruta
-          fi
-        fi ;;
-      requisitos:cambios)             tarjeta "Requisitos (cambios)" - 40m requisitos ;;
-      ruta:acepto|ruta:completo|ruta:ruta-*) tras_ruta ;;
-      ruta:rechazo)                   tarjeta "Ruta (otra vez)" - 20m ruta ;;
-      plan:conforme)   # sin FASEs por aceptar (un cambio que no necesitó FASE nueva): directamente al cierre
-        N=$(primera_sin_aceptar); if [ -n "$N" ]; then fase_n "$N"; else cierre; fi ;;
-      plan:cambios)                   t=$(tarjeta "Plan (cambios)" - 60m plan); tarjeta "Tareas" "$t" 60m tareas ;;
-      fase:acepto|fase:observaciones)
-        N=$(primera_sin_aceptar)
-        if [ -n "$N" ]; then fase_n "$N"
-        else cierre; fi ;;
-      fase:rechazo)                   fase_n "$FASE" " (cambios)" ;;
-      fase:descarto)                  bash "$ROOT/puerta.sh" "$REPO" fase "$FASE" ;;   # la misma puerta, sin lo descartado
-      entrega:descarto)               bash "$ROOT/puerta.sh" "$REPO" entrega ;;
-      entrega:acepto|entrega:observaciones) rm -f "$REPO/.sdd/hermes/mantenimiento/en-curso.txt"; echo "Proyecto entregado" ;;
-      entrega:rechazo)   # una sola FASE: se rehace (implementar con lo pedido → cierre); si no, solo el cierre
-        if [ "$(jq -r '.unica // false' "$P")" = true ]; then fase_n 0 " (cambios)" >/dev/null
-        else tarjeta "Cierre (otra vez)" - 120m cierre; fi ;;
-      preguntas:respondo)             if [ -n "$FASE" ]; then fase_n "$FASE" " (respuestas)"; else mantener; fi ;;
-      mantenimiento:cambio)   # se arregla sin cambiar el comportamiento y se entrega otra vez (no pasa por requisitos ni plan;
-                              # si hiciera falta cambiar un requisito, la etapa lo pregunta)
-        cp "$REPO/.sdd/hermes/mantenimiento/peticion-$GATE.txt" "$REPO/.sdd/hermes/mantenimiento/en-curso.txt"
-        mantener ;;
-      mantenimiento:ignoro)           echo "Hallazgos ignorados; no se vuelve a preguntar mientras no cambien" ;;
-      *) echo "Sin tramo siguiente para $TIPO:$RESULTADO" ;;
-    esac ;;
+    # Qué tramo lanza este resultado lo dice la tabla de transiciones (lib/transiciones.json); el código de cada tramo
+    # es su función tramo_<nombre>, arriba. «fin»: no se lanza nada (y se dice por qué).
+    DESTINO=$(trans_destino "$TIPO" "$RESULTADO") || { echo "Sin tramo siguiente para $TIPO:$RESULTADO"; exit 0; }
+    TRAMO=$(jq -r '.tramo' <<< "$DESTINO")
+    if [ "$TRAMO" = fin ]; then jq -r '.mensaje // "Sin tramo siguiente"' <<< "$DESTINO"; exit 0; fi
+    declare -F "tramo_$TRAMO" >/dev/null || { echo "ERROR: la tabla pide el tramo «${TRAMO}», que lanzar.sh no tiene" >&2; exit 2; }
+    "tramo_$TRAMO" ;;
 
   respuestas)   # respuestas elegidas en una puerta que piden ajustar plan, tareas o tests: se aplican primero y el tramo
                 # siguiente de esa puerta espera a que terminen
