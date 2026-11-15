@@ -70,7 +70,7 @@
 
 ## Field rules
 
-- **Needs:** customer need IDs from `CUSTOMER-NEEDS.md`. Every REQ-F / REQ-NF cites at least one: a requirement no customer asked for is gold plating and needs a conversation, not a silent keep. A REQ-C imposed by the team or the architecture writes `— (team/architecture source)`.
+- **Needs:** customer need IDs from `CUSTOMER-NEEDS.md`. Every REQ-F / REQ-NF cites at least one: a requirement no customer asked for is gold plating and needs a conversation, not a silent keep. A REQ-C imposed by the team or the architecture writes `— (team/architecture source)`. A requirement the customer did not ask for in so many words but that the method proposes so that what they asked for works (an empty state, a duplicate check, a limit) still cites the need it serves and adds `- **Origin:** method`: the requirements gate shows it apart, under «Lo añade el método», so the customer can say it is not wanted. Priority says nothing about origin: a Should the customer asked for has no `Origin` line.
 - **Verification:** how acceptance will be proven; the acceptance stage later asks for evidence of exactly this kind, so choose the method the customer would accept as proof.
 
   | Method | Use for | Evidence later |

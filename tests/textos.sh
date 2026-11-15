@@ -24,6 +24,12 @@ cat > requirements/REQUIREMENTS.md <<'M'
 - **Para el cliente:** Un menú arriba lleva a cada sección.
 - **Priority:** Should have
 - **Needs:** N-001
+- **Origin:** method
+
+### REQ-F-003: La carta con precios
+- **Para el cliente:** La carta entera, con el precio de cada plato.
+- **Priority:** Should have
+- **Needs:** N-002
 
 ### REQ-NF-001: Rendimiento
 - **Priority:** Must have
@@ -63,9 +69,11 @@ echo "$o" | grep -q '^🗣 Lo que pediste:$' && echo "$o" | grep -q '^«Una web 
   && ok "requisitos: empieza por lo que pediste, con tus palabras" || bad "petición: $o"
 sec() { echo "$o" | sed -n "/^$1/,/^\$/p"; }
 sec '✅ Sale de lo que pediste' | grep -q 'cinco raciones estrella' && ! sec '✅ Sale de lo que pediste' | grep -q 'Un menú arriba' \
-  && ok "requisitos: lo imprescindible que sale de tu petición, con la frase para el cliente" || bad "pedido: $(sec '✅')"
+  && ok "requisitos: lo que sale de tu petición, con la frase para el cliente" || bad "pedido: $(sec '✅')"
+sec '✅ Sale de lo que pediste' | grep -q 'La carta entera' && ! sec '➕ Lo añade el método' | grep -q 'La carta entera' \
+  && ok "requisitos: un Should que pediste es tuyo (la prioridad no dice de dónde viene; compra-piso)" || bad "should pedido: $(sec '✅')"
 sec '➕ Lo añade el método' | grep -q 'Un menú arriba' && sec '➕ Lo añade el método' | grep -q 'Rendimiento' \
-  && ok "requisitos: aparte, lo que añadió el método (lo no imprescindible y lo que no sale de ninguna necesidad)" || bad "añadido: $(sec '➕')"
+  && ok "requisitos: aparte, lo que añadió el método (Origin: method, o lo que no sale de ninguna necesidad)" || bad "añadido: $(sec '➕')"
 sec '🔧 Condiciones' | grep -q 'no necesita servidor' && ok "requisitos: las condiciones del proyecto, aparte" || bad "condiciones: $(sec '🔧')"
 ! echo "$o" | grep -q 'ya no vale' && ok "requisitos: no enseña los requisitos retirados" || bad "retirado aparece"
 echo "$o" | grep -q '⭐ recomendada' && echo "$o" | grep -q '^1. ¿Qué foto ponemos de portada?$' && ok "preguntas: numeradas como los botones y con la recomendada marcada" || bad "preguntas: $o"
@@ -599,6 +607,20 @@ assert [(x["pantalla"], x["texto"]) for x in w] == [("la vista de la organizador
 a = "GIVEN 2 plazas WHEN Pablo se da de baja THEN hay 1 persona apuntada y 1 plaza libre"
 b = "GIVEN 2 plazas WHEN Pablo se da de baja THEN hay 1 persona apuntada de 2 plazas, y una persona nueva recibe plaza"
 assert T._n_cambios(a, b) > 1 and T._n_cambios(a, a.replace("libre", "vacía")) == 1
+PY
+# Datos del ejemplo no son textos de la web (compra-piso): lo que el GIVEN/WHEN cita y los casos de una plantilla que
+# también se enseña se quitan; un texto fijo que además sale en un GIVEN de otro criterio, no
+python3 - "$ROOT/plugin/hermes-sdd" <<'PY' && ok "«Esto dirá la web» sin datos del ejemplo («Leche», «Añadido por Lucía»)" || bad "datos del ejemplo en la web"
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_textos as T
+t = """### REQ-F-001: x
+  - GIVEN "Leche" added by Lucía WHEN Pablo opens the list THEN the user sees "Leche" "Añadido por Lucía"
+    - Se ve: "Leche", "Añadido por Lucía" en Lista
+  - GIVEN a list WHEN Ana adds "Pan" THEN the user sees "Añadido por {nombre}" and "Pendiente"
+    - Se ve: "Añadido por {nombre}", "Pendiente" en Lista
+  - GIVEN "Pendiente" products WHEN x THEN the user sees "Pendiente"
+    - Se ve: "Pendiente" en Lista
+"""
+assert [x["texto"] for x in T.textos_web(t)] == ["Añadido por {nombre}", "Pendiente"], T.textos_web(t)
 PY
 # un efecto mal escrito («efecto: --adversarial …») no invalida la decisión (antes la puerta de entrega del taller quedó
 # en error al descartar impugnaciones): se aplica como trabajo y nunca autoriza editar tests

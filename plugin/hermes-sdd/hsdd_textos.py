@@ -68,7 +68,7 @@ def requisitos(repo: Path) -> list[dict]:
         m = re.match(r"^###\s+(REQ-([A-Z]+)-[0-9A-Za-z]+)\s*:?\s*(.*)$", linea)
         if m:
             actual = {"id": m.group(1), "tipo": m.group(2), "titulo": m.group(3).strip(), "cliente": "", "prioridad": "",
-                      "necesidades": None, "obsoleto": False, "verificacion": ""}
+                      "necesidades": None, "obsoleto": False, "verificacion": "", "origen": ""}
             res.append(actual)
             continue
         if linea.startswith("#"):
@@ -85,6 +85,8 @@ def requisitos(repo: Path) -> list[dict]:
             actual["prioridad"] = v
         elif k in ("needs", "necesidades"):
             actual["necesidades"] = re.findall(r"\bN-\d+\b", v)
+        elif k in ("origin", "origen"):
+            actual["origen"] = "metodo" if re.search(r"method|m[eé]todo", v, re.I) else "cliente"
         elif k in ("verification", "verificación", "verificacion"):
             actual["verificacion"] = v.split("—")[0].split(" - ")[0].strip().lower()
         elif k in ("status", "estado") and re.search(r"deprecat|obsolet", v, re.I):
@@ -107,9 +109,10 @@ def _texto_req(r: dict) -> str:
 
 
 def _es_extra(r: dict) -> bool:
-    """¿Lo añadió el método? Lo que no es imprescindible (Should/Could) o no sale de ninguna necesidad del cliente."""
-    p = r["prioridad"].lower()
-    return (not r["necesidades"]) or p.startswith(("should", "could", "nice", "debería", "deseable", "opcional"))
+    """¿Lo añadió el método? Lo que no sale de ninguna necesidad de la persona, o lo que el requisito marca como suyo
+    (`- **Origin:** method`). La prioridad no dice de dónde viene (compra-piso: «borrar los comprados» lo pidió el
+    cliente y, por ser Should, salía como «lo añade el método»)."""
+    return (not r["necesidades"]) or r.get("origen") == "metodo"
 
 
 def _criterios(texto: str) -> dict:
@@ -205,7 +208,7 @@ def _sin_parentesis(linea: str) -> str:
 def textos_web(texto: str) -> list[dict]:
     """[{pantalla, texto, ejemplo}] de las líneas «Se ve:» de los criterios REQ-F, en orden y sin repetir
     (`- Se ve: "a", "b" en <pantalla>; "c" en <otra>`)."""
-    out, vistos, tipo, criterio = [], set(), None, ""
+    out, vistos, tipo, criterio, datos = [], set(), None, "", {}
     for l in texto.replace("“", '"').replace("”", '"').splitlines():
         m = re.match(r"^###\s+REQ-([A-Z]+)-", l)
         if m:
@@ -227,13 +230,22 @@ def textos_web(texto: str) -> list[dict]:
                 continue
             donde = re.match(r"\s*,?\s*(?:en|in|on)\s+(.*\S)", trozo[trozo.rfind('"') + 1:])
             pantalla = donde.group(1).rstrip(".") if donde else ""
+            dato = set(_COMILLAS.findall(re.split(r"\b(?:THEN|ENTONCES)\b", criterio)[0])) if criterio else set()
             for t in citas:
+                datos.setdefault(t, []).append(t in dato)
                 if (pantalla.lower(), t) not in vistos:
                     vistos.add((pantalla.lower(), t))
                     out.append({"pantalla": pantalla, "texto": t, "ejemplo": _ejemplo(t, criterio)})
     # una pantalla dicha como ruta («/organizadora») que solo repite textos ya vistos en una pantalla con nombre sobra
     con_nombre = {x["texto"] for x in out if not x["pantalla"].startswith("/")}
-    return [x for x in out if not (x["pantalla"].startswith("/") and x["texto"] in con_nombre)]
+    out = [x for x in out if not (x["pantalla"].startswith("/") and x["texto"] in con_nombre)]
+    # Datos del ejemplo, no textos de la web (compra-piso: «Leche», «Pasta», «Añadido por Lucía» salían como lo que
+    # dirá la web): lo que el GIVEN/WHEN de su criterio ya cita (un producto, un nombre) en todos los criterios donde
+    # sale, y lo que es un caso de una plantilla que también se enseña («Añadido por Lucía» de «Añadido por {nombre}»)
+    plantillas = [re.compile("^" + ".+".join(re.escape(p) for p in re.split(r"\{[^{}]+\}", x["texto"])) + "$")
+                  for x in out if re.search(r"\{[^{}]+\}", x["texto"])]
+    return [x for x in out if "{" in x["texto"]
+            or not (all(datos.get(x["texto"], [False])) or any(p.match(x["texto"]) for p in plantillas))]
 
 
 def _bloque_web(repo: Path, cambio: bool, maximo: int = 12) -> str:
