@@ -1,0 +1,95 @@
+# hermes-sdd · la caja donde trabaja el agente (executors/github.sh la lanza; no se usa a mano)
+#
+# Una máquina nueva de GitHub por etapa, que se borra al acabar. El agente solo tiene el proyecto: ni el estado de
+# Hermes, ni el notario, ni su clave, ni permiso para escribir en el repo (contents: read). No sube nada: deja su
+# trabajo en un artefacto (commits en un bundle, cambios sin commit, ficheros ignorados como .sdd/ y evidencias/) que
+# el orquestador descarga, valida con las mismas reglas que en local y solo entonces integra.
+#
+# Necesita el secreto CLAUDE_CODE_OAUTH_TOKEN (claude setup-token) y este fichero en la rama por defecto.
+name: sdd-etapa
+run-name: "sdd · ${{ inputs.nombre }} · ${{ inputs.run }}"
+on:
+  workflow_dispatch:
+    inputs:
+      run: { description: "id de la ejecución", required: true }
+      nombre: { description: "etapa (y FASE)", required: true }
+      arnes: { description: "commit de hermes-sdd", required: true }
+      modelo: { required: false, default: "" }
+      paso: { required: false, default: "" }
+      tope_usd: { required: false, default: "" }
+      tope_min: { required: false, default: "60" }
+permissions:
+  contents: read
+concurrency:
+  group: sdd-etapa-${{ github.repository }}
+  cancel-in-progress: false
+jobs:
+  etapa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0, path: proyecto, persist-credentials: false }
+      - uses: actions/checkout@v4
+        with: { repository: noelserdna/hermes-sdd, ref: "${{ inputs.arnes }}", path: arnes, persist-credentials: false }
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            ~/.cache/ms-playwright
+          key: sdd-${{ runner.os }}-${{ hashFiles('proyecto/package-lock.json') }}
+          restore-keys: sdd-${{ runner.os }}-
+      - name: Contexto de la etapa
+        working-directory: proyecto
+        run: |
+          # el último commit de la rama es el contexto (ficheros ignorados que la etapa necesita y el prompt): se quita
+          # de la historia y sus ficheros quedan como ignorados, igual que en el ordenador del orquestador
+          git rev-parse HEAD~1 > "$RUNNER_TEMP/base"
+          git reset -q --mixed "$(cat "$RUNNER_TEMP/base")"
+          git config user.name "$(jq -r .nombre .sdd/hermes/caja/identidad.json)"
+          git config user.email "$(jq -r .email .sdd/hermes/caja/identidad.json)"
+          bash ../arnes/metodo/scripts/install-git-hooks.sh -C . --quiet || true
+          npm i -g @anthropic-ai/claude-code >/dev/null 2>&1
+          if [ -f package.json ] && grep -q '"@playwright/test"' package.json; then
+            (npm ci --no-audit --no-fund || npm install --no-audit --no-fund) >/dev/null 2>&1 || true
+            npx playwright install --with-deps chromium >/dev/null 2>&1 || true
+          fi
+      - name: Etapa
+        working-directory: proyecto
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          MODELO: ${{ inputs.modelo }}
+          TOPE_USD: ${{ inputs.tope_usd }}
+          TOPE_MIN: ${{ inputs.tope_min }}
+          SDD_PASO: ${{ inputs.paso }}
+          SDD_RUN: ${{ inputs.run }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/salida"
+          AJUSTES='{"enabledPlugins":{"sdd-pipeline@noelserdna":false},"permissions":{"deny":["Edit(.sdd/hermes/decisiones/**)","Edit(.sdd/hermes/puertas/**)","Edit(wiki/**)"]}}'
+          ARGS=(-p "$(cat .sdd/hermes/caja/prompt.txt)" --output-format json --plugin-dir "$GITHUB_WORKSPACE/arnes/metodo" --settings "$AJUSTES" --dangerously-skip-permissions)
+          [ -n "$MODELO" ] && ARGS+=(--model "$MODELO")
+          [ -n "$TOPE_USD" ] && ARGS+=(--max-budget-usd "$TOPE_USD")
+          rc=0
+          SDD_EXECUTOR=hermes DISABLE_AUTOUPDATER=1 timeout $(( ${TOPE_MIN:-60} * 60 )) claude "${ARGS[@]}" \
+            > "$RUNNER_TEMP/salida/claude.json" 2> "$RUNNER_TEMP/salida/claude.err" || rc=$?
+          echo "$rc" > "$RUNNER_TEMP/salida/rc"
+      - name: Recoger el trabajo
+        if: always()
+        working-directory: proyecto
+        run: |
+          S="$RUNNER_TEMP/salida"; mkdir -p "$S"; BASE=$(cat "$RUNNER_TEMP/base")
+          echo "$BASE" > "$S/base"
+          [ "$(git rev-parse HEAD)" = "$BASE" ] || git bundle create "$S/commits.bundle" "$BASE..HEAD"
+          git diff HEAD --binary > "$S/pendiente.patch"
+          L=(); for f in pipeline-state.json .sdd evidencias; do [ -e "$f" ] && L+=("$f"); done
+          [ ${#L[@]} -eq 0 ] || tar czf "$S/ignorados.tgz" --exclude=.sdd/hermes/caja --exclude=.sdd/entregas \
+            --exclude=.sdd/hermes/lock --exclude=.sdd/hermes/decisiones --exclude=.sdd/hermes/puertas "${L[@]}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sdd-${{ inputs.run }}
+          path: ${{ runner.temp }}/salida
+          retention-days: 1
+          include-hidden-files: true

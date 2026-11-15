@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# executors/github.sh sin GitHub: un `gh` falso hace de GitHub Actions (clona la rama temporal de un origin local, hace
+# lo que diga el escenario y deja el artefacto como el workflow). Se prueba lo que hace el ordenador con lo que vuelve
+# de la caja: lo aplica si es legítimo y no aplica nada si trae decisiones, puertas, enlaces o commits ajenos.
+set -uo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
+fail=0; ok() { echo "ok   $1"; }; bad() { echo "FAIL $1"; fail=1; }
+export HERMES_SDD_HOME="$T/home"; mkdir -p "$HERMES_SDD_HOME"
+echo '{"commit": "0123456789abcdef0123456789abcdef01234567"}' > "$HERMES_SDD_HOME/instalacion.json"
+git init -q --bare "$T/origin.git"
+R="$T/r"; mkdir -p "$R"; cd "$R"; git init -q -b main; git config user.email t@t; git config user.name t
+printf '.sdd/\npipeline-state.json\nevidencias/\n' > .gitignore; echo hola > a.txt; git add -A; git commit -qm init
+git remote add origin "$T/origin.git"; git push -q origin main
+mkdir -p .sdd/hermes; echo '{"ejecutor":"github","github":{"repo":"yo/prueba"}}' > .sdd/hermes/hermes-sdd.json
+echo '{"etapa":"x"}' > pipeline-state.json
+
+mkdir -p "$T/bin"
+cat > "$T/bin/gh" <<G
+#!/usr/bin/env bash
+case "\$1 \$2" in
+  "workflow view") exit 0 ;;
+  "workflow run") printf '%s\n' "\$@" > "$T/lanzado"; exit 0 ;;
+  "run list") echo 7 ;;
+  "run view") case "\$*" in *conclusion*) echo success ;; *) echo completed ;; esac ;;
+  "run cancel") echo cancelada >> "$T/cancelada" ;;
+  "run download")
+    D=""; while [ \$# -gt 0 ]; do [ "\$1" = -D ] && D=\$2; shift; done
+    rama=\$(grep -A1 '^--ref$' "$T/lanzado" | tail -1)
+    W="$T/runner"; rm -rf "\$W"; git clone -q -b "\$rama" "$T/origin.git" "\$W"; cd "\$W"
+    git config user.email caja@t; git config user.name caja
+    BASE=\$(git rev-parse HEAD~1); git reset -q --mixed "\$BASE"
+    [ -f .sdd/hermes/caja/prompt.txt ] && cp .sdd/hermes/caja/prompt.txt "$T/prompt-recibido"
+    [ -f pipeline-state.json ] && cp pipeline-state.json "$T/contexto-recibido"
+    case "\${ESCENARIO:-}" in
+      bien) echo trabajo > b.txt; git add b.txt; git commit -qm "feat: b"; echo pendiente >> a.txt
+            mkdir -p evidencias/FASE-0 .sdd/hermes; echo png > evidencias/FASE-0/x.png; echo '{"etapa":"y"}' > pipeline-state.json ;;
+      decision) mkdir -p .sdd/hermes/decisiones; echo '{"verbo":"acepto"}' > .sdd/hermes/decisiones/g1.json ;;
+      enlace) ln -s /etc/passwd .sdd/enlace ;;
+      fuera) echo x > .sdd/../notas.txt; mkdir -p wiki; echo x > wiki/w.md ;;
+      ajeno) git checkout -q --orphan otra; git rm -rq --cached . ; echo x > z; git add z; git commit -qm otra ;;
+    esac
+    mkdir -p "\$D"; S="\$D"; echo "\$BASE" > "\$S/base"
+    [ "\$(git rev-parse HEAD)" = "\$BASE" ] || git bundle create -q "\$S/commits.bundle" "\$BASE..HEAD" 2>/dev/null || git bundle create -q "\$S/commits.bundle" HEAD
+    git diff HEAD --binary > "\$S/pendiente.patch" 2>/dev/null
+    L=(); for f in pipeline-state.json .sdd evidencias; do [ -e "\$f" ] && L+=("\$f"); done
+    if [ "\${ESCENARIO:-}" = fuera ]; then L+=(wiki); fi
+    tar czf "\$S/ignorados.tgz" --exclude=.sdd/hermes/caja "\${L[@]}"
+    if [ "\${ESCENARIO:-}" = decision ]; then tar czf "\$S/ignorados.tgz" --exclude=.sdd/hermes/caja "\${L[@]}"; fi
+    echo '{"type":"result","subtype":"success","is_error":false,"total_cost_usd":0.5,"num_turns":3,"result":"hecho"}' > "\$S/claude.json"
+    echo 0 > "\$S/rc" ;;
+  "api -X") exit 0 ;;
+  *) exit 0 ;;
+esac
+G
+chmod +x "$T/bin/gh"; export PATH="$T/bin:$PATH"
+corre() { out=$(ESCENARIO=$1 SDD_TOPE_USD=4.5 bash "$ROOT/executors/github.sh" "$R" "implementar-0" "haz la tarea" sonnet 2>/dev/null | tail -1); }
+
+H0=$(git rev-parse HEAD)
+corre bien
+jq -e '.outcome == "done" and .cost_usd == 0.5 and .turns == 3 and (.caja | test("actions/runs/7"))' <<< "$out" >/dev/null && ok "bien: done con coste y enlace a la ejecución" || bad "bien: $out"
+[ "$(git log -1 --format=%s)" = "feat: b" ] && [ "$(git rev-parse HEAD~1)" = "$H0" ] && ok "sus commits entran por fast-forward sobre el commit enviado" || bad "commits: $(git log --oneline | head -3)"
+git diff --quiet a.txt; [ $? = 1 ] && ok "lo que dejó sin commit queda pendiente (etapa.sh lo commitea a la vista)" || bad "pendiente"
+[ -f evidencias/FASE-0/x.png ] && grep -q '"y"' pipeline-state.json && ok "vuelven las evidencias y el estado del método" || bad "ignorados"
+grep -q 'haz la tarea' "$T/prompt-recibido" && grep -q '"x"' "$T/contexto-recibido" && ok "la caja recibió el prompt y el contexto ignorado" || bad "contexto"
+grep -qx 'tope_usd=4.5' "$T/lanzado" && grep -qx 'arnes=0123456789abcdef0123456789abcdef01234567' "$T/lanzado" && grep -qx 'modelo=sonnet' "$T/lanzado" \
+  && ok "lanza con el tope, el modelo y el commit del arnés" || bad "lanzado: $(cat "$T/lanzado")"
+! git -C "$T/origin.git" branch --list 'sdd-caja/*' | grep -q . && ok "la rama temporal se borra al acabar" || bad "rama: $(git -C "$T/origin.git" branch)"
+git checkout -q a.txt
+
+for esc in decision enlace fuera ajeno; do
+  H=$(git rev-parse HEAD); corre "$esc"
+  if jq -e '.outcome == "failed"' <<< "$out" >/dev/null && [ "$(git rev-parse HEAD)" = "$H" ] && [ ! -e .sdd/hermes/decisiones/g1.json ] && [ ! -e .sdd/enlace ] && [ ! -e wiki ]; then
+    ok "$esc: no se aplica nada ($(jq -r .reason <<< "$out" | cut -c1-70))"
+  else bad "$esc: $out $(git log --oneline -1)"; fi
+done
+echo x >> a.txt; corre bien
+jq -e '.outcome == "failed" and (.reason | test("cambios sin commit"))' <<< "$out" >/dev/null && ok "con cambios sin commit no se lanza" || bad "sucio: $out"
+git checkout -q a.txt
+exit $fail

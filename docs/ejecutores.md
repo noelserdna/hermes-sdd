@@ -67,6 +67,37 @@ Ahora hay cuatro capas, de más a menos fuerte:
 | **Permisos de Claude Code** en todas las etapas | `Edit(~/.hermes/**)`, `Edit(.sdd/hermes/decisiones/**)`, `Edit(.sdd/hermes/puertas/**)` denegados (también las redirecciones de Bash a esas rutas) | No ven lo que abre un script por su cuenta |
 | **Guardias** (`sdd-executor-deny.sh`, `sdd-upstream-guard.sh`) | Órdenes que mencionan `.hermes/`, decisiones o puertas, `firmar.sh`/`decidir.sh`; en Hermes también `write_file`/`patch` a esas rutas y `execute_code` | Son regex: dificultan, no garantizan |
 
-Lo que queda abierto: una etapa con navegador que se lo proponga (un script propio que escriba en `~/.hermes`). El
-cierre completo es separar usuarios del sistema (o un contenedor) para las etapas, con el estado de Hermes sin permiso
-de escritura para ellas (ver `docs/encargado.md`).
+Lo que queda abierto con los ejecutores locales: una etapa con navegador que se lo proponga (un script propio que
+escriba en `~/.hermes`). Lo cierra la caja de GitHub.
+
+### La caja de GitHub (`"ejecutor": "github"`)
+
+Cada etapa corre en una máquina de GitHub Actions que se crea para ella y se borra al acabar. El agente no ve este
+ordenador (ni `~/.hermes`, ni el notario, ni su clave) y no puede escribir en el repo: el workflow tiene
+`contents: read`. Dentro trabaja sin preguntar (`--dangerously-skip-permissions`): la máquina es desechable, y ahí
+Chromium funciona sin pelearse con ningún sandbox.
+
+1. `executors/github.sh` sube a una rama temporal `sdd-caja/<run>` el HEAD del proyecto más un commit de contexto
+   (lo ignorado que la etapa necesita: `.sdd/`, `pipeline-state.json`, `evidencias/` si ocupan menos de 50 MB; el
+   prompt; la identidad de git). Lanza el workflow y espera; si la etapa muere, lo cancela.
+2. La caja (`templates/github/sdd-etapa.yml`) descarga el arnés en el commit instalado, hace la etapa con los mismos
+   hooks y topes, y deja su trabajo en un artefacto: los commits en un bundle, lo que quedó sin commit en un parche y
+   lo ignorado en un tar.
+3. El ordenador lo valida antes de tocar nada. Los commits tienen que descender del commit enviado. Lo ignorado solo
+   puede ir bajo `.sdd/`, `evidencias/` o `pipeline-state.json`, sin enlaces ni `..`, y nunca decisiones ni puertas.
+   Si algo no cumple, no se aplica nada. Después avanza la rama (fast-forward), aplica el parche y copia lo ignorado.
+   Las comprobaciones de `etapa.sh` (registros humanos, tests congelados…) se aplican igual que en local.
+4. Borra la rama temporal y el artefacto.
+
+Para usarla, el proyecto necesita:
+- su repo en GitHub (`origin`, o `"github": {"repo": "dueño/nombre"}` en `.sdd/hermes/hermes-sdd.json`);
+- `templates/github/sdd-etapa.yml` en `.github/workflows/` de la rama por defecto;
+- el secreto `CLAUDE_CODE_OAUTH_TOKEN` (`claude setup-token`; `gh secret set CLAUDE_CODE_OAUTH_TOKEN -R dueño/nombre`);
+- `"ejecutor": "github"` en `.sdd/hermes/hermes-sdd.json`, o en `ejecutores` solo para algunas etapas.
+
+El agente puede leer ese token dentro de la caja, igual que en cualquier sitio donde trabaje: usa uno solo para esto.
+Los topes de gasto acotan lo que puede gastar.
+
+**Firma del notario.** Con el agente fuera del ordenador, la clave del notario (`~/.ssh/hermes-notario`, o
+`clave_notario` en `sdd.json`) queda fuera de su alcance. Los tags de aceptación y las actas salen firmados, y
+`verificar.sh <repo>` comprueba cada uno: `OK`, `SIN FIRMA` o `FIRMA MALA`.

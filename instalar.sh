@@ -109,7 +109,9 @@ if [ "$ANTES_ACTUAL" != "$DEST" ]; then
   python3 -c 'import os, sys; os.replace(sys.argv[1], sys.argv[2])' "$HOME_SDD/.actual-$$" "$HOME_SDD/actual"   # atómico
 fi
 echo "· Arnés $VERSION → $DEST"
-jq -n --arg r "$HOME_SDD/actual" --arg v "$VERSION" --arg d "$DEST" '{root:$r, version:$v, directorio:$d}' > "$HOME_SDD/instalacion.json.tmp" &&
+# commit: el completo, para que una caja remota (executors/github.sh) descargue exactamente este arnés
+COMMIT=$(git -C "$SRC" rev-parse HEAD 2>/dev/null || true); case "$REV" in *-cambios-*) COMMIT="" ;; esac   # con cambios sin commit no hay commit que descargar
+jq -n --arg r "$HOME_SDD/actual" --arg v "$VERSION" --arg d "$DEST" --arg c "$COMMIT" '{root:$r, version:$v, directorio:$d} + (if $c == "" then {} else {commit:$c} end)' > "$HOME_SDD/instalacion.json.tmp" &&
   mv "$HOME_SDD/instalacion.json.tmp" "$HOME_SDD/instalacion.json"
 # Versiones viejas: se quedan las 3 más recientes (y siempre la que está en uso)
 VIEJAS=$(find "$HOME_SDD" -mindepth 1 -maxdepth 1 -type d -name '[0-9]*.[0-9]*' -print0 2>/dev/null | xargs -0 ls -dt 2>/dev/null | tail -n +4 || true)
