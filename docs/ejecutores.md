@@ -89,7 +89,12 @@ Chromium funciona sin pelearse con ningún sandbox.
    Las comprobaciones de `etapa.sh` (registros humanos, tests congelados…) se aplican igual que en local.
 4. Borra la rama temporal y el artefacto.
 
-Para usarla, el proyecto necesita:
+Con `"ejecutor": "github"` en `~/.hermes/hermes-sdd/sdd.json`, los proyectos nuevos (y los adoptados) se preparan
+solos: repo **público** en GitHub (en tu cuenta, o en `github.dueno`), el workflow commiteado y subido a la rama por
+defecto. Lo único que no se puede hacer solo es el token: si falta, `lanzar.sh` avisa con la orden para ponerlo desde
+el portapapeles (`pbpaste | tr -d '[:space:]' | gh secret set CLAUDE_CODE_OAUTH_TOKEN -R dueño/nombre`).
+
+A mano, el proyecto necesita:
 - su repo en GitHub (`origin`, o `"github": {"repo": "dueño/nombre"}` en `.sdd/hermes/hermes-sdd.json`);
 - `templates/github/sdd-etapa.yml` en `.github/workflows/` de la rama por defecto;
 - el secreto `CLAUDE_CODE_OAUTH_TOKEN` (`claude setup-token`; `gh secret set CLAUDE_CODE_OAUTH_TOKEN -R dueño/nombre`);

@@ -38,11 +38,35 @@ preparar() {  # lo común a iniciar y adoptar: sin LLM
   mkdir -p .sdd/hermes
   for l in pipeline-state.json .sdd/ evidencias/; do grep -qxF "$l" .gitignore 2>/dev/null || echo "$l" >> .gitignore; done
   [ -f pipeline-state.json ] || cp "$ROOT/metodo/templates/pipeline-state.template.json" pipeline-state.json
-  [ -f .sdd/hermes/hermes-sdd.json ] || cp "$ROOT/templates/hermes-sdd.json" .sdd/hermes/hermes-sdd.json
+  if [ ! -f .sdd/hermes/hermes-sdd.json ]; then
+    cp "$ROOT/templates/hermes-sdd.json" .sdd/hermes/hermes-sdd.json
+    # El ejecutor de los proyectos nuevos (sdd.json «ejecutor»: claude | github), si se fijó para todos
+    EJ=$(jq -r '.ejecutor // empty' "${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}/sdd.json" 2>/dev/null || true)
+    if [ -n "$EJ" ]; then t=$(mktemp); jq --arg e "$EJ" '.ejecutor = $e' .sdd/hermes/hermes-sdd.json > "$t" && mv "$t" .sdd/hermes/hermes-sdd.json; fi
+  fi
   bash "$ROOT/metodo/scripts/install-git-hooks.sh" -C "$REPO" --quiet
   [ -f AGENTS.md ] || { cp "$ROOT/templates/AGENTS.md" AGENTS.md; echo "AVISO: AGENTS.md creado desde la plantilla; revisa el Stack Profile" >&2; }
+  [ "$(jq -r '.ejecutor // "claude"' .sdd/hermes/hermes-sdd.json)" = github ] && caja_github
   git add -A && { git diff --cached --quiet || git commit -qm "chore(sdd): set up hermes-sdd"; }
+  [ "$(jq -r '.ejecutor // "claude"' .sdd/hermes/hermes-sdd.json)" = github ] && git push -q origin HEAD 2>/dev/null || true
   asegurar_tablero
+}
+caja_github() {  # el proyecto trabaja en la caja de GitHub (executors/github.sh): repo público, workflow y secreto
+  command -v gh >/dev/null || { echo "ERROR: la caja de GitHub necesita gh (GitHub CLI)" >&2; exit 1; }
+  if ! git remote get-url origin >/dev/null 2>&1; then
+    local dueno; dueno=$(jq -r '.github.dueno // empty' "${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}/sdd.json" 2>/dev/null || true)
+    [ -n "$dueno" ] || dueno=$(gh api user -q .login)
+    # Público: así lo quiere quien usa el arnés, y en repos públicos los minutos de Actions no cuestan
+    gh repo create "$dueno/$BOARD" --public --source . --description "$(basename "$REPO") · hecho con hermes-sdd" >/dev/null ||
+      { echo "ERROR: no se pudo crear el repo $dueno/$BOARD en GitHub" >&2; exit 1; }
+  fi
+  mkdir -p .github/workflows
+  cp "$ROOT/templates/github/sdd-etapa.yml" .github/workflows/sdd-etapa.yml
+  local gh_repo; gh_repo=$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || true)
+  if [ -n "$gh_repo" ] && ! gh secret list -R "$gh_repo" 2>/dev/null | grep -q '^CLAUDE_CODE_OAUTH_TOKEN'; then
+    echo "AVISO: falta el token de Claude en $gh_repo. Copia el token (sk-ant-oat01-…) y ejecuta:" >&2
+    echo "  pbpaste | tr -d '[:space:]' | gh secret set CLAUDE_CODE_OAUTH_TOKEN -R $gh_repo" >&2
+  fi
 }
 asegurar_tablero() {
   hermes kanban boards list --json | jq -e --arg b "$BOARD" 'any(.[]; .slug == $b)' >/dev/null ||

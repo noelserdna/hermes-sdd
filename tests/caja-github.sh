@@ -77,4 +77,31 @@ done
 echo x >> a.txt; corre bien
 jq -e '.outcome == "failed" and (.reason | test("cambios sin commit"))' <<< "$out" >/dev/null && ok "con cambios sin commit no se lanza" || bad "sucio: $out"
 git checkout -q a.txt
+# lanzar.sh preparar con «ejecutor»: «github» en sdd.json: repo público en GitHub, workflow de la caja y aviso del token
+mkdir -p "$T/bin2"
+cat > "$T/bin2/gh" <<G
+#!/usr/bin/env bash
+echo "\$*" >> "$T/gh2.log"
+case "\$1 \$2" in
+  "api user") echo yo ;;
+  "repo create") git init -q --bare "$T/nuevo.git"; git remote add origin "$T/nuevo.git" ;;
+  "repo view") echo yo/proyecto-caja ;;
+  "secret list") exit 0 ;;
+esac
+G
+cat > "$T/bin2/hermes" <<'H'
+#!/usr/bin/env bash
+case "$*" in *"boards list"*) echo '[]' ;; esac
+H
+chmod +x "$T/bin2/gh" "$T/bin2/hermes"
+echo '{"ejecutor": "github"}' > "$HERMES_SDD_HOME/sdd.json"
+P2="$T/Proyecto-Caja"; mkdir -p "$P2"; cd "$P2"; git init -q -b main; git config user.email t@t; git config user.name t
+echo x > README.md; git add -A; git commit -qm init
+o=$(PATH="$T/bin2:$PATH" bash "$ROOT/lanzar.sh" preparar "$P2" 2>&1)
+grep -q 'repo create yo/proyecto-caja --public' "$T/gh2.log" && ok "crea el repo en GitHub, público" || bad "repo: $(cat "$T/gh2.log")"
+[ "$(jq -r .ejecutor .sdd/hermes/hermes-sdd.json)" = github ] && git ls-files --error-unmatch .github/workflows/sdd-etapa.yml >/dev/null 2>&1 \
+  && ok "el proyecto queda con ejecutor github y el workflow de la caja commiteado" || bad "workflow: $(git ls-files | head)"
+[ "$(git -C "$T/nuevo.git" rev-parse main 2>/dev/null)" = "$(git rev-parse HEAD)" ] && ok "y subido a la rama por defecto (el workflow tiene que estar ahí)" || bad "push"
+echo "$o" | grep -q 'falta el token de Claude en yo/proyecto-caja' && echo "$o" | grep -q 'pbpaste' && ok "avisa de que falta el token y cómo ponerlo" || bad "aviso: $o"
+rm -f "$HERMES_SDD_HOME/sdd.json"; cd "$R"
 exit $fail
