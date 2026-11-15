@@ -6,7 +6,7 @@ cd "$1"; D=acceptance/decisions.jsonl; mkdir -p acceptance
 med='{"type":"measurement","at":"2026-10-13T06:07:33Z","by":"command","role":"automated","req":"REQ-F-001","ac":1,"observed":0,"op":"eq","threshold":0,"command":"npm audit","extract":"x=(\\d+)"}'
 [ -n "${FALSO_PROMPT:-}" ] && printf '%s' "$3" > "$FALSO_PROMPT"   # lo que se le pidió (para comprobar instrucciones)
 # cada llamada en una línea JSON: el modelo que recibió y el prompt (para comprobar qué sub-paso usa qué modelo)
-[ -n "${FALSO_LOG:-}" ] && jq -nc --arg n "$2" --arg m "${4:-}" --arg p "$3" '{nombre:$n, modelo:$m, prompt:$p}' >> "$FALSO_LOG"
+[ -n "${FALSO_LOG:-}" ] && jq -nc --arg n "$2" --arg m "${4:-}" --arg p "$3" --arg u "${SDD_TOPE_USD:-}" --arg t "${SDD_TOPE_MIN:-}" '{nombre:$n, modelo:$m, prompt:$p, tope_usd:$u, tope_min:$t}' >> "$FALSO_LOG"
 case "${FALSO_MODO:-}" in
   medicion) echo "$med" >> "$D" ;;                                   # la CLI la escribió; el ejecutor no pudo commitear
   humano)   echo '{"type":"demo","by":"Ana","role":"Cliente","req":"REQ-F-001","ac":1,"pass":true}' >> "$D"
@@ -18,4 +18,4 @@ case "${FALSO_MODO:-}" in
             echo '{"type":"resolution","challenge":"CH-001","req":"REQ-F-001","ac":1,"reason":"arreglado","verifier":"yo"}' >> acceptance/challenges.jsonl ;;
   borra)    sed 's/"observed":0/"observed":1/' "$D" > "$D.tmp" && mv "$D.tmp" "$D" ;;  # reescribe un registro anterior
 esac
-jq -nc --arg r "${FALSO_RESUMEN:-}" '{outcome:"done", reason:"ok", run:"falso", cost_usd:0, resumen:$r}'  # FALSO_RESUMEN: lo que «dice» el ejecutor
+jq -nc --arg r "${FALSO_RESUMEN:-}" --argjson c "${FALSO_COSTE:-0}" '{outcome:"done", reason:"ok", run:"falso", cost_usd:$c, resumen:$r}'  # FALSO_RESUMEN: lo que «dice» el ejecutor

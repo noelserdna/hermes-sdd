@@ -79,6 +79,8 @@ AJUSTES=$(jq -nc --arg sb "${SDD_SANDBOX:-0}" --arg os "$(uname -s)" '
         + (if $os == "Darwin" then {failIfUnavailable: true} else {} end))} else {} end)')
 ARGS=(-p "$PROMPT" --output-format json --plugin-dir "$ROOT/metodo" --settings "$AJUSTES")
 [ -n "$MODELO" ] && ARGS+=(--model "$MODELO")
+# Tope de gasto de esta ejecución (etapa.sh lo calcula con lo que le queda a la etapa y al proyecto)
+[ -n "${SDD_TOPE_USD:-}" ] && ARGS+=(--max-budget-usd "$SDD_TOPE_USD")
 cd "$REPO"
 env -i HOME="$HOME" USER="$USER" LOGNAME="${LOGNAME:-$USER}" TMPDIR="${TMPDIR:-/tmp}" LANG="${LANG:-es_ES.UTF-8}" \
   PATH="$PATH_LIMPIO" TERM=dumb \
@@ -93,6 +95,11 @@ INICIO=$(date +%s)
 while kill -0 "$CPID" 2>/dev/null; do
   if [ "$(ps -o ppid= -p $$ | tr -d ' ')" = 1 ]; then
     echo "padre desaparecido: se detiene la etapa" >> "$ERR"; limpiar; exit 1
+  fi
+  # Tope de tiempo propio (SDD_TOPE_MIN; 0 = sin tope): antes solo frenaba el --max-runtime de la tarjeta
+  if [ "${SDD_TOPE_MIN:-0}" -gt 0 ] && [ $(( $(date +%s) - INICIO )) -ge $(( SDD_TOPE_MIN * 60 )) ]; then
+    echo "superó el tope de ${SDD_TOPE_MIN} min: se detiene" >> "$ERR"; limpiar
+    salir failed "la ejecución superó su tope de tiempo (${SDD_TOPE_MIN} min): para darle más, sube topes.ejecucion_min" '{"tope":"tiempo"}'
   fi
   sleep 5 & wait $!   # espera interrumpible: una señal llega al trap al instante
 done
@@ -130,6 +137,10 @@ if ! jq -e . "$OUT" >/dev/null 2>&1; then
   salir failed "Claude Code no devolvió JSON (rc=$RC): $(tail -c 300 "$ERR" | tr '\n' ' ')"
 fi
 TEXTO=$(jq -r '.result // ""' "$OUT")
+if jq -e '(.subtype // "") | test("budget")' "$OUT" >/dev/null 2>&1; then   # --max-budget-usd alcanzado
+  salir failed "la ejecución llegó a su tope de gasto (${SDD_TOPE_USD:-?} \$): para seguir, sube topes.etapa_usd o topes.proyecto_usd" \
+    "$(jq -c --argjson m "$MIN" '{session_id, cost_usd: .total_cost_usd, turns: .num_turns, minutes: $m, tope: "gasto"}' "$OUT")"
+fi
 EXTRA=$(jq -c --argjson m "$MIN" '{session_id, cost_usd: .total_cost_usd, turns: .num_turns, minutes: $m,
   resumen: ((.result // "") | .[0:800])}' "$OUT")
 if [ "$(jq -r .is_error "$OUT")" = true ] || [ "$RC" -ne 0 ]; then

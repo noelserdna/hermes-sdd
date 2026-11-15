@@ -41,6 +41,34 @@ modelo() {  # el del proyecto (.modelos[<etapa>]); si no fija ninguno, el del pe
   [ -n "$m" ] && { echo "$m"; return; }
   HERMES_SDD_HOME="${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}" python3 "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" modelo "$1" "$(ejecutor "$1")" 2>/dev/null
 }
+# Topes de gasto y de tiempo (con menos personas mirando, nada debe gastar sin freno): por etapa (suma de sus
+# ejecuciones), por proyecto (todo etapas.jsonl) y por ejecución de Claude (minutos). Se fijan en sdd.json
+# (`topes`, para todos) y en .sdd/hermes/hermes-sdd.json (`topes`, para este proyecto); 0 = sin tope. Por defecto, unas
+# 3 veces lo más caro y lo más largo que se ha visto (club y taller: 7,4 $ y 36 min por etapa; 131,6 $ por proyecto).
+tope() {  # tope <clave> <defecto>
+  local v; v=$(jq -r --arg k "$1" '.topes[$k] // empty' .sdd/hermes/hermes-sdd.json 2>/dev/null)
+  [ -n "$v" ] || v=$(jq -r --arg k "$1" '.topes[$k] // empty' "${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}/sdd.json" 2>/dev/null)
+  echo "${v:-$2}"
+}
+presupuesto() {  # PRESUPUESTO = lo que puede gastar la ejecución siguiente (USD; vacío = sin tope), o sale de la etapa si no
+  # queda (sin subshell: `fin` tiene que terminar la etapa)
+  local te tp ge gp q
+  PRESUPUESTO=""
+  te=$(tope etapa_usd 20); tp=$(tope proyecto_usd 300)
+  ge=$(jq '[.[].cost_usd // 0] | add // 0' <<< "$EJECUCIONES")
+  gp=0; [ -s .sdd/hermes/etapas.jsonl ] && gp=$(jq -s '[.[].coste_usd // 0] | add // 0' .sdd/hermes/etapas.jsonl 2>/dev/null)
+  jq -e 'type == "number"' <<< "${gp:-x}" >/dev/null 2>&1 || gp=0
+  q=$(jq -n --argjson te "$te" --argjson tp "$tp" --argjson ge "$ge" --argjson gp "${gp:-0}" '
+    [(if $te > 0 then $te - $ge else empty end), (if $tp > 0 then $tp - $gp - $ge else empty end)] | min // ""')
+  [ -z "$q" ] && return 0
+  if jq -e --argjson q "$q" -n '$q < 0.05' >/dev/null; then
+    if jq -e --argjson tp "$tp" --argjson gp "${gp:-0}" --argjson ge "$ge" -n '$tp > 0 and ($gp + $ge) >= $tp - 0.05' >/dev/null; then
+      fin "$(jq -nc --arg r "el proyecto llegó a su tope de gasto ($tp \$; lleva $(jq -n "($gp + $ge) * 100 | floor / 100") \$): para seguir, súbelo en .sdd/hermes/hermes-sdd.json (topes.proyecto_usd)" '{outcome:"failed", reason:$r, tope:"proyecto"}')"
+    fi
+    fin "$(jq -nc --arg r "la etapa llegó a su tope de gasto ($te \$): para seguir, súbelo (topes.etapa_usd) o mira por qué gasta tanto" '{outcome:"failed", reason:$r, tope:"etapa"}')"
+  fi
+  PRESUPUESTO=$(jq -n "$q * 100 | floor / 100")
+}
 registrar_etapa() {  # una línea por etapa en .sdd/hermes/etapas.jsonl: la línea base del encargado (docs/encargado.md)
   local res=$1 head1 ratio='null'
   head1=$(git rev-parse HEAD 2>/dev/null || echo "")
@@ -164,7 +192,8 @@ claude_etapa() {  # claude_etapa <clave-de-estado> <prompt>
   local sal t1; sal=$(mktemp); t1=$(date +%s)
   # SDD_PASO: el paso que corre (acceptance, task-implementer…). La guardia del ejecutor deja `accept challenge
   # resolve` solo a la ronda adversarial (acceptance): el implementador nunca da por resuelto lo que le impugnaron
-  SDD_PASO=$clave SDD_SANDBOX=$sb bash "$ROOT/executors/$EJEC.sh" "$REPO" "$ETAPA${FASE:+-$FASE}" "$2" "${MODELO_PASO:-$(modelo "$ETAPA")}" > "$sal" &
+  presupuesto
+  SDD_TOPE_USD=$PRESUPUESTO SDD_TOPE_MIN=$(tope ejecucion_min 60) SDD_PASO=$clave SDD_SANDBOX=$sb bash "$ROOT/executors/$EJEC.sh" "$REPO" "$ETAPA${FASE:+-$FASE}" "$2" "${MODELO_PASO:-$(modelo "$ETAPA")}" > "$sal" &
   wait $!   # en segundo plano y con wait: un TERM se atiende ya, no cuando acabe Claude
   res=$(tail -1 "$sal"); rm -f "$sal"
   S_LLM=$(( S_LLM + $(date +%s) - t1 ))
