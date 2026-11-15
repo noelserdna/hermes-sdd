@@ -47,48 +47,22 @@ _RT: dict = {"app": None, "pendientes": {}}   # pendientes: id del mensaje Force
 
 
 # ── núcleo común a los canales (validación, decisión, deshacer y cerrojo entre procesos) ─────────────────────────
-def _cargar_nucleo():
-    import importlib.util, sys
-    if "hsdd_nucleo" not in sys.modules:
-        spec = importlib.util.spec_from_file_location("hsdd_nucleo", Path(__file__).with_name("hsdd_nucleo.py"))
-        mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod); sys.modules["hsdd_nucleo"] = mod
-    return sys.modules["hsdd_nucleo"]
+def _hsdd_carga():
+    """El cargador de módulos del plugin (hsdd_carga.py). Es lo único que se carga a mano: ni Hermes ni las pruebas
+    ponen este directorio en ``sys.path``."""
+    if "hsdd_carga" not in sys.modules:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("hsdd_carga", Path(__file__).with_name("hsdd_carga.py"))
+        mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod); sys.modules["hsdd_carga"] = mod
+    return sys.modules["hsdd_carga"]
 
 
-N = _cargar_nucleo()
-
-
-def _cargar_proyectos():
-    import importlib.util, sys
-    if "hsdd_proyectos" not in sys.modules:
-        spec = importlib.util.spec_from_file_location("hsdd_proyectos", Path(__file__).with_name("hsdd_proyectos.py"))
-        mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod); sys.modules["hsdd_proyectos"] = mod
-    return sys.modules["hsdd_proyectos"]
-
-
-PR = _cargar_proyectos()
-
-
-def _cargar_lecciones():
-    import importlib.util, sys
-    if "hsdd_lecciones" not in sys.modules:
-        spec = importlib.util.spec_from_file_location("hsdd_lecciones", Path(__file__).with_name("hsdd_lecciones.py"))
-        mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod); sys.modules["hsdd_lecciones"] = mod
-    return sys.modules["hsdd_lecciones"]
-
-
-PL = _cargar_lecciones()
-
-
-def _cargar_textos():
-    import importlib.util, sys
-    if "hsdd_textos" not in sys.modules:
-        spec = importlib.util.spec_from_file_location("hsdd_textos", Path(__file__).with_name("hsdd_textos.py"))
-        mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod); sys.modules["hsdd_textos"] = mod
-    return sys.modules["hsdd_textos"]
-
-
-TX = _cargar_textos()
+C = _hsdd_carga()
+_DIR = Path(__file__).resolve().parent
+N = C.hermano("hsdd_nucleo", _DIR)
+PR = C.hermano("hsdd_proyectos", _DIR)
+PL = C.hermano("hsdd_lecciones", _DIR)
+TX = C.hermano("hsdd_textos", _DIR)
 HOME = N.HOME
 _leer, _escribir, _ahora, _respuestas = N.leer, N.escribir, N.ahora, N.respuestas
 

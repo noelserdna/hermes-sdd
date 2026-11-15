@@ -20,18 +20,14 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import FileResponse
 from starlette.concurrency import run_in_threadpool
 
-if "hsdd_nucleo" not in sys.modules:
-    _spec = importlib.util.spec_from_file_location("hsdd_nucleo", Path(__file__).resolve().parent.parent / "hsdd_nucleo.py")
-    _mod = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(_mod); sys.modules["hsdd_nucleo"] = _mod
-N = sys.modules["hsdd_nucleo"]
-if "hsdd_proyectos" not in sys.modules:
-    _spec = importlib.util.spec_from_file_location("hsdd_proyectos", Path(__file__).resolve().parent.parent / "hsdd_proyectos.py")
-    _mod = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(_mod); sys.modules["hsdd_proyectos"] = _mod
-PR = sys.modules["hsdd_proyectos"]
-if "hsdd_textos" not in sys.modules:
-    _spec = importlib.util.spec_from_file_location("hsdd_textos", Path(__file__).resolve().parent.parent / "hsdd_textos.py")
-    _mod = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(_mod); sys.modules["hsdd_textos"] = _mod
-TX = sys.modules["hsdd_textos"]
+_PLUGIN = Path(__file__).resolve().parent.parent
+if "hsdd_carga" not in sys.modules:   # el cargador del plugin (hsdd_carga.py): lo único que se carga a mano
+    _spec = importlib.util.spec_from_file_location("hsdd_carga", _PLUGIN / "hsdd_carga.py")
+    _mod = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(_mod); sys.modules["hsdd_carga"] = _mod
+C = sys.modules["hsdd_carga"]
+N = C.hermano("hsdd_nucleo", _PLUGIN)
+PR = C.hermano("hsdd_proyectos", _PLUGIN)
+TX = C.hermano("hsdd_textos", _PLUGIN)
 
 router = APIRouter()
 CAMPOS = ("id", "tipo", "fase", "tablero", "titulo", "texto", "opciones", "preguntas", "estado", "creada", "sha",
