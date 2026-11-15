@@ -298,6 +298,88 @@ expect "enforce: fixed Must is VERIFIED again" "$(ledger 'R("REQ-F-001").verdict
 run gate --fase 1
 expect "enforce: FASE 1 gate exit 0 once the literal is asserted" "$rc" 0
 
+# ---------------------------------------------------------------- 12. clauses: Q-04 (stays as it was, every case) and Q-05 (alternatives)
+got=$(unit 'process.stdout.write(JSON.stringify(q.criterionClauses("GIVEN 2 plazas WHEN la organizadora escribe \"0\" o \"dos\" THEN the user sees \"Escribe un número, de 1 o más\" y las plazas siguen siendo 2").map(c=>c.kind+":"+c.clause)))')
+expect "clause: «siguen» after « y », a comma inside quotes does not split" "$got" '["invariant:las plazas siguen siendo 2"]'
+got=$(unit 'process.stdout.write(JSON.stringify(q.criterionClauses("GIVEN 3 plazas WHEN fija 3 plazas THEN nada cambia.").map(c=>c.clause)))')
+expect "clause: «nada cambia» without its trailing period" "$got" '["nada cambia"]'
+got=$(unit 'process.stdout.write(JSON.stringify(q.criterionClauses("All texts shown in the interface SHALL be written in Spanish.").map(c=>c.kind)))')
+expect "clause: a constraint with no THEN, universal" "$got" '["universal"]'
+got=$(unit 'process.stdout.write(JSON.stringify(q.criterionClauses("GIVEN x WHEN y THEN \"Hecho\" (en la lista, la espera y el total) y no cambia nada más").map(c=>c.clause)))')
+expect "clause: separators inside parentheses do not split" "$got" '["no cambia nada más"]'
+got=$(unit 'process.stdout.write(JSON.stringify(q.criterionClauses("GIVEN tasks 1 and 2 WHEN the user runs `todo list` THEN two lines are printed in id order")))')
+expect "clause: none in a plain THEN" "$got" '[]'
+got=$(unit 'process.stdout.write(JSON.stringify(q.criterionAlternatives("GIVEN 2 plazas WHEN escribe \"0\", \"-1\" o \"dos\" THEN the user sees \"A\" or \"B\"")))')
+expect "alternatives: the GIVEN/WHEN list, not the THEN one" "$got" '[["0","-1","dos"]]'
+got=$(unit 'process.stdout.write(JSON.stringify(q.criterionAlternatives("GIVEN \"Lucía\" y \"Pablo\" apuntados WHEN entra \"Marta\" THEN x")))')
+expect "alternatives: «y» is not a list of cases" "$got" '[]'
+
+fresh_repo clauses
+good_tests
+replace requirements/REQUIREMENTS.md 'THEN tasks 1 and 3 remain' 'THEN the output is `removed` and tasks 1 and 3 remain'
+replace requirements/REQUIREMENTS.md 'GIVEN no task 9 WHEN the user runs `todo rm 9`' 'GIVEN no task 9 WHEN the user types "9" or "x" in `todo rm`'
+rmid=$(grep -n 'tasks 1 and 3 remain' "$repo/requirements/REQUIREMENTS.md" | head -1 | cut -d: -f1)
+req=$(awk -v n="$rmid" 'NR<n && /^### REQ-/ {id=$2} END {sub(":","",id); print id}' "$repo/requirements/REQUIREMENTS.md")
+cat > "$repo/tests/rm.test.js" <<EOF
+test("$req AC1 rm 2", () => {
+  // $req AC1: "…THEN the output is \`removed\` and tasks 1 and 3 remain"
+  expect(run("rm", "2").stdout).toBe("removed");
+});
+test("$req AC2 rm 9", () => {
+  // $req AC2: "…THEN the command exits 3 with \`task 9 not found\`"
+  expect(run("rm", "9").stderr).toContain("task 9 not found");
+});
+EOF
+commit "clauses"
+run lint --quotes
+has "Q-04: the «remain» clause with no clause comment" "Q-04 $req AC1"
+has "Q-04: names the clause" 'the clause "tasks 1 and 3 remain"'
+has "Q-05: alternative «x» not in the code" "Q-05 $req AC2"
+hasnt "Q-05: «9» is in the code" 'alternative "9"'
+expect "Q-04/Q-05: exit 1" "$rc" 1
+cat > "$repo/tests/rm.test.js" <<EOF
+test("$req AC1 rm 2", () => {
+  // $req AC1: "…THEN the output is \`removed\` and tasks 1 and 3 remain"
+  const before = run("list").stdout;
+  run("rm", "2");
+  // $req AC1 cláusula: "tasks 1 and 3 remain"
+  const after = run("list").stdout;
+  console.log(before, after);
+});
+EOF
+commit "comment without assert"
+run lint --quotes
+has "Q-04: a clause comment with no assertion below still fails" "has no assertion in the next 10 lines"
+cat > "$repo/tests/rm.test.js" <<EOF
+test("$req AC1 rm 2", () => {
+  // $req AC1: "…THEN the output is \`removed\` and tasks 1 and 3 remain"
+  expect(run("rm", "2").stdout).toBe("removed");
+  // $req AC1 clause: "tasks 1 and 3"
+  expect(run("list").stdout).toBe("1 a\n3 c");
+});
+EOF
+commit "quote without key word"
+run lint --quotes
+has "Q-04: a clause comment without the key word does not answer" "Q-04 $req AC1"
+cat > "$repo/tests/rm.test.js" <<EOF
+test("$req AC1 rm 2", () => {
+  // $req AC1: "…THEN the output is \`removed\` and tasks 1 and 3 remain"
+  expect(run("rm", "2").stdout).toBe("removed");
+  // $req AC1 cláusula: "tasks 1 and 3 remain"
+  expect(run("list").stdout).toBe("1 a\n3 c");
+});
+test("$req AC2 rm 9 or x", () => {
+  // $req AC2: "…THEN the command exits 3 with \`task 9 not found\`"
+  for (const id of ["9", "x"]) expect(run("rm", id).stderr).toContain("task 9 not found");
+});
+EOF
+commit "clauses fixed"
+run lint --quotes
+hasnt "fixed: no Q-04" "Q-04"
+hasnt "fixed: no Q-05" "Q-05"
+run lint --quotes --json
+expect "fixed: no errors left for $req" "$(js 'j.findings.filter(f=>f.req==="'$req'"&&f.severity==="error").length')" 0
+
 # ---------------------------------------------------------------- 11. the acceptance fixture stays clean
 repo="$FIX"
 run lint --quotes

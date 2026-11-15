@@ -211,7 +211,7 @@ function printLedger(ledger) {
     for (const r of ledger.requirements.filter((x) => x.in_scope && !["WAIVED", "DEPRECATED"].includes(x.verdict)))
       for (const c of (r.criteria || []).filter((x) => (x.literal_gaps || []).length))
         for (const g of c.literal_gaps)
-          out(`${c.state === "weakened" ? "weakened" : "warning: literal gap"} ${r.id} AC${c.n}: ${g.code === "Q-02" ? "the quote is not the criterion's current text" : `literal "${g.literal}" not in the test`} (${g.file}:${g.line}, ${ROUTES.weakened})`);
+          out(`${c.state === "weakened" ? "weakened" : "warning: literal gap"} ${r.id} AC${c.n}: ${g.code === "Q-02" ? "the quote is not the criterion's current text" : g.code === "Q-04" ? `clause "${g.clause}" not asserted on its own` : g.code === "Q-05" ? `alternative "${g.literal}" not exercised` : `literal "${g.literal}" not in the test`} (${g.file}:${g.line}, ${ROUTES.weakened})`);
   }
   for (const r of ledger.requirements.filter((x) => x.in_scope && x.verdict !== "WAIVED"))
     for (const c of (r.criteria || []).filter((x) => x.skipped))

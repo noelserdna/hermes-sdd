@@ -67,10 +67,12 @@ El caso que la motivó: el requisito pedía «Proyectos personales», el test as
 - **Q-01 (aviso):** el fichero no tiene la cita `REQ-X-NNN ACn: "…"` en un comentario.
 - **Q-02 (error):** la cita no es el texto actual del criterio. Se normalizan espacios y tipos de comilla (`' " « » “ ” ‘ ’` y el acento grave); las mayúsculas no. `…` elide: cada trozo entre elipsis debe estar en el criterio, en orden. Así se ve una cita inventada o una que un MODIFY dejó atrás.
 - **Q-03 (error):** un literal del criterio no aparece en el código del test fuera de los comentarios (la cita no cuenta), con la misma normalización.
+- **Q-04 (error):** una cláusula del THEN que dice que algo sigue igual («sigue», «no cambia», «nada cambia», «y no cambia nada más», «remains») o que habla de todos los casos («todos», «ningún», «cualquier», «otras formas», «all», «every») no tiene un comentario de cláusula `REQ-X-NNN ACn cláusula: "…"` que la cite con su palabra clave y lleve debajo, a menos de 10 líneas, un assert. Nace del taller: 8 de las 16 impugnaciones fueron WEAKENED-ASSERT, casi todas una cláusula así que el test no comprobaba.
+- **Q-05 (error):** una alternativa de una lista del GIVEN/WHEN unida por «o»/«or» («escribe "0" o "dos"») no aparece en el código: el criterio pide todos los casos. Una persona puede exceptuarla como un literal.
 - **Qué es un literal:** el texto entre `"…"`, `'…'`, `«…»`, `“…”` o `‘…’` en cualquier parte del criterio (un apóstrofo como en *user's* no abre comilla), y el texto entre acentos graves **solo a partir del THEN/ENTONCES**, donde es una salida o un mensaje esperado (`` `No tasks` ``). Un fragmento entre acentos graves antes del THEN es el comando o la ruta que el test ejecuta (`` `todo add "Buy milk"` ``, `` `/projects` ``); lo construye un helper, así que no se exige literal, y tampoco las comillas que lleva dentro. Los literales vacíos (`""`) se ignoran.
 - Salida `fichero:línea Q-0N REQ-X-NNN ACn mensaje` y un resumen; `--json` da `{findings: [{code, severity, req, ac, file, line, literal?, quote?, exception?, message}], summary}`. Sale con 1 si hay algún error no exceptuado. `--fase N` limita a los requisitos de la FASE.
 
-**En el libro.** `sdd accept` añade por criterio `literal_gaps` (los Q-02/Q-03 no exceptuados, con fichero y línea) y los cuenta en `summary.literal_gaps`. La clave del Stack Profile `literal_gate` decide qué pasa:
+**En el libro.** `sdd accept` añade por criterio `literal_gaps` (los Q-02 a Q-05 no exceptuados, con fichero y línea) y los cuenta en `summary.literal_gaps`. La clave del Stack Profile `literal_gate` decide qué pasa:
 
 | `literal_gate` | Efecto |
 |---|---|
@@ -179,7 +181,7 @@ node "$SDD" accept --remeasure [--fase N]     # vuelve a ejecutar las mediciones
 node "$SDD" accept record fase-acceptance --fase 1 --result accepted|observations|rejected --channel "demo 2026-09-27" --by … --role …
 node "$SDD" accept pack --fase 1              # evidencias/FASE-1/ + manifest.json → .sdd/entregas/FASE-1-evidencias.tar.gz
 node "$SDD" req show REQ-F-004 [--ac 2] [--json]   # enunciado y criterios literales
-node "$SDD" lint --quotes [--fase N] [--json]       # cita y literales de cada criterio en sus tests (Q-01..Q-03)
+node "$SDD" lint --quotes [--fase N] [--json]       # cita y literales de cada criterio en sus tests (Q-01..Q-05)
 node "$SDD" accept record literal-exception --req REQ-F-004 --ac 2 --literal "…" --reason "…" --by … --role …
 node "$SDD" lint --floor [--base REF] [--json]        # lo que baja el listón desde la base (F-01, F-02, F-04, F-07)
 node "$SDD" accept record floor-exception --code F-01 --file PATH --line "…" --base SHA --reason "…" --by … --role …

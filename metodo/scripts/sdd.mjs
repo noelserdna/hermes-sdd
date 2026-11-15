@@ -57,7 +57,9 @@
 //       AC-NNN-NN bound by a BDD tag of spec/tests/BDD-*.md): Q-01 warn, no quote comment `REQ-X-NNN ACn: "…"` in the
 //       file · Q-02 error, the quote (whitespace and quote marks normalized, case kept, `…` elides) is not part of the
 //       criterion's current text · Q-03 error, a literal of the criterion is missing from the file's code (comments do
-//       not count). Literal: text between "…", '…', «…», “…” or ‘…’, and between backticks only after THEN/ENTONCES
+//       not count) · Q-04 error, a THEN clause of «stays as it was» (sigue, no cambia, nada cambia…) or «every case»
+//       (todos, ningún, all…) with no clause comment `REQ-X-NNN ACn cláusula: "…"` followed by an assertion within
+//       10 lines · Q-05 error, an alternative of a GIVEN/WHEN list joined by o/or missing from the code. Literal: text between "…", '…', «…», “…” or ‘…’, and between backticks only after THEN/ENTONCES
 //       (a backtick span before it is the command or route the test drives). A literal-exception record turns a Q-03
 //       into `excepted`. Prints `file:line Q-0N REQ-X-NNN ACn message` and a summary; --json {findings[{code, severity,
 //       req, ac, file, line, literal?, quote?, exception?, message}], summary}. Exit 1 on any error not excepted.

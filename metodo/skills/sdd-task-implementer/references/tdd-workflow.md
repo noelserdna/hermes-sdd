@@ -68,6 +68,39 @@ outside comments. Under `literal_gate: enforce` (the default) the ledger holds a
 back as `weakened`, so the requirement is not VERIFIED. A literal that a helper builds is not an exception you grant
 yourself: assert the built value against the literal, or leave it to a person (`accept record literal-exception`).
 
+### Every clause gets its own assert
+
+A literal is only half of a criterion. In the taller, half of the adversarial findings (8 of 16, WEAKENED-ASSERT) were
+tests that checked the message and skipped a clause with no literal: «y las plazas siguen siendo 2», «y no cambia nada
+más», «nada cambia», or a list of cases («escribe "0" o "dos"») tested with one of them. Before the RED step, split the
+THEN into its clauses and give each one an assert:
+
+- **Something stays as it was** («sigue», «siguen», «no cambia», «nada cambia», «sin cambios», «permanece», «remains»,
+  «unchanged»): read that state *before* the action and assert it is equal *after*. «Y no cambia nada más» is the whole
+  state the screen or the API shows (the list, the waiting list, the counters), not the one value the action touched.
+- **Every case** («todos», «ningún», «cualquier», «otras formas», «all», «every», «any», «no other»): assert over the whole
+  set (iterate the texts, the routes, the forms), not over a sample.
+- **Alternatives** in the GIVEN/WHEN («"0" o "dos"»): one run per alternative, each with its own asserts.
+
+Mark a clause of the first two kinds with a clause comment right above its assert, quoting it with its key word:
+
+```javascript
+// REQ-F-007 AC3: "GIVEN 2 plazas WHEN la organizadora escribe "0" o "dos" THEN the user sees "Escribe un número…" y las plazas siguen siendo 2"
+const antes = await (await page.request.get('/api/taller')).json();
+for (const valor of ['0', 'dos']) {
+  await fijarPlazas(page, valor);
+  await expect(page.getByRole('alert')).toHaveText('Escribe un número de plazas entero, de 1 o más');
+  // REQ-F-007 AC3 cláusula: "las plazas siguen siendo 2"
+  await expect(page.locator('#plazas-taller')).toHaveText('Plazas del taller: 2');
+  expect(await (await page.request.get('/api/taller')).json()).toEqual(antes);
+}
+```
+
+`sdd lint --quotes` checks it: Q-04, a clause of those kinds with no clause comment (`REQ-X-NNN ACn cláusula: "…"`,
+or `clause:`) followed by an assertion within 10 lines; Q-05, an alternative of the GIVEN/WHEN missing from the code.
+Both are errors and hold the criterion back as `weakened`, like Q-03. The comment does not prove the assert is right
+(the adversarial round reads the assert under it), but it makes the clause impossible to forget.
+
 ---
 
 ## The RED-GREEN-REFACTOR Cycle

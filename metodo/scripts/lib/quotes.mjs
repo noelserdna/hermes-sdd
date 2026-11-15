@@ -25,6 +25,15 @@
 // literals are typed (requiredLiterals): the `Se ve:` texts and the THEN's own literals are exact text; a text with a
 // {variable} is a template, only its fixed parts are required; a literal the GIVEN/WHEN already quotes is data of the
 // example («lucia») and is not required verbatim. Criteria without the contract keep the rule above.
+// Clauses (sdd-pipeline 5.2, from the taller: 8 of 16 adversarial findings were WEAKENED-ASSERT, mostly a clause the test
+// never asserted). Two more findings per pair:
+//   Q-04 error  a clause of the THEN that says something stays as it was («las plazas siguen siendo 2», «y no cambia nada
+//               más», «nada cambia») or speaks of every case («todos los textos», «ningún otro», «otras formas») has no
+//               clause comment `REQ-X-NNN ACn cláusula: "…"` (or `clause:`) quoting it — with its key word — followed by
+//               an assertion within the next 10 lines. Such a clause has no literal for Q-03 to find, and a test that
+//               checks the message alone passes. «Nada más» is checked against the whole state read before the action.
+//   Q-05 error  an alternative of a list the GIVEN/WHEN joins with «o»/«or» ("0" o "dos") is not in the test's code:
+//               the criterion asks for every case, not one of them. A person may except it as a literal (below).
 // A literal a helper builds (never verbatim in the file) is a false positive: a person records
 // `sdd accept record literal-exception --req ID --ac N --literal TEXT --reason …`, which holds while the
 // requirement's text keeps its reqHash.
@@ -35,7 +44,7 @@ import { testKeys, reqHash, acNumber, scenarioIndex } from "./acceptance.mjs";
 import { templateParts } from "../sdd-jev.mjs";
 
 export const LITERAL_MODES = ["off", "warn", "enforce"];
-export const QUOTE_CODES = { missingQuote: "Q-01", staleQuote: "Q-02", missingLiteral: "Q-03" };
+export const QUOTE_CODES = { missingQuote: "Q-01", staleQuote: "Q-02", missingLiteral: "Q-03", uncheckedClause: "Q-04", missingAlternative: "Q-05" };
 
 /** Stack Profile `literal_gate`: off | warn | enforce; default and any other value: enforce. */
 export function literalGate(root) {
@@ -116,6 +125,111 @@ export function requiredLiterals(text, sees) {
     if (!data.has(k) && !instance.some((re) => re.test(k))) add(l.literal, l.kind === "code" ? "code" : "exact");
   }
   return out;
+}
+
+// ------------------------------------------------------------------ clauses (Q-04, Q-05)
+const W = "(?<![\\p{L}\\p{N}])", WE = "(?![\\p{L}\\p{N}])";
+const INVARIANT = new RegExp(`${W}(?:sigue|siguen|seguirá|seguirán|no cambian?|nada (?:más )?cambia|sin cambiar|sin cambios|no se (?:modifica|modifican|altera|alteran|borra|borran|crea|crean|añade|añaden|mueve|mueven)|permanece|permanecen|se mantiene|se mantienen|(?:se )?queda(?:n)? (?:igual|como estaba|como estaban)|remains?|unchanged|stays?|nothing (?:else )?changes|does not change|do not change)${WE}`, "iu");
+const UNIVERSAL = new RegExp(`${W}(?:todos|todas|toda la|todo el|ningún|ninguna|ninguno|cualquier|cualquiera|otras formas|otros|otras|all|every|any|none|no other)${WE}`, "iu");
+const QUOTED = [/«[^»]*»/g, /“[^”]*”/g, /"[^"]*"/g, /‘[^’]*’/g, /`[^`]*`/g, /(?<![\p{L}\p{N}])'[^'\n]*?'(?![\p{L}\p{N}])/gu];
+/** The criterion with every quoted span blanked (same length), and the spans: [{ at, end, literal }] by position. */
+function maskQuoted(text) {
+  let m = String(text || "");
+  const spans = [];
+  for (const re of QUOTED) for (const x of [...m.matchAll(re)]) {
+    spans.push({ at: x.index, end: x.index + x[0].length, literal: x[0].slice(1, -1).trim() });
+    m = mask(m, x.index, x[0].length);
+  }
+  return { masked: m, spans: spans.sort((a, b) => a.at - b.at) };
+}
+const thenIndex = (s) => {
+  let at = s.search(/\b(?:THEN|ENTONCES)\b/);
+  if (at < 0) at = s.search(/\b(?:then|entonces)\b/i);
+  return at;
+};
+
+/** Clauses of a criterion a test must assert on their own: [{ kind: "invariant" | "universal", clause, key }]. The THEN
+ *  (the whole text when there is none, as in a constraint) is split into its conjuncts — at «,», «;», « y », « e »,
+ *  « and », outside quotes — and a conjunct with a word of «stays as it was» or «every case» is one clause. */
+export function criterionClauses(text) {
+  const s = String(text || "");
+  const at = Math.max(0, thenIndex(s));
+  let { masked } = maskQuoted(s);
+  // a separator inside parentheses («(inscripción, espera)») does not split the clause
+  for (let d = 0, open = -1, i = 0; i < masked.length; i++) {
+    if (masked[i] === "(") { if (!d++) open = i; }
+    else if (masked[i] === ")" && d && !--d) masked = mask(masked, open, i - open + 1);
+  }
+  const out = [];
+  const sep = /\s*(?:[,;]|\s(?:y|e|and)\s)\s*/giu;
+  let from = at;
+  const pieces = [];
+  for (const m of masked.slice(at).matchAll(sep)) {
+    const i = at + m.index, j = i + m[0].length;
+    // «tasks 1 and 3», «"Lucía" y "Pablo"»: a pair of values, not two clauses
+    if (/[\p{N}"'»”’`]$/u.test(s.slice(0, i)) && /^[\p{N}"'«“‘`]/u.test(s.slice(j)) && !/[,;]/.test(m[0])) continue;
+    pieces.push([from, i]); from = j;
+  }
+  pieces.push([from, s.length]);
+  for (const [a, b] of pieces) {
+    const plain = masked.slice(a, b);
+    for (const [kind, re] of [["invariant", INVARIANT], ["universal", UNIVERSAL]]) {
+      const k = plain.match(re);
+      if (!k) continue;
+      const clause = s.slice(a, b).replace(/^\s*(?:THEN|ENTONCES|then|entonces)\s+/, "")
+        .replace(/^(?:the user sees|el usuario ve|la persona ve|se ve)\s+/i, "").replace(/[.:;,\s]+$/, "").trim();
+      out.push({ kind, clause, key: k[0] });
+      break;
+    }
+  }
+  return out;
+}
+
+/** Alternatives of the GIVEN/WHEN: each list of quoted literals joined by «,» and a final «o»/«u»/«or» ("0" o "dos")
+ *  → [[ "0", "dos" ], …]. A list in the THEN is not one: «sees "A" or "B"» accepts either. */
+export function criterionAlternatives(text) {
+  const s = String(text || "");
+  let end = thenIndex(s);
+  if (end < 0) return [];
+  const { spans } = maskQuoted(s);
+  const before = spans.filter((x) => x.end <= end);
+  const out = [];
+  let chain = [], joined = false;
+  const flush = () => { if (chain.length > 1 && joined) out.push(chain.map((x) => x.literal).filter(Boolean)); chain = []; joined = false; };
+  for (const x of before) {
+    if (!chain.length) { chain = [x]; continue; }
+    const gap = s.slice(chain[chain.length - 1].end, x.at);
+    if (/^\s*,\s*$/.test(gap)) chain.push(x);
+    else if (/^\s*,?\s*(?:o|u|ó|or)\s*$/iu.test(gap)) { chain.push(x); joined = true; }
+    else { flush(); chain = [x]; }
+  }
+  flush();
+  return out.filter((a) => a.length > 1);
+}
+
+/** Clause comments of a file: [{ req, ac, quote, line }] — `REQ-X-NNN ACn cláusula: "…"` (or `clause:`). */
+export function findClauseQuotes(comments) {
+  const CLOSE = { '"': '"', "'": "'", "«": "»", "“": "”", "‘": "’" };
+  const out = [];
+  for (const c of comments)
+    for (const m of c.text.matchAll(/(?<![A-Za-z0-9])(REQ-[A-Z]+(?:-[A-Z0-9]+)*-\d+)[\s_-]+AC0*(\d+)(?!\d)\s+(?:cl[áa]usula|clause)\s*:\s*(["'«“‘])/giu)) {
+      const body = c.text.slice(m.index + m[0].length);
+      const end = body.lastIndexOf(CLOSE[m[3]]);
+      out.push({ req: m[1], ac: Number(m[2]), quote: (end < 0 ? body : body.slice(0, end)).trim(), line: c.line });
+    }
+  return out;
+}
+const ASSERT = /\bexpect\s*[.(]|\bassert\w*\b|\.should\b|\bt\.(?:is|not|deepEqual|true|false|ok|equal|like|throws)\w*\s*\(|\bXCTAssert|\brequire\.\w+\s*\(|\bcheck\w*\s*\(/;
+/** Whether a clause comment at `line` has an assertion on its own line or within the next 10 lines of code. */
+function assertsBelow(codeLines, line) {
+  for (let k = line - 1; k < Math.min(codeLines.length, line + 10); k++) if (ASSERT.test(codeLines[k] || "")) return true;
+  return false;
+}
+/** A clause comment answers a clause when its quote is part of the clause (or the clause part of it) and carries the
+ *  clause's key word. */
+function answers(quote, c) {
+  const q = normLiteral(quote).toLowerCase();
+  return q.includes(normLiteral(c.key).toLowerCase()) && (quoteMatches(quote, c.clause) || quoteMatches(c.clause, quote));
 }
 
 /** True when `quote` (a test's quote comment) is the criterion's text: each fragment between ellipses is a substring
@@ -291,7 +405,9 @@ export function lintQuotes({ root, reqs, scenarios = [], records = [], scope = n
     if (!named.size) continue;
     filesWithPairs++;
     const quotes = findQuotes(comments);
+    const clauseQuotes = findClauseQuotes(comments);
     const codeNorm = normLiteral(code);
+    const codeLines = code.split("\n");
     for (const { req, ac, line } of [...named.values()].sort((a, b) => a.line - b.line)) {
       pairs.push({ req: req.id, ac, file: f.rel });
       const text = req.criteria[ac - 1];
@@ -302,6 +418,24 @@ export function lintQuotes({ root, reqs, scenarios = [], records = [], scope = n
       for (const q of mine.filter((x) => !quoteMatches(x.quote, text)))
         findings.push({ code: "Q-02", severity: "error", ...base, line: q.line, quote: q.quote, message: `the quote is not the current text of ${req.id} AC${ac} (forged, or left behind by a MODIFY): quote it again with sdd req show ${req.id} --ac ${ac}` });
       const at = mine.length ? mine[0].line : line;
+      const clauses = clauseQuotes.filter((q) => q.req === req.id && q.ac === ac);
+      for (const c of criterionClauses(text)) {
+        const ok = clauses.filter((q) => answers(q.quote, c));
+        if (ok.some((q) => assertsBelow(codeLines, q.line))) continue;
+        const why = ok.length ? `its clause comment (line ${ok[0].line}) has no assertion in the next 10 lines`
+          : `no clause comment \`${req.id} AC${ac} cláusula: "${c.clause}"\` above the assert that checks it`;
+        findings.push({ code: "Q-04", severity: "error", ...base, line: ok.length ? ok[0].line : at, clause: c.clause, kind: c.kind,
+          message: `the clause "${c.clause}" of ${req.id} AC${ac} (${c.kind === "invariant" ? "something that stays as it was: read it before the action and assert it after" : "every case: assert all of them, not a sample"}) is not asserted on its own — ${why}` });
+      }
+      for (const alts of criterionAlternatives(text)) for (const alt of alts) {
+        const a = normLiteral(alt);
+        // a short alternative («x», «0») must be a whole string of the code, not a letter of `expect`
+        if (a.length >= 3 ? codeNorm.includes(a) : codeNorm.includes(`"${a}"`)) continue;
+        const ex = exceptions.find((e) => e.req === req.id && acNumber(e.ac) === ac && normLiteral(e.literal) === normLiteral(alt));
+        findings.push({ code: "Q-05", severity: ex ? "excepted" : "error", ...base, line: at, literal: alt,
+          message: `the alternative "${alt}" of ${req.id} AC${ac} (${alts.map((a) => `"${a}"`).join(" o ")}) is not in the test's code: the criterion asks for every case${ex ? ` — excepted by ${ex.by} (${ex.role}), acceptance/decisions.jsonl:${ex.line}` : ""}`,
+          ...(ex ? { exception: { line: ex.line, by: ex.by, role: ex.role, reason: ex.reason } } : {}) });
+      }
       for (const lit of requiredLiterals(text, (req.sees || [])[ac - 1])) {
         if (lit.parts.every((p) => codeNorm.includes(normLiteral(p)))) continue;
         const ex = exceptions.find((e) => e.req === req.id && acNumber(e.ac) === ac && normLiteral(e.literal) === normLiteral(lit.literal));
@@ -312,7 +446,7 @@ export function lintQuotes({ root, reqs, scenarios = [], records = [], scope = n
       }
     }
   }
-  const order = { "Q-01": 1, "Q-02": 2, "Q-03": 3 };
+  const order = { "Q-01": 1, "Q-02": 2, "Q-03": 3, "Q-04": 4, "Q-05": 5 };
   findings.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line || order[a.code] - order[b.code]);
   const count = (s) => findings.filter((x) => x.severity === s).length;
   return {
@@ -329,7 +463,7 @@ export function literalGapsByCriterion(result) {
     if (f.severity !== "error") continue;
     const k = `${f.req}#${f.ac}`;
     if (!m.has(k)) m.set(k, []);
-    m.get(k).push({ code: f.code, file: f.file, line: f.line, ...(f.literal !== undefined ? { literal: f.literal } : {}), ...(f.quote !== undefined ? { quote: f.quote } : {}) });
+    m.get(k).push({ code: f.code, file: f.file, line: f.line, ...(f.literal !== undefined ? { literal: f.literal } : {}), ...(f.quote !== undefined ? { quote: f.quote } : {}), ...(f.clause !== undefined ? { clause: f.clause } : {}) });
   }
   return m;
 }
@@ -337,5 +471,5 @@ export function literalGapsByCriterion(result) {
 /** Whether `literal` is a literal of the criterion (for `accept record literal-exception`). */
 export function isCriterionLiteral(text, literal) {
   const want = normLiteral(literal);
-  return criterionLiterals(text).some((l) => normLiteral(l.literal) === want);
+  return criterionLiterals(text).some((l) => normLiteral(l.literal) === want) || criterionAlternatives(text).flat().some((a) => normLiteral(a) === want);
 }

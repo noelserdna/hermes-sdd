@@ -1153,7 +1153,10 @@ function adversarialLine(ledger) {
   const musts = ledger.summary.must_challenged || 0;
   return `Adversarial (\`adversarial_gate: ${ledger.adversarial_gate || "enforce"}\`): ${open.length} open challenge${open.length === 1 ? "" : "s"}${musts ? `, ${musts} on Must requirement${musts === 1 ? "" : "s"}` : ""} (${open.slice(0, 6).join(", ")}${open.length > 6 ? ", …" : ""}) — route adversarial-finding; the verdicts do not change.`;
 }
-const gapText = (g) => g.code === "Q-02" ? `quote not current (Q-02 ${g.file}:${g.line})` : `literal "${clip(g.literal, 40)}" not in the test (Q-03 ${g.file}:${g.line})`;
+const gapText = (g) => g.code === "Q-02" ? `quote not current (Q-02 ${g.file}:${g.line})`
+  : g.code === "Q-04" ? `clause "${clip(g.clause, 40)}" not asserted on its own (Q-04 ${g.file}:${g.line})`
+  : g.code === "Q-05" ? `alternative "${clip(g.literal, 40)}" not exercised (Q-05 ${g.file}:${g.line})`
+  : `literal "${clip(g.literal, 40)}" not in the test (Q-03 ${g.file}:${g.line})`;
 /** One line on literal gaps (sdd lint --quotes) for the PR block and the report, or null when there is none. */
 function literalLine(ledger) {
   const mode = ledger.literal_gate;

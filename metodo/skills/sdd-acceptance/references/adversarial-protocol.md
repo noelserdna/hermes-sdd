@@ -90,7 +90,7 @@ Categories:
 
 | Category | The code or test… |
 |---|---|
-| `WEAKENED-ASSERT` | asserts a weaker version of the criterion (a word, a value or a clause of the THEN missing) |
+| `WEAKENED-ASSERT` | asserts a weaker version of the criterion (a word, a value or a clause of the THEN missing). A clause comment (`REQ-X-NNN ACn cláusula: "…"`) points at the assert meant for a clause of «stays as it was» or «every case»: read that assert, not the comment — «y no cambia nada más» needs the whole state read before the action and compared after, «todos» needs the whole set |
 | `MOCK-ONLY` | passes against a mock or double whose contract the real provider does not honour |
 | `UNWIRED` | builds and tests the piece, but no user path mounts or calls it |
 | `BYPASS-PATH` | leaves another production route, caller or entry point that skips the behaviour |
