@@ -313,13 +313,20 @@ def _registrar(idx: Path, puerta: dict, verbo: str, texto: str, actor: dict, pru
     # explícita de editar tests que nadie había dado. Descartar o ver la demo no contestan preguntas.
     # (rechazar unos requisitos o un plan no contesta sus preguntas; rechazar una FASE o entrega bloqueada, sí: es la
     # única salida)
+    # Lo marcado va además como campo estructurado, «respuestas» ({"1": "B"}): el notario lo lee de ahí sin volver a
+    # parsear el texto libre. El «Q1: B» del texto se queda para quien lo lee (y para las decisiones de antes del campo).
+    # Una pregunta que la persona ya contestó a mano en el texto no se repite en ninguno de los dos.
+    elegidas = {}
     if puerta.get("preguntas") and verbo not in ("descarto", "ver", "deshacer") and (
             verbo != "rechazo" or puerta.get("tipo") in ("fase", "entrega")):
         marcadas = {str(k): v for k, v in (puerta.get("respuestas") or {}).items() if v}
         ya = {n for n in re.findall(r"[Qq][A-Za-z]?\s*(\d+)\W{0,3}\s*[A-Za-z]\b", texto or "")}
-        resp = ", ".join(f"Q{n}: {l}" for n, l in sorted(marcadas.items(), key=lambda x: int(x[0])) if n not in ya)
+        elegidas = {n: l for n, l in sorted(marcadas.items(), key=lambda x: int(x[0])) if n not in ya}
+        resp = ", ".join(f"Q{n}: {l}" for n, l in elegidas.items())
         texto = (f"{texto}. {resp}" if texto else resp) if resp else texto
     decision = {"verbo": verbo, "texto": texto, "actor": actor, "prueba": prueba, "at": ahora()}
+    if elegidas:
+        decision["respuestas"] = elegidas
     dirdec = Path(puerta["repo"]) / ".sdd" / "hermes" / "decisiones"
     dirdec.mkdir(parents=True, exist_ok=True)
     escribir(dirdec / f"{puerta['id']}.json", decision)
@@ -698,10 +705,44 @@ def fichero_evidencia(puerta: dict, nombre: str) -> Path:
     return Path(puerta["repo"]) / "evidencias" / f"FASE-{puerta.get('fase') or '0'}" / nombre
 
 
+# ── nombres y forma del plan, comunes a bash y Python ─────────────────────────────────────────────────────────────
+# Un solo sitio: antes el tablero salía de un sed en cinco scripts (que dejaba «Café» en «caf») y de slug() aquí
+# («cafe»): un repo con tildes tenía un tablero para bash y otro para el panel. Los scripts usan lib/comun.sh, que
+# llama a esta CLI (`hsdd_nucleo.py slug|unica`).
+def slug(nombre: str) -> str:
+    """Nombre del tablero de un proyecto: minúsculas sin tildes, y lo que no sea letra o número, un guion."""
+    import unicodedata
+    plano = "".join(c for c in unicodedata.normalize("NFD", nombre or "") if unicodedata.category(c) != "Mn")
+    return re.sub(r"[^a-z0-9]+", "-", plano.lower()).strip("-")
+
+
+def unica(repo) -> bool:
+    """¿Plan de una sola FASE, aún sin aceptar y no «fino»? Entonces no tiene puerta de FASE: su aceptación (veredictos y
+    demo) va en la puerta de la entrega. Lo preguntan lanzar.sh (qué tramo crea), etapa.sh (el cierre hace la demo) y la
+    puerta del plan (lo que se le dice a la persona): antes eran tres copias con matices distintos."""
+    import subprocess
+    r = Path(repo)
+    g = r / ".sdd" / "hermes" / "granularidad-plan"
+    if not g.is_file() or g.read_text(errors="replace").strip() == "fina":
+        return False
+    if len(list((r / "plan" / "fases").glob("FASE-*.md"))) != 1:
+        return False
+    try:
+        tags = subprocess.run(["git", "-C", str(r), "tag", "-l", "fase-*-accepted"], capture_output=True, text=True,
+                              timeout=30).stdout
+    except Exception:
+        tags = ""
+    return not tags.strip()
+
+
 if __name__ == "__main__":   # CLI del notario y de jev.sh
     import sys
     a = sys.argv[1:]
     try:
+        if a[:1] == ["slug"]:             # slug <nombre>: el nombre del tablero (lib/comun.sh)
+            print(slug(a[1] if len(a) > 1 else "")); sys.exit(0)
+        if a[:1] == ["unica"]:            # unica <repo>: sale con 0 si el plan es de una sola FASE sin aceptar
+            sys.exit(0 if unica(a[1]) else 1)
         if a[:1] == ["permite-jev"]:      # permite-jev <puerta.json> <verbo> <p>: ¿vale una decisión de Jev?
             puerta, verbo, p = leer(Path(a[1])) or {}, a[2], float(a[3] or 0)
             # El veto (una persona deshizo a Jev) vive en el índice global, no en la copia del repo
@@ -775,6 +816,7 @@ if __name__ == "__main__":   # CLI del notario y de jev.sh
         print(e, file=sys.stderr)
         sys.exit(2)
     print("uso: hsdd_nucleo.py permite-jev <puerta.json> <verbo> <p> | modo [<modo> [<tablero>]] | rejuzgar <puerta>\n"
+          "       | slug <nombre> | unica <repo>\n"
           "       | transicion <puerta> <estado> [--desde a,b] [k=v | k:=json | -k]... | superar <repo> <tipo> <fase> <por> [excepto]\n"
           "       | decidir <puerta> <verbo> <texto> <canal> <id> [prueba-json] [segundos|config] | deshacer <puerta> <canal> <id>",
           file=sys.stderr)

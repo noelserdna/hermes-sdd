@@ -16,6 +16,9 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 SDD="$ROOT/metodo/scripts/sdd.mjs"
+# La tabla de transiciones (lib/transiciones.json): qué verbos valen en cada tipo de puerta, cuáles exigen que la
+# puerta los ofreciera, un texto o una persona, y a qué resultado lleva cada uno (el que recibe lanzar.sh siguiente)
+. "$ROOT/lib/transiciones.sh"
 # El diario del método admite notas de hasta 600 caracteres; el texto de una persona puede ser más largo (club,
 # FASE-7: un rechazo de 755 dejó la decisión escrita a medias). Al diario va recortado; entero queda en la decisión.
 diario() {
@@ -45,7 +48,8 @@ IDX="$HOME_SDD/puertas/$GATE.json"
 jq -e --arg repo "$REPO" --slurpfile d "$DECISION" '
   (.repo == $repo) and (.estado | IN("decidida", "firmada", "error"))
   and (.decision.at == $d[0].at) and (.decision.verbo == $d[0].verbo) and ((.decision.texto // "") == ($d[0].texto // ""))
-  and (.decision.actor.persona == $d[0].actor.persona) and (.decision.actor.canal == $d[0].actor.canal)' "$IDX" >/dev/null ||
+  and (.decision.actor.persona == $d[0].actor.persona) and (.decision.actor.canal == $d[0].actor.canal)
+  and ((.decision.respuestas // {}) == ($d[0].respuestas // {}))' "$IDX" >/dev/null ||
   { echo "NOTARIO: rechazado — la decisión de $GATE no coincide con la que registró un canal" >&2; exit 1; }
 # Lo que se firma es la puerta que vio quien decidió (persona o Jev): la del índice, fuera del alcance de las etapas. La
 # copia del repo, de la que se leen tipo, sha, opciones, preguntas, bloqueo y tests editados, tiene que ser idéntica en
@@ -68,39 +72,36 @@ p() { jq -r "$1 // empty" "$PUERTA"; }
 d() { jq -r "$1 // empty" "$DECISION"; }
 TIPO=$(p .tipo); FASE=$(p .fase); BOARD=$(p .tablero); TASK=$(p .tarjeta); SHA=$(p .sha)
 VERBO=$(d .verbo); TEXTO=$(d .texto); PERSONA=$(d .actor.persona); CANAL=$(d .actor.canal); ID=$(d .actor.id)
+VERBO_DECIDIDO=$VERBO   # el botón que pulsó la persona (VERBO puede pasar a ser otro: revisado → acepto, acepto → cambios)
+# Las respuestas que la persona MARCÓ en los botones Q, como campo de la decisión ({"1": "B"}; lo pone el núcleo). Las
+# decisiones anteriores las llevaban solo dentro del texto («Q1: B»), que se sigue leyendo.
+RESPUESTAS=$(jq -c '.respuestas // {}' "$DECISION")
 PRUEBA=$(d '.prueba | to_entries | map("\(.key):\(.value)") | join(" ")')
-# «🔍 Lo he revisado y acepto»: la persona confirma las inspecciones que la puerta enseñaba y acepta. Se registran a su
-# nombre (paso 1b) y lo demás es una aceptación normal. Solo una persona: una inspección nunca la firma Jev.
-REVISADO=false
-if [ "$VERBO" = revisado ]; then
-  { [ "$TIPO" = fase ] || [ "$TIPO" = entrega ]; } || { echo "NOTARIO: rechazado — 'revisado' no vale para una puerta de tipo '$TIPO'" >&2; exit 1; }
-  jq -e 'any(.opciones[]; .verbo == "revisado")' "$PUERTA" >/dev/null || { echo "NOTARIO: rechazado — la puerta no ofrecía 🔍 Lo he revisado" >&2; exit 1; }
-  [ "$CANAL" != jev ] || { echo "NOTARIO: rechazado — una inspección la confirma una persona, no Jev" >&2; exit 1; }
-  REVISADO=true; VERBO=acepto
+# Verbos que solo puede elegir una persona y que la puerta tiene que haber ofrecido (en la tabla: «persona», «opcion»):
+#  🔍 revisado  — confirma las inspecciones que la puerta enseñaba y acepta (se registran a su nombre en el paso 1b)
+#  🟡 eximo     — exime los imprescindibles sin cumplir, con su motivo (paso 1c), y acepta
+#  ✏️ corrijo   — la duda de la revisión es del propio criterio: se lanza un cambio de requisitos con lo que pide la
+#                 persona y las dudas abiertas (al aprobarse, la FASE se rehace con el criterio bueno)
+#  🗑 descarto  — un hallazgo de la revisión independiente no es un fallo (nombra CH-NNN y por qué): se registra como
+#                 challenge-dismissal a su nombre y la puerta se vuelve a abrir sin él
+# Se comprueban antes de nada (sin acta). Revisado y eximo se firman después como «acepto» («como» en la tabla).
+if jq -e --arg v "$VERBO" 'any(.puertas[].verbos[$v] // empty; .persona)' "$TRANSICIONES" >/dev/null; then
+  trans_verbo "$TIPO" "$VERBO" >/dev/null || { echo "NOTARIO: rechazado — '$VERBO' no vale para una puerta de tipo '$TIPO'" >&2; exit 1; }
+  COMO=$(trans_campo "$TIPO" "$VERBO" como)
+  if [ -n "$COMO" ]; then   # (la opción de corrijo y descarto se comprueba al validar, como la de cualquier verbo)
+    jq -e --arg v "$VERBO" 'any(.opciones[]; .verbo == $v)' "$PUERTA" >/dev/null || { echo "NOTARIO: rechazado — $(trans_campo "$TIPO" "$VERBO" opcion)" >&2; exit 1; }
+  fi
+  [ "$CANAL" != jev ] || { echo "NOTARIO: rechazado — $(trans_campo "$TIPO" "$VERBO" persona)" >&2; exit 1; }
+  if [ "$VERBO" = descarto ]; then
+    printf '%s' "$TEXTO" | grep -qE 'CH-[0-9]+' || { echo "NOTARIO: rechazado — di qué impugnación descartas (su número, p. ej. CH-005) y por qué" >&2; exit 1; }
+  fi
+  if [ "$VERBO" = eximo ]; then
+    [ -n "$TEXTO" ] || { echo "NOTARIO: rechazado — una exención necesita su motivo" >&2; exit 1; }
+  fi
+  [ -z "$COMO" ] || VERBO=$COMO
 fi
-# «✏️ Corregir el requisito»: la duda de la revisión es del propio criterio; se lanza un cambio de requisitos con lo
-# que pide la persona y las dudas abiertas (al aprobarse, la FASE se rehace con el criterio bueno)
-if [ "$VERBO" = corrijo ]; then
-  { [ "$TIPO" = fase ] || [ "$TIPO" = entrega ]; } || { echo "NOTARIO: rechazado — 'corrijo' no vale para una puerta de tipo '$TIPO'" >&2; exit 1; }
-  [ "$CANAL" != jev ] || { echo "NOTARIO: rechazado — corregir un requisito lo decide una persona, no Jev" >&2; exit 1; }
-fi
-# «🗑 Descartar una impugnación»: la persona dice que un hallazgo de la revisión independiente no es un fallo (nombra
-# CH-NNN y por qué). Se registra como challenge-dismissal a su nombre y la puerta se vuelve a abrir sin él.
-if [ "$VERBO" = descarto ]; then
-  { [ "$TIPO" = fase ] || [ "$TIPO" = entrega ]; } || { echo "NOTARIO: rechazado — 'descarto' no vale para una puerta de tipo '$TIPO'" >&2; exit 1; }
-  [ "$CANAL" != jev ] || { echo "NOTARIO: rechazado — una impugnación la descarta una persona, no Jev" >&2; exit 1; }
-  printf '%s' "$TEXTO" | grep -qE 'CH-[0-9]+' || { echo "NOTARIO: rechazado — di qué impugnación descartas (su número, p. ej. CH-005) y por qué" >&2; exit 1; }
-fi
-# «🟡 Aceptar sin lo que falta»: la persona exime los imprescindibles sin cumplir, con su motivo (paso 1c), y lo demás es
-# una aceptación normal. Solo una persona: Jev nunca exime.
-EXIMO=false
-if [ "$VERBO" = eximo ]; then
-  { [ "$TIPO" = fase ] || [ "$TIPO" = entrega ]; } || { echo "NOTARIO: rechazado — 'eximo' no vale para una puerta de tipo '$TIPO'" >&2; exit 1; }
-  jq -e 'any(.opciones[]; .verbo == "eximo")' "$PUERTA" >/dev/null || { echo "NOTARIO: rechazado — la puerta no ofrecía 🟡 Aceptar sin lo que falta" >&2; exit 1; }
-  [ "$CANAL" != jev ] || { echo "NOTARIO: rechazado — una exención la firma una persona, no Jev" >&2; exit 1; }
-  [ -n "$TEXTO" ] || { echo "NOTARIO: rechazado — una exención necesita su motivo" >&2; exit 1; }
-  EXIMO=true; VERBO=acepto
-fi
+REVISADO=false; [ "$VERBO_DECIDIDO" = revisado ] && [ "$VERBO" != revisado ] && REVISADO=true
+EXIMO=false; [ "$VERBO_DECIDIDO" = eximo ] && [ "$VERBO" != eximo ] && EXIMO=true
 
 # Respuestas a las preguntas que enseñó la puerta («Q1: A, Q2: B», lo añade el canal): se validan contra lo que la
 # persona vio ANTES de firmar nada. Una letra que no es opción, una pregunta que no existe o dos letras para la misma
@@ -108,7 +109,7 @@ fi
 # una opción que autoriza editar tests que ya existían (efecto: editar-test) solo la puede elegir una persona.
 TEXTOS="$ROOT/plugin/hermes-sdd/hsdd_textos.py"
 QFILES=(); for f in .sdd/questions-*.md; do [ -f "$f" ] && QFILES+=("$f"); done
-respuestas() { python3 "$TEXTOS" respuestas "$1" --puerta "$PUERTA" --texto "$TEXTO" --verbo "$VERBO" "${@:2}" ${QFILES[@]+"${QFILES[@]}"}; }
+respuestas() { python3 "$TEXTOS" respuestas "$1" --puerta "$PUERTA" --texto "$TEXTO" --respuestas "$RESPUESTAS" --verbo "$VERBO" "${@:2}" ${QFILES[@]+"${QFILES[@]}"}; }
 if ! jq -e '.pasos | index("validado")' "$HOME_SDD/actas/${BOARD:-local}/$GATE.json" >/dev/null 2>&1 &&
    ! ERR=$(respuestas validar --persona "$([ "$CANAL" = jev ] && echo 0 || echo 1)" 2>&1); then
   echo "NOTARIO: rechazado — las respuestas no valen: $(printf '%s' "$ERR" | paste -sd';' - | sed 's/;/; /g')" >&2; exit 1
@@ -117,11 +118,13 @@ fi
 # Aprobar requisitos o plan eligiendo en alguna pregunta una opción distinta de la recomendada: el texto que la
 # persona vio está escrito con la recomendada, así que firmarlo dejaría aprobado algo distinto de lo que eligió.
 # Se convierte en una petición de cambios con esas respuestas: la etapa rehace el texto y la puerta vuelve a abrirse.
-if { [ "$TIPO:$VERBO" = requisitos:acepto ] || [ "$TIPO:$VERBO" = plan:conforme ]; } && [ -n "$TEXTO" ]; then
+# (en la tabla: «si_distintas»)
+SI_DISTINTAS=$(trans_campo "$TIPO" "$VERBO" si_distintas)
+if [ -n "$SI_DISTINTAS" ] && { [ -n "$TEXTO" ] || [ "$RESPUESTAS" != "{}" ]; }; then
   DISTINTAS=$(respuestas distintas)
   if [ -n "$DISTINTAS" ]; then
-    VERBO=cambios
-    TEXTO="$TEXTO. Respuestas distintas de la recomendada ($DISTINTAS): reescribe lo afectado según esas respuestas (están en .sdd/questions-*.md)."
+    VERBO=$SI_DISTINTAS
+    TEXTO="${TEXTO:+$TEXTO. }Respuestas distintas de la recomendada ($DISTINTAS): reescribe lo afectado según esas respuestas (están en .sdd/questions-*.md)."
   fi
 fi
 
@@ -174,17 +177,11 @@ if ! hecho validado; then
   # Lo que se firma es lo que la persona vio
   [ "$(git rev-parse --short=7 HEAD)" = "${SHA:0:7}" ] || fallo "HEAD ($(git rev-parse --short=7 HEAD)) no es el commit mostrado (${SHA:0:7})"
   [ -z "$(git status --porcelain --untracked-files=no)" ] || fallo "el árbol tiene cambios sin commit"
-  # Verbos válidos por tipo de puerta
-  case "$TIPO:$VERBO" in
-    requisitos:acepto|requisitos:cambios|ruta:acepto|ruta:completo|ruta:rechazo|plan:conforme|plan:cambios) ;;
-    ruta:ruta-*) jq -e --arg v "$VERBO" 'any(.opciones[]; .verbo == $v)' "$PUERTA" >/dev/null || fallo "la puerta no ofrecía la ruta $VERBO" ;;
-    fase:acepto|fase:observaciones|fase:rechazo|entrega:acepto|entrega:observaciones|entrega:rechazo) ;;
-    fase:corrijo|entrega:corrijo) jq -e 'any(.opciones[]; .verbo == "corrijo")' "$PUERTA" >/dev/null || fallo "la puerta no ofrecía ✏️ Corregir el requisito" ;;
-    fase:descarto|entrega:descarto) jq -e 'any(.opciones[]; .verbo == "descarto")' "$PUERTA" >/dev/null || fallo "la puerta no ofrecía 🗑 Descartar" ;;
-    mantenimiento:cambio|mantenimiento:ignoro|preguntas:respondo) ;;
-    *) fallo "verbo '$VERBO' no vale para una puerta de tipo '$TIPO'" ;;
-  esac
-  case "$VERBO" in cambios|observaciones|rechazo|ignoro|corrijo|descarto) [ -n "$TEXTO" ] || fallo "'$VERBO' necesita un texto" ;; esac
+  # Verbos válidos por tipo de puerta: los de la tabla; con «opcion», solo si la puerta lo ofrecía; con «texto», con él
+  trans_verbo "$TIPO" "$VERBO" >/dev/null || fallo "verbo '$VERBO' no vale para una puerta de tipo '$TIPO'"
+  OPC=$(trans_campo "$TIPO" "$VERBO" opcion)
+  [ -z "$OPC" ] || jq -e --arg v "$VERBO" 'any(.opciones[]; .verbo == $v)' "$PUERTA" >/dev/null || fallo "$OPC"
+  [ "$(trans_campo "$TIPO" "$VERBO" texto)" != true ] || [ -n "$TEXTO" ] || fallo "'$VERBO' necesita un texto"
   guardar_previos
   # 1b. inspecciones confirmadas en la puerta (idempotente: una por requisito y puerta); el commit, tras validar
   if [ "$REVISADO" = true ]; then
@@ -262,6 +259,7 @@ CHANNEL="$CANAL:$ID $PRUEBA ${BOARD}/${TASK} gate:$GATE"
 # cualquier registro anterior casaba y la aceptación no se registraba)
 registrada() { grep -qF "gate:$GATE\"" acceptance/decisions.jsonl 2>/dev/null; }
 HOY=$(date +%Y-%m-%d)
+TAG=""   # el tag que deja la firma (requirements-vN, fase-N-accepted, entrega-N), si deja alguno
 sha256() { if command -v sha256sum >/dev/null; then sha256sum "$1"; else shasum -a 256 "$1"; fi | cut -d' ' -f1; }
 etiquetar() {  # etiquetar <tag> <mensaje> — idempotente: si existe y apunta a HEAD, ya está hecho
   local tag=$1 msg=$2
@@ -344,10 +342,9 @@ if ! hecho preguntas; then
   # replanificar o al rehacer la FASE; antes esas respuestas se guardaban y el cambio no se lanzaba nunca)
   # (y al aprobar los requisitos: la puerta dice «esto lanzará: 📝 abre un cambio de requisitos: Q3, Q4»; antes se
   # apuntaba y se seguía con la ruta, y lo elegido se perdía — taller, 14/11/2026: el taller compartido con servidor)
-  case "$TIPO:$VERBO" in requisitos:acepto|plan:conforme|plan:cambios|preguntas:respondo|fase:acepto|fase:observaciones|fase:rechazo|entrega:acepto|entrega:observaciones|entrega:rechazo)
-    PIDEN=".sdd/hermes/cambio-por-respuestas-$GATE.txt" ;; esac
-  case "$TIPO:$VERBO" in fase:acepto|fase:observaciones|entrega:acepto|entrega:observaciones)
-    ACCIONES=".sdd/hermes/respuestas-por-aplicar-$GATE.txt" ;; esac
+  # (en la tabla: «respuestas» de cada verbo, cambio y aplicar)
+  if trans_tiene "$TIPO" "$VERBO" respuestas cambio; then PIDEN=".sdd/hermes/cambio-por-respuestas-$GATE.txt"; fi
+  if trans_tiene "$TIPO" "$VERBO" respuestas aplicar; then ACCIONES=".sdd/hermes/respuestas-por-aplicar-$GATE.txt"; fi
   mkdir -p .sdd/hermes
   RJ=".sdd/hermes/respuestas-$GATE.json"
   respuestas aplicar --quien "$NOMBRE ($ROL)" --hoy "$HOY" --salida "$RJ" >/dev/null || fallo "no se pudieron escribir las respuestas"
@@ -422,7 +419,7 @@ Kanban-Task: $BOARD/$TASK"
       bash "$SDD_STATE" set requirements-engineer done >/dev/null 2>&1 || true
       marcar tag
     fi
-    RESULTADO="aprobado"; RESUMEN="Requisitos v$V aprobados por $NOMBRE ($ROL) — tag requirements-v$V" ;;
+    TAG="requirements-v$V"; RESUMEN="Requisitos v$V aprobados por $NOMBRE ($ROL) — tag $TAG" ;;
 
   ruta:acepto|ruta:completo|ruta:ruta-*)
     if ! hecho registrado; then
@@ -443,7 +440,7 @@ Kanban-Task: $BOARD/$TASK"
     # La granularidad del plan que mostraba el botón (compacta | normal | fina | auto): la leen el plan y las tareas
     mkdir -p .sdd/hermes
     jq -r --arg v "$VERBO" '[.opciones[]? | select(.verbo == $v) | .granularidad // empty][0] // "auto"' "$PUERTA" > .sdd/hermes/granularidad
-    RESULTADO="$VERBO"; RESUMEN="Ruta confirmada ($VERBO) por $NOMBRE ($ROL)"
+    RESUMEN="Ruta confirmada ($VERBO) por $NOMBRE ($ROL)"
     if [ "${VERBO#ruta-}" != "$VERBO" ]; then
       RN=$(jq -r --arg v "$VERBO" '.opciones[] | select(.verbo == $v) | .etiqueta | sub("^[^A-Za-zÁÉÍÓÚÑáéíóúñ]+"; "")' "$PUERTA")
       RESUMEN="Ruta «${RN}» elegida por $NOMBRE ($ROL)"
@@ -456,7 +453,7 @@ Kanban-Task: $BOARD/$TASK"
       marcar registrado
     fi
     if ! hecho commit; then commit_si_hay "docs(status): plan agreed by $NOMBRE" status/; marcar commit; fi
-    RESULTADO="conforme"; RESUMEN="Plan conforme ($NOMBRE, $ROL)" ;;
+    RESUMEN="Plan conforme ($NOMBRE, $ROL)" ;;
 
   fase:acepto|fase:observaciones)
     RES=accepted; [ "$VERBO" = observaciones ] && RES=observations
@@ -494,8 +491,8 @@ Kanban-Task: $BOARD/$TASK"
     fi
     if ! hecho pack; then node "$SDD" accept pack --fase "$FASE" >/dev/null 2>&1 || true; marcar pack; fi
     if ! hecho fusion; then fusionar "FASE-$FASE accepted"; marcar fusion; fi
-    RESULTADO="$VERBO"; OBS=""; [ "$VERBO" = observaciones ] && OBS=" con observaciones"
-    RESUMEN="FASE-$FASE aceptada$OBS por $NOMBRE ($ROL) — tag fase-$FASE-accepted$FUSION" ;;
+    OBS=""; [ "$VERBO" = observaciones ] && OBS=" con observaciones"
+    TAG="fase-$FASE-accepted"; RESUMEN="FASE-$FASE aceptada$OBS por $NOMBRE ($ROL) — tag $TAG$FUSION" ;;
 
   fase:rechazo)
     # Lo que recibe la implementación: el texto de la persona, sus respuestas a las preguntas de la puerta (con el
@@ -509,7 +506,7 @@ Kanban-Task: $BOARD/$TASK"
       marcar registrado
     fi
     if ! hecho commit; then commit_si_hay "docs(acceptance): reject FASE-$FASE" acceptance/ status/; marcar commit; fi
-    RESULTADO="rechazo"; RESUMEN="FASE-$FASE rechazada por $NOMBRE ($ROL): $TEXTO" ;;
+    RESUMEN="FASE-$FASE rechazada por $NOMBRE ($ROL): $TEXTO" ;;
 
   entrega:acepto|entrega:observaciones)
     # El número de la entrega se fija en el acta la primera vez: al reanudar tras un corte, contar tags daría N+1
@@ -554,7 +551,7 @@ $(node "$SDD" gate --md 2>/dev/null)"
       marcar tag
     fi
     if ! hecho fusion; then fusionar "delivery $N accepted"; marcar fusion; fi
-    RESULTADO="$VERBO"; RESUMEN="Entrega $N aceptada por $NOMBRE ($ROL) — tag entrega-$N$FUSION"
+    TAG="entrega-$N"; RESUMEN="Entrega $N aceptada por $NOMBRE ($ROL) — tag $TAG$FUSION"
     [ "$UNICA" = true ] && RESUMEN="Entrega $N (y su única fase) aceptada por $NOMBRE ($ROL) — tag entrega-$N$FUSION" ;;
 
   fase:corrijo|entrega:corrijo)
@@ -569,7 +566,7 @@ $(node "$SDD" gate --md 2>/dev/null)"
       marcar registrado
     fi
     if ! hecho commit; then commit_si_hay "docs(status): requirement correction requested by $NOMBRE" status/; marcar commit; fi
-    RESULTADO="corrijo"; RESUMEN="$NOMBRE ($ROL) pide corregir el requisito: $TEXTO" ;;
+    RESUMEN="$NOMBRE ($ROL) pide corregir el requisito: $TEXTO" ;;
 
   fase:descarto|entrega:descarto)
     if ! hecho registrado; then
@@ -586,7 +583,7 @@ $(node "$SDD" gate --md 2>/dev/null)"
       marcar registrado
     fi
     if ! hecho commit; then commit_si_hay "docs(acceptance): challenges dismissed by $NOMBRE" acceptance/; marcar commit; fi
-    RESULTADO="descarto"; RESUMEN="Impugnaciones descartadas por $NOMBRE ($ROL):$(cat "$ACTA.descartadas" 2>/dev/null) — la puerta vuelve sin ellas" ;;
+    RESUMEN="Impugnaciones descartadas por $NOMBRE ($ROL):$(cat "$ACTA.descartadas" 2>/dev/null) — la puerta vuelve sin ellas" ;;
 
   entrega:rechazo)
     mkdir -p .sdd/hermes/feedback; printf '%s\n' "$TEXTO" > ".sdd/hermes/feedback/cierre.txt"
@@ -598,7 +595,7 @@ $(node "$SDD" gate --md 2>/dev/null)"
       marcar registrado
     fi
     if ! hecho commit; then commit_si_hay "docs(acceptance): delivery rejected by $NOMBRE" status/; marcar commit; fi
-    RESULTADO="rechazo"; RESUMEN="Entrega rechazada por $NOMBRE ($ROL): $TEXTO" ;;
+    RESUMEN="Entrega rechazada por $NOMBRE ($ROL): $TEXTO" ;;
 
   preguntas:respondo)
     if ! hecho registrado; then
@@ -607,7 +604,7 @@ $(node "$SDD" gate --md 2>/dev/null)"
       marcar registrado
     fi
     if ! hecho commit; then commit_si_hay "docs(status): $([ -n "$FASE" ] && echo "FASE-$FASE" || echo maintenance) questions answered by $NOMBRE" status/; marcar commit; fi
-    RESULTADO="respondo"; RESUMEN="Preguntas $([ -n "$FASE" ] && echo "de la FASE-$FASE" || echo "del mantenimiento") respondidas por $NOMBRE ($ROL)" ;;
+    RESUMEN="Preguntas $([ -n "$FASE" ] && echo "de la FASE-$FASE" || echo "del mantenimiento") respondidas por $NOMBRE ($ROL)" ;;
 
   mantenimiento:cambio)
     # La petición del cambio sale de los hallazgos que la persona vio (están en la puerta), más su comentario
@@ -621,7 +618,7 @@ $(node "$SDD" gate --md 2>/dev/null)"
       marcar registrado
     fi
     if ! hecho commit; then commit_si_hay "docs(status): maintenance change requested by $NOMBRE" status/; marcar commit; fi
-    RESULTADO="cambio"; RESUMEN="Mantenimiento: $NOMBRE ($ROL) lanza un cambio" ;;
+    RESUMEN="Mantenimiento: $NOMBRE ($ROL) lanza un cambio" ;;
 
   mantenimiento:ignoro)
     if ! hecho registrado; then
@@ -633,7 +630,7 @@ $(node "$SDD" gate --md 2>/dev/null)"
       marcar registrado
     fi
     if ! hecho commit; then commit_si_hay "docs(status): maintenance findings dismissed by $NOMBRE" status/; marcar commit; fi
-    RESULTADO="ignoro"; RESUMEN="Mantenimiento ignorado por $NOMBRE ($ROL): $TEXTO" ;;
+    RESUMEN="Mantenimiento ignorado por $NOMBRE ($ROL): $TEXTO" ;;
 
   requisitos:cambios|plan:cambios|ruta:rechazo)
     mkdir -p .sdd/hermes/feedback; printf '%s\n' "$TEXTO" > ".sdd/hermes/feedback/$TIPO.txt"
@@ -643,8 +640,12 @@ $(node "$SDD" gate --md 2>/dev/null)"
       marcar registrado
     fi
     if ! hecho commit; then commit_si_hay "docs(status): $TIPO changes requested by $NOMBRE" status/; marcar commit; fi
-    RESULTADO="$VERBO"; RESUMEN="$NOMBRE ($ROL) pide cambios en $TIPO: $TEXTO" ;;
+    RESUMEN="$NOMBRE ($ROL) pide cambios en $TIPO: $TEXTO" ;;
 esac
+# El resultado que recibe lanzar.sh siguiente sale de la tabla (antes, una cadena en cada rama de este case que tenía
+# que casar a mano con el case de lanzar.sh: «aprobado» aquí, «requisitos:aprobado» allí)
+RESULTADO=$(trans_campo "$TIPO" "$VERBO" resultado)
+[ -n "$RESULTADO" ] || fallo "la tabla de transiciones no dice el resultado de $TIPO:$VERBO"
 
 if [ "$EXIMO" = true ]; then
   PEN=$(grep -F "| $GATE |" acceptance/PENDIENTES.md 2>/dev/null | awk -F'|' '{gsub(/ /, "", $2); print $2}' | paste -sd, - | sed 's/,/, /g')
@@ -680,7 +681,14 @@ if ! hecho encadenado; then
   fi
   marcar encadenado
 fi
-t=$(mktemp); jq --arg r "$RESUMEN" '.resultado = $r | del(.error)' "$ACTA" > "$t" && mv "$t" "$ACTA"
+# Lo firmado, estructurado: el contrato con los canales y decidir.sh (en el acta y en el índice, «firma»). Antes solo
+# existía «la última línea de stdout» y el plugin adivinaba con expresiones regulares si era un rechazo («rechaz|pide
+# cambios|ignor», que dependía del texto de la persona) y cuál era el tag (« — tag »). «negativo» sale de la tabla.
+NEGATIVO=$(trans_destino "$TIPO" "$RESULTADO" | jq '.negativo // false' 2>/dev/null || true)
+FIRMA=$(jq -nc --arg tipo "$TIPO" --arg v "$VERBO_DECIDIDO" --arg como "$VERBO" --arg r "$RESULTADO" --argjson neg "${NEGATIVO:-false}" \
+  --arg tag "$TAG" --arg res "$RESUMEN" --arg fase "$FASE" \
+  '{tipo:$tipo, fase:$fase, verbo:$v, firmado_como:$como, resultado:$r, negativo:$neg, tag:$tag, resumen:$res}')
+t=$(mktemp); jq --arg r "$RESUMEN" --argjson f "$FIRMA" '.resultado = $r | .firma = $f | del(.error)' "$ACTA" > "$t" && mv "$t" "$ACTA"
 IDX="$HOME_SDD/puertas/$GATE.json"   # índice que leen los canales: la puerta queda cerrada
 # Una línea por puerta firmada en .sdd/hermes/puertas.jsonl (línea base del encargado): cuánto tardó la decisión, quién,
 # si Jev decidió después de que una persona le quitara una decisión anterior, y el texto que acompañó
@@ -698,7 +706,7 @@ if ! hecho historial; then
 fi
 if [ -f "$IDX" ]; then   # por la tabla de transiciones del núcleo, con su cerrojo (decidida|error|firmada → firmada)
   HERMES_SDD_HOME="$HOME_SDD" python3 "$ROOT/plugin/hermes-sdd/hsdd_nucleo.py" transicion "$GATE" firmada \
-    resultado="$RESUMEN" verbo="$VERBO" -error >&2 || echo "NOTARIO: aviso — firmada, pero el índice no se pudo poner al día" >&2
+    resultado="$RESUMEN" verbo="$VERBO" firma:="$FIRMA" -error >&2 || echo "NOTARIO: aviso — firmada, pero el índice no se pudo poner al día" >&2
 fi
 firmar_acta   # al final: el acta ya no cambia (pasos, historial, resultado)
 echo "$RESUMEN"

@@ -349,13 +349,8 @@ def guardar_config(carpeta: str | None = None, stack_defecto: str | None = None,
 
 # ── proyecto nuevo ────────────────────────────────────────────────────────────────────────────────────────────────
 def slug(nombre: str) -> str:
-    s = re.sub(r"[^a-z0-9]+", "-", _sin_tildes(nombre).lower()).strip("-")
-    return s
-
-
-def _sin_tildes(t: str) -> str:
-    import unicodedata
-    return "".join(c for c in unicodedata.normalize("NFD", t) if unicodedata.category(c) != "Mn")
+    """El nombre del tablero: uno solo para bash y Python (hsdd_nucleo.slug)."""
+    return N.slug(nombre)
 
 
 VITEST_MAX_WORKERS = 2   # las etapas comparten la máquina (y con Playwright): Vitest, sin tope, usa todos los núcleos
@@ -593,9 +588,14 @@ SIN_LATIDO_MIN = 30             # una etapa «running» sin ninguna señal de vi
 
 
 def _etapa_de(t: dict) -> tuple:
-    """(etapa, fase) de una tarjeta de etapa («Ejecuta: bash …/etapa.sh <repo> <etapa> [fase]»)."""
-    m = re.search(r"etapa\.sh\s+\S+\s+(\S+)(?:\s+(\S+))?", t.get("body") or "")
-    return (m.group(1), m.group(2)) if m else ("", None)
+    """(etapa, fase) de una tarjeta de etapa («Ejecuta: bash …/etapa.sh <repo> <etapa> [fase]»). Línea a línea: la
+    tarjeta puede llevar antes «Origen: puerta <id> · <título>» (lanzar.sh tarjeta, al encadenar el notario) y la fase
+    no puede salir de la línea siguiente (con \\s+ un salto de línea casaba como separador)."""
+    for linea in (t.get("body") or "").splitlines():
+        m = re.search(r"etapa\.sh[ \t]+\S+[ \t]+(\S+)(?:[ \t]+(\S+))?", linea)
+        if m:
+            return m.group(1), m.group(2)
+    return "", None
 
 
 def vigia(repo: str, tablero: str | None = None, tarjetas: list | None = None, ahora: float | None = None) -> list:

@@ -150,18 +150,30 @@ def _corta_linea(t: str, n: int = 220) -> str:
     return t if len(t) <= n else t[: n - 1].rstrip() + "…"
 
 
-def _resultado_claro(resumen: str) -> str:
+def _resultado_claro(resumen: str, firma: dict | None = None) -> str:
     """El resumen del notario («FASE-0 aceptada por Ana (Cliente) — tag fase-0-accepted») dicho para una persona: qué
-    quedó registrado, dónde (el tag, aparte) y qué pasa ahora."""
-    principal, _, tag = resumen.partition(" — tag ")
+    quedó registrado, dónde (el tag, aparte) y qué pasa ahora. Con `firma` (lo que firmar.sh deja estructurado en el
+    acta y en el índice: {resultado, verbo, negativo, tag, resumen…}) el tag y si fue un «no» salen de ahí; sin ella
+    (puertas firmadas antes de ese campo), se deducen del texto como siempre."""
+    firma = firma if isinstance(firma, dict) and "negativo" in firma else None
+    if firma:
+        tag = firma.get("tag") or ""
+        principal = resumen.replace(f" — tag {tag}", "", 1) if tag else resumen
+    else:
+        principal, _, tag = resumen.partition(" — tag ")
     principal = principal.replace(" (acepto)", "").replace(" (completo)", ", haciéndolo todo")
     principal = re.sub(r"Jev \([^()]*\) \(Agente automático \(modo (\w+)\)\)", r"Jev, en modo \1", principal)
     principal = principal.replace("Jev, en modo auto", "Jev, en modo automático")
-    negativo = bool(re.search(r"rechaz|pide cambios|ignor", principal, re.I))
+    if firma:
+        negativo = bool(firma.get("negativo"))
+    else:   # compatibilidad: puertas firmadas sin «firma» (el texto de la persona podía engañar a esta expresión)
+        negativo = bool(re.search(r"rechaz|pide cambios|ignor", principal, re.I))
     lineas = [f"{'↩️' if negativo else '✅'} {principal}."]
     if tag:
         lineas.append(f"🏷 Queda guardado en el historial como «{tag.strip()}».")
-    if re.search(r"^Entrega \d+ aceptada", principal):
+    entregada = (firma.get("tipo") == "entrega" and not negativo and firma.get("resultado") in ("acepto", "observaciones")
+                 ) if firma else bool(re.search(r"^Entrega \d+ aceptada", principal))
+    if entregada:
         lineas.append("🎉 Proyecto entregado.")
     elif negativo:
         lineas.append("Se rehace con lo que has pedido y te volverá a llegar para decidir.")
@@ -178,7 +190,7 @@ def _render(puerta: dict):
     """Texto y botones que corresponden al estado de la puerta, venga el cambio del canal que venga."""
     from telegram import InlineKeyboardButton as B, InlineKeyboardMarkup as M
     if puerta.get("estado") == "firmada" and puerta.get("resultado"):   # firmada por otro canal (p. ej. el ordenador)
-        return (f"{_cabecera(puerta)}\n{_resultado_claro(puerta['resultado'])}", None)
+        return (f"{_cabecera(puerta)}\n{_resultado_claro(puerta['resultado'], puerta.get('firma'))}", None)
     if puerta.get("estado") == "superada":   # otra puerta la sustituye (un cambio, una reapertura): sin botones
         por = puerta.get("superada_por") or ""
         motivo = por.split(":", 1)[1].strip() if por.startswith("reapertura:") else "la sustituye una puerta más reciente"
@@ -465,9 +477,13 @@ async def _firmar(bot, puerta: dict) -> None:
     # El estado cambia por la tabla de transiciones del núcleo (decidida → firmada | error), con su cerrojo
     try:
         if proc.returncode == 0:
-            resultado = out.decode("utf-8", errors="replace").strip().splitlines()[-1] if out.strip() else "firmada"
+            # Lo firmado lo deja el notario estructurado en el índice («firma»); la última línea de stdout solo vale
+            # para un notario anterior a ese campo
+            firma = (N.leer(N.indice(gid), {}) or {}).get("firma") or {}
+            resultado = firma.get("resumen") or (
+                out.decode("utf-8", errors="replace").strip().splitlines()[-1] if out.strip() else "firmada")
             p = N.transicion(gid, "firmada", resultado=resultado, error=None)
-            texto = f"{_cabecera(p)}\n{_resultado_claro(p['resultado'])}"
+            texto = f"{_cabecera(p)}\n{_resultado_claro(p['resultado'], p.get('firma'))}"
         else:
             p = N.transicion(gid, "error", error=err.decode("utf-8", errors="replace").strip()[-500:])
             texto = (f"{_cabecera(p)}\n⚠️ Tu decisión no se ha podido registrar, así que no se ha aplicado.\n"

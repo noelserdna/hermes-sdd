@@ -81,7 +81,7 @@ def _vista(ls: list) -> str:
 
 def _evidencia(repo: Path, ref: str) -> dict | None:
     """{proyecto, tipo, ref, resumen} si la referencia existe en ese proyecto; None si no."""
-    tablero = re.sub(r"[^a-z0-9]+", "-", repo.name.lower()).strip("-")
+    tablero = N.slug(repo.name)
     h = repo / ".sdd" / "hermes"
     if re.fullmatch(r"g[0-9a-f]{10,}", ref):
         p = N.leer(N.HOME / "puertas" / f"{ref}.json") or N.leer(h / "puertas" / f"{ref}.json")
@@ -169,7 +169,7 @@ def para_etapa(etapa: str, repo: str | None = None, registrar: bool = False) -> 
     if not elegidas:
         return ""
     if registrar and repo:
-        tablero = re.sub(r"[^a-z0-9]+", "-", Path(repo).name.lower()).strip("-")
+        tablero = N.slug(Path(repo).name)
         cambio = False
         for l in elegidas:
             if any(e["proyecto"] == tablero for e in l["evidencias"]):

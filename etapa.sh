@@ -32,6 +32,7 @@ RONDAS='[]'               # rondas adversariales de la etapa (aceptar): completa
 MODELO_PASO=""            # un sub-paso con otro modelo que el de la etapa (veredictos de aceptar: el barato del perfil)
 AL_TERMINAR=()            # «origen|destino»: lo consumido se marca solo si la etapa termina bien (un reintento lo vuelve a ver)
 . "$ROOT/lib/candado.sh"; CON_CANDADO=false
+. "$ROOT/lib/comun.sh"   # slug, unica
 # Ejecutor por etapa: .ejecutores[<etapa>] o, si no, .ejecutor (claude | hermes | replay); el modelo, en .modelos[<etapa>]
 # o, si el proyecto no lo fija, el del perfil de modelos global (sdd.json; por defecto «equilibrado»)
 ejecutor() { jq -r --arg e "$1" '.ejecutores[$e] // .ejecutor // "claude"' .sdd/hermes/hermes-sdd.json 2>/dev/null || echo claude; }
@@ -134,7 +135,7 @@ trap 'interrumpida TERM' TERM; trap 'interrumpida HUP' HUP; trap 'interrumpida I
 trap candado_soltar EXIT
 # ── Antes de gastar nada: ¿el proyecto está en pausa? ¿la cuota de Claude está agotada? ────────────────────────────
 HOME_SDD=${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}
-BOARD=$(basename "$REPO" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')
+BOARD=$(slug "$(basename "$REPO")")   # lib/comun.sh: el mismo nombre que da el plugin
 if [ -f "$HOME_SDD/pausa/_todo" ] || [ -f "$HOME_SDD/pausa/$BOARD" ]; then
   fin '{"outcome":"scheduled","reason":"proyecto en pausa: /reanudar para seguir"}'
 fi
@@ -323,8 +324,6 @@ revision_independiente() {  # ronda adversarial + hsdd_fidelidad de la FASE $FAS
     n=$((n + 1)); echo "$n" > ".sdd/hermes/fidelidad-arreglo-$FASE"   # hecha: si se cortaba a mitad, el reintento la repite
   done
 }
-
-unica() { [ -f .sdd/hermes/granularidad-plan ] && [ "$(cat .sdd/hermes/granularidad-plan)" != fina ] && [ "$(ls plan/fases/FASE-*.md 2>/dev/null | wc -l | tr -d ' ')" = 1 ] && ! git tag -l 'fase-*-accepted' | grep -q .; }
 
 no_hecho() {  # la explicación del ejecutor cuando termina sin hacer la etapa (su primer párrafo tras la línea stage=…)
   echo "$RES" | jq -r '.resumen // .reason // ""' | grep -v '^stage=' | grep -v '^ *$' | head -1 | cut -c1-300
@@ -596,7 +595,7 @@ PY
     fin "$RES" "Línea base propuesta a partir del código" "$P" ;;
 
   cierre)
-    if unica; then   # una sola FASE compacta: aquí se hacen sus veredictos y su demo (no hubo puerta de FASE)
+    if unica "$REPO"; then   # una sola FASE compacta: aquí se hacen sus veredictos y su demo (no hubo puerta de FASE)
       MODELO_PASO=$(modelo_veredictos) claude_etapa acceptance "/sdd-acceptance --fase 0 — $ARNES Produce the per-requirement verdicts with evidence and the FASE demo (captures and a short video in evidencias/FASE-0/). Do not sign off."
       # La misma revisión independiente que una puerta de FASE: sin ella la ruta ligera entregaba sin que nadie mirara
       # si los tests y las capturas prueban los criterios (taller, 14/11/2026: 0 impugnaciones porque no hubo ronda)

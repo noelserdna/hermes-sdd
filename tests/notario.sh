@@ -449,4 +449,31 @@ puerta g19 entrega; t=$(mktemp); jq '.unica = true' .sdd/hermes/puertas/g19.json
 rm -f .sdd/hermes/feedback/implementar-0.txt; decidir g19 rechazo telegram 111 "faltan comprobar los duplicados"; firmar g19
 [ $rc -eq 0 ] && grep -q "faltan comprobar los duplicados" .sdd/hermes/feedback/implementar-0.txt 2>/dev/null \
   && ok "rechazar la entrega de una FASE única deja lo pedido para rehacer la FASE-0" || bad "entrega única: $out"
+# 20. lo firmado, estructurado («firma» en el acta y en el índice): los canales ya no adivinan con regex si fue un «no»
+#     ni cuál es el tag; «verbo» es el botón que se pulsó y «firmado_como», lo que se firmó
+A="$HERMES_SDD_HOME/actas/local"
+jq -e '.firma | .tipo == "entrega" and .resultado == "rechazo" and .negativo == true and .tag == "" and (.resumen | startswith("Entrega rechazada"))' "$A/g19.json" >/dev/null \
+  && jq -e '.firma.negativo == true and .firma.resumen == .resultado' "$HERMES_SDD_HOME/puertas/g19.json" >/dev/null \
+  && ok "firma estructurada de un rechazo: negativo, sin tag, en el acta y en el índice" || bad "firma rechazo: $(jq -c .firma "$A/g19.json" 2>&1)"
+jq -e '.firma | .verbo == "eximo" and .firmado_como == "acepto" and .resultado == "acepto" and .negativo == false and .tag == "fase-0-accepted"' "$A/g6b.json" >/dev/null \
+  && ok "firma estructurada de una exención: el botón (eximo), lo firmado (acepto) y su tag" || bad "firma eximo: $(jq -c .firma "$A/g6b.json" 2>&1)"
+jq -e '.firma | .tipo == "plan" and .resultado == "conforme" and .negativo == false' "$A/g11.json" >/dev/null \
+  && jq -e '.firma | .verbo == "acepto" and .firmado_como == "cambios" and .resultado == "cambios" and .negativo == true' "$A/g10.json" >/dev/null \
+  && ok "firma estructurada: aprobar con una respuesta distinta queda como «cambios» (negativo)" || bad "firma g10/g11: $(jq -c .firma "$A/g10.json" "$A/g11.json" 2>&1)"
+# 21. las respuestas como campo de la decisión ({"1": "B"}, lo que pone el núcleo): el notario las usa sin texto
+decidir_r() {  # decidir_r <id> <verbo> <respuestas-json> [texto]: una decisión con el campo «respuestas»
+  decidir "$1" "$2" telegram 111 "${4:-}"; t=$(mktemp)
+  jq --argjson r "$3" '.respuestas = $r' ".sdd/hermes/decisiones/$1.json" > "$t" && mv "$t" ".sdd/hermes/decisiones/$1.json"; }
+puerta g21 plan; con_preguntas g21; decidir_r g21 conforme '{"1":"B"}'; firmar g21
+[ $rc -eq 0 ] && echo "$out" | grep -q "pide cambios en plan" && grep -q "Q-r-001 = B" .sdd/hermes/feedback/plan.txt \
+  && ok "respuestas como campo (sin «Q1: B» en el texto): la opción no recomendada pide cambios" || bad "campo respuestas: $out"
+puerta g21b plan; con_preguntas g21b; decidir_r g21b conforme '{"1":"D"}'; firmar g21b
+[ $rc -ne 0 ] && echo "$out" | grep -q "Q1: «D» no es una de sus opciones (A o B)" && ok "campo respuestas con una letra que no existe: rechazada" || bad "campo D: $out"
+puerta g21c plan; con_preguntas g21c; decidir_r g21c conforme '{"1":"B"}' "Q1: A"; firmar g21c
+[ $rc -ne 0 ] && echo "$out" | grep -q "Q1 tiene dos respuestas distintas" && ok "campo y texto que se contradicen: rechazada" || bad "campo contra texto: $out"
+puerta g21d plan; con_preguntas g21d; decidir_r g21d conforme '{"1":"A"}'; gemelo g21d
+t=$(mktemp); jq '.respuestas = {"1":"B"}' .sdd/hermes/decisiones/g21d.json > "$t" && mv "$t" .sdd/hermes/decisiones/g21d.json
+out=$(bash "$ROOT/firmar.sh" "$R" g21d 2>&1); rc=$?
+[ $rc -ne 0 ] && echo "$out" | grep -q "no coincide con la que registró un canal" \
+  && ok "unas respuestas retocadas en la copia del repo (no las que registró el canal): no se firma" || bad "respuestas retocadas: $out"
 exit $fail
