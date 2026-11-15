@@ -38,4 +38,13 @@ echo '{"desplegable": false}' > "$T/vite/.sdd/hermes/hermes-sdd.json"; o=$(pytho
 jq -e '.ok == null and (.motivo | test("desactivada"))' <<< "$o" >/dev/null && ok "desactivable por proyecto" || bad "desactivada: $o"
 # nada se queda escuchando: el grupo de npm start se mata al acabar
 sleep 1; ! curl -s -m 2 "$URL" >/dev/null && ok "npm start se detiene al acabar (su puerto ya no responde)" || bad "quedó vivo en $URL"
+# En un repo git se comprueba en una copia limpia del commit: un build que toca ficheros versionados (taller2: «npm
+# install» reescribía package-lock.json) no ensucia el repo, que el notario necesita limpio para firmar
+app "$T/git" "process.env.HOST || '0.0.0.0'"
+echo '{"name":"x","private":true,"scripts":{"build":"echo tocado >> marcador.txt","start":"node server.js"}}' > "$T/git/package.json"
+echo inicio > "$T/git/marcador.txt"; printf '.sdd/\nnode_modules/\n' > "$T/git/.gitignore"   # como en los proyectos del arnés
+( cd "$T/git" && git init -q -b main && git -c user.email=t@t -c user.name=t add -A && git -c user.email=t@t -c user.name=t commit -qm x )
+o=$(python3 "$D" "$T/git")
+jq -e '.ok == true and (.hecho | any(test("copia limpia")))' <<< "$o" >/dev/null && [ -z "$(git -C "$T/git" status --porcelain)" ] \
+  && ok "repo git: se comprueba en una copia limpia y el repo queda sin cambios" || bad "copia limpia: $o / $(git -C "$T/git" status --short)"
 exit $fail

@@ -62,6 +62,35 @@ def _solo_local(puerto: int) -> bool | None:
 
 
 def comprobar(repo: Path) -> dict:
+    """Comprueba el despliegue en una copia limpia del commit (git clone de HEAD en un temporal), como haría quien la
+    despliega: `npm ci` (o `npm install` sin lockfile), build si lo hay y start. Nunca en el repo: taller2, el `build`
+    del proyecto hacía `npm install` y, en macOS, reescribía el package-lock.json que generó la caja (Linux); el notario
+    se negó luego a firmar con el árbol sucio."""
+    import tempfile
+    repo = Path(repo)
+    conf = {}
+    try:
+        conf = json.loads((repo / ".sdd/hermes/hermes-sdd.json").read_text())
+    except Exception:
+        pass
+    if conf.get("desplegable") is False:
+        return {"ok": None, "fallos": [], "hecho": [], "motivo": "desactivada en .sdd/hermes/hermes-sdd.json"}
+    if not (repo / "package.json").exists():
+        return {"ok": None, "fallos": [], "hecho": [], "motivo": "no es un proyecto Node: no sé arrancarlo"}
+    if not (repo / ".git").exists():
+        return _comprobar_en(repo, repo)
+    with tempfile.TemporaryDirectory(prefix="hsdd-despliegue-") as tmp:
+        copia = Path(tmp) / "app"
+        r = subprocess.run(["git", "clone", "-q", "--no-hardlinks", str(repo), str(copia)], capture_output=True, text=True)
+        if r.returncode != 0:
+            return {"ok": False, "fallos": ["no se pudo copiar el commit para probar el despliegue: " + r.stderr.strip()[-200:]], "hecho": []}
+        res = _comprobar_en(copia, repo)
+        if res.get("ok") is not None:
+            res["hecho"] = ["en una copia limpia del commit"] + res.get("hecho", [])
+        return res
+
+
+def _comprobar_en(repo: Path, original: Path) -> dict:
     conf = {}
     try:
         conf = json.loads((repo / ".sdd/hermes/hermes-sdd.json").read_text())
@@ -90,6 +119,20 @@ def comprobar(repo: Path) -> dict:
     if re.search(r"\b(vite|next dev|nodemon|webpack serve)\b(?! (preview|build|start))", scripts["start"]):
         fallos.append(f"«npm start» arranca el servidor de desarrollo ({scripts['start']}), no la app para producción")
     entorno = {**os.environ, "NODE_ENV": "production", "HOST": "0.0.0.0", "CI": "1"}
+    # Las dependencias, como en un despliegue: npm ci con lockfile (no lo reescribe), si no npm install. Las de
+    # desarrollo también, porque el build suele necesitarlas
+    instalar = ["npm", "ci", "--include=dev", "--no-audit", "--no-fund"] if (repo / "package-lock.json").exists() \
+        else ["npm", "install", "--include=dev", "--no-audit", "--no-fund"]
+    if not (repo / "node_modules").exists():
+        try:
+            r = subprocess.run(instalar, cwd=repo, env={**os.environ, "CI": "1"}, capture_output=True, text=True, timeout=ESPERA_BUILD_S)
+            if r.returncode != 0:
+                fallos.append(f"«{' '.join(instalar[:2])}» falla: " + (r.stderr or r.stdout).strip()[-300:])
+                return {"ok": False, "fallos": fallos, "hecho": hecho}
+            hecho.append(f"instala sus dependencias ({' '.join(instalar[:2])})")
+        except subprocess.TimeoutExpired:
+            fallos.append(f"instalar las dependencias tarda más de {ESPERA_BUILD_S} s")
+            return {"ok": False, "fallos": fallos, "hecho": hecho}
     if "build" in scripts:
         try:
             r = subprocess.run(["npm", "run", "build"], cwd=repo, env=entorno, capture_output=True, text=True, timeout=ESPERA_BUILD_S)
@@ -102,7 +145,7 @@ def comprobar(repo: Path) -> dict:
             return {"ok": False, "fallos": fallos, "hecho": hecho}
     puerto = _puerto_libre()
     url = f"http://127.0.0.1:{puerto}/"
-    log = repo / ".sdd/hermes/desplegable.log"
+    log = original / ".sdd/hermes/desplegable.log"
     log.parent.mkdir(parents=True, exist_ok=True)
     with open(log, "w") as salida:
         p = subprocess.Popen(["npm", "start"], cwd=repo, env={**entorno, "PORT": str(puerto)}, stdout=salida,
