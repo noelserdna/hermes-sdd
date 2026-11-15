@@ -113,6 +113,23 @@ has "view: the markers still in spec/ (what CLARIFICATIONS-PENDING should list)"
 hasnt "view: never the hand-written list itself" "ya resuelta hace semanas"
 rm -f "$repo/spec/RULES.md" "$repo/spec/CLARIFICATIONS-PENDING.md"
 ( cd "$repo" && git check-ignore -q status/questions/questions-task-implementer.md ) && bad "status/questions is ignored" || pass "status/questions/ is not ignored"
+# The JSON source (templates/questions.schema.json): add validates and numbers after the .md's questions, the view
+# keeps those verbatim, answer writes the answer, sync copies both files
+printf '%s' '{"skill":"sdd-task-implementer","pregunta":"Waitlist size?","para_cliente":"¿Cuántas plazas tiene la lista de espera?","opciones":[{"letra":"A","texto":"Five","recomendada":true,"efecto":"accion"},{"letra":"B","texto":"None","efecto":"ninguno"}]}' > "$tmp/q.json"
+run questions add --role task-implementer --file "$tmp/q.json"
+has "add: next id after the .md's questions" "Q-task-implementer-003 added"
+grep -q '^## Q-task-implementer-001 \[ANSWERED\]' "$repo/.sdd/questions-task-implementer.md" && grep -q '^## Q-task-implementer-003 \[OPEN\]' "$repo/.sdd/questions-task-implementer.md" \
+  && pass "add: the view keeps the old blocks and renders the new one" || bad "view: $(cat "$repo/.sdd/questions-task-implementer.md")"
+printf '%s' '{"skill":"s","pregunta":"q","para_cliente":"c","opciones":[{"letra":"A","texto":"a","efecto":"editar-test","recomendada":true},{"letra":"B","texto":"b","efecto":"ninguno"}]}' > "$tmp/q2.json"
+run questions add --role task-implementer --file "$tmp/q2.json"
+expect "add: editar-test without ficheros is refused by the schema" "$rc" 1
+run questions answer Q-task-implementer-003 --letter B --by "Ana (club)" --date 2026-11-15
+expect "answer: exit 0" "$rc" 0
+grep -q '^Answer: B — elegida por Ana (club) (2026-11-15)$' "$repo/.sdd/questions-task-implementer.md" && pass "answer: the view shows it" || bad "answer view"
+run questions validate
+expect "validate: the JSON is valid" "$rc" 0
+run questions sync
+[ -f "$repo/status/questions/questions-task-implementer.json" ] && pass "sync copies the JSON too" || bad "sync json: $out"
 
 # ---------------------------------------------------------------- 3. evidence manifest
 mkdir -p "$repo/evidencias/FASE-1" "$repo/acceptance"

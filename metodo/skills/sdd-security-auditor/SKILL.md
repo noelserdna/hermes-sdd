@@ -8,7 +8,7 @@ description: "Audits spec security posture per OWASP ASVS 4.0.3 and CWE: threat 
 > ni registres decisiones humanas, deja la etapa en `done` y termina con el resumen de una línea `stage=… status=…`.
 > Donde esta skill diga `AskUserQuestion`, aplica esas clases en su lugar.
 >
-> Audita lo que haya (`spec/` o, sin specs, `requirements/`); los riesgos que piden una decisión de negocio son clase C (a `.sdd/questions-security-auditor.md`). Deja `audits/SECURITY-AUDIT-BASELINE.md`.
+> Audita lo que haya (`spec/` o, sin specs, `requirements/`); los riesgos que piden una decisión de negocio son clase C (a `.sdd/questions-security-auditor.json`). Deja `audits/SECURITY-AUDIT-BASELINE.md`.
 
 # SDD Security Auditor
 

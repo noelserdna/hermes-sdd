@@ -80,4 +80,8 @@ for q in .sdd/questions-*.md; do   # las preguntas vuelven a estar abiertas: las
   [ -f "$q" ] || continue
   sed -E 's/\[ANSWERED\]/[OPEN]/; s/^Answer: .*/Answer:/' "$q" > "$OUT/extras/preguntas/$(basename "$q")"
 done
+for q in .sdd/questions-*.json; do   # su fuente en JSON, igual: abiertas y sin respuesta
+  [ -f "$q" ] || continue
+  jq '.preguntas |= map(.estado = "OPEN" | .respuesta = null | del(.aplicada))' "$q" > "$OUT/extras/preguntas/$(basename "$q")"
+done
 echo "Grabación en $OUT"

@@ -178,6 +178,19 @@ Q
 puerta g8b plan
 decidir g8b conforme telegram 111; firmar g8b
 [ "$(grep -c "^Answer: B — opción recomendada" .sdd/questions-x.md)" = 2 ] && ok "«B★)» y «[B] … (recomendada)»: al firmar se contesta la recomendada (B)" || bad "firmada: $(tr '\n' '|' < .sdd/questions-x.md)"
+# 8b2. preguntas en JSON (sdd questions add): el notario escribe la respuesta en el JSON (atómico, con la CLI), la vista
+# .md se regenera y la copia versionada (status/questions/) lleva los dos
+rm -f .sdd/questions-x.md
+printf '%s' '{"skill":"sdd-plan-architect","pregunta":"¿Una FASE o dos?","para_cliente":"¿En una entrega o en dos?","opciones":[{"letra":"A","texto":"Dos FASEs","efecto":"accion"},{"letra":"B","texto":"Una","recomendada":true,"efecto":"ninguno"}]}' \
+  | node "$ROOT/metodo/scripts/sdd.mjs" questions add --role y >/dev/null
+puerta g8j plan; t=$(mktemp)
+jq --argjson q "$(python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" preguntas-json .sdd/questions-y.md .sdd/questions-y.json)" '.preguntas = $q' .sdd/hermes/puertas/g8j.json > "$t" && mv "$t" .sdd/hermes/puertas/g8j.json
+decidir g8j conforme telegram 111 "Q1: B"; firmar g8j
+[ $rc -eq 0 ] && [ "$(jq -c '.preguntas[0] | [.estado, .respuesta.letra, .respuesta.como, .respuesta.quien]' .sdd/questions-y.json)" = '["ANSWERED","B","elegida por","Andrés León (Cliente)"]' ] \
+  && grep -q '^## Q-y-001 \[ANSWERED\]' .sdd/questions-y.md && grep -q '^Answer: B — elegida por Andrés León (Cliente)' .sdd/questions-y.md \
+  && git ls-files --error-unmatch status/questions/questions-y.json >/dev/null 2>&1 \
+  && ok "pregunta en JSON: el notario escribe la respuesta en el JSON, regenera la vista y versiona los dos" || bad "JSON: $rc $out $(cat .sdd/questions-y.json)"
+rm -f .sdd/questions-y.md .sdd/questions-y.json
 # 8c. una respuesta que pide cambiar los requisitos: al dar conformidad se lanza un cambio (/cambio) en vez del tramo
 # siguiente; con kanban falso para ver qué tarjetas se crean
 mkdir -p "$T/bin"; : > "$T/klog"

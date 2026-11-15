@@ -371,7 +371,7 @@ route list as a highlight line (`routes: REQ-F-004 implement-or-test FASE-2; REQ
 goes into `summary.highlights`), then ends its turn. The lead dispatches
 task-generator and task-implementer to their owners and sends the loop back (`skills/sdd-lead/SKILL.md`, phase 10);
 the next cycle continues from `.sdd/acceptance-loop.json`, without `--reset`. `needs-human` and `spec-gap` items go to
-`$SDD_STATE_ROOT/.sdd/questions-<role>.md` as questions for the lead (`references/async-questions.md`).
+`$SDD_STATE_ROOT/.sdd/questions-<role>.json` as questions for the lead (`references/async-questions.md`).
 
 ### Test edits inside the loop
 

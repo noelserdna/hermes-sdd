@@ -29,6 +29,30 @@ respuestas_nuevas() {  # respuestas_nuevas <ruta> <texto nuevo> <texto sustituid
   local antes="$3"; [ -n "$antes" ] || antes=$(cat "$1" 2>/dev/null || true)
   comm -13 <(printf '%s\n' "$antes" | lineas_respuesta) <(printf '%s\n' "$2" | lineas_respuesta) | grep -q .
 }
+# Lo mismo en la fuente de verdad, .sdd/questions-<rol>.json (references/async-questions.md): una etapa puede añadir
+# preguntas OPEN (mejor con `sdd questions add`, que valida), nunca poner «respuesta», un estado que no sea OPEN ni
+# cambiar la respuesta de una que ya la tenía. Se compara el JSON entero que quedaría (Write: su contenido; Edit y
+# MultiEdit: el fichero actual con los cambios aplicados) con el de ahora, pregunta a pregunta.
+respuestas_json() { jq -c '[(.preguntas // [])[]? | select(type == "object") | select(.respuesta != null or (.estado // "OPEN") != "OPEN") | {id, estado, respuesta}] | .[]' 2>/dev/null | sort -u; }
+RESPUESTA_JSON='"respuesta"[[:space:]]*:[[:space:]]*[^n[:space:]]|"estado"[[:space:]]*:[[:space:]]*"ANSWERED"|"(como|quien)"[[:space:]]*:'
+respuestas_json_nuevas() {  # respuestas_json_nuevas <ruta> → sale 0 si lo que escribe la herramienta añade o cambia alguna respuesta
+  printf '%s' "$1" | grep -qE '(^|/)\.sdd/questions-[^/]*\.json$' || return 1
+  local antes despues
+  antes=$(cat "$1" 2>/dev/null || true)
+  # El fichero tal como quedaría (split/join: sin regex ni posiciones, así valen los acentos de las preguntas)
+  despues=$(printf '%s' "$IN" | jq -r --arg a "$antes" '.tool_input as $t |
+    if $t.content != null then $t.content
+    else reduce (([{old_string: $t.old_string, new_string: ($t.new_string // ""), replace_all: $t.replace_all}] | map(select(.old_string != null))) + ($t.edits // []))[] as $e ($a;
+      if $e.replace_all then split($e.old_string) | join($e.new_string // "")
+      else split($e.old_string) as $p | if ($p | length) > 1 then $p[0] + ($e.new_string // "") + ($p[1:] | join($e.old_string)) else . end end)
+    end')
+  if [ -z "$(printf '%s' "$IN" | jq -r '.tool_input.patch // empty')" ] && printf '%s' "$despues" | jq -e 'type == "object"' >/dev/null 2>&1; then
+    comm -13 <(printf '%s' "$antes" | respuestas_json) <(printf '%s' "$despues" | respuestas_json) | grep -q .
+  else   # un parche o un JSON roto: se mira, línea a línea, si añade algo de una respuesta
+    comm -13 <(printf '%s\n' "$antes" | sed -E 's/^[-+[:space:]]*//' | grep -E "$RESPUESTA_JSON" | sort -u) \
+             <(printf '%s\n' "$despues" "$(printf '%s' "$IN" | jq -r '.tool_input.patch // empty' | grep -v '^-')" | sed -E 's/^[-+[:space:]]*//' | grep -E "$RESPUESTA_JSON" | sort -u) | grep -q .
+  fi
+}
 case "$HERRAMIENTA" in
   execute_code) bloquear "el ejecutor no ejecuta código suelto; usa la terminal" ;;
   write_file|patch|Write|Edit|MultiEdit)
@@ -38,8 +62,8 @@ case "$HERRAMIENTA" in
     fi
     NUEVO=$(printf '%s' "$IN" | jq -r '[.tool_input.content, .tool_input.new_string, .tool_input.patch, (.tool_input.edits // [] | .[].new_string)] | map(select(. != null)) | join("\n")')
     VIEJO=$(printf '%s' "$IN" | jq -r '[.tool_input.old_string, (.tool_input.edits // [] | .[].old_string)] | map(select(. != null)) | join("\n")')
-    if respuestas_nuevas "$RUTA" "$NUEVO" "$VIEJO"; then
-      bloquear "las respuestas a las preguntas las escribe el notario al firmar la puerta, no una etapa ($RUTA): escribe la pregunta [OPEN] y termina"
+    if respuestas_nuevas "$RUTA" "$NUEVO" "$VIEJO" || respuestas_json_nuevas "$RUTA"; then
+      bloquear "las respuestas a las preguntas las escribe el notario al firmar la puerta, no una etapa ($RUTA): escribe la pregunta [OPEN] (sdd questions add) y termina"
     fi
     exit 0 ;;
 esac
@@ -87,9 +111,15 @@ check '\.hermes/'                                                 "$CMD_SIN_ARNE
 check '(firmar|decidir|puerta|jev|nuevo)\.sh|hsdd_(nucleo|proyectos)' "$CMD_SIN_ARNES" "las puertas, la firma, el modo de Jev y crear proyectos son del arnés, no del ejecutor"
 check '(aprobadores|jev|sdd)\.json'                                   "$CMD" "quién decide (aprobadores.json), el modo de Jev (jev.json) y la configuración (sdd.json) los fija una persona"
 check '(decisions|challenges)\.jsonl|gate-evidence'               "$ESCRIBE$ESCRIBE_I" "los registros humanos no se editan desde el ejecutor"
-# Respuestas escritas desde la terminal en .sdd/questions-*.md (echo, sed -i, tee, python…): ver respuestas_nuevas
-if [ -z "$motivo" ] && printf '%s' "$CMD" | grep -qE 'questions-[^[:space:]]*\.md' &&
-   printf '%s' "$CMD" | grep -qE 'Answer:[[:space:]]*[A-Z]|\[ANSWERED\]|(elegida|aceptada) por ' &&
+# Contestar con la CLI (`sdd questions answer`) es del notario o del lead; una etapa añade (`sdd questions add`)
+check 'questions[[:space:]]+answer'                               "$INVOCA" "las respuestas a las preguntas las escribe el notario al firmar la puerta, no una etapa"
+# Respuestas escritas desde la terminal en .sdd/questions-*.md o en su JSON (echo, sed -i, tee, jq > …, python…): ver
+# respuestas_nuevas y respuestas_json_nuevas
+if [ -z "$motivo" ] &&
+   { { printf '%s' "$CMD" | grep -qE 'questions-[^[:space:]]*\.md' &&
+       printf '%s' "$CMD" | grep -qE 'Answer:[[:space:]]*[A-Z]|\[ANSWERED\]|(elegida|aceptada) por '; } ||
+     { printf '%s' "$CMD" | grep -qE 'questions-[^[:space:]]*\.json' &&   # (la palabra «respuesta» sola no: puede ser el texto de una pregunta)
+       printf '%s' "$CMD" | grep -qE '"?respuesta"?[[:space:]]*[:=]|\.respuesta\b|ANSWERED|(elegida|aceptada) por '; }; } &&
    printf '%s' "$CMD" | grep -qE '>|\btee\b|sed[[:space:]]+(.*[[:space:]])?-[a-zA-Z]*i|perl[[:space:]]+-[a-zA-Z]*i|open\(|write_?[Tt]ext|[Ff]ile(Sync)?\(|\.write\('; then
   motivo="las respuestas a las preguntas las escribe el notario al firmar la puerta, no una etapa"
 fi

@@ -122,5 +122,33 @@ herr() {  # herr <herramienta> <ruta> <campo> <texto> [old_string]
   && echo "ok   Claude Write: reescribir el fichero con las respuestas que ya tenía y una pregunta nueva vale" || { echo "FAIL Write mismas respuestas"; fail=1; }
 o=$(jq -nc --arg p "$QD/.sdd/questions-x.md" '{hook_event_name:"pre_tool_call",tool_name:"write_file",tool_input:{path:$p,content:"## Q-x-001 [ANSWERED]\nAnswer: B — elegida por Ana (Cliente)\n"}}' | bash "$G"); rc=$?
 [ $rc = 2 ] && echo "ok   Hermes write_file: deniega cambiar una respuesta" || { echo "FAIL write_file respuesta: $rc $o"; fail=1; }
+# La fuente de verdad en JSON (.sdd/questions-<rol>.json): una etapa añade preguntas OPEN, nunca escribe «respuesta»
+J="$QD/.sdd/questions-x.json"
+q_abierta='{"id":"Q-x-002","skill":"s","estado":"OPEN","pregunta":"¿Se registra?","para_cliente":"¿Registra?","opciones":[{"letra":"A","texto":"Sí","recomendada":true,"efecto":"accion","ficheros":[]},{"letra":"B","texto":"No","efecto":"ninguno","ficheros":[]}],"respuesta":null}'
+q_hecha='{"id":"Q-x-001","skill":"s","estado":"ANSWERED","pregunta":"¿Vale?","para_cliente":"¿Vale?","opciones":[{"letra":"A","texto":"Sí","recomendada":true,"efecto":"ninguno","ficheros":[]},{"letra":"B","texto":"No","efecto":"ninguno","ficheros":[]}],"respuesta":{"letra":"A","como":"elegida por","quien":"Ana (Cliente)","fecha":"2026-11-14"}}'
+printf '{"version":1,"rol":"x","preguntas":[%s,%s]}\n' "$q_hecha" "$q_abierta" | jq . > "$J"
+contestada=$(jq -c '.preguntas[1] |= (.estado = "ANSWERED" | .respuesta = {letra:"B",como:"elegida por",quien:"Ana (Cliente)",fecha:"2026-11-15"})' "$J")
+[ "$(herr Write "$J" content "$contestada")" = deny ] && echo "ok   Claude Write: deniega contestar una pregunta en questions-*.json" || { echo "FAIL Write respuesta JSON"; fail=1; }
+cambiada=$(jq -c '.preguntas[0].respuesta.letra = "B"' "$J")
+[ "$(herr Write "$J" content "$cambiada")" = deny ] && echo "ok   Claude Write: deniega cambiar la respuesta que ya tenía el JSON" || { echo "FAIL Write cambia respuesta JSON"; fail=1; }
+nueva=$(jq -c --argjson q "$(jq -c '.id = "Q-x-003"' <<< "$q_abierta")" '.preguntas += [$q]' "$J")
+[ "$(herr Write "$J" content "$nueva")" = allow ] && echo "ok   Claude Write: añadir una pregunta OPEN al JSON (con las respuestas que ya tenía) vale" || { echo "FAIL Write pregunta nueva JSON"; fail=1; }
+[ "$(herr Write "$QD/.sdd/questions-y.json" content "$(printf '{"rol":"y","preguntas":[%s]}' "$q_hecha")")" = deny ] \
+  && echo "ok   Claude Write: deniega un JSON nuevo que ya trae preguntas contestadas" || { echo "FAIL Write JSON nuevo contestado"; fail=1; }
+[ "$(herr Edit "$J" new_string '"estado": "ANSWERED", "respuesta": {"letra": "B", "como": "elegida por", "quien": "Ana", "fecha": "2026-11-15"}' '"estado": "OPEN"')" = deny ] \
+  && echo "ok   Claude Edit: deniega poner ANSWERED y una respuesta en el JSON" || { echo "FAIL Edit respuesta JSON"; fail=1; }
+[ "$(herr Edit "$J" new_string '"pregunta": "¿Se registra cada intento?"' '"pregunta": "¿Se registra?"')" = allow ] \
+  && echo "ok   Claude Edit: corregir el texto de una pregunta abierta en el JSON vale" || { echo "FAIL Edit texto JSON"; fail=1; }
+o=$(jq -nc --arg p "$J" --arg c "$contestada" '{hook_event_name:"pre_tool_call",tool_name:"write_file",tool_input:{path:$p,content:$c}}' | bash "$G"); rc=$?
+[ $rc = 2 ] && echo "ok   Hermes write_file: deniega contestar en el JSON" || { echo "FAIL write_file respuesta JSON: $rc $o"; fail=1; }
+o=$(jq -nc --arg p "$J" '{hook_event_name:"pre_tool_call",tool_name:"patch",tool_input:{path:$p,patch:"@@\n-      \"respuesta\": null\n+      \"respuesta\": {\"letra\": \"A\", \"como\": \"elegida por\", \"quien\": \"Ana\", \"fecha\": \"x\"}\n"}}' | bash "$G"); rc=$?
+[ $rc = 2 ] && echo "ok   Hermes patch: deniega un parche que añade una respuesta al JSON" || { echo "FAIL patch respuesta JSON: $rc $o"; fail=1; }
+deny  "jq '.preguntas[1].respuesta = {\"letra\":\"A\"}' .sdd/questions-x.json > t && mv t .sdd/questions-x.json"
+deny  "sed -i '' 's/\"OPEN\"/\"ANSWERED\"/' .sdd/questions-task-implementer.json"
+deny  'node "$SDD" questions answer Q-task-implementer-002 --letter A --by "Ana (Cliente)"'
+allow "node \"\$SDD\" questions add --role task-implementer <<'EOF'
+{\"skill\":\"sdd-task-implementer\",\"pregunta\":\"¿Qué respuesta da la API?\",\"para_cliente\":\"¿Qué se enseña?\",\"opciones\":[]}
+EOF"
+allow 'jq ".preguntas[] | select(.estado == \"OPEN\") | .id" .sdd/questions-task-implementer.json'
 rm -rf "$QD"
 exit $fail

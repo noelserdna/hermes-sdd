@@ -13,7 +13,7 @@ hooks:
 > ni registres decisiones humanas, deja la etapa en `done` y termina con el resumen de una línea `stage=… status=…`.
 > Donde esta skill diga `AskUserQuestion`, aplica esas clases en su lugar.
 >
-> Audita y aplica el Mode Fix solo a los defectos cuyo arreglo es inequívoco (no cambia lo que se pidió); el resto, clase C (a `.sdd/questions-spec-auditor.md`). Deja `audits/AUDIT-BASELINE.md`.
+> Audita y aplica el Mode Fix solo a los defectos cuyo arreglo es inequívoco (no cambia lo que se pidió); el resto, clase C (a `.sdd/questions-spec-auditor.json`). Deja `audits/AUDIT-BASELINE.md`.
 
 # SDD Spec Auditor
 
