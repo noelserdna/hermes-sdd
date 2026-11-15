@@ -17,7 +17,7 @@ gateway ─────────▶ firmar.sh (notario)  ──▶ registro, 
 
 | Canal | Identidad | Fuerza | Dónde |
 |---|---|---|---|
-| `telegram` | `from.id` del update (el bot hace polling: Telegram lo firma) | alta | `plugin/hermes-sdd/__init__.py` |
+| `telegram` | `from.id` del update (el bot hace polling: Telegram lo firma) | alta | `plugin/hermes-sdd/canal_telegram.py` |
 | `dashboard` | con login del panel: email o id de la cuenta; en modo local (127.0.0.1, sin login): el usuario del sistema que arrancó el panel | media / baja en local | `plugin/hermes-sdd/dashboard/` |
 | `local` | `$USER` de quien ejecuta `decidir.sh` | baja (plan B) | `decidir.sh` |
 
