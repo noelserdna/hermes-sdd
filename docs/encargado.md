@@ -152,6 +152,19 @@ Cierre propuesto, por capas:
 - **`puertas.jsonl`** por proyecto, al firmar: tiempo hasta decidir, quién, si se deshizo a Jev, texto de los cambios.
 - **`estado` (`hsdd_proyectos.py estado <repo> --json`)**: lo que hoy calcula `_resumen_proyecto` + candado + puertas
   + últimas etapas. Lo usan el encargado, `/estado` y el panel.
+- **Métricas de resultado (`hsdd_metricas.py <repo> [--json]`)**: «0 etapas fallidas» mide el proceso, no el
+  resultado (el taller: 0 de 12 fallidas, y la entrega se rechazó 2 veces y el cierre llamó 17 veces al ejecutor).
+  Sin LLM, de `etapas.jsonl`, `puertas.jsonl`, los tags, `requirements/REQUIREMENTS.md` y `desplegable.json`:
+  - *entregas* y *fases*: cada puerta de entrega o de FASE es un ciclo que acaba al aceptarse (acepto, con
+    observaciones, eximo); se cuentan los rechazos de cada ciclo (y el máximo). Descartar una impugnación va aparte.
+  - *reejecuciones*: la misma etapa+FASE otra vez en `etapas.jsonl` («busy» no cuenta), y las llamadas al ejecutor
+    de la etapa que más hace (no se restan «de más»: aceptar hace 5 por diseño).
+  - *coste* total y por requisito activo (una media: el coste no se atribuye a un requisito concreto).
+  - *persona en las puertas*: minutos desde que se abre hasta que decide (suma y mediana; incluye la espera, es una
+    cota superior de la atención) y minutos con la demo abierta; *puertas por canal* persona/Jev (y las de Jev
+    deshechas); *demos vistas* sobre las decisiones de FASE/entrega; *desplegable* sí/no/sin comprobar.
+  El resumen de una línea sale en `estado` (campo `resultado`): `/estado`, el panel, la foto del encargado y
+  `hsdd_proyectos.py estado`.
 - Arreglo de paso: `_avisar_fallos` lee `latest_summary`, que el kanban no devuelve; debe leer
   `last_failure_error`/`result` (hoy el motivo del fallo seguramente llega vacío).
 

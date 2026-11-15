@@ -23,6 +23,8 @@ if "hsdd_nucleo" not in sys.modules:
     _spec = importlib.util.spec_from_file_location("hsdd_nucleo", Path(__file__).with_name("hsdd_nucleo.py"))
     _mod = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(_mod); sys.modules["hsdd_nucleo"] = _mod
 N = sys.modules["hsdd_nucleo"]
+_spec_m = importlib.util.spec_from_file_location("hsdd_metricas", Path(__file__).with_name("hsdd_metricas.py"))
+M = importlib.util.module_from_spec(_spec_m); _spec_m.loader.exec_module(M)   # métricas de resultado (sin LLM)
 Rechazo = N.Rechazo
 
 CARPETA_DEFECTO = "~/proyectos-sdd"
@@ -504,6 +506,13 @@ def _jsonl_cola(f: Path, n: int) -> list:
     return out
 
 
+def _resultado(r: Path) -> str:
+    try:
+        return M.resumen(M.calcular(r))
+    except Exception:   # una métrica nunca tumba la foto del proyecto
+        return ""
+
+
 def estado(repo: str, tablero: str | None = None, tarjetas: list | None = None) -> dict:
     """Foto del proyecto sin LLM: qué hace, dónde está parado, qué espera de una persona, fases, coste y lo último que
     pasó (etapas.jsonl, puertas.jsonl). `tarjetas`: las del kanban si ya se tienen (si no, se piden)."""
@@ -570,6 +579,8 @@ def estado(repo: str, tablero: str | None = None, tarjetas: list | None = None) 
         "fases": fases,
         "coste_usd": round(coste, 2),
         "pendientes": pendientes,
+        # el resultado, no solo el proceso: entregas y rechazos, reejecuciones, $/requisito, minutos de la persona…
+        "resultado": _resultado(r),
         "ultimas_etapas": _jsonl_cola(r / ".sdd" / "hermes" / "etapas.jsonl", 5),
         "ultimas_puertas": _jsonl_cola(r / ".sdd" / "hermes" / "puertas.jsonl", 5),
     }
@@ -764,6 +775,8 @@ def foto_encargado(perfil: str, marcar: bool = True) -> str:
          f"- Ahora: {e['trabajando'] or ('ENTREGADO' if e['entregado'] else 'EN PREPARACIÓN: todavía no ha arrancado; recoge la entrada (ver «Preparar la entrada») y lánzalo cuando la persona lo diga' if e.get('preparando') else 'nada en marcha')}"
          + (" · EN PAUSA" if e["pausado"] else ""),
          f"- Requisitos: {e['requisitos'] or 'sin aprobar'} · Fases: {fs} · Coste: {e['coste_usd']} $"]
+    if e.get("resultado"):
+        l.append(f"- Resultado: {e['resultado']}")
     for p in e["puertas"]:
         extra = (", bloqueada: solo rechazar" if p["bloqueada"] else "") + (f", {p['preguntas']} pregunta(s)" if p["preguntas"] else "")
         l.append(f"- Puerta esperando a la persona: «{p['titulo']}» ({p['estado']}{extra})")
@@ -883,6 +896,8 @@ if __name__ == "__main__":   # CLI de nuevo.sh
                 fs = " ".join(f"{f['n']}{'✓' if f['aceptada'] else '·'}" for f in e["fases"])
                 print(f"{e['proyecto']}: {e['trabajando'] or 'sin nada en marcha'} · fases {fs or '-'} · "
                       f"{len(e['puertas'])} puerta(s) · {e['coste_usd']} $" + (" · ENTREGADO" if e["entregado"] else ""))
+                if e.get("resultado"):
+                    print(f"  resultado: {e['resultado']}")
         elif a.cmd == "modelo":   # lo usa etapa.sh cuando el proyecto no fija el modelo de una etapa
             print(modelo_para(a.etapa, a.ejecutor))
         elif a.cmd == "rutas":

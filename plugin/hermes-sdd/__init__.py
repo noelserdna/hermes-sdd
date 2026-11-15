@@ -953,6 +953,8 @@ async def _resumen_proyecto(board: str, repo: str) -> str:
     if not (e["puertas"] or e["trabajando"] or e["paradas"] or e["aparcadas"]):
         lineas.append("  ✅ Entregado" if e["entregado"] else "  💤 Sin nada en marcha")
     lineas.append(f"  {_plural(e['pasos_hechos'], 'paso hecho', 'pasos hechos')} · {e['coste_usd']} $ gastados")
+    if e.get("resultado"):
+        lineas.append(f"  📊 {e['resultado']}")
     return "\n".join(lineas)
 
 
