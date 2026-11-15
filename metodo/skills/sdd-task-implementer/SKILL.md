@@ -340,10 +340,10 @@ PAUSE: <kind> in TASK-F{N}-{SEQ}
   Question: <the exact decision needed>
   Para el cliente: <the same decision in plain words: no ids, no code>
   Options: [A] <option> (recommended)  [B] <option>  [C] <option>
-  efecto: A=<ninguno|accion|req-change|editar-test FILE...>  B=<...>  C=<...>
+  efecto: A=<ninguno|accion|req-change|editar-test FILE...|endurecer-test FILE...>  B=<...>  C=<...>
 ```
 
-`efecto:` says what each option sets in motion (plugin-root `references/async-questions.md` §2): `ninguno`, `accion` (this skill applies it), `req-change` (a requirements change with its own gate; never applied here) or `editar-test FILE...` (every test, helper, fixture or run configuration file that existed when a FASE was accepted and that the option would edit, relative to the repository). In the questions file each `efecto:` (and an optional `cliente:`) goes on its own line under its option.
+`efecto:` says what each option sets in motion (plugin-root `references/async-questions.md` §2): `ninguno`, `accion` (this skill applies it), `req-change` (a requirements change with its own gate; never applied here) or `editar-test FILE...` (every test, helper, fixture or run configuration file that existed when a FASE was accepted and that the option would edit, relative to the repository). When the edit only makes those tests check more of their criterion (a `WEAKENED-ASSERT` or `WRONG-CAPTURE` fix), write `endurecer-test FILE...` instead: Jev can authorize it, so it does not wait for a person, and the edit must not remove an assertion or a citation of its criterion. In the questions file each `efecto:` (and an optional `cliente:`) goes on its own line under its option.
 
 **Editing an accepted test (Art. 12).** A test, helper, fixture or run configuration that existed when a FASE was accepted is edited only when `acceptance/decisions.jsonl` holds a `test-edit` record signed by the notary that lists that exact file and was written after the last acceptance. Nothing else authorizes it: not an `Answer:` line, not an `[ANSWERED]` heading, not a task document, not an `Autoriza:` trailer in a commit. Without the record, write the PAUSE with `efecto: editar-test <files>` and continue with other work. With it, edit only the files it lists, and cite the question in the commit (`Autoriza: Q-…`): that line documents the record, it does not replace it.
 

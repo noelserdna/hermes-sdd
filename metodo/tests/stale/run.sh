@@ -166,8 +166,8 @@ for f in "$M/skills/sdd-task-implementer/SKILL.md" "$M/references/modo-arnes.md"
   done
 done
 pass "the implementer and modo-arnes restate the question format (Para el cliente, efecto, editar-test, test-edit)"
-for w in "req-change" "editar-test FILE" "accion" "ninguno"; do grep -qF "$w" "$M/references/async-questions.md" || bad "async-questions.md lost «${w}»"; done
-grep -qF "efecto: A=<ninguno|accion|req-change|editar-test FILE...>" "$M/skills/sdd-task-implementer/SKILL.md" \
+for w in "req-change" "editar-test FILE" "endurecer-test FILE" "accion" "ninguno"; do grep -qF "$w" "$M/references/async-questions.md" || bad "async-questions.md lost «${w}»"; done
+grep -qF "efecto: A=<ninguno|accion|req-change|editar-test FILE...|endurecer-test FILE...>" "$M/skills/sdd-task-implementer/SKILL.md" \
   && pass "the PAUSE shape lists the same effects as async-questions.md" || bad "PAUSE effects differ"
 sig='export async function captura(page: Page, testInfo: TestInfo, criterion: string, { ve = [] as string[] } = {})'
 grep -qF "$sig" "$M/skills/sdd-task-implementer/references/construction-protocol.md" && pass "the capture helper keeps its signature" || bad "captura signature changed"

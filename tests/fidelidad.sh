@@ -60,6 +60,27 @@ autorizado firmado tests/reglas.test.js && ok "con test-edit firmado por una per
 autoriza g2 Q-task-implementer-003 "Jev (jev-1)" "Agente automático (modo auto)" tests/otro.test.js
 printf "it('b', () => { expect(3).toBe(3) })\n" > tests/otro.test.js; git commit -qam "test: jev"
 ! autorizado jev tests/otro.test.js && ok "Jev no puede autorizar editar un test (art. 12)" || bad "jev"
+# Jev SÍ puede autorizar ENDURECER (test-edit con tighten): si la edición comprueba más, vale; si afloja (quita una
+# aserción), queda autorizado pero grave, y la puerta la decide una persona
+autoriza_end() {  # autoriza_end <gate> <pregunta> <ficheros…>: como firmar.sh con efecto endurecer-test elegido por Jev
+  local g=$1 q=$2; shift 2
+  node "$SDD" accept record test-edit --tighten --paths "$@" --question "$q" --gate "$g" --reason "x" --by "Jev (jev-1)" --role "Agente automático (modo auto)" >/dev/null
+  mkdir -p "$HERMES_SDD_HOME/actas/local"
+  jq -n --arg q "$q" '{autorizaciones: [{pregunta: $q, ficheros: $ARGS.positional, endurecer: true}]}' --args "$@" > "$HERMES_SDD_HOME/actas/local/$g.json"
+  git add acceptance/decisions.jsonl; git commit -qm "docs(acceptance): test edit authorized" -m "Gate-Id: $g"
+}
+grep -q '"tighten":true' acceptance/decisions.jsonl || true
+autoriza_end g3 Q-task-implementer-004 tests/otro.test.js
+grep -q '"tighten":true' acceptance/decisions.jsonl && ok "accept record test-edit --tighten deja tighten en el registro" || bad "tighten en el registro"
+printf "it('b', () => { expect(3).toBe(3); expect(4).toBe(4) })\n" > tests/otro.test.js; git commit -qam "test: endurece"
+o=$(python3 "$F" congelados "$R" --json)
+echo "$o" | jq -e '[.congelados[] | select(.asunto == "test: endurece")][0] | .autorizado and (.grave | not) and (.autorizacion | test("solo para endurecerlo"))' >/dev/null \
+  && ok "Jev autoriza endurecer: una edición que comprueba más vale, sin grave" || bad "endurece: $o"
+printf "it('b', () => { expect(3).toBe(3) })\n" > tests/otro.test.js; git commit -qam "test: afloja con permiso de endurecer"
+o=$(python3 "$F" congelados "$R" --json)
+echo "$o" | jq -e '[.congelados[] | select(.asunto == "test: afloja con permiso de endurecer")][0] | .autorizado and .grave and (.debilitamiento | any(test("quita 1 aserción")))' >/dev/null \
+  && ok "… pero si la edición afloja el test (quita una aserción), es grave: decide una persona" || bad "afloja: $o"
+git tag fase-3e-accepted   # una aceptación cierra el permiso de endurecer (como en la realidad), para los casos siguientes
 # sin acta del notario que la respalde, una línea test-edit añadida al registro no vale
 jq -nc --arg h "$(git rev-parse HEAD)" '{type:"test-edit", at:"x", by:"Ana", role:"Cliente", head:$h, files:["tests/otro.test.js"], question:"Q-x-009", gate:"g9", reason:"x"}' >> acceptance/decisions.jsonl
 git commit -qam "docs: registro sin acta"; printf "it('b', () => { expect(4).toBe(4) })\n" > tests/otro.test.js; git commit -qam "test: sin acta"

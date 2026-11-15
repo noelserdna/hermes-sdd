@@ -360,15 +360,18 @@ fi
 if ! hecho autorizado; then
   RJ=".sdd/hermes/respuestas-$GATE.json"
   if [ -s "$RJ" ] && [ "$(jq '.autorizaciones | length' "$RJ" 2>/dev/null || echo 0)" -gt 0 ]; then
-    [ "$CANAL" != jev ] || fallo "editar un test que ya existía lo autoriza una persona, no Jev (art. 12)"
+    # Jev solo puede autorizar ENDURECER (efecto endurecer-test); editar a secas un test que ya existía es de una persona
+    [ "$CANAL" != jev ] || [ "$(jq '[.autorizaciones[] | select(.endurecer != true)] | length' "$RJ")" = 0 ] ||
+      fallo "editar un test que ya existía lo autoriza una persona, no Jev (art. 12); Jev solo puede autorizar endurecerlo"
     while IFS= read -r A; do
       QID=$(jq -r .pregunta <<< "$A")
       jq -e --arg g "$GATE" --arg q "$QID" 'select(.type == "test-edit" and .gate == $g and .question == $q)' acceptance/decisions.jsonl >/dev/null 2>&1 && continue
       FICH=(); while IFS= read -r f; do FICH+=("$f"); done < <(jq -r '.ficheros[]' <<< "$A")
-      node "$SDD" accept record test-edit --paths "${FICH[@]}" --question "$QID" --gate "$GATE" \
+      END=(); [ "$(jq -r '.endurecer // false' <<< "$A")" = true ] && END=(--tighten)
+      node "$SDD" accept record test-edit --paths "${FICH[@]}" --question "$QID" --gate "$GATE" ${END[@]+"${END[@]}"} \
         --reason "$(jq -r .motivo <<< "$A")" --by "$NOMBRE" --role "$ROL" >/dev/null || fallo "no se pudo registrar la autorización de $QID"
     done < <(jq -c '.autorizaciones[]' "$RJ")
-    t=$(mktemp); jq --slurpfile r "$RJ" '.autorizaciones = [$r[0].autorizaciones[] | {pregunta, ficheros}]' "$ACTA" > "$t" && mv "$t" "$ACTA"
+    t=$(mktemp); jq --slurpfile r "$RJ" '.autorizaciones = [$r[0].autorizaciones[] | {pregunta, ficheros} + (if .endurecer then {endurecer: true} else {} end)]' "$ACTA" > "$t" && mv "$t" "$ACTA"
     # Question-Id y no Refs: el hook commit-msg del proyecto solo admite ids de especificación en Refs (taller: el
     # notario se quedaba a medias con «Refs `Q-acceptance-001` is not a spec id»)
     git add acceptance/decisions.jsonl

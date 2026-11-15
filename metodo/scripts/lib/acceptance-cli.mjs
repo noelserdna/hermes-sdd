@@ -30,7 +30,7 @@ const VALUED = new Set(["repo", "junit", "junit-sha", "fase", "out", "report", "
   "category", "quote", "evidence", "verifier", "counter", "challenge", "challenges", "literal", "code", "file", "line", "base", "question", "gate",
   "since"]);
 const MULTI = new Set(["junit", "paths", "attach", "evidence"]);
-const FLAGS = new Set(["json", "md", "needs", "quotes", "captures", "reset", "no-out", "help", "remeasure", "allow-dirty", "open"]);
+const FLAGS = new Set(["json", "md", "needs", "quotes", "captures", "reset", "no-out", "help", "remeasure", "allow-dirty", "open", "tighten"]);
 
 function parse(argv) {
   const o = { _: [], junit: [], paths: [], attach: [], evidence: [] };
@@ -274,7 +274,9 @@ function cmdRecord(o) {
   } else if (type === "test-edit") {
     if (o.req !== undefined) usage("a test-edit names files, not a requirement: drop --req");
     const files = [...new Set(o.paths.map((f) => String(f).replace(/\\/g, "/").replace(/^\.\//, "")))];
-    Object.assign(rec, { files, question: o.question, gate: o.gate, reason: o.reason });
+    // --tighten: the option only authorizes TIGHTENING those tests (efecto endurecer-test); Jev may choose it, and a
+    // later edit that loosens them is grave for hsdd_fidelidad
+    Object.assign(rec, { files, question: o.question, gate: o.gate, reason: o.reason, ...(o.tighten ? { tighten: true } : {}) });
   } else if (type === "floor-exception") {
     // A person accepts one finding of `sdd lint --floor` (code, file, exact line text) against one base commit; the
     // finding comes back when the line changes or the base moves.

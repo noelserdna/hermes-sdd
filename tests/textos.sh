@@ -622,6 +622,28 @@ t = """### REQ-F-001: x
 """
 assert [x["texto"] for x in T.textos_web(t)] == ["Añadido por {nombre}", "Pendiente"], T.textos_web(t)
 PY
+# endurecer-test: lo puede elegir Jev (editar-test no); la puerta lo enseña con 🔩 y sin ficheros es un error
+f2="$T/q-end.md"; cat > "$f2" <<'Q'
+## Q-x-040 [OPEN] skill=sdd-task-implementer
+Question: ¿Se refuerza la prueba?
+Para el cliente: ¿Hacemos que la prueba compruebe todo lo que pide el criterio?
+Options:
+  A) Sí (recomendada)
+     efecto: endurecer-test tests/e2e/a.spec.js
+  B) No
+     efecto: ninguno
+Answer:
+Q
+python3 - "$ROOT/plugin/hermes-sdd" "$f2" <<'PY' && ok "endurecer-test: Jev puede elegirlo, se enseña con 🔩 y autoriza solo endurecer" || bad "endurecer-test"
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_textos as T
+from pathlib import Path
+f = Path(sys.argv[2]); b = T.bloques_preguntas([f])["Q-x-040"]
+assert T.errores_pregunta(b) == [], T.errores_pregunta(b)
+p = {"tipo": "preguntas", "preguntas": [{"n": 1, "id": "Q-x-040", **T.opciones_json(b)}]}
+assert T.validar_respuestas(p, [f], "Q1: A", "respondo", False) == [], T.validar_respuestas(p, [f], "Q1: A", "respondo", False)
+assert "🔩 autoriza endurecer tests/e2e/a.spec.js" in T.preguntas([f])
+assert "se autoriza ENDURECER" in T.accion_respuesta(b, "A")
+PY
 # un efecto mal escrito («efecto: --adversarial …») no invalida la decisión (antes la puerta de entrega del taller quedó
 # en error al descartar impugnaciones): se aplica como trabajo y nunca autoriza editar tests
 f="$T/q-raro.md"; cat > "$f" <<'Q'

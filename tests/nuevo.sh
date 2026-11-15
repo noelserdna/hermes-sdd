@@ -131,7 +131,7 @@ print(N.decidir("d1", "descarto", "CH-001: no es un fallo", "yo", "local", "u", 
       N.decidir("d2", "acepto", "", "yo", "local", "u", {})["decision"]["texto"])
 PY2
 )
-[ "$o" = "CH-001: no es un fallo | " ] && ok "descartar no contesta preguntas; aceptar sin tocar no escribe las recomendadas como elegidas" || bad "descarto/acepto: «$o»"
+[ "$o" = "CH-001: no es un fallo | " ] && ok "descartar no contesta preguntas; aceptar sin tocar no escribe las recomendadas como elegidas" || bad "descarto/acepto: «${o}»"
 
 o=$($NUEVO config --deshacer-jev 30 2>&1); echo "$o" | grep -q "las de Jev: 30 s" && ok "nuevo.sh config --deshacer-jev guarda la ventana de Jev" || bad "deshacer-jev: $o"
 o=$(python3 - "$ROOT/plugin/hermes-sdd/hsdd_nucleo.py" "$T" <<'PY2'

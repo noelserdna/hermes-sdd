@@ -26,7 +26,7 @@ Question: <the exact decision needed, one or two lines; technical detail goes he
 Para el cliente: <the same decision for the customer, in plain words: no ids, no code, no article numbers>
 Options:
   A) <option> (recommended)
-     efecto: <ninguno | accion | req-change | editar-test FILE...>
+     efecto: <ninguno | accion | req-change | editar-test FILE... | endurecer-test FILE...>
      cliente: <optional: the option in plain words>
   B) <option>
      efecto: <...>
@@ -61,6 +61,7 @@ Answer:
   - `accion`: work for the stage that applies answers (adjust code, the plan, a capture…).
   - `req-change`: changes `requirements/` (add, amend or deprecate a requirement or one of its criteria). The harness turns it into a requirements change with its own human gate; no stage applies it by itself.
   - `editar-test FILE...`: edit tests (or their helpers, fixtures or run configuration) that already existed when a FASE was accepted, Art. 12. List every file, relative to the repository. Only a person can choose it (never Jev); when a person does, the notary records a `test-edit` decision in `acceptance/decisions.jsonl` with exactly those files, and that record is the only thing that authorizes editing them, until the next acceptance. An answered question, an `Answer:` line or an `Autoriza:` line in a commit authorize nothing.
+  - `endurecer-test FILE...`: the same, but the option only TIGHTENS those tests: they will check more of what their criterion asks (a missing clause, the exact literal, the capture taken where the THEN is visible), never less. Use it for a `WEAKENED-ASSERT` or `WRONG-CAPTURE` fix. Jev may choose it, so the person is not asked; the notary records the `test-edit` with `tighten: true`, and if the edit then removes an assertion or stops citing its criterion, the fidelity check reports it as grave and a person decides. Anything that changes what a test expects, or removes a case, is `editar-test`.
 - `cliente:` optional under an option: the option in plain words, shown instead of the option text.
 - Questions written before `efecto:` existed are still read: their effect is guessed from the wording (`(req-change)` or a change verb next to REQ/criterion → req-change; "keep / leave / no…" → ninguno; anything else → accion) and they never authorize editing a test.
 - `Blocks`: what the station skips until the answer arrives (`TASK-F1-004, TASK-F1-007`, `pipeline gate`, `INV-023`).

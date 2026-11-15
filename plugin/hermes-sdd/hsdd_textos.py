@@ -875,7 +875,11 @@ def opciones_json(bloque: str) -> dict:
 # permiso (firmado por el notario) para editar exactamente esos tests que ya existían. Sin efecto declarado (preguntas
 # antiguas) se adivina con las reglas de siempre (pide_cambio, _SIN_ACCION) y nunca autoriza editar un test.
 EFECTOS = {"ninguno": "ninguno", "none": "ninguno", "nada": "ninguno", "accion": "accion", "acción": "accion",
-           "action": "accion", "req-change": "req-change", "editar-test": "editar-test", "edit-test": "editar-test"}
+           "action": "accion", "req-change": "req-change", "editar-test": "editar-test", "edit-test": "editar-test",
+           # Endurecer un test que ya existía (que compruebe lo que pide su criterio, o que la captura enseñe lo que
+           # dice): lo puede autorizar Jev; si la edición luego lo afloja, la fidelidad lo marca grave y decide una persona
+           "endurecer-test": "endurecer-test", "tighten-test": "endurecer-test"}
+PERMISO_TEST = ("editar-test", "endurecer-test")
 _EFECTO = re.compile(r"^\s+(?:efecto|effect)\s*:\s*(\S+)\s*(.*?)\s*$", re.I)
 _CLIENTE_Q = re.compile(r"^(?:Para el cliente|For the customer)\s*:\s*(.*\S)\s*$", re.M | re.I)
 _CLIENTE_OP = re.compile(r"^\s+(?:cliente|para el cliente|customer)\s*:\s*(.*\S)\s*$", re.I)
@@ -933,8 +937,8 @@ def errores_pregunta(bloque: str) -> list[str]:
         if not d["efecto"]:
             errs.append(f"la opción {l} no dice su efecto")
         elif d["efecto"] == "?":
-            errs.append(f"la opción {l} tiene un efecto desconocido («{d['crudo']}»: vale ninguno, accion, req-change o editar-test)")
-        elif d["efecto"] == "editar-test" and not d["ficheros"]:
+            errs.append(f"la opción {l} tiene un efecto desconocido («{d['crudo']}»: vale ninguno, accion, req-change, editar-test o endurecer-test)")
+        elif d["efecto"] in PERMISO_TEST and not d["ficheros"]:
             errs.append(f"la opción {l} autoriza editar tests sin decir cuáles")
     return errs
 
@@ -984,12 +988,15 @@ def accion_respuesta(bloque: str, letra: str) -> str:
     """Si la opción elegida pide trabajo que no es cambiar requisitos (ajustar un test, editar el plan…), la respuesta
     para la etapa que la aplica (si no, ""). Con editar-test, dice qué tests autorizó la persona, y solo esos."""
     e = efecto(bloque, letra)
-    if e["efecto"] not in ("accion", "editar-test", "?"):   # «?»: un efecto mal escrito, se aplica como trabajo
+    if e["efecto"] not in ("accion", *PERMISO_TEST, "?"):   # «?»: un efecto mal escrito, se aplica como trabajo
         return ""
     r = respuesta(bloque, letra)
     if r and e["efecto"] == "editar-test":
         r += ("\nTests ya existentes que la persona autoriza editar (solo estos; firmado en acceptance/decisions.jsonl): "
               + ", ".join(e["ficheros"]))
+    elif r and e["efecto"] == "endurecer-test":
+        r += ("\nTests ya existentes que se autoriza ENDURECER (solo estos, y solo para que comprueben más: ni quitar "
+              "asserts ni dejar de citar su criterio; firmado en acceptance/decisions.jsonl): " + ", ".join(e["ficheros"]))
     return r
 
 
@@ -1098,6 +1105,8 @@ def validar_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str, per
     res, errs, _ = plan_respuestas(puerta, ficheros, texto, verbo, marcadas)
     for r in res:
         e, qn = r["efecto"], f"Q{r['q']['n']} ({r['q'].get('id')})"
+        if e.get("efecto") == "endurecer-test" and not e.get("ficheros"):
+            errs.append(f"{qn}: la opción {r['letra']} autoriza endurecer tests sin decir cuáles")
         if e.get("efecto") == "editar-test":
             if not persona:
                 errs.append(f"{qn}: editar un test que ya existía lo autoriza una persona, no Jev (art. 12)")
@@ -1137,10 +1146,11 @@ def aplicar_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str, qui
             # «esto lanzará: ✏️ autoriza editar…». Un rechazo o una petición de cambios sin tocar la pregunta no autoriza
             # nada (notario 13: rechazar una FASE autorizaba la recomendada de una pregunta que seguía abierta).
             explicita = r["como"] == "elegida por"
-            if e["efecto"] == "editar-test" and e["ficheros"] and (explicita or verbo in ("acepto", "observaciones", "respondo", "conforme")):
+            if e["efecto"] in PERMISO_TEST and e["ficheros"] and (explicita or verbo in ("acepto", "observaciones", "respondo", "conforme")):
                 q = re.search(r"^Question:\s*(.*)$", b, re.M)
                 op = next((x for l, x, _ in opciones(b) if l == letra), "")
                 out["autorizaciones"].append({"pregunta": b.split()[1], "letra": letra, "ficheros": e["ficheros"],
+                                              "endurecer": e["efecto"] == "endurecer-test",
                                               "motivo": _corta(f"{q.group(1) if q else ''} → {letra}) {op}", 560)})
             b = b.replace("[OPEN]", "[ANSWERED]", 1)
             linea = f"Answer: {letra} — {r['como']} {quien} ({hoy})"
@@ -1169,6 +1179,8 @@ def lineas_respuestas(puerta: dict, ficheros: list, texto: str, marcadas: dict |
 def _efecto_txt(e: dict) -> str:
     if e.get("efecto") == "editar-test":
         return "✏️ autoriza editar " + (", ".join(e.get("ficheros") or []) or "tests sin decir cuáles")
+    if e.get("efecto") == "endurecer-test":
+        return "🔩 autoriza endurecer " + (", ".join(e.get("ficheros") or []) or "tests sin decir cuáles")
     return {"accion": "🛠 lanza trabajo", "req-change": "📝 abre un cambio de requisitos", "?": "❔ efecto desconocido"}.get(e.get("efecto"), "")
 
 
@@ -1179,17 +1191,20 @@ LANZARA_MARCADO = "👉 Con lo que has marcado en los botones Q, firmar lanzará
 def _lanzara(elegidas: list[tuple[int, dict]], marcado: bool = False) -> str:
     """La línea «👉 … esto lanzará: …» de [(n, efecto de la opción elegida)]."""
     lanza = {"accion": [], "req-change": [], "ninguno": [], "?": []}
-    tests_aut = []
+    tests_aut, tests_end = [], []
     for n, e in elegidas:
         ef = e.get("efecto") or "ninguno"
         if ef == "editar-test":
             tests_aut += [f"{x} (Q{n})" for x in e.get("ficheros") or []] or [f"tests sin decir cuáles (Q{n})"]
+        elif ef == "endurecer-test":
+            tests_end += [f"{x} (Q{n})" for x in e.get("ficheros") or []] or [f"tests sin decir cuáles (Q{n})"]
         else:
             lanza.setdefault(ef, []).append(f"Q{n}")
     partes = [f"🛠 lanza trabajo: {', '.join(lanza['accion'])}" if lanza["accion"] else "",
               (f"📝 abre un cambio de requisitos (antes de seguir te llega su puerta): {', '.join(lanza['req-change'])}"
                if lanza["req-change"] else ""),
               f"✏️ autoriza editar tests que ya existían: {', '.join(tests_aut)}" if tests_aut else "",
+              f"🔩 autoriza endurecer tests que ya existían: {', '.join(tests_end)}" if tests_end else "",
               f"❔ efecto desconocido: {', '.join(lanza['?'])}" if lanza["?"] else "",
               f"sin más efecto: {', '.join(lanza['ninguno'])}" if lanza["ninguno"] else ""]
     return (LANZARA_MARCADO if marcado else LANZARA_DEFECTO) + " · ".join(x for x in partes if x) + "."

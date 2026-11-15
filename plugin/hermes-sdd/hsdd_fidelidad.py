@@ -197,7 +197,7 @@ def _autorizada(repo: Path, sha: str, fichero: str, auts: list[dict] | None = No
     for r in auts:
         if fichero not in r["files"]:
             continue
-        if _es_jev(r):
+        if _es_jev(r) and not r.get("tighten"):
             motivo = f"{r.get('question')} la registró Jev, no una persona"
             continue
         if subprocess.run(["git", "-C", str(repo), "merge-base", "--is-ancestor", r["head"], sha], capture_output=True).returncode != 0:
@@ -217,7 +217,8 @@ def _autorizada(repo: Path, sha: str, fichero: str, auts: list[dict] | None = No
         if not ok:
             motivo = nota
             continue
-        return True, f"{r.get('question')}: {r.get('by')} ({r.get('role')}), puerta {r.get('gate') or '?'}{nota}"
+        solo = " — solo para endurecerlo" if r.get("tighten") else ""
+        return True, f"{r.get('question')}: {r.get('by')} ({r.get('role')}), puerta {r.get('gate') or '?'}{nota}{solo}"
     return False, motivo
 
 
@@ -287,8 +288,9 @@ def congelados(repo: Path, desde: str | None = None) -> list[dict]:
                             "aserciones_quitadas": [x for x in q if ASERCION.search(x) and x not in pset][:3],
                             "aserciones_puestas": [x for x in p if ASERCION.search(x) and x not in set(q)][:3],
                             "autorizado": ok, "autorizacion": por,
-                            # autorizado por una persona: lo que hizo es lo que se pidió; las señales quedan a la vista, sin grave
-                            "grave": not ok})
+                            # autorizado por una persona: lo que hizo es lo que se pidió; las señales quedan a la vista, sin
+                            # grave. Autorizado solo para ENDURECER (lo puede firmar Jev): una señal de que afloja es grave
+                            "grave": not ok or (por.endswith("solo para endurecerlo") and bool(senales))})
     return out
 
 

@@ -330,6 +330,19 @@ jq '.actor = {persona:"jev", canal:"jev", id:"x"}' .sdd/hermes/decisiones/g13j.j
 out=$(bash "$ROOT/firmar.sh" "$R" g13j 2>&1); rc=$?
 [ $rc -ne 0 ] && echo "$out" | grep -q "lo autoriza una persona, no Jev" && grep -q '^## Q-x-031 \[OPEN\]' .sdd/questions-x.md \
   && ok "Jev no puede elegir una opción que autoriza editar tests (art. 12): rechazada sin contestar nada" || bad "jev editar-test: $out"
+# … pero sí una que solo autoriza ENDURECER (efecto endurecer-test): se firma y el registro lleva tighten
+sed -i.bak 's/efecto: editar-test tests\/b.test.js/efecto: endurecer-test tests\/b.test.js/' .sdd/questions-x.md && rm -f .sdd/questions-x.md.bak
+cp "$HERMES_SDD_HOME/jev.json" "$T/jev.bak" 2>/dev/null || true; echo '{"defecto": "auto"}' > "$HERMES_SDD_HOME/jev.json"
+puerta g13e preguntas 9; decidir g13e respondo telegram 111
+jq '.opciones = [{verbo: "respondo", etiqueta: "✅ Responder"}]' .sdd/hermes/puertas/g13e.json > "$t" && mv "$t" .sdd/hermes/puertas/g13e.json
+jq '.actor = {persona:"jev", canal:"jev", id:"x"} | .prueba = {p: 0.95}' .sdd/hermes/decisiones/g13e.json > "$t" && mv "$t" .sdd/hermes/decisiones/g13e.json
+gemelo g13e
+out=$(bash "$ROOT/firmar.sh" "$R" g13e 2>&1); rc=$?
+if [ -f "$T/jev.bak" ]; then cp "$T/jev.bak" "$HERMES_SDD_HOME/jev.json"; else rm -f "$HERMES_SDD_HOME/jev.json"; fi
+[ $rc -eq 0 ] && jq -se '[.[] | select(.type == "test-edit" and .gate == "g13e")] | length == 1 and .[0].tighten == true and .[0].files == ["tests/b.test.js"]' acceptance/decisions.jsonl >/dev/null \
+  && jq -e '.autorizaciones == [{pregunta:"Q-x-031", ficheros:["tests/b.test.js"], endurecer:true}]' "$HERMES_SDD_HOME/actas/local/g13e.json" >/dev/null \
+  && grep -q "se autoriza ENDURECER" .sdd/hermes/respuestas-g13e.json \
+  && ok "Jev sí puede autorizar ENDURECER un test (endurecer-test): registro con tighten y acta" || bad "jev endurecer: $out $(tail -1 acceptance/decisions.jsonl)"
 rm -f .sdd/questions-x.md
 # ── fusión de la rama de la FASE en la rama por defecto al aceptarla (el notario; nunca push) ──────────────────────
 F="$T/fusion"; mkdir -p "$F"; cd "$F"; git init -q -b main; g() { git -c user.email=t@t -c user.name=t "$@"; }
