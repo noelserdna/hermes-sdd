@@ -291,10 +291,26 @@ def vistos_en_firmadas(repo: Path) -> set:
     return out
 
 
+def _desplegable(repo) -> list:
+    """«Hecho» = desplegable: lo que comprobó el cierre (hsdd_desplegable.py → .sdd/hermes/desplegable.json). Que no
+    arranque como en producción es grave (Jev no entrega sola una app que nadie más puede usar); no saberlo, leve."""
+    from pathlib import Path
+    f = Path(repo) / ".sdd/hermes/desplegable.json"
+    try:
+        d = json.loads(f.read_text())
+    except Exception:
+        return [_aviso("desplegable-sin-comprobar", "No se comprobó que la app arranque como en producción (el cierre no dejó .sdd/hermes/desplegable.json)")]
+    if d.get("ok") is True:
+        return []
+    if d.get("ok") is None:
+        return [_aviso("desplegable-sin-comprobar", f"No se comprobó que la app arranque como en producción: {d.get('motivo', '')}")]
+    return [_aviso("no-desplegable", "La app no está lista para desplegar: " + "; ".join(d.get("fallos") or []), True)]
+
+
 def revisar(repo, tipo: str, fase_n: str | None = None, ia: bool = False) -> dict:
     repo = Path(repo)
     av = {"requisitos": lambda: requisitos(repo), "ruta": lambda: ruta(repo), "plan": lambda: plan(repo),
-          "fase": lambda: fase(repo, fase_n), "entrega": lambda: requisitos(repo) + _capturas_ajenas(repo, None) + _fidelidad(repo, None)
+          "fase": lambda: fase(repo, fase_n), "entrega": lambda: requisitos(repo) + _capturas_ajenas(repo, None) + _fidelidad(repo, None) + _desplegable(repo)
           }.get(tipo, lambda: [])()
     if ia:
         av += revisor_ia(repo, tipo, fase_n)

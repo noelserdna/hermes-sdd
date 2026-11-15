@@ -691,14 +691,26 @@ CORREGIR = ("✏️ Si una duda es del propio criterio (está mal escrito o cont
 
 
 def _bloque_impugnaciones(repo: Path, imp: list | None) -> list[str]:
-    """Lo que encontró la revisión independiente y sigue abierto (gate 4): cada una con su número, para descartarla."""
+    """Lo que encontró la revisión independiente y sigue abierto (gate 4). Las dudas del propio criterio (SPEC-QUESTION)
+    son de la persona: cada una con su requisito y su frase. Lo técnico (tests flojos, capturas, algo sin hacer) ya
+    pasó por los arreglos automáticos y no se cerró: va en una línea por tipo con sus números, para rechazar o
+    descartar sin leer una lista de rutas (taller: 10 impugnaciones con su cita hacían una puerta de 1.600 palabras)."""
     if not imp:
         return []
     nombres = {r["id"]: r["titulo"] or _texto_req(r) for r in requisitos(repo)}
-    lineas = [f"• {c['id']} · {nombres.get(c.get('req'), c.get('req'))} (criterio {c.get('ac')}): "
-              f"{CATEGORIAS.get(c.get('category'), c.get('category', ''))} — «{_corta(c.get('quote') or '', 140)}»" for c in imp]
-    return (["🔎 La revisión independiente encontró cosas que los tests no prueban:\n" + "\n".join(lineas)]
-            + ([CORREGIR] if any(c.get("category") == "SPEC-QUESTION" for c in imp) else []))
+    tuyas = [c for c in imp if c.get("category") == "SPEC-QUESTION"]
+    tecnicas = [c for c in imp if c.get("category") != "SPEC-QUESTION"]
+    partes = []
+    if tuyas:
+        partes.append("🤔 La revisión independiente tiene dudas sobre lo que pide el propio requisito; esto es tuyo:\n" + "\n".join(
+            f"• {c['id']} · {nombres.get(c.get('req'), c.get('req'))}: «{_corta(c.get('quote') or '', 140)}»" for c in tuyas))
+    if tecnicas:
+        grupos: dict[str, list[str]] = {}
+        for c in tecnicas:
+            grupos.setdefault(CATEGORIAS.get(c.get("category"), c.get("category", "")), []).append(c["id"])
+        partes.append("🔧 Siguen abiertas tras los arreglos automáticos (técnicas: " + "; ".join(
+            f"{que}: {', '.join(ids)}" for que, ids in grupos.items()) + "). ❌ Rechazar lo vuelve a intentar.")
+    return partes + ([CORREGIR] if tuyas else [])
 
 
 def puerta_fase(repo: Path, proyecto: str, fase: str, gate_md: str, rc: int, tests_editados: int,

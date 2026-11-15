@@ -339,6 +339,17 @@ activaste para ese proyecto, y entonces el registro y el tag lo dicen), y que lo
 se mostró. Tres registros cuentan la misma historia: el canal, el acta del notario y
 `acceptance/decisions.jsonl` más el tag de git.
 
+**Antes de cada puerta de entrega**, sin que nadie lo pida:
+- los agentes hacen hasta dos pasadas de arreglo sobre lo técnico que encontró la revisión independiente (tests que
+  comprueban menos que su criterio, capturas, algo sin hacer); a ti solo te llegan las dudas sobre el propio requisito y,
+  en una línea, lo técnico que no se cerró (`rondas_arreglo` en `.sdd/hermes/hermes-sdd.json`);
+- se comprueba que la app es **desplegable**: README con cómo arrancarla, `npm start` (no el servidor de desarrollo)
+  que responde en `PORT` y no solo en localhost. Si no, una pasada de arreglo; si sigue sin arrancar, la puerta lo dice
+  como aviso grave y Jev no la decide solo (`"desplegable": false` para desactivarlo);
+- nada gasta sin freno: tope por etapa (20 $), por proyecto (300 $) y por ejecución (60 min), en `topes` de `sdd.json`
+  o de `.sdd/hermes/hermes-sdd.json` (`etapa_usd`, `proyecto_usd`, `ejecucion_min`; 0 = sin tope). Al llegar a uno, la
+  tarjeta se para y te avisa.
+
 **No garantiza** quién sostenía el móvil, ni resiste a alguien con acceso a tu sesión del sistema operativo: el kanban,
 los registros y los tags son ficheros tuyos. Las guardias (hooks, `approvals.deny`) lo *dificultan*. Solo un ejecutor
 en un contenedor o una firma con llave física lo *impiden*.

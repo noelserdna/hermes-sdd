@@ -261,12 +261,13 @@ graves_arreglables() {  # graves de fidelidad que la pasada de arreglo puede arr
   python3 "$ROOT/plugin/hermes-sdd/hsdd_hallazgos.py" arreglables "$REPO" "$FASE" 2>/dev/null ||
     jq -r '.graves // 0' ".sdd/hermes/fidelidad-$FASE.json" 2>/dev/null || echo 0
 }
-hay_hallazgos() {  # impugnaciones abiertas sobre un Must o hallazgos graves de fidelidad que la pasada puede arreglar
-  [ "$(node "$SDD" accept challenge list --open --fase "$FASE" --json 2>/dev/null | jq -r '.must_open // ([.challenges[]? | select(.state == "open")] | length)')" != 0 ] && return 0
+hay_hallazgos() {  # impugnaciones abiertas que los agentes pueden arreglar (no las dudas del propio criterio, SPEC-QUESTION,
+  # que son de una persona) o hallazgos graves de fidelidad que la pasada puede arreglar
+  [ "$(node "$SDD" accept challenge list --open --fase "$FASE" --json 2>/dev/null | jq -r '[.challenges[]? | select(.state == "open" and .category != "SPEC-QUESTION")] | length')" != 0 ] && return 0
   [ "$(graves_arreglables)" -gt 0 ]
 }
 hallazgos() {  # en una línea por hallazgo, para el implementador (sin las capturas de tests congelados: son preguntas)
-  node "$SDD" accept challenge list --open --fase "$FASE" --json 2>/dev/null | jq -r '.challenges[]? | select(.state == "open")
+  node "$SDD" accept challenge list --open --fase "$FASE" --json 2>/dev/null | jq -r '.challenges[]? | select(.state == "open" and .category != "SPEC-QUESTION")
     | "- \(.id) \(.req) AC\(.ac) [\(.category)]: «\(.quote)» — evidencia: \((.evidence // []) | map(if type == "object" then (.path + (if .line then ":\(.line)" else "" end)) else tostring end) | join(", "))"' 2>/dev/null
   python3 "$ROOT/plugin/hermes-sdd/hsdd_hallazgos.py" lineas "$REPO" "$FASE" 2>/dev/null
 }
@@ -295,17 +296,32 @@ esac
 # Política de tests (compacta y normal): cada criterio una vez, al nivel más barato, con su literal desde el principio
 # (coches: 5 líneas de test por línea de código y 4 de los 9 minutos de la FASE-0 retocando asserts)
 [ "$GRAN" = fina ] && TESTS_G="" || TESTS_G=" TEST POLICY: one test per acceptance criterion, at the cheapest level that proves it (unit for logic, DOM for rendering; a real browser only for what needs it and for the demo journey); never test the same criterion at several levels; test each REQ-C constraint once, not in every FASE. Name each test with its 'REQ-X-NNN ACn' and assert the literal example values of the criterion from the first version, so no later pass is needed to align them."
+# «Hecho» = desplegable (hsdd_desplegable.py lo comprueba al cerrar): desde la primera FASE, no como arreglo final
+DESPLIEGUE_G=" DEPLOYABLE FROM THE START: the first FASE's scaffold task also makes the app runnable as in production: an npm 'start' script that serves the built app (never the dev server), a 'build' script if there is a build step, the server listening on process.env.PORT and process.env.HOST (default 0.0.0.0, never a hard-coded 127.0.0.1), and a README.md that says how to install, test and start it."
+desplegable() {  # comprueba que arranca como en producción; si no, UNA pasada de arreglo y se comprueba otra vez
+  python3 "$ROOT/plugin/hermes-sdd/hsdd_desplegable.py" "$REPO" > .sdd/hermes/desplegable.json 2>/dev/null ||
+    jq -n '{ok: false, fallos: ["la comprobación de despliegue falló (hsdd_desplegable.py)"]}' > .sdd/hermes/desplegable.json
+  jq -e '.ok == false' .sdd/hermes/desplegable.json >/dev/null 2>&1 || return 0
+  local ULT; ULT=$(ls plan/fases/FASE-*.md 2>/dev/null | sed -E 's/.*FASE-([0-9]+).*/\1/' | sort -n | tail -1)
+  claude_etapa task-implementer "/sdd-task-implementer --fase=${ULT:-0} — $ARNES The app is not deployable yet: $(jq -r '.fallos | join("; ")' .sdd/hermes/desplegable.json). Append ONE task to task/TASK-FASE-${ULT:-0}.md (next id, Refs the stack constraint REQ-C if there is one) and fix it in one commit, without changing behaviour or any existing test:$DESPLIEGUE_G Check it yourself: npm run build (if any), then PORT=4321 HOST=0.0.0.0 NODE_ENV=production npm start must answer on http://127.0.0.1:4321/."
+  python3 "$ROOT/plugin/hermes-sdd/hsdd_desplegable.py" "$REPO" > .sdd/hermes/desplegable.json 2>/dev/null ||
+    jq -n '{ok: false, fallos: ["la comprobación de despliegue falló (hsdd_desplegable.py)"]}' > .sdd/hermes/desplegable.json
+}
 # Una sola FASE compacta: la aceptación de la FASE y la entrega van en una sola puerta (la de entrega, con la demo)
-revision_independiente() {  # ronda adversarial + hsdd_fidelidad de la FASE $FASE y, si encuentran algo, UNA pasada de arreglo
-  local MV; MV=$(modelo_veredictos)
+revision_independiente() {  # ronda adversarial + hsdd_fidelidad de la FASE $FASE y, mientras encuentren algo que los
+  # agentes pueden arreglar, hasta `rondas_arreglo` pasadas de arreglo (2 de serie) con su ronda incremental detrás. Lo
+  # técnico lo cierran los agentes; a la persona solo le llega lo que es suyo (dudas del criterio) o lo que no se cerró.
+  local MV n max; MV=$(modelo_veredictos)
+  max=$(jq -r '.rondas_arreglo // 2' .sdd/hermes/hermes-sdd.json 2>/dev/null || echo 2)
   fidelidad
-  if hay_hallazgos && [ ! -f ".sdd/hermes/fidelidad-arreglo-$FASE" ]; then
-    # Una pasada de arreglo, una sola vez por implementación de la FASE; lo que quede llega a la persona en la puerta
+  n=$(cat ".sdd/hermes/fidelidad-arreglo-$FASE" 2>/dev/null || echo 0)
+  case "$n" in ''|*[!0-9]*) n=1 ;; esac   # la marca antigua (vacía) era «ya hubo una»
+  while [ "$n" -lt "$max" ] && hay_hallazgos; do
     claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES An independent review of FASE-$FASE found tests or captures that do not prove their criterion, listed below. For each one, add a task to task/TASK-FASE-$FASE.md and fix it (one commit each): the test must do the criterion's GIVEN with its own data and actor, its WHEN, and assert its whole THEN with the exact text; the capture must show the screen where that THEN is visible. Each WRONG-CAPTURE (or capture finding) is a rule, not a single case: apply it to ALL the captures of the FASE, not only to the one cited, and run «sdd lint --captures --fase ${FASE}» before you finish. Fix the code when it is the code that fails. A test that already existed when an earlier FASE was accepted is NOT edited: write an [OPEN] question in .sdd/questions-task-implementer.md instead. Findings: $(hallazgos)"
     MODELO_PASO=$MV claude_etapa acceptance "/sdd-acceptance --fase $FASE — $ARNES Recompute the verdicts, captures and demo of FASE-$FASE after the fixes. Do not sign off."
     fidelidad
-    touch ".sdd/hermes/fidelidad-arreglo-$FASE"   # hecha: si se cortaba a mitad, el reintento la repite
-  fi
+    n=$((n + 1)); echo "$n" > ".sdd/hermes/fidelidad-arreglo-$FASE"   # hecha: si se cortaba a mitad, el reintento la repite
+  done
 }
 
 unica() { [ -f .sdd/hermes/granularidad-plan ] && [ "$(cat .sdd/hermes/granularidad-plan)" != fina ] && [ "$(ls plan/fases/FASE-*.md 2>/dev/null | wc -l | tr -d ' ')" = 1 ] && ! git tag -l 'fase-*-accepted' | grep -q .; }
@@ -425,7 +441,7 @@ case "$ETAPA" in
 
   tareas)
     INC=""; git tag -l 'fase-*-accepted' | grep -q . && INC=" INCREMENTAL: generate task files only for the FASEs that do not have one yet; do not touch the task files of accepted FASEs (except to fix what sdd lint --dir task reports as an error)."
-    claude_etapa task-generator "/sdd-task-generator — $ARNES Generate task/ for all FASEs.$INC$TAREAS_G$TESTS_G"
+    claude_etapa task-generator "/sdd-task-generator — $ARNES Generate task/ for all FASEs.$INC$TAREAS_G$TESTS_G$DESPLIEGUE_G"
     ls task/TASK-FASE-*.md >/dev/null 2>&1 || falla "las tareas no se generaron: $(no_hecho)"
     # Errores del lint: una pasada de reparación con sus líneas (sala, 13/11/2026: una tarea añadida al rehacer la FASE-5,
     # ya aceptada, faltaba en su «Stream Ownership» y el lint paraba las tareas del cambio siguiente)
@@ -593,6 +609,7 @@ PY
       claude_etapa task-implementer "/sdd-task-implementer --fase=$ULT — $ARNES The GLOBAL acceptance gate is not met. Requirements without evidence: $HUECOS. For each one, first append a task to task/TASK-FASE-$ULT.md (next TASK-F$ULT id, same grammar, Refs the requirement), then implement it test-first (the test name carries the requirement id and criterion, e.g. 'REQ-C-001 AC1'), one commit per task with Task:/Refs: trailers. Do not touch tests that already exist.$TESTS_G"
       claude_etapa acceptance "/sdd-acceptance — $ARNES Compute the GLOBAL per-requirement verdicts (all FASEs) with evidence. Do not sign off."
     fi
+    desplegable   # «hecho» = arranca como en producción (un arreglo si no; lo que quede lo ve la puerta como grave)
     # Fidelidad global antes de entregar: tests congelados, capturas, mutantes de todos los Must y coherencia
     python3 "$ROOT/plugin/hermes-sdd/hsdd_fidelidad.py" aceptacion "$REPO" >/dev/null 2>&1 || jq -n '{graves: 1, error: "hsdd_fidelidad falló: no hay comprobación de fidelidad"}' > .sdd/hermes/fidelidad-global.json
     P=$(puerta entrega) || falla "no se pudo abrir la puerta de entrega"

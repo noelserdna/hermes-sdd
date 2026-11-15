@@ -104,4 +104,18 @@ PY
 [ "$o" = "False False True" ] && ok "Jev: preguntas ilegibles o una opción editar-test (por dato) escalan a una persona; una acción no" || bad "jev escala: $o"
 # puerta.sh: si la revisión del encargado falla, la puerta sale con un aviso grave (Jev no decide a ciegas)
 grep -q 'FALLO_REV=.*"graves":1' "$ROOT/puerta.sh" && grep -q 'PREG_ERROR=true' "$ROOT/puerta.sh" && ok "puerta.sh: revisión o preguntas caídas cierran a Jev" || bad "puerta.sh sin cierre ante fallo"
+# «hecho» = desplegable: en la entrega, no desplegable es grave (Jev escala); sin comprobar, leve
+o=$(python3 - "$ROOT/plugin/hermes-sdd" <<'PY'
+import sys, json, tempfile; from pathlib import Path; sys.path.insert(0, sys.argv[1]); import hsdd_revision as V
+d = Path(tempfile.mkdtemp()); (d / ".sdd/hermes").mkdir(parents=True)
+r = []
+r.append([a["codigo"] for a in V._desplegable(d)])
+(d / ".sdd/hermes/desplegable.json").write_text(json.dumps({"ok": False, "fallos": ["solo escucha en localhost"]}))
+r.append([(a["codigo"], a["grave"]) for a in V._desplegable(d)])
+(d / ".sdd/hermes/desplegable.json").write_text(json.dumps({"ok": True}))
+r.append(V._desplegable(d))
+print(json.dumps(r))
+PY
+)
+[ "$o" = '[["desplegable-sin-comprobar"], [["no-desplegable", true]], []]' ] && ok "entrega: no desplegable es aviso grave; sin comprobar, leve; desplegable, nada" || bad "desplegable: $o"
 exit $fail

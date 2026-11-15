@@ -165,14 +165,20 @@ echo "$o" | grep -q '^Preguntas de la FASE-5|⏸ La FASE-5 de «bar» se ha para
 # puerta de FASE con impugnaciones abiertas (gate 4): las enseña en castellano y ofrece descartarlas, no eximir
 echo '[{"id":"CH-005","req":"REQ-F-001","ac":3,"category":"WRONG-CAPTURE","quote":"GIVEN el formulario de lucia"}]' > "$T/imp.json"
 o=$($TX puerta fase "$R" --proyecto bar --fase 0 --rc 4 --impugnaciones "$T/imp.json" | jq -r .texto)
-echo "$o" | grep -q 'la revisión independiente ha encontrado algo que no prueban' && echo "$o" | grep -q '• CH-005 · .*(criterio 3): la captura no enseña lo que dice el criterio' \
+echo "$o" | grep -q 'la revisión independiente ha encontrado algo que no prueban' && echo "$o" | grep -q '🔧 Siguen abiertas tras los arreglos automáticos (técnicas: la captura no enseña lo que dice el criterio: CH-005)' \
   && echo "$o" | grep -q '🗑 Descartar las que no sean un fallo' && ! echo "$o" | grep -q '🟡' && ! echo "$o" | grep -q 'fallan o sin comprobar' \
   && ok "puerta con impugnaciones: las enseña, ofrece 🗑 descartar y no promete 🟡" || bad "impugnaciones: $o"
 echo '[{"id":"CH-017","req":"REQ-F-001","ac":5,"category":"SPEC-QUESTION","quote":"el 2027-01-03 sigue Moroso"}]' > "$T/imp2.json"
 o=$($TX puerta fase "$R" --proyecto bar --fase 2 --rc 4 --impugnaciones "$T/imp2.json" | jq -r .texto)
-echo "$o" | grep -q 'es una duda sobre el propio criterio' && echo "$o" | grep -q '✏️ Corregir el requisito' \
+echo "$o" | grep -q '🤔 La revisión independiente tiene dudas sobre lo que pide el propio requisito; esto es tuyo' && echo "$o" | grep -q '• CH-017 · .*«el 2027-01-03 sigue Moroso»' && echo "$o" | grep -q '✏️ Corregir el requisito' \
   && ! ($TX puerta fase "$R" --proyecto bar --fase 0 --rc 4 --impugnaciones "$T/imp.json" | jq -r .texto | grep -q 'Corregir el requisito') \
   && ok "con una duda del criterio ofrece ✏️ Corregir el requisito (y solo entonces)" || bad "corregir: $o"
+# lo técnico, en una línea por tipo; lo del cliente (dudas del criterio), una por una (puerta de una pantalla)
+printf '%s' '[{"id":"CH-001","req":"REQ-F-001","ac":1,"category":"WEAKENED-ASSERT","quote":"x"},{"id":"CH-002","req":"REQ-F-001","ac":2,"category":"WEAKENED-ASSERT","quote":"y"},{"id":"CH-003","req":"REQ-F-001","ac":3,"category":"NOT-IMPLEMENTED","quote":"z"},{"id":"CH-004","req":"REQ-F-001","ac":4,"category":"SPEC-QUESTION","quote":"duda"}]' > "$T/imp3.json"
+o=$($TX puerta entrega "$R" --proyecto bar --rc 4 --impugnaciones "$T/imp3.json" | jq -r .texto)
+echo "$o" | grep -q 'técnicas: el test comprueba menos de lo que pide el criterio: CH-001, CH-002; no está hecho: CH-003)' \
+  && [ "$(echo "$o" | grep -c '^• CH-')" = 1 ] && echo "$o" | grep -q '^• CH-004 · ' \
+  && ok "entrega: lo técnico agrupado en una línea; solo la duda del criterio va una por una" || bad "agrupado: $o"
 # preguntas escritas sin la cabecera «## » y con números repetidos (club, FASE-0..3): se normalizan y se ven
 N="$T/norm"; mkdir -p "$N/.sdd"; printf '# P\n\nQ-task-implementer-001 [OPEN]\nQuestion: ¿uno?\nOptions: [A] sí (recomendada, implementada) [B] no\n\nQ-task-implementer-001 [OPEN]\nQuestion: ¿dos?\nOptions: [A] a [B] b (recomendada)\n' > "$N/.sdd/questions-task-implementer.md"
 python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" normalizar-preguntas "$N" >/dev/null
