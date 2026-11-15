@@ -155,6 +155,13 @@ until candado_tomar "$REPO" etapa "$ETAPA${FASE:+-$FASE}"; do
 done
 CON_CANDADO=true; export SDD_CANDADO_PID=$$   # los ejecutores que lance usan este candado
 huerfanos   # restos de una etapa anterior (antes de empezar)
+# El estado del arnés no se versiona en el proyecto: si un agente reescribió .gitignore y quitó sus líneas (taller3:
+# el implementador lo dejó sin .sdd/, pipeline-state.json ni evidencias/), se vuelven a poner, a la vista, antes de
+# empezar; si no, un «git add -A» de la etapa siguiente commitearía puertas, decisiones y evidencias
+IGN=0; for l in pipeline-state.json .sdd/ evidencias/; do grep -qxF "$l" .gitignore 2>/dev/null || { echo "$l" >> .gitignore; IGN=1; }; done
+if [ "$IGN" = 1 ]; then
+  git add .gitignore && git commit -qm "chore(sdd): restore the harness entries in .gitignore" >/dev/null 2>&1 || true
+fi
 
 FB=".sdd/hermes/feedback/${ETAPA}${FASE:+-$FASE}.txt"
 PEDIDO=""; [ -s "$FB" ] && PEDIDO=" La persona revisó la propuesta anterior y pidió estos cambios, que son la prioridad de esta ejecución: «$(cat "$FB")»."

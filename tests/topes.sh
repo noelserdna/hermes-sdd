@@ -12,7 +12,10 @@ conf() { echo "{\"ejecutor\":\"claude\",\"ejecutores\":{\"ux\":\"../tests/ejecut
 conf ""; git add -A; git -c user.email=t@t -c user.name=t commit -qm i
 etapa() { : > "$T/log"; out=$(FALSO_LOG="$T/log" bash "$ROOT/etapa.sh" "$R" ux 2>/dev/null | tail -1); }
 
+printf 'node_modules\n' > .gitignore; git add .gitignore; git -c user.email=t@t -c user.name=t commit -qm "gitignore sin el arnés"
 etapa
+grep -qx '.sdd/' .gitignore && grep -qx 'pipeline-state.json' .gitignore && git log -1 --format=%s | grep -q "restore the harness entries" \
+  && ok "la etapa vuelve a poner en .gitignore las líneas del arnés que un agente quitó (taller3)" || bad "gitignore: $(cat .gitignore) / $(git log -1 --format=%s)"
 [ "$(jq -r .tope_usd "$T/log")" = 20 ] && [ "$(jq -r .tope_min "$T/log")" = 60 ] && ok "por defecto: 20 \$ por etapa y 60 min por ejecución" || bad "defecto: $(cat "$T/log" | jq -c '{tope_usd,tope_min}')"
 # lo gastado por el proyecto descuenta: con 295 $ gastados de 300, la ejecución solo puede gastar 5
 echo '{"etapa":"x","coste_usd":295}' >> .sdd/hermes/etapas.jsonl

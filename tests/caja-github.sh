@@ -6,7 +6,7 @@ set -uo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
 fail=0; ok() { echo "ok   $1"; }; bad() { echo "FAIL $1"; fail=1; }
-export HERMES_SDD_HOME="$T/home"; mkdir -p "$HERMES_SDD_HOME"
+export HERMES_SDD_HOME="$T/home" HERMES_SDD_REINTENTOS_DESCARGA=1; mkdir -p "$HERMES_SDD_HOME"
 echo '{"commit": "0123456789abcdef0123456789abcdef01234567"}' > "$HERMES_SDD_HOME/instalacion.json"
 git init -q --bare "$T/origin.git"
 R="$T/r"; mkdir -p "$R"; cd "$R"; git init -q -b main; git config user.email t@t; git config user.name t
@@ -25,6 +25,7 @@ case "\$1 \$2" in
   "run view") case "\$*" in *conclusion*) echo success ;; *) echo completed ;; esac ;;
   "run cancel") echo cancelada >> "$T/cancelada" ;;
   "run download")
+    if [ -n "\${FALLA_DESCARGA:-}" ] && [ ! -f "$T/descarga-fallo" ]; then touch "$T/descarga-fallo"; echo "HTTP 503: Egress is over the account limit" >&2; exit 1; fi
     D=""; while [ \$# -gt 0 ]; do [ "\$1" = -D ] && D=\$2; shift; done
     rama=\$(grep -A1 '^--ref$' "$T/lanzado" | tail -1)
     W="$T/runner"; rm -rf "\$W"; git clone -q -b "\$rama" "$T/origin.git" "\$W"; cd "\$W"
@@ -66,6 +67,12 @@ grep -q 'haz la tarea' "$T/prompt-recibido" && grep -q '"x"' "$T/contexto-recibi
 grep -qx 'tope_usd=4.5' "$T/lanzado" && grep -qx 'arnes=0123456789abcdef0123456789abcdef01234567' "$T/lanzado" && grep -qx 'modelo=sonnet' "$T/lanzado" \
   && ok "lanza con el tope, el modelo y el commit del arnés" || bad "lanzado: $(cat "$T/lanzado")"
 ! git -C "$T/origin.git" branch --list 'sdd-caja/*' | grep -q . && ok "la rama temporal se borra al acabar" || bad "rama: $(git -C "$T/origin.git" branch)"
+git checkout -q a.txt
+# la descarga falla una vez («503 Egress…», taller3) y a la siguiente baja: la etapa sale bien
+H1=$(git rev-parse HEAD); rm -f "$T/descarga-fallo"
+out=$(FALLA_DESCARGA=1 ESCENARIO=bien bash "$ROOT/executors/github.sh" "$R" "implementar-0" "x" 2>/dev/null | tail -1)
+jq -e '.outcome == "done"' <<< "$out" >/dev/null && [ -f "$T/descarga-fallo" ] \
+  && ok "una descarga fallida se reintenta y la etapa sale bien" || bad "reintento de descarga: $out"
 git checkout -q a.txt
 
 for esc in decision enlace fuera ajeno; do

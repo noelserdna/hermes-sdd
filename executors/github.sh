@@ -94,8 +94,14 @@ done
 MIN=$(( ($(date +%s) - INICIO) / 60 ))
 CONCL=$(gh run view "$ID" -R "$GH" --json conclusion -q .conclusion 2>/dev/null)
 S="$TMP/salida"
-gh run download "$ID" -R "$GH" -n "sdd-$RUN" -D "$S" 2>> "$ERR" ||
-  salir failed "la caja terminó ($CONCL) sin dejar su trabajo: https://github.com/$GH/actions/runs/$ID" "{\"minutes\":$MIN}"
+# La descarga puede fallar un rato sin culpa de nadie (taller3: «503 Egress is over the account limit» y, minutos
+# después, bajó bien): se reintenta con esperas crecientes antes de dar la etapa por fallida
+BAJADO=false
+for espera in 0 ${HERMES_SDD_REINTENTOS_DESCARGA:-15 30 60 120 240}; do
+  [ "$espera" = 0 ] || { echo "descarga fallida; se reintenta en ${espera} s" >> "$ERR"; sleep "$espera" & wait $!; }
+  rm -rf "$S"; gh run download "$ID" -R "$GH" -n "sdd-$RUN" -D "$S" 2>> "$ERR" && { BAJADO=true; break; }
+done
+$BAJADO || salir failed "la caja terminó ($CONCL) sin dejar su trabajo: https://github.com/$GH/actions/runs/$ID" "{\"minutes\":$MIN}"
 cp "$S/claude.json" "$OUT" 2>/dev/null; cat "$S/claude.err" >> "$ERR" 2>/dev/null
 
 # ── 3. Validar y aplicar ──────────────────────────────────────────────────────────────────────────────────────────
