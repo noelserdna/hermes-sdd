@@ -94,6 +94,11 @@ edit() { jq -nc --arg p "$1" '{tool_name:"Write",tool_input:{file_path:$p}}' | S
 [ "$(edit "$HOME/.hermes/hermes-sdd/puertas/g1.json")" = deny ] && echo "ok   Claude Write: deniega el estado de Hermes" || { echo "FAIL Write hermes"; fail=1; }
 [ "$(edit status/questions/questions-task-implementer.md)" = deny ] && echo "ok   Claude Write: la copia versionada de las preguntas solo la escribe sdd questions sync" || { echo "FAIL Write status/questions: $(edit status/questions/questions-task-implementer.md)"; fail=1; }
 [ "$(edit acceptance/evidence-manifest-FASE-1.json)" = deny ] && echo "ok   Claude Write: el manifiesto de evidencias lo genera sdd accept --report" || { echo "FAIL Write manifiesto: $(edit acceptance/evidence-manifest-FASE-1.json)"; fail=1; }
+# Disco sin mayúsculas (macOS): la misma carpeta escrita con otra caja sigue siendo el proyecto
+otra=$(pwd -P | tr '[:upper:]' '[:lower:]'); [ "$otra" = "$(pwd -P)" ] && otra=$(pwd -P | tr '[:lower:]' '[:upper:]')
+if [ -d "$otra" ] && [ "$otra" -ef "$(pwd -P)" ]; then
+  [ "$(edit "$otra/acceptance/evidence-manifest-FASE-1.json")" = deny ] && echo "ok   Claude Write: otra caja en la ruta no saca el fichero del proyecto" || { echo "FAIL Write con otra caja: $(edit "$otra/acceptance/evidence-manifest-FASE-1.json")"; fail=1; }
+fi
 # Respuestas de una persona inventadas en .sdd/questions-*.md: ni por la terminal ni por las herramientas de ficheros
 deny  "printf 'Answer: A — elegida por Ana (Cliente) (2026-11-14)\n' >> .sdd/questions-task-implementer.md"
 deny  "sed -i '' 's/\[OPEN\]/[ANSWERED]/' .sdd/questions-task-implementer.md"

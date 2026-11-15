@@ -171,6 +171,13 @@ sdd_roots() {
   if [ -n "$file_path" ]; then
     # Fuera del proyecto queda la ruta absoluta (física): el llamador lo detecta con `case /*`.
     REL_PATH="${file_path#"$PROJECT_DIR"/}"
+    # macOS y Windows: el disco no distingue mayúsculas, y la misma carpeta llega como «Codecrypto» (git) y como
+    # «codecrypto» (el cwd); sin esto un fichero protegido del proyecto pasaría por «fuera del proyecto».
+    if [ "$REL_PATH" = "$file_path" ]; then
+      local lf lp
+      lf=$(printf '%s' "$file_path" | tr '[:upper:]' '[:lower:]'); lp=$(printf '%s' "$PROJECT_DIR" | tr '[:upper:]' '[:lower:]')
+      case "$lf" in "$lp"/*) [ "$PROJECT_DIR" -ef "${file_path:0:${#PROJECT_DIR}}" ] && REL_PATH="${file_path:$((${#PROJECT_DIR} + 1))}" ;; esac
+    fi
   fi
   export CWD PROJECT_DIR STATE_ROOT REL_PATH
   return 0
