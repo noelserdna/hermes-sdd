@@ -58,7 +58,7 @@ SEGMENTOS=$(printf '%s\n' "$CMD_SIN_ARNES" | perl -pe 's/(;|&&|\|\||\||\$\(|`)/\
 INVOCA=$(printf '%s' "$CMD_SIN_ARNES" | sed -E -e 's/"(\$\{?SDD\}?)"/\1/g' -e 's/"[^"]*sdd\.mjs"/sdd.mjs/g')
 if printf '%s' "$INVOCA" | grep -qE '(^|[^[:alnum:]_])(eval|(ba|z)?sh[[:space:]]+-[a-z]*c)([[:space:]]|$)' ||
    ! INVOCA=$(unquoted_text "$INVOCA"); then INVOCA=$CMD_SIN_ARNES; fi
-# Los registros (decisions.jsonl, challenges.jsonl) solo los escribe la CLI (`accept measure`, `accept challenge add`);
+# Los registros (decisions.jsonl, challenges.jsonl) solo los escribe la CLI (`accept measure`, `accept challenge add|resolve`);
 # lo que se deniega es escribirlos a mano. Leerlos, compararlos o commitearlos no los cambia, y el texto de un
 # `cat <<EOF` es un dato: esas partes se quitan antes de buscar. El código de un intérprete (`python3 - <<EOF`,
 # `node -e`) sí cuenta. El arnés comprueba además, al cerrar la etapa, qué se añadió a cada registro.
@@ -69,6 +69,10 @@ ESCRIBE=$(printf '%s\n' "$CMD_SIN_ARNES" |
 ESCRIBE_I=$(printf '%s\n' "$SEGMENTOS" | grep -E '^[[:space:]]*sed[[:space:]]+(.*[[:space:]])?-[a-zA-Z]*i' || true)
 
 check 'accept[[:space:]]+record'                                  "$INVOCA" "registrar una decisión humana (accept record) es del notario"
+# Dar por resuelta una impugnación (`accept challenge resolve`) es del verificador independiente de la ronda adversarial
+# (etapa.sh corre ese paso con SDD_PASO=acceptance); el implementador la arregla y la ronda siguiente la comprueba
+[ "${SDD_PASO:-}" = acceptance ] ||
+  check 'accept[[:space:]]+challenge[[:space:]]+resolve'           "$INVOCA" "dar por resuelta una impugnación es de la ronda adversarial (verificador independiente), no de quien la arregla"
 check '^[[:space:]]*git([[:space:]]+-[Cc][[:space:]]+[^[:space:]]+)*[[:space:]]+(tag|update-ref)[[:space:]].*(fase-([0-9]+|\$\{?[A-Za-z_]+\}?)-accepted|requirements-v|refs/tags)' \
   "$SEGMENTOS" "crear o mover tags de aceptación es del notario"
 check 'route[[:space:]].*--write'                                 "$INVOCA" "confirmar la ruta es una decisión humana"

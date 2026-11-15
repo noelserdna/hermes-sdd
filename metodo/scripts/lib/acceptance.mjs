@@ -47,7 +47,9 @@
 // independent verifier on one criterion, with its category, the literal quote and `path:line` evidence in production
 // or test code. Each sits next to the verdict in `requirements[].challenges[]` and never changes it: `open`, `stale`
 // once a cited file changed since the challenge's HEAD (a capture of the evidence dir: its sha256 changed) or the
-// requirement text changed (reqHash), `dismissed` by a person (`challenge-dismissal` record in decisions.jsonl).
+// requirement text changed (reqHash), `resolved` by an independent verifier of a later round (a resolution line of
+// challenges.jsonl, `sdd accept challenge resolve`: only when the criterion's evidence changed since the challenge),
+// `dismissed` by a person (`challenge-dismissal` record in decisions.jsonl). Only `open` ones count below.
 // `summary.must_challenged` counts the Musts with an open one; the Stack Profile's `adversarial_gate`
 // (off | warn | enforce, default warn) decides whether `sdd gate` exits 4 on them.
 import { createHash } from "node:crypto";
@@ -481,17 +483,24 @@ export function adversarialGate(root) {
   return ADVERSARIAL_MODES.includes(v) ? v : "enforce";
 }
 
+/** Challenges and their resolutions (lines `{"type":"resolution","challenge":"CH-NNN",…}` written by
+ *  `sdd accept challenge resolve`: an independent verifier of a later round found the finding no longer holds). */
 export function readChallenges(file) {
-  const challenges = [], errors = [];
-  if (!existsSync(file)) return { challenges, errors };
+  const challenges = [], resolutions = [], errors = [];
+  if (!existsSync(file)) return { challenges, resolutions, errors };
   readFileSync(file, "utf8").split(/\r?\n/).forEach((l, i) => {
     if (!l.trim()) return;
     let c;
     try { c = JSON.parse(l); } catch { errors.push({ line: i + 1, msg: "not JSON" }); return; }
+    if (c && typeof c === "object" && c.type === "resolution") {
+      if (!/^CH-\d{3,}$/.test(String(c.challenge))) { errors.push({ line: i + 1, msg: "not a resolution (challenge CH-NNN required)" }); return; }
+      resolutions.push({ ...c, line: i + 1 });
+      return;
+    }
     if (!c || typeof c !== "object" || !/^CH-\d{3,}$/.test(String(c.id)) || !c.req) { errors.push({ line: i + 1, msg: "not a challenge (id CH-NNN and req required)" }); return; }
     challenges.push({ ...c, line: i + 1 });
   });
-  return { challenges, errors };
+  return { challenges, resolutions, errors };
 }
 
 /** Next free id: CH-001, CH-002… (max + 1). */
@@ -516,32 +525,11 @@ export function forbiddenEvidence(rel, testPaths = []) {
   return `${rel}: ${top}/ is never evidence${why}; cite production or test code`;
 }
 
-/**
- * Validate a challenge about to be appended (`sdd accept challenge add`). Returns { errors, warnings, evidence } with
- * evidence normalized to [{ path, line }] (a capture of the evidence dir: { path, line: null, sha256 }).
- * Cited files must exist, be committed (tracked, no uncommitted change) and hold the cited line.
- */
-export function validateChallenge(ch, reqs, { root, testPaths = [], evidenceDir = DEFAULT_EVIDENCE_DIR } = {}) {
-  const errors = [], warnings = [], evidence = [];
-  if (!ch.head) errors.push("no HEAD commit: record challenges in a git repository with at least one commit");
-  const req = ch.req ? reqs.find((r) => r.id === ch.req) : null;
-  if (!ch.req) errors.push("--req is required");
-  else if (!req) errors.push(`${ch.req} is not in requirements/REQUIREMENTS.md`);
-  else {
-    if (req.deprecated) errors.push(`${ch.req} is deprecated: it needs no acceptance`);
-    const n = acNumber(ch.ac);
-    if (n === null || Number.isNaN(n) || n < 1) errors.push("--ac N is required (the criterion the finding is about: 2 or AC2)");
-    else if (n > Math.max(1, req.criteria.length)) errors.push(`${ch.req} has ${req.criteria.length} criteria; AC${n} does not exist`);
-    else if (norm(ch.quote) && req.criteria[n - 1] && !norm(req.criteria[n - 1]).toLowerCase().includes(norm(ch.quote).toLowerCase()))
-      warnings.push(`--quote is not a literal part of ${ch.req} AC${n} (\`sdd req show ${ch.req} --ac ${n}\`)`);
-  }
-  if (!CHALLENGE_CATEGORIES.includes(ch.category)) errors.push(`--category must be one of ${CHALLENGE_CATEGORIES.join(", ")}`);
-  if (!norm(ch.quote)) errors.push("--quote is required: the literal words of the criterion that are not met");
-  if (!norm(ch.verifier)) errors.push("--verifier is required (the agent that raised the finding)");
-  if (ch.counter === "refuted") errors.push("--counter refuted: a refuted finding is not recorded; list it in the round's summary");
-  else if (!RECORDED_COUNTERS.includes(ch.counter)) errors.push(`--counter must be ${RECORDED_COUNTERS.join(" | ")} (the counter-verifier's result)`);
-  const refs = ch.evidence || [];
-  if (!refs.length) errors.push("--evidence path:line is required (production or test code)");
+/** `path:line` references of a challenge or a resolution → { errors, evidence: [{ path, line }] } (a capture of the
+ *  evidence dir: { path, line: null, sha256 }). Cited files must exist, be committed (tracked, no uncommitted change)
+ *  and hold the cited line; the folders of FORBIDDEN_EVIDENCE are never evidence. */
+export function validateEvidenceRefs(refs, { root, testPaths = [], evidenceDir = DEFAULT_EVIDENCE_DIR } = {}) {
+  const errors = [], evidence = [];
   const repo = Boolean(root) && isRepo(root);
   const evDir = String(evidenceDir).replace(/^\.\//, "").replace(/\/+$/, "");
   for (const raw of refs) {
@@ -569,13 +557,47 @@ export function validateChallenge(ch, reqs, { root, testPaths = [], evidenceDir 
     }
     evidence.push({ path: rel, line: ref.line });
   }
+  return { errors, evidence };
+}
+
+/**
+ * Validate a challenge about to be appended (`sdd accept challenge add`). Returns { errors, warnings, evidence } with
+ * evidence normalized to [{ path, line }] (a capture of the evidence dir: { path, line: null, sha256 }).
+ * Cited files must exist, be committed (tracked, no uncommitted change) and hold the cited line.
+ */
+export function validateChallenge(ch, reqs, { root, testPaths = [], evidenceDir = DEFAULT_EVIDENCE_DIR } = {}) {
+  const errors = [], warnings = [], evidence = [];
+  if (!ch.head) errors.push("no HEAD commit: record challenges in a git repository with at least one commit");
+  const req = ch.req ? reqs.find((r) => r.id === ch.req) : null;
+  if (!ch.req) errors.push("--req is required");
+  else if (!req) errors.push(`${ch.req} is not in requirements/REQUIREMENTS.md`);
+  else {
+    if (req.deprecated) errors.push(`${ch.req} is deprecated: it needs no acceptance`);
+    const n = acNumber(ch.ac);
+    if (n === null || Number.isNaN(n) || n < 1) errors.push("--ac N is required (the criterion the finding is about: 2 or AC2)");
+    else if (n > Math.max(1, req.criteria.length)) errors.push(`${ch.req} has ${req.criteria.length} criteria; AC${n} does not exist`);
+    else if (norm(ch.quote) && req.criteria[n - 1] && !norm(req.criteria[n - 1]).toLowerCase().includes(norm(ch.quote).toLowerCase()))
+      warnings.push(`--quote is not a literal part of ${ch.req} AC${n} (\`sdd req show ${ch.req} --ac ${n}\`)`);
+  }
+  if (!CHALLENGE_CATEGORIES.includes(ch.category)) errors.push(`--category must be one of ${CHALLENGE_CATEGORIES.join(", ")}`);
+  if (!norm(ch.quote)) errors.push("--quote is required: the literal words of the criterion that are not met");
+  if (!norm(ch.verifier)) errors.push("--verifier is required (the agent that raised the finding)");
+  if (ch.counter === "refuted") errors.push("--counter refuted: a refuted finding is not recorded; list it in the round's summary");
+  else if (!RECORDED_COUNTERS.includes(ch.counter)) errors.push(`--counter must be ${RECORDED_COUNTERS.join(" | ")} (the counter-verifier's result)`);
+  if (!(ch.evidence || []).length) errors.push("--evidence path:line is required (production or test code)");
+  const ev = validateEvidenceRefs(ch.evidence || [], { root, testPaths, evidenceDir });
+  errors.push(...ev.errors);
+  evidence.push(...ev.evidence);
   return { errors, warnings, evidence };
 }
 
-/** State of one challenge: dismissed (a person's record) · stale (requirement text changed or deprecated, a cited
- *  file changed since the challenge's HEAD, a cited capture changed) · open. */
-export function challengeState(root, ch, { req, dismissal, repo = true, cache = new Map(), files = new Map(), evidenceDir = DEFAULT_EVIDENCE_DIR } = {}) {
+/** State of one challenge: dismissed (a person's record) · resolved (a verifier of a later round found, on evidence
+ *  that changed since the challenge, that it no longer holds: `challenge resolve`) · stale (requirement text changed
+ *  or deprecated, a cited file changed since the challenge's HEAD, a cited capture changed) · open. */
+export function challengeState(root, ch, { req, dismissal, resolution, repo = true, cache = new Map(), files = new Map(), evidenceDir = DEFAULT_EVIDENCE_DIR } = {}) {
   if (dismissal) return { state: "dismissed", dismissal: { line: dismissal.line, by: dismissal.by, role: dismissal.role, reason: dismissal.reason, at: dismissal.at || null } };
+  if (resolution) return { state: "resolved", resolution: { line: resolution.line, verifier: resolution.verifier, reason: resolution.reason,
+    evidence: resolution.evidence || [], changed: resolution.changed || [], head: resolution.head || null, at: resolution.at || null } };
   if (!req) return { state: "stale", stale_reason: `${ch.req} is not in requirements/REQUIREMENTS.md` };
   if (req.deprecated) return { state: "stale", stale_reason: "requirement deprecated" };
   if (ch.reqHash !== reqHash(req)) return { state: "stale", stale_reason: "requirement text changed since the challenge (MODIFY)" };
@@ -594,18 +616,21 @@ export function challengeState(root, ch, { req, dismissal, repo = true, cache = 
   return { state: "open" };
 }
 
-/** Challenges with their state, for `challenge list` and the ledger. records: decisions (challenge-dismissal ones count). */
+/** Challenges with their state, for `challenge list` and the ledger. records: decisions (challenge-dismissal ones
+ *  count); opts.resolutions: the resolution lines of challenges.jsonl (the first one per challenge counts). */
 export function challengeStates(root, challenges, reqs, records, opts = {}) {
   const byId = new Map(reqs.map((r) => [r.id, r]));
-  const dis = new Map();
+  const dis = new Map(), res = new Map();
   for (const d of records) if (d.type === "challenge-dismissal") dis.set(d.challenge, d);
-  return challenges.map((c) => ({ ...c, ...challengeState(root, c, { ...opts, req: byId.get(c.req), dismissal: dis.get(c.id) }) }));
+  for (const r of opts.resolutions || []) if (!res.has(r.challenge)) res.set(r.challenge, r);
+  return challenges.map((c) => ({ ...c, ...challengeState(root, c, { ...opts, req: byId.get(c.req), dismissal: dis.get(c.id), resolution: res.get(c.id) }) }));
 }
 
 /** The ledger's view of one challenge (requirements[].challenges[]). */
 export const challengeView = (c) => ({ id: c.id, ac: c.ac, category: c.category, counter: c.counter, quote: c.quote,
   evidence: c.evidence, verifier: c.verifier, head: c.head, at: c.at || null, state: c.state,
-  ...(c.stale_reason ? { stale_reason: c.stale_reason } : {}), ...(c.dismissal ? { dismissal: c.dismissal } : {}) });
+  ...(c.stale_reason ? { stale_reason: c.stale_reason } : {}), ...(c.dismissal ? { dismissal: c.dismissal } : {}),
+  ...(c.resolution ? { resolution: c.resolution } : {}) });
 
 /** Video ids a FASE gate asks for, from plan/fases/FASE-N-*.md: the WF-NNN of the header's `Workflows:` line (the
  *  user-facing workflows, written by plan-architect); without that line, the WF-NNN cited inside `## Demo`; else FASE-N.
@@ -956,7 +981,8 @@ export function evaluate(opts) {
 
   // Adversarial challenges: next to the verdict, never changing it.
   const adversarial = opts.adversarial || adversarialGate(root);
-  const chStates = challengeStates(root, challenges.challenges || [], reqs, recs, { repo: Boolean(g.repo), cache, files, evidenceDir: settings.dir });
+  const chStates = challengeStates(root, challenges.challenges || [], reqs, recs, { repo: Boolean(g.repo), cache, files, evidenceDir: settings.dir,
+    resolutions: challenges.resolutions || [] });
   for (const r of requirements) r.challenges = chStates.filter((c) => c.req === r.id).map(challengeView);
   const unknownChallenges = chStates.filter((c) => !requirements.some((r) => r.id === c.req)).map((c) => c.id);
 
@@ -1190,10 +1216,11 @@ export function renderReport(ledger) {
   const challenged = ledger.requirements.filter((r) => r.in_scope && (r.challenges || []).length);
   if (challenged.length) {
     o.push("", "## Adversarial challenges", "",
-      `Findings of the adversarial round (\`${CHALLENGES_FILE}\`) that sit next to the verdicts without changing them: \`open\` until the cited code or the requirement changes (\`stale\`) or a person dismisses it. Gate \`adversarial_gate: ${ledger.adversarial_gate || "enforce"}\`. ${adversarialLine(ledger) || "No challenge is open."}`, "",
+      `Findings of the adversarial round (\`${CHALLENGES_FILE}\`) that sit next to the verdicts without changing them: \`open\` until the cited code or the requirement changes (\`stale\`), a verifier of a later round resolves it on changed evidence (\`resolved\`) or a person dismisses it. Gate \`adversarial_gate: ${ledger.adversarial_gate || "enforce"}\`. ${adversarialLine(ledger) || "No challenge is open."}`, "",
       "| Challenge | Requirement | Criterion | Category | Counter | State | Quote | Evidence |", "|---|---|---|---|---|---|---|---|");
     for (const r of challenged) for (const c of r.challenges) {
-      const state = c.state === "stale" ? `stale (${c.stale_reason})` : c.state === "dismissed" ? `dismissed by ${c.dismissal.by} (${c.dismissal.role}): ${c.dismissal.reason}` : "open";
+      const state = c.state === "stale" ? `stale (${c.stale_reason})` : c.state === "dismissed" ? `dismissed by ${c.dismissal.by} (${c.dismissal.role}): ${c.dismissal.reason}`
+        : c.state === "resolved" ? `resolved by ${c.resolution.verifier} at ${String(c.resolution.head || "?").slice(0, 7)}: ${c.resolution.reason}` : "open";
       o.push(`| ${c.id} | ${r.id} | AC${c.ac} | ${c.category} | ${c.counter} | ${cell(state)} | ${cell(`"${clip(c.quote)}"`)} | ${cell((c.evidence || []).map((e) => e.line ? `${e.path}:${e.line}` : e.path).join(", "))} |`);
     }
   }

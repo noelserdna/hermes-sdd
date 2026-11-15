@@ -293,8 +293,16 @@ it holds the verifier prompt, the categories and the commands.
    then regenerate the ledger and commit `docs(acceptance)`. Verdicts do not change; `--loop` routes open challenges
    as `adversarial-finding`.
 
-Verifiers never write code, specs, tests or `acceptance/`; only this skill's main thread runs `challenge add`, and only
-a person dismisses a challenge (`accept record challenge-dismissal`). The Stack Profile's `adversarial_gate` (`off` ·
+In an incremental round (`references/adversarial-protocol.md` §7b), each open challenge of a re-checked criterion is
+either confirmed (it stays open) or, when the counter-verifier agrees the new evidence meets the letter, resolved with
+`node "$SDD" accept challenge resolve --challenge CH-NNN --reason TEXT --evidence path:line… --verifier NAME`. The CLI
+refuses it when nothing of the criterion's evidence changed since the challenge ("nada cambió desde CH-NNN": only a
+person dismisses it then). A resolved challenge counts as not open (gate, loop, `must_challenged`); confirmed again
+later, it is a new `challenge add`.
+
+Verifiers never write code, specs, tests or `acceptance/`; only this skill's main thread runs `challenge add` and
+`challenge resolve`, and only inside the adversarial round: the implementer that fixed a finding never resolves it.
+Only a person dismisses a challenge (`accept record challenge-dismissal`). The Stack Profile's `adversarial_gate` (`off` ·
 `warn` · `enforce`, the default) decides whether an open challenge on a Must makes `sdd gate` exit 4.
 
 Then Step 6 (summary and persist, with the adversarial metrics); its block gains `Adversarial: {f} findings · {c} confirmed · {r} refuted · {o} open challenges · {g} coverage gaps · {a} agents`.

@@ -7,8 +7,8 @@ misses the other route that bypasses the implementation. They are found by readi
 production code and tests, with the acceptance artifacts forbidden as evidence, because those artifacts are what a
 green test already convinced.
 
-The division of labour does not change: agents read and argue, the CLI records and computes the gate, a person
-dismisses. `SDD="${SDD_PLUGIN_ROOT:-$CLAUDE_PLUGIN_ROOT}/scripts/sdd.mjs"`, run with `node`.
+The division of labour does not change: agents read and argue, the CLI records and computes the gate, a verifier of
+a later round resolves a finding the new evidence answers, a person dismisses. `SDD="${SDD_PLUGIN_ROOT:-$CLAUDE_PLUGIN_ROOT}/scripts/sdd.mjs"`, run with `node`.
 
 ## 0. Before the round
 
@@ -166,9 +166,27 @@ git diff --cached --quiet || git commit -m "docs(acceptance): adversarial round 
 ```
 
 The verdicts do not change: a challenge sits next to the verdict (`requirements[].challenges[]`,
-`summary.must_challenged` in the ledger) until the code it cites changes (`stale`), the requirement changes, or a
-person dismisses it. Dismissing is a human record, made only after that person says so in this session (the tool
-guard asks): `node "$SDD" accept record challenge-dismissal --challenge CH-NNN --reason TEXT --by NAME --role ROLE`.
+`summary.must_challenged` in the ledger) until the code it cites changes (`stale`), the requirement changes, a
+verifier of a later round resolves it (`resolved`, §7b), or a person dismisses it. Only `open` ones count for the gate,
+the loop and `must_challenged`. Dismissing is a human record, made only after that person says so in this session (the
+tool guard asks): `node "$SDD" accept record challenge-dismissal --challenge CH-NNN --reason TEXT --by NAME --role ROLE`.
+
+Resolving is the independent verifier's, never the implementer's: whoever fixed a finding does not certify the fix
+(the harness denies `challenge resolve` outside the adversarial round, and stops the stage if one appears in
+`challenges.jsonl` from another step). It appends a line `{"type":"resolution",…}` to `acceptance/challenges.jsonl`
+with HEAD, reason, evidence and what changed; the challenge's own line is never rewritten:
+
+```bash
+node "$SDD" accept challenge resolve --challenge CH-010 \
+  --reason "tests/domain/taller.test.js now asserts the whole THEN with the criterion's data" \
+  --evidence tests/domain/taller.test.js:57 --verifier "verifier-FASE-1"
+```
+
+The CLI exits 2 unless something of the criterion's evidence changed since the challenge's HEAD (its bound tests or the
+test files that cite `REQ-X-NNN ACn` or its scenario id, its captures, code that commits with `Refs:` to its
+requirement touched, its text), and unless `--evidence` cites one of those changes. With nothing changed the finding
+stands on the same evidence it was confirmed on: "nada cambió desde CH-NNN: no se puede dar por resuelta" — only a
+person may dismiss it.
 
 ## 7. Into the loop
 
@@ -187,7 +205,9 @@ quote and evidence, commit it, and route:
   `Source: ACCEPTANCE-ADVERSARIAL-FASE-{N}`, then `/sdd-task-implementer --fase N --new-tasks-only`.
 
 After the fixes are committed, run `--adversarial --fase N` again: the challenges whose cited code changed are
-`stale`, and the new round confirms whether each finding still holds.
+`stale`, and the new round confirms whether each finding still holds. A fix often leaves the cited code alone (a new or
+stronger test elsewhere), so the challenge is still `open`: the round must close it one way or the other (§7b), or it
+stays open forever and a person has to dismiss by hand what was already fixed.
 
 ## 7b. Incremental round
 
@@ -206,6 +226,18 @@ FASE) re-checks every criterion. Send only the `recheck: true` criteria to the v
 clean sample of §4 among them; the others keep their previous adversarial verdict (nothing in their evidence changed
 and nobody challenged them), so §5 does not report them as a gap. `incremental` in the plan counts `criteria`,
 `recheck` and `carried`. With nothing to re-check there is no round to run.
+
+Every open challenge on a re-checked criterion gets an answer from the round, in its summary and in the ledger:
+
+- **confirmed**: the verifier (and its counter-verifier, §4) still finds the gap on the current code and tests. Nothing
+  is recorded: the challenge stays `open` with its id. A new gap on the same criterion is a new `challenge add`.
+- **no longer holds**: the counter-verifier agrees that the new evidence meets the letter. The main thread runs
+  `challenge resolve` (§6) citing that new evidence (the test, code or capture that changed). It is `resolved`, stops
+  counting for the gate and, at the next incremental round, forces no recheck unless its evidence moves again.
+- **inconclusive**: it stays `open` (route `needs-human`).
+
+A resolved challenge that a later verifier confirms again is recorded as a new challenge on the same criterion
+(`challenge add`), which is `open` and counts again.
 
 ## 8. Gate
 

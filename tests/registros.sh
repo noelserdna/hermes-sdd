@@ -23,6 +23,12 @@ h=$(git -C "$R" rev-parse HEAD); o=$(etapa humano)
   ok "decisión humana fabricada por el ejecutor → la etapa falla" || bad "humano: $o"
 git -C "$R" reset -q --hard "$h"
 
+h=$(git -C "$R" rev-parse HEAD); o=$(etapa resuelve)
+[ "$(echo "$o" | jq -r .outcome)" = failed ] && echo "$o" | jq -r .reason | grep -q "resueltas fuera de la ronda adversarial" &&
+  [ "$(git -C "$R" rev-parse HEAD)" = "$h" ] &&
+  ok "impugnación resuelta fuera de la ronda adversarial → la etapa falla" || bad "resuelve: $o"
+rm -f "$R/acceptance/challenges.jsonl"; git -C "$R" checkout -q -- . 2>/dev/null
+
 o=$(etapa borra)
 [ "$(echo "$o" | jq -r .outcome)" = failed ] && echo "$o" | jq -r .reason | grep -q "borradas o cambiadas" &&
   [ -n "$(git -C "$R" status --porcelain -- "$D")" ] && [ "$(git -C "$R" rev-parse HEAD)" = "$h" ] &&

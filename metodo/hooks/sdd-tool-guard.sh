@@ -25,7 +25,8 @@
 #     hallazgo del listón (`accept record floor-exception`, 5.3) a acceptance/decisions.jsonl en nombre de una persona. Se busca en el texto FUERA de comillas: `jq '.summary="… accept record …"'` o
 #     `echo "sdd accept record"` no preguntan; `sdd accept measure` y `sdd accept --remeasure` tampoco: registran una
 #     medición producida por un comando (by "command"), no una decisión de una persona; `sdd accept challenge add`
-#     tampoco: registra un hallazgo de la ronda adversarial (lo descarta solo una persona, con el registro de arriba);
+#     y `challenge resolve` tampoco: registran un hallazgo de la ronda adversarial o que un verificador posterior lo
+#     da por resuelto sobre evidencia nueva (lo descarta solo una persona, con el registro de arriba);
 #   - `git tag` que crea, mueve o borra `fase-N-accepted` o `requirements-vN`, también con el número en una variable
 #     (`fase-$N-accepted`, `requirements-v$V`), en un segmento de comando que empieza por `git … tag`; listarlos con
 #     -l/--list/--contains/--points-at/--verify no pregunta.

@@ -87,7 +87,7 @@ case "$REL_PATH" in
   acceptance/decisions.jsonl)
     deny "SDD acceptance: acceptance/decisions.jsonl holds human decisions tied to the requirement text. Append one with \`node \"\$SDD_PLUGIN_ROOT/scripts/sdd.mjs\" accept record …\` after the person has confirmed it; never edit the file." ;;
   acceptance/challenges.jsonl)
-    deny "SDD acceptance: acceptance/challenges.jsonl holds the adversarial round's findings, anchored to HEAD and to the requirement text. Add one with \`node \"\$SDD_PLUGIN_ROOT/scripts/sdd.mjs\" accept challenge add …\` (it validates the evidence); a person dismisses one with \`accept record challenge-dismissal\`. Never edit the file." ;;
+    deny "SDD acceptance: acceptance/challenges.jsonl holds the adversarial round's findings, anchored to HEAD and to the requirement text. Add one with \`node \"\$SDD_PLUGIN_ROOT/scripts/sdd.mjs\" accept challenge add …\` (it validates the evidence); a verifier of a later adversarial round resolves one with \`accept challenge resolve …\` (only on changed evidence); a person dismisses one with \`accept record challenge-dismissal\`. Never edit the file." ;;
   acceptance/ACCEPTANCE-REPORT.md)
     deny "SDD acceptance: acceptance/ACCEPTANCE-REPORT.md is generated. Regenerate it with \`node \"\$SDD_PLUGIN_ROOT/scripts/sdd.mjs\" accept --report acceptance/ACCEPTANCE-REPORT.md\`." ;;
   acceptance/evidence-manifest-*.json)

@@ -65,6 +65,14 @@ allow 'node .claude/sdd/sdd.mjs gate --fase 0 --md'
 allow 'git tag -l'
 allow 'node "/Users/x/.hermes/hermes-sdd/0.1.0/metodo/scripts/sdd.mjs" gate --fase 0'
 deny  'cat ~/.hermes/.env'
+# Dar por resuelta una impugnación: solo la ronda adversarial (SDD_PASO=acceptance), nunca el implementador
+RESUELVE='node "$SDD" accept challenge resolve --challenge CH-010 --reason "nuevo test" --evidence tests/a.test.js:3 --verifier v'
+deny  "$RESUELVE"
+paso() { jq -nc --arg c "$RESUELVE" '{hook_event_name:"PreToolUse",tool_name:"Bash",tool_input:{command:$c}}' |
+  SDD_EXECUTOR=hermes SDD_PASO=$1 bash "$G" | jq -r '.hookSpecificOutput.permissionDecision' | grep . || echo allow; }
+[ "$(paso task-implementer)" = deny ] && echo "ok   deniega challenge resolve al implementador" || { echo "FAIL challenge resolve del implementador"; fail=1; }
+[ "$(paso acceptance)" = allow ] && echo "ok   permite challenge resolve en la ronda adversarial" || { echo "FAIL challenge resolve en acceptance"; fail=1; }
+allow 'node "$SDD" accept challenge add --req REQ-F-001 --ac 1 --category UNWIRED --quote q --evidence src/a.js:1 --verifier v --counter confirmed'
 # Fuera del arnés (sin SDD_EXECUTOR) no interviene
 o=$(jq -nc '{hook_event_name:"PreToolUse",tool_name:"Bash",tool_input:{command:"git tag fase-0-accepted"}}' | bash "$G")
 [ -z "$o" ] && echo "ok   fuera del arnés no interviene" || { echo "FAIL fuera del arnés: $o"; fail=1; }
