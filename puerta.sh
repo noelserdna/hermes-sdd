@@ -117,7 +117,7 @@ case "$TIPO" in
     RUTAS=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" opciones-ruta "${BOARD:-$(basename "$REPO")}" .sdd/hermes/ruta.json) ||
       { echo "no se pudieron leer las rutas configuradas" >&2; exit 1; }
     echo "$RUTAS" > "$GATE_MD"; EXTRA+=(--opciones-ruta "$GATE_MD")
-    OPCIONES=$(echo "$RUTAS" | jq -c '[.[] | {verbo, etiqueta, etapas, auto, granularidad, criterio}] + [{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]') ;;
+    OPCIONES=$(echo "$RUTAS" | jq -c '[.[] | {verbo, etiqueta, etapas, auto, granularidad, criterio, fijada}] + [{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]') ;;
   plan)
     OPCIONES='[{"verbo":"conforme","etiqueta":"✅ Conforme"},{"verbo":"cambios","etiqueta":"✏️ Cambiar","texto":true}]' ;;
   fase)

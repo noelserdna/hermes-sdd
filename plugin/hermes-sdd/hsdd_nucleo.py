@@ -469,8 +469,13 @@ def ajustar_jev(defecto: str | None = None, umbral=None, piloto: list | None = N
 def verbos_jev(puerta: dict) -> dict:
     """Opciones que Jev puede elegir: las que no piden un motivo escrito."""
     # «revisado» confirma una inspección: es un registro humano, Jev nunca puede hacerlo
-    return {o["verbo"]: o["etiqueta"] for o in puerta.get("opciones", [])
-            if o["verbo"] not in ("ver", "revisado") and not o.get("texto")}
+    ops = [o for o in puerta.get("opciones", []) if o["verbo"] not in ("ver", "revisado") and not o.get("texto")]
+    # Una ruta que fijó el cliente al crear el proyecto es una decisión suya: Jev solo puede confirmarla; si cree que
+    # hace falta otra, lo dice y decide una persona (taller2: Jev cambió la «ligera» fijada por la «adaptativa»)
+    fijadas = [o for o in ops if o.get("fijada")]
+    if puerta.get("tipo") == "ruta" and fijadas:
+        ops = fijadas
+    return {o["verbo"]: o["etiqueta"] for o in ops}
 
 
 def puede_jev(puerta: dict, cfg: dict | None = None) -> tuple[bool, str]:

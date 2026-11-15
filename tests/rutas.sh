@@ -171,4 +171,15 @@ p = json.load(open(f"{sys.argv[2]}/.sdd/hermes/puertas/{sys.argv[3]}.json"))
 assert N.evidencias(p) == ["a.png", "b.png"], N.evidencias(p)
 P
 
+# Una ruta fijada por el cliente: Jev solo puede confirmarla (taller2: cambió la «ligera» fijada por la «adaptativa»), y
+# la puerta conserva la marca «fijada» en sus botones
+python3 - "$ROOT/plugin/hermes-sdd" <<'PY' && ok "ruta fijada: Jev solo puede elegirla; sin fijar, cualquiera sin texto" || bad "jev y ruta fijada"
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_nucleo as N
+p = {"tipo": "ruta", "opciones": [{"verbo": "ruta-ligera", "etiqueta": "⭐ Ligera", "fijada": True},
+     {"verbo": "ruta-adaptativa", "etiqueta": "Adaptativa", "fijada": False}, {"verbo": "rechazo", "etiqueta": "❌", "texto": True}]}
+assert list(N.verbos_jev(p)) == ["ruta-ligera"], N.verbos_jev(p)
+p["opciones"][0]["fijada"] = False
+assert list(N.verbos_jev(p)) == ["ruta-ligera", "ruta-adaptativa"], N.verbos_jev(p)
+PY
+grep -q 'criterio, fijada}' "$ROOT/puerta.sh" && ok "puerta.sh guarda «fijada» en los botones de la ruta" || bad "fijada se pierde en puerta.sh"
 exit $fail
