@@ -111,3 +111,22 @@ Los topes de gasto acotan lo que puede gastar.
 **Firma del notario.** Con el agente fuera del ordenador, la clave del notario (`~/.ssh/hermes-notario`, o
 `clave_notario` en `sdd.json`) queda fuera de su alcance. Los tags de aceptación y las actas salen firmados, y
 `verificar.sh <repo>` comprueba cada uno: `OK`, `SIN FIRMA` o `FIRMA MALA`.
+
+### Pendiente: dónde guardar las claves
+
+Tema abierto, a retomar. Con la caja de GitHub y Jev en automático, el arnés mueve cada vez más secretos sin que
+nadie los toque, y hoy cada uno está en un sitio distinto:
+
+| Secreto | Dónde está hoy | Quién lo usa |
+|---|---|---|
+| Token de Claude Code de la caja | Llavero de macOS (`hermes-sdd-caja`); copia en cada repo como secreto de Actions | `lanzar.sh` (lo pone en el repo nuevo); el agente dentro de la caja |
+| Clave del notario | `~/.ssh/hermes-notario`, sin passphrase | `firmar.sh` (firma tags y actas); `verificar.sh` (pública) |
+| Token de `gh` | Llavero (gh) | `executors/github.sh`, `lanzar.sh` |
+| Bot de Telegram y proveedores de Hermes | `~/.hermes/.env`, `auth.json`, `profiles/sdd-ejecutor/.env` (modo 600) | Gateway, ejecutor de Hermes |
+| Quién decide | `~/.hermes/hermes-sdd/aprobadores.json` | Notario, canales |
+
+Qué decidir:
+- **Un solo almacén**, que siga sirviendo si el orquestador sale del Mac. El llavero de macOS ya no valdría en un servidor.
+- **Rotación y alcance mínimo por token.** El token de `gh` tiene hoy `delete_repo`.
+- **Passphrase o hardware para la clave del notario.**
+- **Qué hacer con el token que ve el agente dentro de la caja.**
