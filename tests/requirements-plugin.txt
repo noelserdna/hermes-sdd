@@ -1,0 +1,5 @@
+# Dependencias de los tests del plugin (tests/plugin_telegram.sh, tests/plugin_dashboard.sh) fuera de Hermes:
+# las mismas versiones que trae el venv de Hermes v0.23.1. En CI las instala .github/workflows/tests.yml.
+python-telegram-bot==22.8
+fastapi==0.133.1
+httpx==0.28.1
