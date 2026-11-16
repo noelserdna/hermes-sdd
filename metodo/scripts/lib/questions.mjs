@@ -349,7 +349,7 @@ export function parseQuestions(text, file = "") {
 function fromJson(q, file) {
   return { id: q.id, state: q.estado, skill: q.skill || null, context: q.contexto || null, file, question: q.pregunta || "",
     client: q.para_cliente || "",
-    options: (q.opciones || []).map((o) => ({ letter: o.letra, text: o.texto, effect: effectText(o), recommended: !!o.recomendada })),
+    options: (q.opciones || []).map((o) => ({ letter: o.letra, text: o.texto, ...(o.cliente ? { client: o.cliente } : {}), effect: effectText(o), recommended: !!o.recomendada })),
     blocks: q.bloquea || "", answer: q.respuesta ? answerLine(q.respuesta).replace(/^Answer:\s*/, "") : "", applied: q.aplicada || "" };
 }
 

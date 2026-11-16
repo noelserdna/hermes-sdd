@@ -491,9 +491,11 @@ def puede_jev(puerta: dict, cfg: dict | None = None) -> tuple[bool, str]:
         return False, "una persona deshizo la decisión de Jev"
     if puerta.get("preguntas_error"):
         return False, "no se pudieron leer las preguntas de esta puerta (lo decide una persona)"
-    # Una opción con efecto editar-test (dato de la puerta, no su texto): la elige una persona
-    if any((e or {}).get("efecto") == "editar-test" for q in puerta.get("preguntas") or [] for e in (q.get("efectos") or {}).values()):
-        return False, "una opción autoriza editar tests que ya existían: la elige una persona"
+    # Que la recomendada autorice editar tests (dato de la puerta, no su texto): la elige una persona. Solo cuenta la que
+    # se aplicaría (Jev firma sin tocar los botones Q, o sea, con las recomendadas): una B «editar-test» que nadie va a
+    # elegir no quita la puerta a Jev (material-montana, FASE-1 y FASE-2); el notario sigue rechazando editar-test de Jev
+    if any(((q.get("efectos") or {}).get(q.get("recomendada")) or {}).get("efecto") == "editar-test" for q in puerta.get("preguntas") or []):
+        return False, "la opción recomendada autoriza editar tests que ya existían: la elige una persona"
     if modo == "piloto" and puerta.get("preguntas"):
         return False, "hay preguntas abiertas (clase C): en modo piloto las contesta una persona"
     # Campos de la puerta (puerta.sh ≥ 0.3.1); en puertas anteriores, lo que decía su texto
@@ -579,7 +581,7 @@ def estado_jev(puerta: dict, max_chars: int = 90000) -> dict:
         except OSError:
             pass
     if puerta.get("hallazgos"):
-        contexto["hallazgos"] = json.dumps(puerta["hallazgos"], ensure_ascii=False)[:20000]
+        contexto["hallazgos"] = json.dumps(puerta["hallazgos"], ensure_ascii=False)[:min(20000, max(2000, max_chars // 4))]
     return {"puerta": {k: puerta.get(k) for k in ("tipo", "titulo", "texto")},
             "opciones": {**verbos_jev(puerta), "persona": "Que lo decida una persona"}, "contexto": contexto}
 

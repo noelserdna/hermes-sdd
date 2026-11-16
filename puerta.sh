@@ -80,10 +80,19 @@ REV_JSON=$(mktemp); trap 'rm -f "$REV_JSON"' EXIT; echo null > "$REV_JSON"
 revisar() { { node "$SDD" gate "$@" --json 2>/dev/null || true; } | python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" revisar "$REPO" > "$REV_JSON" 2>/dev/null ||
   echo null > "$REV_JSON"; }
 hay_rev() { jq -e '(.revisar // []) | length > 0' "$REV_JSON" >/dev/null; }
-# Impugnaciones abiertas de la revisión independiente (gate 4): la puerta las enseña y deja descartarlas (🗑)
+# Impugnaciones abiertas de la revisión independiente: la puerta las enseña y deja descartarlas (🗑). Con gate 4 todas;
+# con otro fallo (1/2) solo las dudas del propio criterio (SPEC-QUESTION), que son del cliente: material-montana, FASE-1,
+# CH-004 no salió en la puerta (gate 1, se pidió eximir) y, al arreglarse la cita, el requisito pasó a verificado, la
+# exención caducó y la duda escondida tumbó la etapa de respuestas con gate 4. Las de un requisito eximido no cuentan
+# (el gate tampoco las cuenta) y no se enseñan.
 IMP_JSON=$(mktemp); echo '[]' > "$IMP_JSON"
-impugnaciones() { { node "$SDD" accept challenge list --open "$@" --json 2>/dev/null || echo '{}'; } |
-  jq -c '[.challenges[]? | select(.state == "open") | {id, req, ac, category, quote}]' > "$IMP_JSON" 2>/dev/null || echo '[]' > "$IMP_JSON"; }
+impugnaciones() {  # impugnaciones <rc> [--fase N]
+  local rcg=$1; shift
+  local w; w=$(node "$SDD" accept "$@" --json 2>/dev/null | jq -c '[.requirements[]? | select(.verdict == "WAIVED") | .id]' 2>/dev/null || true)
+  { node "$SDD" accept challenge list --open "$@" --json 2>/dev/null || echo '{}'; } |
+    jq -c --argjson w "${w:-[]}" --arg rc "$rcg" '[.challenges[]? | select(.state == "open") | select(.req as $r | $w | index($r) | not)
+      | select($rc == "4" or .category == "SPEC-QUESTION") | {id, req, ac, category, quote, why}]' > "$IMP_JSON" 2>/dev/null || echo '[]' > "$IMP_JSON"; }
+hay_imp() { jq -e 'length > 0' "$IMP_JSON" >/dev/null 2>&1; }
 DESCARTO='{"verbo":"descarto","etiqueta":"🗑 Descartar una impugnación","texto":true}'
 # Una duda sobre el propio criterio (SPEC-QUESTION) se resuelve corrigiendo el requisito: lanza un cambio con ella
 CORRIJO='{"verbo":"corrijo","etiqueta":"✏️ Corregir el requisito","texto":true}'
@@ -133,14 +142,16 @@ case "$TIPO" in
     EXTRA+=(--gate-md "$GATE_MD" --rc "$rc" --tests-editados "$EDIT" --video "$([ -n "$VIDEO" ] && echo 1 || echo 0)" --capturas "$CAPTURAS")
     OPCIONES='[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1},{"verbo":"acepto","etiqueta":"✅ Aceptar","paso":2},{"verbo":"observaciones","etiqueta":"📝 Con observaciones","texto":true,"paso":2},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'
     revisar --fase "$FASE"; EXTRA+=(--revisar "$REV_JSON")
-    [ "$rc" = 4 ] && { impugnaciones --fase "$FASE"; EXTRA+=(--impugnaciones "$IMP_JSON"); }
+    if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then impugnaciones "$rc" --fase "$FASE"; EXTRA+=(--impugnaciones "$IMP_JSON"); fi
     if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then
       if solo_rev; then   # solo faltan inspecciones: se confirman aquí mismo
         OPCIONES=$(jq -nc --argjson r "$REVISADO" '[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1}, ($r + {paso:2}), {"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]')
       else BLOQUEO=true
-        X=$EXIMO; [ "$rc" = 4 ] && X=$DESCARTO   # impugnación abierta: se arregla (rechazar) o una persona la descarta
-        C=null; [ "$rc" = 4 ] && con_duda && C=$CORRIJO
-        OPCIONES=$(jq -nc --argjson x "$X" --argjson c "$C" '[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1}] + (if $c then [$c + {paso:2}] else [] end) + (if $x then [$x + {paso:2}] else [] end) + [{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'); fi
+        # impugnación abierta (4): se arregla (rechazar) o una persona la descarta; otro fallo: se exime o se rechaza, y
+        # si además hay una duda del criterio, también se puede corregir el requisito o descartar la duda
+        X=$EXIMO; D=null; [ "$rc" = 4 ] && X=$DESCARTO; [ "$rc" != 4 ] && hay_imp && D=$DESCARTO
+        C=null; con_duda && C=$CORRIJO
+        OPCIONES=$(jq -nc --argjson x "$X" --argjson c "$C" --argjson d "$D" '[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1}] + (if $c then [$c + {paso:2}] else [] end) + (if $d then [$d + {paso:2}] else [] end) + (if $x then [$x + {paso:2}] else [] end) + [{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'); fi
     elif hay_rev; then OPCIONES=$(echo "$OPCIONES" | jq -c --argjson r "$REVISADO" '.[0:1] + [$r + {paso:2}] + .[1:]'); fi ;;
   entrega)
     node "$SDD" gate --md > "$GATE_MD" 2>/dev/null || rc=$?
@@ -158,15 +169,15 @@ case "$TIPO" in
       OPCIONES='[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1},{"verbo":"acepto","etiqueta":"✅ Acepto la entrega","paso":2},{"verbo":"observaciones","etiqueta":"📝 Con observaciones","texto":true,"paso":2},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'
     fi
     revisar; EXTRA+=(--revisar "$REV_JSON")
-    [ "$rc" = 4 ] && { impugnaciones; EXTRA+=(--impugnaciones "$IMP_JSON"); }
+    if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then impugnaciones "$rc"; EXTRA+=(--impugnaciones "$IMP_JSON"); fi
     PASO=$([ "$UNICA" = true ] && echo '{paso:2}' || echo '{}')
     if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then
       if solo_rev; then   # solo faltan inspecciones: se confirman aquí mismo
         OPCIONES=$(echo "$OPCIONES" | jq -c --argjson r "$REVISADO" "[.[] | select(.verbo == \"ver\")] + [\$r + $PASO] + [.[] | select(.verbo == \"rechazo\")]")
       else BLOQUEO=true
-        X=$EXIMO; [ "$rc" = 4 ] && X=$DESCARTO
-        C=null; [ "$rc" = 4 ] && con_duda && C=$CORRIJO
-        OPCIONES=$(echo "$OPCIONES" | jq -c --argjson x "$X" --argjson c "$C" "[.[] | select(.verbo == \"ver\")] + (if \$c then [\$c + $PASO] else [] end) + [\$x + $PASO] + [.[] | select(.verbo == \"rechazo\")]"); fi
+        X=$EXIMO; D=null; [ "$rc" = 4 ] && X=$DESCARTO; [ "$rc" != 4 ] && hay_imp && D=$DESCARTO
+        C=null; con_duda && C=$CORRIJO
+        OPCIONES=$(echo "$OPCIONES" | jq -c --argjson x "$X" --argjson c "$C" --argjson d "$D" "[.[] | select(.verbo == \"ver\")] + (if \$c then [\$c + $PASO] else [] end) + (if \$d then [\$d + $PASO] else [] end) + [\$x + $PASO] + [.[] | select(.verbo == \"rechazo\")]"); fi
     elif hay_rev; then
       OPCIONES=$(echo "$OPCIONES" | jq -c --argjson r "$REVISADO" "[.[] | select(.verbo == \"ver\")] + [\$r + $PASO] + [.[] | select(.verbo != \"ver\")]"); fi ;;
   preguntas)       # lo abre etapa.sh implementar cuando la FASE se para en preguntas [OPEN]

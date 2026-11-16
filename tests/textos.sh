@@ -181,6 +181,30 @@ o=$($TX puerta fase "$R" --proyecto bar --fase 2 --rc 4 --impugnaciones "$T/imp2
 echo "$o" | grep -q '🤔 La revisión independiente tiene dudas sobre lo que pide el propio requisito; esto es tuyo' && echo "$o" | grep -q '• CH-017 · .*«el 2027-01-03 sigue Moroso»' && echo "$o" | grep -q '✏️ Corregir el requisito' \
   && ! ($TX puerta fase "$R" --proyecto bar --fase 0 --rc 4 --impugnaciones "$T/imp.json" | jq -r .texto | grep -q 'Corregir el requisito') \
   && ok "con una duda del criterio ofrece ✏️ Corregir el requisito (y solo entonces)" || bad "corregir: $o"
+# material-montana, FASE-1: con el gate en 1 (falta algo) la duda del criterio también se enseña, con su porqué
+echo '[{"id":"CH-004","req":"REQ-F-001","ac":3,"category":"SPEC-QUESTION","quote":"la junta ve Solo el encargado","why":"el cliente decidió otro mensaje para la junta"}]' > "$T/imp4.json"
+o=$($TX puerta fase "$R" --proyecto bar --fase 1 --rc 1 --impugnaciones "$T/imp4.json" | jq -r .texto)
+echo "$o" | grep -q '• CH-004 · .*«la junta ve Solo el encargado»' && echo "$o" | grep -q '❓ el cliente decidió otro mensaje para la junta' \
+  && echo "$o" | grep -q '✏️ Corregir el requisito' \
+  && ok "gate 1 con una duda del criterio: la enseña con su porqué y ofrece corregirla" || bad "duda con gate 1: $o"
+# material-montana, INT-004: criterios en inglés en la puerta de un cambio → lo que se ve (su línea «Se ve:») y los datos
+o=$(python3 - "$ROOT/plugin/hermes-sdd" <<'PYT'
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_textos as X
+from pathlib import Path
+base = """# R\n\n### REQ-F-026: Borrar datos\n- **Para el cliente:** Se borran a petición.\n- **Acceptance Criteria:**\n"""
+c1 = '  - GIVEN "pablo@club.es" is deactivated WHEN the storekeeper exports his data THEN the user sees "Datos de Pablo"\n    - Se ve: "Datos de {socio}" en Datos personales\n'
+c1b = c1.replace("is deactivated", "was deactivated on 2026-01-10")
+c2 = '  - GIVEN the same account WHEN the storekeeper tries to erase it THEN the user sees "No se pueden borrar"\n    - Se ve: "No se pueden borrar" en Datos personales\n'
+X._aprobado = lambda r: base + c1
+X._leer = lambda p: base + c1b + c2
+X.requisitos = lambda r: [{"id": "REQ-F-026", "titulo": "Borrar datos"}]
+print("\n".join(X._ajustes(Path("."))))
+PYT
+)
+echo "$o" | grep -qx '✏️ Borrar datos: cambia el ejemplo del criterio en el que se ve «Datos de {socio}» en Datos personales: ahora con «2026-01-10»' \
+  && echo "$o" | grep -qx '➕ Borrar datos: nuevo criterio «se ve «No se pueden borrar» en Datos personales»' \
+  && ! echo "$o" | grep -qiE 'storekeeper|the same|is deactivated|cuando the' \
+  && ok "cambio con criterios en inglés: la puerta enseña lo que se ve y los datos, no el inglés" || bad "criterios en inglés: $o"
 # lo técnico, en una línea por tipo; lo del cliente (dudas del criterio), una por una (puerta de una pantalla)
 printf '%s' '[{"id":"CH-001","req":"REQ-F-001","ac":1,"category":"WEAKENED-ASSERT","quote":"x"},{"id":"CH-002","req":"REQ-F-001","ac":2,"category":"WEAKENED-ASSERT","quote":"y"},{"id":"CH-003","req":"REQ-F-001","ac":3,"category":"NOT-IMPLEMENTED","quote":"z"},{"id":"CH-004","req":"REQ-F-001","ac":4,"category":"SPEC-QUESTION","quote":"duda"}]' > "$T/imp3.json"
 o=$($TX puerta entrega "$R" --proyecto bar --rc 4 --impugnaciones "$T/imp3.json" | jq -r .texto)

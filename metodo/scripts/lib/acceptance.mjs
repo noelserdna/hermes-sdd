@@ -581,6 +581,7 @@ export function validateChallenge(ch, reqs, { root, testPaths = [], evidenceDir 
   }
   if (!CHALLENGE_CATEGORIES.includes(ch.category)) errors.push(`--category must be one of ${CHALLENGE_CATEGORIES.join(", ")}`);
   if (!norm(ch.quote)) errors.push("--quote is required: the literal words of the criterion that are not met");
+  if (!norm(ch.why)) errors.push("--why is required: in plain words, why the criterion is not met (what the code does instead, or what is unclear in the criterion)");
   if (!norm(ch.verifier)) errors.push("--verifier is required (the agent that raised the finding)");
   if (ch.counter === "refuted") errors.push("--counter refuted: a refuted finding is not recorded; list it in the round's summary");
   else if (!RECORDED_COUNTERS.includes(ch.counter)) errors.push(`--counter must be ${RECORDED_COUNTERS.join(" | ")} (the counter-verifier's result)`);
@@ -627,7 +628,7 @@ export function challengeStates(root, challenges, reqs, records, opts = {}) {
 }
 
 /** The ledger's view of one challenge (requirements[].challenges[]). */
-export const challengeView = (c) => ({ id: c.id, ac: c.ac, category: c.category, counter: c.counter, quote: c.quote,
+export const challengeView = (c) => ({ id: c.id, ac: c.ac, category: c.category, counter: c.counter, quote: c.quote, ...(c.why ? { why: c.why } : {}),
   evidence: c.evidence, verifier: c.verifier, head: c.head, at: c.at || null, state: c.state,
   ...(c.stale_reason ? { stale_reason: c.stale_reason } : {}), ...(c.dismissal ? { dismissal: c.dismissal } : {}),
   ...(c.resolution ? { resolution: c.resolution } : {}) });
@@ -1220,11 +1221,11 @@ export function renderReport(ledger) {
   if (challenged.length) {
     o.push("", "## Adversarial challenges", "",
       `Findings of the adversarial round (\`${CHALLENGES_FILE}\`) that sit next to the verdicts without changing them: \`open\` until the cited code or the requirement changes (\`stale\`), a verifier of a later round resolves it on changed evidence (\`resolved\`) or a person dismisses it. Gate \`adversarial_gate: ${ledger.adversarial_gate || "enforce"}\`. ${adversarialLine(ledger) || "No challenge is open."}`, "",
-      "| Challenge | Requirement | Criterion | Category | Counter | State | Quote | Evidence |", "|---|---|---|---|---|---|---|---|");
+      "| Challenge | Requirement | Criterion | Category | Counter | State | Quote | Why | Evidence |", "|---|---|---|---|---|---|---|---|---|");
     for (const r of challenged) for (const c of r.challenges) {
       const state = c.state === "stale" ? `stale (${c.stale_reason})` : c.state === "dismissed" ? `dismissed by ${c.dismissal.by} (${c.dismissal.role}): ${c.dismissal.reason}`
         : c.state === "resolved" ? `resolved by ${c.resolution.verifier} at ${String(c.resolution.head || "?").slice(0, 7)}: ${c.resolution.reason}` : "open";
-      o.push(`| ${c.id} | ${r.id} | AC${c.ac} | ${c.category} | ${c.counter} | ${cell(state)} | ${cell(`"${clip(c.quote)}"`)} | ${cell((c.evidence || []).map((e) => e.line ? `${e.path}:${e.line}` : e.path).join(", "))} |`);
+      o.push(`| ${c.id} | ${r.id} | AC${c.ac} | ${c.category} | ${c.counter} | ${cell(state)} | ${cell(`"${clip(c.quote)}"`)} | ${cell(c.why ? clip(c.why) : "—")} | ${cell((c.evidence || []).map((e) => e.line ? `${e.path}:${e.line}` : e.path).join(", "))} |`);
     }
   }
   o.push("", "## Deprecated", "");

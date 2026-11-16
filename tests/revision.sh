@@ -97,11 +97,21 @@ spec = importlib.util.spec_from_file_location("hsdd_nucleo", sys.argv[1]); N = i
 N.poner_modo("auto", "demo")
 base = {"tablero": "demo", "tipo": "plan", "opciones": [{"verbo": "conforme", "etiqueta": "✅"}]}
 q = lambda ef: [{"n": 1, "id": "Q-1", "opciones": ["A", "B"], "recomendada": "A", "efectos": {"A": {"efecto": ef}, "B": {"efecto": "ninguno"}}}]
+qb = [{"n": 1, "id": "Q-1", "opciones": ["A", "B"], "recomendada": "A", "efectos": {"A": {"efecto": "ninguno"}, "B": {"efecto": "editar-test"}}}]
 print(N.puede_jev({**base, "preguntas_error": True})[0], N.puede_jev({**base, "preguntas": q("editar-test"), "texto": "sin marcas"})[0],
-      N.puede_jev({**base, "preguntas": q("accion")})[0])
+      N.puede_jev({**base, "preguntas": q("accion")})[0], N.puede_jev({**base, "preguntas": qb})[0])
 PY
 )
-[ "$o" = "False False True" ] && ok "Jev: preguntas ilegibles o una opción editar-test (por dato) escalan a una persona; una acción no" || bad "jev escala: $o"
+[ "$o" = "False False True True" ] && ok "Jev: preguntas ilegibles o una recomendada editar-test escalan a una persona; una acción o un editar-test no recomendado no" || bad "jev escala: $o"
+# Capturas: en castellano, con la ruta una vez; la sobrante de un criterio ya mostrado es leve
+o=$(python3 - "$ROOT/plugin/hermes-sdd" <<'PY'
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_revision as V
+x = {"codigo": "C-03", "fichero": "evidencias/FASE-0/.playwright/a/attachments/REQ-F-003-AC3-93.png", "req": "REQ-F-003", "ac": 3,
+     "mensaje": "not counted for REQ-F-003 AC3: …", "grave": False}
+t = V._captura_txt(x); print(t.count("evidencias/"), "no cuenta para REQ-F-003 AC3" in t, "ya se ve en su propia captura" in t)
+PY
+)
+[ "$o" = "0 True True" ] && ok "captura sobrante: aviso en castellano, sin ruta repetida y leve si el criterio ya se ve" || bad "captura txt: $o"
 # puerta.sh: si la revisión del encargado falla, la puerta sale con un aviso grave (Jev no decide a ciegas)
 grep -q 'FALLO_REV=.*"graves":1' "$ROOT/puerta.sh" && grep -q 'PREG_ERROR=true' "$ROOT/puerta.sh" && ok "puerta.sh: revisión o preguntas caídas cierran a Jev" || bad "puerta.sh sin cierre ante fallo"
 # «hecho» = desplegable: en la entrega, no desplegable es grave (Jev escala); sin comprobar, leve

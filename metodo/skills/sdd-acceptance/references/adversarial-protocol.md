@@ -72,6 +72,10 @@ Rules:
    line when it has one (`req show --json` → `criteria[].sees`), else the literal of its THEN. A capture of another screen,
    an error page, a loading state or the weakened text is a WRONG-CAPTURE finding. A missing capture is not your
    finding: the ledger already marks that criterion `unshown`.
+6. Before a SPEC-QUESTION, read the customer's decisions: `node "{SDD}" questions list --json` (ANSWERED questions
+   and their answers). If the customer already decided what the criterion leaves open, that decision is the answer:
+   it is not a SPEC-QUESTION. If the code contradicts the criterion or a customer decision (a time zone, a message,
+   who may do what), the finding is about the code (NOT-IMPLEMENTED, WEAKENED-ASSERT…), never a SPEC-QUESTION.
 
 Resources: run at most one test file at a time, with `{test_file}`; never the whole suite, the acceptance suite
 without --grep, coverage or watch mode; never start servers or databases outside the test runner.
@@ -83,6 +87,7 @@ Criteria to check, in this order:
 Answer with one JSON object per line, one per criterion, and nothing else:
 {"req": "REQ-F-012", "ac": 2, "verdict": "clean" | "finding", "category": "<one of the categories, findings only>",
  "quote": "<the literal words of the criterion that are not met>", "evidence": ["src/x.ts:41", "tests/x.test.ts:88"],
+ "why": "<for the customer, in their language and plain words: what happens instead, or what is unclear in the criterion>",
  "reasoning": "<how you know, in at most 5 lines>"}
 ```
 
@@ -149,9 +154,12 @@ Record each `confirmed` and each `inconclusive` finding; `refuted` ones are list
 
 ```bash
 node "$SDD" accept challenge add --req REQ-F-012 --ac 2 --category WEAKENED-ASSERT \
-  --quote "su título es 'Proyectos personales'" --evidence src/cv/sections.ts:41 tests/cv/pdf.test.ts:88 \
-  --verifier "verifier-FASE-2" --counter confirmed
+  --quote "su título es 'Proyectos personales'" --why "el PDF titula la sección «Proyectos», sin «personales»" \
+  --evidence src/cv/sections.ts:41 tests/cv/pdf.test.ts:88 --verifier "verifier-FASE-2" --counter confirmed
 ```
+
+`--why` is required: the verifier's `why`, in the customer's language and without code terms. The customer reads it
+in the gate next to the quote; a SPEC-QUESTION without it is a doubt nobody can answer.
 
 The CLI writes `acceptance/challenges.jsonl` (nobody else does), stamps HEAD, the requirement's text hash and the
 paths cited (a capture's sha256), and exits 2 on evidence under `acceptance/`, `feedback/`, `spec/`, `requirements/`,

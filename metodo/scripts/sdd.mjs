@@ -168,8 +168,10 @@
 //   sdd accept pack --fase N [--out .sdd/entregas/FASE-N-evidencias.tar.gz] [--json]
 //       Bundle {evidence_dir}/FASE-N/ with a manifest.json (path, sha256, bytes, kind, criterion, criteria from the
 //       ledger, evaluated_sha) into a tar.gz, for the customer after the sign-off. Exit 1 when the FASE has no evidence.
-//   sdd accept challenge add --req ID --ac N --category CAT --quote TEXT --evidence path:line... --verifier NAME
+//   sdd accept challenge add --req ID --ac N --category CAT --quote TEXT --why TEXT --evidence path:line... --verifier NAME
 //              --counter confirmed|inconclusive [--json]
+//       --why: in plain words, why the criterion is not met (what the code does instead, or what is unclear in the
+//       criterion); the gate shows it to the customer next to the quote.
 //       Append one finding of the adversarial round to acceptance/challenges.jsonl (written only by this command) with
 //       id CH-NNN, HEAD, the requirement's reqHash and the cited paths. CAT: WEAKENED-ASSERT, MOCK-ONLY, UNWIRED,
 //       BYPASS-PATH, CROSSING, NOT-IMPLEMENTED, SPEC-QUESTION, WRONG-CAPTURE. Evidence: committed production or test

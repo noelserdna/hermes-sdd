@@ -180,6 +180,20 @@ def fase(repo: Path, n: str | None) -> list:
     return av + _capturas_ajenas(repo, n) + _fidelidad(repo, n)
 
 
+def _captura_txt(x: dict) -> str:
+    """Un hallazgo de `sdd lint --captures` en castellano, con la ruta una sola vez (material-montana: «ruta: ruta is
+    not counted…»)."""
+    f = x.get("fichero") or ""
+    corto = (f.rsplit("/", 1)[-1] if f else "") + (f":{x['linea']}" if x.get("linea") else "")
+    if x.get("codigo") == "C-03" and x.get("req"):
+        return (f"la captura {corto} no cuenta para {x['req']} AC{x.get('ac')}: la tomó un test que no cita ese criterio"
+                + ("" if x.get("grave") else " (el criterio ya se ve en su propia captura)"))
+    m = x.get("mensaje") or ""
+    if f and m.startswith(f):
+        m = m[len(f):].lstrip(": ")
+    return f"{f}{':' + str(x['linea']) if x.get('linea') else ''}: {m}"
+
+
 def _fidelidad(repo: Path, n: str | None) -> list:
     """Lo que dejó la etapa de aceptación en .sdd/hermes/fidelidad-<N>.json (hsdd_fidelidad): tests congelados cambiados
     sin autorizar o debilitados, capturas que no enseñan su criterio y textos que ningún test comprueba."""
@@ -207,10 +221,10 @@ def _fidelidad(repo: Path, n: str | None) -> list:
                          f"qué se ve ({', '.join(sin[:8])}{'…' if len(sin) > 8 else ''}): falta su línea «Se ve:» (o «No visible:») en los requisitos"))
     lint = r.get("lint_capturas", [])
     for x in [x for x in lint if x.get("grave")][:10]:
-        av.append(_aviso("captura-mal-tomada", f"{x['fichero']}{':' + str(x['linea']) if x.get('linea') else ''}: {x['mensaje']}", True))
+        av.append(_aviso("captura-mal-tomada", _captura_txt(x), True))
     leves = [x for x in lint if not x.get("grave")]
     if leves:
-        av.append(_aviso("capturas-avisos", f"{len(leves)} aviso(s) de sdd lint --captures, p. ej. {leves[0]['fichero']}: {leves[0]['mensaje']}"))
+        av.append(_aviso("capturas-avisos", f"{len(leves)} aviso(s) de las capturas, p. ej. {_captura_txt(leves[0])}"))
     if r.get("mutantes_error"):
         av.append(_aviso("mutantes-sin-hacer", f"No se pudieron probar los mutantes (si cambia un texto, ¿algún test lo nota?): {r['mutantes_error']}"))
     fuera = [x for x in r.get("mutantes", []) if x.get("resultado") == "no está en el código"]

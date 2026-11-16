@@ -144,10 +144,14 @@ export function lintCaptures({ root, reqs, scenarios = [], ledger = null, scope 
     for (const r of ledger.requirements || []) {
       if (r.type !== "F" || r.verdict === "DEPRECATED" || !inScope(r.id)) continue;
       for (const c of r.criteria || []) {
+        // An extra capture that does not count is only an error when the criterion has no capture of its own: when its
+        // own test already shows it (shown_by, passing), the stray image changes nothing (material-montana, FASE-0:
+        // two such images made the gate «grave» and took it away from Jev)
+        const ownShown = (c.shown_by || []).length > 0 && c.state === "pass";
         for (const u of c.unbound_captures || [])
           if (!findings.some((x) => x.code === "C-03" && x.req === r.id && x.ac === c.n))
-            findings.push({ code: "C-03", severity: "error", file: u.ref, line: 0, req: r.id, ac: c.n,
-              message: `${u.ref} is not counted for ${r.id} AC${c.n}: ${u.reason}` });
+            findings.push({ code: "C-03", severity: ownShown ? "warning" : "error", file: u.ref, line: 0, req: r.id, ac: c.n,
+              message: `not counted for ${r.id} AC${c.n}: ${u.reason}${ownShown ? " (the criterion is already shown by its own capture)" : ""}` });
         for (const p of c.shown_by || []) {
           if (!byImage.has(p)) byImage.set(p, []);
           byImage.get(p).push(`${r.id} AC${c.n}`);

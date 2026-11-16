@@ -27,7 +27,7 @@ const die = (msg) => { console.error(`${PROG}: ${msg}`); throw new Exit(2); };
 const VALUED = new Set(["repo", "junit", "junit-sha", "fase", "out", "report", "mode", "ledger", "state", "max-cycles",
   "req", "ac", "by", "role", "reason", "follow-up", "observed", "pass", "metric", "op", "threshold", "paths", "note",
   "result", "channel", "demo", "requirements", "decisions", "command", "extract", "attach",
-  "category", "quote", "evidence", "verifier", "counter", "challenge", "challenges", "literal", "code", "file", "line", "base", "question", "gate",
+  "category", "quote", "why", "evidence", "verifier", "counter", "challenge", "challenges", "literal", "code", "file", "line", "base", "question", "gate",
   "since"]);
 const MULTI = new Set(["junit", "paths", "attach", "evidence"]);
 const FLAGS = new Set(["json", "md", "needs", "quotes", "captures", "reset", "no-out", "help", "remeasure", "allow-dirty", "open", "tighten"]);
@@ -516,13 +516,13 @@ function challengeAdd(o) {
   const n = acNumber(o.ac);
   const ch = { id: nextChallengeId(challenges), req: o.req ? String(o.req).toUpperCase() : undefined, ac: Number.isNaN(n) ? o.ac : n,
     category: o.category ? String(o.category).toUpperCase() : undefined, quote: o.quote === undefined ? undefined : String(o.quote).trim(),
-    evidence: o.evidence, verifier: o.verifier, counter: o.counter ? String(o.counter).toLowerCase() : undefined, head: headOf(root) };
+    why: o.why === undefined ? undefined : String(o.why).trim(), evidence: o.evidence, verifier: o.verifier, counter: o.counter ? String(o.counter).toLowerCase() : undefined, head: headOf(root) };
   const prof = stackProfile(root);
   const v = validateChallenge(ch, reqs, { root, testPaths: listOf(prof.test_paths, ["tests"]), evidenceDir: evidenceSettings(root).dir });
   if (bad.length) v.errors.push(`${CHALLENGES_FILE} has unreadable lines (${bad.map((e) => e.line).join(", ")}); it is written only by this command`);
   if (v.errors.length) { for (const e of v.errors) console.error(`${PROG}: accept challenge add: ${e}`); return 2; }
   const req = reqs.find((r) => r.id === ch.req);
-  const rec = { id: ch.id, req: ch.req, ac: ch.ac, category: ch.category, quote: ch.quote, evidence: v.evidence, verifier: ch.verifier,
+  const rec = { id: ch.id, req: ch.req, ac: ch.ac, category: ch.category, quote: ch.quote, why: ch.why, evidence: v.evidence, verifier: ch.verifier,
     counter: ch.counter, head: ch.head, reqHash: reqHash(req), paths: [...new Set(v.evidence.map((e) => e.path))], at: new Date().toISOString() };
   mkdirSync(path.dirname(file), { recursive: true });
   const prev = existsSync(file) ? readFileSync(file, "utf8") : "";
@@ -662,7 +662,7 @@ function challengeList(o) {
     .map((c) => ({ id: c.id, req: c.req, ac: c.ac, priority: prio.get(c.req) ?? null, category: c.category, counter: c.counter, state: c.state,
       ...(c.stale_reason ? { stale_reason: c.stale_reason } : {}), ...(c.dismissal ? { dismissal: c.dismissal } : {}),
       ...(c.resolution ? { resolution: c.resolution } : {}),
-      quote: c.quote, evidence: c.evidence, verifier: c.verifier, head: c.head, at: c.at || null, line: c.line }));
+      quote: c.quote, ...(c.why ? { why: c.why } : {}), evidence: c.evidence, verifier: c.verifier, head: c.head, at: c.at || null, line: c.line }));
   if (scope) all = all.filter((c) => scope.set.has(c.req));
   const count = (st) => all.filter((c) => c.state === st).length;
   const mustOpen = [...new Set(all.filter((c) => c.state === "open" && c.priority === "Must").map((c) => c.req))];
@@ -676,7 +676,7 @@ function challengeList(o) {
   for (const c of list) {
     const why = c.state === "stale" ? ` — ${c.stale_reason}` : c.state === "dismissed" ? ` — by ${c.dismissal.by} (${c.dismissal.role}): ${c.dismissal.reason}`
       : c.state === "resolved" ? ` — by ${c.resolution.verifier} at ${String(c.resolution.head || "?").slice(0, 7)}: ${c.resolution.reason}` : "";
-    out(`${c.id}  ${c.state.padEnd(9)} ${c.req} AC${c.ac}  ${c.category} (${c.counter})  "${c.quote}"  ${(c.evidence || []).map((e) => e.line ? `${e.path}:${e.line}` : e.path).join(", ")}${why}`);
+    out(`${c.id}  ${c.state.padEnd(9)} ${c.req} AC${c.ac}  ${c.category} (${c.counter})  "${c.quote}"${c.why ? `  (${c.why})` : ""}  ${(c.evidence || []).map((e) => e.line ? `${e.path}:${e.line}` : e.path).join(", ")}${why}`);
   }
   for (const e of errors) out(`${shown}:${e.line}: ${e.msg}`);
   out(`challenges: ${all.length} · open ${count("open")} · stale ${count("stale")} · resolved ${count("resolved")} · dismissed ${count("dismissed")} · Musts with an open challenge: ${mustOpen.join(", ") || "none"}`);
@@ -963,7 +963,7 @@ function cmdGate(o) {
   const labels = { 0: "goal met", 1: "goal not met", 2: "stale evidence — re-run the tests on this commit", 3: "goal met with waived Musts",
     4: "open adversarial challenge on a Must (adversarial_gate: enforce)" };
   const openCh = ledger.requirements.filter((r) => r.in_scope).flatMap((r) => (r.challenges || []).filter((c) => c.state === "open")
-    .map((c) => ({ id: c.id, req: r.id, ac: c.ac, priority: r.priority, category: c.category, counter: c.counter })));
+    .map((c) => ({ id: c.id, req: r.id, ac: c.ac, priority: r.priority, category: c.category, counter: c.counter, ...(r.verdict === "WAIVED" ? { waived: true } : {}) })));
   const mustCh = s.must_challenged || 0;
   const missingVideos = s.missing_videos || [];
   if (o.json) out(JSON.stringify({ code, mode, label: labels[code], evaluated_sha: ledger.evaluated_sha, scope: ledger.scope, summary: s,
@@ -978,10 +978,11 @@ function cmdGate(o) {
     for (const id of missingVideos) out(`missing video ${id}  (${ROUTES.capture})`);
     if (s.literal_gaps && ledger.literal_gate === "warn") out(`gate: ${s.literal_gaps} criteria whose test lacks the criterion's literal — literal_gate warn keeps the verdicts (enforce would hold the Musts back)  (${ROUTES.weakened})`);
     if (adversarial !== "off") {
-      for (const c of openCh) out(`challenge ${c.id} open on ${c.req} AC${c.ac} (${c.priority || "-"}) ${c.category} (${c.counter})  (${ROUTES.adversarial})`);
+      // A waived Must's challenges are shown but do not count (summarize): say so, so nobody dismisses them to unblock
+      for (const c of openCh) out(`challenge ${c.id} open on ${c.req} AC${c.ac} (${c.priority || "-"}) ${c.category} (${c.counter})${c.waived ? "  (waived requirement: does not count)" : `  (${ROUTES.adversarial})`}`);
       if (mustCh && adversarial === "warn") out(`gate: ${mustCh} Must requirement(s) with an open challenge — adversarial_gate warn keeps the exit code (enforce would exit 4)`);
     }
-    out(`gate: ${labels[code]} — Must ${s.must_verified}/${s.must_total} verified${s.must_waived ? `, ${s.must_waived} waived (${s.waived_musts.join(", ")})` : ""}${ledger.scope ? ` · FASE ${ledger.scope.fase}` : ""} · exit ${code}`);
+    out(`gate: ${labels[code]}${code === 4 && (s.challenged_musts || []).length ? ` on ${s.challenged_musts.join(", ")}` : ""} — Must ${s.must_verified}/${s.must_total} verified${s.must_waived ? `, ${s.must_waived} waived (${s.waived_musts.join(", ")})` : ""}${ledger.scope ? ` · FASE ${ledger.scope.fase}` : ""} · exit ${code}`);
   }
   if (mode === "warn") { if (!o.json && !o.md) out(`gate: would exit ${code} (mode warn)`); return 0; }
   return code;

@@ -168,7 +168,24 @@ PEDIDO=""; [ -s "$FB" ] && PEDIDO=" La persona revisó la propuesta anterior y p
 # Lecciones confirmadas de proyectos anteriores para esta etapa (encargado, fase 5): como mucho 5; cada uso se anota
 LECC=$(HERMES_SDD_HOME="${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}" python3 "$ROOT/plugin/hermes-sdd/hsdd_lecciones.py" \
   para-etapa "$ETAPA" --repo "$REPO" --registrar 2>/dev/null || true)
-ARNES="Modo arnés (hermes-sdd): sin persona en la sesión; sigue references/modo-arnes.md del plugin.$PEDIDO${LECC:+ $LECC}"
+# Lo que el cliente ya decidió (preguntas respondidas y exenciones abiertas), en el prompt de TODA etapa: material-montana
+# eligió «hora de España» en la puerta del plan (respuesta sin más efecto), nadie lo escribió en spec/ y la FASE-2 se
+# programó en hora universal; y la revisión independiente volvió a dudar de lo que el cliente ya había decidido.
+decisiones() {
+  local q p
+  # Las de efecto req-change ya están escritas en requirements/: no se repiten. Las más recientes primero (mandan).
+  q=$(node "$SDD" questions list --json 2>/dev/null | jq -r '[.questions[]? | select(.state == "ANSWERED")
+      | ((.answer // "" | capture("^(?<l>[A-Z])\\b").l)? // "") as $l
+      | ([.options[]? | select(.letter == $l)][0]) as $o
+      | select(($o.effect // "") | startswith("req-change") | not)
+      | "\(.id): \((.client // .question) | .[0:110]) → \((($o | (.client // .text)) // (.answer // "")) | .[0:110])"] | reverse | join(" · ")' 2>/dev/null || true)
+  p=$( [ -f acceptance/PENDIENTES.md ] && grep -E '\| abierto \|$' acceptance/PENDIENTES.md | awk -F'|' '{gsub(/^ +| +$/,"",$3); gsub(/^ +| +$/,"",$4); gsub(/^ +| +$/,"",$5); print $3 " (" $4 "): " $5}' | tr '\n' ';' || true)
+  [ -n "$q$p" ] || return 0
+  printf ' Decisiones del cliente que ya están tomadas (aplícalas; no las vuelvas a preguntar ni las impugnes):%s%s' \
+    "${p:+ Eximido por el cliente, se cumple más adelante: $p}" "${q:+ $q.}" | python3 -c 'import sys; t = sys.stdin.read(); print(t if len(t) <= 4000 else t[:3990] + " (…)", end="")'
+}
+DECIS=$(decisiones)
+ARNES="Modo arnés (hermes-sdd): sin persona en la sesión; sigue references/modo-arnes.md del plugin.$PEDIDO${LECC:+ $LECC}$DECIS"
 
 registros_ajenos() {  # registros_ajenos <head-antes> → imprime qué está mal y sale 0; nada y sale 1 si todo es de la CLI
   local f d m
@@ -466,15 +483,23 @@ case "$ETAPA" in
     node "$SDD" lint --plan >/dev/null 2>&1 || falla "sdd lint --plan encuentra errores tras aplicar las respuestas: $(node "$SDD" lint --plan 2>&1 | grep -v ' warning: ' | tail -3 | tr '\n' ' ')"
     # Si cambiaron tests o código, la evidencia de la aceptación caduca: se vuelve a sacar (sin firmar nada) y la puerta
     # de calidad tiene que seguir cumpliéndose (la de esa FASE, o la global si las respuestas vienen de la entrega)
+    ABIERTAS=""
     ULT=$(git describe --tags --abbrev=0 --match 'entrega-*' --match 'fase-*-accepted' 2>/dev/null || echo "$HEAD0")
     if git diff --name-only "$ULT" HEAD | grep -vqE '^(plan|task|docs|status|acceptance)/|\.md$'; then
       PF=$(jq -r 'select(.tipo == "fase") | .fase // empty' ".sdd/hermes/puertas/$FASE.json" 2>/dev/null || true)
       claude_etapa acceptance "/sdd-acceptance${PF:+ --fase $PF} — $ARNES Tests or code changed after the last acceptance (a person's answers were applied). Re-run the test suites with their JUnit reports and refresh the evidence so the acceptance ledger is current. Do not sign off."
       grc=0; if [ -n "$PF" ]; then node "$SDD" gate --fase "$PF" >/dev/null 2>&1 || grc=$?; else node "$SDD" gate >/dev/null 2>&1 || grc=$?; fi
-      [ "$grc" = 0 ] || [ "$grc" = 3 ] || falla "tras aplicar las respuestas, la puerta de calidad${PF:+ de la FASE-$PF} sale con $grc"
+      # 4 = solo queda una impugnación abierta: la FASE ya está firmada y no se deshace; la decide una persona en la
+      # puerta de la entrega, que la enseña con sus botones (material-montana, FASE-1: esto tumbaba la etapa y paraba
+      # el proyecto). Cualquier otro fallo sí es de lo aplicado.
+      if [ "$grc" = 4 ]; then
+        ABIERTAS=$(node "$SDD" accept challenge list --open ${PF:+--fase "$PF"} --json 2>/dev/null | jq -r '[.challenges[]? | select(.state == "open") | .id] | join(", ")' || true)
+      else
+        [ "$grc" = 0 ] || [ "$grc" = 3 ] || falla "tras aplicar las respuestas, la puerta de calidad${PF:+ de la FASE-$PF} sale con $grc"
+      fi
     fi
     mv "$F" "$F.aplicado"
-    fin "$RES" "Respuestas de la puerta $FASE aplicadas" ;;
+    fin "$RES" "Respuestas de la puerta $FASE aplicadas${ABIERTAS:+ (queda abierta $ABIERTAS: se decide en la entrega)}" ;;
 
   mantener)   # mantenimiento de un proyecto entregado que pidió una persona (puerta de mantenimiento): sin cambiar el
               # comportamiento; después el cierre (puerta global → entrega). No pasa por el plan: no es trabajo de una FASE

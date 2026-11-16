@@ -95,7 +95,23 @@ async def _firmar(bot, puerta: dict) -> None:
 
 
 # ── Jev en cada puerta ──────────────────────────────────────────────────────────────────────────────────────────
+# Tamaños del contexto de Jev, de mayor a menor: si el modelo dice que no le cabe (material-montana, plan de 10 FASEs con
+# 5 preguntas: «HTTP 400 max_tokens_exceeded», y la puerta se quedó sin juicio), se vuelve a preguntar con menos
+TAMANOS_JEV = (90000, 40000, 15000)
+DEMASIADO = ("max_tokens", "larger than", "too large", "too long", "context length")
+
+
 async def _consultar_jev(puerta: dict) -> dict:
+    """Pregunta a Jev por esta puerta; si el estado no le cabe, otra vez con menos contexto. Nunca lanza."""
+    juicio = {"error": "sin respuesta"}
+    for n in TAMANOS_JEV:
+        juicio = await _consultar_jev_una(puerta, n)
+        if not any(d in str(juicio.get("error") or "").lower() for d in DEMASIADO):
+            return juicio
+    return juicio
+
+
+async def _consultar_jev_una(puerta: dict, max_chars: int) -> dict:
     """Pregunta a Jev por esta puerta con sdd-jev.mjs (el mismo cliente que usa el método). Nunca lanza: un fallo
     vuelve como {"error"} y la puerta queda para una persona."""
     import tempfile
@@ -103,7 +119,7 @@ async def _consultar_jev(puerta: dict) -> dict:
     try:
         with tempfile.TemporaryDirectory() as d:
             (Path(d) / "q.json").write_text(json.dumps({"questions": N.pregunta_jev(puerta)}))
-            (Path(d) / "i.jsonl").write_text(json.dumps({"id": puerta["id"], "state": N.estado_jev(puerta)}) + "\n")
+            (Path(d) / "i.jsonl").write_text(json.dumps({"id": puerta["id"], "state": N.estado_jev(puerta, max_chars)}) + "\n")
             proc = await asyncio.create_subprocess_exec(
                 "node", str(sdd_jev), "judge", "--questions", str(Path(d) / "q.json"), "--items", str(Path(d) / "i.jsonl"),
                 stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, env={**os.environ, "PATH": PATH_CMDS})

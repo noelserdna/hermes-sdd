@@ -133,7 +133,7 @@ Un test ligado por nombre y en verde prueba que *una* aserción se cumplió, no 
 3. **Un verificador por FASE**, un agente en contexto limpio y de solo lectura, con cuatro reglas: no citar `acceptance/`, `feedback/` ni `spec/` como evidencia (solo código de producción y tests); releer la letra completa del requisito (`sdd req show`); comprobar que los asserts codifican el criterio de verdad; y buscar el camino de producción que esquiva la implementación. Además lee las capturas de `evidencias/` y comprueba que muestran el literal. Se lanzan como mucho `test_slots` a la vez, con los tests de uno en uno.
 4. **Contraverificación** de todos los hallazgos y de una muestra de limpios, por agentes nuevos que no ven el razonamiento del primero: `confirmed`, `refuted` o `inconclusive` (este último lo decide una persona).
 5. **Crítico de cobertura LLM:** confirma que el universo evaluado está completo.
-6. **Registro:** `sdd accept challenge add` escribe cada hallazgo confirmado o no concluyente en `acceptance/challenges.jsonl`. La CLI rechaza (exit 2) la evidencia bajo `acceptance/`, `feedback/`, `spec/`, `requirements/`, `plan/`, `task/`, `audits/`, `changes/` o `.sdd/`, y bajo `test/` cuando no está en los `test_paths` del perfil (en Rails los tests viven ahí). También rechaza un fichero citado sin commitear o una línea que no existe. Una captura de `evidencias/` se cita sin línea (`WRONG-CAPTURE`) y se guarda su sha256.
+6. **Registro:** `sdd accept challenge add` (con `--why`: el porqué en palabras del cliente, obligatorio, que la puerta enseña junto a la cita) escribe cada hallazgo confirmado o no concluyente en `acceptance/challenges.jsonl`. La CLI rechaza (exit 2) la evidencia bajo `acceptance/`, `feedback/`, `spec/`, `requirements/`, `plan/`, `task/`, `audits/`, `changes/` o `.sdd/`, y bajo `test/` cuando no está en los `test_paths` del perfil (en Rails los tests viven ahí). También rechaza un fichero citado sin commitear o una línea que no existe. Una captura de `evidencias/` se cita sin línea (`WRONG-CAPTURE`) y se guarda su sha256.
 
 | Categoría | Qué encontró el verificador |
 |---|---|
@@ -143,7 +143,7 @@ Un test ligado por nombre y en verde prueba que *una* aserción se cumplió, no 
 | `BYPASS-PATH` | Otra ruta, otro caller u otro punto de entrada esquiva el comportamiento |
 | `CROSSING` | Falla con replay, concurrencia o una segunda ruta que ninguna tarea tenía |
 | `NOT-IMPLEMENTED` | El comportamiento no está |
-| `SPEC-QUESTION` | El criterio no se puede cumplir tal como está escrito: pregunta para una persona |
+| `SPEC-QUESTION` | El criterio no se puede cumplir tal como está escrito: pregunta para una persona. Antes, el verificador mira las decisiones del cliente (`sdd questions list --json`): si ya lo decidió, no es duda; si el código contradice el criterio o una decisión, es un hallazgo del código, no un `SPEC-QUESTION` |
 | `WRONG-CAPTURE` | La captura no muestra el literal del criterio |
 
 **El veredicto no cambia.** El libro añade `challenges[]` por requisito (`open`, `stale` cuando cambia el código que citan o el texto del requisito, `resolved`, `dismissed`) y `summary.must_challenged`, que solo cuenta los `open`. El bucle devuelve los abiertos y confirmados con la ruta `adversarial-finding`, y los no concluyentes con la ruta `needs-human`, y genera tareas con `Source: ACCEPTANCE-ADVERSARIAL-FASE-{N}`; un `SPEC-QUESTION` va a `sdd-req-change`. Descartar un hallazgo es un registro humano: `sdd accept record challenge-dismissal --challenge CH-NNN --reason … --by … --role …`.
@@ -186,7 +186,7 @@ node "$SDD" accept record literal-exception --req REQ-F-004 --ac 2 --literal "�
 node "$SDD" lint --floor [--base REF] [--json]        # lo que baja el listón desde la base (F-01, F-02, F-04, F-07)
 node "$SDD" accept record floor-exception --code F-01 --file PATH --line "…" --base SHA --reason "…" --by … --role …
 node "$SDD" accept adversarial plan [--fase N] [--json]
-node "$SDD" accept challenge add --req REQ-F-004 --ac 2 --category WEAKENED-ASSERT --quote "…" --evidence src/x.ts:41 --verifier … --counter confirmed
+node "$SDD" accept challenge add --req REQ-F-004 --ac 2 --category WEAKENED-ASSERT --quote "…" --why "…" --evidence src/x.ts:41 --verifier … --counter confirmed
 node "$SDD" accept challenge resolve --challenge CH-001 --reason "…" --evidence tests/x.test.ts:57 --verifier …
 node "$SDD" accept challenge list [--open] [--json]
 node "$SDD" accept record challenge-dismissal --challenge CH-001 --reason "…" --by … --role …

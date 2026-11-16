@@ -125,6 +125,18 @@ grep -q 'COMPACT PLAN (small project): exactly ONE FASE' "$T/prompt" && [ "$(cat
   && ok "compacta: el plan pide una sola FASE y deja constancia de la granularidad usada" || bad "plan compacto: $(cat "$T/prompt")"
 grep -q "Plan-Size:\*\* compact" "$T/prompt" && grep -q 'no ARCHITECTURE.md, RESEARCH.md, CLARIFY-LOG.md, fases/README.md nor fase-plans/' "$T/prompt" \
   && ok "compacta: el plan en dos ficheros (PLAN.md y el de la FASE), sin los otros cinco" || bad "plan compacto en dos ficheros: $(cat "$T/prompt")"
+# material-montana: lo que el cliente decidió (aquí, la hora de España) llega al prompt de las etapas siguientes
+mkdir -p .sdd
+node "$ROOT/metodo/scripts/sdd.mjs" questions add --role spec-auditor >/dev/null 2>&1 <<'J'
+{"skill": "sdd-spec-auditor", "contexto": "RN-002", "pregunta": "Which clock decides today?",
+ "para_cliente": "¿Qué hora manda para decidir qué día es hoy?",
+ "opciones": [{"letra": "A", "texto": "Europe/Madrid", "recomendada": true, "efecto": "ninguno", "cliente": "La hora de España"},
+              {"letra": "B", "texto": "UTC", "efecto": "ninguno", "cliente": "La hora universal"}]}
+J
+node "$ROOT/metodo/scripts/sdd.mjs" questions answer Q-spec-auditor-001 --letter A --by "Ana (Cliente)" >/dev/null 2>&1
+FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" tareas >/dev/null
+grep -q 'Decisiones del cliente que ya están tomadas' "$T/prompt" && grep -q 'Q-spec-auditor-001: ¿Qué hora manda para decidir qué día es hoy? → La hora de España' "$T/prompt" \
+  && ok "las decisiones del cliente van en el prompt de las etapas" || bad "decisiones en el prompt: $(grep -o 'Decisiones.*' "$T/prompt" | head -c 400)"
 FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" tareas >/dev/null
 grep -q 'COMPACT TASKS: 3 to 6 tasks' "$T/prompt" && grep -q 'TEST POLICY: one test per acceptance criterion' "$T/prompt" \
   && ok "compacta: tareas gruesas y un test por criterio" || bad "tareas compactas: $(cat "$T/prompt")"
@@ -170,6 +182,14 @@ import sys, json; sys.path.insert(0, sys.argv[1]); import hsdd_nucleo as N
 p = json.load(open(f"{sys.argv[2]}/.sdd/hermes/puertas/{sys.argv[3]}.json"))
 assert N.evidencias(p) == ["a.png", "b.png"], N.evidencias(p)
 P
+# material-montana: una duda del propio criterio con el gate en 1 (falta algo) no se esconde: sale con su porqué y se
+# puede corregir el requisito o descartarla, además de eximir o rechazar
+node "$ROOT/metodo/scripts/sdd.mjs" accept challenge add --req REQ-F-001 --ac 1 --category SPEC-QUESTION --quote "unique incremental id" \
+  --why "el criterio no dice si el id vuelve a empezar" --evidence package.json:1 --verifier v --counter confirmed >/dev/null 2>&1
+git add -A >/dev/null 2>&1; git commit -qm "test: duda" >/dev/null 2>&1
+G=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" entrega 2>/dev/null); P=".sdd/hermes/puertas/$G.json"
+jq -e '[.opciones[].verbo] == ["ver","corrijo","descarto","eximo","rechazo"]' "$P" >/dev/null && jq -r .texto "$P" | grep -q '❓ el criterio no dice si el id vuelve a empezar' \
+  && ok "gate 1 con una duda del criterio: la puerta la enseña con su porqué y ofrece corregir o descartar" || bad "duda con gate 1: $(jq -c '[.opciones[].verbo]' "$P" 2>&1)"
 
 # Una ruta fijada por el cliente: Jev solo puede confirmarla (taller2: cambió la «ligera» fijada por la «adaptativa»), y
 # la puerta conserva la marca «fijada» en sus botones

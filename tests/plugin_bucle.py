@@ -126,5 +126,23 @@ async def vigia():
     tarjeta["status"] = "done"; await v._vigia_etapas(Bot())
     ok(json.loads((HOME / "alertas.json").read_text())["proyectos"] == {}, "recuperada, desaparece del panel")
 asyncio.run(vigia())
+
+# 6. Jev con un estado demasiado grande (material-montana: «HTTP 400 max_tokens_exceeded» y la puerta sin juicio): se
+#    vuelve a preguntar con menos contexto
+async def jev_grande():
+    m = cargar("hsdd_d"); tamanos = []
+    async def una(puerta, n):
+        tamanos.append(n)
+        return {"error": 'HTTP 400: {"detail":{"error_type":"max_tokens_exceeded"}}'} if n > 40000 else {"choice": "conforme", "p": 0.9}
+    m.bucle._consultar_jev_una = una
+    j = await m.bucle._consultar_jev({"id": "g1"})
+    ok(j.get("choice") == "conforme" and tamanos == [90000, 40000], f"Jev: si no le cabe, pregunta otra vez con menos contexto ({tamanos})")
+    tamanos.clear()
+    async def otra(puerta, n):
+        tamanos.append(n); return {"error": "HTTP 500"}
+    m.bucle._consultar_jev_una = otra
+    j = await m.bucle._consultar_jev({"id": "g1"})
+    ok(j.get("error") == "HTTP 500" and tamanos == [90000], "Jev: otro error no se reintenta aquí")
+asyncio.run(jev_grande())
 shutil.rmtree(T, ignore_errors=True)
 sys.exit(1 if fallos else 0)

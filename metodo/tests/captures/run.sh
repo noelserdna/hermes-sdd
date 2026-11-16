@@ -192,6 +192,7 @@ run accept --no-out
 has "accept says why the capture does not count" "evidencias/FASE-1/REQ-F-001-AC2.png not counted: attached by the test"
 run lint --captures --json
 expect "lint --captures: C-03 from the ledger for the unbound capture" "$(js 'j.findings.filter(f=>f.code==="C-03").map(f=>f.file+" "+f.req+" AC"+f.ac).join()')" "evidencias/FASE-1/REQ-F-001-AC2.png REQ-F-001 AC2"
+expect "C-03 is an error when the criterion has no capture of its own (AC2 is unshown)" "$(js 'j.findings.filter(f=>f.code==="C-03").map(f=>f.severity+"|"+f.message.slice(0,30)).join()')" "error|not counted for REQ-F-001 AC2:"
 # The capture helper's sidecar names the test that took it: a test that cites AC2 and passes → it counts
 printf '{"criterio":"REQ-F-001-AC2","test":"REQ-F-001 AC2 saludo de lucia","ve":["Hola, lucia"],"url":"http://x/clases"}' > "$repo/evidencias/FASE-1/REQ-F-001-AC2.json"
 run accept --json --no-out

@@ -794,10 +794,10 @@ commitT "feat(todo): export" "Task: TASK-F2-001"
 adv_green() { junit .sdd/junit/unit.xml "AC-001-01 adds=pass" "AC-001-02 empty title=pass" "AC-002-01 order=pass" "AC-002-02 empty list=pass"; }
 adv_green
 add_ok() {
-  run accept challenge add --req REQ-F-001 --ac 1 --category WEAKENED-ASSERT --quote 'task 1 "Buy milk" is pending' \
+  run accept challenge add --why "el código no hace lo que pide el criterio" --req REQ-F-001 --ac 1 --category WEAKENED-ASSERT --quote 'task 1 "Buy milk" is pending' \
     --evidence src/api.js:1 tests/todo.test.js:3 --verifier verifier-FASE-1 --counter confirmed "$@"
 }
-bad_ev() { run accept challenge add --req REQ-F-001 --ac 1 --category UNWIRED --quote q --evidence "$1" --verifier v --counter confirmed; }
+bad_ev() { run accept challenge add --why "el código no hace lo que pide el criterio" --req REQ-F-001 --ac 1 --category UNWIRED --quote q --evidence "$1" --verifier v --counter confirmed; }
 
 run gate --fase 1; expect "adv: gate --fase 1 → 0 before any challenge" "$rc" 0
 add_ok --json
@@ -820,25 +820,25 @@ bad_ev test/models/task_test.rb:2
 expect "test/ outside test_paths → 2" "$rc" 2; has "test/: says why" "not a test path of the Stack Profile"
 bad_ev .sdd/junit/unit.xml:1
 expect "evidence under .sdd/ → 2" "$rc" 2
-run accept challenge add --req REQ-F-001 --ac 1 --category WEAKENED-ASSERT --quote q --evidence src/api.js:1 --verifier v --counter refuted
+run accept challenge add --why "el código no hace lo que pide el criterio" --req REQ-F-001 --ac 1 --category WEAKENED-ASSERT --quote q --evidence src/api.js:1 --verifier v --counter refuted
 expect "--counter refuted → 2" "$rc" 2; has "refuted: goes to the summary" "a refuted finding is not recorded"
-run accept challenge add --req REQ-F-001 --ac 1 --category WEAKENED-ASSERT --quote q --evidence src/api.js:1 --verifier v
+run accept challenge add --why "el código no hace lo que pide el criterio" --req REQ-F-001 --ac 1 --category WEAKENED-ASSERT --quote q --evidence src/api.js:1 --verifier v
 expect "no --counter → 2" "$rc" 2
-run accept challenge add --req REQ-F-099 --ac 1 --category WEAKENED-ASSERT --quote q --evidence src/api.js:1 --verifier v --counter confirmed
+run accept challenge add --why "el código no hace lo que pide el criterio" --req REQ-F-099 --ac 1 --category WEAKENED-ASSERT --quote q --evidence src/api.js:1 --verifier v --counter confirmed
 expect "unknown requirement → 2" "$rc" 2
-run accept challenge add --req REQ-F-001 --ac 3 --category WEAKENED-ASSERT --quote q --evidence src/api.js:1 --verifier v --counter confirmed
+run accept challenge add --why "el código no hace lo que pide el criterio" --req REQ-F-001 --ac 3 --category WEAKENED-ASSERT --quote q --evidence src/api.js:1 --verifier v --counter confirmed
 expect "criterion that does not exist → 2" "$rc" 2; has "says how many criteria" "has 2 criteria"
-run accept challenge add --req REQ-F-001 --category WEAKENED-ASSERT --quote q --evidence src/api.js:1 --verifier v --counter confirmed
+run accept challenge add --why "el código no hace lo que pide el criterio" --req REQ-F-001 --category WEAKENED-ASSERT --quote q --evidence src/api.js:1 --verifier v --counter confirmed
 expect "no --ac → 2" "$rc" 2
-run accept challenge add --req REQ-F-004 --ac 1 --category WEAKENED-ASSERT --quote q --evidence src/api.js:1 --verifier v --counter confirmed
+run accept challenge add --why "el código no hace lo que pide el criterio" --req REQ-F-004 --ac 1 --category WEAKENED-ASSERT --quote q --evidence src/api.js:1 --verifier v --counter confirmed
 expect "deprecated requirement → 2" "$rc" 2
-run accept challenge add --req REQ-F-001 --ac 1 --category WRONG --quote q --evidence src/api.js:1 --verifier v --counter confirmed
+run accept challenge add --why "el código no hace lo que pide el criterio" --req REQ-F-001 --ac 1 --category WRONG --quote q --evidence src/api.js:1 --verifier v --counter confirmed
 expect "unknown category → 2" "$rc" 2; has "lists the categories" "WRONG-CAPTURE"
-run accept challenge add --req REQ-F-001 --ac 1 --category UNWIRED --quote "  " --evidence src/api.js:1 --verifier v --counter confirmed
+run accept challenge add --why "el código no hace lo que pide el criterio" --req REQ-F-001 --ac 1 --category UNWIRED --quote "  " --evidence src/api.js:1 --verifier v --counter confirmed
 expect "empty --quote → 2" "$rc" 2
-run accept challenge add --req REQ-F-001 --ac 1 --category UNWIRED --quote q --evidence src/api.js:1 --counter confirmed
+run accept challenge add --why "el código no hace lo que pide el criterio" --req REQ-F-001 --ac 1 --category UNWIRED --quote q --evidence src/api.js:1 --counter confirmed
 expect "no --verifier → 2" "$rc" 2
-run accept challenge add --req REQ-F-001 --ac 1 --category UNWIRED --quote q --verifier v --counter confirmed
+run accept challenge add --why "el código no hace lo que pide el criterio" --req REQ-F-001 --ac 1 --category UNWIRED --quote q --verifier v --counter confirmed
 expect "no --evidence → 2" "$rc" 2
 bad_ev src/nope.js:1
 expect "missing evidence file → 2" "$rc" 2; has "missing file named" "no such file"
@@ -857,14 +857,14 @@ bad_ev src/store.js:1
 expect "evidence file with uncommitted changes → 2" "$rc" 2
 ( cd "$repo" && git checkout -q -- src/store.js )
 expect "refused challenges append nothing" "$(chlines)" "$before"
-run accept challenge add --req REQ-F-001 --ac 2 --category BYPASS-PATH --quote "not literal" --evidence src/api.js:2 --verifier v --counter inconclusive
+run accept challenge add --why "el código no hace lo que pide el criterio" --req REQ-F-001 --ac 2 --category BYPASS-PATH --quote "not literal" --evidence src/api.js:2 --verifier v --counter inconclusive
 expect "inconclusive is recorded → 0" "$rc" 0; has "warns when the quote is not literal" "--quote is not a literal part of REQ-F-001 AC2"
 expect "second challenge is CH-002" "$(lastch 'r.id + "|" + r.counter')" "CH-002|inconclusive"
 
 # test/ inside test_paths (Rails Minitest) is evidence; top-level test/*.md never is.
 profile "test_paths: test" "code_paths: src"
 commit "profile: test_paths test"
-run accept challenge add --req REQ-F-002 --ac 1 --category MOCK-ONLY --quote "two lines are printed in id order" --evidence test/models/task_test.rb:2 --verifier v --counter confirmed
+run accept challenge add --why "el código no hace lo que pide el criterio" --req REQ-F-002 --ac 1 --category MOCK-ONLY --quote "two lines are printed in id order" --evidence test/models/task_test.rb:2 --verifier v --counter confirmed
 expect "test/ inside test_paths → 0" "$rc" 0
 bad_ev test/TEST-PLAN.md:1
 expect "top-level test/*.md stays forbidden → 2" "$rc" 2
@@ -967,7 +967,7 @@ run accept challenge list --json
 expect "stale when the requirement text changed" "$(js 'j.challenges.find(x=>x.id==="CH-005").stale_reason')" "requirement text changed since the challenge (MODIFY)"
 ( cd "$repo" && git checkout -q -- requirements/REQUIREMENTS.md )
 mkdir -p "$repo/evidencias/FASE-1"; printf 'png' > "$repo/evidencias/FASE-1/AC-001-01.png"
-run accept challenge add --req REQ-F-001 --ac 1 --category WRONG-CAPTURE --quote 'Buy milk' --evidence evidencias/FASE-1/AC-001-01.png --verifier v --counter confirmed --json
+run accept challenge add --why "el código no hace lo que pide el criterio" --req REQ-F-001 --ac 1 --category WRONG-CAPTURE --quote 'Buy milk' --evidence evidencias/FASE-1/AC-001-01.png --verifier v --counter confirmed --json
 expect "a capture of the evidence dir without a line → 0, pinned by sha256" "$(js 'const e=j.challenge.evidence[0]; e.path + "|" + e.line + "|" + /^sha256:/.test(e.sha256)')" "evidencias/FASE-1/AC-001-01.png|null|true"
 printf 'png2' > "$repo/evidencias/FASE-1/AC-001-01.png"
 run accept challenge list --json
@@ -1001,7 +1001,7 @@ has "plan: text summary" "adversarial plan: 2 FASE(s) · 6 uncovered · 1 withou
 run accept adversarial plan --fase 9; expect "plan of a FASE that does not exist → 2" "$rc" 2
 run accept adversarial; expect "accept adversarial without plan → 2" "$rc" 2
 run accept challenge; expect "accept challenge without add|list → 2" "$rc" 2
-run --help; has "--help documents challenge add" "sdd accept challenge add --req ID"; has "--help documents gate exit 4" "4 met, but a Must"; has "--help documents adversarial plan" "sdd accept adversarial plan"
+run --help; has "--help documents challenge add" "sdd accept challenge add --req ID --ac N --category CAT --quote TEXT --why TEXT"; has "--help documents gate exit 4" "4 met, but a Must"; has "--help documents adversarial plan" "sdd accept adversarial plan"
 
 # ---------------------------------------------------------------- 20. incremental adversarial round (plan --since)
 # A later round re-reads only the criteria whose evidence moved since the previous round's plan: a test block that
@@ -1114,7 +1114,7 @@ sed -i.bak 's/THEN the output is `No tasks`/THEN the output is `No tasks yet`/' 
 runo accept adversarial plan --fase 1 --since .sdd/base.json --json
 expect "inc: a requirement whose text changed re-checks all its criteria" "$(rechecked)" "REQ-F-002#1,REQ-F-002#2"
 ( cd "$repo" && git checkout -q -- requirements/REQUIREMENTS.md )
-run accept challenge add --req REQ-F-002 --ac 2 --category WEAKENED-ASSERT --quote 'No tasks' --evidence tests/todo.test.js:17 --verifier v --counter confirmed
+run accept challenge add --why "el código no hace lo que pide el criterio" --req REQ-F-002 --ac 2 --category WEAKENED-ASSERT --quote 'No tasks' --evidence tests/todo.test.js:17 --verifier v --counter confirmed
 runo accept adversarial plan --fase 1 --since .sdd/base.json --json
 expect "inc: an open challenge re-checks its criterion" "$(rechecked)" "REQ-F-002#2"
 contains "$(reasons REQ-F-002 2)" "challenge CH-001 open" && pass "inc: reason open challenge" || bad "inc: reason challenge ($(reasons REQ-F-002 2))"
@@ -1167,7 +1167,7 @@ grep -q '| CH-001 | REQ-F-002 | AC2 | WEAKENED-ASSERT | confirmed | resolved by 
 runo accept adversarial plan --fase 1 --since .sdd/base2.json --json
 expect "plan --since: a resolved challenge does not force a recheck" "$(js 'j.incremental.recheck')" 0
 # reopened: a later verifier confirms it again → a new challenge on the same criterion
-run accept challenge add --req REQ-F-002 --ac 2 --category WEAKENED-ASSERT --quote 'No tasks' --evidence tests/empty.test.js:3 --verifier v3 --counter confirmed
+run accept challenge add --why "el código no hace lo que pide el criterio" --req REQ-F-002 --ac 2 --category WEAKENED-ASSERT --quote 'No tasks' --evidence tests/empty.test.js:3 --verifier v3 --counter confirmed
 expect "confirmed again → new challenge CH-002" "$(lastch 'r.id + "|" + r.ac')" "CH-002|2"
 run gate --fase 1; expect "reopened: gate 4 again" "$rc" 4
 run accept challenge; has "accept challenge without a subcommand names resolve" "add\`, \`resolve\` or \`list\`"

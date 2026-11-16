@@ -289,7 +289,7 @@ it holds the verifier prompt, the categories and the commands.
    `evidencias/FASE-{N}/` against the criterion's literal.
 5. Counter-verification of every finding and a sample of clean verdicts, by fresh agents that never see the first
    reasoning; an LLM coverage critic confirms the evaluated universe is complete.
-6. `node "$SDD" accept challenge add …` records each confirmed or inconclusive finding in `acceptance/challenges.jsonl`,
+6. `node "$SDD" accept challenge add … --why "…"` records each confirmed or inconclusive finding (`--why`: the plain-language reason the customer reads in the gate) in `acceptance/challenges.jsonl`,
    then regenerate the ledger and commit `docs(acceptance)`. Verdicts do not change; `--loop` routes open challenges
    as `adversarial-finding`.
 

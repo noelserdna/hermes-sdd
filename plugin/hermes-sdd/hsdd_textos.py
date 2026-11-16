@@ -146,6 +146,43 @@ def _criterios(texto: str) -> dict:
     return res
 
 
+def _vistas_criterios(texto: str) -> dict:
+    """{criterio GIVEN: lo que se ve} de un REQUIREMENTS.md: la sublínea «Se ve: …» o «No visible: …» que sigue a cada
+    criterio (lo único del criterio que está en el idioma del cliente)."""
+    res, crit = {}, None
+    for l in texto.splitlines():
+        if re.match(r"^\s+[-*]\s+GIVEN\b", l):
+            crit = re.sub(r"^\s+[-*]\s+", "", l).strip()
+        elif crit and (m := re.match(r"^\s+[-*]\s+(Se ve|No visible)\s*:\s*(.*)$", l)):
+            res.setdefault(crit, (m.group(1), m.group(2).strip()))
+        elif not l.strip() or re.match(r"^\s*[-*]\s+\*\*|^#", l):
+            crit = None
+    return res
+
+
+_INGLES = re.compile(r"\b(the|and|is|are|his|her|has|was|with|tries|opens|returns|after|before|which|their|its|of)\b", re.I)
+
+
+def _criterio_cliente(c: str, vistas: dict) -> str:
+    """Un criterio para el cliente: si está escrito en inglés (material-montana: «"pablo@club.es" is deactivated… cuando
+    the storekeeper exports his data»), lo que se ve, con su línea «Se ve:» («se ve «Datos de Pablo» en Datos
+    personales»); si está en castellano o no tiene esa línea, el criterio con las palabras clave traducidas."""
+    llano = _criterio_llano(c)
+    v = vistas.get(c)
+    if not v or len(_INGLES.findall(re.sub(r'"[^"]*"', "", llano))) < 2:
+        return llano
+    clase, linea = v
+    if clase == "No visible":
+        return f"no se ve en pantalla: {linea}"
+    partes = []
+    for trozo in _sin_parentesis(linea).split(";"):
+        citas = _COMILLAS.findall(trozo)
+        if citas:
+            donde = re.match(r"\s*,?\s*(?:en|in|on)\s+(.*\S)", trozo[trozo.rfind('"') + 1:])
+            partes.append(", ".join(f"«{t}»" for t in citas) + (f" en {donde.group(1).rstrip('.')}" if donde else ""))
+    return ("se ve " + "; ".join(partes)) if partes else llano
+
+
 _NOMBRE_CAMPO = {"verification": "cómo se comprueba", "priority": "la prioridad", "para el cliente": "la frase para el cliente",
                  "needs": "las necesidades de las que sale", "status": "el estado", "rationale": "el porqué"}
 
@@ -334,6 +371,8 @@ def _ajustes(repo: Path) -> list[str]:
         return []
     ahora = _leer(repo / "requirements" / "REQUIREMENTS.md")
     viejo, nuevo = _criterios(antes), _criterios(ahora)
+    vistas = {**_vistas_criterios(antes), **_vistas_criterios(ahora)}
+    cli = lambda c: _criterio_cliente(c, vistas)
     # «Stack del proyecto» (título habitual de la condición de herramientas) dicho sin jerga
     nombres = {r["id"]: re.sub(r"^Stack\b", "Herramientas", r["titulo"]) or _texto_req(r) for r in requisitos(repo)}
     out = []
@@ -375,14 +414,18 @@ def _ajustes(repo: Path) -> list[str]:
             if par is not None and _parecido(c, par) >= 0.6:
                 # Un solo retoque se dice por palabras («x» pasa a «y»); varios, con la frase entera antes y después
                 # (taller, INT-003: «se añade «de 2 plazas,»; «1» pasa a «una persona nueva…»; se quita «libre»» no se entendía)
-                if _n_cambios(c, par) == 1:
-                    out.append(f"✏️ {nombres.get(rid, rid)}: en el criterio «{_corta(_criterio_llano(c), 120)}» {_cambio_palabras(c, par)}")
+                if cli(c) == cli(par) and cli(c) != _criterio_llano(c):
+                    # en inglés y con lo mismo que se ve: solo cambian los datos del ejemplo (fechas, cantidades)
+                    out.append(f"✏️ {nombres.get(rid, rid)}: cambia el ejemplo del criterio en el que {_corta(cli(c), 140)}"
+                               f"{_cambio_datos(c, par)}")
+                elif _n_cambios(c, par) == 1:
+                    out.append(f"✏️ {nombres.get(rid, rid)}: en el criterio «{_corta(cli(c), 120)}» {_cambio_palabras(c, par)}")
                 else:
-                    out.append(f"✏️ {nombres.get(rid, rid)}: un criterio cambia. Antes: «{_corta(_criterio_llano(c), 200)}» "
-                               f"→ ahora: «{_corta(_criterio_llano(par), 200)}»")
+                    out.append(f"✏️ {nombres.get(rid, rid)}: un criterio cambia. Antes: «{_corta(cli(c), 200)}» "
+                               f"→ ahora: «{_corta(cli(par), 200)}»")
                 quitados.remove(c); puestos.remove(par)
-        out += [f"➖ {nombres.get(rid, rid)}: se quita el criterio «{_corta(_criterio_llano(c), 180)}»" for c in quitados]
-        out += [f"➕ {nombres.get(rid, rid)}: nuevo criterio «{_corta(_criterio_llano(c), 180)}»" for c in puestos]
+        out += [f"➖ {nombres.get(rid, rid)}: se quita el criterio «{_corta(cli(c), 180)}»" for c in quitados]
+        out += [f"➕ {nombres.get(rid, rid)}: nuevo criterio «{_corta(cli(c), 180)}»" for c in puestos]
     return out[:8] + ([f"… y {len(out) - 8} cambios más (el detalle está en requirements/REQUIREMENTS.md)"] if len(out) > 8 else [])
 
 
@@ -394,6 +437,20 @@ def _parecido(a: str, b: str) -> float:
 def _n_cambios(a: str, b: str) -> int:
     import difflib
     return sum(1 for op, *_ in difflib.SequenceMatcher(None, a.split(), b.split()).get_opcodes() if op != "equal")
+
+
+_DATO = re.compile(r'"[^"]+"|\b\d{4}-\d{2}-\d{2}\b|\b\d+(?:[.,]\d+)?\b')
+
+
+def _cambio_datos(a: str, b: str) -> str:
+    """De un criterio en inglés, solo los datos que cambian (textos citados, fechas, cantidades): «: ahora con «2026-01-10»,
+    «2026-12-20»» (material-montana: «"is" pasa a "was"» no le dice nada al cliente)."""
+    da, db = _DATO.findall(a), _DATO.findall(b)
+    nuevos = [d.strip('"') for d in db if d not in da]
+    fuera = [d.strip('"') for d in da if d not in db]
+    partes = ([("ahora con " + ", ".join(f"«{d}»" for d in dict.fromkeys(nuevos)))] if nuevos else []) \
+        + ([("ya no con " + ", ".join(f"«{d}»" for d in dict.fromkeys(fuera)))] if fuera else [])
+    return (": " + "; ".join(partes)) if partes else " (cambia la redacción, no los datos)"
 
 
 def _cambio_palabras(a: str, b: str) -> str:
@@ -763,7 +820,8 @@ CATEGORIAS = {"WEAKENED-ASSERT": "el test comprueba menos de lo que pide el crit
 
 
 CORREGIR = ("✏️ Si una duda es del propio criterio (está mal escrito o contradice otro), pulsa ✏️ Corregir el requisito "
-            "y di cómo tiene que quedar: se lanza un cambio de requisitos y la fase se rehace con el criterio bueno.")
+            "y di cómo tiene que quedar: se lanza un cambio de requisitos y la fase se rehace con el criterio bueno. "
+            "Si no es un fallo, 🗑 Descártala con su número y por qué.")
 
 
 def _bloque_impugnaciones(repo: Path, imp: list | None) -> list[str]:
@@ -779,7 +837,8 @@ def _bloque_impugnaciones(repo: Path, imp: list | None) -> list[str]:
     partes = []
     if tuyas:
         partes.append("🤔 La revisión independiente tiene dudas sobre lo que pide el propio requisito; esto es tuyo:\n" + "\n".join(
-            f"• {c['id']} · {nombres.get(c.get('req'), c.get('req'))}: «{_corta(c.get('quote') or '', 140)}»" for c in tuyas))
+            f"• {c['id']} · {nombres.get(c.get('req'), c.get('req'))}: «{_corta(c.get('quote') or '', 140)}»"
+            + (f"\n  ❓ {_corta(c['why'], 240)}" if c.get("why") else "") for c in tuyas))
     if tecnicas:
         grupos: dict[str, list[str]] = {}
         for c in tecnicas:
