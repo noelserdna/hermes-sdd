@@ -7,6 +7,7 @@ T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
 fail=0; ok() { echo "ok   $1"; }; bad() { echo "FAIL $1"; fail=1; }
 export HERMES_SDD_HOME="$T/h"; mkdir -p "$HERMES_SDD_HOME"
 R="$T/r"; mkdir -p "$R/.sdd/hermes" "$R/ux"; cd "$R"; git init -q -b main
+git config user.email t@t; git config user.name t   # las etapas commitean con la identidad del repo (Linux sin global)
 cp "$ROOT/metodo/templates/pipeline-state.template.json" pipeline-state.json; echo x > ux/UI-DESIGN-SYSTEM.md
 conf() { echo "{\"ejecutor\":\"claude\",\"ejecutores\":{\"ux\":\"../tests/ejecutor-falso\"}$1}" > .sdd/hermes/hermes-sdd.json; }
 conf ""; git add -A; git -c user.email=t@t -c user.name=t commit -qm i
