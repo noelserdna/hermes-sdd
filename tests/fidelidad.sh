@@ -366,4 +366,14 @@ t = F.norm(F.ocr(Path(sys.argv[2])))
 assert F.norm("Vivienda 2ºB") in t and "ocupada" in t, t
 PY
 fi
+# taller3: un e2e que pasó en la etapa (su JUnit) y falla en este ordenador no es «tests rotos» (grave): es el entorno
+python3 - "$ROOT/plugin/hermes-sdd" "$T" <<'PY' && ok "mutantes: el JUnit de la etapa distingue tests rotos de un entorno local que falla" || bad "junit de la etapa"
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_fidelidad as F
+from pathlib import Path
+r = Path(sys.argv[2]) / "junit"; (r / ".sdd/junit").mkdir(parents=True)
+(r / ".sdd/junit/playwright.xml").write_text('<testsuites><testsuite><testcase name="a" classname="criterios.spec.js"/><testcase name="b" classname="otro.spec.js"><failure message="x"/></testcase></testsuite></testsuites>')
+assert F._junit_pasa(r, "tests/e2e/criterios.spec.js") is True
+assert F._junit_pasa(r, "tests/e2e/otro.spec.js") is False
+assert F._junit_pasa(r, "tests/e2e/nadie.spec.js") is False
+PY
 exit $fail

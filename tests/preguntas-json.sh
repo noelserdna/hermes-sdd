@@ -35,7 +35,7 @@ node "$SDD" questions add --role task-implementer >/dev/null <<'J' && ok "add: e
  "pregunta": "REQ-F-024 AC2 only logs E_ZONA_SOLO_JUNTA; logging E_NO_AUTORIZADO breaks AC-001-08 (FASE-1, accepted).",
  "para_cliente": "¿El registro de seguridad apunta también los intentos en zonas que no son de la junta?",
  "opciones": [
-   {"letra": "A", "texto": "Keep logging only the board's zones", "efecto": "ninguno"},
+   {"letra": "A", "texto": "Keep logging only the board's zones", "efecto": "ninguno", "cliente": "No, solo las zonas de la junta"},
    {"letra": "B", "texto": "Cambiar el criterio y adaptar el test aceptado", "recomendada": true, "efecto": "editar-test",
     "ficheros": ["tests/integration/accesos.test.js"], "cliente": "Sí, todos los intentos; se adapta la prueba"},
    {"letra": "C", "texto": "Amend REQ-F-024 AC2", "efecto": "req-change"}],
@@ -55,6 +55,15 @@ out=$(printf '{"skill":"s","pregunta":"q","para_cliente":"c","opciones":[{"letra
 out=$(printf '{"skill":"s","pregunta":"q","para_cliente":"c","estado":"ANSWERED","respuesta":{"letra":"A","como":"elegida por","quien":"Ana","fecha":"x"},"opciones":[]}' | node "$SDD" questions add --role task-implementer 2>&1); rc=$?
 [ $rc = 1 ] && case "$out" in *"only the notary or the lead answers"*) true ;; *) false ;; esac && ok "add: una etapa no puede traer la respuesta hecha" || bad "add con respuesta: $rc $out"
 node "$SDD" questions validate >/dev/null && ok "validate: el JSON escrito cumple el esquema" || bad "validate"
+# taller3: opciones en inglés y una segunda pregunta abierta sobre el mismo criterio se rechazan (en un repo aparte,
+# para no cambiar las preguntas que cuentan los casos siguientes)
+AQUI=$PWD; mkdir -p "$T/q3/.sdd"; cd "$T/q3"; git init -q
+out=$(printf '{"skill":"s","pregunta":"q","para_cliente":"¿Vale así?","opciones":[{"letra":"A","texto":"Keep the texts and skip the scan","efecto":"ninguno","recomendada":true},{"letra":"B","texto":"Cambiar los textos","efecto":"accion"}]}' | node "$SDD" questions add --role acceptance 2>&1); rc=$?
+[ $rc = 1 ] && case "$out" in *"write them in Spanish"*) true ;; *) false ;; esac && ok "add: opciones en inglés, rechazadas (las lee el cliente)" || bad "inglés: $rc $out"
+printf '{"skill":"s","contexto":"REQ-NF-001 AC1","pregunta":"¿Vale «confirmada»?","para_cliente":"¿Vale así?","opciones":[{"letra":"A","texto":"Sí","efecto":"ninguno","recomendada":true},{"letra":"B","texto":"No","efecto":"accion"}]}' | node "$SDD" questions add --role task-implementer >/dev/null
+out=$(printf '{"skill":"s","contexto":"CH-001 REQ-NF-001 AC1","pregunta":"¿Se permite «registrada»?","para_cliente":"¿Vale así?","opciones":[{"letra":"A","texto":"Sí","efecto":"ninguno","recomendada":true},{"letra":"B","texto":"No","efecto":"accion"}]}' | node "$SDD" questions add --role acceptance 2>&1); rc=$?
+[ $rc = 1 ] && case "$out" in *"already OPEN about REQ-NF-001 AC1"*) true ;; *) false ;; esac && ok "add: una segunda pregunta abierta sobre el mismo criterio, rechazada" || bad "duplicada: $rc $out"
+cd "$AQUI"
 
 # Otro rol, solo .md antiguo (el formato de siempre, con efectos declarados)
 cat > .sdd/questions-plan-architect.md <<'Q'

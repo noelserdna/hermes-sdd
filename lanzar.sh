@@ -142,11 +142,17 @@ for f in sorted((repo / "plan/fases").glob("FASE-*.md")):
         fases.setdefault(r, set()).add(n)
 aceptada = lambda n: subprocess.run(["git", "-C", str(repo), "rev-parse", "-q", "--verify", f"refs/tags/fase-{n}-accepted"], capture_output=True).returncode == 0
 rehacer = set()
+entregado = bool(subprocess.run(["git", "-C", str(repo), "tag", "-l", "entrega-*"], capture_output=True, text=True).stdout.strip())
 for r in cambiados:
+    if fases.get(r) and all(aceptada(n) for n in fases[r]) and entregado:
+        continue   # ya entregado: se vuelve a comprobar con el cierre (abajo), no se replanifica
     if not fases.get(r) or any(aceptada(n) for n in fases[r]):
         sys.exit(0)
     rehacer |= fases[r]
-print(" ".join(sorted(rehacer, key=int)))
+# Solo retoques de criterios de requisitos ya entregados (taller3, INT-002: aclarar la frase de un criterio que la app
+# ya cumplía reiniciaba ruta, especificaciones, diseño, plan…): se comprueba otra vez con el cierre, que arregla lo que
+# no cumpla el criterio nuevo
+print("REVISAR" if not rehacer else " ".join(sorted(rehacer, key=int)))
 PY
 }
 
@@ -227,6 +233,9 @@ tramo_requisitos_aprobados() {
   if ! ls "$REPO"/plan/fases/FASE-*.md >/dev/null 2>&1; then
     # Aún no hay plan (un cambio pedido al aprobar los primeros requisitos): se sigue por la ruta, como siempre
     tarjeta "Ruta" - 20m ruta
+  elif [ "$RF" = REVISAR ]; then
+    echo "Cambio que solo retoca criterios de lo ya entregado: se comprueba otra vez con el cierre (sin replanificar)"
+    cierre - "Cierre: comprobar los criterios cambiados"
   elif [ "$RF" = IGUAL ]; then
     # Mismos requisitos (el cambio solo tocó la especificación): sin replanificar, sigue la FASE en curso
     echo "Cambio sin cambios en los requisitos: se sigue con ${N:+la FASE-$N}${N:-el cierre}"

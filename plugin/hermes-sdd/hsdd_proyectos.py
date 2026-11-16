@@ -207,7 +207,9 @@ def opciones_ruta(tablero: str, propuesta: dict | None = None, repo=None) -> lis
     fijada = (cfg.get("rutas_proyecto") or {}).get(tablero) == rec
     tras_entrega = repo is not None and cambio_tras_entrega(repo) and any(r["id"] == "ligera" for r in rutas(cfg))
     if tras_entrega:
-        rec, fijada = "ligera", False
+        # Tras una entrega, la ligera es la del método (los documentos ya existen y el cambio los ajusta): cuenta como
+        # fijada, y Jev solo puede confirmarla (taller3: eligió la adaptativa para aclarar la frase de un criterio)
+        rec, fijada = "ligera", True
     nombres = dict(OPCIONALES_RUTA)
     auto = [k for k, e in ((propuesta or {}).get("stages") or {}).items() if e.get("run") and k in nombres]
     ops = []

@@ -39,6 +39,15 @@ g commit -qam nuevo; git tag -d requirements-v1.1 >/dev/null; g tag requirements
 o=$(cambio_corto); [ -z "$o" ] && ok "un requisito nuevo: cascada completa (hay que planificarlo)" || bad "nuevo: [$o]"
 git reset -q --hard requirements-v1.0; echo "ajuste" >> plan/fases/FASE-1-UNO.md; g commit -qam spec; git tag -d requirements-v1.1 >/dev/null; g tag requirements-v1.1
 o=$(cambio_corto); [ "$o" = IGUAL ] && ok "un cambio que no toca los requisitos (solo la especificación): sigue la FASE en curso" || bad "igual: [$o]"
+# ya entregado (taller3, INT-002): retocar un criterio de una FASE aceptada se comprueba con el cierre, sin replanificar;
+# un requisito nuevo o quitado sigue siendo cascada completa
+git reset -q --hard requirements-v1.0; g tag entrega-1
+cambiar '- **Statement:** a' '- **Statement:** a2'
+o=$(cambio_corto); [ "$o" = REVISAR ] && ok "ya entregado: retocar un criterio de una FASE aceptada → REVISAR (se comprueba con el cierre)" || bad "revisar: [$o]"
+git reset -q --hard requirements-v1.0; printf '### REQ-F-004: Nuevo\n- **Statement:** d\n' >> requirements/REQUIREMENTS.md
+g commit -qam nuevo2; git tag -d requirements-v1.1 >/dev/null; g tag requirements-v1.1
+o=$(cambio_corto); [ -z "$o" ] && ok "ya entregado: un requisito nuevo sigue siendo cascada completa" || bad "nuevo entregado: [$o]"
+git tag -d entrega-1 >/dev/null
 
 # ── plan: criterios que citan una pantalla de una FASE posterior ───────────────────────────────────────────────────
 D="$T/d"; mkdir -p "$D/requirements" "$D/plan/fases"

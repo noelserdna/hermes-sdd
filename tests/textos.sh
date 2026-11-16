@@ -278,8 +278,10 @@ git checkout -q requirements/REQUIREMENTS.md
 o=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" opciones-ruta sala | jq -r '.[0].verbo + " " + (.[0].tras_entrega | tostring)')
 git tag entrega-1
 o2=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" opciones-ruta sala | jq -r '.[0].verbo + " " + (.[0].tras_entrega | tostring)')
+o3=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" opciones-ruta sala | jq -r '[.[] | select(.fijada) | .verbo] | join(",")')
 git tag -d entrega-1 >/dev/null
 [ "$o2" = "ruta-ligera true" ] && [ "$o" != "ruta-ligera true" ] && ok "ruta tras una entrega: recomienda la ligera (antes, la del proyecto)" || bad "ruta tras entrega: $o / $o2"
+[ "$o3" = "ruta-ligera" ] && ok "… y cuenta como fijada: Jev solo puede confirmarla (taller3 eligió la adaptativa)" || bad "fijada tras entrega: [$o3]"
 # … si lo pidió un mantenimiento en curso, lo dice así y no promete replanificar
 printf '# INT-003\n\n> Mantenimiento detectado el 2026-11-13 por la revisión periódica: sube vite\n' > intent/INT-003.md
 mkdir -p .sdd/hermes/mantenimiento; echo x > .sdd/hermes/mantenimiento/en-curso.txt

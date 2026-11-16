@@ -252,6 +252,26 @@ export function addQuestion(root, role, input) {
     throw new QError("a new question is OPEN and has no answer: only the notary or the lead answers (sdd questions answer)");
   const extra = Object.keys(input).filter((k) => !STAGE_FIELDS.includes(k) && !["id", "estado", "respuesta", "aplicada"].includes(k));
   if (extra.length) throw new QError(`unknown field(s) ${extra.join(", ")} (a question has ${STAGE_FIELDS.join(", ")})`);
+  // Lo que lee el cliente va en castellano (taller3: «Keep the mandated texts; the scan skips…» como opción B)
+  const textoCliente = [input.para_cliente, ...(Array.isArray(input.opciones) ? input.opciones.map((o) => typeOf(o) === "object" ? (o.cliente || o.texto) : o) : [])]
+    .filter((t) => typeof t === "string");
+  const ingles = textoCliente.filter((t) => (t.match(/\b(the|and|keep|both|without|with|should|skip|skips|reword|because|is|are|which|their)\b/gi) || []).length >= 2);
+  if (ingles.length) throw new QError(`the customer reads «Para el cliente» and the options: write them in Spanish («${ingles[0].slice(0, 60)}…»); technical detail goes in «pregunta»`);
+  // Una sola pregunta abierta por criterio (taller3: REQ-NF-001 AC1 se preguntó desde aceptación y desde el
+  // implementador, y además era una impugnación: tres cosas para una sola duda)
+  const citas = new Set(`${input.contexto || ""} ${input.pregunta || ""}`.match(/REQ-[A-Z]+-\d+\s+AC\d+/g) || []);
+  if (citas.size) {
+    for (const f of questionFiles(path.join(root, SOURCE_DIR), JSON_RE)) {
+      let otro;
+      try { otro = readDoc(root, f.name.match(JSON_RE)[1]); } catch { continue; }
+      for (const q of otro.preguntas || []) {
+        if (q.estado !== "OPEN") continue;
+        const suyas = `${q.contexto || ""} ${q.pregunta || ""}`.match(/REQ-[A-Z]+-\d+\s+AC\d+/g) || [];
+        const comun = suyas.find((c) => citas.has(c));
+        if (comun) throw new QError(`${q.id} is already OPEN about ${comun}: do not open a second question on the same criterion (extend that one, or wait for its answer)`);
+      }
+    }
+  }
   const doc = readDoc(root, role);
   const prefix = `Q-${role}-`;
   const nums = [...doc.preguntas.map((q) => q.id), ...markdownBlocks(readText(filesOf(root, role).md)).map((b) => b.id)]

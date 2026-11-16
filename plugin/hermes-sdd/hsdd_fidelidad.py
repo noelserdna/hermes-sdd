@@ -626,6 +626,22 @@ def _guardar_cache(repo: Path, c: dict) -> None:
         pass
 
 
+def _junit_pasa(repo: Path, fichero: str) -> bool:
+    """¿El JUnit de la última etapa (.sdd/junit/*.xml) tiene casos de ese fichero de test y ninguno falló?"""
+    import xml.etree.ElementTree as ET
+    nombre, casos, malos = Path(fichero).name, 0, 0
+    for x in (repo / ".sdd" / "junit").glob("*.xml"):
+        try:
+            raiz = ET.parse(x).getroot()
+        except (ET.ParseError, OSError):
+            continue
+        for tc in raiz.iter("testcase"):
+            if Path(tc.get("classname") or tc.get("file") or "").name == nombre or (tc.get("file") or "").endswith(fichero):
+                casos += 1
+                malos += any(h.tag in ("failure", "error") for h in tc)
+    return casos > 0 and malos == 0
+
+
 def mutantes(repo: Path, copia: Path, acc: dict, solo_must: bool = True, stats: dict | None = None) -> list[dict]:
     """Para cada texto que un criterio dice que se ve: se cambia en el código de la app (src/) de la copia y se
     ejecutan los tests que el método enlaza a ese criterio. Si todos siguen pasando, el criterio está «verificado»
@@ -673,8 +689,13 @@ def mutantes(repo: Path, copia: Path, acc: dict, solo_must: bool = True, stats: 
                         persistente["r"][pbkey] = {"r": list(cache[bkey]), "t": time.time()}
                 base_e2e, base_uni = cache[bkey]
                 if not (base_e2e and base_uni):
-                    out.append({**base, "resultado": "sus tests ya fallan sin mutar nada", "grave": True,
-                                "fallan": ([*e2e] if not base_e2e else []) + ([*uni] if not base_uni else [])})
+                    fallan = ([*e2e] if not base_e2e else []) + ([*uni] if not base_uni else [])
+                    # Si la etapa los vio pasar (su JUnit), lo que falla es este ordenador, no los tests: aviso leve
+                    if fallan and all(_junit_pasa(repo, f) for f in fallan):
+                        out.append({**base, "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+                                    "grave": False, "fallan_aqui": fallan})
+                    else:
+                        out.append({**base, "resultado": "sus tests ya fallan sin mutar nada", "grave": True, "fallan": fallan})
                     continue
                 pkey = "mut:" + _sha(lit.encode(), _hash_ficheros(copia, [str(p.relative_to(copia)) for p in con]).encode(),
                                      _hash_ficheros(copia, [*e2e, *uni, *sueltos]).encode(), "|".join(e2e).encode(),
@@ -745,6 +766,17 @@ def de_aceptacion(repo: Path, fase: str | None, con_mutantes: bool = True) -> di
                            capture_output=True)
             if (repo / "node_modules").is_dir():
                 (copia / "node_modules").symlink_to(repo / "node_modules")
+            elif (copia / "package.json").exists():
+                # Con la caja de GitHub el repo local no tiene node_modules (se instalaron en la caja): sin ellos la línea
+                # base de los e2e fallaba y salía «sus tests ya fallan» como grave (taller3). Se instalan en la copia, como
+                # en un despliegue; si no se puede, no hay mutantes (se dice), no tests rotos
+                inst = ["npm", "ci"] if (copia / "package-lock.json").exists() else ["npm", "install"]
+                r = subprocess.run([*inst, "--no-audit", "--no-fund"], cwd=copia, capture_output=True, text=True, timeout=600)
+                if r.returncode != 0:
+                    raise RuntimeError(f"no se pudieron instalar las dependencias para los mutantes ({' '.join(inst)}): "
+                                       + (r.stderr or r.stdout).strip()[-200:])
+                if "@playwright/test" in (copia / "package.json").read_text(errors="replace"):
+                    subprocess.run(["npx", "playwright", "install", "chromium"], cwd=copia, capture_output=True, timeout=600)
             res["mutantes_cache"] = {}
             res["mutantes"] = mutantes(repo, copia, acc, stats=res["mutantes_cache"])
         except Exception as e:   # sin copia no hay mutantes: se dice, no se inventa
