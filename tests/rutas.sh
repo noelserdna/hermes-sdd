@@ -168,6 +168,13 @@ node "$ROOT/metodo/scripts/sdd.mjs" questions answer Q-spec-auditor-001 --letter
 FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" tareas >/dev/null
 grep -q 'Decisiones del cliente que ya están tomadas' "$T/prompt" && grep -q 'Q-spec-auditor-001: ¿Qué hora manda para decidir qué día es hoy? → La hora de España' "$T/prompt" \
   && ok "las decisiones del cliente van en el prompt de las etapas" || bad "decisiones en el prompt: $(grep -o 'Decisiones.*' "$T/prompt" | head -c 400)"
+# material-montana (C16): una cita de un test que un cambio de requisitos dejó vieja se pide volver a citar al implementar
+mkdir -p tests/citas; printf '// REQ-F-001 AC1: "un texto que el criterio ya no dice"\ntest("REQ-F-001 AC1 x", () => {});\n' > tests/citas/vieja.test.js
+mkdir -p task; [ -f task/TASK-FASE-0.md ] || { printf -- '- [x] TASK-F0-001 x\n' > task/TASK-FASE-0.md; NUEVA_TAREA=1; }
+FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" implementar 0 >/dev/null 2>&1
+grep -q 'Stale quotes: tests/citas/vieja.test.js:1 REQ-F-001 AC1' "$T/prompt" && grep -q 'update ONLY those quote comments' "$T/prompt" \
+  && ok "implementar: pide volver a citar los tests que el cambio de requisitos dejó con el texto viejo" || bad "citas viejas: $(grep -o 'Stale quotes.*' "$T/prompt" | head -c 200) $(node "$ROOT/metodo/scripts/sdd.mjs" lint --quotes 2>&1 | head -3)"
+rm -rf tests/citas; [ -n "${NUEVA_TAREA:-}" ] && rm -f task/TASK-FASE-0.md; git checkout -q -- . 2>/dev/null; git clean -qfd tests task 2>/dev/null
 FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" tareas >/dev/null
 grep -q 'COMPACT TASKS: 3 to 6 tasks' "$T/prompt" && grep -q 'TEST POLICY: one test per acceptance criterion' "$T/prompt" \
   && ok "compacta: tareas gruesas y un test por criterio" || bad "tareas compactas: $(cat "$T/prompt")"

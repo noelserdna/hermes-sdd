@@ -150,6 +150,8 @@ From each `PLAN-FASE-{N}.md`: components → tasks grouped by behaviour; data mo
 
 Split a task above 6 files or 2 API operations (V-08 warns above 8); two trivially related operations sharing all their files may share a slice.
 
+**Task budget.** About 2-4 tasks per functional requirement of the FASE (the `Requisitos` line), plus the setup tasks of FASE-0, the contract tasks and the journey task; a FASE well above that (more than 15, `sdd lint --plan` P-SIZE) is cut into layers or into steps too small to be worth a commit. Merge trivial steps of the same concern (a constant, its test and its wiring are one task), keep one vertical slice per use case or operation (never one task per layer), and put a requirement's tests inside the task that implements it. Count before writing: if the total exceeds the budget, merge first.
+
 **Contract task per port.** A slice tested against a double stays green when the real provider sends something else (a missing prompt field, config read from the wrong place), and nothing else in the chain would notice. So each row of `Puertos con doble` gets a sister task `CONTRACT-<port>`: `blocked-by` the task that writes the double and the one that writes the real provider; its write-set is one test file under the Stack Profile's `test_paths`, in `contract/` and named by the stack's test-file convention (`<port>.contract.test.ts` in JS/TS, `<port>_contract_test.rb` in Rails, as the kit's testing rule says), so the runner picks it up; it runs in the provider's Stream (in `integración` when the double's task sits in another work Stream, since it needs both merged); Revert SAFE; commit `test({scope}): …`. Its Acceptance names the test `CONTRACT-<port> REQ-F-NNN ACn …` (the id binds it to the criterion in the acceptance ledger) and lists the row's observable, which the test asserts on the double and on the real provider driven through a fake transport. A mock, fake or stub of an external system in §7.2 Setup with no row in `Puertos con doble` is a `[PLAN GAP]` (Handling Plan Gaps): without the row there is no observable to write the contract against. Template: `references/task-template.md` § Contract task.
 
 **Journey task per FASE.** Unit and slice tests can all pass while the page the user opens never calls the new piece, or shows a container with the wrong text. So every FASE with REQ-F scenarios gets one journey task in the Verification phase (Stream `verificación`). Its Acceptance, which travels in both formats, says that the test:
@@ -280,7 +282,7 @@ A FASE agent writes only its own `TASK-FASE-{N}.md`: never the global files, `pi
 | V-07 | Every task has a revert category (compact: absent Revert = SAFE) | WARN |
 | V-08 | No task touches more than 8 files | WARN |
 | V-09 | Task IDs follow `TASK-F{N}-{SEQ}` and are unique | ERROR |
-| V-10 | 5-80 tasks per FASE | WARN |
+| V-10 | 5-80 tasks per FASE (aim for the task budget of Phase 2: about 2-4 per functional requirement) | WARN |
 | V-11 | Critical path identified in TASK-ORDER.md (compact plan of one FASE: the `> **Critical path:**` line of TASK-FASE-0.md) | ERROR |
 | V-12 | File paths follow the CLAUDE.md conventions | WARN |
 | V-13 | Every source file in Coverage Map §7.4 has its test inside the implementing task, in a cross-Stream test task, or an exclusion | ERROR |

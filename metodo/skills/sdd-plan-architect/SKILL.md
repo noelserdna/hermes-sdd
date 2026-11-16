@@ -305,6 +305,7 @@ Budget ≤ 12 000 chars: technical-context rows are `aspect · decision · ADR i
 | V7: Operation Mapping | every operation of a `Style: operations` contract has a mapping row | `spec/contracts/` ↔ `design/OPERATION-MAPPING.md` |
 | V8: Backed increments | every FASE header has `Requisitos` and `Escenarios`, its criteria cite REQ/scenario ids, and its `## Demo` has 1-10 steps each citing a scenario that exists in `spec/tests/BDD-*.md` | `plan/fases/` ↔ `spec/tests/` |
 | V9: Must assigned | every active Must REQ-F/REQ-NF is on some FASE `Requisitos` line | `requirements/REQUIREMENTS.md` ↔ `plan/fases/` |
+| P-WHOLE: whole requirements | no REQ is on the `Requisitos` line of two FASEs (rule R5; an accepted FASE keeps its line) | `plan/fases/` |
 
 V8 and V9 are mechanical: run `node "${SDD_PLUGIN_ROOT:-$CLAUDE_PLUGIN_ROOT}/scripts/sdd.mjs" lint --plan` and fix the lines it prints (it also warns about FASEs over 3 use cases or 15 tasks). Fix V1-V5 and V7-V9 gaps in the artifacts; flag V6 unused decisions. In Requirements-only mode V2-V4 and V7 are reported as N/A, not as gaps. Append the Validation Report (check · status · coverage · gaps, then `Plan validation: PASS|FAIL`) to the PLAN.md footer.
 

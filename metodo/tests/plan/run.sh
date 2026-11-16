@@ -56,6 +56,15 @@ expect "todo-reqonly --json: FASE-0 con 9 criterios REQ ACn y 0 UCs" "$(js '[j.f
 fresh reqonly-m1 todo-reqonly; sub "$P/plan/fases/FASE-1-LIFECYCLE.md" 's/REQ-F-004 AC2, REQ-F-005 AC1/REQ-F-004 AC7, REQ-F-005 AC1/'
 run lint --plan --repo "$P"; expect "todo-reqonly: criterio inexistente → 1" "$rc" 1
 has "todo-reqonly: P-AC REQ-F-004 AC7" "REQ-F-004 has no acceptance criterion 7"
+# P-WHOLE (material-montana: REQ-F-025 en la línea Requisitos de seis FASEs): un requisito, entero, en una sola FASE
+fresh reqonly-w todo-reqonly; sub "$P/plan/fases/FASE-0-SKELETON.md" 's/REQ-F-006, REQ-NF-002/REQ-F-006, REQ-F-003, REQ-NF-002/'
+run lint --plan --repo "$P"; expect "P-WHOLE: un REQ en dos FASEs sin aceptar → 1" "$rc" 1
+has "P-WHOLE: lo dice en la FASE anterior" "P-WHOLE REQ-F-003 is also on the Requisitos line of FASE-1-LIFECYCLE.md"
+(cd "$P" && git init -q && git -c user.email=t@t -c user.name=t commit -q --allow-empty -m x && git tag fase-0-accepted)
+run lint --plan --repo "$P"; expect "P-WHOLE: si la FASE anterior está aceptada (plan incremental), vale" "$rc" 0
+grepf skills/sdd-plan-architect/SKILL.md "P-WHOLE: whole requirements" "skill del plan: P-WHOLE en su tabla de validaciones"
+grepf skills/sdd-task-generator/SKILL.md "**Task budget.** About 2-4 tasks per functional requirement" "skill de tareas: presupuesto por requisito (material-montana: 146 tareas para 26 RF)"
+grepf skills/sdd-req-change/SKILL.md "**Quotes in tests.**" "skill del cambio: las citas viejas de los tests van al informe y las vuelve a citar el implementador"
 fresh reqonly-m2 todo-reqonly; sub "$P/plan/fases/FASE-1-LIFECYCLE.md" 's/REQ-F-003, REQ-F-004, REQ-F-005/REQ-F-003, REQ-F-005/'
 run lint --plan --repo "$P"; expect "todo-reqonly: Must sin FASE → 1" "$rc" 1
 has "todo-reqonly: V9 REQ-F-004" "REQ-F-004"

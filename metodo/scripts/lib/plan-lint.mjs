@@ -23,6 +23,7 @@
 // A plan without the marker is horizontal (legacy): skipped with a note, exit 0. A mixed plan
 // (`Plan-Style: vertical (from FASE-4)`) checks FASE-4 onward; REQ ids cited in the earlier FASEs count for V9.
 import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { loadScenarios, effectivePriority } from "./acceptance.mjs";
 import { parseRequirements } from "../sdd-jev.mjs";
@@ -232,6 +233,7 @@ export function lintPlan(root, { dir = "plan", requirements } = {}) {
 
   const fases = [];
   const assigned = new Set();
+  const inFases = new Map();   // REQ id → [{file, fase, line}] (P-WHOLE)
   const legacy = [];
   for (const f of files) {
     const abs = path.join(fasesDir, f);
@@ -252,6 +254,8 @@ export function lintPlan(root, { dir = "plan", requirements } = {}) {
       summary.requirements = fz.requisitos.ids;
       for (const id of fz.requisitos.ids) {
         assigned.add(id);
+        if (!inFases.has(id)) inFases.set(id, []);
+        inFases.get(id).push({ file, fase: fz.fase, line: fz.requisitos.line });
         if (reqs && !reqById.has(id)) err(file, fz.requisitos.line, "P-AC", `Requisitos: ${id} is not in ${rel(reqFile)}`);
       }
     }
@@ -328,6 +332,18 @@ export function lintPlan(root, { dir = "plan", requirements } = {}) {
     }
   }
 
+  // P-WHOLE: a requirement goes whole in ONE FASE, the one that completes it (material-montana: REQ-F-025 sat on the
+  // Requisitos line of six FASEs, so sdd gate --fase asked each of them for all its criteria). Earlier FASEs cite the
+  // part they deliver in Escenarios. An accepted FASE (tag fase-N-accepted) keeps its line: an incremental plan adds
+  // the changed requirement to a new FASE.
+  const accepted = (n) => n !== null && spawnSync("git", ["-C", root, "rev-parse", "-q", "--verify", `refs/tags/fase-${n}-accepted`], { stdio: "ignore" }).status === 0;
+  for (const [id, where] of inFases) {
+    const open = where.filter((w) => !accepted(w.fase));
+    if (open.length < 2) continue;
+    const last = open[open.length - 1];
+    for (const w of open.slice(0, -1))
+      err(w.file, w.line, "P-WHOLE", `${id} is also on the Requisitos line of ${path.basename(last.file)}: a requirement goes whole in one FASE (the one that completes it); here cite the criteria this FASE delivers in Escenarios (${id} ACn)`);
+  }
   if (legacy.length) notes.push(`mixed plan: ${legacy.length} horizontal FASE(s) before FASE-${from} not checked; REQ ids they cite count as assigned`);
   // V9: every active Must REQ-F / REQ-NF assigned
   if (reqs) {
