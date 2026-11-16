@@ -171,6 +171,29 @@ LECC=$(HERMES_SDD_HOME="${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}" python3 "$
 # Lo que el cliente ya decidió (preguntas respondidas y exenciones abiertas), en el prompt de TODA etapa: material-montana
 # eligió «hora de España» en la puerta del plan (respuesta sin más efecto), nadie lo escribió en spec/ y la FASE-2 se
 # programó en hora universal; y la revisión independiente volvió a dudar de lo que el cliente ya había decidido.
+req_cambiados() {  # los requisitos que cambió el último cambio aprobado (entre los dos últimos tags requirements-v*):
+  # «añadidos: …; cambiados: …; quitados: …», o nada si no hay un tag anterior o no cambia ningún requisito
+  local prev
+  prev=$(git tag -l 'requirements-v*' --sort=-v:refname | sed -n 2p)
+  [ -n "$prev" ] || return 0
+  git show "$prev:requirements/REQUIREMENTS.md" 2>/dev/null | python3 -c '
+import re, sys
+def bloques(t):
+    return {m.group(1): m.group(0).strip() for m in re.finditer(r"^### (REQ-[A-Z]+-\d+).*?(?=^### |^## |\Z)", t, re.M | re.S)}
+antes = bloques(sys.stdin.read())
+ahora = bloques(open("requirements/REQUIREMENTS.md", encoding="utf-8").read())
+if not antes: sys.exit(0)
+partes = [(n, sorted(x)) for n, x in (("added", set(ahora) - set(antes)), ("modified", [r for r in ahora if r in antes and antes[r] != ahora[r]]),
+                                      ("removed", set(antes) - set(ahora))) if x]
+print("; ".join(n + ": " + ", ".join(x) for n, x in partes))' 2>/dev/null || true
+}
+actualizar() {  # actualizar <clave de etapa>: la etapa ya se hizo y un cambio de requisitos la dejó «stale» → solo lo afectado
+  # (material-montana: tras cada cambio se reescribían especificación, auditoría, pruebas, seguridad, técnico y UX: ~10 $)
+  [ "$(bash "$STATE" get "$1" 2>/dev/null)" = stale ] || return 0
+  local c; c=$(req_cambiados)
+  [ -n "$c" ] || return 0
+  echo " UPDATE MODE: this artifact already exists and the approved requirements change touched only these requirements ($c). Update only what they affect (and what references them); do not rewrite, reorder or reformat the rest, and do not open questions about anything that did not change."
+}
 decisiones() {
   local q p
   # Las de efecto req-change ya están escritas en requirements/: no se repiten. Las más recientes primero (mandan).
@@ -407,6 +430,25 @@ case "$ETAPA" in
     P=$(puerta ruta) || falla "no se pudo abrir la puerta de ruta"
     fin '{"outcome":"done","reason":"ok"}' "Ruta propuesta" "$P" ;;
 
+  dudas)   # antes del plan: las dudas de diseño abiertas, juntas y en una sola puerta (material-montana: 12 preguntas en
+           # la puerta del plan, duplicadas y contradictorias, varias que reabrían requisitos ya aprobados)
+    python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" normalizar-preguntas "$REPO" >/dev/null 2>&1 || true
+    node "$SDD" questions render >/dev/null 2>&1 || true
+    abiertas() { node "$SDD" questions list --open --json 2>/dev/null | jq '.questions | length' 2>/dev/null || echo 0; }
+    if [ "$(abiertas)" -gt 1 ]; then   # una pasada barata: fusionar las que deciden lo mismo, sin añadir ninguna
+      claude_etapa dudas "$ARNES Consolidate the OPEN questions (sdd questions list --open --json) before the plan: when two or more decide the same thing, keep the clearest one and run «sdd questions merge <other> --into <kept>» for the rest; drop (merge into the kept one) any question already decided by an ANSWERED question. Do not add questions, do not answer any, do not edit requirements/, spec/ or any other file, and do not edit the questions JSON by hand."
+      node "$SDD" questions render >/dev/null 2>&1 || true
+    fi
+    mkdir -p .sdd/hermes
+    if [ "$(abiertas)" -gt 0 ]; then
+      touch .sdd/hermes/dudas-diseno
+      P=$(puerta preguntas) || falla "no se pudo abrir la puerta de las dudas de diseño"
+      fin "$(jq -nc '{outcome:"failed", reason:"esperando tus respuestas: puerta «Dudas antes del plan»"}')" "Dudas de diseño para la persona" "$P"
+    fi
+    rm -f .sdd/hermes/dudas-diseno
+    ORIGEN="dudas $(git rev-parse --short HEAD)" bash "$ROOT/lanzar.sh" plan "$REPO" >/dev/null || falla "no se pudo encadenar el plan"
+    fin '{"outcome":"done","reason":"sin dudas abiertas"}' "Sin dudas de diseño abiertas: sigue el plan" ;;
+
   especificar|auditar|pruebas|seguridad|tecnico|ux|brechas)   # etapas opcionales: las encadena la ruta (lanzar.sh)
     case "$ETAPA" in
       especificar) CL=specifications-engineer; HECHO="Especificaciones escritas"; PRODUCTO="spec/use-cases spec/domain spec/contracts"
@@ -424,7 +466,8 @@ case "$ETAPA" in
       brechas)     CL=gap-detector; HECHO="Huecos entre especificación y código revisados"; PRODUCTO=audits/GAP-ANALYSIS-REVIEW.md
         PIDE="Detect the gaps between spec/ (or requirements/) and the code${FASE:+ of FASE-$FASE}; --semantic." ;;
     esac
-    claude_etapa "$CL" "/sdd-$CL — $ARNES $PIDE"
+    ACT=""; for x in $PRODUCTO; do [ -e "$x" ] && ACT=$(actualizar "$CL") && break; done
+    claude_etapa "$CL" "/sdd-$CL — $ARNES $PIDE$ACT"
     hay=""; for x in $PRODUCTO; do [ -e "$x" ] && hay=1; done
     [ -n "$hay" ] || falla "$CL no dejó $PRODUCTO: $(no_hecho)"
     fin "$RES" "$HECHO" ;;
@@ -440,6 +483,10 @@ case "$ETAPA" in
         *) bash "$STATE" set "$k" skipped --reason "hermes-sdd no tiene esta etapa: el plan sale de requirements/" >/dev/null 2>&1 || true ;; esac
     done
     echo "$GRAN" > .sdd/hermes/granularidad-plan   # la que se usó: lanzar.sh la lee (una sola FASE compacta)
+    if [ -z "$INC" ] && ls plan/fases/FASE-*.md >/dev/null 2>&1 && C=$(req_cambiados) && [ -n "$C" ]; then
+      # Ya hay plan y lo que llega es un cambio (material-montana: el plan entero se rehacía tras cada cambio)
+      INC=" INCREMENTAL: plan/ already exists and the approved requirements change touched only: $C. Keep every FASE whose requirements did not change exactly as it is; edit only the FASE(s) that contain those requirements (or add a FASE for added ones), and keep the FASE numbering."
+    fi
     claude_etapa plan-architect "/sdd-plan-architect --skip-clarify — $ARNES Generate plan/.$INC$PLAN_G"
     ls plan/fases/FASE-*.md >/dev/null 2>&1 || falla "el plan no se generó: $(no_hecho)"
     # Errores del lint: una pasada de reparación con sus líneas (sala, 12/11/2026: una FASE aceptada citaba un escenario
@@ -464,6 +511,9 @@ case "$ETAPA" in
 
   tareas)
     INC=""; git tag -l 'fase-*-accepted' | grep -q . && INC=" INCREMENTAL: generate task files only for the FASEs that do not have one yet; do not touch the task files of accepted FASEs (except to fix what sdd lint --dir task reports as an error)."
+    if [ -z "$INC" ] && ls task/TASK-FASE-*.md >/dev/null 2>&1 && C=$(req_cambiados) && [ -n "$C" ]; then
+      INC=" INCREMENTAL: task/ already exists and the approved requirements change touched only: $C. Regenerate the task file only of a FASE whose plan file changed (or that has no task file yet); leave every other task file as it is."
+    fi
     claude_etapa task-generator "/sdd-task-generator — $ARNES Generate task/ for all FASEs.$INC$TAREAS_G$TESTS_G$DESPLIEGUE_G"
     ls task/TASK-FASE-*.md >/dev/null 2>&1 || falla "las tareas no se generaron: $(no_hecho)"
     # Errores del lint: una pasada de reparación con sus líneas (sala, 13/11/2026: una tarea añadida al rehacer la FASE-5,
@@ -596,7 +646,7 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
 
   cambio)
     INT=$(cat .sdd/hermes/cambio-actual 2>/dev/null) || falla "no hay ningún cambio en curso (.sdd/hermes/cambio-actual)"
-    claude_etapa req-change "/sdd-req-change --batch --cascade=manual --file intent/$INT.md — $ARNES Apply this change request to requirements/ as the next version (Version +1, Status: Review)."
+    claude_etapa req-change "/sdd-req-change --batch --cascade=manual --file intent/$INT.md — $ARNES Apply this change request to requirements/ as the next version (Version +1, Status: Review). Answered questions are decisions: write their chosen option as is. For a detail the request leaves open (a figure, a limit, a wording), write the sensible default in the requirement and do not open a question about it; never open a question whose recommended option is req-change."
     requisitos_legibles req-change sdd-req-change
     ejemplos_coherentes req-change sdd-req-change
     P=$(puerta requisitos) || falla "no se pudo abrir la puerta de requisitos"

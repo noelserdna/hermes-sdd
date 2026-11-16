@@ -941,9 +941,16 @@ def puerta_mantenimiento(proyecto: str, hallazgos: list) -> dict:
     return {"titulo": "Mantenimiento", "texto": "\n\n".join(partes)}
 
 
-def puerta_preguntas(proyecto: str, fase: str) -> dict:
+def puerta_preguntas(proyecto: str, fase: str, diseno: bool = False) -> dict:
     """La implementación de una FASE (o un mantenimiento, sin FASE) se paró en preguntas abiertas: la persona las
-    contesta aquí (las preguntas, con sus botones Q, las añade el final de la puerta como en cualquier otra)."""
+    contesta aquí (las preguntas, con sus botones Q, las añade el final de la puerta como en cualquier otra). Con
+    «diseno», son las dudas del diseño, juntas y antes de hacer el plan."""
+    if diseno:
+        partes = [f"🧩 Antes de hacer el plan de «{proyecto}» hay que decidir esto (todas las dudas del diseño, juntas).",
+                  "Al responder, se hace el plan con tus respuestas. Si alguna pide cambiar los requisitos, antes te llega "
+                  "su puerta de requisitos con lo que cambia.",
+                  "👉 Elige en los botones Q (la recomendada ya está marcada) y pulsa ✅ Responder."]
+        return {"titulo": "Dudas antes del plan", "texto": "\n\n".join(partes)}
     que = f"La FASE-{fase}" if fase else "El mantenimiento"
     partes = [f"⏸ {que} de «{proyecto}» se ha parado: para seguir necesita que decidas esto.",
               f"Al responder, {que[0].lower() + que[1:]} sigue con tus respuestas. Si alguna pide cambiar los requisitos, "
@@ -1636,7 +1643,10 @@ def _cli_respuestas(argv: list) -> int:
             return 1 if errs else 0
         if a.accion == "distintas":   # respuestas distintas de la recomendada: «Q-id = L; …»
             res, _, modo = plan_respuestas(puerta, fs, a.texto, a.verbo, marcadas)
-            print("; ".join(f"{r['q']['id']} = {r['letra']}" for r in res if modo == "elegidas" and r["letra"] != r["q"].get("recomendada")))
+            # solo las que piden trabajo sobre el texto firmado (el efecto que la puerta enseñó): «ninguno» solo se
+            # registra y «req-change» ya lanza su propio cambio (material-montana: un «Conforme» con una respuesta sin efecto se volvía «cambios» del plan)
+            print("; ".join(f"{r['q']['id']} = {r['letra']}" for r in res if modo == "elegidas" and r["letra"] != r["q"].get("recomendada")
+                            and ((r["q"].get("efectos") or {}).get(r["letra"]) or {}).get("efecto") not in ("ninguno", "req-change")))
             return 0
         if a.accion == "lineas":
             print("\n".join(lineas_respuestas(puerta, fs, a.texto, marcadas)))
@@ -1670,7 +1680,7 @@ if __name__ == "__main__":
     ap.add_argument("--capturas", type=int, default=0); ap.add_argument("--version", default="")
     ap.add_argument("--cambio", default=""); ap.add_argument("--anadidos", default=""); ap.add_argument("--quitados", default="")
     ap.add_argument("--partida", default="", help="requisitos de partida (fichero), si la persona los trajo casi listos")
-    ap.add_argument("--adopcion", type=int, default=0); ap.add_argument("--fases-aceptadas", default="")
+    ap.add_argument("--diseno", type=int, default=0); ap.add_argument("--adopcion", type=int, default=0); ap.add_argument("--fases-aceptadas", default="")
     ap.add_argument("--hallazgos", default=""); ap.add_argument("--opciones-ruta", default="")
     ap.add_argument("--unica", type=int, default=0); ap.add_argument("--revisar", default="")
     ap.add_argument("--impugnaciones", default="", help="fichero JSON con las impugnaciones abiertas (gate 4)")
@@ -1698,7 +1708,7 @@ if __name__ == "__main__":
         r = puerta_entrega(repo, proyecto, md, a.rc, a.fases_aceptadas.split(), bool(a.unica), bool(a.video), a.capturas,
                            a.tests_editados, rev, imp)
     elif a.tipo == "preguntas":
-        r = puerta_preguntas(proyecto, a.fase)
+        r = puerta_preguntas(proyecto, a.fase, bool(a.diseno))
     elif a.tipo == "mantenimiento":
         r = puerta_mantenimiento(proyecto, json.loads(_leer(Path(a.hallazgos)) or "[]"))
     else:

@@ -161,7 +161,7 @@ export function answerLine(r) {
 
 /** One JSON question as the Markdown block of references/async-questions.md §2. */
 export function renderBlock(q) {
-  const o = [`## ${q.id} [${q.estado}] skill=${q.skill}${q.contexto ? ` context=${q.contexto}` : ""}`,
+  const o = [`## ${q.id} [${q.estado}] skill=${q.skill}${q.contexto ? ` context=${q.contexto}` : ""}${q.tema ? ` tema=${q.tema}` : ""}${q.fusionada ? ` merged-into=${q.fusionada}` : ""}`,
     `Question: ${q.pregunta}`, `Para el cliente: ${q.para_cliente}`, "Options:"];
   for (const op of q.opciones) {
     o.push(`  ${op.letra}) ${op.texto}${op.recomendada ? " (recommended)" : ""}`, `     efecto: ${effectText(op)}`);
@@ -241,7 +241,7 @@ export function validateAll(root) {
   return out;
 }
 
-const STAGE_FIELDS = ["skill", "contexto", "pregunta", "para_cliente", "opciones", "bloquea"];
+const STAGE_FIELDS = ["skill", "contexto", "tema", "pregunta", "para_cliente", "opciones", "bloquea"];
 
 /** A stage's new question: always OPEN and without an answer (a stage never answers; the guard denies it too).
  *  Its id is the next free Q-<role>-NNN, counting the questions only the .md has. Returns the id. */
@@ -272,12 +272,26 @@ export function addQuestion(root, role, input) {
       }
     }
   }
+  // Una sola pregunta por tema, de cualquier rol (material-montana: la zona horaria se preguntó tres veces, con
+  // recomendadas distintas, y lo ya contestado se volvía a abrir en la etapa siguiente)
+  if (input.tema != null) {
+    if (typeof input.tema !== "string" || !/^[a-z0-9][a-z0-9-]*$/.test(input.tema)) throw new QError(`tema is a slug (lowercase, digits and dashes): «${input.tema}»`);
+    for (const f of questionFiles(path.join(root, SOURCE_DIR), JSON_RE)) {
+      let otro;
+      try { otro = readDoc(root, f.name.match(JSON_RE)[1]); } catch { continue; }
+      for (const q of otro.preguntas || []) {
+        if (q.tema !== input.tema) continue;
+        if (q.estado === "OPEN") throw new QError(`${q.id} is already OPEN about «${input.tema}»: do not open a second question on the same topic (extend that one with sdd questions merge, or wait for its answer)`);
+        if (q.estado === "ANSWERED") throw new QError(`${q.id} already decided «${input.tema}» (${answerLine(q.respuesta)}): apply that decision, do not ask it again`);
+      }
+    }
+  }
   const doc = readDoc(root, role);
   const prefix = `Q-${role}-`;
   const nums = [...doc.preguntas.map((q) => q.id), ...markdownBlocks(readText(filesOf(root, role).md)).map((b) => b.id)]
     .filter((id) => id.startsWith(prefix)).map((id) => Number(id.slice(prefix.length))).filter(Number.isFinite);
   const id = `${prefix}${String(Math.max(0, ...nums) + 1).padStart(3, "0")}`;
-  const q = { id, skill: input.skill, ...(input.contexto ? { contexto: input.contexto } : {}), estado: "OPEN",
+  const q = { id, skill: input.skill, ...(input.contexto ? { contexto: input.contexto } : {}), ...(input.tema ? { tema: input.tema } : {}), estado: "OPEN",
     pregunta: input.pregunta, para_cliente: input.para_cliente,
     opciones: Array.isArray(input.opciones) ? input.opciones.map((o) => (typeOf(o) === "object" ? { ...o, ficheros: o.ficheros || [] } : o)) : input.opciones,
     ...(input.bloquea ? { bloquea: input.bloquea } : {}), respuesta: null };
@@ -316,6 +330,27 @@ export function answerQuestion(root, id, ans) {
   return { id, role, changed: true };
 }
 
+/** Two OPEN questions about the same thing: `from` becomes MERGED (not shown, not answered) pointing to `into`, which
+ *  keeps its options and takes the other's context and topic. The gate then asks once. */
+export function mergeQuestion(root, from, into) {
+  if (from === into) throw new QError("a question cannot be merged into itself");
+  const rf = roleOf(root, from), ri = roleOf(root, into);
+  if (!rf) throw new QError(`${from} is not in any ${SOURCE_DIR}/questions-*.json`);
+  if (!ri) throw new QError(`${into} is not in any ${SOURCE_DIR}/questions-*.json`);
+  const df = readDoc(root, rf), di = rf === ri ? df : readDoc(root, ri);
+  const qf = df.preguntas.find((x) => x.id === from), qi = di.preguntas.find((x) => x.id === into);
+  if (qf.estado === "MERGED" && qf.fusionada === into) return { id: from, into, changed: false };
+  if (qf.estado !== "OPEN") throw new QError(`${from} is ${qf.estado}: only an OPEN question can be merged`);
+  if (qi.estado !== "OPEN") throw new QError(`${into} is ${qi.estado}: merge into an OPEN question`);
+  qf.estado = "MERGED"; qf.fusionada = into;
+  const ctx = [qi.contexto, qf.contexto ? `${from}: ${qf.contexto}` : from].filter(Boolean).join("; ");
+  qi.contexto = ctx;
+  if (!qi.tema && qf.tema) { qi.tema = qf.tema; delete qf.tema; }
+  saveDoc(root, df);
+  if (di !== df) saveDoc(root, di);
+  return { id: from, into, changed: true };
+}
+
 // ------------------------------------------------------------------ reading (list, view)
 /** Blocks of one Markdown questions file: [{ id, state, skill, context, question, client, options[{letter, text, effect}], blocks, answer, applied }]. */
 export function parseQuestions(text, file = "") {
@@ -347,7 +382,8 @@ export function parseQuestions(text, file = "") {
 
 /** A JSON question in the shape of parseQuestions (what list and view print). */
 function fromJson(q, file) {
-  return { id: q.id, state: q.estado, skill: q.skill || null, context: q.contexto || null, file, question: q.pregunta || "",
+  return { id: q.id, state: q.estado, skill: q.skill || null, context: q.contexto || null, ...(q.tema ? { topic: q.tema } : {}),
+    ...(q.fusionada ? { merged_into: q.fusionada } : {}), file, question: q.pregunta || "",
     client: q.para_cliente || "",
     options: (q.opciones || []).map((o) => ({ letter: o.letra, text: o.texto, ...(o.cliente ? { client: o.cliente } : {}), effect: effectText(o), recommended: !!o.recomendada })),
     blocks: q.bloquea || "", answer: q.respuesta ? answerLine(q.respuesta).replace(/^Answer:\s*/, "") : "", applied: q.aplicada || "" };
@@ -429,14 +465,14 @@ export function renderView({ from, questions, markers = [] }) {
 // ------------------------------------------------------------------ CLI
 let PROG = "sdd";
 class Exit extends Error { constructor(code) { super(`exit ${code}`); this.code = code; } }
-const USAGE = "questions add --role R [--file F|-] [--json] | answer Q-ID (--letter L | --text T) --by WHO [--how H] [--date D] | validate [--json] | render | sync | list [--open] [--json] | view [--out FILE]";
+const USAGE = "questions add --role R [--file F|-] [--json] | answer Q-ID (--letter L | --text T) --by WHO [--how H] [--date D] | merge Q-ID --into Q-ID | validate [--json] | render | sync | list [--open] [--json] | view [--out FILE]";
 function usage(msg) { console.error(`${PROG}: ${msg}`); console.error(`usage: ${PROG} ${USAGE}`); throw new Exit(2); }
 
 export function runQuestions(argv, { prog = "sdd" } = {}) {
   PROG = prog;
   try {
-    const o = { _: [], json: false, open: false, out: null, root: ".", role: null, file: null, letter: null, text: null, by: null, how: null, date: null };
-    const VAL = { "--out": "out", "--repo": "root", "--dir": "root", "--role": "role", "--file": "file", "--letter": "letter", "--text": "text", "--by": "by", "--how": "how", "--date": "date" };
+    const o = { _: [], json: false, open: false, out: null, root: ".", role: null, file: null, letter: null, text: null, by: null, how: null, date: null, into: null };
+    const VAL = { "--out": "out", "--repo": "root", "--dir": "root", "--role": "role", "--file": "file", "--letter": "letter", "--text": "text", "--by": "by", "--how": "how", "--date": "date", "--into": "into" };
     for (let i = 0; i < argv.length; i++) {
       const a = argv[i];
       if (a === "--json") o.json = true;
@@ -467,6 +503,14 @@ export function runQuestions(argv, { prog = "sdd" } = {}) {
       const r = answerQuestion(root, id, { letra: o.letter, texto: o.text, como: o.how, quien: o.by, fecha: o.date });
       if (o.json) console.log(JSON.stringify(r));
       else console.log(r.changed ? `questions: ${id} answered in ${SOURCE_DIR}/questions-${r.role}.json` : `questions: ${id} already had that answer`);
+      return 0;
+    }
+    if (sub === "merge") {
+      const id = o._[0];
+      if (!id || !o.into) usage("merge needs the question id and --into Q-ID");
+      const r = mergeQuestion(root, id, o.into);
+      if (o.json) console.log(JSON.stringify(r));
+      else console.log(r.changed ? `questions: ${id} merged into ${o.into}` : `questions: ${id} was already merged into ${o.into}`);
       return 0;
     }
     if (sub === "validate") {
@@ -504,7 +548,7 @@ export function runQuestions(argv, { prog = "sdd" } = {}) {
       else process.stdout.write(md);
       return 0;
     }
-    usage(`unknown questions command ${sub ?? "(none)"}: use add, answer, validate, render, sync, list or view`);
+    usage(`unknown questions command ${sub ?? "(none)"}: use add, answer, merge, validate, render, sync, list or view`);
   } catch (e) {
     if (e instanceof Exit) return e.code;
     if (e instanceof QError) { console.error(`${PROG}: questions: ${e.message}`); return 1; }

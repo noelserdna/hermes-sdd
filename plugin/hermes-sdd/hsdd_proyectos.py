@@ -53,7 +53,7 @@ STACKS_DEFECTO = [
 ETAPAS_MODELO = [("requisitos", "Requisitos"), ("ruta", "Ruta"),
                  ("especificar", "Especificaciones"), ("auditar", "Auditoría de especificaciones"),
                  ("pruebas", "Plan de pruebas"), ("seguridad", "Revisión de seguridad"), ("tecnico", "Diseño técnico"),
-                 ("ux", "Diseño visual y de uso"), ("plan", "Plan"), ("tareas", "Tareas"),
+                 ("ux", "Diseño visual y de uso"), ("dudas", "Dudas de diseño"), ("plan", "Plan"), ("tareas", "Tareas"),
                  ("huecos", "Completar huecos del plan"), ("implementar", "Implementar"), ("aceptar", "Aceptar"),
                  # un sub-paso de aceptar: veredictos y re-veredictos (pocos turnos que ejecutan la CLI); la ronda
                  # adversarial sigue con el modelo de «aceptar»
@@ -66,7 +66,7 @@ ETAPAS_MODELO = [("requisitos", "Requisitos"), ("ruta", "Ruta"),
 # juicio del contrato: donde más rinde un modelo grande
 _PIENSAN = ("requisitos", "especificar", "auditar", "seguridad", "tecnico", "plan", "cambio", "adoptar")
 PERFILES = {
-    "calidad": {e: ("sonnet" if e == "ruta" else "opus") for e, _ in ETAPAS_MODELO},
+    "calidad": {e: ("sonnet" if e in ("ruta", "dudas") else "opus") for e, _ in ETAPAS_MODELO},
     "equilibrado": {e: ("opus" if e in _PIENSAN else "sonnet") for e, _ in ETAPAS_MODELO},
     "rapido": {e: "sonnet" for e, _ in ETAPAS_MODELO},
 }

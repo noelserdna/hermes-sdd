@@ -172,9 +172,31 @@ tras_ruta() {  # las etapas opcionales que pide la ruta → Plan → Tareas, enc
     toca "$clave" || continue
     t=$(tarjeta "$titulo" "$padre" 90m "$etapa"); padre=$t; primera=${primera:-$t}
   done <<< "$OPCIONALES"
-  t=$(tarjeta "Plan" "$padre" 60m plan); primera=${primera:-$t}
-  tarjeta "Tareas" "$t" 60m tareas >/dev/null
+  # Las dudas de diseño abiertas se deciden juntas ANTES del plan (material-montana: 12 preguntas en la puerta del plan,
+  # varias que reabrían requisitos); la etapa «dudas» encadena Plan → Tareas cuando no queda ninguna
+  t=$(tarjeta "Dudas de diseño" "$padre" 30m dudas); primera=${primera:-$t}
   echo "$primera"
+}
+plan_y_tareas() {  # Plan → Tareas; imprime la primera
+  local t; t=$(tarjeta "Plan" - 60m plan)
+  tarjeta "Tareas" "$t" 60m tareas >/dev/null
+  echo "$t"
+}
+ruta_o_sigue() {  # tras un cambio de requisitos: la ruta ya confirmada sigue valiendo → sus etapas; si no, la puerta «Ruta»
+  # (material-montana: cada cambio volvía a preguntar la misma ruta). Vale si alguien la confirmó, no hay entrega y la
+  # ruta que el método recomienda ahora no pide ninguna etapa que la confirmada no tenga.
+  local st="$REPO/pipeline-state.json" conf nueva ans=()
+  if jq -e '.route.confirmedBy // empty' "$st" >/dev/null 2>&1 && ! git -C "$REPO" tag -l 'entrega-*' | grep -q . &&
+     conf=$(jq -c '[.route.stages // {} | to_entries[] | select(.value.run == true) | .key]' "$st" 2>/dev/null); then
+    [ -f "$REPO/.sdd/route-answers.json" ] && ans=(--answers .sdd/route-answers.json)
+    if nueva=$(cd "$REPO" && node "$ROOT/metodo/scripts/sdd.mjs" route --json ${ans[@]+"${ans[@]}"} 2>/dev/null |
+               jq -c '[.stages // {} | to_entries[] | select(.value.run == true) | .key]') && [ -n "$nueva" ] &&
+       jq -en --argjson c "$conf" --argjson n "$nueva" '($n - $c) | length == 0' >/dev/null; then
+      echo "La ruta confirmada sigue valiendo: se rehacen sus etapas sin volver a preguntarla" >&2
+      tras_ruta; return 0
+    fi
+  fi
+  tarjeta "Ruta" - 20m ruta
 }
 mantener() {  # el mantenimiento en curso (.sdd/hermes/mantenimiento/en-curso.txt) → cierre (puerta global → entrega)
   local t l
@@ -232,7 +254,7 @@ tramo_requisitos_aprobados() {
   N=$(primera_sin_aceptar)
   if ! ls "$REPO"/plan/fases/FASE-*.md >/dev/null 2>&1; then
     # Aún no hay plan (un cambio pedido al aprobar los primeros requisitos): se sigue por la ruta, como siempre
-    tarjeta "Ruta" - 20m ruta
+    ruta_o_sigue
   elif [ "$RF" = REVISAR ]; then
     echo "Cambio que solo retoca criterios de lo ya entregado: se comprueba otra vez con el cierre (sin replanificar)"
     cierre - "Cierre: comprobar los criterios cambiados"
@@ -262,7 +284,7 @@ tramo_requisitos_aprobados() {
     echo "Cambio sin replanificar (requisitos de las FASEs $RF): se rehace la FASE-$N"
     fase_n "$N" " (requisitos nuevos)"
   else
-    tarjeta "Ruta" - 20m ruta
+    ruta_o_sigue
   fi
 }
 tramo_requisitos_otra_vez() { tarjeta "Requisitos (cambios)" - 40m requisitos; }
@@ -280,7 +302,21 @@ tramo_rehacer_entrega() {  # una sola FASE: se rehace (implementar con lo pedido
   if [ "$(jq -r '.unica // false' "$P")" = true ]; then fase_n 0 " (cambios)" >/dev/null
   else tarjeta "Cierre (otra vez)" - 120m cierre; fi
 }
-tramo_tras_preguntas() { if [ -n "$FASE" ]; then fase_n "$FASE" " (respuestas)"; else mantener; fi; }
+tramo_tras_preguntas() {
+  if [ -n "$FASE" ]; then fase_n "$FASE" " (respuestas)"
+  elif [ -f "$REPO/.sdd/hermes/dudas-diseno" ] && [ ! -s "$REPO/.sdd/hermes/mantenimiento/en-curso.txt" ]; then
+    # dudas de diseño contestadas: la tarjeta «Dudas» parada queda obsoleta y sigue el plan
+    rm -f "$REPO/.sdd/hermes/dudas-diseno"
+    local l; if l=$("${K[@]}" list --json 2>/dev/null); then
+      printf '%s' "$l" | jq -r '.[]? | select(.assignee == "sdd-estacion" and .status == "blocked")
+        | select((.body // "") | test("etapa\\.sh \\S+ dudas$")) | .id' 2>/dev/null | while read -r id; do
+        "${K[@]}" comment "$id" "Obsoleta: las dudas se contestaron en su puerta; sigue el plan." >/dev/null 2>&1 || true
+        "${K[@]}" archive "$id" >/dev/null 2>&1 || true
+      done
+    fi
+    plan_y_tareas
+  else mantener; fi
+}
 tramo_mantenimiento_cambio() {  # se arregla sin cambiar el comportamiento y se entrega otra vez (no pasa por requisitos
   # ni plan; si hiciera falta cambiar un requisito, la etapa lo pregunta)
   cp "$REPO/.sdd/hermes/mantenimiento/peticion-$GATE.txt" "$REPO/.sdd/hermes/mantenimiento/en-curso.txt"
@@ -340,6 +376,9 @@ case "$CMD" in
     T=$(tarjeta "Aplicar respuestas ($(jq -r '.titulo // .tipo' "$REPO/.sdd/hermes/puertas/$GATE.json"))" - 60m respuestas "$GATE")
     RAIZ="$T" bash "$0" siguiente "$REPO" "$GATE" "$RESULTADO" >/dev/null
     echo "$T" ;;
+
+  plan)         # Plan → Tareas (lo encadena la etapa «dudas» cuando no queda ninguna abierta)
+    plan_y_tareas ;;
 
   rehacer)      # la FASE N otra vez, con tarjetas NUEVAS: huecos (si quedan [PLAN GAP]) → implementar → aceptar
     N=$3; [ -f "$REPO/task/TASK-FASE-$N.md" ] || { echo "no existe task/TASK-FASE-$N.md" >&2; exit 2; }

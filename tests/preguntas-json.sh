@@ -178,4 +178,27 @@ cp .sdd/questions-task-implementer.md "$T/m2"
 node "$SDD" questions render >/dev/null 2>&1 && bad "render de un JSON inválido debía fallar" || \
   { v=$(node "$SDD" questions validate 2>&1); cmp -s "$T/m2" .sdd/questions-task-implementer.md && case "$v" in *"efecto: must be one of"*) true ;; *) false ;; esac \
     && ok "render/validate: un JSON fuera del esquema no se pinta y se dice por qué" || bad "render inválido"; }
+
+# ── material-montana (C4): una sola pregunta por tema, de cualquier rol; las duplicadas se fusionan ──────────────────
+R2="$T/tema"; mkdir -p "$R2/.sdd"; cd "$R2" || exit 1
+q() { printf '{"skill":"sdd-%s","tema":"%s","pregunta":"Which clock?","para_cliente":"¿Qué hora manda?","opciones":[{"letra":"A","texto":"Madrid","recomendada":true,"efecto":"ninguno"},{"letra":"B","texto":"UTC","efecto":"ninguno"}]}' "$1" "$2"; }
+q spec-auditor zona-horaria | node "$SDD" questions add --role spec-auditor >/dev/null 2>&1
+out=$(q plan-architect zona-horaria | node "$SDD" questions add --role plan-architect 2>&1); rc=$?
+[ $rc = 1 ] && echo "$out" | grep -q 'Q-spec-auditor-001 is already OPEN about «zona-horaria»' && [ ! -f .sdd/questions-plan-architect.json ] \
+  && ok "tema: otra pregunta abierta sobre lo mismo (otro rol) se rechaza" || bad "tema abierto: $rc $out"
+out=$(q x 'Zona Horaria' | node "$SDD" questions add --role x 2>&1) && bad "tema que no es slug" || ok "tema: tiene que ser un slug"
+q plan-architect huso | node "$SDD" questions add --role plan-architect >/dev/null 2>&1
+node "$SDD" questions merge Q-plan-architect-001 --into Q-spec-auditor-001 >/dev/null 2>&1
+o=$(node "$SDD" questions list --open --json | jq -c '[.questions[].id]')
+c=$(jq -r '.preguntas[0].contexto' .sdd/questions-spec-auditor.json); m=$(jq -r '.preguntas[0] | "\(.estado) \(.fusionada)"' .sdd/questions-plan-architect.json)
+[ "$o" = '["Q-spec-auditor-001"]' ] && [ "$c" = Q-plan-architect-001 ] && [ "$m" = "MERGED Q-spec-auditor-001" ] && node "$SDD" questions validate >/dev/null 2>&1 \
+  && ok "merge: la fusionada deja de estar abierta y la otra se queda con su contexto" || bad "merge: $o | $c | $m"
+node "$SDD" questions answer Q-spec-auditor-001 --letter A --by "Ana" >/dev/null 2>&1
+out=$(q implementador zona-horaria | node "$SDD" questions add --role impl 2>&1)
+[ $? = 1 ] && echo "$out" | grep -q 'already decided «zona-horaria»' && ok "tema ya contestado: no se vuelve a preguntar" || bad "tema contestado: $out"
+python3 - "$ROOT/plugin/hermes-sdd" <<'PY' && ok "la puerta no enseña la fusionada" || bad "puerta con fusionada"
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_textos as X, json
+b = json.load(open(".sdd/questions-plan-architect.json"))["preguntas"][0]
+assert not X._abierta(b)
+PY
 exit $fail

@@ -10,7 +10,7 @@
 | `sdd-lead` | Current behaviour: the human is in this session. |
 | any other role | Replace `AskUserQuestion`, STOP and "wait for the user" with the three steps below. |
 
-1. **Write** the question with `sdd questions add --role <role>` into `$STATE_ROOT/.sdd/questions-<role>.json` (Section 2).
+1. **Write** the question with `sdd questions add --role <role>` into `$STATE_ROOT/.sdd/questions-<role>.json` (Section 2). First read `sdd questions list --json`: if a question already covers that decision (any role), do not add another one. If it is OPEN, leave it (or `sdd questions merge <yours> --into <that one>` when you already added a duplicate); if it is ANSWERED, apply its answer. Give every question a `tema` (a slug of what is decided: `zona-horaria`, `borrado-socios`): `add` rejects a second OPEN or ANSWERED question with the same `tema`.
 2. **Continue** with work that does not depend on the answer (Section 3).
 3. **Hand off** when no unblocked work remains (Section 4), then end the turn.
 
@@ -74,6 +74,7 @@ Answer:
 ```
 
 - `NNN`: three digits, `max(NNN present in the JSON or its view, including [ANSWERED]) + 1`; `001` for a new file. `sdd questions add` assigns it.
+- `tema` (`tema=` in the view) optional but expected: a slug of what is decided, shared by every role. One question per `tema`, OPEN or ANSWERED; `sdd questions merge Q-A --into Q-B` turns a duplicate into `MERGED` (not shown, not answered) and keeps Q-B.
 - `skill`: the skill writing the question. `contexto` (`context=`): where it comes from (`TASK-F1-004`, `Step 4.5 AUD-017`, `spec/adr/ADR-025.md:45`).
 - `opciones` (`Options`): letters, at least two, exactly one with `"recomendada": true` (`(recommended)` in the view). A PAUSE's `Question:` / `Options:` lines are copied verbatim into `pregunta` and each option's `texto`.
 - `para_cliente` (`Para el cliente:`) mandatory. The gate shows it first and folds the `Question:` into one technical line: the person decides on this sentence.
@@ -84,6 +85,7 @@ Answer:
   - `editar-test FILE...`: edit tests (or their helpers, fixtures or run configuration) that already existed when a FASE was accepted, Art. 12. List every file, relative to the repository. Only a person can choose it (never Jev); when a person does, the notary records a `test-edit` decision in `acceptance/decisions.jsonl` with exactly those files, and that record is the only thing that authorizes editing them, until the next acceptance. An answered question, an `Answer:` line or an `Autoriza:` line in a commit authorize nothing.
   - `endurecer-test FILE...`: the same, but the option only TIGHTENS those tests: they will check more of what their criterion asks (a missing clause, the exact literal, the capture taken where the THEN is visible), never less. Use it for a `WEAKENED-ASSERT` or `WRONG-CAPTURE` fix. Jev may choose it, so the person is not asked; the notary records the `test-edit` with `tighten: true`, and if the edit then removes an assertion or stops citing its criterion, the fidelity check reports it as grave and a person decides. Anything that changes what a test expects, or removes a case, is `editar-test`.
 - `cliente` (`cliente:` under an option) optional: the option in plain words, shown instead of the option text.
+- The recommended option is what the artifact ALREADY says: write the sensible default first, then ask «we wrote X; keep it?», so the recommended option has effect `ninguno` and signing the gate as it is changes nothing. Recommend `req-change` only when the default would be a serious risk (data loss, a legal or security breach) and say which in `para_cliente`; a figure, a wording or a limit is never that risk.
 - The effect matches what the option changes, not how big it sounds: moving work between FASEs, splitting or reordering them is `accion` (the plan), never `req-change`; `req-change` is only for the text of `requirements/`. In `para_cliente` and `cliente`, say «fase» (never FASE, sprint or milestone) and no requirement ids.
 - Questions written before the JSON existed (only a `## Q-…` block in the `.md`) are still read, as Markdown, and the view keeps them verbatim. Those written before `efecto:` existed have their effect guessed from the wording (`(req-change)` or a change verb next to REQ/criterion → req-change; "keep / leave / no…" → ninguno; anything else → accion) and they never authorize editing a test. A question in the JSON is never guessed: an option without a valid `efecto` is treated as work (`accion`) and authorizes nothing.
 - `bloquea` (`Blocks`): what the station skips until the answer arrives (`TASK-F1-004, TASK-F1-007`, `pipeline gate`, `INV-023`).

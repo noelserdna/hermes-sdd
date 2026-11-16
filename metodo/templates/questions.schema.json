@@ -21,7 +21,9 @@
         "id": { "type": "string", "pattern": "^Q-[A-Za-z][A-Za-z0-9_-]*-[0-9]{3}$" },
         "skill": { "type": "string", "minLength": 1 },
         "contexto": { "type": "string" },
-        "estado": { "enum": ["OPEN", "ANSWERED"] },
+        "estado": { "enum": ["OPEN", "ANSWERED", "MERGED"] },
+        "tema": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$", "description": "Slug de lo que se decide (zona-horaria, borrado-socios): una sola pregunta por tema, abierta o contestada" },
+        "fusionada": { "type": "string", "pattern": "^Q-[A-Za-z][A-Za-z0-9_-]*-[0-9]{3}$", "description": "MERGED: la pregunta que la sustituye (sdd questions merge)" },
         "pregunta": { "type": "string", "minLength": 1 },
         "para_cliente": { "type": "string", "minLength": 1 },
         "opciones": {

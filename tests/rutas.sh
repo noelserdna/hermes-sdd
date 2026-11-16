@@ -85,12 +85,30 @@ chmod +x "$T/bin/hermes"; export PATH="$T/bin:$PATH"
 echo '{"tipo":"ruta"}' > .sdd/hermes/puertas/r9.json
 bash "$ROOT/lanzar.sh" siguiente "$R" r9 ruta-mia >/dev/null
 o=$(tr '\n' ';' < "$T/cartas")
-[ "$o" = "Auditoría de especificaciones<-;Diseño visual y de uso<t1;Plan<t2;Tareas<t3;" ] && ok "lanzar: auditoría → diseño visual → plan → tareas, encadenadas" || bad "cadena: $o"
+[ "$o" = "Auditoría de especificaciones<-;Diseño visual y de uso<t1;Dudas de diseño<t2;" ] && ok "lanzar: auditoría → diseño visual → dudas de diseño, encadenadas" || bad "cadena: $o"
+# material-montana (C6, C11): las dudas de diseño se deciden juntas antes del plan. Sin ninguna abierta, sigue el plan;
+# con alguna, una sola puerta «Dudas antes del plan» y, al responder, Plan → Tareas
+rm -f "$T/cartas"; mkdir -p .sdd; mv .sdd/questions-spec-auditor.json "$T/qsa.json" 2>/dev/null; rm -f .sdd/questions-spec-auditor.md
+o=$(bash "$ROOT/etapa.sh" "$R" dudas | tail -1)
+echo "$o" | jq -e '.outcome == "done"' >/dev/null && [ "$(tr '\n' ';' < "$T/cartas")" = "Plan<-;Tareas<t4;" ] \
+  && ok "dudas sin preguntas abiertas: encadena Plan → Tareas" || bad "dudas sin abiertas: $o $(tr '\n' ';' < "$T/cartas" 2>/dev/null)"
+node "$ROOT/metodo/scripts/sdd.mjs" questions add --role spec-auditor >/dev/null 2>&1 <<'J'
+{"skill": "sdd-spec-auditor", "tema": "reservas-solapadas", "pregunta": "Overlapping bookings?", "para_cliente": "¿Se pueden solapar dos reservas del mismo material?",
+ "opciones": [{"letra": "A", "texto": "No", "recomendada": true, "efecto": "ninguno", "cliente": "No: la segunda se rechaza"},
+              {"letra": "B", "texto": "Yes", "efecto": "req-change", "cliente": "Sí, avisando"}]}
+J
+rm -f "$T/cartas"; o=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/etapa.sh" "$R" dudas | tail -1); G=$(echo "$o" | jq -r '.puerta // empty')
+[ -n "$G" ] && jq -e '.tipo == "preguntas" and .titulo == "Dudas antes del plan" and ([.opciones[].verbo] == ["respondo"])' ".sdd/hermes/puertas/$G.json" >/dev/null \
+  && [ -f .sdd/hermes/dudas-diseno ] && [ ! -s "$T/cartas" ] && ok "dudas abiertas: una sola puerta «Dudas antes del plan», sin plan todavía" || bad "dudas abiertas: $o"
+bash "$ROOT/lanzar.sh" siguiente "$R" "$G" respondo >/dev/null
+[ "$(tr '\n' ';' < "$T/cartas")" = "Plan<-;Tareas<t6;" ] && [ ! -f .sdd/hermes/dudas-diseno ] && ok "al responderlas: Plan → Tareas" || bad "tras dudas: $(tr '\n' ';' < "$T/cartas")"
+rm -f .sdd/questions-spec-auditor.*; mv "$T/qsa.json" .sdd/questions-spec-auditor.json 2>/dev/null; node "$ROOT/metodo/scripts/sdd.mjs" questions render >/dev/null 2>&1
+rm -f "$T/cartas"
 rm -f "$T/cartas"; jq '.route.stages["gap-detector"].run = true' pipeline-state.json > p.tmp && mv p.tmp pipeline-state.json
 echo '{"tipo":"fase","fase":"0"}' > .sdd/hermes/puertas/f9.json; git tag fase-0-accepted 2>/dev/null; mkdir -p plan/fases; touch plan/fases/FASE-0-x.md
 bash "$ROOT/lanzar.sh" siguiente "$R" f9 acepto >/dev/null
 o=$(tr '\n' ';' < "$T/cartas")
-[ "$o" = "Huecos entre especificación y código<-;Cierre: puerta global y entrega<t5;" ] && ok "lanzar: huecos entre especificación y código antes del cierre" || bad "cierre: $o"
+[ "$o" = "Huecos entre especificación y código<-;Cierre: puerta global y entrega<t8;" ] && ok "lanzar: huecos entre especificación y código antes del cierre" || bad "cierre: $o"
 
 # 5. etapa opcional: sin su producto, falla con lo que dijo el ejecutor
 mkdir -p .sdd/hermes; echo '{"ejecutor":"claude","ejecutores":{"ux":"../tests/ejecutor-falso"}}' > .sdd/hermes/hermes-sdd.json
@@ -99,6 +117,19 @@ echo "$o" | jq -e '.outcome == "failed" and (.reason | test("ux-designer no dej�
 mkdir -p ux && echo x > ux/UI-DESIGN-SYSTEM.md && git add ux && git commit -qm "docs(ux): x"
 o=$(bash "$ROOT/etapa.sh" "$R" ux | tail -1)
 echo "$o" | jq -e '.outcome == "done" and .resumen == "Diseño visual y de uso escrito"' >/dev/null && ok "etapa ux con ux/: hecha" || bad "ux hecha: $o"
+# material-montana (C9): tras un cambio de requisitos la etapa ya hecha («stale») solo toca lo que cambió
+cp -R requirements "$T/req.bak" 2>/dev/null || true
+mkdir -p requirements; printf '# R\n\n### REQ-F-001: Uno\nx\n\n### REQ-F-002: Dos\ny\n' > requirements/REQUIREMENTS.md
+git add requirements && git commit -qm "docs(requirements): v1" && git tag requirements-v9.0
+printf '# R\n\n### REQ-F-001: Uno\nx cambiado\n\n### REQ-F-002: Dos\ny\n\n### REQ-F-003: Tres\nz\n' > requirements/REQUIREMENTS.md
+git add requirements && git commit -qm "docs(requirements): v2" && git tag requirements-v9.1
+bash "$ROOT/metodo/scripts/sdd-state.sh" set ux-designer stale >/dev/null
+FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" ux >/dev/null
+grep -q 'UPDATE MODE: .*(added: REQ-F-003; modified: REQ-F-001)' "$T/prompt" && ok "etapa ya hecha tras un cambio: solo actualiza los requisitos que cambiaron" || bad "ux incremental: $(grep -o 'UPDATE.*' "$T/prompt" | head -c 300)"
+bash "$ROOT/metodo/scripts/sdd-state.sh" set ux-designer done >/dev/null
+FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" ux >/dev/null
+! grep -q 'UPDATE MODE' "$T/prompt" && ok "…y si no estaba «stale», como siempre" || bad "ux no stale: actualizó"
+git tag -d requirements-v9.0 requirements-v9.1 >/dev/null; rm -rf requirements; cp -R "$T/req.bak" requirements 2>/dev/null || true; git add -A requirements; git commit -qm "test: requisitos de antes" >/dev/null 2>&1
 
 # 6. Jev: el criterio de cada ruta y su propio umbral en modo auto
 py <<'P' && ok "Jev: cada ruta con su criterio; en auto decide con umbral_auto (0.8 de serie)" || bad "jev rutas"

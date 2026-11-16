@@ -272,4 +272,11 @@ o=$(cd "$T" && echo '{"preguntas":[{"n":1,"id":"Q-1","opciones":["A","B"],"recom
   python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" respuestas validar --puerta p.json --verbo conforme --respuestas '["B"]' 2>&1; echo "rc=$?")
 [ "$o" = "$(printf 'Q-1 = B\nel campo «respuestas» de la decisión no es {pregunta: letra}\nrc=1')" ] \
   && ok "CLI del notario: --respuestas da las elegidas; un campo mal formado rechaza la decisión" || bad "cli respuestas: $o"
+# material-montana: «Conforme» con una respuesta distinta sin efecto (o que ya lanza su cambio) sigue siendo «Conforme»
+o=$(cd "$T" && echo '{"preguntas":[{"n":1,"id":"Q-1","opciones":["A","B"],"recomendada":"A","efectos":{"B":{"efecto":"ninguno"}}},
+ {"n":2,"id":"Q-2","opciones":["A","B"],"recomendada":"A","efectos":{"B":{"efecto":"req-change"}}},
+ {"n":3,"id":"Q-3","opciones":["A","B"],"recomendada":"A","efectos":{"B":{"efecto":"accion"}}}]}' > p.json \
+  && python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" respuestas distintas --puerta p.json --verbo conforme --respuestas '{"1":"B","2":"B"}'; \
+  python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" respuestas distintas --puerta p.json --verbo conforme --respuestas '{"1":"B","3":"B"}')
+[ "$o" = "$(printf '\nQ-3 = B')" ] && ok "respuestas distintas sin efecto o con req-change: «Conforme» no se vuelve «cambios»; las de trabajo, sí" || bad "distintas por efecto: $o"
 exit $fail

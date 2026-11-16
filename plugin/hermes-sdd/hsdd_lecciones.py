@@ -31,7 +31,7 @@ if "hsdd_nucleo" not in sys.modules:
     _mod = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(_mod); sys.modules["hsdd_nucleo"] = _mod
 N = sys.modules["hsdd_nucleo"]
 
-ETAPAS = ("requisitos", "ruta", "especificar", "auditar", "pruebas", "seguridad", "tecnico", "ux", "plan", "tareas",
+ETAPAS = ("requisitos", "ruta", "especificar", "auditar", "pruebas", "seguridad", "tecnico", "ux", "dudas", "plan", "tareas",
           "huecos", "implementar", "aceptar", "cierre", "cambio", "brechas", "adoptar")
 MAX_POR_ETAPA = 5
 USOS_PARA_REVISAR = 3

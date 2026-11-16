@@ -62,6 +62,31 @@ ORIGEN="puerta f7" bash "$ROOT/lanzar.sh" cambio "$R" "quiero otra cosa" >/dev/n
 bash "$ROOT/lanzar.sh" cambio "$R" "otra petición distinta" >/dev/null
 [ "$(ls intent | wc -l | tr -d ' ')" = 2 ] && ok "un cambio sin origen (/cambio) abre su INT" || bad "cambio sin origen: $(ls intent)"
 
+# material-montana (C8): tras un cambio de requisitos con plan, la ruta ya confirmada no se vuelve a preguntar si la
+# recomendada no pide etapas nuevas; si pide una que no tenía, sí. node falso solo para «sdd route --json».
+REAL_NODE=$(command -v node)
+cat > "$T/bin/node" <<N
+#!/usr/bin/env bash
+case " \$* " in *" route --json"*) cat "$T/ruta-nueva.json"; exit 0 ;; esac
+exec "$REAL_NODE" "\$@"
+N
+chmod +x "$T/bin/node"
+jq -n '{route: {confirmedBy: "Ana", stages: {"plan-architect": {run: true}, "ux-designer": {run: true}, "tech-designer": {run: false}}},
+        stages: {"ux-designer": {status: "stale"}}}' > pipeline-state.json
+echo '{"stages": {"plan-architect": {"run": true}, "ux-designer": {"run": true}, "tech-designer": {"run": false}}}' > "$T/ruta-nueva.json"
+g tag requirements-v1.0 >/dev/null 2>&1; echo '{"tipo":"requisitos"}' > .sdd/hermes/puertas/r1.json
+antes=$(jq length "$T/tarjetas.json")
+bash "$ROOT/lanzar.sh" siguiente "$R" r1 aprobado >/dev/null 2>&1
+nuevas=$(jq -c --argjson a "$antes" '[.[$a:][].title]' "$T/tarjetas.json")
+[ "$nuevas" = '["Diseño visual y de uso","Dudas de diseño"]' ] && ok "cambio con la ruta confirmada igual: sigue por sus etapas, sin la puerta «Ruta»" || bad "ruta confirmada: $nuevas"
+echo '{"stages": {"plan-architect": {"run": true}, "ux-designer": {"run": true}, "tech-designer": {"run": true}}}' > "$T/ruta-nueva.json"
+echo '{"tipo":"requisitos"}' > .sdd/hermes/puertas/r2.json
+antes=$(jq length "$T/tarjetas.json")
+bash "$ROOT/lanzar.sh" siguiente "$R" r2 aprobado >/dev/null 2>&1
+nuevas=$(jq -c --argjson a "$antes" '[.[$a:][].title]' "$T/tarjetas.json")
+[ "$nuevas" = '["Ruta"]' ] && ok "si la ruta recomendada pide una etapa nueva, se vuelve a preguntar" || bad "ruta nueva: $nuevas"
+rm -f "$T/bin/node" pipeline-state.json
+
 # el número de entrega queda fijado en el acta (al reanudar no se cuenta otra vez)
 grep -q 'entrega_n // empty' "$ROOT/firmar.sh" && ok "firmar.sh fija el número de la entrega en el acta" || bad "entrega_n"
 exit $fail

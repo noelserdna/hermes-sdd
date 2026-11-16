@@ -180,7 +180,8 @@ case "$TIPO" in
         OPCIONES=$(echo "$OPCIONES" | jq -c --argjson x "$X" --argjson c "$C" --argjson d "$D" "[.[] | select(.verbo == \"ver\")] + (if \$c then [\$c + $PASO] else [] end) + (if \$d then [\$d + $PASO] else [] end) + [\$x + $PASO] + [.[] | select(.verbo == \"rechazo\")]"); fi
     elif hay_rev; then
       OPCIONES=$(echo "$OPCIONES" | jq -c --argjson r "$REVISADO" "[.[] | select(.verbo == \"ver\")] + [\$r + $PASO] + [.[] | select(.verbo != \"ver\")]"); fi ;;
-  preguntas)       # lo abre etapa.sh implementar cuando la FASE se para en preguntas [OPEN]
+  preguntas)       # lo abre etapa.sh implementar cuando la FASE se para en preguntas [OPEN] (y «dudas», antes del plan)
+    [ -z "$FASE" ] && [ -f .sdd/hermes/dudas-diseno ] && EXTRA+=(--diseno 1)
     OPCIONES='[{"verbo":"respondo","etiqueta":"✅ Responder"}]' ;;
   mantenimiento)   # lo abre vigilar.sh con .sdd/hermes/mantenimiento/hallazgos.json
     EXTRA+=(--hallazgos .sdd/hermes/mantenimiento/hallazgos.json)
