@@ -236,6 +236,10 @@ def _ejemplo(plantilla: str, criterio: str) -> str:
     if "{" not in plantilla:
         return ""
     trozos = re.split(r"\{[^{}]*\}", plantilla)
+    # Una plantilla que es solo el hueco («{desde}», «{correo}») encaja con cualquier cita: no hay ejemplo fiable
+    # (material-montana2: {desde}, {hasta}, {estado} y {correo} salían todos como «Casco»)
+    if len("".join(trozos).strip(" .,:;")) < 2:
+        return ""
     patron = "(.+?)".join(re.escape(t) for t in trozos)
     return next((q for q in _COMILLAS.findall(criterio) if re.fullmatch(patron, q)), "")
 
@@ -906,7 +910,10 @@ def puerta_entrega(repo: Path, proyecto: str, gate_md: str, rc: int, fases_acept
         r["titulo"] = f"Entrega parcial: {proyecto}"
         r["texto"] = (f"📦 Entrega parcial: las fases {', '.join(parcial)} (ya aceptadas una a una)"
                       + (f" de {total}" if total else "") + ". Lo que falta del plan no se entrega ahora ni cuenta "
-                      "como fallo: sigue pendiente y se retoma después.\n\n" + r["texto"])
+                      "como fallo: sigue pendiente y se retoma después.\n\n"
+                      # no está «terminado»: lo entregado está listo, el resto del plan no (material-montana2)
+                      + r["texto"].replace(f"🎁 «{proyecto}» está terminado y listo para entregar.",
+                                           f"🎁 Lo hecho de «{proyecto}» está listo para entregar.", 1))
     return r
 
 

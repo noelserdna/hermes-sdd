@@ -73,6 +73,14 @@ trivial = re.compile(r"^(import\b|export \{|from\s|//|#|/\*|\*|\}?\)?;?$|\}\);?$
 doc = re.compile(r"\.(md|txt|csv|json|ya?ml)$", re.I)
 print(sum(1 for f, q in quitadas.items() if not doc.search(f) and any(x and not trivial.match(x) and x not in puestas[f] for x in q)))'
 }
+# sin_autorizar <fase|global> <n>: de los tests existentes cambiados, los que no autorizó nadie con su firma o se
+# debilitaron (hsdd_fidelidad, el mismo informe que enseña la puerta). Uno autorizado ya lo decidió una persona: no
+# vuelve a quitarle la puerta a Jev (material-montana2, FASE-2: el cambio que se firmó en la FASE-1). Sin informe, <n>.
+sin_autorizar() {
+  local f=".sdd/hermes/fidelidad-$1.json"
+  jq -e '.congelados | type == "array"' "$f" >/dev/null 2>&1 || { echo "$2"; return; }
+  jq '[.congelados[] | select((.autorizado | not) or ((.debilitamiento // []) | length > 0)) | .fichero] | unique | length' "$f"
+}
 
 # Requisitos sin verificar que solo una persona puede comprobar (Verification: inspection o demo): la puerta los enseña y
 # ofrece 🔍 Lo he revisado y acepto; el notario registra la inspección a nombre de quien lo pulsa.
@@ -136,7 +144,7 @@ case "$TIPO" in
     # Tampoco cuentan los imports, las líneas en blanco, los comentarios ni las líneas que solo se movieron (coches,
     # FASE-1: ampliar un `import { a, b }` mandaba la puerta a una persona y la tuvo esperando 7 h)
     BASE=$(git describe --tags --abbrev=0 --match 'fase-*-accepted' 2>/dev/null || git describe --tags --abbrev=0 --match 'requirements-v*' 2>/dev/null || git rev-list --max-parents=0 HEAD)
-    EDIT=$(tests_editados "$BASE")
+    EDIT=$(sin_autorizar "$FASE" "$(tests_editados "$BASE")")
     VIDEO=$(ls evidencias/FASE-"$FASE"/*.mp4 evidencias/FASE-"$FASE"/*.webm evidencias/FASE-"$FASE"/*.mov 2>/dev/null | head -1 || true)
     CAPTURAS=$( (ls evidencias/FASE-"$FASE"/*.png evidencias/FASE-"$FASE"/*.jpg 2>/dev/null || true) | wc -l | tr -d ' ')
     EXTRA+=(--gate-md "$GATE_MD" --rc "$rc" --tests-editados "$EDIT" --video "$([ -n "$VIDEO" ] && echo 1 || echo 0)" --capturas "$CAPTURAS")
@@ -165,7 +173,7 @@ case "$TIPO" in
       VIDEO=$(ls evidencias/FASE-0/*.mp4 evidencias/FASE-0/*.webm evidencias/FASE-0/*.mov 2>/dev/null | head -1 || true)
       CAPTURAS=$( (ls evidencias/FASE-0/*.png evidencias/FASE-0/*.jpg 2>/dev/null || true) | wc -l | tr -d ' ')
       BASE=$(git describe --tags --abbrev=0 --match 'requirements-v*' 2>/dev/null || git rev-list --max-parents=0 HEAD)
-      EDIT=$(tests_editados "$BASE")
+      EDIT=$(sin_autorizar global "$(tests_editados "$BASE")")
       EXTRA+=(--unica 1 --video "$([ -n "$VIDEO" ] && echo 1 || echo 0)" --capturas "$CAPTURAS" --tests-editados "$EDIT")
       OPCIONES='[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1},{"verbo":"acepto","etiqueta":"✅ Acepto la entrega","paso":2},{"verbo":"observaciones","etiqueta":"📝 Con observaciones","texto":true,"paso":2},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'
     fi

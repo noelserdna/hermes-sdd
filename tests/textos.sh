@@ -244,6 +244,14 @@ git add -A && git commit -qm t && git tag fase-0-accepted
 printf 'expect(a).toBe(2)\n' > tests/a.test.js; printf '# Plan\nnuevo\n' > test/TEST-PLAN.md; git commit -qam t2
 g=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" fase 1 2>/dev/null)
 [ "$(jq -r .tests_editados "$HERMES_SDD_HOME/puertas/$g.json")" = 1 ] && ok "tests editados: el .test.js cuenta, TEST-PLAN.md no" || bad "tests editados: $(jq -r .tests_editados "$HERMES_SDD_HOME/puertas/$g.json")"
+# con el informe de fidelidad: un cambio autorizado con firma no cuenta (ya lo decidió una persona; material-montana2,
+# FASE-2), uno sin autorizar o que debilita, sí
+mkdir -p .sdd/hermes; echo '{"congelados":[{"fichero":"tests/a.test.js","autorizado":true,"autorizacion":"Q-1: x"}]}' > .sdd/hermes/fidelidad-1.json
+g=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" fase 1 2>/dev/null); a=$(jq -r .tests_editados "$HERMES_SDD_HOME/puertas/$g.json")
+echo '{"congelados":[{"fichero":"tests/a.test.js","autorizado":true,"debilitamiento":["quita una aserción"]}]}' > .sdd/hermes/fidelidad-1.json
+g=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" fase 1 2>/dev/null); b=$(jq -r .tests_editados "$HERMES_SDD_HOME/puertas/$g.json")
+rm -f .sdd/hermes/fidelidad-1.json
+[ "$a/$b" = "0/1" ] && ok "tests editados: el autorizado con firma no quita la puerta a Jev; el que debilita, sí" || bad "autorizados: $a/$b"
 # reabrir la puerta de la misma FASE deja la anterior «superada», no dos abiertas a la vez (club: entrega reabierta)
 g2=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/puerta.sh" "$R" fase 1 2>/dev/null)
 [ "$(jq -r '.estado + " " + .superada_por' "$HERMES_SDD_HOME/puertas/$g.json")" = "superada $g2" ] && [ "$(jq -r .estado "$HERMES_SDD_HOME/puertas/$g2.json")" = abierta ] \
@@ -706,6 +714,9 @@ md = """### REQ-F-001: x
 """
 w = [(x["texto"], x["ejemplo"]) for x in T.textos_web(md)]
 assert w == [("Apuntados ({n} de {n} plazas)", "Apuntados (0 de 2 plazas)"), ("Lista de espera", "")], w
+# una plantilla que es solo el hueco no toma como ejemplo otro dato del criterio (material-montana2: {desde} → «Casco»)
+assert T._ejemplo("{desde}", 'GIVEN "Casco" WHEN x THEN "Reserva creada: Casco"') == ""
+assert T._ejemplo("Reserva creada: {material}", 'GIVEN "Casco" WHEN x THEN "Reserva creada: Casco"') == "Reserva creada: Casco"
 R = Path(sys.argv[2]) / "hecho"; (R / "design").mkdir(parents=True); (R / "spec/use-cases").mkdir(parents=True)
 (R / "pipeline-state.json").write_text(json.dumps({"stages": {"specifications-engineer": {"status": "done"}, "tech-designer": {"status": "skipped"}}}))
 assert T._hecho_antes(R) == "📐 Antes del plan se hizo: especificaciones. El plan parte de esos documentos.", T._hecho_antes(R)

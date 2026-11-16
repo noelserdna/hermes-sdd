@@ -446,7 +446,7 @@ case "$ETAPA" in
       fin "$(jq -nc '{outcome:"failed", reason:"esperando tus respuestas: puerta «Dudas antes del plan»"}')" "Dudas de diseño para la persona" "$P"
     fi
     rm -f .sdd/hermes/dudas-diseno
-    ORIGEN="dudas $(git rev-parse --short HEAD)" bash "$ROOT/lanzar.sh" plan "$REPO" >/dev/null || falla "no se pudo encadenar el plan"
+    # Plan → Tareas ya cuelgan de esta tarjeta (lanzar.sh tras_ruta): al acabar bien, siguen solas
     fin '{"outcome":"done","reason":"sin dudas abiertas"}' "Sin dudas de diseño abiertas: sigue el plan" ;;
 
   especificar|auditar|pruebas|seguridad|tecnico|ux|brechas)   # etapas opcionales: las encadena la ruta (lanzar.sh)
@@ -677,6 +677,11 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
       ULT=$(ls plan/fases/FASE-*.md | sed -E 's/.*FASE-([0-9]+).*/\1/' | sort -n | tail -1)
       claude_etapa task-implementer "/sdd-task-implementer --fase=$ULT — $ARNES The GLOBAL acceptance gate is not met. Requirements without evidence: $HUECOS. For each one, first append a task to task/TASK-FASE-$ULT.md (next TASK-F$ULT id, same grammar, Refs the requirement), then implement it test-first (the test name carries the requirement id and criterion, e.g. 'REQ-C-001 AC1'), one commit per task with Task:/Refs: trailers. Do not touch tests that already exist.$TESTS_G"
       claude_etapa acceptance "/sdd-acceptance — $ARNES Compute the GLOBAL per-requirement verdicts (all FASEs) with evidence. Do not sign off."
+    elif [ "$rc" != 0 ] && [ "$rc" != 3 ]; then
+      # Entrega parcial: cada aceptación de FASE corre solo sus tests y el junit guarda la última; sin volver a correrlos
+      # todos, las FASEs anteriores salen sin capturas (material-montana2: 15 capturas «sin test» en FASE-0 y 1)
+      F=$(tr '\n' ' ' < .sdd/hermes/entrega-parcial | sed 's/ $//')
+      claude_etapa acceptance "/sdd-acceptance — $ARNES Partial delivery of FASEs $F. Run the WHOLE test suite (unit and every e2e spec of those FASEs, not only the last one) so the junit reports cover every delivered FASE, and compute the per-requirement verdicts of FASEs $F with evidence. Do not implement anything, do not touch tests and do not sign off."
     fi
     desplegable   # «hecho» = arranca como en producción (un arreglo si no; lo que quede lo ve la puerta como grave)
     # Fidelidad global antes de entregar: tests congelados, capturas, mutantes de todos los Must y coherencia

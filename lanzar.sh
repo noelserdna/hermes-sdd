@@ -166,6 +166,17 @@ ux-designer|ux|Diseño visual y de uso"
 toca() {  # toca <clave>: ¿la ruta confirmada la ejecuta y aún no está hecha?
   jq -e --arg k "$1" '(.route.stages[$k].run == true) and (.stages[$k].status != "done")' "$REPO/pipeline-state.json" >/dev/null 2>&1
 }
+archivar_dudas() {  # archivar_dudas <motivo>: la tarjeta «Dudas» parada en su puerta y su Plan → Tareas en espera
+  # (al contestar las dudas sigue otro plan; si la respuesta pidió un cambio, la ruta crea una cadena nueva)
+    local l; if l=$("${K[@]}" list --json 2>/dev/null); then
+      printf '%s' "$l" | jq -r '.[]? | select(.assignee == "sdd-estacion")
+        | select((.status == "blocked" and ((.body // "") | test("etapa\\.sh \\S+ dudas$")))
+              or ((.status == "todo") and ((.body // "") | test("etapa\\.sh \\S+ (plan|tareas)$")))) | .id' 2>/dev/null | while read -r id; do
+        "${K[@]}" comment "$id" "$1" >/dev/null 2>&1 || true
+        "${K[@]}" archive "$id" >/dev/null 2>&1 || true
+      done
+    fi
+}
 tras_ruta() {  # las etapas opcionales que pide la ruta → Plan → Tareas, encadenadas; imprime la primera
   local padre=- primera="" clave etapa titulo t
   while IFS='|' read -r clave etapa titulo; do
@@ -173,8 +184,13 @@ tras_ruta() {  # las etapas opcionales que pide la ruta → Plan → Tareas, enc
     t=$(tarjeta "$titulo" "$padre" 90m "$etapa"); padre=$t; primera=${primera:-$t}
   done <<< "$OPCIONALES"
   # Las dudas de diseño abiertas se deciden juntas ANTES del plan (material-montana: 12 preguntas en la puerta del plan,
-  # varias que reabrían requisitos); la etapa «dudas» encadena Plan → Tareas cuando no queda ninguna
+  # varias que reabrían requisitos). Plan → Tareas cuelgan de «Dudas»: sin dudas abiertas siguen solas; con dudas, la
+  # etapa se para en su puerta y, al contestarlas, el tramo archiva esta cadena y crea otra. La cadena la crea este
+  # script: desde dentro de una tarjeta Hermes no deja tocar el kanban (material-montana2: «no se pudo encadenar»)
+  archivar_dudas "Obsoleta: los requisitos cambiaron y la ruta crea otra cadena de dudas y plan."
   t=$(tarjeta "Dudas de diseño" "$padre" 30m dudas); primera=${primera:-$t}
+  t=$(tarjeta "Plan" "$t" 60m plan)
+  tarjeta "Tareas" "$t" 60m tareas >/dev/null
   echo "$primera"
 }
 plan_y_tareas() {  # Plan → Tareas; imprime la primera
@@ -305,15 +321,9 @@ tramo_rehacer_entrega() {  # una sola FASE: se rehace (implementar con lo pedido
 tramo_tras_preguntas() {
   if [ -n "$FASE" ]; then fase_n "$FASE" " (respuestas)"
   elif [ -f "$REPO/.sdd/hermes/dudas-diseno" ] && [ ! -s "$REPO/.sdd/hermes/mantenimiento/en-curso.txt" ]; then
-    # dudas de diseño contestadas: la tarjeta «Dudas» parada queda obsoleta y sigue el plan
+    # dudas de diseño contestadas: la tarjeta «Dudas» parada y su Plan → Tareas en espera quedan obsoletos y sigue el plan
     rm -f "$REPO/.sdd/hermes/dudas-diseno"
-    local l; if l=$("${K[@]}" list --json 2>/dev/null); then
-      printf '%s' "$l" | jq -r '.[]? | select(.assignee == "sdd-estacion" and .status == "blocked")
-        | select((.body // "") | test("etapa\\.sh \\S+ dudas$")) | .id' 2>/dev/null | while read -r id; do
-        "${K[@]}" comment "$id" "Obsoleta: las dudas se contestaron en su puerta; sigue el plan." >/dev/null 2>&1 || true
-        "${K[@]}" archive "$id" >/dev/null 2>&1 || true
-      done
-    fi
+    archivar_dudas "Obsoleta: las dudas se contestaron en su puerta; sigue el plan."
     plan_y_tareas
   else mantener; fi
 }
@@ -385,6 +395,26 @@ case "$CMD" in
     mkdir -p "$REPO/.sdd/hermes"
     if [ "$(echo "$F" | wc -w | tr -d ' ')" -ge "$TOTAL" ]; then rm -f "$REPO/.sdd/hermes/entrega-parcial"
     else echo "$F" | tr ' ' '\n' > "$REPO/.sdd/hermes/entrega-parcial"; fi
+    # Lo que ya corre o espera de una FASE que no se entrega (al aceptar la anterior, el tramo lanza la siguiente) se
+    # para y se archiva: si no, choca con el cierre en el candado y gasta en algo que no se pidió (material-montana2)
+    . "$ROOT/lib/candado.sh"
+    if candado_vivo "$REPO" && [ "$CANDADO_QUIEN" = etapa ]; then
+      RUNV=$(cat "$REPO/.sdd/hermes/lock/run" 2>/dev/null)
+      if [[ "$RUNV" =~ ^(huecos|implementar|aceptar)-([0-9]+)$ ]] && ! grep -qx "${BASH_REMATCH[2]}" <(echo "$F" | tr ' ' '\n'); then
+        V=$(cat "$REPO/.sdd/hermes/lock/pid"); kill -TERM "$V" 2>/dev/null || true
+        for _ in $(seq 1 "${HERMES_SDD_ESPERA_PARADA:-30}"); do kill -0 "$V" 2>/dev/null || break; sleep 1; done
+        echo "parada la etapa en curso ($RUNV): no entra en esta entrega" >&2
+      fi
+    fi
+    if L=$("${K[@]}" list --json 2>/dev/null); then
+      printf '%s' "$L" | jq -r --arg f " $F " '.[]? | select(.assignee == "sdd-estacion" and .status != "archived" and .status != "done")
+        | select((.body // "") | test("etapa\\.sh \\S+ (huecos|implementar|aceptar) [0-9]+$"))
+        | select(((.body | capture("(?<n>[0-9]+)$").n) as $n | $f | contains(" " + $n + " ")) | not) | .id' 2>/dev/null |
+      while read -r id; do
+        "${K[@]}" comment "$id" "Archivada: se entregan las FASEs $F; esta FASE sigue en el plan para después." >/dev/null 2>&1 || true
+        "${K[@]}" archive "$id" >/dev/null 2>&1 || true
+      done
+    fi
     T=$(tarjeta "Cierre: entrega de las FASEs $F" - 120m cierre)
     echo "Entrega ${TOTAL:+de $(echo "$F" | wc -w | tr -d ' ') de $TOTAL FASEs }(FASEs $F): $T" ;;
 
@@ -416,9 +446,21 @@ case "$CMD" in
     while [ $# -gt 0 ]; do case "$1" in --de) DE=$2; shift 2 ;; *) FASE=$1; shift ;; esac; done
     # Si Hermes ya la está repitiendo (cada tarjeta tiene un reintento automático) o hay otra en cola, no se duplica:
     # dos a la vez chocan en el candado del repo (club, FASE-3: la vieja se reintentó sola y la nueva quedó «ocupada»)
-    if "${K[@]}" list --json 2>/dev/null | jq -e --arg e "etapa.sh $REPO $ETAPA${FASE:+ $FASE}" \
-        'any(.[]?; (.status == "running" or .status == "ready" or .status == "todo") and ((.body // "") | endswith($e)))' >/dev/null; then
+    # (la de --de no cuenta: es la que se sustituye, aunque siga «running» porque su ejecución aún vive)
+    if "${K[@]}" list --json 2>/dev/null | jq -e --arg e "etapa.sh $REPO $ETAPA${FASE:+ $FASE}" --arg de "$DE" \
+        'any(.[]?; .id != $de and (.status == "running" or .status == "ready" or .status == "todo") and ((.body // "") | endswith($e)))' >/dev/null; then
       echo "ya hay una tarjeta de $ETAPA${FASE:+ $FASE} en marcha o en cola: no se duplica" >&2; exit 1
+    fi
+    # --de: si la ejecución de la vieja sigue viva (su etapa.sh con el candado, esperando a la caja), se para antes; si
+    # no, la nueva choca con su candado (material-montana2: hubo que matarla a mano). Solo si es esa misma etapa.
+    if [ -n "$DE" ]; then
+      . "$ROOT/lib/candado.sh"
+      L="$REPO/.sdd/hermes/lock"
+      if candado_vivo "$REPO" && [ "$CANDADO_QUIEN" = etapa ] && [ "$(cat "$L/run" 2>/dev/null)" = "$ETAPA${FASE:+-$FASE}" ]; then
+        V=$(cat "$L/pid"); kill -TERM "$V" 2>/dev/null || true
+        for _ in $(seq 1 "${HERMES_SDD_ESPERA_PARADA:-30}"); do kill -0 "$V" 2>/dev/null || break; sleep 1; done
+        echo "parada la ejecución viva de $ETAPA${FASE:+ $FASE} (pid $V)" >&2
+      fi
     fi
     NUEVA=$(tarjeta "Reintento: $ETAPA${FASE:+ FASE-$FASE}" - 120m "$ETAPA" $FASE)
     if [ -n "$DE" ]; then

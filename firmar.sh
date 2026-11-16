@@ -610,13 +610,18 @@ $(gate_entrega --md 2>/dev/null)"
     RESUMEN="Entrega rechazada por $NOMBRE ($ROL): $TEXTO" ;;
 
   preguntas:respondo)
+    # de qué son: de una FASE, las dudas de diseño antes del plan (material-montana2: salían «del mantenimiento») o
+    # las del mantenimiento
+    if [ -n "$FASE" ]; then DE="de la FASE-$FASE"; EN="FASE-$FASE"
+    elif [ -f .sdd/hermes/dudas-diseno ]; then DE="antes del plan"; EN="design"
+    else DE="del mantenimiento"; EN=maintenance; fi
     if ! hecho registrado; then
-      diario --stage task-implementer --kind decision --text "$NOMBRE respondió las preguntas $([ -n "$FASE" ] && echo "de la FASE-$FASE" || echo "del mantenimiento")${TEXTO:+ ($TEXTO)}" \
+      diario --stage task-implementer --kind decision --text "$NOMBRE respondió las preguntas $DE${TEXTO:+ ($TEXTO)}" \
         --by "$NOMBRE ($ROL)" >/dev/null
       marcar registrado
     fi
-    if ! hecho commit; then commit_si_hay "docs(status): $([ -n "$FASE" ] && echo "FASE-$FASE" || echo maintenance) questions answered by $NOMBRE" status/; marcar commit; fi
-    RESUMEN="Preguntas $([ -n "$FASE" ] && echo "de la FASE-$FASE" || echo "del mantenimiento") respondidas por $NOMBRE ($ROL)" ;;
+    if ! hecho commit; then commit_si_hay "docs(status): $EN questions answered by $NOMBRE" status/; marcar commit; fi
+    RESUMEN="Preguntas $DE respondidas por $NOMBRE ($ROL)" ;;
 
   mantenimiento:cambio)
     # La petición del cambio sale de los hallazgos que la persona vio (están en la puerta), más su comentario

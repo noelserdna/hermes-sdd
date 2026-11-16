@@ -376,4 +376,13 @@ assert F._junit_pasa(r, "tests/e2e/criterios.spec.js") is True
 assert F._junit_pasa(r, "tests/e2e/otro.spec.js") is False
 assert F._junit_pasa(r, "tests/e2e/nadie.spec.js") is False
 PY
+# un texto que la app compone (plantilla + datos) tiene su parte fija en el código: no es «no está en el código»
+# (material-montana2, FASE-1: «Reserva creada: Casco del 2026-12-11 al 2026-12-13»)
+python3 - "$ROOT/plugin/hermes-sdd" "$T" <<'PY' && ok "texto compuesto por la app: se reconoce su parte fija en el código" || bad "plantilla"
+import sys; from pathlib import Path; sys.path.insert(0, sys.argv[1]); import hsdd_fidelidad as F
+d = Path(sys.argv[2]) / "plantilla"; d.mkdir(exist_ok=True); f = d / "reservas.js"
+f.write_text("export const aviso = (r) => `Reserva creada: ${r.material} del ${r.desde} al ${r.hasta}`;\n")
+assert F._prefijo_en_codigo("Reserva creada: Casco del 2026-12-11 al 2026-12-13", [f]) == "Reserva creada:", F._prefijo_en_codigo("Reserva creada: Casco del 2026-12-11 al 2026-12-13", [f])
+assert F._prefijo_en_codigo("Ya estás apuntada", [f]) == ""
+PY
 exit $fail

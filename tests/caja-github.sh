@@ -20,9 +20,9 @@ cat > "$T/bin/gh" <<G
 #!/usr/bin/env bash
 case "\$1 \$2" in
   "workflow view") exit 0 ;;
-  "workflow run") printf '%s\n' "\$@" > "$T/lanzado"; exit 0 ;;
-  "run list") echo 7 ;;
-  "run view") case "\$*" in *conclusion*) echo success ;; *) echo completed ;; esac ;;
+  "workflow run") printf '%s\n' "\$@" > "$T/lanzado"; echo \$(( \$(cat "$T/n" 2>/dev/null || echo 6) + 1 )) > "$T/n"; echo x >> "$T/lanzamientos"; exit 0 ;;
+  "run list") case "\$*" in *join*) cat "$T/n" 2>/dev/null ;; *) cat "$T/n" 2>/dev/null ;; esac ;;
+  "run view") case "\$*" in *conclusion*) echo success ;; *) [ -n "\${COLA:-}" ] && [ "\$3" = "\$COLA" ] && echo queued || echo completed ;; esac ;;
   "run cancel") echo cancelada >> "$T/cancelada" ;;
   "run download")
     if [ -n "\${FALLA_DESCARGA:-}" ] && [ ! -f "$T/descarga-fallo" ]; then touch "$T/descarga-fallo"; echo "HTTP 503: Egress is over the account limit" >&2; exit 1; fi
@@ -48,7 +48,8 @@ case "\$1 \$2" in
     if [ "\${ESCENARIO:-}" = fuera ]; then L+=(wiki); fi
     tar czf "\$S/ignorados.tgz" --exclude=.sdd/hermes/caja "\${L[@]}"
     if [ "\${ESCENARIO:-}" = decision ]; then tar czf "\$S/ignorados.tgz" --exclude=.sdd/hermes/caja "\${L[@]}"; fi
-    echo '{"type":"result","subtype":"success","is_error":false,"total_cost_usd":0.5,"num_turns":3,"result":"hecho"}' > "\$S/claude.json"
+    R=hecho; [ "\${ESCENARIO:-}" = bien401 ] && R="Diseño hecho: E_SESSION_EXPIRED responde 401"
+    echo '{"type":"result","subtype":"success","is_error":false,"total_cost_usd":0.5,"num_turns":3,"result":"'"\$R"'"}' > "\$S/claude.json"
     echo 0 > "\$S/rc" ;;
   "api -X") exit 0 ;;
   *) exit 0 ;;
@@ -73,6 +74,20 @@ H1=$(git rev-parse HEAD); rm -f "$T/descarga-fallo"
 out=$(FALLA_DESCARGA=1 ESCENARIO=bien bash "$ROOT/executors/github.sh" "$R" "implementar-0" "x" 2>/dev/null | tail -1)
 jq -e '.outcome == "done"' <<< "$out" >/dev/null && [ -f "$T/descarga-fallo" ] \
   && ok "una descarga fallida se reintenta y la etapa sale bien" || bad "reintento de descarga: $out"
+git checkout -q a.txt
+# un «401» en el resumen de una etapa que salió bien no es el token de la caja (material-montana2, M4)
+corre bien401
+jq -e '.outcome == "done"' <<< "$out" >/dev/null && ok "un 401 citado en un resumen correcto no se toma por token rechazado" || bad "401: $out"
+git checkout -q a.txt
+# GitHub deja el run en cola sin máquina: pasado el tope se cancela y se relanza (material-montana2, M5/M8)
+rm -f "$T/cancelada" "$T/lanzamientos"
+out=$(COLA=$(( $(cat "$T/n") + 1 )) HERMES_SDD_COLA_MIN=0 HERMES_SDD_PAUSA=0 HERMES_SDD_PAUSA_ID=0 ESCENARIO=bien bash "$ROOT/executors/github.sh" "$R" "implementar-0" "x" 2>/dev/null | tail -1)
+jq -e '.outcome == "done"' <<< "$out" >/dev/null && [ "$(wc -l < "$T/lanzamientos" | tr -d ' ')" = 2 ] && [ -s "$T/cancelada" ] \
+  && ok "un run en cola sin máquina se cancela y se relanza" || bad "cola: $out / lanzamientos $(cat "$T/lanzamientos" 2>/dev/null | wc -l)"
+git checkout -q a.txt
+rm -f "$T/lanzamientos"
+out=$(COLA=$(( $(cat "$T/n") + 1 )) HERMES_SDD_COLA_MIN=0 HERMES_SDD_RELANZAR=0 HERMES_SDD_PAUSA=0 ESCENARIO=bien bash "$ROOT/executors/github.sh" "$R" "implementar-0" "x" 2>/dev/null | tail -1)
+jq -e '.outcome == "failed" and .cola == true' <<< "$out" >/dev/null && ok "sin relanzamientos que queden, falla diciendo que GitHub no dio máquina" || bad "cola sin relanzar: $out"
 git checkout -q a.txt
 
 for esc in decision enlace fuera ajeno; do

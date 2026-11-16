@@ -76,20 +76,40 @@ git push -q origin "$C:refs/heads/$RAMA" 2> "$ERR" || salir failed "no se pudo s
 SUBIDA=true
 
 # ── 2. Lanzar y esperar ───────────────────────────────────────────────────────────────────────────────────────────
-gh workflow run sdd-etapa.yml -R "$GH" --ref "$RAMA" -f run="$RUN" -f nombre="$NOMBRE" -f arnes="$ARNES" \
-  -f modelo="$MODELO" -f paso="${SDD_PASO:-}" -f tope_usd="${SDD_TOPE_USD:-}" -f tope_min="${SDD_TOPE_MIN:-60}" 2>> "$ERR" ||
-  salir failed "GitHub no aceptó lanzar la etapa: $(tail -c 300 "$ERR" | tr '\n' ' ')"
-for _ in $(seq 1 30); do
-  ID=$(gh run list -R "$GH" --workflow sdd-etapa.yml --branch "$RAMA" --json databaseId -q '.[0].databaseId' 2>/dev/null)
-  [ -n "$ID" ] && break; sleep 4
-done
-[ -n "$ID" ] || salir failed "la etapa no aparece en GitHub Actions ($GH, rama $RAMA)"
-echo "$ID" > "$DIR/caja/run-id"
+# Lanza el workflow y devuelve en ID el run nuevo (distinto de los que ya había en la rama)
+lanzar() {
+  local antes; antes=$(gh run list -R "$GH" --workflow sdd-etapa.yml --branch "$RAMA" --json databaseId -q '[.[].databaseId]|join(" ")' 2>/dev/null)
+  gh workflow run sdd-etapa.yml -R "$GH" --ref "$RAMA" -f run="$RUN" -f nombre="$NOMBRE" -f arnes="$ARNES" \
+    -f modelo="$MODELO" -f paso="${SDD_PASO:-}" -f tope_usd="${SDD_TOPE_USD:-}" -f tope_min="${SDD_TOPE_MIN:-60}" 2>> "$ERR" ||
+    salir failed "GitHub no aceptó lanzar la etapa: $(tail -c 300 "$ERR" | tr '\n' ' ')"
+  ID=""
+  for _ in $(seq 1 30); do
+    ID=$(gh run list -R "$GH" --workflow sdd-etapa.yml --branch "$RAMA" --json databaseId -q '.[0].databaseId' 2>/dev/null)
+    [ -n "$ID" ] && ! grep -qw -- "$ID" <<< "$antes" && break; ID=""; sleep "${HERMES_SDD_PAUSA_ID:-4}"
+  done
+  [ -n "$ID" ] || salir failed "la etapa no aparece en GitHub Actions ($GH, rama $RAMA)"
+  echo "$ID" > "$DIR/caja/run-id"
+}
+lanzar
+# Tope de cola: GitHub puede dejar un run «queued» sin máquina mucho rato (material-montana2: 37 y 73 min; el tope
+# de la tarjeta contaba esa espera y la etapa se cortó tras 16 min de trabajo). Pasado el tope se cancela y se
+# vuelve a lanzar (hasta HERMES_SDD_RELANZAR veces); el tiempo de la etapa cuenta desde que tiene máquina.
+COLA_MAX=$(( ${HERMES_SDD_COLA_MIN:-10} * 60 )); RELANZAR=${HERMES_SDD_RELANZAR:-2}; EN_COLA=$(date +%s)
 while :; do
   ST=$(gh run view "$ID" -R "$GH" --json status -q .status 2>/dev/null || echo desconocido)
   [ "$ST" = completed ] && break
   if [ "$(ps -o ppid= -p $$ | tr -d ' ')" = 1 ]; then echo "padre desaparecido: se cancela la caja" >> "$ERR"; exit 1; fi
-  sleep 10 & wait $!
+  case "$ST" in
+    queued|waiting|pending|requested)
+      if [ $(( $(date +%s) - EN_COLA )) -ge "$COLA_MAX" ]; then
+        gh run cancel "$ID" -R "$GH" >/dev/null 2>&1 || echo "no se pudo cancelar el run $ID en cola" >> "$ERR"
+        [ "$RELANZAR" -gt 0 ] || salir failed "GitHub no dio máquina a la caja en ${HERMES_SDD_COLA_MIN:-10} min (varias veces): reintenta más tarde" '{"cola":true}'
+        echo "run $ID ${HERMES_SDD_COLA_MIN:-10} min en cola sin máquina: se relanza" >> "$ERR"
+        RELANZAR=$((RELANZAR - 1)); lanzar; EN_COLA=$(date +%s); INICIO=$EN_COLA
+      fi ;;
+    *) EN_COLA=$(date +%s) ;;
+  esac
+  sleep "${HERMES_SDD_PAUSA:-10}" & wait $!
 done
 MIN=$(( ($(date +%s) - INICIO) / 60 ))
 CONCL=$(gh run view "$ID" -R "$GH" --json conclusion -q .conclusion 2>/dev/null)
@@ -146,7 +166,10 @@ fi
 TEXTO=$(jq -r '.result // ""' "$OUT")
 # Token de la caja inválido o caducado: no se arregla reintentando (en local se aparca hasta /login; aquí lo arregla
 # quien pone el secreto)
-if echo "$TEXTO" | grep -qiE 'failed to authenticate|oauth (access )?token (is )?(invalid|expired)|invalid api key|401'; then
+# Solo cuando la ejecución falló: un resumen correcto puede citar un «401» de la propia app (material-montana2:
+# «E_SESSION_EXPIRED responde 401» hizo fallar dos veces un diseño técnico bien hecho)
+if { [ "$(jq -r .is_error "$OUT")" = true ] || [ "$(cat "$S/rc" 2>/dev/null || echo 0)" != 0 ]; } &&
+   echo "$TEXTO" | grep -qiE 'failed to authenticate|oauth (access )?token (is )?(invalid|expired)|invalid api key|(api error|status|http)[: ]+401'; then
   salir failed "Claude no acepta el token de la caja: vuelve a ponerlo con «claude setup-token» y «gh secret set CLAUDE_CODE_OAUTH_TOKEN -R ${GH}»" "$EXTRA"
 fi
 if [ "$(jq -r .is_error "$OUT")" = true ] || [ "$(cat "$S/rc" 2>/dev/null || echo 0)" != 0 ]; then

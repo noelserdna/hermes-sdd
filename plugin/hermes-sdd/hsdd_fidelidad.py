@@ -642,6 +642,17 @@ def _junit_pasa(repo: Path, fichero: str) -> bool:
     return casos > 0 and malos == 0
 
 
+def _prefijo_en_codigo(lit: str, fuentes: list) -> str:
+    """La parte fija más larga (palabras desde el principio, ≥ 2 palabras y ≥ 8 letras) de un texto visible que está tal
+    cual en el código: la app compone el resto con los datos. Vacío si no hay ninguna."""
+    palabras = lit.split()
+    for k in range(len(palabras) - 1, 1, -1):
+        pre = " ".join(palabras[:k])
+        if len(pre) >= 8 and any(pre in l for p in fuentes for l in _codigo(p)):
+            return pre
+    return ""
+
+
 def mutantes(repo: Path, copia: Path, acc: dict, solo_must: bool = True, stats: dict | None = None) -> list[dict]:
     """Para cada texto que un criterio dice que se ve: se cambia en el código de la app (src/) de la copia y se
     ejecutan los tests que el método enlaza a ese criterio. Si todos siguen pasando, el criterio está «verificado»
@@ -672,7 +683,15 @@ def mutantes(repo: Path, copia: Path, acc: dict, solo_must: bool = True, stats: 
                                  and norm(lit) in norm(x.read_text(encoding="utf-8", errors="replace")))
                 base = {"req": r["id"], "ac": c.get("n"), "texto": lit, "e2e": e2e, "unitarios": uni}
                 if not con:
-                    out.append({**base, "resultado": "no está en el código", "grave": False})
+                    # La app lo compone (plantilla con el dato: «Reserva creada: » + material + fechas) y un e2e
+                    # comprueba el texto entero: no es un aviso (material-montana2, FASE-1: 3 avisos así)
+                    fijo = _prefijo_en_codigo(lit, fuentes)
+                    comprobado = bool(sueltos) or any(norm(lit) in norm((copia / e).read_text(encoding="utf-8", errors="replace"))
+                                                      for e in e2e if (copia / e).is_file())
+                    if fijo and comprobado:
+                        out.append({**base, "resultado": "lo compone el código y lo comprueba un e2e", "grave": False, "plantilla": fijo})
+                    else:
+                        out.append({**base, "resultado": "no está en el código", "grave": False})
                     continue
                 clave = (lit, tuple(e2e), tuple(uni), tuple(sueltos))
                 # Línea base: si los tests del criterio ya fallan sin mutar nada, cualquier mutante «muere» y no dice nada

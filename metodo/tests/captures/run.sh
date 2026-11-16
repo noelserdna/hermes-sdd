@@ -200,6 +200,11 @@ expect "sidecar: taken by «REQ-F-001 AC2 saludo de lucia», which cites AC2 and
 printf '{"criterio":"REQ-F-001-AC2","test":"WF-001 REQ-F-001 AC6 recorrido","ve":["Hola, lucia"]}' > "$repo/evidencias/FASE-1/REQ-F-001-AC2.json"
 run accept --json --no-out
 expect "sidecar: taken by the journey that does not cite AC2 → not counted" "$(js "($C)(2).visual + '|' + ($C)(2).unbound_captures[0].reason.slice(0,24)")" "missing|taken by the test \"WF-00"
+# the sidecar names a test that is not in any report (it did not run: material-montana2, a partial delivery with the
+# junit of the last FASE only): the reason says so instead of blaming the title
+printf '{"criterio":"REQ-F-001-AC2","test":"REQ-F-001 AC2 una prueba de otra FASE","ve":["Hola, lucia"]}' > "$repo/evidencias/FASE-1/REQ-F-001-AC2.json"
+run accept --json --no-out
+expect "sidecar: taken by a test that is not in the reports → says it did not run" "$(js "($C)(2).unbound_captures[0].reason.split(', ')[1]")" "which is not in the test reports (it did not run)"
 rm -f "$repo/evidencias/FASE-1/REQ-F-001-AC2.json"
 # A capture named after a criterion that nobody attached (minitest) keeps counting by its name
 printf 'png-ac4' > "$repo/evidencias/FASE-1/REQ-F-001-AC1-extra.png"

@@ -893,7 +893,11 @@ export function evaluate(opts) {
             if (sc?.test) {
               e.binding = "sidecar"; e.test = sc.test;
               if (!passing.some((t) => sameTest(t.name, sc)))
+                // three causes, three fixes: it fails, it ran under a title that does not cite the criterion, or it is
+                // not in the reports at all (it did not run: material-montana2, a partial delivery read the junit of
+                // the last FASE only and blamed 15 captures on titles)
                 e.unbound = c.tests.some((t) => sameTest(t.name, sc)) ? `taken by the test "${clip(sc.test)}", which does not pass`
+                  : !(junit?.cases || []).some((jc) => sameTest(jc.name, sc)) ? `taken by the test "${clip(sc.test)}", which is not in the test reports (it did not run)`
                   : `taken by the test "${clip(sc.test)}", whose title does not cite ${req.id} AC${c.n}`;
             } else {
               const same = ((a.sha256 && attachedBySha.get(a.sha256)) || []).filter((x) => ids.some((id) => nameHasId(x.path, id)));

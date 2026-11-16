@@ -425,10 +425,15 @@ out=$(bash "$ROOT/puerta.sh" recuperar g16 2>&1); rc=$?
   && jq -e '.estado == "abierta" and (has("decision") | not)' "$HERMES_SDD_HOME/puertas/g16.json" >/dev/null \
   && ok "recuperar sin validar: restaura acceptance/ y reabre la puerta para decidir otra vez" || bad "recuperar sin validar: $out $(git status --short)"
 out=$(bash "$ROOT/puerta.sh" recuperar g16 2>&1) && bad "recupera una puerta abierta" || ok "solo se recupera una puerta en error"
+# las respuestas a las dudas de diseño (antes del plan) se llaman así, no «del mantenimiento» (material-montana2)
+touch .sdd/hermes/dudas-diseno; puerta gdd preguntas; decidir gdd respondo telegram 111; firmar gdd; rm -f .sdd/hermes/dudas-diseno
+[ $rc -eq 0 ] && echo "$out" | tail -1 | grep -q "^Preguntas antes del plan respondidas" && ok "dudas de diseño: «Preguntas antes del plan respondidas»" || bad "dudas: $out"
 # 17. transiciones: decidir.sh pasa por el núcleo (una puerta firmada no se vuelve a decidir; el verbo tiene que existir)
 mkdir -p "$HERMES_SDD_HOME"; jq '.andres.canales.local = env.USER' "$HERMES_SDD_HOME/aprobadores.json" > "$T/ap" && cp "$T/ap" "$HERMES_SDD_HOME/aprobadores.json"
 out=$(bash "$ROOT/decidir.sh" g14 conforme 2>&1) && bad "decide una puerta ya firmada" || { echo "$out" | grep -q "ya está resuelta" && ok "decidir.sh: una puerta firmada no se vuelve a decidir" || bad "firmada: $out"; }
 out=$(bash "$ROOT/decidir.sh" g16 inventado 2>&1) && bad "verbo inventado" || { echo "$out" | grep -q "Opción no válida" && ok "decidir.sh: un verbo que la puerta no ofrece, no" || bad "verbo: $out"; }
+out=$(bash "$ROOT/decidir.sh" g16 ver 2>&1) && echo "$out" | grep -q "^Demo: " && jq -e '.ver_at and .estado == "abierta"' "$HERMES_SDD_HOME/puertas/g16.json" >/dev/null \
+  && ok "decidir.sh ver: dice dónde está la demo y deja constancia, sin decidir (material-montana2)" || bad "ver: $out"
 out=$(HERMES_SDD_HOME="$HERMES_SDD_HOME" python3 "$ROOT/plugin/hermes-sdd/hsdd_nucleo.py" transicion g14 abierta 2>&1) && bad "firmada → abierta" \
   || { echo "$out" | grep -q "no puede pasar a «abierta»" && ok "tabla de transiciones: firmada no vuelve a abierta" || bad "transición: $out"; }
 [ "$(jq 'has("estado")' .sdd/hermes/puertas/g14.json)" = false ] || bad "la copia del repo lleva estado"

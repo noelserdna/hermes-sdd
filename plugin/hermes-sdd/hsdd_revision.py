@@ -185,6 +185,9 @@ def _captura_txt(x: dict) -> str:
     not counted…»)."""
     f = x.get("fichero") or ""
     corto = (f.rsplit("/", 1)[-1] if f else "") + (f":{x['linea']}" if x.get("linea") else "")
+    if x.get("codigo") == "C-03" and x.get("req") and "not in the test reports" in (x.get("mensaje") or ""):
+        return (f"la captura {corto} no cuenta para {x['req']} AC{x.get('ac')}: el test que la tomó no está en los "
+                "resultados de la última pasada de tests (no se ejecutó): hay que volver a pasarlos todos")
     if x.get("codigo") == "C-03" and x.get("req"):
         return (f"la captura {corto} no cuenta para {x['req']} AC{x.get('ac')}: la tomó un test que no cita ese criterio"
                 + ("" if x.get("grave") else " (el criterio ya se ve en su propia captura)"))

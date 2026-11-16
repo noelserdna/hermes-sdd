@@ -25,6 +25,13 @@ NUCLEO=(env HERMES_SDD_HOME="$HOME_SDD" python3 "$ROOT/plugin/hermes-sdd/hsdd_nu
 IDX="$HOME_SDD/puertas/$GATE.json"
 [ -f "$IDX" ] || { echo "No conozco la puerta $GATE" >&2; exit 2; }
 REPO=$(jq -r .repo "$IDX")
+if [ "$VERBO" = ver ]; then   # ▶ Ver demo, como en Telegram: dice dónde está y deja constancia de que se vio
+  F=$(jq -r '.fase // empty' "$IDX"); D="$REPO/evidencias/FASE-${F:-0}"
+  env HERMES_SDD_HOME="$HOME_SDD" python3 -c 'import sys, time; sys.path.insert(0, sys.argv[1]); import hsdd_nucleo as N; N.marcar(sys.argv[2], ver_at=time.time())' \
+    "$ROOT/plugin/hermes-sdd" "$GATE" >/dev/null || exit 2
+  echo "Demo: $D ($(ls "$D"/*.png 2>/dev/null | wc -l | tr -d ' ') capturas; vídeo: $(ls "$D"/*.mp4 "$D"/*.webm 2>/dev/null | head -1 || echo ninguno))"
+  exit 0
+fi
 if [ "$VERBO" = deshacer ] && [ -z "$EN" ]; then   # por la tabla de transiciones: decidida → abierta
   "${NUCLEO[@]}" deshacer "$GATE" local "$USER" || exit 2
   echo "Deshecha: la puerta $GATE vuelve a estar abierta"; exit 0

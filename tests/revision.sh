@@ -112,6 +112,14 @@ t = V._captura_txt(x); print(t.count("evidencias/"), "no cuenta para REQ-F-003 A
 PY
 )
 [ "$o" = "0 True True" ] && ok "captura sobrante: aviso en castellano, sin ruta repetida y leve si el criterio ya se ve" || bad "captura txt: $o"
+o=$(python3 - "$ROOT/plugin/hermes-sdd" <<'PY'
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_revision as V
+x = {"codigo": "C-03", "fichero": "evidencias/FASE-0/AC-001-01.png", "req": "REQ-F-001", "ac": 1, "grave": True,
+     "mensaje": 'not counted for REQ-F-001 AC1: taken by the test "AC-001-01 FASE-0 …", which is not in the test reports (it did not run)'}
+t = V._captura_txt(x); print("no se ejecutó" in t, "no cita" in t)
+PY
+)
+[ "$o" = "True False" ] && ok "captura de un test que no se ejecutó: lo dice, en vez de culpar al título" || bad "captura no ejecutada: $o"
 # puerta.sh: si la revisión del encargado falla, la puerta sale con un aviso grave (Jev no decide a ciegas)
 grep -q 'FALLO_REV=.*"graves":1' "$ROOT/puerta.sh" && grep -q 'PREG_ERROR=true' "$ROOT/puerta.sh" && ok "puerta.sh: revisión o preguntas caídas cierran a Jev" || bad "puerta.sh sin cierre ante fallo"
 # «hecho» = desplegable: en la entrega, no desplegable es grave (Jev escala); sin comprobar, leve

@@ -85,13 +85,13 @@ chmod +x "$T/bin/hermes"; export PATH="$T/bin:$PATH"
 echo '{"tipo":"ruta"}' > .sdd/hermes/puertas/r9.json
 bash "$ROOT/lanzar.sh" siguiente "$R" r9 ruta-mia >/dev/null
 o=$(tr '\n' ';' < "$T/cartas")
-[ "$o" = "Auditoría de especificaciones<-;Diseño visual y de uso<t1;Dudas de diseño<t2;" ] && ok "lanzar: auditoría → diseño visual → dudas de diseño, encadenadas" || bad "cadena: $o"
+[ "$o" = "Auditoría de especificaciones<-;Diseño visual y de uso<t1;Dudas de diseño<t2;Plan<t3;Tareas<t4;" ] && ok "lanzar: auditoría → diseño visual → dudas de diseño → plan → tareas, encadenadas por lanzar.sh" || bad "cadena: $o"
 # material-montana (C6, C11): las dudas de diseño se deciden juntas antes del plan. Sin ninguna abierta, sigue el plan;
 # con alguna, una sola puerta «Dudas antes del plan» y, al responder, Plan → Tareas
 rm -f "$T/cartas"; mkdir -p .sdd; mv .sdd/questions-spec-auditor.json "$T/qsa.json" 2>/dev/null; rm -f .sdd/questions-spec-auditor.md
 o=$(bash "$ROOT/etapa.sh" "$R" dudas | tail -1)
-echo "$o" | jq -e '.outcome == "done"' >/dev/null && [ "$(tr '\n' ';' < "$T/cartas")" = "Plan<-;Tareas<t4;" ] \
-  && ok "dudas sin preguntas abiertas: encadena Plan → Tareas" || bad "dudas sin abiertas: $o $(tr '\n' ';' < "$T/cartas" 2>/dev/null)"
+echo "$o" | jq -e '.outcome == "done"' >/dev/null && [ ! -s "$T/cartas" ] \
+  && ok "dudas sin preguntas abiertas: acaba bien y sigue el Plan que ya cuelga de ella (no toca el kanban: dentro de Hermes no puede)" || bad "dudas sin abiertas: $o $(tr '\n' ';' < "$T/cartas" 2>/dev/null)"
 node "$ROOT/metodo/scripts/sdd.mjs" questions add --role spec-auditor >/dev/null 2>&1 <<'J'
 {"skill": "sdd-spec-auditor", "tema": "reservas-solapadas", "pregunta": "Overlapping bookings?", "para_cliente": "¿Se pueden solapar dos reservas del mismo material?",
  "opciones": [{"letra": "A", "texto": "No", "recomendada": true, "efecto": "ninguno", "cliente": "No: la segunda se rechaza"},
