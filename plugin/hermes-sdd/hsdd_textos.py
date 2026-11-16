@@ -899,7 +899,20 @@ def _que_pulsar(rc: int, rev: dict | None, aceptar: str, obs: str, rechazar: str
 
 def puerta_entrega(repo: Path, proyecto: str, gate_md: str, rc: int, fases_aceptadas: list[str], unica: bool = False,
                    video: bool = False, capturas: int = 0, tests_editados: int = 0, rev: dict | None = None,
-                   imp: list | None = None) -> dict:
+                   imp: list | None = None, parcial: list[str] | None = None) -> dict:
+    r = _puerta_entrega(repo, proyecto, gate_md, rc, fases_aceptadas, unica, video, capturas, tests_editados, rev, imp)
+    if parcial:   # entrega parcial (lanzar.sh entregar): qué entra y qué queda
+        total = len(list((repo / "plan" / "fases").glob("FASE-*.md")))
+        r["titulo"] = f"Entrega parcial: {proyecto}"
+        r["texto"] = (f"📦 Entrega parcial: las fases {', '.join(parcial)} (ya aceptadas una a una)"
+                      + (f" de {total}" if total else "") + ". Lo que falta del plan no se entrega ahora ni cuenta "
+                      "como fallo: sigue pendiente y se retoma después.\n\n" + r["texto"])
+    return r
+
+
+def _puerta_entrega(repo: Path, proyecto: str, gate_md: str, rc: int, fases_aceptadas: list[str], unica: bool = False,
+                    video: bool = False, capturas: int = 0, tests_editados: int = 0, rev: dict | None = None,
+                    imp: list | None = None) -> dict:
     filas = _filas_gate(gate_md)
     ok = sum(1 for f in filas if f["veredicto"] == "VERIFIED")
     if rc == 0:
@@ -1680,7 +1693,7 @@ if __name__ == "__main__":
     ap.add_argument("--capturas", type=int, default=0); ap.add_argument("--version", default="")
     ap.add_argument("--cambio", default=""); ap.add_argument("--anadidos", default=""); ap.add_argument("--quitados", default="")
     ap.add_argument("--partida", default="", help="requisitos de partida (fichero), si la persona los trajo casi listos")
-    ap.add_argument("--diseno", type=int, default=0); ap.add_argument("--adopcion", type=int, default=0); ap.add_argument("--fases-aceptadas", default="")
+    ap.add_argument("--diseno", type=int, default=0); ap.add_argument("--parcial", default=""); ap.add_argument("--adopcion", type=int, default=0); ap.add_argument("--fases-aceptadas", default="")
     ap.add_argument("--hallazgos", default=""); ap.add_argument("--opciones-ruta", default="")
     ap.add_argument("--unica", type=int, default=0); ap.add_argument("--revisar", default="")
     ap.add_argument("--impugnaciones", default="", help="fichero JSON con las impugnaciones abiertas (gate 4)")
@@ -1706,7 +1719,7 @@ if __name__ == "__main__":
         r = puerta_fase(repo, proyecto, a.fase, md, a.rc, a.tests_editados, bool(a.video), a.capturas, rev, imp)
     elif a.tipo == "entrega":
         r = puerta_entrega(repo, proyecto, md, a.rc, a.fases_aceptadas.split(), bool(a.unica), bool(a.video), a.capturas,
-                           a.tests_editados, rev, imp)
+                           a.tests_editados, rev, imp, a.parcial.split() or None)
     elif a.tipo == "preguntas":
         r = puerta_preguntas(proyecto, a.fase, bool(a.diseno))
     elif a.tipo == "mantenimiento":

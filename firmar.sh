@@ -16,6 +16,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 SDD="$ROOT/metodo/scripts/sdd.mjs"
+. "$ROOT/lib/comun.sh"   # parcial, gate_entrega (entrega parcial)
 # La tabla de transiciones (lib/transiciones.json): qué verbos valen en cada tipo de puerta, cuáles exigen que la
 # puerta los ofreciera, un texto o una persona, y a qué resultado lleva cada uno (el que recibe lanzar.sh siguiente)
 . "$ROOT/lib/transiciones.sh"
@@ -225,7 +226,7 @@ if ! hecho validado; then
     # Si con las exenciones la puerta sigue sin cumplirse (p. ej. falta el vídeo de la demo, que no se exime), no queda
     # nada registrado: se deshace y solo cabe rechazar
     rc=0; G=$(mktemp)
-    if [ "$TIPO" = fase ]; then node "$SDD" gate --fase "$FASE" > "$G" 2>&1 || rc=$?; else node "$SDD" gate > "$G" 2>&1 || rc=$?; fi
+    if [ "$TIPO" = fase ]; then node "$SDD" gate --fase "$FASE" > "$G" 2>&1 || rc=$?; else gate_entrega > "$G" 2>&1 || rc=$?; fi
     if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then
       QUEDA=$(grep -E '^missing video|^FAILING|exit [0-9]' "$G" | grep -v WAIVED | head -2 | paste -sd';' -); rm -f "$G"
       fallo "aun eximiendo los imprescindibles, la puerta de calidad sigue sin cumplirse ($QUEDA): solo se admite rechazo"
@@ -236,7 +237,7 @@ if ! hecho validado; then
   if { [ "$TIPO" = fase ] || [ "$TIPO" = entrega ]; } && [ "$VERBO" != rechazo ] && [ "$VERBO" != descarto ] && [ "$VERBO" != corrijo ]; then
     rc=0
     if [ "$TIPO" = fase ]; then node "$SDD" gate --fase "$FASE" >/dev/null 2>&1 || rc=$?
-    else node "$SDD" gate >/dev/null 2>&1 || rc=$?; fi
+    else gate_entrega >/dev/null 2>&1 || rc=$?; fi
     [ "$rc" = 0 ] || [ "$rc" = 3 ] || fallo "la puerta de calidad sale con $rc: solo se admite rechazo"
   fi
   t=$(mktemp); jq --arg r "$ROL" --arg n "$NOMBRE" --arg h "$(git rev-parse HEAD)" --arg g "${rc:-}" \
@@ -552,12 +553,17 @@ Channel: $CHANNEL
 Commit: $HEAD0
 Acceptance: global gate exit $(jq -r '.gate_exit // "?"' "$ACTA")${TEXTO:+; notes: $TEXTO}
 Kanban-Task: $BOARD/$TASK
+$(parcial && echo "Scope: partial delivery, FASEs $(tr '\n' ' ' < .sdd/hermes/entrega-parcial)")
 
-$(node "$SDD" gate --md 2>/dev/null)"
+$(gate_entrega --md 2>/dev/null)"
       marcar tag
     fi
     if ! hecho fusion; then fusionar "delivery $N accepted"; marcar fusion; fi
     TAG="entrega-$N"; RESUMEN="Entrega $N aceptada por $NOMBRE ($ROL) — tag $TAG$FUSION"
+    if parcial; then   # lo que queda del plan sigue ahí: se retoma con /reanudar o rehaciendo la FASE siguiente
+      RESUMEN="Entrega parcial $N (FASEs $(tr '\n' ' ' < .sdd/hermes/entrega-parcial | sed 's/ $//')) aceptada por $NOMBRE ($ROL) — tag $TAG$FUSION"
+      rm -f .sdd/hermes/entrega-parcial
+    fi
     [ "$UNICA" = true ] && RESUMEN="Entrega $N (y su única fase) aceptada por $NOMBRE ($ROL) — tag entrega-$N$FUSION" ;;
 
   fase:corrijo|entrega:corrijo)

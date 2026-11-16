@@ -10,7 +10,7 @@
 # global que leen los canales). Imprime el id de la puerta.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
-. "$ROOT/lib/comun.sh"   # slug
+. "$ROOT/lib/comun.sh"   # slug, gate_entrega
 SDD="$ROOT/metodo/scripts/sdd.mjs"
 HOME_SDD="${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}"
 
@@ -154,8 +154,9 @@ case "$TIPO" in
         OPCIONES=$(jq -nc --argjson x "$X" --argjson c "$C" --argjson d "$D" '[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1}] + (if $c then [$c + {paso:2}] else [] end) + (if $d then [$d + {paso:2}] else [] end) + (if $x then [$x + {paso:2}] else [] end) + [{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'); fi
     elif hay_rev; then OPCIONES=$(echo "$OPCIONES" | jq -c --argjson r "$REVISADO" '.[0:1] + [$r + {paso:2}] + .[1:]'); fi ;;
   entrega)
-    node "$SDD" gate --md > "$GATE_MD" 2>/dev/null || rc=$?
+    gate_entrega --md > "$GATE_MD" 2>/dev/null || rc=$?
     EXTRA+=(--gate-md "$GATE_MD" --rc "$rc" --fases-aceptadas "$(git tag -l 'fase-*-accepted' | tr '\n' ' ')")
+    parcial && EXTRA+=(--parcial "$(cat .sdd/hermes/entrega-parcial | tr '\n' ' ')")
     OPCIONES='[{"verbo":"acepto","etiqueta":"✅ Acepto la entrega"},{"verbo":"observaciones","etiqueta":"📝 Con observaciones","texto":true},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true}]'
     # Plan de una sola FASE sin aceptar (y no «fina»): no hubo puerta de FASE, así que esta trae su demo (▶ Ver demo primero)
     if [ -f .sdd/hermes/granularidad-plan ] && [ "$(cat .sdd/hermes/granularidad-plan)" != fina ] && [ "$(ls plan/fases/FASE-*.md 2>/dev/null | wc -l | tr -d ' ')" = 1 ] \

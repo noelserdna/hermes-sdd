@@ -225,10 +225,15 @@ La pestaña **SDD** tiene cuatro secciones:
 |---|---|---|
 | Requisitos, ruta, plan | un resumen | `✅` · `✏️ cambios` (con motivo) · `❌` |
 | FASE | 1º alertas, veredicto por requisito y `▶ Ver demo` (capturas y vídeo) | 2º `✅ Aceptar` · `📝 Con observaciones` · `❌ Rechazar` |
+| Dudas antes del plan | todas las dudas del diseño juntas (una sola vez, antes de planificar), con la recomendada marcada | elegir una respuesta por pregunta; lo que pida cambiar requisitos llega antes como puerta de requisitos |
 | Preguntas abiertas | un formulario `Q1·A Q1·B …` con la opción recomendada marcada | elegir una respuesta por pregunta |
-| Entrega | la comprobación global de todos los requisitos | aceptar → tag `entrega-N` |
+| Entrega | la comprobación global de todos los requisitos (en una entrega parcial, la de cada fase entregada) | aceptar → tag `entrega-N` |
 
 En las puertas de FASE se registra cuánto tiempo pasó entre ver la demo y decidir.
+
+Cuando la revisión independiente duda del propio criterio (no del código), la puerta lo enseña con su porqué en
+llano («❓ …») y ofrece `✏️ Corregir el requisito` o `🗑 Descartar la duda`, además de eximir o rechazar. Lo que ya
+decidiste en una puerta llega a todas las etapas siguientes: no se vuelve a preguntar.
 
 Lo que ningún test puede comprobar (requisitos que se verifican por inspección o por demo) aparece en las puertas de
 FASE y de entrega bajo «🔍 Esto no lo puede comprobar un test, lo compruebas tú», con el botón `🔍 Lo he revisado y
@@ -245,6 +250,7 @@ ofrece en vez de dejar solo `❌ Rechazar`. Jev nunca puede pulsarlo.
 | `/mantenimiento [proyecto]` | lanzar ahora la revisión de mantenimiento |
 | `/pausar [proyecto\|todo] [ahora]` · `/reanudar [proyecto\|todo]` | parar y seguir |
 | `/anular <proyecto> <fase> <motivo>` | anular una aceptación ya firmada (queda registrado, no se borra nada) |
+| `/entregar <proyecto>` | entregar ya las fases aceptadas aunque el plan no esté terminado (entrega parcial; el resto sigue pendiente) |
 | `/nuevo <nombre> [stack] <qué quieres>` | crear y lanzar un proyecto nuevo (carpeta y stack por defecto si no los dices) |
 | `/jev [proyecto] [modo]` | ver o cambiar el modo de Jev (`humano`, `consejo`, `piloto`, `auto`) |
 

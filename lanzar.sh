@@ -377,6 +377,17 @@ case "$CMD" in
     RAIZ="$T" bash "$0" siguiente "$REPO" "$GATE" "$RESULTADO" >/dev/null
     echo "$T" ;;
 
+  entregar)     # entrega parcial: lo aceptado hasta ahora (tags fase-N-accepted) se entrega ya; el resto del plan sigue
+                # pendiente y se retoma con el encadenado normal (material-montana: no había forma de cortar y entregar)
+    F=$(git -C "$REPO" tag -l 'fase-*-accepted' | sed -E 's/fase-([0-9]+)-accepted/\1/' | sort -n | tr '\n' ' ' | sed 's/ $//')
+    [ -n "$F" ] || { echo "No hay ninguna FASE aceptada: no hay nada que entregar" >&2; exit 2; }
+    TOTAL=$(ls "$REPO"/plan/fases/FASE-*.md 2>/dev/null | wc -l | tr -d ' ')
+    mkdir -p "$REPO/.sdd/hermes"
+    if [ "$(echo "$F" | wc -w | tr -d ' ')" -ge "$TOTAL" ]; then rm -f "$REPO/.sdd/hermes/entrega-parcial"
+    else echo "$F" | tr ' ' '\n' > "$REPO/.sdd/hermes/entrega-parcial"; fi
+    T=$(tarjeta "Cierre: entrega de las FASEs $F" - 120m cierre)
+    echo "Entrega ${TOTAL:+de $(echo "$F" | wc -w | tr -d ' ') de $TOTAL FASEs }(FASEs $F): $T" ;;
+
   plan)         # Plan → Tareas (lo encadena la etapa «dudas» cuando no queda ninguna abierta)
     plan_y_tareas ;;
 

@@ -32,7 +32,7 @@ RONDAS='[]'               # rondas adversariales de la etapa (aceptar): completa
 MODELO_PASO=""            # un sub-paso con otro modelo que el de la etapa (veredictos de aceptar: el barato del perfil)
 AL_TERMINAR=()            # «origen|destino»: lo consumido se marca solo si la etapa termina bien (un reintento lo vuelve a ver)
 . "$ROOT/lib/candado.sh"; CON_CANDADO=false
-. "$ROOT/lib/comun.sh"   # slug, unica
+. "$ROOT/lib/comun.sh"   # slug, unica, parcial, gate_entrega
 # Ejecutor por etapa: .ejecutores[<etapa>] o, si no, .ejecutor (claude | hermes | replay); el modelo, en .modelos[<etapa>]
 # o, si el proyecto no lo fija, el del perfil de modelos global (sdd.json; por defecto «equilibrado»)
 ejecutor() { jq -r --arg e "$1" '.ejecutores[$e] // .ejecutor // "claude"' .sdd/hermes/hermes-sdd.json 2>/dev/null || echo claude; }
@@ -670,8 +670,9 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
       # si los tests y las capturas prueban los criterios (taller, 14/11/2026: 0 impugnaciones porque no hubo ronda)
       FASE=0; revision_independiente
     fi
-    rc=0; node "$SDD" gate >/dev/null 2>&1 || rc=$?
-    if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then
+    rc=0; gate_entrega >/dev/null 2>&1 || rc=$?
+    # Entrega parcial: cada FASE entregada ya pasó su puerta; aquí no se cierran huecos de lo que aún no se hizo
+    if [ "$rc" != 0 ] && [ "$rc" != 3 ] && ! parcial; then
       HUECOS=$(node "$SDD" gate 2>/dev/null | grep -E 'MISSING|FAILING|STALE' | awk '{print $1" "$2}' | tr '\n' ';')
       ULT=$(ls plan/fases/FASE-*.md | sed -E 's/.*FASE-([0-9]+).*/\1/' | sort -n | tail -1)
       claude_etapa task-implementer "/sdd-task-implementer --fase=$ULT — $ARNES The GLOBAL acceptance gate is not met. Requirements without evidence: $HUECOS. For each one, first append a task to task/TASK-FASE-$ULT.md (next TASK-F$ULT id, same grammar, Refs the requirement), then implement it test-first (the test name carries the requirement id and criterion, e.g. 'REQ-C-001 AC1'), one commit per task with Task:/Refs: trailers. Do not touch tests that already exist.$TESTS_G"
@@ -679,10 +680,11 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
     fi
     desplegable   # «hecho» = arranca como en producción (un arreglo si no; lo que quede lo ve la puerta como grave)
     # Fidelidad global antes de entregar: tests congelados, capturas, mutantes de todos los Must y coherencia
-    python3 "$ROOT/plugin/hermes-sdd/hsdd_fidelidad.py" aceptacion "$REPO" >/dev/null 2>&1 || jq -n '{graves: 1, error: "hsdd_fidelidad falló: no hay comprobación de fidelidad"}' > .sdd/hermes/fidelidad-global.json
+    # (en una entrega parcial, sin mutantes: los de lo que aún no se hizo saldrían todos «sin comprobar»)
+    python3 "$ROOT/plugin/hermes-sdd/hsdd_fidelidad.py" aceptacion "$REPO" $(parcial && echo --sin-mutantes) >/dev/null 2>&1 || jq -n '{graves: 1, error: "hsdd_fidelidad falló: no hay comprobación de fidelidad"}' > .sdd/hermes/fidelidad-global.json
     P=$(puerta entrega) || falla "no se pudo abrir la puerta de entrega"
     [ -n "${RES:-}" ] || RES='{"outcome":"done","reason":"ok"}'
-    fin "$RES" "Cierre: puerta de calidad global calculada" "$P" ;;
+    fin "$RES" "Cierre: puerta de calidad $(parcial && echo "de la entrega parcial (FASEs $(tr '\n' ' ' < .sdd/hermes/entrega-parcial | sed 's/ $//'))" || echo global) calculada" "$P" ;;
 
   *) falla "etapa desconocida: $ETAPA" ;;
 esac

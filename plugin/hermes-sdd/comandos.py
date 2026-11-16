@@ -172,6 +172,23 @@ async def _cmd_cambio(raw_args: str = "") -> str:
         return f"No se lanzó el cambio: {e}"
 
 
+async def _cmd_entregar(raw_args: str = "") -> str:
+    """Entrega ya lo aceptado (las FASEs con su tag) aunque el plan no esté terminado: abre el cierre de esas FASEs."""
+    persona, _ = P._autorizado_en_sesion()
+    if not persona:
+        return "Solo una persona autorizada puede pedir una entrega."
+    nombre = raw_args.strip()
+    if not nombre:
+        return "Uso: /entregar <proyecto> — entrega las fases ya aceptadas; el resto del plan sigue pendiente"
+    repo = (await P._proyectos()).get(nombre)
+    if not repo:
+        return f"No conozco el proyecto {nombre}."
+    try:
+        return await P._cli("bash", str(P._root() / "lanzar.sh"), "entregar", repo)
+    except Exception as e:
+        return f"No se preparó la entrega: {e}"
+
+
 async def _cmd_mantenimiento(raw_args: str = "") -> str:
     persona, _ = P._autorizado_en_sesion()
     if not persona:
@@ -255,6 +272,7 @@ ORDENES = (
     ("pausar", _cmd_pausar, "Pausa un proyecto (ahora = detener)", "[proyecto|todo] [ahora]"),
     ("reanudar", _cmd_reanudar, "Reanuda un proyecto en pausa", "[proyecto|todo]"),
     ("anular", _cmd_anular, "Anula la aceptación de una FASE", "[proyecto] [fase] [motivo]"),
+    ("entregar", _cmd_entregar, "Entrega ya las fases aceptadas", "[proyecto]"),
     ("mantenimiento", _cmd_mantenimiento, "Revisa los proyectos entregados", "[proyecto]"),
     ("puertas", _cmd_puertas, "Decisiones pendientes, con sus botones", None),
     ("preparar", _cmd_preparar, "Prepara un proyecto con su encargado", "[nombre] [stack] [qué quieres construir]"),
