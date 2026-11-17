@@ -7,7 +7,11 @@ FASE-3; la FASE quedaba bloqueada en su puerta sin poder cumplirse).
 Una cita («…» o "…") de un criterio cuenta como pantalla de otra FASE cuando aparece en el título de un requisito
 o de una FASE posterior y en ningún título de esa FASE o de las anteriores.
 
+forma: lo que la granularidad pide al plan y a las tareas (antes, frases del prompt que el agente olvidaba; taller:
+7 ficheros y 675 líneas para una FASE compacta; montana: tareas de «verificar criterios»). Una línea por fallo.
+
 Uso: python3 hsdd_plan.py dependencias <repo> [--texto]
+     python3 hsdd_plan.py forma <repo> plan|tareas <compacta|normal|fina>
 """
 import json
 import re
@@ -81,7 +85,46 @@ def texto(h: list) -> str:
                      f"FASE-{x['fase_vista']}" for x in h)
 
 
+TAREA = re.compile(r"^\s*- \[[ xX]\] (TASK-[A-Za-z0-9-]+)(.*)$", re.M)
+VERIFICAR = re.compile(r"\b(verif\w*|comprob\w*|check)\b.{0,40}\b(criteri\w*|constraint\w*|restricci\w*|acceptance)\b", re.I)
+TOPES = {"compacta": (3, 6), "normal": (2, 10)}   # normal: «unas 4 a 8», con margen; fina: sin tope
+
+
+def forma(repo, que: str, gran: str) -> list:
+    """Fallos de forma del plan o de las tareas según la granularidad: lista de frases (vacía si está bien)."""
+    r, out = Path(repo), []
+    fases = sorted((r / "plan" / "fases").glob("FASE-*.md"))
+    if que == "plan":
+        if any("HARDENING" in f.name.upper() for f in fases) and gran in ("compacta", "normal"):
+            out.append("hay una FASE de endurecimiento (HARDENING): sus criterios medidos van en la FASE que entrega el recorrido que miden")
+        if gran == "compacta":
+            if [f.name.split("-")[1] for f in fases] != ["0"]:
+                out.append(f"un plan compacto tiene exactamente una FASE, la FASE-0 (hay {len(fases)}: {', '.join(f.name for f in fases)})")
+            if "Plan-Size:** compact" not in ((r / "plan" / "PLAN.md").read_text(encoding="utf-8") if (r / "plan" / "PLAN.md").exists() else ""):
+                out.append("plan/PLAN.md no dice '> **Plan-Size:** compact'")
+            sobran = [x for x in ("plan/ARCHITECTURE.md", "plan/RESEARCH.md", "plan/CLARIFY-LOG.md", "plan/fases/README.md", "plan/fase-plans")
+                      if (r / x).exists()]
+            if sobran:
+                out.append(f"un plan compacto no lleva {', '.join(sobran)}")
+    else:
+        tf = sorted((r / "task").glob("TASK-FASE-*.md"))
+        if gran == "compacta" and (r / "task" / "TASK-ORDER.md").exists():
+            out.append("unas tareas compactas no llevan task/TASK-ORDER.md")
+        lo, hi = TOPES.get(gran, (0, 10 ** 6))
+        for f in tf:
+            ts = TAREA.findall(f.read_text(encoding="utf-8", errors="replace"))
+            if ts and not lo <= len(ts) <= hi:
+                out.append(f"{f.name} tiene {len(ts)} tareas; con granularidad {gran} van de {lo} a {hi} (porciones que se ven funcionando, no una por función)")
+            for tid, resto in ts:
+                if VERIFICAR.search(resto):
+                    out.append(f"{f.name}: {tid} es una tarea de verificar criterios o restricciones; eso lo hace la puerta de aceptación, no una tarea")
+    return out
+
+
 if __name__ == "__main__":
+    if len(sys.argv) >= 5 and sys.argv[1] == "forma":
+        print("\n".join(forma(sys.argv[2], sys.argv[3], sys.argv[4])))
+        sys.exit(0)
     if len(sys.argv) < 3 or sys.argv[1] != "dependencias":
         print(__doc__, file=sys.stderr)
         sys.exit(2)

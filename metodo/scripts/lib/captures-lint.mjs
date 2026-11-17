@@ -12,12 +12,15 @@
 //   C-03 error    the test that takes a REQ-F criterion's capture does not cite that criterion in its title: statically
 //                 (the capture id names a criterion the enclosing test's title does not cite — a test.step does not
 //                 count) and in the ledger (`unbound_captures`: the PNG is an attachment of such a test).
+//   C-05 error    a capture of a REQ-F criterion with «Se ve» texts that does not pass { ve: [...] }
+//   C-06 error    its ve list lacks one of those texts (warning when ve is not an inline list)
 //   C-04 warning  an id cited in a test file (UC-NNN, REQ-X-NNN, WF-NNN, AC-NNN-NN) that exists nowhere in
 //                 requirements/, spec/, plan/, design/ or ux/.
 import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 import { testKeys, scenarioIndex } from "./acceptance.mjs";
 import { splitComments, testFiles } from "./quotes.mjs";
+import { templateParts } from "../sdd-jev.mjs";
 
 const CAPTURE_CALL = /\b(captura|captureCriterion|capturar|captureEvidence)\s*\(|\.screenshot\s*\(/g;
 const API_CALL = /\brequest\s*\.\s*(get|post|put|patch|delete|fetch|head)\s*\(|\bfetch\s*\(/g;
@@ -26,6 +29,21 @@ const TEST_START = /^\s*(?:test|it)(?:\.(?:only|skip|fixme|fail|slow))?\s*\(\s*(
 const ID_RE = /(?<![A-Za-z0-9])(UC-\d{3,}|WF-\d{3,}|AC-\d{3,}-\d{2,}|REQ-[A-Z]+(?:-[A-Z0-9]+)*-\d{3,})(?![A-Za-z0-9])/g;
 
 const lineOf = (text, idx) => text.slice(0, idx).split("\n").length;
+
+/** The text of a call from its name to its closing parenthesis (strings and nesting respected; at most 2,000 chars). */
+function callText(code, at) {
+  const open = code.indexOf("(", at);
+  if (open < 0) return "";
+  let depth = 0, q = null;
+  for (let i = open; i < Math.min(code.length, open + 2000); i++) {
+    const c = code[i];
+    if (q) { if (c === "\\") i++; else if (c === q) q = null; continue; }
+    if (c === "'" || c === '"' || c === "`") q = c;
+    else if (c === "(" || c === "[" || c === "{") depth++;
+    else if (c === ")" || c === "]" || c === "}") { depth--; if (depth === 0) return code.slice(at, i + 1); }
+  }
+  return code.slice(at, Math.min(code.length, open + 2000));
+}
 
 /** Test blocks of a source file: [{ title, start (offset), end, line }] (a block runs to the next test at its indent or less). */
 function testBlocks(code) {
@@ -134,6 +152,24 @@ export function lintCaptures({ root, reqs, scenarios = [], ledger = null, scope 
           if (!cites.has(`${t.req}#${t.ac}`))
             findings.push({ code: "C-03", severity: "error", file: f.rel, line, req: t.req, ac: t.ac,
               message: `the capture "${id}" of ${t.req} AC${t.ac} is taken inside the test "${b.title.slice(0, 80)}", whose title does not cite ${t.req} AC${t.ac}${t.sid ? ` (${t.sid})` : ""}: the ledger cannot tie the image to a test of the criterion (a test.step title does not count); move it to a test that cites the criterion` });
+        }
+        // C-05 / C-06: the capture asserts what its criterion's «Se ve:» line promises (before: a sentence of the
+        // implementer's prompt, often forgotten; the capture then showed another screen or nothing of the criterion)
+        const callTxt = callText(body, at);
+        for (const t of targets) {
+          if (!reqF.has(t.req) || !inScope(t.req) || t.ac < 1) continue;
+          const sv = reqs.find((r) => r.id === t.req)?.sees?.[t.ac - 1];
+          if (!sv || !sv.texts?.length) continue;
+          const veM = callTxt.match(/\bve\s*:\s*(\[)?/);
+          if (!veM) {
+            findings.push({ code: "C-05", severity: "error", file: f.rel, line, req: t.req, ac: t.ac,
+              message: `the capture "${id}" of ${t.req} AC${t.ac} does not pass the criterion's «Se ve» texts: call it with { ve: [${sv.texts.map((x) => JSON.stringify(x.text)).join(", ")}] } so the helper asserts them on screen before the screenshot` });
+            continue;
+          }
+          const falta = sv.texts.filter((x) => (x.template ? templateParts(x.text) : [x.text]).some((p) => !callTxt.includes(p)));
+          if (falta.length)
+            findings.push({ code: "C-06", severity: veM[1] ? "error" : "warning", file: f.rel, line, req: t.req, ac: t.ac,
+              message: `the capture "${id}" of ${t.req} AC${t.ac} does not assert ${falta.map((x) => `«${x.text}»`).join(", ")} from its «Se ve» line${veM[1] ? "" : " (ve is not an inline list: check it by hand)"}` });
         }
       }
     }

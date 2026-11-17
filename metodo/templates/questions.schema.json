@@ -35,6 +35,7 @@
           "maxContains": 1
         },
         "bloquea": { "type": "string" },
+        "riesgo": { "type": "string", "minLength": 1, "description": "Riesgo grave (pérdida de datos, incumplimiento legal o de seguridad) que justifica recomendar un req-change" },
         "respuesta": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/respuesta" }] },
         "aplicada": { "type": "string" }
       },

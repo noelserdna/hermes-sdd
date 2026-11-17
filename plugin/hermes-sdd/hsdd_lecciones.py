@@ -11,7 +11,8 @@
 Se guardan en $HERMES_SDD_HOME/lecciones/ (repositorio git propio): lecciones.json (la fuente) y LECCIONES.md (la
 vista legible, regenerada).
 
-  python3 hsdd_lecciones.py proponer <repo> <etapa> "<regla>" <evidencia>... [--por quien]
+  python3 hsdd_lecciones.py proponer <repo> <etapa> "<regla>" <evidencia>... [--por quien] [--comprobable "<cómo>"]
+  python3 hsdd_lecciones.py listar lint      → las comprobables, pendientes de convertir en comprobación del arnés
   python3 hsdd_lecciones.py decidir <id> confirmar|descartar|mantener|caducar <persona>
   python3 hsdd_lecciones.py para-etapa <etapa> [--repo R --registrar]      → texto para el prompt de la etapa
   python3 hsdd_lecciones.py listar [estado]
@@ -120,7 +121,10 @@ def _general(regla: str, repo: Path) -> str | None:
     return None
 
 
-def proponer(repo, etapa: str, regla: str, refs: list, por: str = "encargado") -> dict:
+def proponer(repo, etapa: str, regla: str, refs: list, por: str = "encargado", comprobable: str = "") -> dict:
+    """`comprobable`: cómo se comprobaría sin modelo (un lint, un fichero que no debe existir, un recuento…). Una lección
+    comprobable no va al prompt de las etapas (el agente la olvida): queda como trabajo para el arnés, convertirla en
+    una comprobación con su test (Lauren Tan, 11/2026: cada fallo repetido, una regla dura, no un prompt)."""
     repo = Path(repo).resolve()
     regla = " ".join(regla.split())
     if etapa not in ETAPAS:
@@ -137,7 +141,8 @@ def proponer(repo, etapa: str, regla: str, refs: list, por: str = "encargado") -
         raise Rechazo("ya hay una lección con esa misma regla")
     n = max([int(l["id"][2:]) for l in ls] or [0]) + 1
     l = {"id": f"L-{n:03d}", "etapa": etapa, "regla": regla, "evidencias": evs, "por": por, "estado": "propuesta",
-         "propuesta": N.ahora(), "usos": []}
+         "propuesta": N.ahora(), "usos": [], "tipo": "lint" if comprobable.strip() else "prompt",
+         **({"comprobacion": " ".join(comprobable.split())} if comprobable.strip() else {})}
     _guardar(ls + [l], f"{l['id']} propuesta ({etapa})")
     return l
 
@@ -165,7 +170,8 @@ def para_etapa(etapa: str, repo: str | None = None, registrar: bool = False) -> 
     """Las lecciones confirmadas de esa etapa, como texto para su prompt (vacío si no hay). Con `registrar`, anota el
     uso en ese proyecto y pasa a «revisar» la que llega a 3 proyectos desde la última vez que se mantuvo."""
     ls = _todas()
-    elegidas = [l for l in ls if l["estado"] == "confirmada" and l["etapa"] == etapa][:MAX_POR_ETAPA]
+    # Las comprobables no van al prompt: son trabajo pendiente del arnés (listar lint)
+    elegidas = [l for l in ls if l["estado"] == "confirmada" and l["etapa"] == etapa and l.get("tipo", "prompt") != "lint"][:MAX_POR_ETAPA]
     if not elegidas:
         return ""
     if registrar and repo:
@@ -204,9 +210,10 @@ if __name__ == "__main__":
     try:
         if a[:1] == ["proponer"] and len(a) >= 5:
             por = a[a.index("--por") + 1] if "--por" in a else "encargado"
-            refs = [x for i, x in enumerate(a[4:], 4) if x != "--por" and a[i - 1] != "--por"]
-            l = proponer(a[1], a[2], a[3], refs, por)
-            print(f"{l['id']} propuesta: espera a que una persona la confirme. Evidencia: "
+            comp = a[a.index("--comprobable") + 1] if "--comprobable" in a else ""
+            refs = [x for i, x in enumerate(a[4:], 4) if x not in ("--por", "--comprobable") and a[i - 1] not in ("--por", "--comprobable")]
+            l = proponer(a[1], a[2], a[3], refs, por, comp)
+            print(f"{l['id']} propuesta{' (comprobable: se convertirá en una comprobación del arnés, no va al prompt)' if l['tipo'] == 'lint' else ''}: espera a que una persona la confirme. Evidencia: "
                   + "; ".join(f"{e['tipo']} {e['ref']} ({e['resumen']})" for e in l["evidencias"]))
         elif a[:1] == ["decidir"] and len(a) == 4:
             l = decidir(a[1], a[2], a[3]); print(f"{l['id']}: {l['estado']}")
@@ -215,8 +222,9 @@ if __name__ == "__main__":
             print(para_etapa(a[1], repo, "--registrar" in a))
         elif a[:1] == ["listar"]:
             for l in _todas():
-                if len(a) < 2 or l["estado"] == a[1]:
-                    print(f"{l['id']} [{l['estado']}] {l['etapa']}: {l['regla']}")
+                if len(a) < 2 or l["estado"] == a[1] or (a[1] == "lint" and l.get("tipo") == "lint"):
+                    print(f"{l['id']} [{l['estado']}{', lint' if l.get('tipo') == 'lint' else ''}] {l['etapa']}: {l['regla']}"
+                          + (f" — comprobación: {l['comprobacion']}" if l.get("comprobacion") else ""))
         else:
             print(__doc__, file=sys.stderr); sys.exit(2)
     except Rechazo as e:

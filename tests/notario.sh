@@ -181,7 +181,7 @@ decidir g8b conforme telegram 111; firmar g8b
 # 8b2. preguntas en JSON (sdd questions add): el notario escribe la respuesta en el JSON (atómico, con la CLI), la vista
 # .md se regenera y la copia versionada (status/questions/) lleva los dos
 rm -f .sdd/questions-x.md
-printf '%s' '{"skill":"sdd-plan-architect","pregunta":"¿Una FASE o dos?","para_cliente":"¿En una entrega o en dos?","opciones":[{"letra":"A","texto":"Dos FASEs","efecto":"accion"},{"letra":"B","texto":"Una","recomendada":true,"efecto":"ninguno"}]}' \
+printf '%s' '{"skill":"sdd-plan-architect","tema":"fases","pregunta":"¿Una FASE o dos?","para_cliente":"¿En una entrega o en dos?","opciones":[{"letra":"A","texto":"Dos FASEs","efecto":"accion"},{"letra":"B","texto":"Una","recomendada":true,"efecto":"ninguno"}]}' \
   | node "$ROOT/metodo/scripts/sdd.mjs" questions add --role y >/dev/null
 puerta g8j plan; t=$(mktemp)
 jq --argjson q "$(python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" preguntas-json .sdd/questions-y.md .sdd/questions-y.json)" '.preguntas = $q' .sdd/hermes/puertas/g8j.json > "$t" && mv "$t" .sdd/hermes/puertas/g8j.json

@@ -846,6 +846,16 @@ function cmdVerify(o) {
   const isTest = (f) => tests.some((p) => f === p || f.startsWith(p + "/")) || TEST_NAME_RE.test(path.posix.basename(f));
   const results = [], perTask = {}, proveItMissing = [];
   let codeCommits = 0;
+  // Tests ya aceptados que una persona autorizó editar (registros test-edit del notario): el commit que los toca cita
+  // la pregunta que lo autoriza («Autoriza: Q-…»). Antes era una frase del prompt del implementador.
+  const autorizados = new Map();   // fichero → Set de preguntas
+  try {
+    for (const l of readFileSync(path.join(topLevel(repo), "acceptance", "decisions.jsonl"), "utf8").split("\n")) {
+      let d; try { d = JSON.parse(l); } catch { continue; }
+      if (d?.type !== "test-edit" || !d.question) continue;
+      for (const f of d.files || []) (autorizados.get(f) || autorizados.set(f, new Set()).get(f)).add(d.question);
+    }
+  } catch { /* sin registros */ }
   for (const rec of raw.split("\x1e").slice(1)) {
     const [sha, parents = "", tr = "", body = "", tail = ""] = rec.split("\x1f");
     const lines = body.replace(/\n+$/, "").split("\n").map((text, i) => ({ n: i + 1, text }));
@@ -862,6 +872,12 @@ function cmdVerify(o) {
         (proveIt === "enforce" ? r.errors : r.warnings).push(msg);
         proveItMissing.push(sha);
       }
+    }
+    if (!merge && autorizados.size) {
+      const citadas = new Set([...body.matchAll(/Autoriza:\s*(Q-[A-Za-z0-9_-]+)/g)].map((m) => m[1]));
+      for (const f of files.filter((x) => autorizados.has(x)))
+        if (![...autorizados.get(f)].some((q) => citadas.has(q)))
+          r.errors.push(`changes ${f}, an accepted test a person authorized to edit: cite the authorizing question in the message («Autoriza: ${[...autorizados.get(f)].join(" | ")}»)`);
     }
     results.push(r);
   }

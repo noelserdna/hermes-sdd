@@ -241,7 +241,7 @@ export function validateAll(root) {
   return out;
 }
 
-const STAGE_FIELDS = ["skill", "contexto", "tema", "pregunta", "para_cliente", "opciones", "bloquea"];
+const STAGE_FIELDS = ["skill", "contexto", "tema", "pregunta", "para_cliente", "opciones", "bloquea", "riesgo"];
 
 /** A stage's new question: always OPEN and without an answer (a stage never answers; the guard denies it too).
  *  Its id is the next free Q-<role>-NNN, counting the questions only the .md has. Returns the id. */
@@ -257,6 +257,26 @@ export function addQuestion(root, role, input) {
     .filter((t) => typeof t === "string");
   const ingles = textoCliente.filter((t) => (t.match(/\b(the|and|keep|both|without|with|should|skip|skips|reword|because|is|are|which|their)\b/gi) || []).length >= 2);
   if (ingles.length) throw new QError(`the customer reads «Para el cliente» and the options: write them in Spanish («${ingles[0].slice(0, 60)}…»); technical detail goes in «pregunta»`);
+  // Reglas de redacción y de recomendación que antes eran prosa del prompt (references/async-questions.md §1): aquí
+  // son errores, porque una etapa las olvidaba (material-montana, montana2: ids en el texto del cliente, «Sí, no se
+  // aceptan» como respuesta a «¿Se puede…?», recomendadas que reabrían requisitos)
+  if (typeof input.tema !== "string" || !input.tema) throw new QError("tema is required: a slug of what is decided (zona-horaria, borrado-socios), so the same topic is never asked twice");
+  const ops = Array.isArray(input.opciones) ? input.opciones.filter((o) => typeOf(o) === "object") : [];
+  const rec = ops.filter((o) => o.recomendada === true);   // exactly one: the schema says it (maxContains)
+  if (rec.length === 1 && rec[0].efecto === "req-change" && !(typeof input.riesgo === "string" && input.riesgo.trim()))
+    throw new QError("the recommended option reopens the requirements (req-change): write the sensible default in the artifact and recommend keeping it (efecto ninguno); recommend req-change only for a serious risk, named in «riesgo» (data loss, legal or security breach)");
+  const clienteTxt = [["para_cliente", input.para_cliente], ...ops.map((o) => [`option ${o.letra}`, o.cliente || ""])].filter(([, t]) => typeof t === "string" && t);
+  for (const [donde, t] of clienteTxt) {
+    const id = t.match(/`|\b(?:REQ|UC|WF|SCR|API|INV|RN)-[A-Z0-9]|\bAC-?\d|\bQ-[a-z]|\bFASE\b|\bsprint\b|\bmilestone\b/i);
+    if (id) throw new QError(`${donde} is read by the customer: no code, ids or «FASE/sprint» («${id[0]}» in «${t.slice(0, 60)}»); say «fase» and describe it in plain words`);
+  }
+  const frases = (input.para_cliente || "").split(/(?<=[.?!])\s+(?=[¿¡A-ZÁÉÍÓÚÑ])/).filter((x) => x.trim());
+  if (frases.length > 2) throw new QError(`para_cliente is one plain sentence (it has ${frases.length}): details go in «contexto» or «pregunta»`);
+  for (const o of ops) {
+    const c = (o.cliente || "").trim();
+    if (/^s[ií](?=[\s,:;—-])[\s,:;—-]+no\b/i.test(c) || /^no\b[\s,:;—-]+(?:s[ií](?![a-z])|se\s+(?:permite|puede|acepta))/i.test(c))
+      throw new QError(`option ${o.letra} answers backwards («${c.slice(0, 50)}»): to «¿Se puede X?», «Sí» means X can be done; write the plain consequence («No: se rechaza con un aviso»)`);
+  }
   // Una sola pregunta abierta por criterio (taller3: REQ-NF-001 AC1 se preguntó desde aceptación y desde el
   // implementador, y además era una impugnación: tres cosas para una sola duda)
   const citas = new Set(`${input.contexto || ""} ${input.pregunta || ""}`.match(/REQ-[A-Z]+-\d+\s+AC\d+/g) || []);
@@ -294,7 +314,7 @@ export function addQuestion(root, role, input) {
   const q = { id, skill: input.skill, ...(input.contexto ? { contexto: input.contexto } : {}), ...(input.tema ? { tema: input.tema } : {}), estado: "OPEN",
     pregunta: input.pregunta, para_cliente: input.para_cliente,
     opciones: Array.isArray(input.opciones) ? input.opciones.map((o) => (typeOf(o) === "object" ? { ...o, ficheros: o.ficheros || [] } : o)) : input.opciones,
-    ...(input.bloquea ? { bloquea: input.bloquea } : {}), respuesta: null };
+    ...(input.bloquea ? { bloquea: input.bloquea } : {}), ...(input.riesgo ? { riesgo: input.riesgo } : {}), respuesta: null };
   for (const k of Object.keys(q)) if (q[k] === undefined) delete q[k];
   saveDoc(root, { ...doc, version: 1, rol: role, preguntas: [...doc.preguntas, q] });
   return id;

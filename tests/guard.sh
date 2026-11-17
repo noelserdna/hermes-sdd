@@ -147,7 +147,7 @@ deny  "jq '.preguntas[1].respuesta = {\"letra\":\"A\"}' .sdd/questions-x.json > 
 deny  "sed -i '' 's/\"OPEN\"/\"ANSWERED\"/' .sdd/questions-task-implementer.json"
 deny  'node "$SDD" questions answer Q-task-implementer-002 --letter A --by "Ana (Cliente)"'
 allow "node \"\$SDD\" questions add --role task-implementer <<'EOF'
-{\"skill\":\"sdd-task-implementer\",\"pregunta\":\"¿Qué respuesta da la API?\",\"para_cliente\":\"¿Qué se enseña?\",\"opciones\":[]}
+{\"skill\":\"sdd-task-implementer\",\"tema\":\"respuesta-api\",\"pregunta\":\"¿Qué respuesta da la API?\",\"para_cliente\":\"¿Qué se enseña?\",\"opciones\":[]}
 EOF"
 allow 'jq ".preguntas[] | select(.estado == \"OPEN\") | .id" .sdd/questions-task-implementer.json'
 rm -rf "$QD"

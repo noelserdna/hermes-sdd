@@ -165,6 +165,20 @@ git -C "$repo" commit -q -m "Merge feature" --trailer "Refs: FASE-3" 2>/dev/null
 run verify --range HEAD~1..HEAD --repo "$repo" --json; expect "merge commit exento en rango" "$rc:$(js 'j.results[0].exempt')" "0:merge"
 run verify --range nada..HEAD --repo "$repo"; expect "rango inválido → 2" "$rc" 2
 
+# ---------------------------------------------------------------- 5a. verify --range: Autoriza en tests autorizados
+au="$tmp/au"; mkdir -p "$au/tests" "$au/acceptance"; git -C "$au" init -q -b main
+echo "it('a', () => expect(1).toBe(1))" > "$au/tests/a.test.js"; git -C "$au" add -A; git -C "$au" commit -q -m "chore: init"
+echo '{"type":"test-edit","files":["tests/a.test.js"],"question":"Q-task-implementer-001","gate":"g1","by":"Ana"}' > "$au/acceptance/decisions.jsonl"
+git -C "$au" add -A; git -C "$au" commit -q -m "docs(acceptance): test-edit"
+b=$(git -C "$au" rev-parse HEAD)
+echo "it('a', () => expect(2).toBe(2))" > "$au/tests/a.test.js"; git -C "$au" commit -qam "test(a): segunda migración"
+run verify --range "$b..HEAD" --repo "$au" --json
+expect "Autoriza: un test autorizado editado sin citar su pregunta → error" "$rc:$(js 'j.results[0].errors.some(e=>e.includes("Autoriza: Q-task-implementer-001"))')" "1:true"
+git -C "$au" commit -q --amend -m "test(a): segunda migración" -m "Task: TASK-F1-001
+Autoriza: Q-task-implementer-001"
+run verify --range "$b..HEAD" --repo "$au" --json
+expect "Autoriza: con la pregunta citada → sin error" "$rc:$(js 'j.results[0].errors.length')" "0:0"
+
 # ---------------------------------------------------------------- 5b. verify --range: Prove-It (fix con código y sin test)
 pv="$tmp/pv"; mkdir -p "$pv/src" "$pv/tests"
 git -C "$pv" init -q -b main

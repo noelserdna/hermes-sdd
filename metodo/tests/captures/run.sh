@@ -146,6 +146,9 @@ test('WF-001 REQ-F-001 AC6 recorrido', async ({ page }, testInfo) => {
     await captura(page, testInfo, 'REQ-F-001-AC2')
   })
 })
+test('REQ-F-001 AC4 pablo ve su saludo', async ({ page }, testInfo) => {
+  await captura(page, testInfo, 'REQ-F-001-AC4', { ve: ['Hola'] })
+})
 J
 run lint --captures --json
 expect "lint --captures exits 1 on errors" "$rc" 1
@@ -153,6 +156,10 @@ expect "C-01: capture right after a CSV check by API (club: fase-7.plazos.spec.j
 expect "C-01: no error when the screen is asserted after the API call, or the helper asserts { ve }" "$(js 'j.findings.filter(f=>f.code==="C-01"&&(f.ac===1||f.ac===5)).length')" 0
 expect "C-03: capture in a test.step of a test that does not cite the criterion (club: REQ-F-008 AC4)" "$(js 'j.findings.filter(f=>f.code==="C-03").map(f=>f.req+" AC"+f.ac+" "+f.line).join()')" "REQ-F-001 AC2 21"
 expect "C-04: UC-099 exists nowhere in the documents" "$(js 'j.findings.filter(f=>f.code==="C-04"&&f.message.startsWith("UC")).map(f=>f.message.slice(0,6)).join()')" "UC-099"
+run lint --captures --json
+expect "C-05: a capture of a criterion with «Se ve» that does not pass { ve } (AC1, AC2, AC3)" "$(js 'j.findings.filter(f=>f.code==="C-05").map(f=>f.req+" AC"+f.ac).sort().join()')" "REQ-F-001 AC1,REQ-F-001 AC2,REQ-F-001 AC3"
+expect "C-06: its inline ve lacks the «Se ve» text (AC4: «Hola» for «Hola, {usuario}»)" "$(js 'j.findings.filter(f=>f.code==="C-06").map(f=>f.req+" AC"+f.ac+" "+f.severity).join()')" "REQ-F-001 AC4 error"
+run lint --captures
 run lint --captures
 has "text output: file:line code severity" "tests/e2e/clases.spec.js:7 C-01 error REQ-F-001 AC3"
 

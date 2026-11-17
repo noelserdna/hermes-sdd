@@ -333,6 +333,16 @@ granularidad() {
   else echo normal; fi
 }
 GRAN=$(granularidad)
+# forma_o_falla <plan|tareas> <prompt de arreglo>: lo que la granularidad exige (hsdd_plan.py forma); si falla, una
+# pasada de arreglo con la lista y, si sigue fallando, la etapa para con ella
+forma_o_falla() {
+  [ "$EJEC" = replay ] && return 0   # una grabación no se puede arreglar: lo que dejó es lo que hay
+  local f; f=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_plan.py" forma . "$1" "$GRAN" 2>/dev/null || true)
+  [ -z "$f" ] && return 0
+  claude_etapa "$([ "$1" = plan ] && echo plan-architect || echo task-generator)" "$2. Each line below is a rule the $1 breaks; fix every one: $(printf '%s' "$f" | tr '\n' ';')"
+  f=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_plan.py" forma . "$1" "$GRAN" 2>/dev/null || true)
+  [ -z "$f" ] || falla "$([ "$1" = plan ] && echo "el plan" || echo "las tareas") no tienen la forma de la granularidad $GRAN: $(printf '%s' "$f" | head -3 | tr '\n' ' ')"
+}
 # Lo que cambia con la granularidad, en las instrucciones al ejecutor (en inglés, como las skills)
 case "$GRAN" in
   compacta) PLAN_G=" COMPACT PLAN (small project): exactly ONE FASE, FASE-0, that delivers every requirement and the whole user journey; no HARDENING FASE (measured NFRs are criteria of FASE-0); its demo walks the whole journey. Write it as a compact plan (skill section «Compact plan (one FASE)»): only plan/PLAN.md, with '> **Plan-Size:** compact', and plan/fases/FASE-0-SKELETON.md ending with '## Plan de la FASE'; no ARCHITECTURE.md, RESEARCH.md, CLARIFY-LOG.md, fases/README.md nor fase-plans/ (taller: 7 files and 675 lines for one FASE)."
@@ -438,6 +448,9 @@ case "$ETAPA" in
     if [ "$(abiertas)" -gt 1 ]; then   # una pasada barata: fusionar las que deciden lo mismo, sin añadir ninguna
       claude_etapa dudas "$ARNES Consolidate the OPEN questions (sdd questions list --open --json) before the plan: when two or more decide the same thing, keep the clearest one and run «sdd questions merge <other> --into <kept>» for the rest; drop (merge into the kept one) any question already decided by an ANSWERED question. Do not add questions, do not answer any, do not edit requirements/, spec/ or any other file, and do not edit the questions JSON by hand."
       node "$SDD" questions render >/dev/null 2>&1 || true
+      # La consolidación solo fusiona preguntas: si tocó algo fuera de .sdd/, la etapa para (antes era prosa del prompt)
+      FUERA=$( { git diff --name-only "$HEAD0" HEAD; git status --porcelain | cut -c4-; } 2>/dev/null | grep -vE '^(\.sdd|status/questions)/' | sort -u | head -3 | tr '\n' ' ')
+      [ -z "$FUERA" ] || falla "la consolidación de dudas cambió ficheros fuera de .sdd/: $FUERA"
     fi
     mkdir -p .sdd/hermes
     if [ "$(abiertas)" -gt 0 ]; then
@@ -505,6 +518,9 @@ case "$ETAPA" in
       node "$SDD" lint --plan >/dev/null 2>&1 || falla "sdd lint --plan encuentra errores tras corregir dependencias entre FASEs"
       H=$(python3 "$DEP" dependencias . --texto 2>/dev/null || true)
     fi
+    # La forma que pide la granularidad (una FASE compacta, sin FASE de endurecimiento…): antes, prosa del prompt; ahora
+    # una pasada de arreglo y, si sigue, la etapa para
+    forma_o_falla plan "/sdd-plan-architect --skip-clarify — $ARNES Fix the shape of plan/ (do not change requirements/ or spec/)"
     mkdir -p .sdd/hermes
     if [ -n "$H" ]; then printf '%s\n' "$H" > .sdd/hermes/plan-avisos.txt; else rm -f .sdd/hermes/plan-avisos.txt; fi
     fin "$RES" "Plan generado ($(ls plan/fases/FASE-*.md 2>/dev/null | wc -l | tr -d ' ') FASEs)" ;;
@@ -523,6 +539,7 @@ case "$ETAPA" in
       claude_etapa task-generator "/sdd-task-generator — $ARNES Fix task/ so that sdd lint --dir task has no errors (do not change plan/, requirements/ or spec/; do not change any task's status, scope or commit). In the task file of an accepted FASE change only what the error names. Errors: $ERR"
       node "$SDD" lint --dir task >/dev/null 2>&1 || falla "sdd lint de tareas encuentra errores: $(node "$SDD" lint --dir task 2>&1 | grep -v '^ *$' | tail -3 | tr '\n' ' ')"
     fi
+    forma_o_falla tareas "/sdd-task-generator — $ARNES Fix the shape of task/ (do not change plan/, requirements/ or spec/; do not change any task's status or commit)"
     P=$(puerta plan) || falla "no se pudo abrir la puerta de plan"
     fin "$RES" "Tareas generadas: $(node "$SDD" tasks status 2>/dev/null | tail -1)" "$P" ;;
 
@@ -601,7 +618,7 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
     # citar es cambiar solo el comentario (hsdd_fidelidad no lo cuenta como editar un test que ya existía)
     CITAS=$(node "$SDD" lint --quotes --json 2>/dev/null | jq -r '[.findings[]? | select(.code == "Q-02") | "\(.file):\(.line) \(.req) AC\(.ac)"] | unique | .[:30] | join("; ")' 2>/dev/null || true)
     [ -n "$CITAS" ] && CITAS=" The approved requirements changed the text of some criteria that tests already quote: update ONLY those quote comments to the current text (sdd req show <REQ> --ac <n>), in one commit «test: re-quote criteria changed by the requirements» — a comment-only edit, also in tests of accepted FASEs; if the test then no longer checks what the new text says, write an [OPEN] question with efecto endurecer-test instead of changing the test. Stale quotes: $CITAS."
-    claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES Implement FASE-$FASE completely, test-first, one commit per task with Refs:/Task: trailers. Before you finish, check every criterion of the FASE: its test does that criterion's own GIVEN (same actor, same dates and data) and WHEN, and asserts its whole THEN with the exact text; its capture shows the screen where that THEN is visible, with the GIVEN's data on screen: take it with the capture helper passing the criterion's «Se ve:» texts (captura(page, testInfo, id, { ve: [...] })), inside the test whose title cites that criterion, after asserting on screen (never right after an API or CSV check); run «sdd lint --captures --fase ${FASE}» and leave it without errors; the e2e suites (old and new) are green. [ANSWERED] questions in .sdd/questions-*.md are the person's decisions: apply them and do not ask them again; an existing test may be edited only in the exact files a person authorized (a test-edit record in acceptance/decisions.jsonl, written by the notary), and the commit cites that question («Autoriza: Q-…»). Write any new question with «sdd questions add --role task-implementer» (a JSON object on stdin: skill, contexto, pregunta, para_cliente — one plain sentence, no code or ids —, opciones [{letra, texto, efecto: ninguno|accion|req-change|editar-test|endurecer-test, ficheros, recomendada}] with exactly one recommended, and bloquea), as references/async-questions.md says; never write .sdd/questions-* by hand.$TESTS_G$RECH$OBS${CITAS:-}"
+    claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES Implement FASE-$FASE completely, test-first, one commit per task with Refs:/Task: trailers. Before you finish, check every criterion of the FASE: its test does that criterion's own GIVEN (same actor, same dates and data) and WHEN, and asserts its whole THEN with the exact text; its capture shows the screen where that THEN is visible, with the GIVEN's data on screen: take it with the capture helper passing the criterion's «Se ve:» texts (captura(page, testInfo, id, { ve: [...] })), inside the test whose title cites that criterion, after asserting on screen (never right after an API or CSV check); run «sdd lint --captures --fase ${FASE}» and leave it without errors; the e2e suites (old and new) are green. [ANSWERED] questions in .sdd/questions-*.md are the person's decisions: apply them and do not ask them again; an existing test may be edited only in the exact files a person authorized (a test-edit record in acceptance/decisions.jsonl, written by the notary), and the commit cites that question («Autoriza: Q-…»). Write any new question with «sdd questions add --role task-implementer» (a JSON object on stdin: skill, tema, contexto, pregunta, para_cliente, opciones [{letra, texto, cliente, efecto, ficheros, recomendada}], bloquea and, only to recommend req-change, riesgo; the command rejects what breaks references/async-questions.md and says why); never write .sdd/questions-* by hand.$TESTS_G$RECH$OBS${CITAS:-}"
     [ -n "$OBS" ] && AL_TERMINAR+=(".sdd/hermes/feedback/observaciones.txt|.sdd/hermes/feedback/observaciones.aplicadas-$FASE.txt")
     if ! st=$(node "$SDD" tasks status --fase "$FASE" --require-done 2>&1); then
       # Parada en preguntas [OPEN] (p. ej. un criterio que contradice otro): se abren a la persona en una puerta. La
@@ -631,6 +648,12 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
     fi
     base=$(git describe --tags --abbrev=0 --match 'fase-*-accepted' 2>/dev/null || git describe --tags --abbrev=0 --match 'requirements-v*' 2>/dev/null || git rev-list --max-parents=0 HEAD)
     node "$SDD" verify --range "$base..HEAD" >/dev/null 2>&1 || falla "sdd verify --range $base..HEAD encuentra commits inválidos"
+    # El prompt pedía dejar «sdd lint --captures» sin errores; ahora, tras la pasada de arreglos, es una parada: un error
+    # estático de captura (C-01 tras una comprobación por API, C-03 en un test que no cita el criterio) no llega a la
+    # aceptación. Solo los estáticos (con línea): los del ledger dependen del último JUnit (material-montana2, M13)
+    CE=$(node "$SDD" lint --captures --fase "$FASE" --json 2>/dev/null | jq -r '[.findings[]? | select(.severity == "error" and (.line // 0) > 0)
+      | "\(.file):\(.line) \(.code)"] | .[0:3] | join(", ")' 2>/dev/null || true)
+    [ -z "$CE" ] || falla "sdd lint --captures --fase $FASE sigue con errores tras la implementación: $CE"
     fin "$RES" "FASE-$FASE implementada: $(echo "$st" | tail -1)" ;;
 
   aceptar)

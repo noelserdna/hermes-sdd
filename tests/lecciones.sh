@@ -34,4 +34,9 @@ python3 "$L" decidir L-001 mantener Ana >/dev/null
 o=$(python3 "$L" decidir L-001 confirmar Ana 2>&1) && bad "confirma dos veces" || ok "no se decide dos veces lo mismo"
 HIST=$(git -C "$HERMES_SDD_HOME/lecciones" log --oneline); grep -q "L-001 confirmada por Ana" <<< "$HIST" && grep -q "L-001" "$HERMES_SDD_HOME/lecciones/LECCIONES.md" \
   && ok "todo queda en el repositorio git de lecciones y en LECCIONES.md" || bad "git"
+# una lección comprobable no va al prompt: queda como trabajo del arnés (listar lint)
+o=$(python3 "$L" proponer "$T/origen" tareas "Las tareas compactas nunca incluyen una tarea de verificar los criterios de aceptación" g0123456789ab --comprobable "contar tareas cuyo título dice verificar criterios" 2>&1)
+LID=$(echo "$o" | grep -o 'L-[0-9]*' | head -1); python3 "$L" decidir "$LID" confirmar Ana >/dev/null
+[ -z "$(python3 "$L" para-etapa tareas)" ] && python3 "$L" listar lint | grep -q "$LID .*comprobación: contar tareas" && echo "$o" | grep -q "no va al prompt" \
+  && ok "lección comprobable: confirmada, no entra al prompt y queda en «listar lint» para convertirla en comprobación" || bad "comprobable: $o / $(python3 "$L" listar lint)"
 exit $fail

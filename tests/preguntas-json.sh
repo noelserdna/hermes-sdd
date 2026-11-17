@@ -31,7 +31,7 @@ Q
 # La nueva, en JSON: la recomendada es B (no la primera) y su texto «Cambiar el criterio…» haría adivinar req-change,
 # pero el efecto declarado manda
 node "$SDD" questions add --role task-implementer >/dev/null <<'J' && ok "add: escribe la pregunta en el JSON" || bad "add"
-{"skill": "sdd-task-implementer", "contexto": "TASK-F1-004",
+{"skill": "sdd-task-implementer", "contexto": "TASK-F1-004", "tema": "registro-zonas",
  "pregunta": "REQ-F-024 AC2 only logs E_ZONA_SOLO_JUNTA; logging E_NO_AUTORIZADO breaks AC-001-08 (FASE-1, accepted).",
  "para_cliente": "¿El registro de seguridad apunta también los intentos en zonas que no son de la junta?",
  "opciones": [
@@ -48,7 +48,7 @@ grep -q '^## Q-task-implementer-001 \[OPEN\]' .sdd/questions-task-implementer.md
   && grep -q '^     efecto: editar-test tests/integration/accesos.test.js$' .sdd/questions-task-implementer.md \
   && ok "add: regenera la vista .md (la antigua se conserva tal cual, la nueva con el formato de async-questions.md)" || bad "vista: $(cat .sdd/questions-task-implementer.md)"
 cp .sdd/questions-task-implementer.json "$T/antes.json"
-out=$(printf '{"skill":"s","pregunta":"q","para_cliente":"c","opciones":[{"letra":"A","texto":"a","efecto":"editar-test"},{"letra":"B","texto":"b","efecto":"cambiar"}]}' | node "$SDD" questions add --role task-implementer 2>&1); rc=$?
+out=$(printf '{"skill":"s","tema":"t1","pregunta":"q","para_cliente":"c","opciones":[{"letra":"A","texto":"a","efecto":"editar-test"},{"letra":"B","texto":"b","efecto":"cambiar"}]}' | node "$SDD" questions add --role task-implementer 2>&1); rc=$?
 [ $rc = 1 ] && case "$out" in *"ficheros: needs at least 1"*"efecto: must be one of"*"recomendada; must be exactly 1"*) true ;; *) false ;; esac \
   && cmp -s .sdd/questions-task-implementer.json "$T/antes.json" \
   && ok "add: el esquema rechaza editar-test sin ficheros, un efecto desconocido y no marcar recomendada (y no escribe nada)" || bad "add inválida: $rc $out"
@@ -58,10 +58,10 @@ node "$SDD" questions validate >/dev/null && ok "validate: el JSON escrito cumpl
 # taller3: opciones en inglés y una segunda pregunta abierta sobre el mismo criterio se rechazan (en un repo aparte,
 # para no cambiar las preguntas que cuentan los casos siguientes)
 AQUI=$PWD; mkdir -p "$T/q3/.sdd"; cd "$T/q3"; git init -q
-out=$(printf '{"skill":"s","pregunta":"q","para_cliente":"¿Vale así?","opciones":[{"letra":"A","texto":"Keep the texts and skip the scan","efecto":"ninguno","recomendada":true},{"letra":"B","texto":"Cambiar los textos","efecto":"accion"}]}' | node "$SDD" questions add --role acceptance 2>&1); rc=$?
+out=$(printf '{"skill":"s","tema":"t2","pregunta":"q","para_cliente":"¿Vale así?","opciones":[{"letra":"A","texto":"Keep the texts and skip the scan","efecto":"ninguno","recomendada":true},{"letra":"B","texto":"Cambiar los textos","efecto":"accion"}]}' | node "$SDD" questions add --role acceptance 2>&1); rc=$?
 [ $rc = 1 ] && case "$out" in *"write them in Spanish"*) true ;; *) false ;; esac && ok "add: opciones en inglés, rechazadas (las lee el cliente)" || bad "inglés: $rc $out"
-printf '{"skill":"s","contexto":"REQ-NF-001 AC1","pregunta":"¿Vale «confirmada»?","para_cliente":"¿Vale así?","opciones":[{"letra":"A","texto":"Sí","efecto":"ninguno","recomendada":true},{"letra":"B","texto":"No","efecto":"accion"}]}' | node "$SDD" questions add --role task-implementer >/dev/null
-out=$(printf '{"skill":"s","contexto":"CH-001 REQ-NF-001 AC1","pregunta":"¿Se permite «registrada»?","para_cliente":"¿Vale así?","opciones":[{"letra":"A","texto":"Sí","efecto":"ninguno","recomendada":true},{"letra":"B","texto":"No","efecto":"accion"}]}' | node "$SDD" questions add --role acceptance 2>&1); rc=$?
+printf '{"skill":"s","tema":"t3","contexto":"REQ-NF-001 AC1","pregunta":"¿Vale «confirmada»?","para_cliente":"¿Vale así?","opciones":[{"letra":"A","texto":"Sí","efecto":"ninguno","recomendada":true},{"letra":"B","texto":"No","efecto":"accion"}]}' | node "$SDD" questions add --role task-implementer >/dev/null
+out=$(printf '{"skill":"s","tema":"t4","contexto":"CH-001 REQ-NF-001 AC1","pregunta":"¿Se permite «registrada»?","para_cliente":"¿Vale así?","opciones":[{"letra":"A","texto":"Sí","efecto":"ninguno","recomendada":true},{"letra":"B","texto":"No","efecto":"accion"}]}' | node "$SDD" questions add --role acceptance 2>&1); rc=$?
 [ $rc = 1 ] && case "$out" in *"already OPEN about REQ-NF-001 AC1"*) true ;; *) false ;; esac && ok "add: una segunda pregunta abierta sobre el mismo criterio, rechazada" || bad "duplicada: $rc $out"
 cd "$AQUI"
 
@@ -160,7 +160,7 @@ cd "$R" || exit 1
 
 # ── 4. huecos: el arnés cierra las del implementador sobre [PLAN GAP], también en el JSON ─────────────────────────────
 node "$SDD" questions add --role task-implementer >/dev/null <<'J'
-{"skill": "sdd-task-implementer", "contexto": "TASK-F2-007", "pregunta": "TASK-F2-007 is a [PLAN GAP]: which provider?",
+{"skill": "sdd-task-implementer", "contexto": "TASK-F2-007", "tema": "proveedor-correo", "pregunta": "TASK-F2-007 is a [PLAN GAP]: which provider?",
  "para_cliente": "¿Con qué proveedor se envían los correos?",
  "opciones": [{"letra": "A", "texto": "SMTP", "recomendada": true, "efecto": "accion"}, {"letra": "B", "texto": "Ninguno", "efecto": "ninguno"}]}
 J
@@ -201,4 +201,23 @@ import sys; sys.path.insert(0, sys.argv[1]); import hsdd_textos as X, json
 b = json.load(open(".sdd/questions-plan-architect.json"))["preguntas"][0]
 assert not X._abierta(b)
 PY
+# Reglas de redacción y de recomendación: antes, prosa del prompt; ahora, errores de `questions add` (Lauren Tan: cada
+# fallo repetido de un agente es una comprobación, no una instrucción)
+mkdir -p "$T/reglas/.sdd"; cd "$T/reglas"; git init -q
+qa() {  # qa <json> → rc y salida de questions add
+  out=$(printf '%s' "$1" | node "$SDD" questions add --role r 2>&1); rc=$?; }
+base='"skill":"s","pregunta":"q","opciones":[{"letra":"A","texto":"a","efecto":"ninguno","recomendada":true,"cliente":"Se queda así"},{"letra":"B","texto":"b","efecto":"accion","cliente":"Se cambia"}]'
+qa "{$base,\"para_cliente\":\"¿Vale así?\"}"
+[ $rc = 1 ] && echo "$out" | grep -q 'tema is required' && ok "add: sin tema, rechazada" || bad "sin tema: $rc $out"
+qa "{$base,\"tema\":\"a1\",\"para_cliente\":\"¿Vale el texto de REQ-F-002 en la FASE-1?\"}"
+[ $rc = 1 ] && echo "$out" | grep -q 'no code, ids' && ok "add: ids o «FASE» en lo que lee el cliente, rechazada" || bad "ids: $rc $out"
+qa "{$base,\"tema\":\"a2\",\"para_cliente\":\"Hay dos caminos. Uno es corto. Otro es largo. ¿Cuál?\"}"
+[ $rc = 1 ] && echo "$out" | grep -q 'one plain sentence' && ok "add: para_cliente de varias frases, rechazada" || bad "frases: $rc $out"
+qa '{"skill":"s","tema":"a3","pregunta":"q","para_cliente":"¿Se pueden reservar fechas pasadas?","opciones":[{"letra":"A","texto":"a","efecto":"ninguno","recomendada":true,"cliente":"No: se rechaza con un aviso"},{"letra":"B","texto":"b","efecto":"req-change","cliente":"Sí, no se aceptan"}]}'
+[ $rc = 1 ] && echo "$out" | grep -q 'answers backwards' && ok "add: una opción que responde al revés («Sí, no…»), rechazada" || bad "al revés: $rc $out"
+qa '{"skill":"s","tema":"a4","pregunta":"q","para_cliente":"¿Cuántas reservas a la vez?","opciones":[{"letra":"A","texto":"a","efecto":"req-change","recomendada":true,"cliente":"Tres"},{"letra":"B","texto":"b","efecto":"ninguno","cliente":"Sin límite"}]}'
+[ $rc = 1 ] && echo "$out" | grep -q 'reopens the requirements' && ok "add: recomendar req-change sin riesgo grave, rechazada" || bad "req-change: $rc $out"
+qa '{"skill":"s","tema":"a5","riesgo":"sin ella se pierden datos de socios","pregunta":"q","para_cliente":"¿Guardamos copia de los socios?","opciones":[{"letra":"A","texto":"a","efecto":"req-change","recomendada":true,"cliente":"Sí, cada noche"},{"letra":"B","texto":"b","efecto":"ninguno","cliente":"No"}]}'
+[ $rc = 0 ] && jq -e '.preguntas[0].riesgo' .sdd/questions-r.json >/dev/null && ok "add: req-change recomendado con su riesgo grave, aceptada (y el riesgo queda escrito)" || bad "con riesgo: $rc $out"
+cd "$AQUI"
 exit $fail

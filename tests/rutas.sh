@@ -102,6 +102,13 @@ rm -f "$T/cartas"; o=$(HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/etapa.sh" "$R" dudas 
   && [ -f .sdd/hermes/dudas-diseno ] && [ ! -s "$T/cartas" ] && ok "dudas abiertas: una sola puerta «Dudas antes del plan», sin plan todavía" || bad "dudas abiertas: $o"
 bash "$ROOT/lanzar.sh" siguiente "$R" "$G" respondo >/dev/null
 [ "$(tr '\n' ';' < "$T/cartas")" = "Plan<-;Tareas<t6;" ] && [ ! -f .sdd/hermes/dudas-diseno ] && ok "al responderlas: Plan → Tareas" || bad "tras dudas: $(tr '\n' ';' < "$T/cartas")"
+# la consolidación de dudas solo fusiona preguntas: si toca un fichero fuera de .sdd/, la etapa para (antes, prosa)
+for t in uno dos; do printf '{"skill":"s","tema":"duda-%s","pregunta":"q","para_cliente":"¿Vale así?","opciones":[{"letra":"A","texto":"a","efecto":"ninguno","recomendada":true},{"letra":"B","texto":"b","efecto":"accion"}]}' "$t" \
+  | node "$ROOT/metodo/scripts/sdd.mjs" questions add --role dudas-x >/dev/null 2>&1; done
+cp .sdd/hermes/hermes-sdd.json "$T/hs.bak" 2>/dev/null; echo '{"ejecutor":"claude","ejecutores":{"dudas":"../tests/ejecutor-falso"}}' > .sdd/hermes/hermes-sdd.json
+o=$(FALSO_MODO=toca HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/etapa.sh" "$R" dudas | tail -1)
+echo "$o" | jq -e '.outcome == "failed" and (.reason | test("fuera de .sdd/: fuera-de-sdd.txt"))' >/dev/null && ok "dudas: si la consolidación toca algo fuera de .sdd/, la etapa para" || bad "dudas toca: $o"
+rm -f fuera-de-sdd.txt .sdd/questions-dudas-x.* .sdd/hermes/dudas-diseno; if [ -f "$T/hs.bak" ]; then mv "$T/hs.bak" .sdd/hermes/hermes-sdd.json; else rm -f .sdd/hermes/hermes-sdd.json; fi
 rm -f .sdd/questions-spec-auditor.*; mv "$T/qsa.json" .sdd/questions-spec-auditor.json 2>/dev/null; node "$ROOT/metodo/scripts/sdd.mjs" questions render >/dev/null 2>&1
 rm -f "$T/cartas"
 rm -f "$T/cartas"; jq '.route.stages["gap-detector"].run = true' pipeline-state.json > p.tmp && mv p.tmp pipeline-state.json
@@ -151,15 +158,17 @@ P
 echo compacta > .sdd/hermes/granularidad 2>/dev/null || true
 grep -q '^compacta$' .sdd/hermes/granularidad || bad "firmar no guardó la granularidad"
 echo '{"ejecutor":"claude","ejecutores":{"plan":"../tests/ejecutor-falso","tareas":"../tests/ejecutor-falso","implementar":"../tests/ejecutor-falso"}}' > .sdd/hermes/hermes-sdd.json
-FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" plan >/dev/null
+rm -f "$T/llamadas"; FALSO_LOG="$T/llamadas" bash "$ROOT/etapa.sh" "$R" plan >/dev/null; jq -rs '.[0].prompt' "$T/llamadas" > "$T/prompt"
 grep -q 'COMPACT PLAN (small project): exactly ONE FASE' "$T/prompt" && [ "$(cat .sdd/hermes/granularidad-plan)" = compacta ] \
   && ok "compacta: el plan pide una sola FASE y deja constancia de la granularidad usada" || bad "plan compacto: $(cat "$T/prompt")"
 grep -q "Plan-Size:\*\* compact" "$T/prompt" && grep -q 'no ARCHITECTURE.md, RESEARCH.md, CLARIFY-LOG.md, fases/README.md nor fase-plans/' "$T/prompt" \
   && ok "compacta: el plan en dos ficheros (PLAN.md y el de la FASE), sin los otros cinco" || bad "plan compacto en dos ficheros: $(cat "$T/prompt")"
+jq -e -s 'length == 2 and (.[1].prompt | test("Fix the shape of plan/") and test("Plan-Size"))' "$T/llamadas" >/dev/null \
+  && ok "compacta: si el plan no tiene la forma (aquí, sin Plan-Size), una pasada de arreglo con la lista de fallos" || bad "forma plan: $(jq -c '[.[].prompt[0:60]]' -s "$T/llamadas")"
 # material-montana: lo que el cliente decidió (aquí, la hora de España) llega al prompt de las etapas siguientes
 mkdir -p .sdd
 node "$ROOT/metodo/scripts/sdd.mjs" questions add --role spec-auditor >/dev/null 2>&1 <<'J'
-{"skill": "sdd-spec-auditor", "contexto": "RN-002", "pregunta": "Which clock decides today?",
+{"skill": "sdd-spec-auditor", "contexto": "RN-002", "tema": "reloj-hoy", "pregunta": "Which clock decides today?",
  "para_cliente": "¿Qué hora manda para decidir qué día es hoy?",
  "opciones": [{"letra": "A", "texto": "Europe/Madrid", "recomendada": true, "efecto": "ninguno", "cliente": "La hora de España"},
               {"letra": "B", "texto": "UTC", "efecto": "ninguno", "cliente": "La hora universal"}]}
@@ -240,4 +249,20 @@ p["opciones"][0]["fijada"] = False
 assert list(N.verbos_jev(p)) == ["ruta-ligera", "ruta-adaptativa"], N.verbos_jev(p)
 PY
 grep -q 'criterio, fijada}' "$ROOT/puerta.sh" && ok "puerta.sh guarda «fijada» en los botones de la ruta" || bad "fijada se pierde en puerta.sh"
+# la forma que pide la granularidad, comprobada (antes, prosa del prompt): plan compacto de una FASE sin ficheros de
+# más; tareas dentro de su tope y sin tareas de «verificar criterios»
+python3 - "$ROOT/plugin/hermes-sdd" "$T" <<'PY' && ok "forma del plan y de las tareas según la granularidad: comprobada" || bad "forma"
+import sys; from pathlib import Path; sys.path.insert(0, sys.argv[1]); import hsdd_plan as P
+r = Path(sys.argv[2]) / "forma"; (r / "plan" / "fases").mkdir(parents=True); (r / "task").mkdir()
+(r / "plan" / "PLAN.md").write_text("> **Plan-Size:** compact\n"); (r / "plan" / "fases" / "FASE-0-SKELETON.md").write_text("x")
+assert P.forma(r, "plan", "compacta") == [], P.forma(r, "plan", "compacta")
+(r / "plan" / "ARCHITECTURE.md").write_text("x"); (r / "plan" / "fases" / "FASE-1-HARDENING.md").write_text("x")
+f = P.forma(r, "plan", "compacta")
+assert any("exactamente una FASE" in x for x in f) and any("ARCHITECTURE.md" in x for x in f) and any("HARDENING" in x for x in f), f
+tareas = "\n".join(f"- [ ] TASK-F0-00{i} Porción {i}" for i in range(1, 8)) + "\n- [ ] TASK-F0-008 Verificar los criterios de aceptación\n"
+(r / "task" / "TASK-FASE-0.md").write_text(tareas); (r / "task" / "TASK-ORDER.md").write_text("x")
+f = P.forma(r, "tareas", "compacta")
+assert any("8 tareas" in x for x in f) and any("TASK-F0-008" in x for x in f) and any("TASK-ORDER" in x for x in f), f
+assert not any("tareas;" in x for x in P.forma(r, "tareas", "fina")), P.forma(r, "tareas", "fina")
+PY
 exit $fail

@@ -86,6 +86,9 @@ un rehacer), y **solo entonces**, propónla: `bash {{ARNES}}/encargado.sh leccio
 cliente) y para la etapa que debió aplicarla (requisitos, plan, tareas, implementar, aceptar…); la evidencia, la
 puerta (g…), la tarjeta (t_…) o el commit que lo prueban. Una persona la confirma por Telegram; sin eso no se usa.
 Pocas y buenas: si dudas, no la propongas.
+Si la regla se puede **comprobar sin un modelo** (un fichero que no debe existir, un recuento, un texto que debe o no
+aparecer, un trailer de commit…), añade `--comprobable "<cómo se comprobaría>"`: esa lección no va al prompt de las
+etapas (un agente la olvida), se convierte en una comprobación del arnés.
 
 ## Lo que no haces
 - No escribes fuera de `wiki/` (y, en preparación, de `intent/` y `requirements/`). No cambias el plan, las tareas
