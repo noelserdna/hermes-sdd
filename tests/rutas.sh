@@ -273,5 +273,7 @@ tareas = "\n".join(f"- [ ] TASK-F0-00{i} Porción {i}" for i in range(1, 8)) + "
 f = P.forma(r, "tareas", "compacta")
 assert any("8 tareas" in x for x in f) and any("TASK-F0-008" in x for x in f) and any("TASK-ORDER" in x for x in f), f
 assert not any("tareas;" in x for x in P.forma(r, "tareas", "fina")), P.forma(r, "tareas", "fina")
+(r / "task" / "TASK-FASE-0.md").write_text("- [ ] TASK-F0-001 Porción\n- [ ] TASK-F0-002 Porción\n- [ ] TASK-F0-003 Verify all FASE-0 criteria end to end | `tests/e2e/viaje.spec.js`\n")
+assert not any("TASK-F0-003" in x for x in P.forma(r, "tareas", "compacta")), P.forma(r, "tareas", "compacta")
 PY
 exit $fail

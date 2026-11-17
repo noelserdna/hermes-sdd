@@ -356,6 +356,23 @@ se mostró. Tres registros cuentan la misma historia: el canal, el acta del nota
   o de `.sdd/hermes/hermes-sdd.json` (`etapa_usd`, `proyecto_usd`, `ejecucion_min`; 0 = sin tope). Al llegar a uno, la
   tarjeta se para y te avisa.
 
+**Reglas duras, no prompts.** Lo que se puede comprobar no se le pide al agente en el prompt: se comprueba, y la etapa
+se para si no se cumple (tras una pasada de arreglo). Preguntas bien escritas (`sdd questions add` rechaza ids en el
+texto del cliente, opciones al revés o un cambio de requisitos recomendado sin riesgo grave); la forma del plan y de
+las tareas según su granularidad; capturas que comprueban sus textos «Se ve:» (C-05, C-06); el lint del proyecto, una
+carpeta por caso de uso sin importarse entre ellas (`sdd lint --arch`) y el helper de evidencias de la plantilla sin
+tocar; y el commit que toca un test autorizado cita su pregunta (`Autoriza: Q-…`). Una lección que se puede comprobar
+(`--comprobable`) no va al prompt: se convierte en comprobación.
+
+**La demo se dice y se ve.** En los proyectos con plantilla (`web-vite`), el guion de la demo sale de los casos de uso
+y los workflows (`sdd demo script`); cada criterio se narra con un rótulo en pantalla y voz en off justo cuando sus
+textos «Se ve:» están en la app, y la puerta comprueba que lo dicho y lo visto coinciden (C-07, C-08). La voz la pone
+`sdd demo narrate` en tu máquina (`say` en macOS, `espeak-ng` en Linux, y `ffmpeg`): el vídeo de la puerta es un mp4.
+
+**Evals de las skills.** `bash evals/run.sh --cambiadas` ejecuta, por céntimos, los casos de las skills que cambiaron
+(una skill sobre un proyecto pequeño, puntuada con los lints) y guarda el resultado en `evals/results.jsonl`: los fallos
+de una skill se ven antes de una prueba de proyecto entera.
+
 **No garantiza** quién sostenía el móvil, ni resiste a alguien con acceso a tu sesión del sistema operativo: el kanban,
 los registros y los tags son ficheros tuyos. Las guardias (hooks, `approvals.deny`) lo *dificultan*. Solo un ejecutor
 en un contenedor o una firma con llave física lo *impiden*.

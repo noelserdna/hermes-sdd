@@ -1,0 +1,32 @@
+{
+  "skill": "sdd-task-generator",
+  "descripcion": "Tareas de una FASE con 8 tareas de plan en tres zonas de ficheros: lint de tareas limpio, forma normal y Streams agrupados por fichero (metodo/tests/fixtures/plan-mini/README.md)",
+  "fixture": "metodo/tests/fixtures/plan-mini",
+  "copiar": [
+    "plan"
+  ],
+  "prompt": "/sdd-task-generator — Modo arnés (hermes-sdd): sin persona en la sesión; sigue references/modo-arnes.md del plugin. Generate task/ for all FASEs. Tasks are slices that are seen working (about 4 to 8 per FASE), not one task per function; no separate tasks to 'verify criteria' or 'verify constraints' (the acceptance gate does that).",
+  "modelo": "sonnet",
+  "tope_usd": 1.5,
+  "tope_min": 20,
+  "permitidos": [
+    "task/",
+    ".sdd/",
+    "pipeline-state.json",
+    "status/"
+  ],
+  "checks": [
+    {
+      "nombre": "sdd lint de tareas sin errores",
+      "cmd": "node \"$SDD\" lint --dir task"
+    },
+    {
+      "nombre": "forma de las tareas (granularidad normal)",
+      "cmd": "f=$(python3 \"$ARNES/plugin/hermes-sdd/hsdd_plan.py\" forma . tareas normal); echo \"$f\"; [ -z \"$f\" ]"
+    },
+    {
+      "nombre": "Streams: las zonas de ficheros independientes (src/api, src/cli) van en paralelo",
+      "cmd": "grep -E '^- Streams:' task/TASK-ORDER.md && grep -qE '^- Streams:.*∥' task/TASK-ORDER.md"
+    }
+  ]
+}

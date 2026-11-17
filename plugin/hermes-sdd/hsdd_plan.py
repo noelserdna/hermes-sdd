@@ -87,6 +87,7 @@ def texto(h: list) -> str:
 
 TAREA = re.compile(r"^\s*- \[[ xX]\] (TASK-[A-Za-z0-9-]+)(.*)$", re.M)
 VERIFICAR = re.compile(r"\b(verif\w*|comprob\w*|check)\b.{0,40}\b(criteri\w*|constraint\w*|restricci\w*|acceptance)\b", re.I)
+RECORRIDO = re.compile(r"e2e|end to end|journey|recorrido|playwright|\.spec\.", re.I)
 TOPES = {"compacta": (3, 6), "normal": (2, 10)}   # normal: «unas 4 a 8», con margen; fina: sin tope
 
 
@@ -116,7 +117,9 @@ def forma(repo, que: str, gran: str) -> list:
             if ts and not lo <= len(ts) <= hi:
                 out.append(f"{f.name} tiene {len(ts)} tareas; con granularidad {gran} van de {lo} a {hi} (porciones que se ven funcionando, no una por función)")
             for tid, resto in ts:
-                if VERIFICAR.search(resto):
+                # la tarea de recorrido (journey) de la FASE sí va: el método la pide en la fase de verificación, con su
+                # e2e (la eval tareas-mini lo destapó: «Verify all FASE-1 … end to end | tests/e2e/…» no es de sobra)
+                if VERIFICAR.search(resto) and not RECORRIDO.search(resto):
                     out.append(f"{f.name}: {tid} es una tarea de verificar criterios o restricciones; eso lo hace la puerta de aceptación, no una tarea")
     return out
 

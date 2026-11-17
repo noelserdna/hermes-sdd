@@ -1,0 +1,35 @@
+{
+  "skill": "sdd-plan-architect",
+  "descripcion": "Plan desde requisitos (sin especificaciones) de la app de tareas: lint del plan limpio (cada Must planificado, cada requisito entero en una FASE) y forma normal (sin FASE de endurecimiento)",
+  "fixture": "metodo/examples/todo-app",
+  "setup": [
+    "cp \"$ARNES/metodo/templates/pipeline-state.template.json\" pipeline-state.json",
+    "for k in specifications-engineer spec-auditor test-planner security-auditor ux-designer tech-designer gap-detector; do bash \"$ARNES/metodo/scripts/sdd-state.sh\" set $k skipped --reason 'eval: el plan sale de requirements/'; done"
+  ],
+  "prompt": "/sdd-plan-architect --skip-clarify — Modo arnés (hermes-sdd): sin persona en la sesión; sigue references/modo-arnes.md del plugin. Generate plan/. Keep the plan as small as the rules allow: one FASE per user journey, and no separate HARDENING FASE when a measured NFR fits in the FASE that delivers the journey it measures.",
+  "modelo": "sonnet",
+  "tope_usd": 2,
+  "tope_min": 25,
+  "permitidos": [
+    "plan/",
+    ".sdd/",
+    "pipeline-state.json",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "status/"
+  ],
+  "checks": [
+    {
+      "nombre": "sdd lint --plan sin errores",
+      "cmd": "node \"$SDD\" lint --plan"
+    },
+    {
+      "nombre": "forma del plan (granularidad normal)",
+      "cmd": "f=$(python3 \"$ARNES/plugin/hermes-sdd/hsdd_plan.py\" forma . plan normal); echo \"$f\"; [ -z \"$f\" ]"
+    },
+    {
+      "nombre": "dependencias entre FASEs: ningún criterio cita una pantalla de una FASE posterior",
+      "cmd": "h=$(python3 \"$ARNES/plugin/hermes-sdd/hsdd_plan.py\" dependencias . --texto); echo \"$h\"; [ -z \"$h\" ]"
+    }
+  ]
+}
