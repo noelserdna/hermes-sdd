@@ -121,7 +121,9 @@ function cmdLintCaptures(o) {
   const scope = scopeFor(root, reqs, o.fase);
   let ledger = null;
   try { ledger = buildLedger({ ...o, "no-out": true }).ledger; } catch (e) { if (!(e instanceof Exit)) throw e; }
-  const r = lintCaptures({ root, reqs, scenarios: loadScenarios(root), ledger, scope: scope ? scope.set : null, testPaths: testPathsOf(root) });
+  const prof = stackProfile(root);
+  const r = lintCaptures({ root, reqs, scenarios: loadScenarios(root), ledger, scope: scope ? scope.set : null, testPaths: testPathsOf(root),
+    fase: o.fase, narration: String(prof.narration || "off").trim().toLowerCase(), evidenceDir: prof.evidence_dir || "evidencias" });
   const summary = { ...r.summary, ...(scope ? { fase: o.fase } : {}) };
   if (o.json) { out(JSON.stringify({ findings: r.findings, summary }, null, 2)); return summary.errors ? 1 : 0; }
   for (const f of r.findings) out(`${f.file}${f.line ? `:${f.line}` : ""} ${f.code} ${f.severity}${f.req ? ` ${f.req} AC${f.ac}` : ""} ${f.message}`);

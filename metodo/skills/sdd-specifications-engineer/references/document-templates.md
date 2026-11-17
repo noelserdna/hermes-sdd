@@ -301,6 +301,12 @@ One row per invariant; a code block below the table only when the validation doe
 |---|---|---|---|---|---|---|---|
 | 1 | [step] | sync/async/manual | [duration] | [n × backoff or —] | [schema ref] → [schema ref] | [abort / skip / retry] | [rollback or —] |
 
+## Navigation
+
+| # | Screen | Actor | How to get there | What the user does |
+|---|---|---|---|---|
+| 1 | [screen name as the requirements say it, e.g. Material] | [role] | [from where: menu entry, link or button, as the user sees it] | [the action, in the UC's words] |
+
 ## Error scenarios
 
 | Error | Step | Action | Result state |
@@ -316,6 +322,13 @@ None. *(or a table: Event | Step | Payload | Consumers)*
 | Duration p95 | [value] |
 | Success rate | [value] |
 ````
+
+---
+
+Rule for `## Navigation` (user-facing workflows only): one row per step that happens on a screen, in the user's words
+(screen names as the `Se ve:` lines of the requirements say them, the menu entry or button that leads there; no routes,
+selectors or HTTP). It is the map agents use to reach each feature (tests, demo, maintenance reproducing a report) and
+the demo script (`sdd demo script`) prints it next to the steps.
 
 ---
 

@@ -230,5 +230,35 @@ expect "criterion_video: required → a passing criterion without video is unsho
 run accept --report acceptance/R.md --no-out
 grep -q '^| REQ-F-001 | AC1 | pass | test-results/b/REQ-F-001-AC1-9f8e.png | test-results/b/video.webm |' "$repo/acceptance/R.md" && pass "report: screenshot and video per criterion" || bad "report: video column ($(grep 'REQ-F-001 | AC1 ' "$repo/acceptance/R.md"))"
 
+# ---------------------------------------------------------------- 7. narration: what is said is what is seen
+nr="$tmp/narra"; mkdir -p "$nr/requirements" "$nr/evidencias/FASE-0" "$nr/tests/e2e"; ( cd "$nr" && git init -q -b main )
+printf '# P\n\n## SDD Stack Profile\n\n- narration: required\n' > "$nr/CLAUDE.md"
+cat > "$nr/requirements/REQUIREMENTS.md" <<'MD'
+### REQ-F-001: Reservar material
+- **Statement:** THE system SHALL book
+- **Priority:** Must have
+- **Verification:** test
+- **Acceptance criteria:**
+  - GIVEN "lucia" WHEN she books "Casco" THEN the user sees "Reserva creada: Casco"
+    - Se ve: "Reserva creada: Casco" en Mis reservas
+  - GIVEN "lucia" WHEN she opens "Mis reservas" THEN the user sees "Hola, lucia"
+    - Se ve: "Hola, {usuario}" en la cabecera
+  - GIVEN "lucia" WHEN she cancels THEN nothing changes on screen
+    - No visible: lo comprueba el almacén
+MD
+nrun() { rc=0; out=$(cd "$nr" && node "$SDD" lint --captures --fase 0 --json 2>&1) || rc=$?; }
+nrun; expect "narration: before the run (no captures) there is nothing to say" "$(js 'j.findings.filter(f=>/C-0[78]/.test(f.code)).length')" 0
+printf '{"criterio":"REQ-F-001-AC1","imagen":"REQ-F-001-AC1.png","narrado":"Reservar material. En Mis reservas se ve «Reserva creada: Casco»."}' > "$nr/evidencias/FASE-0/REQ-F-001-AC1.json"
+printf '{"criterio":"REQ-F-001-AC2","imagen":"REQ-F-001-AC2.png","narrado":null}' > "$nr/evidencias/FASE-0/REQ-F-001-AC2.json"
+nrun
+expect "C-07: a visible criterion nobody narrates (AC2); AC1 narrated with its text; AC3 not visible" "$(js 'j.findings.filter(f=>/C-0[78]/.test(f.code)).map(f=>f.code+" AC"+f.ac+" "+f.severity).join()')" "C-07 AC2 error"
+printf '{"video":"WF-001-x.webm","narraciones":[{"t":1,"texto":"Lucía abre Mis reservas y ve su saludo","criterio":"REQ-F-001-AC2"}]}' > "$nr/evidencias/FASE-0/WF-001-x.narracion.json"
+nrun
+expect "C-08: narrated without saying its «Se ve» text (the fixed part «Hola,»)" "$(js 'j.findings.filter(f=>/C-0[78]/.test(f.code)).map(f=>f.code+" AC"+f.ac).join()')" "C-08 AC2"
+printf '{"video":"WF-001-x.webm","narraciones":[{"t":1,"texto":"En la cabecera se ve «Hola, lucia»","criterio":"REQ-F-001-AC2"}]}' > "$nr/evidencias/FASE-0/WF-001-x.narracion.json"
+nrun; expect "narration that says what the capture shows: clean" "$(js 'j.findings.filter(f=>/C-0[78]/.test(f.code)).length')" 0
+printf '# P\n\n## SDD Stack Profile\n\n- narration: off\n' > "$nr/CLAUDE.md"; rm "$nr/evidencias/FASE-0/WF-001-x.narracion.json"
+nrun; expect "narration: off → no C-07/C-08" "$(js 'j.findings.filter(f=>/C-0[78]/.test(f.code)).length')" 0
+
 [ "$fail" = 0 ] && echo "tests/captures: all passed"
 exit $fail

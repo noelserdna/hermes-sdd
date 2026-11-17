@@ -33,7 +33,7 @@ perfil() { cat AGENTS.md CLAUDE.md 2>/dev/null | grep -m1 -E "^- $1:" | sed -E "
 duras_implementar() {  # usa $SDD, $FASE y $ROOT; en el directorio del repo
   local ce l a t
   # capturas: solo los errores estáticos (con línea); los del ledger dependen del último JUnit (material-montana2, M13)
-  ce=$(node "$SDD" lint --captures --fase "$FASE" --json 2>/dev/null | jq -r '.findings[]? | select(.severity == "error" and (.line // 0) > 0)
+  ce=$(node "$SDD" lint --captures --fase "$FASE" --json 2>/dev/null | jq -r '.findings[]? | select(.severity == "error" and ((.line // 0) > 0 or .code == "C-07" or .code == "C-08"))
     | "sdd lint --captures: \(.file):\(.line) \(.code) \(.message[0:160])"' 2>/dev/null | head -5)
   [ -n "$ce" ] && printf '%s\n' "$ce"
   a=$(node "$SDD" lint --arch --json 2>/dev/null | jq -r '.findings[]? | select(.severity == "error") | "sdd lint --arch: \(.file):\(.line) \(.code) \(.message[0:160])"' 2>/dev/null | head -5)
@@ -47,4 +47,11 @@ duras_implementar() {  # usa $SDD, $FASE y $ROOT; en el directorio del repo
     echo "tests/e2e/fixtures/evidence.js cambió: es la plantilla del arnés (captura, vídeo y locución) y no se toca"
   fi
   return 0
+}
+
+# narrar_demo <fase>: la voz en off de los vídeos narrados de la FASE (sdd demo narrate, en esta máquina: say o
+# espeak-ng y ffmpeg) → evidencias/FASE-N/*.mp4, el vídeo que se ve en la puerta y en Telegram. Sin TTS, mp4 sin voz.
+narrar_demo() {
+  case "$(perfil narration)" in required|warn) ;; *) return 0 ;; esac
+  node "$SDD" demo narrate --fase "$1" > .sdd/hermes/demo-narrada-$1.txt 2>&1 || true
 }

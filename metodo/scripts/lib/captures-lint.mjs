@@ -14,6 +14,8 @@
 //                 count) and in the ledger (`unbound_captures`: the PNG is an attachment of such a test).
 //   C-05 error    a capture of a REQ-F criterion with «Se ve» texts that does not pass { ve: [...] }
 //   C-06 error    its ve list lacks one of those texts (warning when ve is not an inline list)
+//   C-07 error    (narration: required; warning with warn) a visible criterion no video narrates (evidence of the run)
+//   C-08 error    its narration does not say its «Se ve» texts
 //   C-04 warning  an id cited in a test file (UC-NNN, REQ-X-NNN, WF-NNN, AC-NNN-NN) that exists nowhere in
 //                 requirements/, spec/, plan/, design/ or ux/.
 import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
@@ -92,7 +94,7 @@ function knownIds(root) {
  * Run the lint. opts: { root, reqs, scenarios, ledger (from `sdd accept`, optional), scope: Set | null, testPaths }.
  * Returns { findings: [{ code, severity: error|warning, file, line, req?, ac?, message }], summary }.
  */
-export function lintCaptures({ root, reqs, scenarios = [], ledger = null, scope = null, testPaths } = {}) {
+export function lintCaptures({ root, reqs, scenarios = [], ledger = null, scope = null, testPaths, fase, narration = "off", evidenceDir = "evidencias" } = {}) {
   const findings = [];
   const { byScenario } = scenarioIndex(scenarios);
   const reqF = new Set(reqs.filter((r) => r.type === "F" && !r.deprecated).map((r) => r.id));
@@ -206,7 +208,50 @@ export function lintCaptures({ root, reqs, scenarios = [], ledger = null, scope 
       findings.push({ code: "C-02", severity: "warning", file: p, line: 0,
         message: `${p} is the only image of ${crits.length} criteria (${crits.slice(0, 6).join(", ")}${crits.length > 6 ? ", …" : ""}): one screen rarely shows that many promises; capture each criterion where its THEN is visible` });
   }
-  const order = { "C-01": 1, "C-03": 2, "C-02": 3, "C-04": 4 };
+  // C-07 / C-08: the demo says each criterion while the screen shows it (Stack Profile `narration: required|warn|off`).
+  // From the evidence of the run (the harness helper writes <video>.narracion.json and each capture's `narrado`):
+  // C-07 a visible REQ-F criterion that no video narrates; C-08 its narration does not say its «Se ve» texts, so what is
+  // said and what is seen are not the same promise. Only once the run left captures (before it, there is nothing to read).
+  if (narration === "required" || narration === "warn") {
+    const sev = narration === "required" ? "error" : "warning";
+    const base = path.join(root, evidenceDir);
+    const dirs = fase !== undefined && fase !== null ? [path.join(base, `FASE-${fase}`)]
+      : (existsSync(base) ? readdirSync(base).filter((d) => /^FASE-\d+$/.test(d)).map((d) => path.join(base, d)) : []);
+    const said = new Map();
+    let captures = 0;
+    const add = (id, t) => { if (id && t) (said.get(id) || said.set(id, []).get(id)).push(String(t)); };
+    for (const d of dirs) {
+      if (!existsSync(d)) continue;
+      for (const f of readdirSync(d).filter((x) => x.endsWith(".json"))) {
+        let j; try { j = JSON.parse(readFileSync(path.join(d, f), "utf8")); } catch { continue; }
+        if (f.endsWith(".narracion.json")) for (const n of j.narraciones || []) add(n.criterio, n.texto);
+        else if (j && j.criterio && j.imagen) { captures++; add(j.criterio, j.narrado); }
+      }
+    }
+    if (captures) {
+      const { byCriterion } = scenarioIndex(scenarios);
+      const rel = path.relative(root, dirs[0] || base) || evidenceDir;
+      for (const r of reqs) {
+        if (r.type !== "F" || r.deprecated || !inScope(r.id)) continue;
+        (r.criteria || []).forEach((_, i) => {
+          const sv = r.sees?.[i];
+          if (!sv || !sv.texts?.length) return;
+          const ids = [...(byCriterion.get(`${r.id}#${i + 1}`) || []), `${r.id}-AC${i + 1}`];
+          const textos = ids.flatMap((id) => said.get(id) || []);
+          if (!textos.length) {
+            findings.push({ code: "C-07", severity: sev, file: rel, line: 0, req: r.id, ac: i + 1,
+              message: `${r.id} AC${i + 1} (${ids[0]}) is not narrated in any video: before its capture call narrar(page, testInfo, <its sentence from .sdd/demo/GUION-FASE-N.md>, { criterio: '${ids[0]}' })` });
+            return;
+          }
+          const falta = sv.texts.filter((x) => (x.template ? templateParts(x.text) : [x.text]).some((p) => !textos.some((t) => t.includes(p))));
+          if (falta.length)
+            findings.push({ code: "C-08", severity: sev, file: rel, line: 0, req: r.id, ac: i + 1,
+              message: `${r.id} AC${i + 1} (${ids[0]}) is narrated without saying ${falta.map((x) => `«${x.text}»`).join(", ")}: what is said must be what its capture shows` });
+        });
+      }
+    }
+  }
+  const order = { "C-01": 1, "C-03": 2, "C-05": 3, "C-06": 4, "C-07": 5, "C-08": 6, "C-02": 7, "C-04": 8 };
   findings.sort((a, b) => order[a.code] - order[b.code] || a.file.localeCompare(b.file) || a.line - b.line);
   const count = (s) => findings.filter((x) => x.severity === s).length;
   return { findings, summary: { test_files: files.length, capture_calls: captureCalls, errors: count("error"), warnings: count("warning") } };

@@ -184,6 +184,15 @@ FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" implementar 0 >/dev/null 2>&
 grep -q 'Stale quotes: tests/citas/vieja.test.js:1 REQ-F-001 AC1' "$T/prompt" && grep -q 'update ONLY those quote comments' "$T/prompt" \
   && ok "implementar: pide volver a citar los tests que el cambio de requisitos dejó con el texto viejo" || bad "citas viejas: $(grep -o 'Stale quotes.*' "$T/prompt" | head -c 200) $(node "$ROOT/metodo/scripts/sdd.mjs" lint --quotes 2>&1 | head -3)"
 rm -rf tests/citas; [ -n "${NUEVA_TAREA:-}" ] && rm -f task/TASK-FASE-0.md; git checkout -q -- . 2>/dev/null; git clean -qfd tests task 2>/dev/null
+# demo narrada: con «narration: required» en el Stack Profile, el implementador recibe el guion (casos de uso, workflow y
+# una frase por criterio) y la orden de decir cada criterio justo antes de su captura
+cp AGENTS.md "$T/agents.bak" 2>/dev/null || touch "$T/agents.nuevo"; printf '\n## SDD Stack Profile\n- narration: required\n' >> AGENTS.md
+mkdir -p task; [ -f task/TASK-FASE-0.md ] || { printf -- '- [x] TASK-F0-001 x\n' > task/TASK-FASE-0.md; NUEVA_TAREA=1; }
+FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" implementar 0 >/dev/null 2>&1
+grep -q 'NARRATED DEMO: .sdd/demo/GUION-FASE-0.md is the script' "$T/prompt" && [ -f .sdd/demo/GUION-FASE-0.md ] \
+  && ok "narration required: el implementador recibe el guion de la demo y narra cada criterio antes de su captura" || bad "narra: $(grep -o 'NARRATED.\{0,80\}' "$T/prompt") $(ls .sdd/demo 2>&1)"
+if [ -f "$T/agents.bak" ]; then mv "$T/agents.bak" AGENTS.md; else rm -f AGENTS.md; fi
+[ -n "${NUEVA_TAREA:-}" ] && rm -f task/TASK-FASE-0.md; git checkout -q -- . 2>/dev/null; git clean -qfd tests task 2>/dev/null
 FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" tareas >/dev/null
 grep -q 'COMPACT TASKS: 3 to 6 tasks' "$T/prompt" && grep -q 'TEST POLICY: one test per acceptance criterion' "$T/prompt" \
   && ok "compacta: tareas gruesas y un test por criterio" || bad "tareas compactas: $(cat "$T/prompt")"

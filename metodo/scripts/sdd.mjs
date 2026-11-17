@@ -81,6 +81,9 @@
 //       the capture id against the enclosing test's title, a test.step does not count; and the ledger's
 //       unbound_captures) · C-04 warning, an id (UC-, REQ-, WF-, AC-) cited in a test that exists in no document. Exit 1
 //       on any error.
+//   sdd demo script --fase N [--json]                           the FASE demo script from use cases, workflows and criteria:
+//       .sdd/demo/GUION-FASE-N.{json,md}, one sentence per criterion built from its «Se ve:» line (lib/demo.mjs)
+//   sdd demo narrate --fase N [--tts say|espeak-ng|none]        voice-over for evidencias/FASE-N/*.narracion.json → .mp4
 //   sdd lint --arch [--json]                                     one folder per use case: A-01 features/<a> imports features/<b> (error),
 //       A-02 a source file loose next to features/ (warning); nothing to say without a features/ folder (lib/arch-lint.mjs)
 //   sdd lint --stale [--json] [--requirements FILE]
@@ -294,6 +297,7 @@ import {
 import { runFloor } from "./lib/floor.mjs";
 import { runAcceptance } from "./lib/acceptance-cli.mjs";
 import { lintArch } from "./lib/arch-lint.mjs";
+import { runDemo } from "./lib/demo.mjs";
 import { runPlanLint } from "./lib/plan-lint.mjs";
 import { runTracker } from "./lib/tracker.mjs";
 import { runRoute } from "./lib/route.mjs";
@@ -1104,6 +1108,7 @@ export function run(argv, { prog = "sdd", helpUrl = import.meta.url, legacy = fa
       if (argv.includes("--help") || argv.includes("-h")) { try { help(0); } catch (e) { if (e instanceof Exit) return e.code; throw e; } }
       return runPlanLint([...argv.slice(0, first.index), ...argv.slice(first.index + 1)], { prog });
     }
+    if (first.cmd === "demo") return runDemo([...argv.slice(0, first.index), ...argv.slice(first.index + 1)], { prog });
     if (first.cmd === "lint" && argv.includes("--arch")) {
       if (argv.includes("--help") || argv.includes("-h")) { try { help(0); } catch (e) { if (e instanceof Exit) return e.code; throw e; } }
       return cmdLintArch(argv);
