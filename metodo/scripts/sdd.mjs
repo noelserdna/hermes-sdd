@@ -81,6 +81,8 @@
 //       the capture id against the enclosing test's title, a test.step does not count; and the ledger's
 //       unbound_captures) · C-04 warning, an id (UC-, REQ-, WF-, AC-) cited in a test that exists in no document. Exit 1
 //       on any error.
+//   sdd lint --arch [--json]                                     one folder per use case: A-01 features/<a> imports features/<b> (error),
+//       A-02 a source file loose next to features/ (warning); nothing to say without a features/ folder (lib/arch-lint.mjs)
 //   sdd lint --stale [--json] [--requirements FILE]
 //       Documents left behind by a requirements change (scripts/lib/stale-lint.mjs), Markdown under spec/, ux/, design/,
 //       test/, plan/, task/: S-01 error, a quoted text ("…", «…», “…”) that an earlier version of REQUIREMENTS.md
@@ -291,6 +293,7 @@ import {
 } from "./lib/git-log.mjs";
 import { runFloor } from "./lib/floor.mjs";
 import { runAcceptance } from "./lib/acceptance-cli.mjs";
+import { lintArch } from "./lib/arch-lint.mjs";
 import { runPlanLint } from "./lib/plan-lint.mjs";
 import { runTracker } from "./lib/tracker.mjs";
 import { runRoute } from "./lib/route.mjs";
@@ -1080,6 +1083,18 @@ function cmdLintStale(argv) {
   return r.findings.length ? 1 : 0;
 }
 
+function cmdLintArch(argv) {
+  const a = argv.filter((x) => x !== "lint" && x !== "--arch");
+  const root = path.resolve(optValue(a, "repo") || ".");
+  const r = lintArch({ root, codePaths: codePaths(root) });
+  if (a.includes("--json")) console.log(JSON.stringify(r, null, 2));
+  else {
+    for (const f of r.findings) console.log(`${f.file}:${f.line} ${f.code} ${f.severity} ${f.message}`);
+    console.log(`${PROG}: lint --arch: ${r.summary.files} file(s), ${r.summary.features} feature(s) · ${r.summary.errors} error(s) · ${r.summary.warnings} warning(s)`);
+  }
+  return r.summary.errors ? 1 : 0;
+}
+
 /** Run the CLI; returns the exit code. `legacy` = the sdd-task-lint.mjs command set (lint|json|status|index). */
 export function run(argv, { prog = "sdd", helpUrl = import.meta.url, legacy = false } = {}) {
   PROG = prog; HELP_URL = helpUrl;
@@ -1088,6 +1103,10 @@ export function run(argv, { prog = "sdd", helpUrl = import.meta.url, legacy = fa
     if (first.cmd === "lint" && argv.includes("--plan")) {
       if (argv.includes("--help") || argv.includes("-h")) { try { help(0); } catch (e) { if (e instanceof Exit) return e.code; throw e; } }
       return runPlanLint([...argv.slice(0, first.index), ...argv.slice(first.index + 1)], { prog });
+    }
+    if (first.cmd === "lint" && argv.includes("--arch")) {
+      if (argv.includes("--help") || argv.includes("-h")) { try { help(0); } catch (e) { if (e instanceof Exit) return e.code; throw e; } }
+      return cmdLintArch(argv);
     }
     if (first.cmd === "lint" && argv.includes("--floor")) {
       if (argv.includes("--help") || argv.includes("-h")) { try { help(0); } catch (e) { if (e instanceof Exit) return e.code; throw e; } }

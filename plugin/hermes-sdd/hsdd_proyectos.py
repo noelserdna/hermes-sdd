@@ -371,6 +371,8 @@ def agents_md(nombre: str, s: dict, que: str) -> str:
                "- task_state: trailers", "- test_slots: 1"]
     perfil += [f"- server: {s['server']}"] if s.get("server") else []
     perfil += [f"- port: {s['port']}"] if s.get("port") else []
+    if plantilla_stack(s.get("id", "")):   # la plantilla trae lint, e2e y la demo narrada
+        perfil += ["- lint: npm run lint", "- acceptance: npx playwright test", "- narration: required"]
     return (f"# Instrucciones para agentes\n\n{nombre}: {resumen}\n"
             f"Stack elegido al crear el proyecto: {s['nombre']} ({s['stack']}). No lo cambies sin un requisito que lo pida.\n\n"
             "## SDD Stack Profile\n" + "\n".join(perfil) + "\n\n"
@@ -378,6 +380,29 @@ def agents_md(nombre: str, s: dict, que: str) -> str:
             "- Cualquier cambio de comportamiento lleva su test.\n"
             + (f"- Vitest con como mucho {VITEST_MAX_WORKERS} workers: `test: {{ maxWorkers: {VITEST_MAX_WORKERS} }}` en "
                "vitest.config (la máquina la comparten otras etapas y el navegador de los e2e).\n" if vitest else ""))
+
+
+def plantilla_stack(stack: str) -> Path | None:
+    p = _raiz_arnes() / "templates" / "stacks" / stack
+    return p if p.is_dir() else None
+
+
+def copiar_plantilla(stack: str, repo: Path) -> list:
+    """Los ficheros de la plantilla del stack (templates/stacks/<id>/: config de Playwright, helper de evidencias y
+    locución, ESLint, package.json) en el proyecto nuevo, sin pisar nada. Así el implementador no los inventa: el
+    contrato con la aceptación ya está escrito (y el arnés comprueba que el helper no cambia)."""
+    base = plantilla_stack(stack)
+    if not base:
+        return []
+    hechos = []
+    for f in sorted(base.rglob("*")):
+        if f.is_file():
+            dst = repo / f.relative_to(base)
+            if not dst.exists():
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(f, dst)
+                hechos.append(str(f.relative_to(base)))
+    return hechos
 
 
 def intent_md(que: str) -> str:
@@ -457,6 +482,7 @@ def nuevo_proyecto(nombre: str, que: str, stack: str | None = None, carpeta: str
     (repo / "intent").mkdir(exist_ok=True)
     (repo / "intent" / "INT-001.md").write_text(intent_md(que))
     (repo / ".gitignore").write_text(GITIGNORE)
+    copiar_plantilla(st["id"], repo)
     git("add", "-A")
     git("commit", "-q", "-m", f"chore: proyecto {tablero} (stack {st['id']}) con la petición inicial")
     if jev:

@@ -47,6 +47,12 @@ echo "$o" | grep -q "Proyecto bogota-turismo en $R (stack web-astro, Jev humano,
 o=$($NUEVO tienda "$QUE" --carpeta "$T/otra" --jev consejo 2>&1)
 [ -d "$T/otra/tienda/.git" ] && grep -q '^- stack: JavaScript (ES modules) + Vite + Vitest$' "$T/otra/tienda/AGENTS.md" \
   && ok "--carpeta manda sobre la de por defecto; sin --stack, el de por defecto" || bad "carpeta/stack: $o"
+# la plantilla del stack (Playwright, helper de evidencias y locución, ESLint, package.json) va en el primer commit
+TI="$T/otra/tienda"
+[ -f "$TI/tests/e2e/fixtures/evidence.js" ] && [ -f "$TI/playwright.config.js" ] && [ -f "$TI/eslint.config.js" ] && [ -f "$TI/package.json" ] \
+  && [ -z "$(git -C "$TI" status --porcelain)" ] && grep -q '^- lint: npm run lint$' "$TI/AGENTS.md" && grep -q '^- narration: required$' "$TI/AGENTS.md" \
+  && cmp -s "$TI/tests/e2e/fixtures/evidence.js" "$ROOT/templates/stacks/web-vite/tests/e2e/fixtures/evidence.js" \
+  && ok "web-vite: la plantilla del stack en el proyecto (commiteada) y su Stack Profile con lint, e2e y narración" || bad "plantilla: $(ls -R "$TI" | head -20)"
 [ "$(jq -r '.proyectos.tienda' "$HERMES_SDD_HOME/jev.json")" = consejo ] && ok "--jev deja el modo de Jev del proyecto" || bad "jev: $(cat "$HERMES_SDD_HOME/jev.json")"
 
 # ── lo que no procede, sin dejar nada a medias ───────────────────────────────────────────────────────────────────

@@ -412,6 +412,18 @@
    - Task: TASK-F{N}-{SEQ}
 ```
 
+**Harness template first.** When the project already has `playwright.config.js` and `tests/e2e/fixtures/evidence.js`
+whose header says «Plantilla del arnés» (projects created by hermes-sdd with a stack template), use them as they are:
+`import { test, expect, captura, narrar } from './fixtures/evidence.js'`. Never edit `evidence.js` (the harness checks
+it is unchanged); `playwright.config.js` may change its `webServer` or `projects`, never its `outputDir`, `reporter` or
+`use`. The templates below are for projects without that file.
+
+**Code layout (enforced by `sdd lint --arch`).** One folder per use case, `src/features/uc-NNN-<slug>/`, holding
+everything that use case needs (view, logic, store access); what two use cases share lives in `src/shared/`. A file of
+one feature never imports another feature's file (A-01, error); a source file never sits loose next to `features/`
+except the entry points `main`, `index`, `app`, `router` (A-02, warning). Agents copy the pattern they find, so the
+first FASE sets it up.
+
 **Playwright config template** (new suites only — step 2; an existing suite gets the `use`, `outputDir` and
 `reporter` lines below in its own E2E setup task, because every REQ-F criterion needs its capture to be VERIFIED):
 

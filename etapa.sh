@@ -648,12 +648,15 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
     fi
     base=$(git describe --tags --abbrev=0 --match 'fase-*-accepted' 2>/dev/null || git describe --tags --abbrev=0 --match 'requirements-v*' 2>/dev/null || git rev-list --max-parents=0 HEAD)
     node "$SDD" verify --range "$base..HEAD" >/dev/null 2>&1 || falla "sdd verify --range $base..HEAD encuentra commits inválidos"
-    # El prompt pedía dejar «sdd lint --captures» sin errores; ahora, tras la pasada de arreglos, es una parada: un error
-    # estático de captura (C-01 tras una comprobación por API, C-03 en un test que no cita el criterio) no llega a la
-    # aceptación. Solo los estáticos (con línea): los del ledger dependen del último JUnit (material-montana2, M13)
-    CE=$(node "$SDD" lint --captures --fase "$FASE" --json 2>/dev/null | jq -r '[.findings[]? | select(.severity == "error" and (.line // 0) > 0)
-      | "\(.file):\(.line) \(.code)"] | .[0:3] | join(", ")' 2>/dev/null || true)
-    [ -z "$CE" ] || falla "sdd lint --captures --fase $FASE sigue con errores tras la implementación: $CE"
+    # Reglas duras del código entregado (antes, frases del prompt; Lauren Tan: lo que se puede comprobar no va en el
+    # prompt): capturas sin errores estáticos, el lint del proyecto, una carpeta por caso de uso sin importarse entre
+    # ellas y el helper de evidencias de la plantilla sin tocar. Una pasada de arreglo con la lista y, si sigue, para.
+    D=$(duras_implementar)
+    if [ -n "$D" ]; then
+      claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES FASE-$FASE breaks these hard rules; fix every one (a task and a commit each, tests stay green; never edit tests/e2e/fixtures/evidence.js, restore it with git if you changed it): $(printf '%s' "$D" | tr '\n' ';')"
+      D=$(duras_implementar)
+      [ -z "$D" ] || falla "la FASE-$FASE no cumple las reglas duras tras la pasada de arreglo: $(printf '%s' "$D" | head -3 | tr '\n' ' ')"
+    fi
     fin "$RES" "FASE-$FASE implementada: $(echo "$st" | tail -1)" ;;
 
   aceptar)

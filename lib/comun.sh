@@ -27,3 +27,24 @@ gate_entrega() {  # gate_entrega [--md]: como «sdd gate», global o FASE a FASE
   done
   return "$peor"
 }
+
+# duras_implementar: una línea por regla dura que el código de la FASE incumple (vacío si ninguna)
+perfil() { cat AGENTS.md CLAUDE.md 2>/dev/null | grep -m1 -E "^- $1:" | sed -E "s/^- $1: *//"; }
+duras_implementar() {  # usa $SDD, $FASE y $ROOT; en el directorio del repo
+  local ce l a t
+  # capturas: solo los errores estáticos (con línea); los del ledger dependen del último JUnit (material-montana2, M13)
+  ce=$(node "$SDD" lint --captures --fase "$FASE" --json 2>/dev/null | jq -r '.findings[]? | select(.severity == "error" and (.line // 0) > 0)
+    | "sdd lint --captures: \(.file):\(.line) \(.code) \(.message[0:160])"' 2>/dev/null | head -5)
+  [ -n "$ce" ] && printf '%s\n' "$ce"
+  a=$(node "$SDD" lint --arch --json 2>/dev/null | jq -r '.findings[]? | select(.severity == "error") | "sdd lint --arch: \(.file):\(.line) \(.code) \(.message[0:160])"' 2>/dev/null | head -5)
+  [ -n "$a" ] && printf '%s\n' "$a"
+  if [ -n "$(perfil lint)" ] && [ -f package.json ] && jq -e '.scripts.lint' package.json >/dev/null 2>&1; then
+    if [ -x node_modules/.bin/eslint ] || [ "$(perfil lint)" != "npm run lint" ]; then l=$(eval "$(perfil lint)" 2>&1) || printf 'lint (%s): %s\n' "$(perfil lint)" "$(printf '%s' "$l" | grep -E 'error' | head -3 | tr '\n' ' ')"
+    else l=$(npx --yes eslint@9.17.0 . 2>&1) || printf 'lint (eslint): %s\n' "$(printf '%s' "$l" | grep -E 'error' | head -3 | tr '\n' ' ')"; fi
+  fi
+  t=$(ls "$ROOT"/templates/stacks/*/tests/e2e/fixtures/evidence.js 2>/dev/null | head -1)
+  if [ -f tests/e2e/fixtures/evidence.js ] && [ -n "$t" ] && grep -q 'Plantilla del arnés' tests/e2e/fixtures/evidence.js && ! cmp -s "$t" tests/e2e/fixtures/evidence.js; then
+    echo "tests/e2e/fixtures/evidence.js cambió: es la plantilla del arnés (captura, vídeo y locución) y no se toca"
+  fi
+  return 0
+}

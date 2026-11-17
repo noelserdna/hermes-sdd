@@ -136,6 +136,8 @@ From each FASE file: **Criterios de Exito** → acceptance groups; **Specs a Lee
 
 ### Phase 2: Plan Decomposition
 
+Each task's write-set follows the code layout of `sdd-task-implementer/references/construction-protocol.md` (one folder per use case, `src/features/uc-NNN-<slug>/`, shared code in `src/shared/`; `sdd lint --arch` enforces it), so a slice touches its own feature folder and, at most, `src/shared/`.
+
 From each `PLAN-FASE-{N}.md`: components → tasks grouped by behaviour; data models → inside the first slice that needs them (own Foundation task only when ≥ 2 slices share them); API operations (`API-NNN-NN`, transport per `design/OPERATION-MAPPING.md`) → one vertical slice each; tests (§7 + Coverage Map §7.4) → inside the implementing task, written first; configuration → one setup task per concern; integration points → wiring tasks.
 
 | Concern | Granularity | Example |
