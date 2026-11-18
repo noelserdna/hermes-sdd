@@ -21,7 +21,6 @@ nuevo() {  # nuevo <nombre> <guion-json>: proyecto practicado con su kanban, su 
   jq -n --arg u "$USER" '{yo:{nombre:"Alumna", rol:"Cliente", canales:{local:$u}}}' > "$HERMES_SDD_HOME/aprobadores.json"
   hermes kanban init >/dev/null 2>&1
   R="$d/practica"; BOARD=practica; LOG="$d/sim.log"; : > "$LOG"
-  git clone -q "$ROOT/grabaciones/todo-app/repo.bundle" "$R.tmp" 2>/dev/null; rm -rf "$R.tmp"   # (nada: practicar clona)
   bash "$ROOT/practicar.sh" "$ROOT/grabaciones/todo-app" "$R" >>"$LOG" 2>&1 || { bad "$1: practicar"; return 1; }
   git -C "$R" config user.email a@a; git -C "$R" config user.name Alumna
   local t; t=$(mktemp)
@@ -128,7 +127,104 @@ esc_fallo() {
     && ok "fallo: no queda ninguna tarjeta bloqueada" || bad "fallo: quedan bloqueadas: $(tarjetas | jq -c '[.[] | select(.status == "blocked") | .title]')"
 }
 
-ESC=${*:-rechazo fallo}
-for e in $ESC; do "esc_$e"; done
+# 3. Rechazar una FASE cuya pregunta recomienda cambiar los requisitos (material-montana5: dos vueltas así). La
+#    respuesta lanza el cambio; al aprobarlo, la FASE se rehace y su implementación recibe TAMBIÉN lo que la persona
+#    escribió al rechazar (no se pierde por el camino del cambio).
+esc_rechazo_cambio() {
+  nuevo rechazo_cambio '{"cambio": ["cambio"], "implementar-0": ["replay", "commit"]}' || return
+  local d="$BASE/rechazo_cambio"
+  decide_rc() {
+    local p=$1 t; t=$(jq -r '.tipo + ":" + (.fase // "")' "$HERMES_SDD_HOME/puertas/$p.json")
+    if [ "$t" = "fase:0" ] && [ ! -f "$d/rechazada" ]; then touch "$d/rechazada"; decide "$p" rechazo "Falta el botón de borrar"
+    elif [ "$t" = "fase:0" ]; then return 1
+    else camino_feliz "$p"; fi
+  }
+  correr decide_rc
+  git -C "$R" tag -l 'requirements-v*' | grep -qx 'requirements-v1.1' \
+    && ok "rechazo con cambio: la recomendada lanza el cambio y su puerta de requisitos se aprueba (v1.1)" \
+    || bad "rechazo con cambio: no hay requirements-v1.1 ($(git -C "$R" tag -l | tr '\n' ' '); $(grep -E 'PUERTA|NOTARIO' "$LOG" | tail -3 | tr '\n' ' '))"
+  local pr; pr=$(ls "$R"/.sdd/hermes/guion-prompts/implementar-0-*.txt 2>/dev/null | sort -V | tail -1)
+  [ -n "$pr" ] && grep -q "Falta el botón de borrar" "$pr" \
+    && ok "rechazo con cambio: la FASE-0 se rehace y su implementación recibe lo que se escribió al rechazar" \
+    || bad "rechazo con cambio: la implementación no recibió el rechazo ($(basename "${pr:-ninguno}"))"
+  [ "$(abierta | xargs -I{} jq -r '.tipo + ":" + .fase' "$HERMES_SDD_HOME/puertas/{}.json" 2>/dev/null)" = "fase:0" ] \
+    && ok "rechazo con cambio: la FASE-0 vuelve a su puerta sin desbloqueos a mano" \
+    || bad "rechazo con cambio: no volvió la puerta de la FASE-0 ($(tarjetas | jq -c '[.[] | {title, status}]'))"
+}
+
+# 4. Descartar una impugnación (usado 3 veces en pruebas reales, sin ningún test): la puerta de la FASE sale bloqueada
+#    con la impugnación; la persona la descarta («no es un fallo»); la puerta vuelve sin ella, se acepta y sigue la FASE-1.
+esc_descarto() {
+  nuevo descarto '{"aceptar-0": ["replay", "impugna"]}' || return
+  local d="$BASE/descarto" bloqueada=""
+  decide_d() {
+    local p=$1 f="$HERMES_SDD_HOME/puertas/$1.json" t; t=$(jq -r '.tipo + ":" + (.fase // "")' "$f")
+    if [ "$t" = "fase:0" ] && [ -z "$bloqueada" ]; then
+      bloqueada=$(jq -c '{bloqueo, opciones: [.opciones[].verbo], ch: (.texto | test("CH-001"))}' "$f")
+      decide "$p" descarto "CH-001: no es un fallo, el test sí lo comprueba"
+    elif [ "$t" = "fase:0" ]; then
+      jq -c '{bloqueo, ch: (.texto | test("CH-001"))}' "$f" > "$d/segunda"; decide "$p" acepto
+    elif [ "$t" = "fase:1" ]; then return 1
+    else camino_feliz "$p"; fi
+  }
+  correr decide_d
+  [ "$(echo "$bloqueada" | jq -c '[.bloqueo, (.opciones | index("descarto") != null), .ch]' 2>/dev/null)" = "[true,true,true]" ] \
+    && ok "descarto: la impugnación abierta bloquea la puerta de la FASE y ofrece descartarla" || bad "descarto: primera puerta ${bloqueada}"
+  [ "$(jq -c '[.bloqueo, .ch]' "$d/segunda" 2>/dev/null)" = "[false,false]" ] \
+    && ok "descarto: la puerta vuelve sin la impugnación descartada y sin bloqueo" || bad "descarto: segunda puerta $(cat "$d/segunda" 2>/dev/null)"
+  git -C "$R" tag -l | grep -qx fase-0-accepted && tarjetas | jq -e 'any(.[]; .title | startswith("Implementar FASE-1"))' >/dev/null \
+    && ok "descarto: aceptada la FASE-0, sigue la FASE-1" || bad "descarto: no siguió ($(git -C "$R" tag -l | tr '\n' ' '))"
+}
+
+# 5. Entrega parcial (/entregar) tras aceptar la FASE-1: la FASE-2 que ya estaba en cola no entra; el cierre abre la
+#    puerta de entrega de las FASEs 0 y 1 y, aceptada, queda la etiqueta entrega-1 (material-montana2..5 lo hicieron así)
+esc_entrega() {
+  nuevo entrega '{}' || return
+  decide_e() {
+    local p=$1 t; t=$(jq -r '.tipo + ":" + (.fase // "")' "$HERMES_SDD_HOME/puertas/$p.json")
+    case "$t" in
+      fase:1) decide "$p" acepto && bash "$ROOT/lanzar.sh" entregar "$R" >>"$LOG" 2>&1 ;;
+      # la grabación tiene un requisito de cobertura sin medir: la entrega sale bloqueada y solo vale eximirlo (N25 en
+      # material-montana3: «eximo» dejó la puerta en error)
+      entrega:) if jq -e '.bloqueo' "$HERMES_SDD_HOME/puertas/$p.json" >/dev/null; then decide "$p" eximo "La cobertura se mide al terminar todas las FASEs"
+                else decide "$p" acepto; fi; return 1 ;;
+      *) camino_feliz "$p" ;;
+    esac
+  }
+  correr decide_e 60
+  git -C "$R" tag -l | grep -qx entrega-1 && ok "entrega: /entregar tras la FASE-1 acaba en la etiqueta entrega-1" \
+    || bad "entrega: sin entrega-1 ($(git -C "$R" tag -l | tr '\n' ' '); $(grep -E 'PUERTA|NOTARIO|Cierre' "$LOG" | tail -3 | tr '\n' ' '))"
+  tarjetas | jq -e '[.[] | select((.title | startswith("Implementar FASE-2")) and (.status == "done" or .status == "running"))] | length == 0' >/dev/null \
+    && ok "entrega: la FASE-2 que estaba en cola no se ejecuta" || bad "entrega: la FASE-2 se ejecutó"
+  grep -q "Entrega parcial 1 (FASEs 0 1) aceptada" "$LOG" \
+    && ok "entrega: la entrega es de las FASEs 0 y 1, con la exención apuntada" || bad "entrega: $(grep -i 'entrega' "$LOG" | tail -2 | tr '\n' ' ')"
+}
+
+# 6. Un cambio pedido a mitad (/cambio) justo cuando la FASE-1 está en cola: el cambio pasa por su puerta de requisitos
+#    y la FASE-1 se hace con los requisitos nuevos, sin dos implementaciones a la vez ni tarjetas bloqueadas
+esc_cambio_medio() {
+  nuevo cambio_medio '{}' || return
+  decide_m() {
+    local p=$1 t; t=$(jq -r '.tipo + ":" + (.fase // "")' "$HERMES_SDD_HOME/puertas/$p.json")
+    case "$t" in
+      fase:0) decide "$p" acepto && bash "$ROOT/lanzar.sh" cambio "$R" "Que cada tarea pueda llevar una fecha límite" >>"$LOG" 2>&1 ;;
+      fase:1) return 1 ;;
+      *) camino_feliz "$p" ;;
+    esac
+  }
+  correr decide_m 60
+  git -C "$R" tag -l 'requirements-v*' | grep -q 'requirements-v1\.[1-9]' \
+    && ok "cambio a mitad: pasa por su puerta de requisitos y se aprueba" || bad "cambio a mitad: sin versión nueva ($(git -C "$R" tag -l | tr '\n' ' '))"
+  [ "$(abierta | xargs -I{} jq -r '.tipo + ":" + .fase' "$HERMES_SDD_HOME/puertas/{}.json" 2>/dev/null)" = "fase:1" ] \
+    && ok "cambio a mitad: la FASE-1 llega a su puerta" || bad "cambio a mitad: no llegó a la FASE-1 ($(tarjetas | jq -c '[.[] | {title, status}]'))"
+  [ -z "$(tarjetas | jq -r '.[] | select(.status == "blocked") | .id')" ] && ! grep -q '"busy"\|ocupado' "$LOG" \
+    && ok "cambio a mitad: ninguna tarjeta bloqueada ni etapas pisándose" || bad "cambio a mitad: $(tarjetas | jq -c '[.[] | select(.status == "blocked") | .title]') $(grep -c 'ocupado' "$LOG")"
+}
+
+# Cada escenario es independiente (su kanban, su HOME, su repo): corren a la vez y se cuentan al final
+ESC=${*:-rechazo fallo rechazo_cambio descarto entrega cambio_medio}
+for e in $ESC; do ( fail=0; "esc_$e"; exit $fail ) > "$BASE/$e.out" 2>&1 & done
+wait
+for e in $ESC; do cat "$BASE/$e.out"; grep -q '^FAIL' "$BASE/$e.out" && fail=1; grep -q '^ok' "$BASE/$e.out" || { echo "FAIL $e: no comprobó nada"; fail=1; }; done
 [ $fail = 0 ] && echo "tests/simulador.sh: all passed"
 exit $fail
