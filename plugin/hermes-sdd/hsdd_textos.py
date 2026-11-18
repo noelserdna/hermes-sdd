@@ -1419,7 +1419,32 @@ def plan_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str,
         vista = (r["q"].get("efectos") or {}).get(r["letra"])
         # sin el bloque (la pregunta ya no está en .sdd/) no hay nada que escribir ni que lanzar: vale lo que vio la puerta
         r["efecto"] = efecto(b, r["letra"]) if b else {"efecto": "ninguno", "ficheros": [], **(vista or {})}
+        r["autoriza"] = autoriza_test(r, verbo)
+        # Invariante: una pregunta solo se da por contestada si su efecto se va a cumplir. Un permiso de test que esta
+        # decisión no concede la deja ABIERTA (antes quedaba ANSWERED, el feedback decía «firmado» y el implementador
+        # no podía ni editar ni volver a preguntar: material-montana5, M5-12, 89 min parada)
+        r["estado"] = "OPEN" if r["autoriza"] is False else "ANSWERED"
     return res, errs, modo
+
+
+VERBOS_ACEPTAN = ("acepto", "observaciones", "respondo", "conforme")
+
+
+def autoriza_test(r: dict, verbo: str):
+    """None si la respuesta no toca tests; True/False si concede el permiso que declara su opción. La ÚNICA regla:
+    - marcada por la persona en su botón Q: sí;
+    - endurecer-test (el test comprueba más, nunca menos): sí con cualquier verbo que conteste, también al rechazar
+      (la puerta lo anuncia y hasta Jev puede autorizarlo);
+    - editar-test sin marcar: solo al aceptar, dar conformidad o responder, viendo «esto lanzará: ✏️ autoriza editar».
+    Sin ficheros no hay permiso que conceder."""
+    e = r.get("efecto") or {}
+    if e.get("efecto") not in PERMISO_TEST:
+        return None
+    if not e.get("ficheros"):
+        return False
+    if r.get("como") == "elegida por" or e["efecto"] == "endurecer-test":
+        return True
+    return verbo in VERBOS_ACEPTAN
 
 
 def validar_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str, persona: bool,
@@ -1449,8 +1474,9 @@ def aplicar_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str, qui
     res, errs, _ = plan_respuestas(puerta, ficheros, texto, verbo, marcadas)
     if errs:
         raise ValueError("; ".join(errs))
-    out = {"peticiones": [], "por_aplicar": [], "autorizaciones": []}
-    por_id = {r["q"]["id"]: r for r in res}
+    out = {"peticiones": [], "por_aplicar": [], "autorizaciones": [], "abiertas": []}
+    out["abiertas"] = [r["q"]["id"] for r in res if r["estado"] == "OPEN"]
+    por_id = {r["q"]["id"]: r for r in res if r["estado"] == "ANSWERED"}   # las que quedan abiertas no se escriben
 
     def anotar(b, r) -> None:
         letra = r["letra"]
@@ -1460,11 +1486,8 @@ def aplicar_respuestas(puerta: dict, ficheros: list, texto: str, verbo: str, qui
         if acc:
             out["por_aplicar"].append(acc)
         e = efecto(b, letra)
-        # Editar un test ya aceptado: o la persona eligió esa opción (Qn: L), o la aceptó por defecto al ACEPTAR viendo
-        # «esto lanzará: ✏️ autoriza editar…». Un rechazo o una petición de cambios sin tocar la pregunta no autoriza
-        # nada (notario 13: rechazar una FASE autorizaba la recomendada de una pregunta que seguía abierta).
-        explicita = r["como"] == "elegida por"
-        if e["efecto"] in PERMISO_TEST and e["ficheros"] and (explicita or verbo in ("acepto", "observaciones", "respondo", "conforme")):
+        # El permiso lo decide autoriza_test (la misma regla que deja la pregunta abierta si no lo concede)
+        if autoriza_test({**r, "efecto": e}, verbo):
             op = next((x for l, x, _ in opciones(b) if l == letra), "")
             out["autorizaciones"].append({"pregunta": _qid(b), "letra": letra, "ficheros": e["ficheros"],
                                           "endurecer": e["efecto"] == "endurecer-test",
@@ -1504,6 +1527,10 @@ def lineas_respuestas(puerta: dict, ficheros: list, texto: str, marcadas: dict |
     out = []
     for r in res:
         b = r["q"].get("bloque") or ""
+        if r["estado"] == "OPEN":   # no se contestó: el implementador no debe actuar como si estuviera decidida
+            out.append(f"Q{r['q']['n']} ({r['q'].get('id', '?')}) sigue ABIERTA: editar ese test lo autoriza una persona "
+                       f"marcando su opción en el botón Q (o al aceptar la puerta)")
+            continue
         op = next((x for l, x, _ in opciones(b) if l == r["letra"]), "?")
         out.append(f"Q{r['q']['n']} ({r['q'].get('id', '?')}): {_texto_pregunta(b)} → elegida {r['letra']}: {op}")
     return out

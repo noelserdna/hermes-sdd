@@ -1,0 +1,113 @@
+{
+  "id": "g179501988832f2",
+  "tipo": "fase",
+  "fase": "2",
+  "tablero": "material-montana5",
+  "tarjeta": "t_b9bcfb2c",
+  "adopcion": false,
+  "sha": "62e39e4c3d9b29111ace08122ba249481971be43",
+  "creada": "2026-11-18T16:38:08Z",
+  "repo": "/proyectos/material-montana5",
+  "titulo": "Aceptar FASE-2",
+  "texto": "🧭 Encargado: 1 aviso\n• La FASE-2 añadió 1161 líneas de tests para 371 de código (3.1×): revisa si los tests prueban lo que piden los criterios\n\n🧪 La FASE-2 de «material-montana5» está lista para revisar.\n\n⛔ No pasa la comprobación: hay requisitos que fallan o sin comprobar. No se puede aceptar tal cual: recházala para que se corrija o, si lo que falta puede esperar, acéptala sin ello.\n\n⚠️ Entregar lo reservado: pasa sus pruebas, pero la revisión independiente duda de que lo comprueben (CH-011) (5 de 5 criterios)\n⚠️ Marcar la devolución: pasa sus pruebas, pero la revisión independiente duda de que lo comprueben (CH-012) (4 de 4 criterios)\n⚠️ Roles y permisos de cada pantalla: pasa sus pruebas, pero la revisión independiente duda de que lo comprueben (CH-009, CH-010) (3 de 4 criterios)\n✅ Multa de 2 euros por día de retraso: funciona y está comprobado (4 de 4 criterios)\n✅ Sin reservar mientras haya multa pendiente: funciona y está comprobado (3 de 3 criterios)\n✅ Marcar la multa como pagada: funciona y está comprobado (4 de 4 criterios)\n\n🛡 No se ha tocado ningún test que ya existía (ni sus ayudas ni su configuración).\n\n🎬 Demo: vídeo y 23 capturas.\n\n👉 Pulsa ▶ Ver demo; después ❌ Rechazar y di qué hay que corregir, o 🟡 Aceptar sin lo que falta si puede esperar (di por qué; queda apuntado como pendiente con su número de seguimiento).\n\n❓ Antes, 3 preguntas (la recomendada ya está marcada en los botones Q):\n\n1. ¿Se puede añadir una captura de la pantalla «Pendientes de entrega» vacía (sin la reserva cancelada de Lucía) para poder enseñar este criterio en la demo?\n   🔧 Detalle técnico: REQ-F-005 AC3 pasa (e2e y unit) pero queda 'unshown': el test e2e AC-005-03 de tests/e2e/fase-2-ciclo-de-prestamo.spec.js:108 no llama a captura(), así que no…\n   A) Sí, se añade la captura; la prueba no cambia lo que comprueba  ⭐ recomendada  (🔩 autoriza endurecer tests/e2e/fase-2-ciclo-de-prestamo.spec.js)\n   B) No; este criterio queda sin captura y hay que exentarlo\n\n2. Dos pruebas antiguas comprueban de forma incompleta que el encargado y la junta no pueden reservar ni cancelar, y por eso esa regla no se puede dar por comprobada. ¿Se refuerzan para que comprueben el aviso exacto y a los dos roles?\n   🔧 Detalle técnico: REQ-F-012 AC4 sale MISSING (3/4): tests/unit/views-fase0.test.js:195 y tests/unit/views-fase1.test.js:46, aceptados en FASEs anteriores, citan el criterio pero…\n   A) Sí, se refuerzan esas dos pruebas para que comprueben todo lo que pide la regla  ⭐ recomendada  (🔩 autoriza endurecer tests/unit/views-fase0.test.js, tests/unit/views-fase1.test.js)\n   B) No: se dejan como están y la regla queda sin dar por comprobada\n\n3. Quien no tiene permiso para entregar, cobrar o reservar no ve el botón correspondiente; si la acción se envía de todos modos, la web avisa «No tienes permiso para hacer esto». ¿Se queda así, sin botones que no sirven?\n   🔧 Detalle técnico: La junta no tiene botón «Entregar», el socio no tiene «Marcar como pagada» y el encargado o la junta no ven el formulario de Reservar, así que no hay un contro…\n   A) Sí, se queda así: sin botones para quien no puede usarlos  ⭐ recomendada\n   B) No: se muestran los botones a todos y la web avisa al pulsarlos sin permiso  (🛠 lanza trabajo)\n\n👉 Si firmas sin tocar los botones Q, esto lanzará: 🔩 autoriza endurecer tests que ya existían: tests/e2e/fase-2-ciclo-de-prestamo.spec.js (Q1), tests/unit/views-fase0.test.js (Q2), tests/unit/views-fase1.test.js (Q2) · sin más efecto: Q3.",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "eximo",
+      "etiqueta": "🟡 Aceptar sin lo que falta",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-2/WF-001-AC-005-01-REQ-F-005-AC1-WF-001-el-encarg.mp4",
+  "preguntas": [
+    {
+      "n": 1,
+      "id": "Q-acceptance-001",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "endurecer-test",
+          "ficheros": [
+            "tests/e2e/fase-2-ciclo-de-prestamo.spec.js"
+          ],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "¿Se puede añadir una captura de la pantalla «Pendientes de entrega» vacía (sin la reserva cancelada de Lucía) para poder enseñar este criterio en la demo?"
+    },
+    {
+      "n": 2,
+      "id": "Q-task-implementer-002",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "endurecer-test",
+          "ficheros": [
+            "tests/unit/views-fase0.test.js",
+            "tests/unit/views-fase1.test.js"
+          ],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "Dos pruebas antiguas comprueban de forma incompleta que el encargado y la junta no pueden reservar ni cancelar, y por eso esa regla no se puede dar por comprobada. ¿Se refuerzan para que comprueben el aviso exacto y a los dos roles?"
+    },
+    {
+      "n": 3,
+      "id": "Q-task-implementer-003",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "accion",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "Quien no tiene permiso para entregar, cobrar o reservar no ve el botón correspondiente; si la acción se envía de todos modos, la web avisa «No tienes permiso para hacer esto». ¿Se queda así, sin botones que no sirven?"
+    }
+  ],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": true,
+  "unica": false,
+  "revisar": [],
+  "encargado": ""
+}
