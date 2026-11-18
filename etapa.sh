@@ -343,7 +343,7 @@ GRAN=$(granularidad)
 # forma_o_falla <plan|tareas> <prompt de arreglo>: lo que la granularidad exige (hsdd_plan.py forma); si falla, una
 # pasada de arreglo con la lista y, si sigue fallando, la etapa para con ella
 forma_o_falla() {
-  [ "$EJEC" = replay ] && return 0   # una grabación no se puede arreglar: lo que dejó es lo que hay
+  case "$EJEC" in replay|*ejecutor-guion) return 0 ;; esac   # una grabación no se puede arreglar: lo que dejó es lo que hay
   local f; f=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_plan.py" forma . "$1" "$GRAN" 2>/dev/null || true)
   [ -z "$f" ] && return 0
   claude_etapa "$([ "$1" = plan ] && echo plan-architect || echo task-generator)" "$2. Each line below is a rule the $1 breaks; fix every one: $(printf '%s' "$f" | tr '\n' ';')"
@@ -701,7 +701,11 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
     # cuando la persona rechazó o hay criterios concretos que arreglar
     OBLIGA=""; [ -n "$RECH" ] && { ! head -1 "$FB" 2>/dev/null | grep -q '^Los requisitos cambiaron' ||
       grep -q '^Criterios de la FASE que no pasan' "$FB" 2>/dev/null; } && OBLIGA=1
-    if [ -n "$OBLIGA" ] && [ -z "$(git log --format=%H "$ANTES..HEAD" -- . ':!acceptance' ':!status' ':!.sdd' 2>/dev/null)" ]; then
+    # Desde el commit rechazado (lo apunta el notario), no desde el inicio de este intento: lo que hizo un intento
+    # anterior que falló por otra cosa también cuenta (material-montana5, M5-14)
+    DESDE=$ANTES; B="${FB%.txt}.base"
+    if [ -s "$B" ] && git merge-base --is-ancestor "$(cat "$B")" HEAD 2>/dev/null; then DESDE=$(cat "$B"); AL_TERMINAR+=("$B|$B.aplicado"); fi
+    if [ -n "$OBLIGA" ] && [ -z "$(git log --format=%H "$DESDE..HEAD" -- . ':!acceptance' ':!status' ':!.sdd' 2>/dev/null)" ]; then
       falla "la FASE-$FASE volvió con cambios pedidos y la implementación no ha cambiado nada: lo pedido necesita algo que esta etapa no puede hacer (mira .sdd/questions-task-implementer.md)"
     fi
     # Antes de entregar, la comprobación rápida de fidelidad (sin LLM ni mutantes): capturas que no enseñan su criterio,

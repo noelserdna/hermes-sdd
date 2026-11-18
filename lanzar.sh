@@ -466,6 +466,12 @@ case "$CMD" in
                 # el kanban perdió al worker)
     ETAPA=$3; FASE=""; DE=""; shift 3
     while [ $# -gt 0 ]; do case "$1" in --de) DE=$2; shift 2 ;; *) FASE=$1; shift ;; esac; done
+    # Sin --de, la vieja es la última tarjeta bloqueada de esta misma etapa (y FASE): si no, sus hijas (Aceptar tras
+    # Implementar) se quedan esperando a una tarjeta que nadie va a terminar (material-montana5, M5-14)
+    if [ -z "$DE" ]; then
+      DE=$("${K[@]}" list --json 2>/dev/null | jq -r --arg e "etapa.sh $REPO $ETAPA${FASE:+ $FASE}" \
+        '[.[]? | select(.status == "blocked" and ((.body // "") | endswith($e)))] | sort_by(.created_at) | last | .id // empty' 2>/dev/null)
+    fi
     # Si Hermes ya la está repitiendo (cada tarjeta tiene un reintento automático) o hay otra en cola, no se duplica:
     # dos a la vez chocan en el candado del repo (club, FASE-3: la vieja se reintentó sola y la nueva quedó «ocupada»)
     # (la de --de no cuenta: es la que se sustituye, aunque siga «running» porque su ejecución aún vive)

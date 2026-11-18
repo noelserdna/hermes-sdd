@@ -325,6 +325,10 @@ feedback_implementar() {  # lo que recibe una implementación rechazada: texto, 
       | "- \(.id) \(.req) AC\(.ac) [\(.category)]: «\(.quote)» — \((.evidence // []) | map(if type == "object" then (.path + (if .line then ":\(.line)" else "" end)) else tostring end) | join(", "))"]
       | if length > 0 then "Hallazgos de la revisión independiente (el test o la captura no prueban el criterio):", .[] else empty end' 2>/dev/null || true
   } > ".sdd/hermes/feedback/implementar-$FASE.txt"
+  # El commit que la persona rechazó: la implementación tiene que cambiar algo DESDE AQUÍ, no desde que empieza cada
+  # intento (material-montana5, M5-14: el primer reintento hizo el trabajo y falló por otra cosa; el segundo no tenía
+  # nada más que hacer y la guarda «no ha cambiado nada» lo bloqueó 35 min)
+  git rev-parse HEAD > ".sdd/hermes/feedback/implementar-$FASE.base"
 }
 
 commit_si_hay() {  # commit_si_hay <mensaje> <rutas...> — solo las que existen; no hace nada si no hay cambios
