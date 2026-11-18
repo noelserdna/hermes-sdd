@@ -149,6 +149,28 @@ bash "$ROOT/metodo/scripts/sdd-state.sh" set tech-designer done >/dev/null; bash
 o=$(bash "$ROOT/etapa.sh" "$R" actualizar-diseno | tail -1)
 echo "$o" | jq -e '.outcome == "done" and (.resumen | test("ya estaba al día"))' >/dev/null && ok "…y sin etapas «stale», no lanza nada" || bad "actualizar-diseno vacío: $o"
 cp "$T/ps.bak" pipeline-state.json
+# material-montana4 → meta 2 h: pruebas, seguridad, técnico y UX en paralelo (una sesión con subagentes); lo que no
+# deje su documento se hace después una a una
+jq '.route.stages |= (. + {"test-planner":{"run":true},"security-auditor":{"run":true},"tech-designer":{"run":true},"ux-designer":{"run":true}})
+    | .stages["test-planner"].status = "pending" | .stages["security-auditor"].status = "pending" | .stages["tech-designer"].status = "pending" | .stages["ux-designer"].status = "pending"' pipeline-state.json > "$T/ps" && cp "$T/ps" pipeline-state.json
+rm -rf test/TEST-PLAN.md design audits/SECURITY-AUDIT-BASELINE.md ux
+echo '{"ejecutor":"claude","ejecutores":{"disenar":"../tests/ejecutor-falso"}}' > .sdd/hermes/hermes-sdd.json
+: > "$T/disena.jsonl"; o=$(FALSO_MODO=disena FALSO_LOG="$T/disena.jsonl" bash "$ROOT/etapa.sh" "$R" disenar | tail -1)
+[ "$(jq -s 'length' "$T/disena.jsonl")" = 3 ] && jq -s -e '.[0].prompt | test("PARALLEL DESIGN") and test("/sdd-test-planner") and test("/sdd-ux-designer")' "$T/disena.jsonl" >/dev/null \
+  && echo "$o" | jq -e '.outcome == "done" and (.resumen | test("en paralelo"))' >/dev/null \
+  && [ "$(for k in test-planner security-auditor tech-designer ux-designer; do bash "$ROOT/metodo/scripts/sdd-state.sh" get $k; done | sort -u)" = done ] \
+  && ok "diseño en paralelo: una sesión para las cuatro; las dos que no dejaron documento, una a una; todas done" || bad "disenar: $o / $(jq -s -c 'map(.prompt[0:40])' "$T/disena.jsonl") / $(for k in test-planner security-auditor tech-designer ux-designer; do bash "$ROOT/metodo/scripts/sdd-state.sh" get $k; done | tr '\n' ' ')"
+rm -rf test/TEST-PLAN.md design audits/SECURITY-AUDIT-BASELINE.md ux; git add -A >/dev/null 2>&1; git commit -qm "test: limpia diseño" >/dev/null 2>&1
+# tras_ruta: las cuatro en una sola tarjeta «Diseño en paralelo», detrás de especificar y auditar
+(
+  eval "$(sed -n -e '/^OPCIONALES="/,/^ux-designer|ux|/p' -e '/^toca() /,/^}$/p' -e '/^archivar_dudas() /,/^}$/p' -e '/^tras_ruta() /,/^}$/p' "$ROOT/lanzar.sh")"
+  REPO=$PWD; K=(true); tarjeta() { echo "$1" >> "$T/tarjetas"; echo "t$RANDOM"; }
+  jq '.route.stages |= (. + {"specifications-engineer":{"run":true},"spec-auditor":{"run":true}}) | reduce ("specifications-engineer","spec-auditor","test-planner","security-auditor","tech-designer","ux-designer") as $k (.; .stages[$k].status = "pending")' pipeline-state.json > "$T/ps2" && cp "$T/ps2" pipeline-state.json
+  : > "$T/tarjetas"; tras_ruta >/dev/null
+  [ "$(tr '\n' '|' < "$T/tarjetas")" = "Especificaciones|Auditoría de especificaciones|Diseño en paralelo: pruebas, seguridad, técnico y UX|Dudas de diseño|Plan|Tareas|" ] \
+    && echo "ok   tras_ruta: especificar y auditar en fila, las otras cuatro en una tarjeta en paralelo" || echo "FAIL tras_ruta: $(tr '\n' '|' < "$T/tarjetas")"
+) | tee "$T/tr.out"; grep -q '^FAIL' "$T/tr.out" && fail=1
+cp "$T/ps.bak" pipeline-state.json
 git tag -d requirements-v9.0 requirements-v9.1 >/dev/null; rm -rf requirements; cp -R "$T/req.bak" requirements 2>/dev/null || true; git add -A requirements; git commit -qm "test: requisitos de antes" >/dev/null 2>&1
 
 # 6. Jev: el criterio de cada ruta y su propio umbral en modo auto

@@ -403,7 +403,11 @@ def deshacer(gid: str, persona: str) -> dict:
 # rechazar, o no llega al umbral, la puerta queda para una persona. Las reglas duras de puede_jev mandan sobre el modo.
 JEV = "jev"
 MODOS = ("humano", "consejo", "piloto", "auto")
-JEV_DEFECTO = {"defecto": "humano", "proyectos": {}, "piloto": ["ruta", "plan"], "umbral": 0.9, "umbral_auto": 0.8}
+# umbrales_auto: en auto, un umbral propio por tipo de puerta. El plan, 0.6: equivocarse es barato (se rehace con
+# «cambios», nada se ha programado) y lo que importa ya lo comprueban reglas duras (lint del plan, tamaño, pantallas de
+# otra FASE); material-montana4: Jev dio el plan por bueno con 0.56 y esperó a una persona
+JEV_DEFECTO = {"defecto": "humano", "proyectos": {}, "piloto": ["ruta", "plan"], "umbral": 0.9, "umbral_auto": 0.8,
+               "umbrales_auto": {"plan": 0.6}}
 
 
 def config_jev() -> dict:
@@ -432,11 +436,15 @@ def poner_modo(modo: str, tablero: str | None = None) -> dict:
 TIPOS_PUERTA = ("requisitos", "ruta", "plan", "fase", "entrega", "preguntas", "mantenimiento")
 
 
-def umbral_jev(modo: str, cfg: dict | None = None) -> float:
-    """Probabilidad mínima para que Jev decida. En auto la persona delegó la decisión: su propio umbral (umbral_auto);
-    si no lo fija, el general. Lo usan quien decide y el notario: tienen que medir igual."""
+def umbral_jev(modo: str, cfg: dict | None = None, tipo: str | None = None) -> float:
+    """Probabilidad mínima para que Jev decida. En auto la persona delegó la decisión: su propio umbral (umbral_auto,
+    o el de ese tipo de puerta en umbrales_auto); si no lo fija, el general. Lo usan quien decide y el notario: tienen
+    que medir igual."""
     cfg = cfg if cfg is not None else config_jev()
     if modo == "auto":
+        por_tipo = (cfg.get("umbrales_auto") or {}).get(tipo or "")
+        if por_tipo is not None:
+            return float(por_tipo)
         return float(cfg.get("umbral_auto") or cfg.get("umbral", 0.9))
     return float(cfg.get("umbral", 0.9))
 
@@ -597,7 +605,7 @@ def aplicar_jev(gid: str, juicio: dict) -> dict:
         cfg = config_jev()
         modo = modo_jev(puerta.get("tablero", ""), cfg)
         # En auto la persona delegó la decisión: su propio umbral (umbral_auto); si no lo fija, el general
-        umbral = umbral_jev(modo, cfg)
+        umbral = umbral_jev(modo, cfg, puerta.get("tipo"))
         jev = {**juicio, "modo": modo, "umbral": umbral, "at": ahora()}
         if puerta.get("estado") != "abierta":
             jev["decide"], jev["motivo"] = False, "la puerta ya estaba resuelta"
@@ -766,7 +774,7 @@ if __name__ == "__main__":   # CLI del notario y de jev.sh
             ok, motivo = puede_jev({**puerta, "jev_vetado": global_.get("jev_vetado")})
             if ok and verbo not in verbos_jev(puerta):
                 ok, motivo = False, f"Jev no puede elegir «{verbo}»"
-            if ok and p < umbral_jev(modo_jev(puerta.get("tablero", ""))):
+            if ok and p < umbral_jev(modo_jev(puerta.get("tablero", "")), None, puerta.get("tipo")):
                 ok, motivo = False, f"p {p} por debajo del umbral"
             print(f"{modo_jev(puerta.get('tablero', ''))}" if ok else motivo)
             sys.exit(0 if ok else 1)

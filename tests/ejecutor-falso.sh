@@ -17,6 +17,12 @@ case "${FALSO_MODO:-}" in
   resuelve) # da por resuelta una impugnación fuera de la ronda adversarial (como lo haría el implementador)
             echo '{"type":"resolution","challenge":"CH-001","req":"REQ-F-001","ac":1,"reason":"arreglado","verifier":"yo"}' >> acceptance/challenges.jsonl ;;
   toca)     echo "fuera" > fuera-de-sdd.txt ;;                       # cambia un fichero que esta etapa no debía tocar
+  disena)   # diseño en paralelo: la sesión deja el plan de pruebas y el técnico; seguridad y UX, solo si se piden una a una
+            case "$3" in
+              "/sdd-security-auditor"*) mkdir -p audits; echo x > audits/SECURITY-AUDIT-BASELINE.md ;;
+              "/sdd-ux-designer"*) mkdir -p ux; echo x > ux/UI.md ;;
+              *) mkdir -p test design; echo x > test/TEST-PLAN.md; echo x > design/D.md ;;
+            esac ;;
   borra)    sed 's/"observed":0/"observed":1/' "$D" > "$D.tmp" && mv "$D.tmp" "$D" ;;  # reescribe un registro anterior
 esac
 jq -nc --arg r "${FALSO_RESUMEN:-}" --argjson c "${FALSO_COSTE:-0}" '{outcome:"done", reason:"ok", run:"falso", cost_usd:$c, resumen:$r}'  # FALSO_RESUMEN: lo que «dice» el ejecutor

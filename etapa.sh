@@ -7,6 +7,7 @@
 #     ruta           propone qué etapas necesita el proyecto (factores por el ejecutor si no hay Jev) → puerta
 #     especificar · auditar · pruebas · seguridad · tecnico · ux
 #                    pasos extra que pide la ruta (spec/, audits/, test/TEST-PLAN.md, design/, ux/), antes del plan
+#     disenar        pruebas, seguridad, técnico y UX a la vez (subagentes en una sesión), cuando la ruta pide 2 o más
 #     actualizar-diseno  tras un cambio de requisitos, las de arriba ya hechas, puestas al día juntas en una sesión
 #     plan           plan por FASEs
 #     tareas         tareas de todas las FASEs → puerta de plan (conformidad con el orden de entrega)
@@ -415,6 +416,26 @@ ejemplos_coherentes() {  # ejemplos_coherentes <clave-de-estado> <skill>: un eje
 $malos"
 }
 
+opcional() {  # opcional <etapa>: CL (clave del método), HECHO, PRODUCTO y PIDE de una etapa opcional
+  case "$1" in
+      especificar) CL=specifications-engineer; HECHO="Especificaciones escritas"; PRODUCTO="spec/use-cases spec/domain spec/contracts"
+        PIDE="Write the formal specifications in spec/ from the approved requirements/." ;;
+      auditar)     CL=spec-auditor; HECHO="Especificaciones auditadas"; PRODUCTO=audits/AUDIT-BASELINE.md
+        PIDE="Audit spec/ (baseline audit), then Mode Fix only for defects whose fix is unambiguous." ;;
+      pruebas)     CL=test-planner; HECHO="Plan de pruebas escrito"; PRODUCTO=test/TEST-PLAN.md
+        PIDE="Write the test plan (test/TEST-PLAN.md, matrices and E2E scenarios) from spec/." ;;
+      seguridad)   CL=security-auditor; HECHO="Seguridad revisada"; PRODUCTO=audits/SECURITY-AUDIT-BASELINE.md
+        PIDE="Audit the security posture of spec/ (or requirements/ when there is no spec/)." ;;
+      tecnico)     CL=tech-designer; HECHO="Diseño técnico escrito"; PRODUCTO=design
+        PIDE="Write the technical design in design/, keeping the Stack Profile of AGENTS.md." ;;
+      ux)          CL=ux-designer; HECHO="Diseño visual y de uso escrito"; PRODUCTO=ux
+        PIDE="Write the UX design in ux/ (design system, wireframes of the screens the requirements need, accessibility)." ;;
+      brechas)     CL=gap-detector; HECHO="Huecos entre especificación y código revisados"; PRODUCTO=audits/GAP-ANALYSIS-REVIEW.md
+        PIDE="Detect the gaps between spec/ (or requirements/) and the code${FASE:+ of FASE-$FASE}; --semantic." ;;
+  esac
+}
+producto_hecho() { local x; for x in $PRODUCTO; do [ -e "$x" ] && return 0; done; return 1; }
+
 case "$ETAPA" in
   requisitos)
     VERIF="Verification: usa test siempre que un test pueda leerlo (también en restricciones REQ-C: idioma de los textos, dependencias, stack, sin red); inspection o demo solo para lo que ningún test puede observar, porque eso lo tiene que confirmar una persona a mano en la puerta."
@@ -477,27 +498,34 @@ case "$ETAPA" in
     fin '{"outcome":"done","reason":"sin dudas abiertas"}' "Sin dudas de diseño abiertas: sigue el plan" ;;
 
   especificar|auditar|pruebas|seguridad|tecnico|ux|brechas)   # etapas opcionales: las encadena la ruta (lanzar.sh)
-    case "$ETAPA" in
-      especificar) CL=specifications-engineer; HECHO="Especificaciones escritas"; PRODUCTO="spec/use-cases spec/domain spec/contracts"
-        PIDE="Write the formal specifications in spec/ from the approved requirements/." ;;
-      auditar)     CL=spec-auditor; HECHO="Especificaciones auditadas"; PRODUCTO=audits/AUDIT-BASELINE.md
-        PIDE="Audit spec/ (baseline audit), then Mode Fix only for defects whose fix is unambiguous." ;;
-      pruebas)     CL=test-planner; HECHO="Plan de pruebas escrito"; PRODUCTO=test/TEST-PLAN.md
-        PIDE="Write the test plan (test/TEST-PLAN.md, matrices and E2E scenarios) from spec/." ;;
-      seguridad)   CL=security-auditor; HECHO="Seguridad revisada"; PRODUCTO=audits/SECURITY-AUDIT-BASELINE.md
-        PIDE="Audit the security posture of spec/ (or requirements/ when there is no spec/)." ;;
-      tecnico)     CL=tech-designer; HECHO="Diseño técnico escrito"; PRODUCTO=design
-        PIDE="Write the technical design in design/, keeping the Stack Profile of AGENTS.md." ;;
-      ux)          CL=ux-designer; HECHO="Diseño visual y de uso escrito"; PRODUCTO=ux
-        PIDE="Write the UX design in ux/ (design system, wireframes of the screens the requirements need, accessibility)." ;;
-      brechas)     CL=gap-detector; HECHO="Huecos entre especificación y código revisados"; PRODUCTO=audits/GAP-ANALYSIS-REVIEW.md
-        PIDE="Detect the gaps between spec/ (or requirements/) and the code${FASE:+ of FASE-$FASE}; --semantic." ;;
-    esac
+    opcional "$ETAPA"
     ACT=""; for x in $PRODUCTO; do [ -e "$x" ] && ACT=$(actualizar "$CL") && break; done
     claude_etapa "$CL" "/sdd-$CL — $ARNES $PIDE$ACT"
     hay=""; for x in $PRODUCTO; do [ -e "$x" ] && hay=1; done
     [ -n "$hay" ] || falla "$CL no dejó $PRODUCTO: $(no_hecho)"
     fin "$RES" "$HECHO" ;;
+
+  disenar)   # pruebas, seguridad, técnico y UX a la vez (lanzar.sh tras_ruta la elige cuando la ruta pide dos o más):
+             # leen spec/ y escriben cada una en su carpeta, así que no dependen entre sí. Una sola sesión que lanza un
+             # subagente por etapa en paralelo (material-montana4: 21 min en fila). Lo que no deje su documento se hace
+             # después, una a una, como siempre: la cadena no se queda parada por esto
+    PEND=""
+    for e in pruebas seguridad tecnico ux; do
+      opcional "$e"
+      jq -e --arg k "$CL" '(.route.stages[$k].run == true) and (.stages[$k].status != "done")' pipeline-state.json >/dev/null 2>&1 && PEND="$PEND $e"
+    done
+    PEND=${PEND# }
+    [ -n "$PEND" ] || fin '{"outcome":"done","reason":"nada que diseñar"}' "El diseño ya estaba hecho"
+    TAREAS=$(for e in $PEND; do opcional "$e"; printf '«/sdd-%s: %s Leave %s.» ' "$CL" "$PIDE" "$PRODUCTO"; done)
+    opcional "$(echo "$PEND" | cut -d' ' -f1)"
+    MODELO_PASO=$(modelo "$(echo "$PEND" | cut -d' ' -f1)") claude_etapa "$CL" "$ARNES PARALLEL DESIGN: these stages only read spec/ and requirements/ and each writes its own folder, so run them at the same time: launch one subagent per stage, all in a single message (Task tool, in the foreground, and wait for all of them), each told to apply its skill (with the Skill tool, or by reading skills/<name>/SKILL.md of the sdd-pipeline plugin and following it) to do exactly its task and to set its stage to done when finished (scripts/sdd-state.sh set <stage> done): $TAREAS Each subagent opens its own questions with «sdd questions add» and writes only its own folder. When all have answered, commit each stage's files in its own commit and finish. Never schedule reminders, wake-ups or background waits."
+    for e in $PEND; do   # lo que no dejó su documento, una a una
+      opcional "$e"
+      if producto_hecho; then bash "$STATE" set "$CL" done >/dev/null 2>&1
+      else claude_etapa "$CL" "/sdd-$CL — $ARNES $PIDE"; producto_hecho || falla "$CL no dejó $PRODUCTO: $(no_hecho)"; bash "$STATE" set "$CL" done >/dev/null 2>&1; fi
+    done
+    git add -A test audits design ux 2>/dev/null; git diff --cached --quiet || git commit -qm "docs(design): test plan, security, technical and UX design" >/dev/null 2>&1
+    fin "$RES" "Diseño hecho en paralelo ($PEND)" ;;
 
   actualizar-diseno)   # tras un cambio de requisitos: las etapas de diseño que ya se hicieron, puestas al día juntas en
                        # una sola sesión (lanzar.sh tras_ruta la elige cuando todas las que tocan están «stale»)

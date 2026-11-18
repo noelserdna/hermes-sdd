@@ -101,6 +101,11 @@ modo auto local; puerta n2 requisitos; jevdecide n2 acepto 0.5; firmar n2
 [ $rc -ne 0 ] && echo "$out" | grep -q "umbral" && ok "notario: no firma una decisión de Jev por debajo del umbral" || bad "notario umbral: $out"
 puerta n8 requisitos; jevdecide n8 acepto 0.83; firmar n8   # entre umbral_auto (0.8) y umbral (0.9): en auto vale
 [ $rc -eq 0 ] && ok "notario: en modo auto mide con umbral_auto, como quien decide (p 0.83)" || bad "notario umbral_auto: $out"
+# el plan tiene su propio umbral en auto (0.6): se rehace con «cambios» y reglas duras ya lo comprueban (montana4: 0.56)
+puerta n10 plan "Plan" '[{"verbo":"conforme","etiqueta":"✅ Conforme"},{"verbo":"cambios","etiqueta":"✏️","texto":true}]'; jevdecide n10 conforme 0.65; firmar n10
+[ $rc -eq 0 ] && ok "notario: el plan en auto se firma con su umbral propio (0.6; p 0.65)" || bad "notario umbral del plan: $out"
+puerta n11 requisitos; jevdecide n11 acepto 0.65; firmar n11
+[ $rc -ne 0 ] && echo "$out" | grep -q "umbral" && ok "…y los requisitos siguen con el de auto (0.8; p 0.65 no vale)" || bad "umbral requisitos: $out"
 git tag -l 'requirements-v*' | xargs -r git tag -d >/dev/null
 puerta n9 entrega "Todo bien" '[{"verbo":"revisado","etiqueta":"🔍 Lo he revisado y acepto"},{"verbo":"acepto","etiqueta":"✅"}]'; jevdecide n9 revisado 0.99; firmar n9
 [ $rc -ne 0 ] && echo "$out" | grep -q "una inspección la confirma una persona, no Jev" && ok "notario: Jev no puede firmar «revisado»" || bad "notario revisado: $out"

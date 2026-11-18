@@ -191,8 +191,17 @@ tras_ruta() {  # las etapas opcionales que pide la ruta → Plan → Tareas, enc
   if [ "$n" -ge 2 ] && [ "$todas_stale" = 1 ]; then
     t=$(tarjeta "Poner al día el diseño (cambio de requisitos)" - 90m actualizar-diseno); padre=$t; primera=$t
   else
+    # pruebas, seguridad, técnico y UX no dependen entre sí: si la ruta pide dos o más, van juntas en una tarjeta que
+    # las hace en paralelo (etapa disenar); especificar y auditar van antes, en fila (las demás leen spec/)
+    local par=0
+    for clave in test-planner security-auditor tech-designer ux-designer; do toca "$clave" && par=$((par + 1)); done
     while IFS='|' read -r clave etapa titulo; do
       toca "$clave" || continue
+      if [[ "$clave" =~ ^(test-planner|security-auditor|tech-designer|ux-designer)$ ]] && { [ "$par" = hecho ] || [ "$par" -ge 2 ]; }; then
+        [ "$par" = hecho ] && continue
+        t=$(tarjeta "Diseño en paralelo: pruebas, seguridad, técnico y UX" "$padre" 90m disenar); padre=$t; primera=${primera:-$t}; par=hecho
+        continue
+      fi
       t=$(tarjeta "$titulo" "$padre" 90m "$etapa"); padre=$t; primera=${primera:-$t}
     done <<< "$OPCIONALES"
   fi
