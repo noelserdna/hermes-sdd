@@ -36,7 +36,9 @@ duras_implementar() {  # usa $SDD, $FASE y $ROOT; en el directorio del repo
   ce=$(node "$SDD" lint --captures --fase "$FASE" --json 2>/dev/null | jq -r '.findings[]? | select(.severity == "error" and ((.line // 0) > 0 or .code == "C-07" or .code == "C-08"))
     | "sdd lint --captures: \(.file):\(.line) \(.code) \(.message[0:160])"' 2>/dev/null | head -5)
   [ -n "$ce" ] && printf '%s\n' "$ce"
-  a=$(node "$SDD" lint --arch --json 2>/dev/null | jq -r '.findings[]? | select(.severity == "error") | "sdd lint --arch: \(.file):\(.line) \(.code) \(.message[0:160])"' 2>/dev/null | head -5)
+  # A-03 (tests que fijan la lista cerrada de pantallas o del menú) solo en ficheros nuevos desde la última FASE aceptada
+  local desde; desde=$(git describe --tags --abbrev=0 --match 'fase-*-accepted' 2>/dev/null || true)
+  a=$(node "$SDD" lint --arch ${desde:+--since "$desde"} --json 2>/dev/null | jq -r '.findings[]? | select(.severity == "error") | "sdd lint --arch: \(.file):\(.line) \(.code) \(.message[0:160])"' 2>/dev/null | head -5)
   [ -n "$a" ] && printf '%s\n' "$a"
   if [ -n "$(perfil lint)" ] && [ -f package.json ] && jq -e '.scripts.lint' package.json >/dev/null 2>&1; then
     if [ -x node_modules/.bin/eslint ] || [ "$(perfil lint)" != "npm run lint" ]; then l=$(eval "$(perfil lint)" 2>&1) || printf 'lint (%s): %s\n' "$(perfil lint)" "$(printf '%s' "$l" | grep -E 'error' | head -3 | tr '\n' ' ')"

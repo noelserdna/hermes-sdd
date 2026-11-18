@@ -68,6 +68,23 @@ o=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_plan.py" dependencias "$D" | jq -r '.[
 printf '# FASE-0 — Préstamos\n> **Requisitos:** REQ-F-001, REQ-F-002\n\n## Objetivo\n' > "$D/plan/fases/FASE-0-PRESTAMOS.md"; rm "$D/plan/fases/FASE-1-CONSULTAS.md"
 o=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_plan.py" dependencias "$D")
 [ "$o" = "[]" ] && ok "plan: si la pantalla llega en la misma FASE no hay aviso" || bad "misma FASE: $o"
+# la pantalla del «Se ve: "…" en Mis reservas», sin comillas (material-montana4)
+cat > "$D/requirements/REQUIREMENTS.md" <<'R'
+## Functional
+### REQ-F-003: Reservar
+- **Statement:** a
+  - GIVEN "Cuerda" WHEN lucia reserves it THEN the user sees "Reserva hecha: Cuerda"
+    - Se ve: "Reserva hecha: {material}" en Mis reservas
+  - GIVEN "Tienda" WHEN lucia reserves it THEN the user sees "No quedan unidades"
+    - Se ve: "No quedan unidades" en Reservar
+### REQ-F-005: Ver mis reservas
+- **Statement:** b
+  - GIVEN a booking WHEN she opens it THEN the user sees "Reservada"
+R
+printf '# FASE-0 — Reservar\n> **Requisitos:** REQ-F-003\n\n## Objetivo\n' > "$D/plan/fases/FASE-0-RESERVAR.md"; rm -f "$D/plan/fases/FASE-0-PRESTAMOS.md"
+printf '# FASE-1 — Ver y cancelar mis reservas\n> **Requisitos:** REQ-F-005\n\n## Objetivo\n' > "$D/plan/fases/FASE-1-MIS.md"
+o=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_plan.py" dependencias "$D" | jq -r '.[] | "\(.requisito) \(.criterio) \(.cita) \(.fase_vista)"')
+[ "$o" = "REQ-F-003 AC1 Mis reservas 1" ] && ok "plan: la pantalla de «Se ve: … en Mis reservas» que llega en una FASE posterior se detecta" || bad "Se ve en: [$o]"
 # ── estado del proyecto (hsdd_proyectos.py estado): la foto que leen /estado, el panel y el encargado ───────────────
 cd "$REPO"; git reset -q --hard requirements-v1.0; mkdir -p .sdd/hermes
 echo '{"etapa":"plan","resultado":"done"}' > .sdd/hermes/etapas.jsonl

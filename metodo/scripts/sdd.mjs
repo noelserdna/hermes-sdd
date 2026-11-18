@@ -85,7 +85,9 @@
 //       .sdd/demo/GUION-FASE-N.{json,md}, one sentence per criterion built from its «Se ve:» line (lib/demo.mjs)
 //   sdd demo narrate --fase N [--tts say|espeak-ng|none]        voice-over for evidencias/FASE-N/*.narracion.json → .mp4
 //   sdd lint --arch [--json]                                     one folder per use case: A-01 features/<a> imports features/<b> (error),
-//       A-02 a source file loose next to features/ (warning); nothing to say without a features/ folder (lib/arch-lint.mjs)
+//       A-02 a source file loose next to features/ (warning); nothing to say without a features/ folder (lib/arch-lint.mjs);
+//       A-03 a test pins the closed set of screens, routes or menu entries (error; with --since REF, only test files
+//       that did not exist at REF)
 //   sdd lint --stale [--json] [--requirements FILE]
 //       Documents left behind by a requirements change (scripts/lib/stale-lint.mjs), Markdown under spec/, ux/, design/,
 //       test/, plan/, task/: S-01 error, a quoted text ("…", «…», “…”) that an earlier version of REQUIREMENTS.md
@@ -1093,7 +1095,7 @@ function cmdLintStale(argv) {
 function cmdLintArch(argv) {
   const a = argv.filter((x) => x !== "lint" && x !== "--arch");
   const root = path.resolve(optValue(a, "repo") || ".");
-  const r = lintArch({ root, codePaths: codePaths(root) });
+  const r = lintArch({ root, codePaths: codePaths(root), since: optValue(a, "since") || null });
   if (a.includes("--json")) console.log(JSON.stringify(r, null, 2));
   else {
     for (const f of r.findings) console.log(`${f.file}:${f.line} ${f.code} ${f.severity} ${f.message}`);

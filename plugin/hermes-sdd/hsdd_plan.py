@@ -27,7 +27,16 @@ def _requisitos(repo: Path) -> dict:
         return {}
     out = {}
     for m in re.finditer(r"^### (REQ-[A-Z]+-\d+):?\s*(.*?)\n(.*?)(?=^### |^## |\Z)", f.read_text(), re.M | re.S):
-        crit = [l.strip()[2:] for l in m.group(3).splitlines() if re.match(r"\s+- (GIVEN|WHEN|IF|WHILE)\b", l)]
+        crit = []
+        for l in m.group(3).splitlines():
+            if re.match(r"\s+- (GIVEN|WHEN|IF|WHILE)\b", l):
+                crit.append(l.strip()[2:])
+            elif crit and re.match(r"\s+- Se ve:", l):
+                # la pantalla donde se ve: «Se ve: "…" en Mis reservas» (material-montana4: un criterio de la FASE-0
+                # se veía «en Mis reservas», que llega en la FASE-1, y el plan no lo vio porque no iba entre comillas)
+                donde = re.search(r'["»”]\s*(?:,\s*)?en (?:la (?:pantalla|vista) )?([^"«».;]{3,40}?)\s*\.?\s*$', l)
+                if donde:
+                    crit[-1] += f" «{donde.group(1).strip()}»"
         out[m.group(1)] = {"titulo": m.group(2).strip(), "criterios": crit}
     return out
 

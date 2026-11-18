@@ -7,6 +7,7 @@
 #     ruta           propone qué etapas necesita el proyecto (factores por el ejecutor si no hay Jev) → puerta
 #     especificar · auditar · pruebas · seguridad · tecnico · ux
 #                    pasos extra que pide la ruta (spec/, audits/, test/TEST-PLAN.md, design/, ux/), antes del plan
+#     actualizar-diseno  tras un cambio de requisitos, las de arriba ya hechas, puestas al día juntas en una sesión
 #     plan           plan por FASEs
 #     tareas         tareas de todas las FASEs → puerta de plan (conformidad con el orden de entrega)
 #     huecos N       completa los [PLAN GAP] de la FASE N con las respuestas ya aprobadas (sin puerta: aplica lo decidido)
@@ -358,7 +359,7 @@ case "$GRAN" in
 esac
 # Política de tests (compacta y normal): cada criterio una vez, al nivel más barato, con su literal desde el principio
 # (coches: 5 líneas de test por línea de código y 4 de los 9 minutos de la FASE-0 retocando asserts)
-[ "$GRAN" = fina ] && TESTS_G="" || TESTS_G=" TEST POLICY: one test per acceptance criterion, at the cheapest level that proves it (unit for logic, DOM for rendering; a real browser only for what needs it and for the demo journey); never test the same criterion at several levels; test each REQ-C constraint once, not in every FASE. Name each test with its 'REQ-X-NNN ACn' and assert the literal example values of the criterion from the first version, so no later pass is needed to align them."
+[ "$GRAN" = fina ] && TESTS_G="" || TESTS_G=" TEST POLICY: one test per acceptance criterion, at the cheapest level that proves it (unit for logic, DOM for rendering; a real browser only for what needs it and for the demo journey); never test the same criterion at several levels; test each REQ-C constraint once, not in every FASE; never pin the closed set of screens, routes or menu entries (toEqual of the whole list, toHaveLength/toHaveCount of the links): check that the entries the criterion names are there, because every later FASE adds screens (sdd lint --arch A-03). Name each test with its 'REQ-X-NNN ACn' and assert the literal example values of the criterion from the first version, so no later pass is needed to align them."
 # «Hecho» = desplegable (hsdd_desplegable.py lo comprueba al cerrar): desde la primera FASE, no como arreglo final
 DESPLIEGUE_G=" DEPLOYABLE FROM THE START: the first FASE's scaffold task also makes the app runnable as in production: an npm 'start' script that serves the built app (never the dev server), a 'build' script if there is a build step, the server listening on process.env.PORT and process.env.HOST (default 0.0.0.0, never a hard-coded 127.0.0.1), and a README.md that says how to install, test and start it."
 desplegable() {  # comprueba que arranca como en producción; si no, UNA pasada de arreglo y se comprueba otra vez
@@ -452,7 +453,14 @@ case "$ETAPA" in
     node "$SDD" questions render >/dev/null 2>&1 || true
     abiertas() { node "$SDD" questions list --open --json 2>/dev/null | jq '.questions | length' 2>/dev/null || echo 0; }
     if [ "$(abiertas)" -gt 1 ]; then   # una pasada barata: fusionar las que deciden lo mismo, sin añadir ninguna
-      claude_etapa dudas "$ARNES Consolidate the OPEN questions (sdd questions list --open --json) before the plan: when two or more decide the same thing, keep the clearest one and run «sdd questions merge <other> --into <kept>» for the rest; drop (merge into the kept one) any question already decided by an ANSWERED question. Do not add questions, do not answer any, do not edit requirements/, spec/ or any other file, and do not edit the questions JSON by hand."
+      # Parejas candidatas: temas que comparten una palabra con contenido (material-montana4: «sesion-y-intentos-fallidos»
+      # y «sesion-caducidad» llegaron a la persona como dos preguntas, y recomendaban lo contrario sobre la caducidad)
+      PAREJAS=$(node "$SDD" questions list --open --json 2>/dev/null | jq -r '
+        [.questions[] | {id, w: ((.topic // "") | split("-") | map(select(length >= 5 and (IN("antes","despues","sobre","entre","desde","hasta","cuando") | not))))}] as $q
+        | [range(0; $q | length) as $i | range($i + 1; $q | length) as $j
+           | select(($q[$i].w - ($q[$i].w - $q[$j].w)) | length > 0) | "\($q[$i].id) y \($q[$j].id)"] | join("; ")' 2>/dev/null || true)
+      CAND=""; [ -n "$PAREJAS" ] && CAND=" These pairs share a topic word and probably decide the same thing (and may even recommend opposite answers): $PAREJAS. Merge each pair into one question that decides it consistently, unless they clearly decide different things."
+      claude_etapa dudas "$ARNES Consolidate the OPEN questions (sdd questions list --open --json) before the plan: when two or more decide the same thing, keep the clearest one and run «sdd questions merge <other> --into <kept>» for the rest; drop (merge into the kept one) any question already decided by an ANSWERED question. Do not add questions, do not answer any, do not edit requirements/, spec/ or any other file, and do not edit the questions JSON by hand.$CAND"
       node "$SDD" questions render >/dev/null 2>&1 || true
       # La consolidación solo fusiona preguntas: si tocó algo fuera de .sdd/, la etapa para (antes era prosa del prompt)
       FUERA=$( { git diff --name-only "$HEAD0" HEAD; git status --porcelain | cut -c4-; } 2>/dev/null | grep -vE '^(\.sdd|status/questions)/' | sort -u | head -3 | tr '\n' ' ')
@@ -490,6 +498,22 @@ case "$ETAPA" in
     hay=""; for x in $PRODUCTO; do [ -e "$x" ] && hay=1; done
     [ -n "$hay" ] || falla "$CL no dejó $PRODUCTO: $(no_hecho)"
     fin "$RES" "$HECHO" ;;
+
+  actualizar-diseno)   # tras un cambio de requisitos: las etapas de diseño que ya se hicieron, puestas al día juntas en
+                       # una sola sesión (lanzar.sh tras_ruta la elige cuando todas las que tocan están «stale»)
+    C=$(req_cambiados); CLAVES=""
+    for clave in specifications-engineer spec-auditor test-planner security-auditor tech-designer ux-designer; do
+      jq -e --arg k "$clave" '(.route.stages[$k].run == true) and (.stages[$k].status == "stale")' pipeline-state.json >/dev/null 2>&1 &&
+        CLAVES="$CLAVES $clave"
+    done
+    CLAVES=${CLAVES# }
+    [ -n "$CLAVES" ] || fin '{"outcome":"done","reason":"nada que poner al día"}' "El diseño ya estaba al día"
+    LISTA=$(for k in $CLAVES; do printf '/sdd-%s, ' "$k"; done | sed 's/, $//')
+    MODELO_PASO=$(modelo especificar) claude_etapa "${CLAVES%% *}" "$ARNES UPDATE MODE, several stages in this one session: the approved requirements change touched only these requirements (${C:-see changes/}). Bring up to date, in this order, the artifacts of each of these skills: $LISTA. For each one, update only what those requirements affect (and what references them); do not rewrite, reorder or reformat the rest, and do not open questions about anything that did not change (a detail the change leaves open gets the sensible default, written down as an assumption). When a skill's update is done, set its stage to done (bash \"\${SDD_PLUGIN_ROOT:-\$CLAUDE_PLUGIN_ROOT}/scripts/sdd-state.sh\" set <stage> done)."
+    for k in $CLAVES; do
+      case "$(bash "$STATE" get "$k" 2>/dev/null)" in stale|running) falla "la puesta al día no cerró $k (sigue $(bash "$STATE" get "$k" 2>/dev/null))" ;; esac
+    done
+    fin "$RES" "Diseño puesto al día con el cambio de requisitos ($CLAVES)" ;;
 
   plan)
     INC=""; git tag -l 'fase-*-accepted' | grep -q . && INC=" INCREMENTAL: the requirements changed after some FASEs were accepted (tags fase-N-accepted, see changes/). Keep every accepted FASE file as it is (its scope, tasks and order) and add new FASE(s) after the last one, covering only the new or modified requirements. The one edit allowed in an accepted FASE file: a reference (scenario AC-…, requirement or use case id) that the approved requirements change removed or renumbered, so that sdd lint --plan passes."
@@ -628,7 +652,7 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
     NARRA=""
     if [ "$(perfil narration)" = required ] || [ "$(perfil narration)" = warn ]; then
       node "$SDD" demo script --fase "$FASE" >/dev/null 2>&1 &&
-        NARRA=" NARRATED DEMO: .sdd/demo/GUION-FASE-$FASE.md is the script (use cases, workflow, one sentence per criterion). In each e2e test, narrate with narrar(page, testInfo, text) from tests/e2e/fixtures/evidence.js the use case steps it walks (the main flow, in plain Spanish), and right before each criterion's captura call narrar(page, testInfo, <that criterion's exact sentence from the script, with its {template} filled with the test's data>, { criterio: '<the same id as the capture>' }). sdd lint --captures checks it (C-07 not narrated, C-08 the narration does not say its Se ve texts)."
+        NARRA=" NARRATED DEMO: .sdd/demo/GUION-FASE-$FASE.md is the script (use cases, workflow, one sentence per criterion). In each e2e test, narrate with narrar(page, testInfo, text) from tests/e2e/fixtures/evidence.js the use case steps it walks (the main flow, in plain Spanish), and right before each criterion's captura call narrar(page, testInfo, <that criterion's exact sentence from the script, with its {template} filled with the test's data>, { criterio: '<the same id as the capture>' }). sdd lint --captures checks it (C-07 not narrated, C-08 the narration does not say its Se ve texts). A «(s)» or «(es)» in a criterion's text means singular or plural: narrate, and check in captura ve, the form the screen shows («1 día», «3 días»), never the literal «día(s)»."
     fi
     [ -n "$CITAS" ] && CITAS=" The approved requirements changed the text of some criteria that tests already quote: update ONLY those quote comments to the current text (sdd req show <REQ> --ac <n>), in one commit «test: re-quote criteria changed by the requirements» — a comment-only edit, also in tests of accepted FASEs; if the test then no longer checks what the new text says, write an [OPEN] question with efecto endurecer-test instead of changing the test. Stale quotes: $CITAS."
     claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES Implement FASE-$FASE completely, test-first, one commit per task with Refs:/Task: trailers. Before you finish, check every criterion of the FASE: its test does that criterion's own GIVEN (same actor, same dates and data) and WHEN, and asserts its whole THEN with the exact text; its capture shows the screen where that THEN is visible, with the GIVEN's data on screen: take it with the capture helper passing the criterion's «Se ve:» texts (captura(page, testInfo, id, { ve: [...] })), inside the test whose title cites that criterion, after asserting on screen (never right after an API or CSV check); run «sdd lint --captures --fase ${FASE}» and leave it without errors; the e2e suites (old and new) are green. [ANSWERED] questions in .sdd/questions-*.md are the person's decisions: apply them and do not ask them again; an existing test may be edited only in the exact files a person authorized (a test-edit record in acceptance/decisions.jsonl, written by the notary), and the commit cites that question («Autoriza: Q-…»). Write any new question with «sdd questions add --role task-implementer» (a JSON object on stdin: skill, tema, contexto, pregunta, para_cliente, opciones [{letra, texto, cliente, efecto, ficheros, recomendada}], bloquea and, only to recommend req-change, riesgo; the command rejects what breaks references/async-questions.md and says why); never write .sdd/questions-* by hand.$TESTS_G$RECH$OBS${CITAS:-}${NARRA:-}"

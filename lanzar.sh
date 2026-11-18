@@ -179,11 +179,23 @@ archivar_dudas() {  # archivar_dudas <motivo>: la tarjeta «Dudas» parada en su
     fi
 }
 tras_ruta() {  # las etapas opcionales que pide la ruta → Plan → Tareas, encadenadas; imprime la primera
-  local padre=- primera="" clave etapa titulo t
+  local padre=- primera="" clave etapa titulo t n=0 todas_stale=1
+  # Tras un cambio de requisitos, si todas las que tocan ya estaban hechas (stale: solo se ponen al día), van juntas en
+  # una sola sesión (material-montana4: cambio, auditoría, pruebas, seguridad, técnico y UX, una tras otra, ~25 min
+  # para un requisito nuevo)
   while IFS='|' read -r clave etapa titulo; do
     toca "$clave" || continue
-    t=$(tarjeta "$titulo" "$padre" 90m "$etapa"); padre=$t; primera=${primera:-$t}
+    n=$((n + 1))
+    jq -e --arg k "$clave" '.stages[$k].status == "stale"' "$REPO/pipeline-state.json" >/dev/null 2>&1 || todas_stale=0
   done <<< "$OPCIONALES"
+  if [ "$n" -ge 2 ] && [ "$todas_stale" = 1 ]; then
+    t=$(tarjeta "Poner al día el diseño (cambio de requisitos)" - 90m actualizar-diseno); padre=$t; primera=$t
+  else
+    while IFS='|' read -r clave etapa titulo; do
+      toca "$clave" || continue
+      t=$(tarjeta "$titulo" "$padre" 90m "$etapa"); padre=$t; primera=${primera:-$t}
+    done <<< "$OPCIONALES"
+  fi
   # Las dudas de diseño abiertas se deciden juntas ANTES del plan (material-montana: 12 preguntas en la puerta del plan,
   # varias que reabrían requisitos). Plan → Tareas cuelgan de «Dudas»: sin dudas abiertas siguen solas; con dudas, la
   # etapa se para en su puerta y, al contestarlas, el tramo archiva esta cadena y crea otra. La cadena la crea este

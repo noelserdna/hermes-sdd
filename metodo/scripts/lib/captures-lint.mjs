@@ -20,7 +20,7 @@
 //                 requirements/, spec/, plan/, design/ or ux/.
 import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
-import { testKeys, scenarioIndex } from "./acceptance.mjs";
+import { testKeys, scenarioIndex, faseScope } from "./acceptance.mjs";
 import { splitComments, testFiles } from "./quotes.mjs";
 import { templateParts } from "../sdd-jev.mjs";
 
@@ -88,6 +88,17 @@ function knownIds(root) {
   };
   for (const d of ["requirements", "spec", "plan", "design", "ux"]) if (existsSync(path.join(root, d))) walk(path.join(root, d), 0);
   return ids;
+}
+
+/**
+ * Does the narrated text say this fixed part of a «Se ve» text? «(s)» and «(es)» in the criterion mean singular or
+ * plural, as the screen shows it: «1 día de retraso» says «día(s) de retraso» (material-montana4: the lint demanded the
+ * literal «día(s)», the narration copied it, and the capture verifier saw caption and screen disagree).
+ */
+export function saysPart(text, part) {
+  if (!/\((?:s|es)\)/i.test(part)) return text.includes(part);
+  const re = part.split(/(\((?:s|es)\))/i).map((x, i) => (i % 2 ? `(?:${x.slice(1, -1)})?` : x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))).join("");
+  return new RegExp(re).test(text);
 }
 
 /**
@@ -231,8 +242,20 @@ export function lintCaptures({ root, reqs, scenarios = [], ledger = null, scope 
     if (captures) {
       const { byCriterion } = scenarioIndex(scenarios);
       const rel = path.relative(root, dirs[0] || base) || evidenceDir;
+      // Sin --fase, solo los criterios de las FASEs que ya tienen evidencias: los de una FASE aún sin hacer no se
+      // pueden haber narrado (material-montana3 y 4: 10 avisos graves «no narrado» de FASEs que no se entregaban,
+      // en la puerta de una entrega parcial; eran lo único que impedía que Jev la firmara)
+      let hechas = null;
+      if (fase === undefined || fase === null) {
+        hechas = new Set();
+        for (const d of dirs) {
+          const n = path.basename(d).replace(/^FASE-/, "");
+          const ids = faseScope(root, n).requirements;
+          if (ids) for (const id of ids) hechas.add(id); else { hechas = null; break; }   // un plan sin Requisitos: todo
+        }
+      }
       for (const r of reqs) {
-        if (r.type !== "F" || r.deprecated || !inScope(r.id)) continue;
+        if (r.type !== "F" || r.deprecated || !inScope(r.id) || (hechas && !hechas.has(r.id))) continue;
         (r.criteria || []).forEach((_, i) => {
           const sv = r.sees?.[i];
           if (!sv || !sv.texts?.length) return;
@@ -243,7 +266,7 @@ export function lintCaptures({ root, reqs, scenarios = [], ledger = null, scope 
               message: `${r.id} AC${i + 1} (${ids[0]}) is not narrated in any video: before its capture call narrar(page, testInfo, <its sentence from .sdd/demo/GUION-FASE-N.md>, { criterio: '${ids[0]}' })` });
             return;
           }
-          const falta = sv.texts.filter((x) => (x.template ? templateParts(x.text) : [x.text]).some((p) => !textos.some((t) => t.includes(p))));
+          const falta = sv.texts.filter((x) => (x.template ? templateParts(x.text) : [x.text]).some((p) => !textos.some((t) => saysPart(t, p))));
           if (falta.length)
             findings.push({ code: "C-08", severity: sev, file: rel, line: 0, req: r.id, ac: i + 1,
               message: `${r.id} AC${i + 1} (${ids[0]}) is narrated without saying ${falta.map((x) => `«${x.text}»`).join(", ")}: what is said must be what its capture shows` });

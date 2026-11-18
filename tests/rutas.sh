@@ -136,6 +136,19 @@ grep -q 'UPDATE MODE: .*(added: REQ-F-003; modified: REQ-F-001)' "$T/prompt" && 
 bash "$ROOT/metodo/scripts/sdd-state.sh" set ux-designer done >/dev/null
 FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" ux >/dev/null
 ! grep -q 'UPDATE MODE' "$T/prompt" && ok "…y si no estaba «stale», como siempre" || bad "ux no stale: actualizó"
+# material-montana4: tras un cambio, las etapas de diseño ya hechas se ponen al día juntas, en una sola sesión
+cp pipeline-state.json "$T/ps.bak"
+jq '.route.stages["tech-designer"].run = true | .route.stages["ux-designer"].run = true | .route.stages["spec-auditor"].run = false' pipeline-state.json > "$T/ps" && cp "$T/ps" pipeline-state.json
+bash "$ROOT/metodo/scripts/sdd-state.sh" set tech-designer stale >/dev/null; bash "$ROOT/metodo/scripts/sdd-state.sh" set ux-designer stale >/dev/null
+echo '{"ejecutor":"claude","ejecutores":{"ux":"../tests/ejecutor-falso","actualizar-diseno":"../tests/ejecutor-falso"}}' > .sdd/hermes/hermes-sdd.json
+o=$(FALSO_PROMPT="$T/prompt" bash "$ROOT/etapa.sh" "$R" actualizar-diseno | tail -1)
+grep -q 'several stages in this one session: .*(added: REQ-F-003; modified: REQ-F-001).*/sdd-tech-designer, /sdd-ux-designer' "$T/prompt" \
+  && echo "$o" | jq -e '.outcome == "failed" and (.reason | test("no cerró tech-designer"))' >/dev/null \
+  && ok "puesta al día del diseño: una sesión con las etapas «stale»; si deja alguna sin cerrar, falla" || bad "actualizar-diseno: $o / $(grep -o 'several.*' "$T/prompt" | head -c 200)"
+bash "$ROOT/metodo/scripts/sdd-state.sh" set tech-designer done >/dev/null; bash "$ROOT/metodo/scripts/sdd-state.sh" set ux-designer done >/dev/null
+o=$(bash "$ROOT/etapa.sh" "$R" actualizar-diseno | tail -1)
+echo "$o" | jq -e '.outcome == "done" and (.resumen | test("ya estaba al día"))' >/dev/null && ok "…y sin etapas «stale», no lanza nada" || bad "actualizar-diseno vacío: $o"
+cp "$T/ps.bak" pipeline-state.json
 git tag -d requirements-v9.0 requirements-v9.1 >/dev/null; rm -rf requirements; cp -R "$T/req.bak" requirements 2>/dev/null || true; git add -A requirements; git commit -qm "test: requisitos de antes" >/dev/null 2>&1
 
 # 6. Jev: el criterio de cada ruta y su propio umbral en modo auto

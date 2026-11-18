@@ -257,6 +257,13 @@ export function addQuestion(root, role, input) {
     .filter((t) => typeof t === "string");
   const ingles = textoCliente.filter((t) => (t.match(/\b(the|and|keep|both|without|with|should|skip|skips|reword|because|is|are|which|their)\b/gi) || []).length >= 2);
   if (ingles.length) throw new QError(`the customer reads «Para el cliente» and the options: write them in Spanish («${ingles[0].slice(0, 60)}…»); technical detail goes in «pregunta»`);
+  // «pregunta» también lo lee la persona, como «Detalle técnico» bajo la pregunta (material-montana3 y 4: salía en
+  // inglés). Puede llevar ids y código; lo que cuenta es la prosa: más palabras inglesas que castellanas
+  if (typeof input.pregunta === "string") {
+    const en = (input.pregunta.match(/\b(the|and|is|are|which|does|not|only|when|with|without|should|because|their|has|have|that|this|there|no one|any)\b/gi) || []).length;
+    const es = (input.pregunta.match(/\b(el|la|los|las|de|del|que|en|y|se|un|una|por|con|para|si|no|es|son)\b/gi) || []).length;
+    if (en >= 4 && en > es) throw new QError(`«pregunta» is shown to the person as the technical detail: write it in Spanish («${input.pregunta.slice(0, 60)}…»); ids and code may stay as they are`);
+  }
   // Reglas de redacción y de recomendación que antes eran prosa del prompt (references/async-questions.md §1): aquí
   // son errores, porque una etapa las olvidaba (material-montana, montana2: ids en el texto del cliente, «Sí, no se
   // aceptan» como respuesta a «¿Se puede…?», recomendadas que reabrían requisitos)

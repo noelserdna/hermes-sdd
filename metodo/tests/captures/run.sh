@@ -257,6 +257,35 @@ nrun
 expect "C-08: narrated without saying its «Se ve» text (the fixed part «Hola,»)" "$(js 'j.findings.filter(f=>/C-0[78]/.test(f.code)).map(f=>f.code+" AC"+f.ac).join()')" "C-08 AC2"
 printf '{"video":"WF-001-x.webm","narraciones":[{"t":1,"texto":"En la cabecera se ve «Hola, lucia»","criterio":"REQ-F-001-AC2"}]}' > "$nr/evidencias/FASE-0/WF-001-x.narracion.json"
 nrun; expect "narration that says what the capture shows: clean" "$(js 'j.findings.filter(f=>/C-0[78]/.test(f.code)).length')" 0
+node --input-type=module -e 'import { saysPart } from "'"$(dirname "$SDD")"'/lib/captures-lint.mjs"; process.exit(saysPart("Multa (1 día de retraso)", "día(s) de retraso)") && saysPart("3 días de retraso", "día(s) de retraso") && !saysPart("3 dia de retraso", "día(s) de retraso") ? 0 : 1)' \
+  && pass "C-08: «día(s)» in the criterion is said as «1 día» or «3 días»" || bad "saysPart (s)"
+# global (sin --fase): solo las FASEs con evidencias; un requisito de una FASE aún sin hacer no cuenta (material-montana4)
+cat >> "$nr/requirements/REQUIREMENTS.md" <<'MD'
+### REQ-F-002: Entregar material
+- **Statement:** THE system SHALL deliver
+- **Priority:** Must have
+- **Verification:** test
+- **Acceptance criteria:**
+  - GIVEN a booking WHEN the keeper delivers it THEN the user sees "Entregado"
+    - Se ve: "Entregado" en Entregas
+MD
+mkdir -p "$nr/plan/fases"; printf '# FASE-0
+
+**Requisitos:** REQ-F-001
+
+## Demo
+' > "$nr/plan/fases/FASE-0-reservar.md"
+printf '# FASE-1
+
+**Requisitos:** REQ-F-002
+
+## Demo
+' > "$nr/plan/fases/FASE-1-entregar.md"
+grun() { rc=0; out=$(cd "$nr" && node "$SDD" lint --captures --json 2>&1) || rc=$?; }
+grun; expect "global: a criterion of a FASE without evidence yet is not «not narrated»" "$(js 'j.findings.filter(f=>/C-0[78]/.test(f.code)).map(f=>f.req).join()')" ""
+mkdir -p "$nr/evidencias/FASE-1"; printf '{"criterio":"REQ-F-002-AC1","imagen":"x.png","narrado":null}' > "$nr/evidencias/FASE-1/REQ-F-002-AC1.json"
+grun; expect "global: once that FASE has evidence, its criterion counts" "$(js 'j.findings.filter(f=>/C-0[78]/.test(f.code)).map(f=>f.code+" "+f.req).join()')" "C-07 REQ-F-002"
+rm -rf "$nr/evidencias/FASE-1" "$nr/plan"
 printf '# P\n\n## SDD Stack Profile\n\n- narration: off\n' > "$nr/CLAUDE.md"; rm "$nr/evidencias/FASE-0/WF-001-x.narracion.json"
 nrun; expect "narration: off → no C-07/C-08" "$(js 'j.findings.filter(f=>/C-0[78]/.test(f.code)).length')" 0
 
