@@ -114,6 +114,19 @@ fin() {  # fin <json-del-ejecutor-o-propio> [resumen] [puerta]
     local par; for par in ${AL_TERMINAR[@]+"${AL_TERMINAR[@]}"}; do [ -e "${par%%|*}" ] && mv "${par%%|*}" "${par#*|}"; done
   fi
   registrar_etapa "$1" "${2:-}" "${3:-}"
+  # Una etapa que termina mal sin otra puerta abre la puerta «fallo» (motivo, 🔁 Reintentar, ⏹ Dejarla parada): antes la
+  # tarjeta quedaba bloqueada sin puerta ni aviso en el canal que se usa, y solo salía con un desbloqueo a mano (montana2:
+  # 5, montana3: 3, montana5: 3). Con kanban: sin él no hay tramo que reintentar.
+  local P_FALLO=""
+  if [ "$(echo "$1" | jq -r .outcome 2>/dev/null)" = failed ] && [ -z "${3:-}" ] && [ -z "${HERMES_SDD_SIN_KANBAN:-}" ]; then
+    local veces; veces=$(cat .sdd/hermes/puertas/*.json 2>/dev/null | jq -s --arg e "$ETAPA" --arg f "${FASE:-}" \
+      '[.[] | select(.tipo == "fallo" and .fallo.etapa == $e and (.fallo.fase // "") == $f)] | length + 1' 2>/dev/null || echo 1)
+    mkdir -p .sdd/hermes
+    echo "$1" | jq -c --arg e "$ETAPA" --arg f "${FASE:-}" --argjson v "${veces:-1}" \
+      '{etapa:$e, fase:$f, motivo:(.reason // "sin motivo"), veces:$v}' > .sdd/hermes/fallo.json 2>/dev/null &&
+      P_FALLO=$(bash "$ROOT/puerta.sh" "$REPO" fallo ${FASE:+"$FASE"} 2>>.sdd/hermes/puerta-fallo.err | tail -1) || P_FALLO=""
+    set -- "$1" "${2:-}" "$P_FALLO"
+  fi
   # Etapa resuelta: las tarjetas bloqueadas de intentos anteriores de esta misma etapa quedan obsoletas y se archivan
   if [ "$(echo "$1" | jq -r .outcome 2>/dev/null)" = done ] && [ -z "${HERMES_SDD_SIN_KANBAN:-}" ]; then
     bash "$ROOT/lanzar.sh" limpiar "$REPO" >/dev/null 2>&1 || true

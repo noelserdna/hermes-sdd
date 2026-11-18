@@ -222,4 +222,15 @@ bash "$ROOT/jev.sh" umbral 0.8 >/dev/null && bash "$ROOT/jev.sh" piloto ruta,pla
 o=$(jq -c '[.umbral, .piloto, .proyectos.recetas, .proyectos.demo]' "$HERMES_SDD_HOME/jev.json")
 [ "$o" = '[0.8,["ruta","plan","mantenimiento"],"piloto","auto"]' ] && ok "jev.sh cambia umbral, tipos de piloto y modo por proyecto" || bad "jev.sh: $o"
 bash "$ROOT/jev.sh" recetas sinsentido >/dev/null 2>&1 && bad "jev.sh acepta un modo desconocido" || ok "jev.sh rechaza un modo desconocido"
+# Puerta «fallo» (una etapa terminó mal): Jev solo puede reintentarla, y solo la primera vez; dejarla parada o
+# reintentar una etapa que ya falló antes es de una persona (un bucle de reintentos a ciegas)
+python3 - "$ROOT/plugin/hermes-sdd" <<'PY' && ok "puerta fallo: Jev solo reintenta, y solo la primera vez" || bad "jev en la puerta fallo"
+import importlib.util, sys
+s = importlib.util.spec_from_file_location("N", sys.argv[1] + "/hsdd_nucleo.py"); N = importlib.util.module_from_spec(s); s.loader.exec_module(N)
+ops = [{"verbo": "reintento", "etiqueta": "🔁 Reintentar"}, {"verbo": "paro", "etiqueta": "⏹ Dejarla parada"}]
+cfg = {"defecto": "auto"}
+assert list(N.verbos_jev({"tipo": "fallo", "opciones": ops})) == ["reintento"]
+assert N.puede_jev({"tipo": "fallo", "opciones": ops, "fallo": {"veces": 1}}, cfg)[0]
+assert not N.puede_jev({"tipo": "fallo", "opciones": ops, "fallo": {"veces": 2}}, cfg)[0]
+PY
 exit $fail

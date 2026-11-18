@@ -433,7 +433,7 @@ def poner_modo(modo: str, tablero: str | None = None) -> dict:
     return cfg
 
 
-TIPOS_PUERTA = ("requisitos", "ruta", "plan", "fase", "entrega", "preguntas", "mantenimiento")
+TIPOS_PUERTA = ("requisitos", "ruta", "plan", "fase", "entrega", "preguntas", "mantenimiento", "fallo")
 
 
 def umbral_jev(modo: str, cfg: dict | None = None, tipo: str | None = None) -> float:
@@ -483,6 +483,9 @@ def verbos_jev(puerta: dict) -> dict:
     fijadas = [o for o in ops if o.get("fijada")]
     if puerta.get("tipo") == "ruta" and fijadas:
         ops = fijadas
+    # Una etapa que falló: Jev solo puede reintentarla (dejarla parada es de una persona, que mira por qué)
+    if puerta.get("tipo") == "fallo":
+        ops = [o for o in ops if o["verbo"] == "reintento"]
     return {o["verbo"]: o["etiqueta"] for o in ops}
 
 
@@ -499,6 +502,9 @@ def puede_jev(puerta: dict, cfg: dict | None = None) -> tuple[bool, str]:
         return False, "una persona deshizo la decisión de Jev"
     if puerta.get("preguntas_error"):
         return False, "no se pudieron leer las preguntas de esta puerta (lo decide una persona)"
+    # La misma etapa ya falló antes: reintentar otra vez a ciegas es un bucle; lo mira una persona
+    if tipo == "fallo" and int((puerta.get("fallo") or {}).get("veces") or 1) > 1:
+        return False, "la etapa ya falló antes: lo mira una persona"
     # Que la recomendada autorice editar tests (dato de la puerta, no su texto): la elige una persona. Solo cuenta la que
     # se aplicaría (Jev firma sin tocar los botones Q, o sea, con las recomendadas): una B «editar-test» que nadie va a
     # elegir no quita la puerta a Jev (material-montana, FASE-1 y FASE-2); el notario sigue rechazando editar-test de Jev

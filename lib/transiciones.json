@@ -104,6 +104,16 @@
         "cambio": {"tramo": "mantenimiento_cambio"},
         "ignoro": {"tramo": "fin", "negativo": true, "mensaje": "Hallazgos ignorados; no se vuelve a preguntar mientras no cambien"}
       }
+    },
+    "fallo": {
+      "verbos": {
+        "reintento": {"resultado": "reintento"},
+        "paro": {"resultado": "paro"}
+      },
+      "resultados": {
+        "reintento": {"tramo": "reintento"},
+        "paro": {"tramo": "fin", "negativo": true, "mensaje": "La etapa queda parada; para repetirla: lanzar.sh reintentar <repo> <etapa> [fase]"}
+      }
     }
   }
 }

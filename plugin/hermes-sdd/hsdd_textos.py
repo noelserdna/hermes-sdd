@@ -961,6 +961,18 @@ def puerta_mantenimiento(proyecto: str, hallazgos: list) -> dict:
     return {"titulo": "Mantenimiento", "texto": "\n\n".join(partes)}
 
 
+def puerta_fallo(proyecto: str, fallo: dict) -> dict:
+    """Una etapa terminó mal sin abrir otra puerta: qué etapa, por qué y las dos salidas. Antes quedaba solo una tarjeta
+    bloqueada en el kanban y salía con un desbloqueo a mano (montana2: 5; montana3: 3; montana5: 3)."""
+    etapa, fase = fallo.get("etapa", "?"), fallo.get("fase") or ""
+    que = f"«{etapa}»" + (f" de la FASE-{fase}" if fase else "")
+    veces = int(fallo.get("veces") or 1)
+    partes = [f"⚠️ La etapa {que} de «{proyecto}» no ha terminado" + (f" (es la vez {veces})" if veces > 1 else "") + ".",
+              "Motivo: " + _corta(str(fallo.get("motivo") or "sin motivo"), 700),
+              "👉 🔁 Reintentar la vuelve a lanzar (lo ya hecho se conserva) · ⏹ Dejarla parada si hay que mirar algo antes."]
+    return {"titulo": f"Etapa parada: {etapa}" + (f" FASE-{fase}" if fase else ""), "texto": "\n\n".join(partes)}
+
+
 def puerta_preguntas(proyecto: str, fase: str, diseno: bool = False) -> dict:
     """La implementación de una FASE (o un mantenimiento, sin FASE) se paró en preguntas abiertas: la persona las
     contesta aquí (las preguntas, con sus botones Q, las añade el final de la puerta como en cualquier otra). Con
@@ -1728,7 +1740,7 @@ if __name__ == "__main__":
     ap.add_argument("--cambio", default=""); ap.add_argument("--anadidos", default=""); ap.add_argument("--quitados", default="")
     ap.add_argument("--partida", default="", help="requisitos de partida (fichero), si la persona los trajo casi listos")
     ap.add_argument("--diseno", type=int, default=0); ap.add_argument("--parcial", default=""); ap.add_argument("--adopcion", type=int, default=0); ap.add_argument("--fases-aceptadas", default="")
-    ap.add_argument("--hallazgos", default=""); ap.add_argument("--opciones-ruta", default="")
+    ap.add_argument("--hallazgos", default=""); ap.add_argument("--opciones-ruta", default=""); ap.add_argument("--fallo", default="")
     ap.add_argument("--unica", type=int, default=0); ap.add_argument("--revisar", default="")
     ap.add_argument("--impugnaciones", default="", help="fichero JSON con las impugnaciones abiertas (gate 4)")
     if sys.argv[1:2] == ["revisar"]:   # revisar <repo>  (gate --json por stdin) → {"revisar": [...], "solo": bool}
@@ -1758,6 +1770,8 @@ if __name__ == "__main__":
         r = puerta_preguntas(proyecto, a.fase, bool(a.diseno))
     elif a.tipo == "mantenimiento":
         r = puerta_mantenimiento(proyecto, json.loads(_leer(Path(a.hallazgos)) or "[]"))
+    elif a.tipo == "fallo":
+        r = puerta_fallo(proyecto, json.loads(_leer(Path(a.fallo)) or "{}") if a.fallo else {})
     else:
         sys.exit(f"tipo de puerta desconocido: {a.tipo}")
     r["texto"] += preguntas(ficheros_preguntas(repo))

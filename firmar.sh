@@ -653,6 +653,16 @@ $(gate_entrega --md 2>/dev/null)"
     if ! hecho commit; then commit_si_hay "docs(status): maintenance findings dismissed by $NOMBRE" status/; marcar commit; fi
     RESUMEN="Mantenimiento ignorado por $NOMBRE ($ROL): $TEXTO" ;;
 
+  fallo:reintento|fallo:paro)
+    if ! hecho registrado; then
+      diario --stage orchestrator --kind decision \
+        --text "$NOMBRE: $([ "$VERBO" = reintento ] && echo reintentar || echo dejar parada) la etapa que falló ($(jq -r '.fallo.motivo // ""' "$PUERTA" | cut -c1-300))" \
+        --by "$NOMBRE ($ROL)" >/dev/null
+      marcar registrado
+    fi
+    if ! hecho commit; then commit_si_hay "docs(status): failed stage $([ "$VERBO" = reintento ] && echo retried || echo parked) by $NOMBRE" status/; marcar commit; fi
+    RESUMEN="Etapa $(jq -r '.fallo.etapa + (if (.fallo.fase // "") != "" then " FASE-" + .fallo.fase else "" end)' "$PUERTA"): $([ "$VERBO" = reintento ] && echo "se reintenta" || echo "queda parada") ($NOMBRE, $ROL)" ;;
+
   requisitos:cambios|plan:cambios|ruta:rechazo)
     mkdir -p .sdd/hermes/feedback; printf '%s\n' "$TEXTO" > ".sdd/hermes/feedback/$TIPO.txt"
     if ! hecho registrado; then

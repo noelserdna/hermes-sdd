@@ -4,7 +4,7 @@
 # No crea la tarjeta él mismo: lo lanza un worker del kanban, y Hermes no deja que los procesos de un worker
 # modifiquen el tablero (frontera de seguridad que respetamos).
 #
-#   puerta.sh <repo> <tipo> [fase]        tipo: requisitos | ruta | plan | fase | entrega | preguntas | mantenimiento
+#   puerta.sh <repo> <tipo> [fase]        tipo: requisitos | ruta | plan | fase | entrega | preguntas | mantenimiento | fallo
 #
 # Escribe <repo>/.sdd/hermes/puertas/<id>.json (lo lee el notario) y $HERMES_SDD_HOME/puertas/<id>.json (índice
 # global que leen los canales). Imprime el id de la puerta.
@@ -195,6 +195,10 @@ case "$TIPO" in
   mantenimiento)   # lo abre vigilar.sh con .sdd/hermes/mantenimiento/hallazgos.json
     EXTRA+=(--hallazgos .sdd/hermes/mantenimiento/hallazgos.json)
     OPCIONES='[{"verbo":"cambio","etiqueta":"🛠 Lanzar cambio"},{"verbo":"ignoro","etiqueta":"🔕 Ignorar","texto":true}]' ;;
+  fallo)           # lo abre etapa.sh cuando una etapa termina mal sin otra puerta (.sdd/hermes/fallo.json: etapa, fase,
+                   # motivo). Antes quedaba una tarjeta bloqueada y solo salía con un desbloqueo a mano (montana2-5)
+    EXTRA+=(--fallo .sdd/hermes/fallo.json)
+    OPCIONES='[{"verbo":"reintento","etiqueta":"🔁 Reintentar"},{"verbo":"paro","etiqueta":"⏹ Dejarla parada"}]' ;;
   *) echo "tipo de puerta desconocido: $TIPO" >&2; exit 2 ;;
 esac
 # Las preguntas en JSON (.sdd/questions-<rol>.json) son la verdad y su .md una vista: si una etapa escribió el JSON a
@@ -247,11 +251,12 @@ jq -n --arg id "$ID" --arg t "$TIPO" --arg f "$FASE" --arg b "$BOARD" --arg s "$
   --arg r "$REPO" --arg ti "$TITULO" --arg tx "$TEXTO" --argjson o "$OPCIONES" --arg v "${VIDEO:-}" --argjson q "$PREGUNTAS" \
   --argjson ad "$([ -f .sdd/hermes/adopcion ] && echo true || echo false)" \
   --argjson hz "$([ "$TIPO" = mantenimiento ] && cat .sdd/hermes/mantenimiento/hallazgos.json || echo null)" \
+  --argjson fa "$([ "$TIPO" = fallo ] && cat .sdd/hermes/fallo.json || echo null)" \
   --argjson te "${EDIT:-0}" --argjson bl "$BLOQUEO" --argjson un "${UNICA:-false}" --argjson rv "$(cat "$REV_JSON")" \
   --argjson en "$(jq -c '{avisos, graves}' <<< "$ENC")" --argjson pe "$PREG_ERROR" \
   '{id:$id, tipo:$t, fase:$f, tablero:$b, tarjeta:"", adopcion:$ad, sha:$s, creada:$c, repo:$r, titulo:$ti, texto:$tx,
     opciones:$o, demo:$v, preguntas:$q, preguntas_error:$pe, hallazgos:$hz, tests_editados:$te, bloqueo:$bl, unica:$un,
-    revisar:(($rv // {}).revisar // []), encargado:$en}' > ".sdd/hermes/puertas/$ID.json"
+    revisar:(($rv // {}).revisar // []), encargado:$en} + (if $fa then {fallo:$fa} else {} end)' > ".sdd/hermes/puertas/$ID.json"
 # La copia del repo es lo que se mostró (la lee el notario) y no lleva estado: el estado vive solo en el índice global
 # y solo cambia por las transiciones del núcleo (hsdd_nucleo.py transicion). Una puerta nueva del mismo proyecto, tipo y
 # FASE sustituye a la que siguiera abierta (club: reabrir la entrega dejaba dos puertas de entrega abiertas a la vez):

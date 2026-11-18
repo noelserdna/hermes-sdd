@@ -335,6 +335,11 @@ tramo_fases_o_cierre() {  # la primera FASE sin aceptar o, si no queda ninguna (
 tramo_plan_otra_vez() { local t; t=$(tarjeta "Plan (cambios)" - 60m plan); tarjeta "Tareas" "$t" 60m tareas; }
 tramo_rehacer_fase() { fase_n "$FASE" " (cambios)"; }
 tramo_reabrir_puerta() { bash "$ROOT/puerta.sh" "$REPO" "$TIPO" ${FASE:+"$FASE"}; }   # la misma puerta, sin lo descartado
+tramo_reintento() {  # la puerta «fallo» pidió reintentar: la misma etapa, con una tarjeta nueva que hereda las hijas
+  local e f; e=$(jq -r '.fallo.etapa // empty' "$P"); f=$(jq -r '.fallo.fase // empty' "$P")
+  [ -n "$e" ] || { echo "la puerta no dice qué etapa reintentar"; return 1; }
+  bash "$ROOT/lanzar.sh" reintentar "$REPO" "$e" $f >/dev/null && echo "Se reintenta $e${f:+ FASE-$f}"
+}
 tramo_entregado() { rm -f "$REPO/.sdd/hermes/mantenimiento/en-curso.txt"; echo "Proyecto entregado"; }
 tramo_rehacer_entrega() {  # una sola FASE: se rehace (implementar con lo pedido → cierre); si no, solo el cierre
   if [ "$(jq -r '.unica // false' "$P")" = true ]; then fase_n 0 " (cambios)" >/dev/null
@@ -491,6 +496,10 @@ case "$CMD" in
       fi
     fi
     NUEVA=$(tarjeta "Reintento: $ETAPA${FASE:+ FASE-$FASE}" - 120m "$ETAPA" $FASE)
+    # Una puerta «fallo» que siguiera abierta para esta FASE ya no tiene sentido: se reintenta (a mano o desde ella)
+    for tj in $(HERMES_SDD_HOME="${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}" python3 "$ROOT/plugin/hermes-sdd/hsdd_nucleo.py" superar "$REPO" fallo "$FASE" "$NUEVA" 2>/dev/null); do
+      "${K[@]}" archive "$tj" >/dev/null 2>&1 || true
+    done
     if [ -n "$DE" ]; then
       for h in $("${K[@]}" show "$DE" --json 2>/dev/null | jq -r '.children[]?' 2>/dev/null); do
         "${K[@]}" link "$NUEVA" "$h" >/dev/null 2>&1 && "${K[@]}" unlink "$DE" "$h" >/dev/null 2>&1 || true

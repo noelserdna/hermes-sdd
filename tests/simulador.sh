@@ -51,7 +51,7 @@ camino_feliz() {  # decide toda puerta con lo que haría una persona conforme
   p=$1; tipo=$(jq -r .tipo "$HERMES_SDD_HOME/puertas/$p.json")
   case "$tipo" in
     ruta) v=$(jq -r '[.opciones[] | select(.auto == true) | .verbo][0] // [.opciones[] | select(.verbo | startswith("ruta-")) | .verbo][0] // "acepto"' "$HERMES_SDD_HOME/puertas/$p.json") ;;
-    plan) v=conforme ;; preguntas) v=respondo ;; *) v=acepto ;;
+    plan) v=conforme ;; preguntas) v=respondo ;; fallo) v=reintento ;; *) v=acepto ;;
   esac
   decide "$p" "$v"
 }
@@ -75,6 +75,7 @@ esc_rechazo() {
     local p=$1 t; t=$(jq -r '.tipo + ":" + (.fase // "")' "$HERMES_SDD_HOME/puertas/$p.json")
     if [ "$t" = "fase:0" ] && [ ! -f "$BASE/rechazo/rechazada" ]; then touch "$BASE/rechazo/rechazada"; decide "$p" rechazo "Falta el botón de borrar. Q1: C, Q2: C"
     elif [ "$t" = "fase:0" ]; then return 1   # vuelve la puerta de la FASE-0: fin del escenario
+    elif [ "${t%%:*}" = fallo ] && [ ! -f "$BASE/rechazo/a-mano" ]; then touch "$BASE/rechazo/a-mano"; return 1   # se reintenta con la CLI
     else camino_feliz "$p"; fi
   }
   correr rechazar_fase0
@@ -87,6 +88,8 @@ esc_rechazo() {
   padre=$(k show "$hija" --json 2>/dev/null | jq -r '(.parents // .task.parents // [])[0] // empty')
   [ -n "$nueva" ] && [ "$padre" = "$nueva" ] && ok "rechazo: reintentar sin --de pasa Aceptar FASE-0 a la tarjeta nueva" \
     || bad "rechazo: Aceptar FASE-0 cuelga de «${padre}», no del reintento «${nueva}»"
+  [ -z "$(abierta)" ] && ok "rechazo: reintentar a mano da por superada la puerta «fallo» que seguía abierta" \
+    || bad "rechazo: tras reintentar a mano sigue abierta $(abierta)"
   correr rechazar_fase0
   local r; r=$(ultima 'Reintento: implementar')
   [ "$(echo "$r" | jq -r .outcome)" = done ] && ok "rechazo: el reintento sin trabajo nuevo termina (lo hecho desde el rechazo cuenta)" \
@@ -96,7 +99,36 @@ esc_rechazo() {
     || bad "rechazo: no volvió la puerta de la FASE-0 ($(tarjetas | jq -c '[.[] | {title, status}]'))"
 }
 
-ESC=${*:-rechazo}
+# 2. Una etapa cae (montana2 M4/M5/M8, montana3 N8, montana5 M5-12/13/14): antes quedaba una tarjeta bloqueada sin
+#    puerta y solo salía con un desbloqueo a mano. Ahora abre una puerta «fallo» con el motivo y dos salidas.
+esc_fallo() {
+  nuevo fallo '{"implementar-0": ["falla"]}' || return
+  local vista=""
+  hasta_fallo() {
+    local p=$1 t; t=$(jq -r .tipo "$HERMES_SDD_HOME/puertas/$p.json")
+    case "$t" in
+      fallo) if [ -z "$vista" ]; then vista=$p; decide "$p" reintento; else return 1; fi ;;
+      fase)  return 1 ;;   # la FASE-0 llegó a su puerta: fin del escenario
+      *)     camino_feliz "$p" ;;
+    esac
+  }
+  correr hasta_fallo
+  if [ -n "$vista" ]; then
+    local f="$HERMES_SDD_HOME/puertas/$vista.json"
+    jq -e '(.opciones | map(.verbo)) == ["reintento", "paro"] and (.texto | test("Implementar FASE-0|implementar")) and (.texto | test("el guion: falla"))' "$f" >/dev/null \
+      && ok "fallo: la etapa que cae abre una puerta con el motivo y dos salidas (reintentar o dejarla parada)" \
+      || bad "fallo: la puerta no es la esperada: $(jq -c '{opciones: [.opciones[].verbo], texto: .texto[0:200]}' "$f")"
+  else
+    bad "fallo: la etapa cayó y no abrió ninguna puerta ($(tarjetas | jq -c '[.[] | select(.status == "blocked") | .title]'))"
+  fi
+  [ "$(abierta | xargs -I{} jq -r '.tipo + ":" + .fase' "$HERMES_SDD_HOME/puertas/{}.json" 2>/dev/null)" = "fase:0" ] \
+    && ok "fallo: tras «Reintentar», la FASE-0 sigue sola hasta su puerta (sin tocar el kanban a mano)" \
+    || bad "fallo: no llegó a la puerta de la FASE-0 ($(tarjetas | jq -c '[.[] | {title, status}]'))"
+  [ -z "$(tarjetas | jq -r '.[] | select(.status == "blocked") | .id')" ] \
+    && ok "fallo: no queda ninguna tarjeta bloqueada" || bad "fallo: quedan bloqueadas: $(tarjetas | jq -c '[.[] | select(.status == "blocked") | .title]')"
+}
+
+ESC=${*:-rechazo fallo}
 for e in $ESC; do "esc_$e"; done
 [ $fail = 0 ] && echo "tests/simulador.sh: all passed"
 exit $fail
