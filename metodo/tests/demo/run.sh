@@ -69,5 +69,13 @@ if command -v ffmpeg >/dev/null 2>&1 && ffmpeg -loglevel error -f lavfi -i color
   [ $rc = 0 ] && [ -s "$r/evidencias/FASE-1/WF-001-x.mp4" ] && [ "$(j 'j[0].mp4 + "|" + j[0].voice')" = "WF-001-x.mp4|null" ] \
     && pass "narrate: mp4 de cada vídeo narrado (sin TTS: sin voz, y lo dice)" || bad "narrate: $rc $out"
 else pass "narrate: sin ffmpeg completo (libvpx/libx264) en esta máquina, no se prueba el mp4"; fi
+# el test no espera a que se lea cada frase: el montaje congela la imagen donde no cabe (material-montana3: las esperas
+# de narrar eran más de la mitad de cada suite e2e)
+tl=$(node --input-type=module -e '
+import { filmTimeline, readingSeconds } from "'"$(dirname "$SDD")"'/lib/demo.mjs";
+const r = filmTimeline([{ t: 1, d: 3 }, { t: 2, d: 0.5 }, { t: 6, d: 2 }], 7);
+console.log(JSON.stringify({ f: r.pieces.map((p) => p.freeze), o: r.offsets, rd: readingSeconds("x".repeat(40)) }));')
+[ "$tl" = '{"f":[0,2.4,0,1.4],"o":[1,4.4,8.4],"rd":2.6}' ] \
+  && pass "narrate: congela lo que falta para cada frase y retrasa las siguientes lo mismo" || bad "filmTimeline: $tl"
 [ $fail = 0 ] && echo "metodo/tests/demo: all passed"
 exit $fail

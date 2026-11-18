@@ -884,7 +884,10 @@ function cmdVerify(o) {
       const citadas = new Set([...body.matchAll(/Autoriza:\s*(Q-[A-Za-z0-9_-]+)/g)].map((m) => m[1]));
       for (const f of files.filter((x) => autorizados.has(x)))
         if (![...autorizados.get(f)].some((q) => citadas.has(q)))
-          r.errors.push(`changes ${f}, an accepted test a person authorized to edit: cite the authorizing question in the message («Autoriza: ${[...autorizados.get(f)].join(" | ")}»)`);
+          // Aviso, no error: la autorización es el registro test-edit que firmó una persona (el notario lo escribe), y
+          // ese existe; la línea del commit es trazabilidad. Como error paraba la FASE entera por un mensaje
+          // (material-montana3: la etapa que aplica respuestas no conocía la regla y hubo que reescribir commits)
+          r.warnings.push(`changes ${f}, an accepted test a person authorized to edit: cite the authorizing question in the message («Autoriza: ${[...autorizados.get(f)].join(" | ")}»)`);
     }
     results.push(r);
   }

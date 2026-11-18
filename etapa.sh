@@ -288,7 +288,7 @@ fidelidad() {  # ronda adversarial del método + hsdd_fidelidad de la FASE (deja
     n=$(jq '[.fases[].requirements[].criteria[]] | length' "$plan" 2>/dev/null || echo null); v=$n
   else rm -f "$plan"; fi
   if [ "$tipo" != incremental ] || [ "$v" != 0 ]; then
-    claude_etapa acceptance "/sdd-acceptance --adversarial --fase $FASE — $ARNES Independent verifiers read each criterion of FASE-$FASE against production code, tests and captures: the GIVEN situation with its own data and actor, the WHEN, the whole THEN with its exact text, and whether each capture shows it (its «Se ve:» line says what must be on screen). One verifier is dedicated to captures and looks at EVERY capture of the FASE with the full table (criterion, «Se ve», image, test that took it), so that a wrong pattern is reported for all the captures it affects at once. Record confirmed or inconclusive findings with accept challenge add. Do not fix anything and do not sign off. Run the verifier and counter-verification agents in the foreground and wait for their answers in this same session: never schedule reminders, wake-ups, monitors or background waits (nobody will come back to this session), and close the acceptance stage state before you finish.$inc"
+    claude_etapa acceptance "/sdd-acceptance --adversarial --fase $FASE — $ARNES Independent verifiers read each criterion of FASE-$FASE against production code, tests and captures: the GIVEN situation with its own data and actor, the WHEN, the whole THEN with its exact text, and whether each capture shows it (its «Se ve:» line says what must be on screen). One verifier is dedicated to captures and looks at EVERY capture of the FASE with the full table (criterion, «Se ve», image, test that took it), so that a wrong pattern is reported for all the captures it affects at once. Record confirmed or inconclusive findings with accept challenge add. Do not fix anything and do not sign off. Run the verifier and counter-verification agents in the foreground and wait for their answers in this same session: never schedule reminders, wake-ups, monitors or background waits (nobody will come back to this session), and close the acceptance stage state before you finish. The verifiers read code, tests, captures and the junit reports; they do not run the e2e suite.$(no_repitas "$FASE")$inc"
     coste=$(echo "$RES" | jq '.cost_usd // 0' 2>/dev/null || echo 0)
   fi
   # La ronda terminó (claude_etapa sale de la etapa si falla): su plan es la base de la siguiente
@@ -297,6 +297,11 @@ fidelidad() {  # ronda adversarial del método + hsdd_fidelidad de la FASE (deja
     '. + [{tipo: $t, criterios: $n, verificados: $v, coste_usd: $c}]' <<< "$RONDAS")
   # Rápida (sin mutantes): decide si hace falta la pasada de arreglo. Los mutantes, una sola vez, antes de la puerta
   python3 "$ROOT/plugin/hermes-sdd/hsdd_fidelidad.py" aceptacion "$REPO" --fase "$FASE" --sin-mutantes >/dev/null 2>&1 || jq -n '{graves: 1, error: "hsdd_fidelidad falló: no hay comprobación de fidelidad"}' > ".sdd/hermes/fidelidad-$FASE.json"   # un fallo no deja valer el JSON anterior
+}
+# Las pruebas no se repiten en cada paso (material-montana3: cada paso de aceptar —veredictos, ronda adversarial,
+# re-veredictos— volvía a pasar toda la suite e2e con vídeo, unos 5 min cada vez y de 3 a 8 veces por FASE)
+no_repitas() {  # no_repitas <fase>: la frase para el prompt
+  echo " TESTS ALREADY RUN: do not re-run the whole e2e suite when the evidence of FASE-$1 is fresh (\\`sdd accept --fase $1\\` lists no «stale junit» nor missing report for it: evidencias/FASE-$1/ and .sdd/junit/playwright-fase-$1.xml come from the current code). Re-run it only when it is stale or missing, and then only that FASE's journeys, with SDD_FASE=$1 SDD_EVIDENCE_DIR=evidencias exported; to check one test, run just that one with --grep."
 }
 modelo_veredictos() {  # el del proyecto («aceptar-veredictos», si no el de aceptar); si no, el del perfil global
   local m; m=$(jq -r '.modelos["aceptar-veredictos"] // .modelos.aceptar // .modelos.defecto // empty' .sdd/hermes/hermes-sdd.json 2>/dev/null)
@@ -367,16 +372,17 @@ desplegable() {  # comprueba que arranca como en producción; si no, UNA pasada 
 }
 # Una sola FASE compacta: la aceptación de la FASE y la entrega van en una sola puerta (la de entrega, con la demo)
 revision_independiente() {  # ronda adversarial + hsdd_fidelidad de la FASE $FASE y, mientras encuentren algo que los
-  # agentes pueden arreglar, hasta `rondas_arreglo` pasadas de arreglo (2 de serie) con su ronda incremental detrás. Lo
+  # agentes pueden arreglar, hasta `rondas_arreglo` pasadas de arreglo (1 de serie; material-montana3: con 2, la FASE-2
+  # hizo 8 pasos y 54 min para un solo hallazgo) con su ronda incremental detrás. Lo
   # técnico lo cierran los agentes; a la persona solo le llega lo que es suyo (dudas del criterio) o lo que no se cerró.
   local MV n max; MV=$(modelo_veredictos)
-  max=$(jq -r '.rondas_arreglo // 2' .sdd/hermes/hermes-sdd.json 2>/dev/null || echo 2)
+  max=$(jq -r '.rondas_arreglo // 1' .sdd/hermes/hermes-sdd.json 2>/dev/null || echo 1)
   fidelidad
   n=$(cat ".sdd/hermes/fidelidad-arreglo-$FASE" 2>/dev/null || echo 0)
   case "$n" in ''|*[!0-9]*) n=1 ;; esac   # la marca antigua (vacía) era «ya hubo una»
   while [ "$n" -lt "$max" ] && hay_hallazgos; do
     claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES An independent review of FASE-$FASE found tests or captures that do not prove their criterion, listed below. For each one, add a task to task/TASK-FASE-$FASE.md and fix it (one commit each): the test must do the criterion's GIVEN with its own data and actor, its WHEN, and assert its whole THEN with the exact text; the capture must show the screen where that THEN is visible. Each WRONG-CAPTURE (or capture finding) is a rule, not a single case: apply it to ALL the captures of the FASE, not only to the one cited, and run «sdd lint --captures --fase ${FASE}» before you finish. Fix the code when it is the code that fails. A test that already existed when an earlier FASE was accepted is NOT edited: write an [OPEN] question with «sdd questions add --role task-implementer» instead. Findings: $(hallazgos)"
-    MODELO_PASO=$MV claude_etapa acceptance "/sdd-acceptance --fase $FASE — $ARNES Recompute the verdicts, captures and demo of FASE-$FASE after the fixes. Do not sign off."
+    MODELO_PASO=$MV claude_etapa acceptance "/sdd-acceptance --fase $FASE — $ARNES Recompute the verdicts, captures and demo of FASE-$FASE after the fixes. Do not sign off.$(no_repitas "$FASE")"
     fidelidad
     n=$((n + 1)); echo "$n" > ".sdd/hermes/fidelidad-arreglo-$FASE"   # hecha: si se cortaba a mitad, el reintento la repite
   done
@@ -671,7 +677,7 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
     # Veredictos y re-veredictos: pocos turnos que ejecutan la CLI, con el modelo barato del perfil (club: 9,47 $ con el
     # de la etapa). La ronda adversarial y el implementador siguen con el de la etapa.
     MV=$(modelo_veredictos)
-    MODELO_PASO=$MV claude_etapa acceptance "/sdd-acceptance --fase $FASE — $ARNES Produce the per-requirement verdicts with evidence and the FASE demo (captures and a short video in evidencias/FASE-$FASE/). Do not sign off."
+    MODELO_PASO=$MV claude_etapa acceptance "/sdd-acceptance --fase $FASE — $ARNES Produce the per-requirement verdicts with evidence and the FASE demo (captures and a short video in evidencias/FASE-$FASE/). Do not sign off.$(no_repitas "$FASE")"
     # ¿Los tests y las capturas prueban de verdad cada criterio? (sala: un e2e citaba REQ-F-003 AC3 y ejecutaba otro
     # escenario, con otra vivienda; capturas de otra semana; tests ya aceptados editados sin autorizar). Dos miradas:
     # la ronda adversarial del método (verificadores independientes: el GIVEN con sus datos, el THEN entero, las
@@ -698,6 +704,9 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
     fin "$RES" "Línea base propuesta a partir del código" "$P" ;;
 
   cierre)
+    # Primero, que arranque como en producción: su arreglo cambia código, y medir antes dejaba caducadas las pruebas
+    # recién pasadas (material-montana3: el arreglo de `npm start` llegó tras medir y la entrega se rechazó una vez)
+    desplegable
     if unica "$REPO"; then   # una sola FASE compacta: aquí se hacen sus veredictos y su demo (no hubo puerta de FASE)
       MODELO_PASO=$(modelo_veredictos) claude_etapa acceptance "/sdd-acceptance --fase 0 — $ARNES Produce the per-requirement verdicts with evidence and the FASE demo (captures and a short video in evidencias/FASE-0/). Do not sign off."
       # La misma revisión independiente que una puerta de FASE: sin ella la ruta ligera entregaba sin que nadie mirara
@@ -716,9 +725,8 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
       # Entrega parcial: cada aceptación de FASE corre solo sus tests y el junit guarda la última; sin volver a correrlos
       # todos, las FASEs anteriores salen sin capturas (material-montana2: 15 capturas «sin test» en FASE-0 y 1)
       F=$(tr '\n' ' ' < .sdd/hermes/entrega-parcial | sed 's/ $//')
-      claude_etapa acceptance "/sdd-acceptance — $ARNES Partial delivery of FASEs $F. Run the WHOLE test suite (unit and every e2e spec of those FASEs, not only the last one) so the junit reports cover every delivered FASE, and compute the per-requirement verdicts of FASEs $F with evidence. Do not implement anything, do not touch tests and do not sign off."
+      claude_etapa acceptance "/sdd-acceptance — $ARNES Partial delivery of FASEs $F. Run the unit suite once and, for each of those FASEs whose evidence is stale or missing (\\`sdd accept --fase N\\` lists a «stale junit» or no report for it), its e2e journeys with SDD_FASE=N SDD_EVIDENCE_DIR=evidencias exported (each FASE writes .sdd/junit/playwright-fase-N.xml and evidencias/FASE-N/; a FASE whose evidence is fresh is not run again). Then compute the per-requirement verdicts of FASEs $F with evidence. Do not implement anything, do not touch code or tests and do not sign off."
     fi
-    desplegable   # «hecho» = arranca como en producción (un arreglo si no; lo que quede lo ve la puerta como grave)
     # Fidelidad global antes de entregar: tests congelados, capturas, mutantes de todos los Must y coherencia
     # (en una entrega parcial, sin mutantes: los de lo que aún no se hizo saldrían todos «sin comprobar»)
     python3 "$ROOT/plugin/hermes-sdd/hsdd_fidelidad.py" aceptacion "$REPO" $(parcial && echo --sin-mutantes) >/dev/null 2>&1 || jq -n '{graves: 1, error: "hsdd_fidelidad falló: no hay comprobación de fidelidad"}' > .sdd/hermes/fidelidad-global.json

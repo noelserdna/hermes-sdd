@@ -109,7 +109,8 @@ fase_n() {  # fase_n <N> [sufijo]: (huecos →) implementar → aceptar la FASE 
   if unica "$REPO"; then   # una sola FASE: sus veredictos y su demo los hace el cierre, y se aceptan con la entrega
     cierre "$t" "Cierre: demo, puerta global y entrega" >/dev/null
   else
-    tarjeta "Aceptar FASE-$1" "$t" 60m aceptar "$1" >/dev/null
+    # 120m: la de 60 cortó la aceptación de la FASE-1 de material-montana3 a mitad (señal TERM, 59 min perdidos)
+    tarjeta "Aceptar FASE-$1" "$t" 120m aceptar "$1" >/dev/null
   fi
   echo "$primera"
 }

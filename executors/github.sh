@@ -64,8 +64,19 @@ jq -n --arg n "$(git config user.name || echo hermes-sdd)" --arg e "$(git config
 export GIT_INDEX_FILE="$TMP/index"
 git read-tree HEAD
 CONTEXTO=(.sdd pipeline-state.json)
-[ -d evidencias ] && [ "$(du -sk evidencias | cut -f1)" -lt 51200 ] && CONTEXTO+=(evidencias)   # < 50 MB
 for f in "${CONTEXTO[@]}"; do [ -e "$f" ] && git add -f -- "$f"; done
+# Las evidencias, sin lo repetido: la carpeta .playwright (copia cruda de vídeos y capturas) y el webm que ya tiene su
+# mp4 narrado. Enteras pasaban de 50 MB (material-montana3: 188 MB), no subían, y cada paso de aceptar volvía a pasar
+# toda la suite e2e con vídeo para rehacerlas (5 min por paso, de 3 a 8 pasos por FASE)
+if [ -d evidencias ]; then
+  find evidencias -type f ! -path '*/.playwright/*' | while IFS= read -r f; do
+    case "$f" in *.webm) [ -f "${f%.webm}.mp4" ] && continue ;; esac
+    printf '%s\n' "$f"
+  done > "$TMP/evidencias"
+  if [ -s "$TMP/evidencias" ] && [ "$(tr '\n' '\0' < "$TMP/evidencias" | xargs -0 du -ck 2>/dev/null | tail -1 | cut -f1)" -lt 51200 ]; then   # < 50 MB
+    tr '\n' '\0' < "$TMP/evidencias" | xargs -0 git add -f --
+  fi
+fi
 git rm -r -q --cached --ignore-unmatch -- .sdd/entregas .sdd/hermes/lock .sdd/hermes/runs >/dev/null 2>&1
 # GitHub no acepta ficheros de más de 100 MB: fuera del contexto los de más de 50
 git ls-files -s | while read -r _ obj _ f; do [ "$(git cat-file -s "$obj")" -gt 52428800 ] && git rm -q --cached -- "$f"; done

@@ -10,7 +10,9 @@
 //                                          → for each <video>.narracion.json of evidencias/FASE-N (written by the
 //                                            harness helper `narrar`), a voice-over placed at its times and an
 //                                            <video>.mp4 (H.264 + AAC; Telegram plays only mp4). Without a TTS, the
-//                                            mp4 has the captions and no voice (said in the output)
+//                                            mp4 has the captions and no voice (said in the output). The tests do not
+//                                            wait for a sentence: where its voice (or the time to read its caption)
+//                                            does not fit before the next one, the film freezes that frame
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync, rmSync, mkdtempSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import os from "node:os";
@@ -142,7 +144,49 @@ function synth(tts, voice, text, out) {
   return false;
 }
 
-/** Narrate the videos of FASE N: returns [{ video, mp4, segments, voice }] (errors per video in `error`). */
+/** Seconds of audio in a WAV file (its byte rate and data chunk), 0 when unreadable. */
+export function wavSeconds(file) {
+  try {
+    const b = readFileSync(file);
+    let i = 12, rate = 0;
+    while (i + 8 <= b.length) {
+      const id = b.toString("ascii", i, i + 4), n = b.readUInt32LE(i + 4);
+      if (id === "fmt ") rate = b.readUInt32LE(i + 16);
+      if (id === "data") return rate ? Math.min(n, b.length - i - 8) / rate : 0;
+      i += 8 + n + (n & 1);
+    }
+  } catch { /* unreadable */ }
+  return 0;
+}
+/** What a person needs to read a caption (seconds): the pause the tests used to make, now made in the film. */
+export const readingSeconds = (text) => Math.min(8, Math.max(1.5, String(text || "").length * 0.065));
+function videoSeconds(file) {
+  const r = spawnSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", file], { encoding: "utf8" });
+  const d = parseFloat((r.stdout || "").trim());
+  return Number.isFinite(d) && d > 0 ? d : null;
+}
+/**
+ * The film's timeline: the test runs at full speed (the helper `narrar` no longer waits), so where a sentence needs
+ * more time than the test left before the next one, the last frame of that stretch is frozen for the difference.
+ * items: [{t, d}] sorted by t (start in the test video, seconds needed). Returns pieces [{from, to|null, freeze}] of
+ * the source video and, per item, its offset in the film.
+ */
+export function filmTimeline(items, duration = null, pad = 0.4) {
+  const pieces = [], offsets = [];
+  if (items.length && items[0].t > 0.05) pieces.push({ from: 0, to: items[0].t, freeze: 0 });
+  let added = 0;
+  items.forEach((x, j) => {
+    const next = j + 1 < items.length ? items[j + 1].t : duration;
+    const gap = next === null ? 0 : Math.max(0, next - x.t);
+    const freeze = Math.max(0, Math.round((x.d + pad - gap) * 100) / 100);
+    offsets.push(x.t + added);
+    pieces.push({ from: x.t, to: j + 1 < items.length ? next : null, freeze });
+    added += freeze;
+  });
+  return { pieces, offsets };
+}
+
+/** Narrate the videos of FASE N: returns [{ video, mp4, segments, voice, frozen }] (errors per video in `error`). */
 export function narrate(root, fase, { tts: pref, voice } = {}) {
   const prof = stackProfile(root);
   const dir = path.join(root, prof.evidence_dir || "evidencias", `FASE-${fase}`);
@@ -157,23 +201,38 @@ export function narrate(root, fase, { tts: pref, voice } = {}) {
     if (!existsSync(video)) { out.push({ video: path.basename(video), error: "video not found" }); continue; }
     const mp4 = video.replace(/\.webm$/, ".mp4");
     const tmp = mkdtempSync(path.join(os.tmpdir(), "sdd-voz-"));
-    const segs = [];
-    if (tts.tts !== "none")
-      (n.narraciones || []).forEach((x, i) => {
-        const wav = path.join(tmp, `s${i}.${tts.tts === "say" ? "wav" : "wav"}`);
-        if (synth(tts, voice, x.texto, wav)) segs.push({ wav, ms: Math.max(0, Math.round((x.t || 0) * 1000)) });
+    // Each sentence: its start in the test video and the time it needs (its voice, or the time to read its caption)
+    const items = (n.narraciones || []).map((x) => ({ t: Math.max(0, Number(x.t) || 0), texto: x.texto }))
+      .sort((a, b) => a.t - b.t)
+      .map((x, i) => {
+        const wav = path.join(tmp, `s${i}.wav`);
+        const ok = tts.tts !== "none" && synth(tts, voice, x.texto, wav);
+        return { ...x, wav: ok ? wav : null, d: (ok && wavSeconds(wav)) || readingSeconds(x.texto) };
       });
+    const { pieces, offsets } = filmTimeline(items, items.length ? videoSeconds(video) : null);
+    const segs = items.map((x, i) => ({ wav: x.wav, ms: Math.round(offsets[i] * 1000) })).filter((s) => s.wav);
+    const frozen = Math.round(pieces.reduce((a, p) => a + p.freeze, 0) * 10) / 10;
     const args = ["-y", "-loglevel", "error", "-i", video];
     for (const s of segs) args.push("-i", s.wav);
+    const graph = [];
+    let vout = "0:v";
+    if (pieces.length) {
+      pieces.forEach((p, k) => graph.push(`[0:v]trim=start=${p.from}${p.to !== null ? `:end=${p.to}` : ""},setpts=PTS-STARTPTS` +
+        `${p.freeze > 0 ? `,tpad=stop_mode=clone:stop_duration=${p.freeze}` : ""}[v${k}]`));
+      graph.push(`${pieces.map((_, k) => `[v${k}]`).join("")}concat=n=${pieces.length}:v=1:a=0[film]`);
+      vout = "[film]";
+    }
     if (segs.length) {
-      const f1 = segs.map((s, i) => `[${i + 1}:a]adelay=${s.ms}|${s.ms}[a${i}]`).join(";");
-      const mix = segs.map((_, i) => `[a${i}]`).join("") + `amix=inputs=${segs.length}:normalize=0:duration=longest[voz]`;
-      args.push("-filter_complex", `${f1};${mix}`, "-map", "0:v", "-map", "[voz]", "-c:a", "aac", "-b:a", "96k");
-    } else args.push("-map", "0:v", "-an");
+      graph.push(...segs.map((s, i) => `[${i + 1}:a]adelay=${s.ms}|${s.ms}[a${i}]`));
+      graph.push(segs.map((_, i) => `[a${i}]`).join("") + `amix=inputs=${segs.length}:normalize=0:duration=longest[voz]`);
+    }
+    if (graph.length) args.push("-filter_complex", graph.join(";"));
+    args.push("-map", vout);
+    if (segs.length) args.push("-map", "[voz]", "-c:a", "aac", "-b:a", "96k"); else args.push("-an");
     args.push("-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "veryfast", "-crf", "28", "-movflags", "+faststart", mp4);
     const r = spawnSync("ffmpeg", args, { encoding: "utf8" });
     rmSync(tmp, { recursive: true, force: true });
-    out.push({ video: path.basename(video), mp4: r.status === 0 ? path.basename(mp4) : null, segments: segs.length,
+    out.push({ video: path.basename(video), mp4: r.status === 0 ? path.basename(mp4) : null, segments: segs.length, frozen,
       voice: tts.tts === "none" ? null : `${tts.tts}${voice || tts.voice ? `:${voice || tts.voice}` : ""}`,
       ...(r.status === 0 ? {} : { error: (r.stderr || "").trim().slice(-300) }) });
   }

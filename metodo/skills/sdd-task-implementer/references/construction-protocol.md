@@ -416,7 +416,10 @@
 whose header says «Plantilla del arnés» (projects created by hermes-sdd with a stack template), use them as they are:
 `import { test, expect, captura, narrar } from './fixtures/evidence.js'`. Never edit `evidence.js` (the harness checks
 it is unchanged); `playwright.config.js` may change its `webServer` or `projects`, never its `outputDir`, `reporter` or
-`use`. The templates below are for projects without that file.
+`use`. Name each FASE's journey files `tests/e2e/fase-{N}-<slug>.spec.js`: with `SDD_FASE={N}` the template runs only
+those (accepting FASE-2 does not re-record FASE-0 and 1) and writes `.sdd/junit/playwright-fase-{N}.xml`. `narrar` does
+not wait for the sentence to be read (the film freezes the frame instead): never add waits for the narration. The
+templates below are for projects without that file.
 
 **Code layout (enforced by `sdd lint --arch`).** One folder per use case, `src/features/uc-NNN-<slug>/`, holding
 everything that use case needs (view, logic, store access); what two use cases share lives in `src/shared/`. A file of

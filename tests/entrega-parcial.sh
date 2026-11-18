@@ -64,13 +64,14 @@ echo 0 > "$T/rc-1"; echo 0 > "$T/rc-0"; g >/dev/null; r3=$?
 mv .sdd/hermes/entrega-parcial "$T/ep"; g >/dev/null; r=$?
 [ "$r" = 1 ] && ok "sin entrega parcial: la puerta global, como siempre" || bad "global: $r"
 mv "$T/ep" .sdd/hermes/entrega-parcial
-# el cierre parcial con el gate en rojo vuelve a correr TODOS los tests de las FASEs entregadas (material-montana2, M13:
-# el junit solo tenía los de la última aceptación y las FASEs 0 y 1 salieron «sin capturas»); sin cerrar huecos
+# el cierre parcial con el gate en rojo vuelve a correr los tests de cada FASE entregada cuya evidencia caducó, FASE a
+# FASE (material-montana2, M13: el junit solo tenía los de la última aceptación y las FASEs 0 y 1 salieron «sin
+# capturas»; ahora hay un junit por FASE y la que está al día no se repite); sin cerrar huecos
 echo 1 > "$T/rc-0"; echo 0 > "$T/rc-1"
 echo '{"ejecutor":"claude","ejecutores":{"cierre":"../tests/ejecutor-falso"}}' > .sdd/hermes/hermes-sdd.json
 FALSO_LOG="$T/llamadas" HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/etapa.sh" "$R" cierre >/dev/null 2>&1
-jq -e -s 'any(.[]; .prompt | test("Partial delivery of FASEs 0 1") and test("WHOLE test suite")) and (all(.[]; .prompt | test("GLOBAL acceptance gate is not met") | not))' "$T/llamadas" >/dev/null \
-  && ok "cierre parcial con el gate en rojo: vuelve a pasar todos los tests de las FASEs entregadas, sin cerrar huecos" || bad "cierre parcial: $(jq -r '.prompt[0:120]' "$T/llamadas" 2>&1)"
+jq -e -s 'any(.[]; .prompt | test("Partial delivery of FASEs 0 1") and test("for each of those FASEs whose evidence is stale") and test("SDD_FASE=N")) and (all(.[]; .prompt | test("GLOBAL acceptance gate is not met") | not))' "$T/llamadas" >/dev/null \
+  && ok "cierre parcial con el gate en rojo: vuelve a pasar los tests de cada FASE entregada caducada, sin cerrar huecos" || bad "cierre parcial: $(jq -r '.prompt[0:120]' "$T/llamadas" 2>&1)"
 rm -f "$T/bin/node" .sdd/hermes/hermes-sdd.json
 
 # la puerta lo dice

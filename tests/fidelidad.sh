@@ -289,15 +289,15 @@ git commit -qam "docs(acceptance): test-edit"
 [ "$(graves_arreglables)" = 3 ] && ok "con permiso firmado para editarlo, el test congelado vuelve a la pasada de arreglo" || bad "autorizado: $(graves_arreglables)"
 jq -n '{graves: 1, error: "hsdd_fidelidad falló"}' > .sdd/hermes/fidelidad-1.json
 [ "$(graves_arreglables)" = 1 ] && ok "si la fidelidad falló, sigue habiendo pasada de arreglo" || bad "error de fidelidad"
-# 4g. pasadas de arreglo: hasta rondas_arreglo (2 de serie) mientras queden hallazgos arreglables; las dudas del criterio
+# 4g. pasadas de arreglo: hasta rondas_arreglo (1 de serie) mientras queden hallazgos arreglables; las dudas del criterio
 # (SPEC-QUESTION) no lanzan arreglo (son de una persona); la marca antigua (vacía) cuenta como una ya hecha
 (
   eval "$(sed -n '/^revision_independiente() {/,/^}/p' "$ROOT/etapa.sh")"
-  ARNES=""; modelo_veredictos() { echo m; }; fidelidad() { :; }; hallazgos() { echo "- CH-1"; }
+  ARNES=""; modelo_veredictos() { echo m; }; fidelidad() { :; }; hallazgos() { echo "- CH-1"; }; no_repitas() { :; }
   claude_etapa() { [ "$1" = task-implementer ] && echo x >> "$T/pasadas"; }
   quedan=5; hay_hallazgos() { [ "$quedan" -gt 0 ]; }
   FASE=7; rm -f ".sdd/hermes/fidelidad-arreglo-7" "$T/pasadas"; revision_independiente
-  [ "$(wc -l < "$T/pasadas" | tr -d ' ')" = 2 ] && [ "$(cat .sdd/hermes/fidelidad-arreglo-7)" = 2 ] && echo "ok   2 pasadas de arreglo de serie mientras queden hallazgos" || echo "FAIL pasadas: $(cat "$T/pasadas" 2>/dev/null | wc -l)"
+  [ "$(wc -l < "$T/pasadas" | tr -d ' ')" = 1 ] && [ "$(cat .sdd/hermes/fidelidad-arreglo-7)" = 1 ] && echo "ok   1 pasada de arreglo de serie aunque queden hallazgos (lo que quede va a la puerta)" || echo "FAIL pasadas: $(cat "$T/pasadas" 2>/dev/null | wc -l)"
   echo '{"rondas_arreglo": 3}' > .sdd/hermes/hermes-sdd.json.r; cp .sdd/hermes/hermes-sdd.json "$T/hs.bak" 2>/dev/null || true
   jq -s '.[0] + .[1]' "$T/hs.bak" .sdd/hermes/hermes-sdd.json.r > .sdd/hermes/hermes-sdd.json 2>/dev/null || mv .sdd/hermes/hermes-sdd.json.r .sdd/hermes/hermes-sdd.json
   rm -f ".sdd/hermes/fidelidad-arreglo-7" "$T/pasadas"; quedan=0; revision_independiente

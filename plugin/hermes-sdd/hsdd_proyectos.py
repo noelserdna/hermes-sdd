@@ -144,7 +144,9 @@ RUTAS_DEFECTO = [
      "descripcion": "Solo lo esencial: requisitos, plan, programación y aceptación. Para prototipos y proyectos pequeños."},
     {"id": "con-diseno", "nombre": "Con diseño", "etapas": ["tech-designer", "ux-designer"], "granularidad": "normal",
      "descripcion": "Lo esencial más el diseño visual y de uso y el diseño técnico. Para apps con pantallas cuidadas."},
-    {"id": "completa", "nombre": "Completa", "etapas": [k for k, _ in OPCIONALES_RUTA], "granularidad": "fina",
+    # Todas las etapas, pero con tareas de tamaño normal: con «fina», material-montana3 tuvo 73 tareas (20 en la FASE-0),
+    # sin la política de un test por criterio, y la implementación fue lo más largo después de aceptar
+    {"id": "completa", "nombre": "Completa", "etapas": [k for k, _ in OPCIONALES_RUTA], "granularidad": "normal",
      "descripcion": "Todas las etapas del método: especificaciones, auditoría, plan de pruebas, seguridad, diseño y repaso del código frente a la especificación. "
                     "Más lenta y más cara; para proyectos serios o de un cliente externo."},
 ]

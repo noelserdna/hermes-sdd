@@ -171,13 +171,13 @@ echo "it('a', () => expect(1).toBe(1))" > "$au/tests/a.test.js"; git -C "$au" ad
 echo '{"type":"test-edit","files":["tests/a.test.js"],"question":"Q-task-implementer-001","gate":"g1","by":"Ana"}' > "$au/acceptance/decisions.jsonl"
 git -C "$au" add -A; git -C "$au" commit -q -m "docs(acceptance): test-edit"
 b=$(git -C "$au" rev-parse HEAD)
-echo "it('a', () => expect(2).toBe(2))" > "$au/tests/a.test.js"; git -C "$au" commit -qam "test(a): segunda migración"
+echo "it('a', () => expect(2).toBe(2))" > "$au/tests/a.test.js"; git -C "$au" commit -qam "test(a): segunda migración" -m "Task: TASK-F1-001"
 run verify --range "$b..HEAD" --repo "$au" --json
-expect "Autoriza: un test autorizado editado sin citar su pregunta → error" "$rc:$(js 'j.results[0].errors.some(e=>e.includes("Autoriza: Q-task-implementer-001"))')" "1:true"
+expect "Autoriza: un test autorizado editado sin citar su pregunta → aviso, no error (la autorización es el registro)" "$rc:$(js 'j.results[0].warnings.some(e=>e.includes("Autoriza: Q-task-implementer-001"))'):$(js 'j.results[0].errors.length')" "0:true:0"
 git -C "$au" commit -q --amend -m "test(a): segunda migración" -m "Task: TASK-F1-001
 Autoriza: Q-task-implementer-001"
 run verify --range "$b..HEAD" --repo "$au" --json
-expect "Autoriza: con la pregunta citada → sin error" "$rc:$(js 'j.results[0].errors.length')" "0:0"
+expect "Autoriza: con la pregunta citada → sin error ni aviso" "$rc:$(js 'j.results[0].errors.length'):$(js 'j.results[0].warnings.filter(e=>e.includes("Autoriza")).length')" "0:0:0"
 
 # ---------------------------------------------------------------- 5b. verify --range: Prove-It (fix con código y sin test)
 pv="$tmp/pv"; mkdir -p "$pv/src" "$pv/tests"

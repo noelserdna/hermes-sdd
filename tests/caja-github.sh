@@ -33,6 +33,7 @@ case "\$1 \$2" in
     BASE=\$(git rev-parse HEAD~1); git reset -q --mixed "\$BASE"
     [ -f .sdd/hermes/caja/prompt.txt ] && cp .sdd/hermes/caja/prompt.txt "$T/prompt-recibido"
     [ -f pipeline-state.json ] && cp pipeline-state.json "$T/contexto-recibido"
+    { find evidencias -type f 2>/dev/null | sort; } > "$T/evidencias-recibidas"
     case "\${ESCENARIO:-}" in
       bien) echo trabajo > b.txt; git add b.txt; git commit -qm "feat: b"; echo pendiente >> a.txt
             mkdir -p evidencias/FASE-0 .sdd/hermes; echo png > evidencias/FASE-0/x.png; echo '{"etapa":"y"}' > pipeline-state.json ;;
@@ -59,7 +60,11 @@ chmod +x "$T/bin/gh"; export PATH="$T/bin:$PATH"
 corre() { out=$(ESCENARIO=$1 SDD_TOPE_USD=4.5 bash "$ROOT/executors/github.sh" "$R" "implementar-0" "haz la tarea" sonnet 2>/dev/null | tail -1); }
 
 H0=$(git rev-parse HEAD)
+mkdir -p evidencias/FASE-0/.playwright/t1; echo crudo > evidencias/FASE-0/.playwright/t1/video.webm
+echo w > evidencias/FASE-0/v.webm; echo m > evidencias/FASE-0/v.mp4; echo s > evidencias/FASE-0/solo.webm; echo p > evidencias/FASE-0/c.png
 corre bien
+[ "$(tr '\n' ' ' < "$T/evidencias-recibidas")" = "evidencias/FASE-0/c.png evidencias/FASE-0/solo.webm evidencias/FASE-0/v.mp4 " ] \
+  && ok "la caja recibe las evidencias sin .playwright ni el webm que ya tiene su mp4" || bad "evidencias enviadas: $(cat "$T/evidencias-recibidas")"
 jq -e '.outcome == "done" and .cost_usd == 0.5 and .turns == 3 and (.caja | test("actions/runs/7"))' <<< "$out" >/dev/null && ok "bien: done con coste y enlace a la ejecución" || bad "bien: $out"
 [ "$(git log -1 --format=%s)" = "feat: b" ] && [ "$(git rev-parse HEAD~1)" = "$H0" ] && ok "sus commits entran por fast-forward sobre el commit enviado" || bad "commits: $(git log --oneline | head -3)"
 git diff --quiet a.txt; [ $? = 1 ] && ok "lo que dejó sin commit queda pendiente (etapa.sh lo commitea a la vista)" || bad "pendiente"

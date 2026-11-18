@@ -38,13 +38,15 @@ async function rotulo(page, texto) {
 /**
  * Lo que se dice: un rótulo en pantalla y una entrada de la locución del vídeo (la voz se pone después, con
  * `sdd demo narrate`). `criterio`: el id del criterio que esta frase anuncia (AC-NNN-NN o REQ-F-NNN-ACn); su
- * captura va después. Espera lo que se tarda en leerlo, para que la voz quepa en el vídeo.
+ * captura va después. No espera a que se lea: el test sigue a su velocidad y es `sdd demo narrate` quien congela la
+ * imagen en el vídeo lo que haga falta para que quepa la voz (material-montana3: las esperas eran más de la mitad de
+ * cada suite e2e, y la suite se pasa muchas veces por FASE). Solo deja que el rótulo llegue a pintarse.
  */
 export async function narrar(page, testInfo, texto, { criterio = null } = {}) {
   const s = de(testInfo);
   await rotulo(page, texto);
   s.narraciones.push({ t: (Date.now() - s.t0) / 1000, texto, ...(criterio ? { criterio } : {}) });
-  await page.waitForTimeout(Math.min(8000, Math.max(1500, texto.length * 65)));
+  await page.waitForTimeout(200);
 }
 
 /**

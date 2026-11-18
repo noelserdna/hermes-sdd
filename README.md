@@ -346,7 +346,7 @@ se mostró. Tres registros cuentan la misma historia: el canal, el acta del nota
 `acceptance/decisions.jsonl` más el tag de git.
 
 **Antes de cada puerta de entrega**, sin que nadie lo pida:
-- los agentes hacen hasta dos pasadas de arreglo sobre lo técnico que encontró la revisión independiente (tests que
+- los agentes hacen una pasada de arreglo (sube con `rondas_arreglo`) sobre lo técnico que encontró la revisión independiente (tests que
   comprueban menos que su criterio, capturas, algo sin hacer); a ti solo te llegan las dudas sobre el propio requisito y,
   en una línea, lo técnico que no se cerró (`rondas_arreglo` en `.sdd/hermes/hermes-sdd.json`);
 - se comprueba que la app es **desplegable**: README con cómo arrancarla, `npm start` (no el servidor de desarrollo)

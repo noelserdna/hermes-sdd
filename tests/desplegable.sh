@@ -47,4 +47,10 @@ echo inicio > "$T/git/marcador.txt"; printf '.sdd/\nnode_modules/\n' > "$T/git/.
 o=$(python3 "$D" "$T/git")
 jq -e '.ok == true and (.hecho | any(test("copia limpia")))' <<< "$o" >/dev/null && [ -z "$(git -C "$T/git" status --porcelain)" ] \
   && ok "repo git: se comprueba en una copia limpia y el repo queda sin cambios" || bad "copia limpia: $o / $(git -C "$T/git" status --short)"
+# el cierre comprueba (y arregla) el arranque ANTES de medir: medir y después cambiar código dejaba caducadas las
+# pruebas de la entrega (material-montana3, N24)
+CI=$(sed -n '/^  cierre)$/,/;;$/p' "$ROOT/etapa.sh")
+d=$(grep -n '^    desplegable' <<< "$CI" | head -1 | cut -d: -f1); g=$(grep -n 'gate_entrega' <<< "$CI" | head -1 | cut -d: -f1)
+[ -n "$d" ] && [ -n "$g" ] && [ "$d" -lt "$g" ] && [ "$(grep -c '^ *desplegable' <<< "$CI")" = 1 ] \
+  && ok "el cierre comprueba el arranque antes de medir, y una sola vez" || bad "orden del cierre: desplegable $d, gate $g"
 exit $fail
