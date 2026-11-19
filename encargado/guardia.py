@@ -100,11 +100,13 @@ def segmento(seg: list, cwd: str) -> str | None:
     if cmd in ("python3", "python"):
         script = next((a for a in args if a.endswith(".py")), "")
         nombre = os.path.basename(script)
-        if dentro(ruta(script, cwd), ARNES) and ((nombre == "hsdd_proyectos.py" and "estado" in args)
+        if dentro(ruta(script, cwd), ARNES) and ((nombre == "hsdd_proyectos.py" and ("estado" in args or "puerta" in args))
+                                                 or (nombre == "hsdd_transcripcion.py" and ("resumen" in args or "proyecto" in args))
+                                                 or (nombre == "hsdd_wiki.py" and ("ver" in args or "buscar" in args))
                                                  or (nombre == "hsdd_plan.py" and "dependencias" in args)
                                                  or (nombre == "hsdd_revision.py" and "revisar" in args and "--ia" not in args)):
             return None
-        return "solo puede ejecutar hsdd_proyectos.py estado, hsdd_plan.py dependencias y hsdd_revision.py revisar (sin --ia)"
+        return "solo puede ejecutar hsdd_proyectos.py estado|puerta, hsdd_transcripcion.py, hsdd_wiki.py ver|buscar, hsdd_plan.py dependencias y hsdd_revision.py revisar (sin --ia)"
     if cmd == "node":
         script = next((a for a in args if a.endswith("sdd.mjs")), "")
         if not script or not dentro(ruta(script, cwd), ARNES):
@@ -114,7 +116,9 @@ def segmento(seg: list, cwd: str) -> str | None:
         if sub not in SDD_LECTURA:
             return f"sdd {sub} no es una orden de lectura"
         texto = " ".join(resto)
-        if re.search(r"\b(record|measure|challenge|pack|add)\b|--(report|write|fix|confirm|set)\b", texto):
+        # «challenge list» lee; «challenge add/resolve» escriben (y record, measure, pack…)
+        if re.search(r"\b(record|measure|pack|add|resolve)\b|--(report|write|fix|confirm|set)\b", texto) or \
+                ("challenge" in texto and not re.search(r"\bchallenge\s+list\b", texto)):
             return f"sdd {texto[:40]} escribe; el encargado solo lee"
         return None
     return f"la orden «{cmd}» no está en la lista de lectura"

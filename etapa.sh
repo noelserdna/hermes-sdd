@@ -226,6 +226,7 @@ DECIS=$(decisiones)
 # La wiki del proyecto (hsdd_wiki.py): una página por identificador con su definición, lo relacionado, quién lo cita,
 # dónde está en el código y los tests y su veredicto. Se reconstruye antes de cada sesión (claude_etapa): 0,2 s
 WIKI=" Project wiki: .sdd/wiki/index.md lists every artifact id (requirements, needs, use cases, screens, invariants, APIs, ADRs, FASEs, tasks, scenarios); .sdd/wiki/<ID>.md has its definition, related ids by type, who cites it (file:line), where it is in code and tests and its verdict. Read the page of an id before opening whole documents to find it; open the document only for the part you need. It is generated: never edit it."
+[ -n "${HERMES_SDD_SIN_WIKI:-}" ] && WIKI=""   # para medir con y sin ella (A/B)
 ARNES="Modo arnés (hermes-sdd): sin persona en la sesión; sigue references/modo-arnes.md del plugin.$PEDIDO${LECC:+ $LECC}$DECIS$WIKI"
 
 registros_ajenos() {  # registros_ajenos <head-antes> → imprime qué está mal y sale 0; nada y sale 1 si todo es de la CLI
@@ -250,7 +251,7 @@ registros_ajenos() {  # registros_ajenos <head-antes> → imprime qué está mal
   return 1
 }
 claude_etapa() {  # claude_etapa <clave-de-estado> <prompt>
-  python3 "$ROOT/plugin/hermes-sdd/hsdd_wiki.py" construir "$REPO" >/dev/null 2>&1 || true   # la wiki, al día con lo último
+  [ -n "${HERMES_SDD_SIN_WIKI:-}" ] || python3 "$ROOT/plugin/hermes-sdd/hsdd_wiki.py" construir "$REPO" >/dev/null 2>&1 || true   # la wiki, al día
   local clave=$1 res st head0 malo
   head0=$(git rev-parse HEAD)
   # Sandbox de Claude Code en las etapas que no abren un navegador (en macOS no puede arrancar Chromium)

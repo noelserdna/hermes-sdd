@@ -53,6 +53,9 @@ El proyecto todavía no ha arrancado: tu trabajo es que arranque con buena entra
    puerta de Requisitos a la persona, como siempre.
 
 ## Supervisar (te despierta el vigía cuando cambia algo que mirar)
+**Sigue la skill `supervisar-proyecto`**: es cómo se supervisaron a mano las pruebas del arnés (dónde mirar, cómo
+preparar la recomendación de cada puerta, el catálogo de atascos con su causa y su remedio, qué anotar y el balance).
+Lo de abajo es el resumen de tus acciones.
 Acciones, siempre con `bash {{ARNES}}/encargado.sh <acción> {{REPO}} …` (prueba antes con `--seco` si dudas); cada
 una comprueba sus condiciones y queda anotada:
 

@@ -873,6 +873,7 @@ if __name__ == "__main__":   # CLI de nuevo.sh
     ru = sub.add_parser("rutas"); ru.add_argument("--defecto")
     op = sub.add_parser("opciones-ruta"); op.add_argument("tablero"); op.add_argument("propuesta", nargs="?")
     es = sub.add_parser("estado"); es.add_argument("repo"); es.add_argument("--json", action="store_true")
+    pu = sub.add_parser("puerta"); pu.add_argument("repo"); pu.add_argument("id")
     vg = sub.add_parser("vigia"); vg.add_argument("repo")
     sub.add_parser("modelo-encargado")
     cp = sub.add_parser("cerrar-pendientes"); cp.add_argument("repo")
@@ -912,6 +913,16 @@ if __name__ == "__main__":   # CLI de nuevo.sh
             print(modelo_encargado())
         elif a.cmd == "foto-encargado":
             print(foto_encargado(a.perfil, marcar=not a.sin_marcar))
+        elif a.cmd == "puerta":
+            # Lo que el encargado necesita para preparar la recomendación de una puerta de SU proyecto (solo lectura):
+            # el texto que ve la persona, sus botones, preguntas, avisos y el juicio de Jev. Nunca la decisión registrada.
+            pu = N.leer(N.HOME / "puertas" / f"{a.id}.json") if re.fullmatch(r"g[0-9a-f]+", a.id) else None
+            if not pu or Path(pu.get("repo", "")).resolve() != Path(a.repo).resolve():
+                print(f"{a.id}: no es una puerta de este proyecto", file=sys.stderr); sys.exit(1)
+            print(json.dumps({k: pu.get(k) for k in ("id", "tipo", "fase", "titulo", "estado", "creada", "texto", "opciones",
+                              "preguntas", "bloqueo", "tests_editados", "revisar", "encargado", "fallo")}
+                             | {"jev": {k: (pu.get("jev") or {}).get(k) for k in ("choice", "p", "regla", "decide", "motivo")}},
+                             ensure_ascii=False, indent=1))
         elif a.cmd == "estado":
             e = estado(a.repo)
             if a.json:
