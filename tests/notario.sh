@@ -115,12 +115,25 @@ Options:
   B) Dejarlo como está
 Answer:
 Q
-puerta g6b fase 0; exime g6b; decidir g6b eximo telegram 111 "el login lo pruebo yo en la reunión"; firmar g6b
+# la duda de la revisión independiente sobre ese mismo requisito, enseñada en la puerta, queda resuelta con la
+# exención (montana8, M8-10: volvió a bloquear la entrega aunque la persona ya la había decidido al eximir)
+REQX=$(node "$ROOT/metodo/scripts/sdd.mjs" accept --fase 0 --json | jq -r '[.requirements[] | select(.priority == "Must" and .verdict != "VERIFIED")][0].id')
+TF=$(git ls-files | grep -v '^\.' | head -1)
+node "$ROOT/metodo/scripts/sdd.mjs" accept challenge add --req "$REQX" --ac 1 --category SPEC-QUESTION --quote "el criterio" \
+  --why "la pantalla llega en una fase posterior" --evidence "$TF:1" --verifier v --counter confirmed > "$T/chx.log" 2>&1
+CHX=$(node "$ROOT/metodo/scripts/sdd.mjs" accept challenge list --open --json | jq -r '.challenges[-1].id')
+git add acceptance/ && git commit -qm "docs(acceptance): adversarial"
+puerta g6b fase 0; exime g6b
+t=$(mktemp); jq --arg c "$CHX" '.texto += "\n• \($c) · duda sobre el criterio"' .sdd/hermes/puertas/g6b.json > "$t" && mv "$t" .sdd/hermes/puertas/g6b.json; gemelo g6b
+decidir g6b eximo telegram 111 "el login lo pruebo yo en la reunión"; firmar g6b
 P=acceptance/PENDIENTES.md
 [ $rc -eq 0 ] && echo "$out" | grep -q "FASE-0 aceptada" && echo "$out" | grep -q "con exenciones (REPO-1" \
   && grep -q '^| REPO-1 | REQ-' "$P" && grep -q "el login lo pruebo yo en la reunión" "$P" && grep -q "| g6b | abierto |" "$P" \
   && grep -q '"followUp":"REPO-1"' acceptance/decisions.jsonl && git tag -l | grep -q '^fase-0-accepted$' \
   && ok "eximir: waiver con su seguimiento, PENDIENTES.md y la FASE aceptada" || bad "eximir: $out $(cat "$P" 2>/dev/null | tail -3)"
+node "$ROOT/metodo/scripts/sdd.mjs" accept challenge list --open --json | jq -e --arg c "$CHX" '[.challenges[] | select(.state == "open" and .id == $c)] | length == 0' >/dev/null \
+  && grep "$CHX" acceptance/decisions.jsonl | grep -q "REPO-" \
+  && ok "eximir: la duda sobre el requisito eximido que enseñaba la puerta queda resuelta, citando la exención" || bad "duda tras eximir: $CHX $REQX $TF $(cat "$T/chx.log") $(tail -2 acceptance/decisions.jsonl)"
 o=$(bash "$ROOT/verificar.sh" "$R" 2>&1); rcv=$?
 [ $rcv -eq 0 ] && echo "$o" | grep -q '^OK         tag fase-0-accepted$' && echo "$o" | grep -q '^OK         acta g6b$' \
   && ok "el tag y el acta salen firmados con la clave del notario (verificar.sh)" || bad "firma: $rcv $o"

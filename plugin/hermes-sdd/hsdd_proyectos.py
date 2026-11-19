@@ -647,6 +647,10 @@ def vigia(repo: str, tablero: str | None = None, tarjetas: list | None = None, a
         elif p.get("estado") == "decidida" and ahora > (p.get("firmar_en") or ahora) + FIRMA_RETRASO_S:
             out.append(f"DECIDIDA SIN FIRMAR | {p.get('titulo')} ({p.get('id')}) | el notario no la ha firmado")
         elif p.get("estado") == "abierta":
+            j = p.get("jev") or {}
+            if j and not j.get("decide"):
+                # va a la persona: el encargado le prepara la recomendación ya, no a las 4 h (montana8, M8-2)
+                out.append(f"PUERTA PARA TI | {p.get('titulo')} ({p.get('id')}) | {(j.get('motivo') or 'la decide una persona')[:160]}")
             desde = _ts(p.get("publicada") or p.get("creada"))
             h = (ahora - desde) / 3600 if desde else 0
             tramo = next((x for x in reversed(ESPERA_PUERTA_H) if h >= x), None)

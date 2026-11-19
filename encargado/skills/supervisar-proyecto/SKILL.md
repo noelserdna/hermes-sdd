@@ -72,6 +72,12 @@ Lee el texto de la puerta como lo verá ella y **comprueba lo que dice** antes d
   comprobaciones) y no quita ni afloja nada; recomienda la opción recomendada y dilo así.
 - **Cambio de requisitos derivado de respuestas ya elegidas:** coincide con lo elegido → aprobar.
 - **Entrega:** lo entregado funciona y está comprobado; lo aplazado (`changes/aplazados.md`) se lista para la siguiente.
+- **«‼️ La captura de … no enseña «…»»:** ábrela (`evidencias/FASE-N/<AC>.png` y su `.json`, campo `ve`) y mira si el
+  texto está con sus huecos ya rellenos. Si está, el aviso es falso: dilo y anótalo (montana8: «{material}, del {inicio}»).
+- **Una duda (CH-…) sobre un criterio que depende de una pantalla de una FASE posterior:** recomienda 🟡 eximir con el
+  motivo y la recomendada de su pregunta; la exención la resuelve y no vuelve en la entrega.
+- **Puerta «fallo» con motivo «quedó en running: marcada stale» y una pregunta:** la etapa se paró en la pregunta;
+  recomienda 🔁 reintentar con la respuesta recomendada si solo añade o es coherente con lo ya respondido.
 
 ## Catálogo de atascos (síntoma → causa → qué hacer)
 | Síntoma | Causa habitual | Qué haces |

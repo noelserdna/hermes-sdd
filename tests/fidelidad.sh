@@ -29,6 +29,23 @@ o=$(python3 "$F" congelados "$R" --json)
 echo "$o" | jq -e '.congelados[0] | .autorizado == false and .grave and (.debilitamiento | any(test("deja de citar REQ-F-003 AC1"))) and (.debilitamiento | any(test("saltado"))) and (.debilitamiento | any(test("quita 1 aserción")))' >/dev/null \
   && ok "test congelado cambiado sin autorizar: deja de citar el criterio, quita una aserción y se salta" || bad "congelados: $o"
 
+# 1b. mudar la cita a otro test no es comprobar menos: el criterio con captura lo cita solo su test del recorrido, y
+# quitarla de la prueba unitaria no es «deja de citar» si el e2e la sigue teniendo (montana8, M8-9). Si ya nadie la cita, sí
+R2="$T/r2"; mkdir -p "$R2/tests/app" "$R2/tests/e2e"
+( cd "$R2" && git init -q -b main && git config user.email t@t && git config user.name t && git config commit.gpgsign false
+  printf "it('REQ-F-003 AC1 lista', () => {\n  expect(lista()).toEqual([1])\n})\n" > tests/app/inv.test.js
+  printf "test('REQ-F-003 AC1 reserva', async () => {\n  await expect(page.getByText('Reserva hecha')).toBeVisible()\n})\n" > tests/e2e/rec.spec.js
+  git add -A && git commit -qm "test" && git tag fase-0-accepted
+  sed -i.bak 's/REQ-F-003 AC1 lista/lista del inventario/' tests/app/inv.test.js && rm -f tests/app/inv.test.js.bak
+  git commit -qam "test(app): la cita la lleva solo el recorrido" )
+o=$(python3 "$F" congelados "$R2" --json)
+echo "$o" | jq -e '[.congelados[] | .debilitamiento[]] | any(test("deja de citar")) | not' >/dev/null \
+  && ok "quitar la cita de un test cuando otro test la sigue teniendo: no es debilitar" || bad "cita mudada: $o"
+( cd "$R2" && sed -i.bak 's/REQ-F-003 AC1 reserva/reserva/' tests/e2e/rec.spec.js && rm -f tests/e2e/rec.spec.js.bak && git commit -qam "test(e2e): sin cita" )
+o=$(python3 "$F" congelados "$R2" --json)
+echo "$o" | jq -e '[.congelados[] | .debilitamiento[]] | any(test("deja de citar REQ-F-003 AC1"))' >/dev/null \
+  && ok "y si ya ningún test la cita: «deja de citar»" || bad "cita perdida: $o"
+
 # 2. Quién autoriza editar un test congelado: SOLO un registro test-edit del notario (acceptance/decisions.jsonl) que
 # nombre ese fichero, de una persona, confirmado por su acta en $HERMES_SDD_HOME. Las preguntas de .sdd/ y el mensaje
 # del commit las puede escribir la propia etapa: una «Answer: … elegida por Ana» inventada no autoriza nada.
@@ -151,6 +168,11 @@ assert F._visibles('DADO «lucia» CUANDO abre «Socios» ENTONCES el usuario no
 assert not F.en_texto("No", "Nombre y noviembre")
 assert F.en_texto("No", "No tienes permiso")
 assert F.en_texto("Te has apuntado a Iniciación", "Clases · Tehasapuntado a Iniciación ·")   # el OCR junta palabras
+# una parte fija de plantilla que empieza o acaba en signo («…{material}, del {inicio}…» → «, del»): lo que va pegado
+# al signo es el hueco ya rellenado, no otra palabra (montana8, M8-8: aviso grave falso que llevó la puerta a persona)
+assert all(F.en_texto(t, "Reserva hecha: 2 × Piolet, del 2026-12-05 al 2026-12-07")
+           for t in F.plantilla_partes("Reserva hecha: {cantidad} × {material}, del {inicio} al {fin}"))
+assert not F.en_texto(", del", "Piolet,delantero")
 PY
 
 # 4d. capturas con el contrato «Se ve»: manda lo que el test comprobó en pantalla (el JSON del helper); el OCR es la

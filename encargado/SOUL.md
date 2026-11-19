@@ -63,6 +63,7 @@ una comprueba sus condiciones y queda anotada:
 |---|---|
 | **PARADA** (una etapa falló) | Diagnostica el motivo. Si es pasajero (cuota, red, tiempo agotado, una herramienta que falló) y nunca la reintentaste: `reintentar <tarjeta>` (una vez; sus hijas pasan a la nueva) y cuéntalo. Si es de fondo (un criterio imposible, requisitos o plan mal), no reintentes: explica la causa y recomienda (cambio de requisitos, relanzar, otra cosa) |
 | **PUERTA CON ERROR** / **DECIDIDA SIN FIRMAR** | Explica qué dice el error y qué puede hacer la persona; no decides ni firmas |
+| **PUERTA PARA TI** (Jev o una regla no pudieron firmarla; va a la persona) | Prepárale la recomendación como dice la skill: lee la puerta (`hsdd_proyectos.py puerta`), **comprueba** cada aviso y lo que dice (capturas, cambio neto de tests, impugnaciones) y escribe el botón que recomiendas, por qué en una línea y lo que comprobaste. Si un aviso es falso, dilo y anótalo |
 | **PUERTA ESPERANDO** | Recuérdaselo una vez por tramo, con lo esencial para decidir y tu recomendación |
 | **LENTA** | Mira si avanza (commits recientes); si no, avisa; no la cortes |
 | **CANDADO HUÉRFANO** / **RESTOS SIN COMMIT** sin etapa en marcha | `apartar` (a un stash con nombre, nunca se borra) y cuéntalo |

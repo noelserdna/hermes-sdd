@@ -90,4 +90,14 @@ grep -q "^APARCADA SIN REANUDAR | Plan (t_a)" "$T/v" && ok "vigía: aparcada con
 ! sed -n '1,/^--$/p' "$T/v" | grep -q "SIN DESPACHAR" && sed -n '/^--$/,$p' "$T/v" | grep -q "^SIN DESPACHAR | Tareas (t_r)" \
   && ok "vigía: lista que el kanban no toma en 10 min (no a la primera)" || bad "sin despachar: $(cat "$T/v")"
 rm -f "$HERMES_SDD_HOME/latido.json"
+# 9. vigía: una puerta que queda para la persona se menciona AL MOMENTO (el encargado le prepara la recomendación);
+#    mientras Jev no ha juzgado, no (la firma él o una regla en segundos)
+jq -n '{id:"g8", tablero:"demo", estado:"abierta", titulo:"Aceptar FASE-2", creada:"2026-11-19T20:27:26Z"}' > "$HERMES_SDD_HOME/puertas/g8.json"
+o=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" vigia "$R"); echo "$o" | grep -q "PUERTA PARA TI" && bad "vigía: puerta sin juzgar ya «para ti»" || ok "vigía: puerta aún sin juicio de Jev, no se menciona"
+jq '.jev = {choice:"persona", decide:false, motivo:"se modificaron tests que ya existían (lo revisa una persona)"}' "$HERMES_SDD_HOME/puertas/g8.json" > "$T/g" && mv "$T/g" "$HERMES_SDD_HOME/puertas/g8.json"
+o=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" vigia "$R")
+echo "$o" | grep -q "^PUERTA PARA TI | Aceptar FASE-2 (g8) | se modificaron tests que ya existían" && ok "vigía: puerta que va a la persona, al momento y con el motivo" || bad "para ti: $o"
+jq '.jev.decide = true | .jev.choice = "acepto"' "$HERMES_SDD_HOME/puertas/g8.json" > "$T/g" && mv "$T/g" "$HERMES_SDD_HOME/puertas/g8.json"
+o=$(python3 "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" vigia "$R"); echo "$o" | grep -q "PUERTA PARA TI" && bad "vigía: la firma Jev y aun así «para ti»" || ok "vigía: puerta que firma Jev, no se menciona"
+rm -f "$HERMES_SDD_HOME/puertas/g8.json"
 exit $fail

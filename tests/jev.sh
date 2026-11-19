@@ -270,4 +270,20 @@ mal = {k: v for k, v in casos.items() if v[0] != v[1]}
 assert not mal, mal
 assert N.describir_jev({"tipo": "plan", "opciones": op("conforme"), "jev": {"choice": "conforme", "p": 1, "regla": "plan sin avisos graves de la revisión", "decide": True}}).startswith("🤖 Jev lo aprueba por regla")
 PY
+# La ayuda de Jev en la puerta de requisitos la calcula puerta.sh dentro de la estación, cuyo perfil no tiene la clave
+# (montana8, M8-1: la puerta salió sin ayuda): sin TYPESAFE_API_KEY en el entorno, la toma del .env de Hermes
+cat > "$T/clave.mjs" <<'JS'
+import http from "node:http"; import fs from "node:fs";
+const srv = http.createServer((req, res) => { fs.appendFileSync(process.env.VISTO, (req.headers.authorization || "sin") + "\n"); res.writeHead(500); res.end("{}"); });
+srv.listen(0, "127.0.0.1", () => console.log(srv.address().port));
+JS
+VISTO="$T/clave.log" node "$T/clave.mjs" > "$T/puerto2" & SRV2=$!
+for _ in $(seq 50); do [ -s "$T/puerto2" ] && break; sleep 0.1; done
+( unset TYPESAFE_API_KEY; export SDD_JEV_URL="http://127.0.0.1:$(cat "$T/puerto2")"
+  echo "TYPESAFE_API_KEY=clave-del-env" > "$(dirname "$HERMES_SDD_HOME")/.env"
+  python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" jev-requisitos "$R" >/dev/null 2>&1 )
+kill $SRV2; wait $SRV2 2>/dev/null
+grep -q "Bearer clave-del-env" "$T/clave.log" 2>/dev/null && ok "ayuda de Jev en requisitos sin la clave en el entorno: la toma del .env de Hermes" \
+  || bad "jev-requisitos sin clave en el entorno: no llamó a Jev ($(cat "$T/clave.log" 2>/dev/null))"
+rm -f "$(dirname "$HERMES_SDD_HOME")/.env"
 exit $fail

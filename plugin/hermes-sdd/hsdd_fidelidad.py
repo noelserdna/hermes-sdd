@@ -102,7 +102,11 @@ def en_texto(lit: str, texto: str) -> bool:
     a, t = norm(lit), norm(texto)
     if not a:
         return True
-    if re.search(r"(?<![a-z0-9])" + re.escape(a) + r"(?![a-z0-9])", t):
+    # «palabra entera» solo en los extremos que son letra o cifra: una parte fija de plantilla puede empezar en signo
+    # («, del» de «{material}, del {inicio}») y lo que va pegado delante es el hueco ya rellenado (montana8, M8-8)
+    antes = r"(?<![a-z0-9])" if re.match(r"[a-z0-9]", a) else ""
+    despues = r"(?![a-z0-9])" if re.search(r"[a-z0-9]$", a) else ""
+    if re.search(antes + re.escape(a) + despues, t):
         return True
     a2 = a.replace(" ", "")
     return len(a2) >= 8 and a2 in t.replace(" ", "")
@@ -235,8 +239,9 @@ def _diff_por_fichero(repo: Path, sha: str, ficheros: list[str]) -> dict:
     return por_fichero
 
 
-def debilitamiento(quitadas: list[str], puestas: list[str]) -> list[str]:
-    """Señales de que un cambio comprueba menos: patrones en lo añadido y aserciones que se van."""
+def debilitamiento(quitadas: list[str], puestas: list[str], sigue_citado: set | None = None) -> list[str]:
+    """Señales de que un cambio comprueba menos: patrones en lo añadido y aserciones que se van. `sigue_citado`: las
+    citas que algún test aún tiene en HEAD; dejar de citar una de ellas aquí es mudar la cita, no comprobar menos."""
     senales = sorted({d for x in puestas for rx, d in DEBIL if rx.search(x)}
                      | {d for rx, d in DEBIL_JUNTO if rx.search("\n".join(puestas))})
     aq = sum(len(ASERCION.findall(x)) for x in quitadas)
@@ -246,10 +251,21 @@ def debilitamiento(quitadas: list[str], puestas: list[str]) -> list[str]:
     cita = lambda xs: set(re.findall(r"REQ-[A-Z]+-\d{3}(?: AC\d+)?|AC-\d{3}-\d{2}", " ".join(xs)))
     # una cita sustituida por otra más concreta del mismo requisito («REQ-F-001» → «REQ-F-001 AC5») no se quita
     puestas_c = cita(puestas)
-    quitadas_citas = sorted(c for c in cita(quitadas) - puestas_c if not any(x.startswith(c) for x in puestas_c))
+    # y la que sigue en otro test tampoco: «cada criterio con captura lo cita solo su test del recorrido» obliga a quitarla
+    # de los demás niveles (montana8, M8-9: «deja de citar REQ-F-003 AC1», citado y verificado en el e2e, llevó la FASE-2
+    # a una persona)
+    quitadas_citas = sorted(c for c in cita(quitadas) - puestas_c if not any(x.startswith(c) for x in puestas_c)
+                            and c not in (sigue_citado or set()))
     if quitadas_citas:
         senales.append("deja de citar " + ", ".join(quitadas_citas[:6]) + ("…" if len(quitadas_citas) > 6 else ""))
     return senales
+
+
+def citas_en_tests(repo: Path) -> set[str]:
+    """Las citas de criterio (REQ-F-003 AC1, AC-007-01, REQ-F-003) que tienen los ficheros de test en HEAD (no sus .md)."""
+    t = git(repo, "grep", "-h", "-o", "-E", r"REQ-[A-Z]+-[0-9]{3}( AC[0-9]+)?|AC-[0-9]{3}-[0-9]{2}", "HEAD", "--",
+            "tests", "test", ":(exclude)*.md", ":(exclude)**/*.md")
+    return {l.split(":", 1)[-1].strip() for l in t.splitlines() if l.strip()}
 
 
 def congelados(repo: Path, desde: str | None = None) -> list[dict]:
@@ -258,6 +274,7 @@ def congelados(repo: Path, desde: str | None = None) -> list[dict]:
     ya = set(git(repo, "rev-list", desde).split()) if desde else set()
     tags = [t for t in git(repo, "tag", "-l", "fase-*-accepted", "--sort=creatordate").split() if t]
     auts = autorizaciones(repo)
+    sigue = citas_en_tests(repo)
     vistos = set()   # (commit, fichero): un commit que toca un test de la FASE-0 y otro de la FASE-1 informa de los dos
     for tag in tags:
         ficheros = congelables(repo, tag)
@@ -278,7 +295,7 @@ def congelados(repo: Path, desde: str | None = None) -> list[dict]:
                 if clase != "test":   # en helpers, fixtures y configs también cuenta lo añadido: ahí no van tests nuevos
                     qset = set(q)
                     cambiadas += [x for x in p if x and not TRIVIAL.match(x) and x not in qset]
-                senales = debilitamiento(q, p)
+                senales = debilitamiento(q, p, sigue)
                 if not cambiadas and not senales:
                     continue
                 ok, por = _autorizada(repo, sha, f, auts)

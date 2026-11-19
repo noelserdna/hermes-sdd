@@ -486,14 +486,23 @@ def jev_requisitos(repo: Path) -> dict:
     (scripts/jev/supuestos.json). Lo deja en .sdd/hermes/jev-requisitos.json para el texto de la puerta. Sin Jev
     (sin clave, apagado) o si falla, {} y la puerta sale como siempre. Evaluado sobre 28 puertas reales: no detecta por sí
     solo lo que una persona rechazaría, así que solo ordena lo que la persona revisa."""
-    import subprocess, tempfile
+    import os, subprocess, tempfile
     repo = Path(repo)
     cli = SDD_CLI.parent / "sdd-jev.mjs"
     out = {}
+    # La llama puerta.sh dentro de la estación, cuyo perfil no lleva la clave (que no la vean las sesiones de las etapas):
+    # sin ella en el entorno, la del .env de Hermes, solo para estas llamadas (montana8, M8-1: la puerta salió sin ayuda)
+    env = dict(os.environ)
+    if not env.get("TYPESAFE_API_KEY"):
+        sdd = Path(env.get("HERMES_SDD_HOME") or Path.home() / ".hermes" / "hermes-sdd")
+        for l in _leer(sdd.parent / ".env").splitlines():
+            if l.startswith("TYPESAFE_API_KEY="):
+                env["TYPESAFE_API_KEY"] = l.split("=", 1)[1].strip().strip("'\"")
+    run = lambda *a, **k: subprocess.run(*a, env=env, **k)
     try:
-        if subprocess.run(["node", str(cli), "status"], capture_output=True, timeout=20).returncode != 0:
+        if run(["node", str(cli), "status"], capture_output=True, timeout=20).returncode != 0:
             return {}
-        r = subprocess.run(["node", str(cli), "needs", str(repo / "requirements/CUSTOMER-NEEDS.md"),
+        r = run(["node", str(cli), "needs", str(repo / "requirements/CUSTOMER-NEEDS.md"),
                             str(repo / "requirements/REQUIREMENTS.md"), "--json"], capture_output=True, text=True, timeout=120)
         if r.returncode in (0, 1) and r.stdout.strip():
             n = json.loads(r.stdout)
@@ -506,7 +515,7 @@ def jev_requisitos(repo: Path) -> dict:
             with tempfile.TemporaryDirectory() as d:
                 (Path(d) / "i.jsonl").write_text("\n".join(json.dumps({"id": str(k), "state": {"encargo": enc, "supuesto": x}}, ensure_ascii=False)
                                                           for k, x in enumerate(sup)))
-                r = subprocess.run(["node", str(cli), "judge", "--questions", str(SDD_CLI.parent / "jev" / "supuestos.json"),
+                r = run(["node", str(cli), "judge", "--questions", str(SDD_CLI.parent / "jev" / "supuestos.json"),
                                     "--items", str(Path(d) / "i.jsonl")], capture_output=True, text=True, timeout=120)
             if r.returncode == 0 and r.stdout.strip():
                 puntos = {int(it["id"]): it["answers"]["objetable"]["score"] for it in json.loads(r.stdout).get("items") or []}

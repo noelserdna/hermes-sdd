@@ -75,6 +75,18 @@ wiki() {  # esqueleto del wiki (si no existe) como repositorio git propio, ignor
   fi
 }
 
+# A dónde avisa el vigía: el tema de Telegram del proyecto (encargado.sh tema); sin tema, el chat principal del dueño.
+# Un «telegram» a secas no tiene destino en el perfil del encargado y cada ronda fallaba sin que él llegara a actuar
+# (montana8, M8-4); sin chat principal, en local (queda en su sesión).
+destino_aviso() {
+  local d
+  d=$(hermes config get gateway.profile_routes --json 2>/dev/null | jq -r --arg n "encargado-$BOARD" \
+    '[.[]? | select(.name == $n)][0] | if . then "telegram:\(.chat_id):\(.thread_id)" else empty end' 2>/dev/null || true)
+  [ -n "$d" ] || d=$(hermes config get platforms.telegram.home_channel.chat_id 2>/dev/null | tr -d '"[:space:]' \
+    | sed -n 's/^\(-\{0,1\}[0-9][0-9]*\)$/telegram:\1/p' || true)
+  echo "${d:-local}"
+}
+
 vigilante() {  # el cron del vigía en el perfil del encargado: cada 5 min un script sin LLM (hsdd_proyectos.py vigia);
   # solo si su salida cambia se despierta el modelo, que diagnostica, actúa según su carta y avisa en su tema
   local PD="$HH/profiles/$P" id destino
@@ -88,9 +100,7 @@ export HERMES_SDD_HOME="$HOME_SDD"
 exec python3 "$ARNES/plugin/hermes-sdd/hsdd_proyectos.py" vigia "$REPO"
 V
   chmod +x "$PD/scripts/vigia.sh"
-  destino=$(hermes config get gateway.profile_routes --json 2>/dev/null | jq -r --arg n "encargado-$BOARD" \
-    '[.[]? | select(.name == $n)][0] | if . then "telegram:\(.chat_id):\(.thread_id)" else empty end' 2>/dev/null)
-  destino=${destino:-telegram}
+  destino=$(destino_aviso)
   local PROMPT="Eres el encargado de $BOARD y te despierta el vigía: cambió la lista de asuntos que mirar (va arriba, MONITOR CHANGE). Para cada asunto NUEVO, diagnostica (hsdd_proyectos.py estado, .sdd/hermes/etapas.jsonl, el motivo, git log) y actúa según tu carta, sección «Supervisar». En esta ronda no hay nadie para aprobar: no relances; si hace falta, recomiéndalo. Después escribe a la persona un mensaje breve en castellano: qué pasó, qué hiciste o qué recomiendas, y qué necesitas que decida. Si lo único que cambió es que algo se resolvió, una línea. Si no hay nada que contar, responde exactamente [SILENT]."
   # (la primera vez el perfil aún no tiene cron/jobs.json: sin «|| true», pipefail + set -e cortarían aquí el script)
   id=$(jq -r '(if type == "array" then . else (.jobs // []) end)[] | select(.name == "vigia") | .id' "$PD/cron/jobs.json" 2>/dev/null | head -1 || true)
@@ -109,6 +119,7 @@ modelo() {
 
 case "$CMD" in
   perfil) echo "$P" ;;
+  destino) destino_aviso ;;   # a dónde avisa el vigía (lo usa la batería)
 
   crear)
     [ -d "$REPO/.git" ] || { echo "ERROR: $REPO no es un repositorio git" >&2; exit 1; }

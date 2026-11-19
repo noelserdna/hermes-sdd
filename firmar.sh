@@ -223,6 +223,19 @@ if ! hecho validado; then
         fallo "no se pudo registrar la exención de $REQ"
       printf '| %s | %s %s | %s | %s | %s (%s) | %s | %s | abierto |\n' "$FU" "$REQ" "$TIT" "${QUE:-—}" "$MOTIVO" "$NOMBRE" "$ROL" "$(date +%Y-%m-%d)" "$GATE" >> "$PEND"
     done <<< "$FALTAN"
+    # Las dudas de la revisión independiente sobre un requisito eximido que la puerta enseñaba ya las decidió la persona
+    # al eximir: quedan resueltas citando la exención (montana8, M8-10: CH-001, eximida en la FASE-0, volvió a bloquear
+    # la entrega, que no ofrece eximir). Solo las que salían en el texto de la puerta: lo que no vio no lo decidió.
+    VISTO=$(jq -r '.texto // ""' "$PUERTA")
+    node "$SDD" accept challenge list --open ${FASE:+--fase "$FASE"} --json 2>/dev/null |
+      jq -r '.challenges[]? | select(.state == "open") | "\(.id)\t\(.req)"' 2>/dev/null |
+      while IFS=$'\t' read -r CH CREQ; do
+        printf '%s' "$VISTO" | grep -qw -- "$CH" || continue
+        FU=$(grep -F "| $CREQ " "$PEND" | grep -F "| $GATE |" | awk -F'|' '{print $2}' | tr -d ' ' | head -1)
+        [ -n "$FU" ] || continue
+        node "$SDD" accept record challenge-dismissal --challenge "$CH" --reason "Eximido por $NOMBRE en la puerta $GATE ($FU): $TEXTO" \
+          --by "$NOMBRE" --role "$ROL" >/dev/null || fallo "no se pudo resolver $CH con la exención"
+      done
     # Si con las exenciones la puerta sigue sin cumplirse (p. ej. falta el vídeo de la demo, que no se exime), no queda
     # nada registrado: se deshace y solo cabe rechazar
     rc=0; G=$(mktemp)
