@@ -204,8 +204,143 @@ def construir(repo: Path) -> dict:
     if sup:
         indice += ["## Supuestos (requirements/REQUIREMENTS.md)", "", sup.group(1).strip(), ""]
     (W / "index.md").write_text("\n".join(indice), encoding="utf-8")
-    (W / "log.md").write_text(f"# Log\n\n- {hoy}: generada de {len(docs)} documentos: {len(ids)} páginas\n", encoding="utf-8")
-    return {"paginas": len(ids), "documentos": len(docs), "con_definicion": sum(1 for i in ids if i in defs)}
+    n_proc = proceso(repo, W, hoy)
+    (W / "log.md").write_text(f"# Log\n\n- {hoy}: generada de {len(docs)} documentos: {len(ids)} páginas de artefactos y "
+                              f"{n_proc} del proceso\n", encoding="utf-8")
+    return {"paginas": len(ids), "documentos": len(docs), "con_definicion": sum(1 for i in ids if i in defs), "proceso": n_proc}
+
+
+def _jsonl(f: Path) -> list:
+    out = []
+    for l in _leer(f).splitlines():
+        try:
+            out.append(json.loads(l))
+        except ValueError:
+            pass
+    return out
+
+
+def _hora(ts: str) -> str:
+    return (ts or "")[:16].replace("T", " ")
+
+
+def _anadir(f: Path, partes: list) -> None:
+    if f.exists():
+        f.write_text(_leer(f).rstrip() + "\n\n" + "\n".join(partes) + "\n", encoding="utf-8")
+
+
+def proceso(repo: Path, W: Path, hoy: str) -> int:
+    """Lo que PASA en el proyecto, en la misma wiki: la cronología (etapas y puertas, quién decidió cada una), una página
+    por puerta, por pregunta y por impugnación, y la historia de cada FASE y de cada requisito. De las fuentes que ya
+    escribe el arnés (etapas.jsonl, puertas.jsonl, las puertas, questions-*.json, decisions.jsonl, challenges.jsonl,
+    changes/aplazados.md): nada se copia a mano, todo se enlaza."""
+    h = repo / ".sdd" / "hermes"
+    etapas, decididas = _jsonl(h / "etapas.jsonl"), _jsonl(h / "puertas.jsonl")
+    puertas = {}
+    for f in sorted((h / "puertas").glob("g*.json")) if (h / "puertas").is_dir() else []:
+        try:
+            puertas[f.stem] = json.loads(_leer(f))
+        except ValueError:
+            pass
+    decision = {d.get("puerta"): d for d in decididas}
+    decs = _jsonl(repo / "acceptance" / "decisions.jsonl")
+    descartes = {d.get("challenge"): d for d in decs if d.get("type") == "challenge-dismissal"}
+    retos = [c for c in _jsonl(repo / "acceptance" / "challenges.jsonl") if c.get("id") and c.get("type") in (None, "challenge")]
+    resueltas = {c.get("challenge"): c for c in _jsonl(repo / "acceptance" / "challenges.jsonl") if c.get("type") == "resolution"}
+    preguntas = []
+    for f in sorted((repo / ".sdd").glob("questions-*.json")):
+        try:
+            preguntas += [q for q in json.loads(_leer(f)).get("preguntas") or [] if q.get("id")]
+        except ValueError:
+            pass
+    n = 0
+    quien = lambda d: ("una regla de Jev" if d.get("persona") == "jev" and "regla" in (d.get("resultado") or "")
+                       else "Jev" if d.get("persona") == "jev" else "la persona" + (f" ({d['canal']})" if d.get("canal") else ""))
+    # cronología
+    filas = []
+    for e in etapas:
+        filas.append((e.get("ts", ""), f"etapa **{e.get('etapa')}**" + (f" FASE-{e['fase']}" if e.get("fase") and str(e.get("fase")).isdigit() else ""),
+                      f"{e.get('resultado')} · {e.get('minutos', '?')} min · {round(e.get('coste_usd') or 0, 2)} $"
+                      + (f" · {_corta(e.get('resumen') or e.get('motivo') or '', 160)}" if (e.get('resumen') or e.get('motivo')) else "")
+                      + (f" → [[{e['puerta']}]]" if e.get("puerta") else "")))
+    for d in decididas:
+        filas.append((d.get("ts", ""), f"puerta [[{d.get('puerta')}]] ({d.get('tipo')}{' FASE-' + str(d['fase']) if d.get('fase') else ''})",
+                      f"**{d.get('verbo')}** por {quien(d)}" + (f" en {d['segundos_hasta_decidir']} s" if d.get("segundos_hasta_decidir") is not None else "")
+                      + (f" · «{_corta(d['texto'], 160)}»" if d.get("texto") else "")))
+    filas.sort()
+    total = sum(e.get("coste_usd") or 0 for e in etapas)
+    cuerpo = ["---", "title: Cronología del proyecto", f"updated: {hoy}", "type: summary", "---", "", "# Cronología del proyecto", "",
+              f"{len(etapas)} etapas ({round(total, 2)} $), {len(decididas)} puertas decididas: "
+              + ", ".join(f"{v} por {k}" for k, v in sorted(_cuenta(quien(d) for d in decididas).items())) + ".", "",
+              "| Cuándo (UTC) | Qué | Resultado |", "|---|---|---|"]
+    cuerpo += [f"| {_hora(t)} | {q} | {r.replace('|', '/')} |" for t, q, r in filas]
+    (W / "proceso.md").write_text("\n".join(cuerpo) + "\n", encoding="utf-8"); n += 1
+    # una página por puerta
+    for gid, p in puertas.items():
+        d = decision.get(gid) or {}
+        partes = ["---", f"title: Puerta {gid} — {p.get('titulo', '')}", f"updated: {hoy}", "type: puerta", "---", "",
+                  f"# Puerta {p.get('titulo', gid)}", "", f"Tipo {p.get('tipo')}" + (f", [[FASE-{p['fase']}]]" if p.get("fase") else "")
+                  + f"; abierta {_hora(p.get('creada', ''))}" + (" · **bloqueada**" if p.get("bloqueo") else ""), ""]
+        if d:
+            partes += [f"**Decidida:** {d.get('verbo')} por {quien(d)} ({_hora(d.get('ts', ''))})" + (f": «{d['texto']}»" if d.get("texto") else ""),
+                       "", f"Resultado: {d.get('resultado', '')}", ""]
+        else:
+            partes += ["**Sin decidir todavía.**", ""]
+        qs = p.get("preguntas") or []
+        if qs:
+            partes += ["## Preguntas", ""] + [f"- [[{q.get('id')}]] (recomendada {q.get('recomendada')})" for q in qs] + [""]
+        partes += ["## Lo que vio la persona", "", _corta(p.get("texto") or "", 4000), ""]
+        (W / f"{gid}.md").write_text("\n".join(partes), encoding="utf-8"); n += 1
+    # una página por pregunta
+    for q in preguntas:
+        r = q.get("respuesta") or {}
+        ops = q.get("opciones") or []
+        partes = ["---", f"title: {q['id']}", f"updated: {hoy}", "type: pregunta", f"tags: [{q.get('tema', '')}]", "---", "",
+                  f"# {q['id']} ({q.get('estado')})", "", f"**Para el cliente:** {q.get('para_cliente', '')}", "",
+                  f"**Detalle técnico:** {q.get('pregunta', '')}", "", f"**Contexto:** {q.get('contexto', '')}", "", "## Opciones", ""]
+        partes += [f"- **{o.get('letra')}**{' ⭐' if o.get('recomendada') else ''} {o.get('cliente') or o.get('texto', '')} (efecto: {o.get('efecto')})" for o in ops]
+        partes += ["", f"**Respuesta:** {r.get('letra')} — {r.get('como', '')} {r.get('quien', '')} ({r.get('fecha', '')})" if r else "**Sin responder.**", ""]
+        (W / f"{q['id']}.md").write_text("\n".join(partes), encoding="utf-8"); n += 1
+    # una página por impugnación
+    for c in retos:
+        destino = (f"descartada por {descartes[c['id']].get('by')}: «{descartes[c['id']].get('reason', '')}»" if c["id"] in descartes
+                   else "resuelta" + (f": {resueltas[c['id']].get('reason', '')}" if resueltas[c['id']].get("reason") else "") if c["id"] in resueltas
+                   else "sin descartar (atendida o abierta: mira la puerta de su FASE)")
+        partes = ["---", f"title: {c['id']}", f"updated: {hoy}", "type: impugnación", f"tags: [{c.get('category', '')}]", "---", "",
+                  f"# {c['id']} sobre [[{c.get('req')}]] AC{c.get('ac')} ({c.get('category')})", "",
+                  f"**Por qué:** {c.get('why', '')}", "", f"**Cita:** «{c.get('quote', '')}»", "",
+                  "**Evidencia:** " + ", ".join(f"`{e.get('path')}:{e.get('line')}`" for e in c.get("evidence") or [] if isinstance(e, dict)), "",
+                  f"**Destino:** {destino}", ""]
+        (W / f"{c['id']}.md").write_text("\n".join(partes), encoding="utf-8"); n += 1
+    # historia de cada FASE y de cada requisito
+    for fn in sorted({str(e.get("fase")) for e in etapas if str(e.get("fase") or "").isdigit()}):
+        hist = [f"- {_hora(e.get('ts', ''))} etapa {e.get('etapa')}: {e.get('resultado')}, {e.get('minutos')} min, {round(e.get('coste_usd') or 0, 2)} $"
+                for e in etapas if str(e.get("fase")) == fn]
+        hist += [f"- {_hora(d.get('ts', ''))} puerta [[{d.get('puerta')}]]: **{d.get('verbo')}** por {quien(d)}" + (f": «{_corta(d['texto'], 200)}»" if d.get("texto") else "")
+                 for d in decididas if str(d.get("fase")) == fn]
+        _anadir(W / f"FASE-{fn}.md", ["## Historia de la FASE", ""] + sorted(hist))
+    for req in {c.get("req") for c in retos} | {r for q in preguntas for r in ID.findall(f"{q.get('contexto', '')} {q.get('pregunta', '')}") if r.startswith("REQ-")}:
+        hist = [f"- impugnación [[{c['id']}]] AC{c.get('ac')} ({c.get('category')})" for c in retos if c.get("req") == req]
+        hist += [f"- pregunta [[{q['id']}]] ({q.get('estado')})" for q in preguntas if req in f"{q.get('contexto', '')} {q.get('pregunta', '')}"]
+        _anadir(W / f"{req}.md", ["## Historia", ""] + hist)
+    ind = W / "index.md"
+    _anadir(ind, ["## Proceso", "", "- [[proceso]] — cronología: etapas, puertas y quién decidió cada una",
+                  f"- Puertas ({len(puertas)}): " + " · ".join(f"[[{g}]]" for g in sorted(puertas)),
+                  f"- Preguntas ({len(preguntas)}): " + " · ".join(f"[[{q['id']}]]" for q in preguntas),
+                  f"- Impugnaciones ({len(retos)}): " + " · ".join(f"[[{c['id']}]]" for c in retos)])
+    return n
+
+
+def _cuenta(it) -> dict:
+    out = {}
+    for x in it:
+        out[x] = out.get(x, 0) + 1
+    return out
+
+
+def _corta(t: str, n: int) -> str:
+    t = " ".join(str(t).split())
+    return t if len(t) <= n else t[:n - 1] + "…"
 
 
 def _celdas(fila: str) -> list:

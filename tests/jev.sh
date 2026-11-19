@@ -143,6 +143,7 @@ srv.listen(0, "127.0.0.1", () => console.log(srv.address().port));
 JS
 VISTO="$T/visto.json" node "$T/jev_falso.mjs" > "$T/puerto" & SRV=$!
 for _ in $(seq 50); do [ -s "$T/puerto" ] && break; sleep 0.1; done
+unset SDD_JEV   # la batería apaga Jev (sin red); aquí se prueba contra el servidor falso local
 export SDD_JEV_URL="http://127.0.0.1:$(cat "$T/puerto")" TYPESAFE_API_KEY=prueba
 echo "{\"root\": \"$ROOT\"}" > "$HERMES_SDD_HOME/instalacion.json"
 TAB=demo; modo auto demo; puerta c1 requisitos
