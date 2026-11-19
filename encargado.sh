@@ -75,16 +75,87 @@ wiki() {  # esqueleto del wiki (si no existe) como repositorio git propio, ignor
   fi
 }
 
-# A dónde avisa el vigía: el tema de Telegram del proyecto (encargado.sh tema); sin tema, el chat principal del dueño.
-# Un «telegram» a secas no tiene destino en el perfil del encargado y cada ronda fallaba sin que él llegara a actuar
-# (montana8, M8-4); sin chat principal, en local (queda en su sesión).
+# A dónde avisa el vigía: el tema de Telegram del proyecto, enlazado como ruta del gateway (encargado.sh tema). Sin
+# ruta, el perfil del encargado no tiene bot con el que enviar, ni a un tema ni al chat principal («platform 'telegram'
+# not configured»; montana8 M8-4 y montana9 M9-1): entonces local (queda en su sesión).
 destino_aviso() {
   local d
   d=$(hermes config get gateway.profile_routes --json 2>/dev/null | jq -r --arg n "encargado-$BOARD" \
     '[.[]? | select(.name == $n)][0] | if . then "telegram:\(.chat_id):\(.thread_id)" else empty end' 2>/dev/null || true)
-  [ -n "$d" ] || d=$(hermes config get platforms.telegram.home_channel.chat_id 2>/dev/null | tr -d '"[:space:]' \
-    | sed -n 's/^\(-\{0,1\}[0-9][0-9]*\)$/telegram:\1/p' || true)
   echo "${d:-local}"
+}
+
+# tema_nuevo: crea el tema «🧭 <proyecto>» en el chat principal del dueño con el bot (lo mismo que /encargado) y
+# escribe «<chat> <hilo>». El token no sale de aquí. HERMES_SDD_TELEGRAM_API: otra API (la batería).
+tema_nuevo() {
+  local chat
+  chat=$(hermes config get platforms.telegram.home_channel.chat_id 2>/dev/null | tr -d '"[:space:]' || true)
+  [[ "$chat" =~ ^-?[0-9]+$ ]] || return 1
+  TOKEN_ENV="$HH/.env" API="${HERMES_SDD_TELEGRAM_API:-https://api.telegram.org}" CHAT="$chat" NOMBRE="🧭 $BOARD" python3 - <<'PY2'
+import json, os, sys, urllib.request
+tok = next((l.split("=", 1)[1].strip().strip("'\"") for l in open(os.environ["TOKEN_ENV"], encoding="utf-8")
+            if l.startswith("TELEGRAM_BOT_TOKEN=")), "")
+if not tok:
+    sys.exit(1)
+def api(m, **d):
+    r = urllib.request.Request(f"{os.environ['API']}/bot{tok}/{m}", data=json.dumps(d).encode(), headers={"Content-Type": "application/json"})
+    return json.load(urllib.request.urlopen(r, timeout=20))
+try:
+    t = api("createForumTopic", chat_id=int(os.environ["CHAT"]), name=os.environ["NOMBRE"])["result"]["message_thread_id"]
+    api("sendMessage", chat_id=int(os.environ["CHAT"]), message_thread_id=t, text=(
+        f"{os.environ['NOMBRE']}: aquí te escribe el encargado del proyecto. Vigila las etapas y, cuando una puerta te "
+        "espera, te deja aquí su recomendación. No decide puertas: esas siguen llegando al chat principal."))
+except Exception as e:
+    print(f"no pude crear el tema: {type(e).__name__}", file=sys.stderr); sys.exit(1)
+print(os.environ["CHAT"], t)
+PY2
+}
+
+# rearmar: olvida lo último que vio el vigía, para que la siguiente ronda despierte al encargado con lo que haya. Hermes
+# guarda lo visto ANTES de entregar: una ronda que no pudo entregar (sin ruta aún) se lo comía (montana9, M9-2).
+rearmar() {
+  local f="$HH/profiles/$P/cron/jobs.json"
+  [ -f "$f" ] || return 0
+  python3 - "$f" <<'PY2'
+import json, sys
+p = sys.argv[1]; d = json.load(open(p)); js = d["jobs"] if isinstance(d, dict) else d
+for j in js:
+    if j.get("name") == "vigia":
+        j.pop("monitor_state", None)
+json.dump(d, open(p, "w"), indent=2)
+PY2
+}
+
+# Sin etapas en marcha en ningún proyecto se puede reiniciar el gateway (sus etapas cuelgan de él): carga la ruta del
+# tema y el vigía empieza a avisar allí. Con etapas, lo dice y espera a que una persona lo reinicie.
+reiniciar_si_se_puede() {
+  if pgrep -f "/etapa\.sh " >/dev/null 2>&1; then
+    echo "  El tema se activa al reiniciar el gateway; hay etapas en marcha: hazlo cuando no las haya (hermes gateway restart; luego encargado.sh rearmar $REPO)"
+    return 0
+  fi
+  # en su propia sesión y sin heredar la salida: quien capture la de crear no espera, y reiniciar no lo corta
+  python3 -c 'import subprocess, sys; subprocess.Popen(sys.argv[1:], start_new_session=True, stdin=subprocess.DEVNULL,
+    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)' bash -c "sleep 8; hermes gateway restart; sleep 20; bash '$ROOT/encargado.sh' rearmar '$REPO'"
+  echo "  Reinicio el gateway para enlazar el tema (en un minuto el encargado avisa allí)"
+}
+
+enlazar_tema() {  # enlazar_tema <chat> <hilo>: ruta por chat Y tema (si fuera solo por chat, todo el privado iría al
+  # encargado y se perderían los avisos); el tema queda también en dm_topics. El gateway la carga al reiniciar.
+  local CHAT=$1 HILO=$2 RUTAS TEMAS
+  RUTAS=$(hermes config get gateway.profile_routes --json 2>/dev/null || echo '[]')
+  TEMAS=$(hermes config get platforms.telegram.extra.dm_topics --json 2>/dev/null || echo '[]')
+  jq -e . <<< "$RUTAS" >/dev/null 2>&1 || RUTAS='[]'; jq -e . <<< "$TEMAS" >/dev/null 2>&1 || TEMAS='[]'
+  RUTAS=$(jq -c --arg n "encargado-$BOARD" --arg c "$CHAT" --argjson t "$HILO" --arg p "$P" \
+    '[.[] | select(.name != $n)] + [{name: $n, platform: "telegram", chat_id: $c, thread_id: ($t | tostring), profile: $p}]' <<< "$RUTAS")
+  TEMAS=$(jq -c --arg c "$CHAT" --argjson t "$HILO" --arg nombre "🧭 $BOARD" '
+    (if any(.[]; (.chat_id | tostring) == $c) then . else . + [{chat_id: ($c | tonumber), topics: []}] end)
+    | map(if (.chat_id | tostring) == $c
+          then .topics = ([.topics[]? | select(.name != $nombre and (.thread_id // 0) != $t)] + [{name: $nombre, thread_id: $t}])
+          else . end)' <<< "$TEMAS")
+  hermes config set gateway.profile_routes "$RUTAS" >/dev/null
+  hermes config set platforms.telegram.extra.dm_topics "$TEMAS" >/dev/null
+  echo "Tema «🧭 ${BOARD}» (${CHAT}/${HILO}) → ${P} (se activa al reiniciar el gateway)"
+  vigilante
 }
 
 vigilante() {  # el cron del vigía en el perfil del encargado: cada 5 min un script sin LLM (hsdd_proyectos.py vigia);
@@ -120,6 +191,7 @@ modelo() {
 case "$CMD" in
   perfil) echo "$P" ;;
   destino) destino_aviso ;;   # a dónde avisa el vigía (lo usa la batería)
+  tema-nuevo) tema_nuevo ;;   # crea el tema con el bot y escribe «<chat> <hilo>» (lo usa la batería)
 
   crear)
     [ -d "$REPO/.git" ] || { echo "ERROR: $REPO no es un repositorio git" >&2; exit 1; }
@@ -157,6 +229,11 @@ case "$CMD" in
     registrar "$REPO"
     echo "Encargado de $BOARD listo: perfil $P, modelo $(modelo), wiki en $REPO/wiki"
     vigilante
+    # Sin tema propio no puede avisar a nadie: se le crea ahora (como /encargado) y se enlaza
+    if [ "$(destino_aviso)" = local ] && [ -z "${HERMES_SDD_SIN_TEMA:-}" ]; then
+      if T=$(tema_nuevo); then enlazar_tema $T | sed 's/^/  /'; reiniciar_si_se_puede
+      else echo "  Sin tema de Telegram (¿temas del bot activados en @BotFather?): avisa en local; pídelo con /encargado $BOARD"; fi
+    fi
     echo "  Hablar con él: panel de Hermes → /chat?profile=$P   ·   hermes -p $P chat" ;;
 
   lanzar)   # el proyecto preparado (lanzar.sh preparar) arranca con la entrada que recogió el encargado. Es la única
@@ -227,24 +304,10 @@ case "$CMD" in
     [ $# -ge 5 ] || { echo "Uso: encargado.sh leccion <repo> <etapa> \"<regla general>\" <puerta g…|tarjeta t_…|commit>..." >&2; exit 2; }
     HERMES_SDD_HOME="$HOME_SDD" python3 "$ARNES/plugin/hermes-sdd/hsdd_lecciones.py" proponer "$REPO" "$3" "$4" "${@:5}" --por "encargado de $BOARD" ;;
 
-  tema)   # encargado.sh tema <repo> <chat_id> <thread_id>: ese tema de Telegram habla con el encargado del proyecto.
-          # Ruta por chat Y tema (si fuera solo por chat, todo el privado iría al encargado y se perderían los avisos);
-          # el tema queda también en dm_topics para que Hermes lo conozca. El gateway la carga al reiniciar.
-    CHAT=${3:?falta el chat_id}; HILO=${4:?falta el thread_id}
-    RUTAS=$(hermes config get gateway.profile_routes --json 2>/dev/null || echo '[]')
-    TEMAS=$(hermes config get platforms.telegram.extra.dm_topics --json 2>/dev/null || echo '[]')
-    jq -e . <<< "$RUTAS" >/dev/null 2>&1 || RUTAS='[]'; jq -e . <<< "$TEMAS" >/dev/null 2>&1 || TEMAS='[]'
-    RUTAS=$(jq -c --arg n "encargado-$BOARD" --arg c "$CHAT" --argjson t "$HILO" --arg p "$P" \
-      '[.[] | select(.name != $n)] + [{name: $n, platform: "telegram", chat_id: $c, thread_id: ($t | tostring), profile: $p}]' <<< "$RUTAS")
-    TEMAS=$(jq -c --arg c "$CHAT" --argjson t "$HILO" --arg nombre "🧭 $BOARD" '
-      (if any(.[]; (.chat_id | tostring) == $c) then . else . + [{chat_id: ($c | tonumber), topics: []}] end)
-      | map(if (.chat_id | tostring) == $c
-            then .topics = ([.topics[]? | select(.name != $nombre and (.thread_id // 0) != $t)] + [{name: $nombre, thread_id: $t}])
-            else . end)' <<< "$TEMAS")
-    hermes config set gateway.profile_routes "$RUTAS" >/dev/null
-    hermes config set platforms.telegram.extra.dm_topics "$TEMAS" >/dev/null
-    echo "Tema «🧭 ${BOARD}» (${CHAT}/${HILO}) → ${P} (se activa al reiniciar el gateway)"
-    vigilante ;;   # el vigía avisa en el tema
+  tema)   # encargado.sh tema <repo> <chat_id> <thread_id>: ese tema de Telegram habla con el encargado (lo usa /encargado)
+    enlazar_tema "${3:?falta el chat_id}" "${4:?falta el thread_id}" ;;
+
+  rearmar) rearmar; echo "Vigía de $BOARD rearmado: la próxima ronda despierta al encargado" ;;
 
   borrar)
     hermes profile delete -y "$P" >/dev/null 2>&1 || true

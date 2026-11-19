@@ -29,8 +29,13 @@ Lo que vive mientras el plugin está cargado (app de Telegram, bucle, hilo, cand
 from __future__ import annotations
 
 import logging
+import os
 import sys
 from pathlib import Path
+
+# Dentro del gateway, /nuevo, /preparar y /encargado crean el tema «🧭 proyecto» con su bot tras `encargado.sh crear`;
+# crear no debe crear otro (fuera del gateway, por línea de órdenes, sí lo crea: sin tema el encargado no avisa)
+os.environ.setdefault("HERMES_SDD_SIN_TEMA", "1")
 
 log = logging.getLogger("hermes_plugins.hermes_sdd")   # este prefijo llega a gateway.log
 _DIR = Path(__file__).resolve().parent

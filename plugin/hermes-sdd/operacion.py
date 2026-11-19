@@ -90,7 +90,7 @@ async def _tema_encargado(nombre: str, repo: str, uid: str, bienvenida: str = ""
         "plan y código, discute arquitectura, diseño y UX contigo y recuerda en su wiki. No decide puertas: esas "
         "siguen llegando al chat principal.") + "\n(Estará listo en un minuto: se reinicia el gateway para enlazar el tema.)")
     import subprocess as _sp
-    _sp.Popen(["bash", "-c", "sleep 8; hermes gateway restart >/dev/null 2>&1"], start_new_session=True,
+    _sp.Popen(["bash", "-c", f"sleep 8; hermes gateway restart >/dev/null 2>&1; sleep 20; bash '{P._root() / 'encargado.sh'}' rearmar '{repo}' >/dev/null 2>&1"], start_new_session=True,
               env={**os.environ, "PATH": PATH_CMDS}, stdout=_sp.DEVNULL, stderr=_sp.DEVNULL)
     return f"Tema «🧭 {nombre}» creado: en un minuto, lo que escribas allí lo lee su encargado."
 
