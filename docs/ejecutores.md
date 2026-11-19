@@ -17,6 +17,8 @@ hace cada etapa lo decide `.sdd/hermes/hermes-sdd.json` del proyecto:
 |---|---|---|---|
 | `claude` | `claude -p` con el núcleo del método como plugin (`metodo/`), bajo supervisor: candado por repo, grupo de procesos, *dead-man switch*, `caffeinate`, entorno limpio, cuota | Las pesadas: requisitos, plan, tareas, implementar, aceptar, cambio, adoptar, cierre | todo-app completo: 46 min, 25,43 $ de suscripción |
 | `hermes` | Un agente de Hermes (perfil `sdd-ejecutor`: solo ficheros y terminal, skills del método, guardia en el dialecto de Hermes) | Las ligeras y acotadas: factores de la ruta, diagnósticos, revisiones | Factores de la ruta con Sonnet: 0,075 $ (Claude Code: 0,24 $), misma ruta |
+| `caja` | La etapa en un contenedor Linux de este ordenador que se crea para ella y se borra al acabar (Apple container o Docker/OrbStack). Mismo aislamiento que la caja de GitHub, sin cola ni máquina nueva por etapa | Todas, también las que abren un navegador | Etapa mínima: 16 s de punta a punta; el contenedor arranca en 1-2 s |
+| `github` | La etapa en una máquina de GitHub Actions que se crea para ella y se borra al acabar | Todas | 50-76 min por prueba solo en arrancar máquinas (montana3-5) |
 | `replay` | Reproduce una ejecución grabada (cherry-pick de sus commits) y ejecuta los tests de verdad | Prácticas y pruebas | todo-app completo: ~50 s, 0 $ |
 
 ## Elegir modelo por etapa
@@ -68,7 +70,36 @@ Ahora hay cuatro capas, de más a menos fuerte:
 | **Guardias** (`sdd-executor-deny.sh`, `sdd-upstream-guard.sh`) | Órdenes que mencionan `.hermes/`, decisiones o puertas, `firmar.sh`/`decidir.sh`; en Hermes también `write_file`/`patch` a esas rutas y `execute_code` | Son regex: dificultan, no garantizan |
 
 Lo que queda abierto con los ejecutores locales: una etapa con navegador que se lo proponga (un script propio que
-escriba en `~/.hermes`). Lo cierra la caja de GitHub.
+escriba en `~/.hermes`). Lo cierran las cajas: la local o la de GitHub.
+
+### La caja local (`"ejecutor": "caja"`)
+
+La misma idea que la caja de GitHub, en este ordenador. Se eligió en noviembre de 2026 porque la de GitHub costaba
+50-76 min por prueba solo en arrancar una máquina nueva para cada una de sus 38-51 etapas (y, a veces, en esperar a que
+GitHub diera máquina), y porque en macOS el sandbox de Claude Code no deja arrancar Chromium: las etapas con navegador
+iban sin aislamiento. En un contenedor Linux, Chromium arranca sin pelearse con nada.
+
+1. `executors/caja.sh` copia el proyecto en HEAD (`git clone`) con lo ignorado que la etapa necesita (`.sdd/` sin
+   decisiones, puertas, candado ni ejecuciones; `pipeline-state.json`; `evidencias/` sin la copia cruda de Playwright),
+   el prompt y la identidad de git.
+2. Lanza el contenedor con la imagen `hermes-sdd-caja` (`templates/caja/Containerfile`: Node 22, las dependencias de
+   Chromium, ffmpeg, espeak-ng y Claude Code; se construye sola la primera vez). Dentro solo hay: la copia en
+   `/proyecto`, el arnés en `/arnes` **en solo lectura**, la caché de npm y navegadores en `/cache`
+   (`~/.cache/hermes-sdd-caja`) y `/salida`. `templates/caja/etapa.sh` hace los mismos pasos que el workflow de GitHub.
+   El token entra por un fichero de entorno que se borra al acabar, nunca por la línea de órdenes.
+3. Lo que devuelve se valida y se aplica con **las mismas reglas** que la caja de GitHub (`lib/caja-aplicar.sh`, que
+   usan las dos): si algo no cumple, no se aplica nada.
+
+Configuración en `.sdd/hermes/hermes-sdd.json`: `"caja": {"runtime": "container" | "docker", "memoria": "3G",
+"cpus": 3}`. Por defecto Apple container si está instalado. Con 8 GB de memoria, 4 GB no llegaron a arrancar la máquina
+(se quedó en «Starting container»): por eso el defecto es 3 GB, y si el contenedor no da señales en 3 min la etapa
+falla diciéndolo en vez de quedarse colgada. El constructor de imágenes de Apple container (otra máquina de 2 GB) se
+para después de construir.
+
+Comprobado de verdad (etapa mínima con Haiku, 0,02 $): desde dentro no existen `~/.hermes`, `/Users` ni `/Volumes`, y
+escribir una decisión lo para el guardia (y el ordenador no la habría aplicado). `tests/caja-local.sh` lo comprueba con
+un `container` falso: lo legítimo se aplica; una decisión fabricada, un fichero fuera de lo permitido o commits ajenos
+no aplican nada.
 
 ### La caja de GitHub (`"ejecutor": "github"`)
 

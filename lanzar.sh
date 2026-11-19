@@ -43,7 +43,7 @@ preparar() {  # lo común a iniciar y adoptar: sin LLM
   [ -f pipeline-state.json ] || cp "$ROOT/metodo/templates/pipeline-state.template.json" pipeline-state.json
   if [ ! -f .sdd/hermes/hermes-sdd.json ]; then
     cp "$ROOT/templates/hermes-sdd.json" .sdd/hermes/hermes-sdd.json
-    # El ejecutor de los proyectos nuevos (sdd.json «ejecutor»: claude | github), si se fijó para todos
+    # El ejecutor de los proyectos nuevos (sdd.json «ejecutor»: claude | caja | github), si se fijó para todos
     EJ=$(jq -r '.ejecutor // empty' "${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}/sdd.json" 2>/dev/null || true)
     if [ -n "$EJ" ]; then t=$(mktemp); jq --arg e "$EJ" '.ejecutor = $e' .sdd/hermes/hermes-sdd.json > "$t" && mv "$t" .sdd/hermes/hermes-sdd.json; fi
   fi

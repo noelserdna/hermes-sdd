@@ -121,7 +121,7 @@ def modelo_para(etapa: str, ejecutor: str = "claude") -> str:
             ids = modelos_openrouter().get(m)
             return ids[0] if ids else OPENROUTER_DEFECTO[m]
         return m if "/" in m else ""
-    if ejecutor == "claude":
+    if ejecutor in ("claude", "caja"):   # la caja local lanza el mismo Claude Code
         return m.split("/", 1)[1].replace(".", "-") if m.startswith("anthropic/") else m
     return ""
 

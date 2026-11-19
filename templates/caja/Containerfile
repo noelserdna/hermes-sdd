@@ -1,0 +1,17 @@
+# hermes-sdd · la CAJA LOCAL donde trabaja el agente (executors/caja.sh la construye y la lanza; no se usa a mano)
+#
+# Lo mismo que la caja de GitHub (templates/github/sdd-etapa.yml) pero en este ordenador, con Apple container (o
+# Docker/OrbStack): Linux, donde Chromium arranca sin pelearse con el sandbox de macOS. El agente solo ve una copia
+# del proyecto: ni ~/.hermes, ni el notario, ni su clave. Se construye una vez; cada etapa es un contenedor nuevo que se
+# borra al acabar. Las descargas de npm y de los navegadores de Playwright viven en una caché aparte (/cache).
+FROM node:22-bookworm-slim
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends git jq ca-certificates curl ffmpeg espeak-ng procps \
+ && npx -y playwright@1 install-deps chromium \
+ && rm -rf /var/lib/apt/lists/* /root/.npm
+RUN npm i -g @anthropic-ai/claude-code && rm -rf /root/.npm
+# Claude Code no acepta saltarse permisos como root: el agente es un usuario normal
+RUN useradd -m -u 1001 -s /bin/bash caja && mkdir -p /cache /proyecto /salida && chown caja /cache /proyecto /salida
+ENV PLAYWRIGHT_BROWSERS_PATH=/cache/ms-playwright npm_config_cache=/cache/npm DISABLE_AUTOUPDATER=1 SDD_EXECUTOR=hermes
+USER caja
+WORKDIR /proyecto
