@@ -221,5 +221,11 @@ qa '{"skill":"s","tema":"a4","pregunta":"q","para_cliente":"¿Cuántas reservas 
 [ $rc = 1 ] && echo "$out" | grep -q 'reopens the requirements' && ok "add: recomendar req-change sin riesgo grave, rechazada" || bad "req-change: $rc $out"
 qa '{"skill":"s","tema":"a5","riesgo":"sin ella se pierden datos de socios","pregunta":"q","para_cliente":"¿Guardamos copia de los socios?","opciones":[{"letra":"A","texto":"a","efecto":"req-change","recomendada":true,"cliente":"Sí, cada noche"},{"letra":"B","texto":"b","efecto":"ninguno","cliente":"No"}]}'
 [ $rc = 0 ] && jq -e '.preguntas[0].riesgo' .sdd/questions-r.json >/dev/null && ok "add: req-change recomendado con su riesgo grave, aceptada (y el riesgo queda escrito)" || bad "con riesgo: $rc $out"
+# Con los requisitos aprobados (tag requirements-v*), ni con riesgo: material-montana5 abrió así una vuelta de 20 min
+git -c user.email=a@a -c user.name=a commit -q --allow-empty -m init && git tag requirements-v1.0
+qa '{"skill":"s","tema":"a6","riesgo":"sin ella se pierden datos de socios","pregunta":"q","para_cliente":"¿Guardamos copia de las reservas?","opciones":[{"letra":"A","texto":"a","efecto":"req-change","recomendada":true,"cliente":"Sí, cada noche"},{"letra":"B","texto":"b","efecto":"ninguno","cliente":"No"}]}'
+[ $rc = 1 ] && echo "$out" | grep -q 'already approved' && ok "add: con requisitos aprobados, recomendar req-change se rechaza aunque lleve riesgo" || bad "aprobados: $rc $out"
+qa '{"skill":"s","tema":"a7","pregunta":"q","para_cliente":"¿Guardamos copia de las facturas?","opciones":[{"letra":"A","texto":"a","efecto":"ninguno","recomendada":true,"cliente":"No"},{"letra":"B","texto":"b","efecto":"req-change","cliente":"Sí, cada noche"}]}'
+[ $rc = 0 ] && ok "add: con requisitos aprobados, un req-change NO recomendado sigue valiendo (la persona puede elegirlo)" || bad "no recomendada: $rc $out"
 cd "$AQUI"
 exit $fail

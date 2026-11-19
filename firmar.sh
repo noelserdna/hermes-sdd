@@ -358,6 +358,17 @@ if ! hecho preguntas; then
   respuestas aplicar --quien "$NOMBRE ($ROL)" --hoy "$HOY" --salida "$RJ" >/dev/null || fallo "no se pudieron escribir las respuestas"
   if [ -n "$PIDEN" ] && [ "$(jq '.peticiones | length' "$RJ")" -gt 0 ]; then jq -r '.peticiones | join("\n\n")' "$RJ" > "$PIDEN"; fi
   if [ -n "$ACCIONES" ] && [ "$(jq '.por_aplicar | length' "$RJ")" -gt 0 ]; then jq -r '.por_aplicar | join("\n\n")' "$RJ" > "$ACCIONES"; fi
+  # Con los requisitos ya aprobados, un cambio que pide una respuesta al aceptar el plan, una FASE o unas dudas no
+  # reabre los requisitos a mitad de camino (material-montana1-5: 7 de las 8 vueltas, 14-28 min y una puerta más
+  # cada una): queda documentado en changes/aplazados.md y la puerta de entrega lo ofrece para la siguiente entrega
+  if trans_tiene "$TIPO" "$VERBO" respuestas aplazar && [ "$(jq '.peticiones | length' "$RJ")" -gt 0 ]; then
+    mkdir -p changes
+    [ -s changes/aplazados.md ] || printf '%s\n\n%s\n' "# Cambios aplazados a la siguiente entrega" \
+      "Respuestas que pedían cambiar los requisitos ya aprobados. No se aplicaron a mitad de camino: la puerta de entrega los enseña y, si se quieren, se piden con /cambio." > changes/aplazados.md
+    { printf '\n## %s · puerta «%s» · %s (%s)\n\n' "$HOY" "$(p .titulo)" "$NOMBRE" "$ROL"
+      jq -r '.peticiones[] | "- " + (split("\n") | join("\n  "))' "$RJ"; } >> changes/aplazados.md
+    commit_si_hay "docs(changes): requirement changes deferred to the next delivery by $NOMBRE" changes/aplazados.md
+  fi
   marcar preguntas
 fi
 # ── 2b. tests que la persona autoriza editar (art. 12) ──────────────────────────────────────────────────────────────

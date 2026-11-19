@@ -196,6 +196,17 @@ esc_entrega() {
     || bad "entrega: sin entrega-1 ($(git -C "$R" tag -l | tr '\n' ' '); $(grep -E 'PUERTA|NOTARIO|Cierre' "$LOG" | tail -3 | tr '\n' ' '))"
   tarjetas | jq -e '[.[] | select((.title | startswith("Implementar FASE-2")) and (.status == "done" or .status == "running"))] | length == 0' >/dev/null \
     && ok "entrega: la FASE-2 que estaba en cola no se ejecuta" || bad "entrega: la FASE-2 se ejecutó"
+  # Las dos preguntas de la grabación recomiendan cambiar los requisitos al aceptar la FASE-0: con los requisitos ya
+  # aprobados no se reabren (antes: una vuelta de requisitos a mitad); quedan en changes/aplazados.md y la entrega lo dice
+  ! git -C "$R" tag -l | grep -qx 'requirements-v1.1' && grep -c '^- ' "$R/changes/aplazados.md" 2>/dev/null | grep -qx 2 \
+    && ok "entrega: las respuestas que pedían cambiar requisitos al aceptar la FASE-0 quedan aplazadas, sin vuelta de requisitos" \
+    || bad "entrega: aplazados ($(git -C "$R" tag -l | tr '\n' ' '); $(grep -c '^- ' "$R/changes/aplazados.md" 2>/dev/null))"
+  local pe; pe=$(grep -l '"tipo": "entrega"' "$HERMES_SDD_HOME"/puertas/*.json 2>/dev/null | head -1)
+  [ -n "$pe" ] && jq -r .texto "$pe" | grep -q "quedaron para la siguiente entrega" \
+    && ok "entrega: la puerta de entrega enseña lo aplazado" || bad "entrega: la puerta no enseña lo aplazado"
+  local pf; pf=$(grep -l '"tipo": "fase"' "$HERMES_SDD_HOME"/puertas/*.json 2>/dev/null | head -1)
+  [ -n "$pf" ] && jq -r .texto "$pf" | grep -q "queda anotado para la siguiente entrega" && ! jq -r .texto "$pf" | grep -q "abre un cambio de requisitos" \
+    && ok "entrega: la puerta de la FASE anuncia lo que hará (anotarlo), no un cambio de requisitos" || bad "entrega: texto de la puerta de FASE"
   grep -q "Entrega parcial 1 (FASEs 0 1) aceptada" "$LOG" \
     && ok "entrega: la entrega es de las FASEs 0 y 1, con la exención apuntada" || bad "entrega: $(grep -i 'entrega' "$LOG" | tail -2 | tr '\n' ' ')"
 }
@@ -217,6 +228,10 @@ esc_cambio_medio() {
     && ok "cambio a mitad: pasa por su puerta de requisitos y se aprueba" || bad "cambio a mitad: sin versión nueva ($(git -C "$R" tag -l | tr '\n' ' '))"
   [ "$(abierta | xargs -I{} jq -r '.tipo + ":" + .fase' "$HERMES_SDD_HOME/puertas/{}.json" 2>/dev/null)" = "fase:1" ] \
     && ok "cambio a mitad: la FASE-1 llega a su puerta" || bad "cambio a mitad: no llegó a la FASE-1 ($(tarjetas | jq -c '[.[] | {title, status}]'))"
+  local a i; a=$(grep -n "Requisitos v1.1 aprobados" "$LOG" | head -1 | cut -d: -f1); i=$(grep -n "^Implementar FASE-1" "$LOG" | head -1 | cut -d: -f1)
+  [ -n "$a" ] && [ -n "$i" ] && [ "$i" -gt "$a" ] \
+    && ok "cambio a mitad: la FASE-1 se implementa DESPUÉS de aprobar el cambio, con los requisitos nuevos" \
+    || bad "cambio a mitad: la FASE-1 se implementó antes de aprobar el cambio (línea ${i:-?} frente a ${a:-?})"
   [ -z "$(tarjetas | jq -r '.[] | select(.status == "blocked") | .id')" ] && ! grep -q '"busy"\|ocupado' "$LOG" \
     && ok "cambio a mitad: ninguna tarjeta bloqueada ni etapas pisándose" || bad "cambio a mitad: $(tarjetas | jq -c '[.[] | select(.status == "blocked") | .title]') $(grep -c 'ocupado' "$LOG")"
 }

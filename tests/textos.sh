@@ -423,8 +423,8 @@ echo "$o" | grep -q '^1. ¿Cambiamos el formato en que se guardan los datos del 
   && echo "$o" | grep -q '^   B) Cambiar el formato y adaptar la prueba que lo comprueba  (✏️ autoriza editar tests/integration/store.test.js)$' \
   && ok "club, FASE-7: la pregunta sale con su frase para el cliente y lo técnico plegado en una línea" || bad "para el cliente: $o"
 echo "$o" | grep -q '^👉 Si firmas sin tocar los botones Q, esto lanzará: ✏️ autoriza editar tests que ya existían: tests/integration/accesos.test.js (Q2), tests/e2e/helpers/servidor.js (Q2) · sin más efecto: Q1.$' \
-  && echo "$o" | grep -q '(📝 abre un cambio de requisitos)' \
-  && ok "antes de firmar: «esto lanzará…» con los tests que se autoriza editar" || bad "esto lanzará: $o"
+  && echo "$o" | grep -q '(📌 se anota para la siguiente entrega)' && ! echo "$o" | grep -q 'abre un cambio de requisitos' \
+  && ok "antes de firmar: «esto lanzará…» con los tests que se autoriza editar; un req-change de una FASE se anota para la siguiente entrega" || bad "esto lanzará: $o"
 python3 - "$ROOT/plugin/hermes-sdd" <<'PYT' && ok "efecto declarado manda sobre la regex: «Sí: se mantiene el aplazamiento» no lanza trabajo; «No: quitar el límite y borrar el test» sí" || bad "efecto declarado"
 import sys; sys.path.insert(0, sys.argv[1]); import hsdd_textos as T
 b = ("## Q-x-001 [OPEN]\nQuestion: ¿?\nPara el cliente: ¿?\nOptions:\n  A) Sí: se mantiene el aplazamiento (recommended)\n     efecto: ninguno\n"
@@ -725,5 +725,18 @@ res, errs, modo = T.plan_respuestas({"tipo": "requisitos", "preguntas": qs}, [],
 assert sorted((r["q"]["n"], r["letra"], r["como"]) for r in res) == [(1, "B", "elegida por"), (2, "A", "opción recomendada, aceptada por")], res
 res, _, _ = T.plan_respuestas({"tipo": "requisitos", "preguntas": qs}, [], "", "cambios", {"1": "B"})
 assert [r["q"]["n"] for r in res] == [1], res
+PY
+# Supuestos (clase S): la puerta de requisitos los enseña juntos, y una puerta sin sección no dice nada
+python3 - "$ROOT/plugin/hermes-sdd" <<'PY' && ok "puerta de requisitos: enseña la sección «Supuestos» para que la persona diga si alguno no vale" || bad "supuestos en la puerta"
+import sys, tempfile
+sys.path.insert(0, sys.argv[1]); import hsdd_textos as T
+from pathlib import Path
+d = Path(tempfile.mkdtemp()); (d / "requirements").mkdir()
+(d / "requirements/REQUIREMENTS.md").write_text("# R\n\n## Supuestos\n\n<!-- nota -->\n- El bloqueo dura 15 minutos.\n- La sesión caduca a los 30 minutos.\n\n## Traceability\n")
+assert T.supuestos(d) == ["El bloqueo dura 15 minutos.", "La sesión caduca a los 30 minutos."], T.supuestos(d)
+t = T.puerta_requisitos(d, "p", "1.0")["texto"]
+assert "Lo que hemos supuesto porque no lo decías (2)" in t and "• La sesión caduca a los 30 minutos." in t, t
+(d / "requirements/REQUIREMENTS.md").write_text("# R\n\n## Traceability\n")
+assert "supuesto" not in T.puerta_requisitos(d, "p", "1.0")["texto"]
 PY
 exit $fail

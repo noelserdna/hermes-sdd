@@ -39,7 +39,7 @@ for tipo, d in tabla.items():
             errs.append(f"{tipo}:{v} y su «como» llevan a resultados distintos")
         if e.get("si_distintas") and e["si_distintas"] not in verbos:
             errs.append(f"{tipo}:{v} si_distintas → «{e['si_distintas']}», que no es un verbo de {tipo}")
-        if not set(e.get("respuestas") or []) <= {"cambio", "aplicar"}:
+        if not set(e.get("respuestas") or []) <= {"cambio", "aplicar", "aplazar"}:
             errs.append(f"{tipo}:{v} respuestas desconocidas {e.get('respuestas')}")
         if e.get("persona") and not e.get("opcion"):
             errs.append(f"{tipo}:{v} solo para personas pero sin «opcion» (la puerta tiene que ofrecerlo)")
@@ -279,4 +279,16 @@ o=$(cd "$T" && echo '{"preguntas":[{"n":1,"id":"Q-1","opciones":["A","B"],"recom
   && python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" respuestas distintas --puerta p.json --verbo conforme --respuestas '{"1":"B","2":"B"}'; \
   python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" respuestas distintas --puerta p.json --verbo conforme --respuestas '{"1":"B","3":"B"}')
 [ "$o" = "$(printf '\nQ-3 = B')" ] && ok "respuestas distintas sin efecto o con req-change: «Conforme» no se vuelve «cambios»; las de trabajo, sí" || bad "distintas por efecto: $o"
+# Las puertas cuyo texto dice «📌 queda anotado para la siguiente entrega» son las que aplazan en la tabla (la puerta no
+# puede prometer otra cosa que lo que hace el notario)
+python3 - "$ROOT" <<'PY' && ok "aplazar: las puertas que lo anuncian (hsdd_textos.TIPOS_APLAZAN) son las que aplazan en la tabla" || bad "aplazar: tabla y textos no coinciden"
+import json, sys, importlib.util
+root = sys.argv[1]
+t = json.load(open(root + "/lib/transiciones.json"))["puertas"]
+s = importlib.util.spec_from_file_location("T", root + "/plugin/hermes-sdd/hsdd_textos.py"); T = importlib.util.module_from_spec(s); s.loader.exec_module(T)
+aprobar = {"plan": "conforme", "fase": "acepto", "preguntas": "respondo", "requisitos": "acepto", "entrega": "acepto"}
+tabla = {tipo for tipo, v in aprobar.items() if "aplazar" in (t[tipo]["verbos"][v].get("respuestas") or [])}
+assert tabla == set(T.TIPOS_APLAZAN), (tabla, T.TIPOS_APLAZAN)
+assert not any("cambio" in (t[tipo]["verbos"][v].get("respuestas") or []) for tipo, v in aprobar.items() if tipo in tabla)
+PY
 exit $fail

@@ -58,6 +58,13 @@
 - **Needs:** N-00X | — (team/architecture source)
 - **Verification:** test — {what the static check reads, e.g. package.json, import graph} | inspection — {what is reviewed}
 
+## Supuestos
+
+<!-- Lo que el encargo dejaba abierto y se escribió con un valor por defecto en vez de preguntarlo (clase S de
+references/modo-arnes.md). Una línea por supuesto, en castellano llano: qué y por qué. La puerta de requisitos los
+enseña juntos para que la persona diga si alguno no vale. -->
+- {e.g. "Tras 5 contraseñas fallidas la cuenta se bloquea 15 minutos (lo habitual en webs de socios)."}
+
 ## Traceability
 
 | REQ ID | Type | Priority | Source | Needs | Verification | Dependencies |

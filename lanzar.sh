@@ -392,6 +392,10 @@ case "$CMD" in
       git add "intent/$INT.md" && git commit -qm "docs(intent): $INT"
     fi
     echo "$INT" > .sdd/hermes/cambio-actual
+    # Lo que la FASE en curso tenía en cola (implementar, aceptar) espera al cambio: al aprobarlo, el tramo de
+    # requisitos aprobados la relanza con los requisitos nuevos. Si no, se hacía con los viejos y luego llegaban dos
+    # puertas a la vez, la de la FASE y la del cambio (simulador, escenario cambio_medio). Lo que ya corre, termina.
+    N=$(primera_sin_aceptar); [ -n "$N" ] && viejas_de_fase "$N"
     T=$(tarjeta "Cambio $INT" - 60m cambio)
     echo "Cambio $INT en marcha en $BOARD: $T" ;;
 

@@ -6,7 +6,7 @@
     "opcion": "mensaje si la puerta no ofrecía esa opción (el verbo solo vale si la puerta lo enseñó)",
     "persona": "mensaje si lo decide Jev: solo una persona puede elegir ese verbo",
     "como": "se firma como este otro verbo (revisado y eximo son una aceptación con algo más registrado): desde ahí, sus respuestas y su resultado son los de ese verbo",
-    "respuestas": "qué hacen las respuestas elegidas a las preguntas de la puerta con este verbo: «cambio» (las que piden cambiar requisitos lanzan /cambio antes del tramo siguiente) y «aplicar» (las que piden trabajo las aplica la etapa respuestas antes del tramo siguiente)",
+    "respuestas": "qué hacen las respuestas elegidas a las preguntas de la puerta con este verbo: «cambio» (las que piden cambiar requisitos lanzan /cambio antes del tramo siguiente), «aplazar» (esas mismas se anotan en changes/aplazados.md y la puerta de entrega las ofrece para la siguiente entrega: con los requisitos aprobados no se reabren a mitad de camino; material-montana1-5, 7 de 8 vueltas de requisitos salieron así) y «aplicar» (las que piden trabajo las aplica la etapa respuestas antes del tramo siguiente)",
     "si_distintas": "si la persona eligió en alguna pregunta una opción distinta de la recomendada, el verbo pasa a ser este (el texto que vio está escrito con la recomendada)",
     "clave *": "un verbo que acaba en * vale para todos los que empiezan así (ruta-normal, ruta-rapida…)"
   },
@@ -43,7 +43,7 @@
     },
     "plan": {
       "verbos": {
-        "conforme": {"resultado": "conforme", "respuestas": ["cambio"], "si_distintas": "cambios"},
+        "conforme": {"resultado": "conforme", "respuestas": ["aplazar"], "si_distintas": "cambios"},
         "cambios": {"resultado": "cambios", "texto": true, "respuestas": ["cambio"]}
       },
       "resultados": {
@@ -53,8 +53,8 @@
     },
     "fase": {
       "verbos": {
-        "acepto": {"resultado": "acepto", "respuestas": ["cambio", "aplicar"]},
-        "observaciones": {"resultado": "observaciones", "texto": true, "respuestas": ["cambio", "aplicar"]},
+        "acepto": {"resultado": "acepto", "respuestas": ["aplazar", "aplicar"]},
+        "observaciones": {"resultado": "observaciones", "texto": true, "respuestas": ["aplazar", "aplicar"]},
         "rechazo": {"resultado": "rechazo", "texto": true, "respuestas": ["cambio"]},
         "revisado": {"resultado": "acepto", "como": "acepto", "opcion": "la puerta no ofrecía 🔍 Lo he revisado", "persona": "una inspección la confirma una persona, no Jev"},
         "eximo": {"resultado": "acepto", "como": "acepto", "texto": true, "opcion": "la puerta no ofrecía 🟡 Aceptar sin lo que falta", "persona": "una exención la firma una persona, no Jev"},
@@ -89,7 +89,7 @@
     },
     "preguntas": {
       "verbos": {
-        "respondo": {"resultado": "respondo", "respuestas": ["cambio"]}
+        "respondo": {"resultado": "respondo", "respuestas": ["aplazar"]}
       },
       "resultados": {
         "respondo": {"tramo": "tras_preguntas"}

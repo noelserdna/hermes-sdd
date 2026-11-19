@@ -25,6 +25,7 @@
 // A copy is written only when its content changed, never deleted, so a run without questions leaves status/ untouched.
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, renameSync, existsSync, unlinkSync } from "node:fs";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 export const SOURCE_DIR = ".sdd";
@@ -245,6 +246,12 @@ const STAGE_FIELDS = ["skill", "contexto", "tema", "pregunta", "para_cliente", "
 
 /** A stage's new question: always OPEN and without an answer (a stage never answers; the guard denies it too).
  *  Its id is the next free Q-<role>-NNN, counting the questions only the .md has. Returns the id. */
+function requisitosAprobados(root) {
+  try {
+    return execFileSync("git", ["-C", root, "tag", "-l", "requirements-v*"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim() !== "";
+  } catch { return false; }
+}
+
 export function addQuestion(root, role, input) {
   if (!ROLE_RE.test(role || "")) throw new QError(`invalid role «${role}»`);
   if (typeOf(input) !== "object") throw new QError("the question must be a JSON object");
@@ -270,6 +277,12 @@ export function addQuestion(root, role, input) {
   if (typeof input.tema !== "string" || !input.tema) throw new QError("tema is required: a slug of what is decided (zona-horaria, borrado-socios), so the same topic is never asked twice");
   const ops = Array.isArray(input.opciones) ? input.opciones.filter((o) => typeOf(o) === "object") : [];
   const rec = ops.filter((o) => o.recomendada === true);   // exactly one: the schema says it (maxContains)
+  // Con los requisitos ya aprobados (un tag requirements-v*), ninguna etapa recomienda reabrirlos: ni con «riesgo»
+  // (material-montana5: «riesgo: sin moverlo, la verificación de la FASE-0 no cierra ese criterio» bastó para una
+  // vuelta de 20 min). Se escribe el valor por defecto como supuesto y, si la persona quiere el cambio, lo elige a mano
+  // y queda para la siguiente entrega
+  if (rec.length === 1 && rec[0].efecto === "req-change" && requisitosAprobados(root))
+    throw new QError("the requirements are already approved (requirements-v* tag): never recommend reopening them. Recommend keeping what is written (efecto ninguno) or the work that fits it (accion), and note the default you took as an assumption; the person can still pick a req-change option by hand, and it is deferred to the next delivery");
   if (rec.length === 1 && rec[0].efecto === "req-change" && !(typeof input.riesgo === "string" && input.riesgo.trim()))
     throw new QError("the recommended option reopens the requirements (req-change): write the sensible default in the artifact and recommend keeping it (efecto ninguno); recommend req-change only for a serious risk, named in «riesgo» (data loss, legal or security breach)");
   const clienteTxt = [["para_cliente", input.para_cliente], ...ops.map((o) => [`option ${o.letra}`, o.cliente || ""])].filter(([, t]) => typeof t === "string" && t);

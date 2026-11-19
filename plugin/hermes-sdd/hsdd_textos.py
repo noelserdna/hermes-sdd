@@ -480,6 +480,17 @@ def _partida(texto: str) -> int:
     return n or len(re.findall(r"^\s*(?:[-*]|\d+[.)])\s+\S", texto, re.M)) or len(re.findall(r"^#{2,4}\s+\S", texto, re.M))
 
 
+def supuestos(repo: Path) -> list[str]:
+    """Las líneas de la sección «## Supuestos» de requirements/REQUIREMENTS.md: lo que el encargo dejaba abierto y se
+    escribió con un valor por defecto en vez de preguntarlo (clase S de references/modo-arnes.md)."""
+    t = _leer(repo / "requirements" / "REQUIREMENTS.md")
+    m = re.search(r"^##\s+Supuestos\s*$(.*?)(?=^##\s|\Z)", t, re.M | re.S)
+    if not m:
+        return []
+    return [_corta(re.sub(r"^\s*(?:[-*]|\d+\.)\s+", "", l).strip(), 300) for l in m.group(1).splitlines()
+            if re.match(r"^\s*(?:[-*]|\d+\.)\s+\S", l)]
+
+
 def puerta_requisitos(repo: Path, proyecto: str, version: str = "", cambio: dict | None = None, adopcion: bool = False,
                       partida: str = "") -> dict:
     reqs = requisitos(repo)
@@ -553,6 +564,10 @@ def puerta_requisitos(repo: Path, proyecto: str, version: str = "", cambio: dict
     web = _bloque_web(repo, cambio=False)
     if web:
         partes.append(web)
+    sup = supuestos(repo)
+    if sup:   # clase S (references/modo-arnes.md): lo que el encargo dejaba abierto, con su valor por defecto
+        partes.append(f"🧩 Lo que hemos supuesto porque no lo decías ({len(sup)}); si alguno no vale, dilo con ✏️:\n"
+                      + "\n".join(f"• {x}" for x in sup))
     return {"titulo": titulo, "texto": "\n\n".join(partes) + _cierre_requisitos(extras)}
 
 
@@ -901,6 +916,16 @@ def _que_pulsar(rc: int, rev: dict | None, aceptar: str, obs: str, rechazar: str
     return f"👉 Pulsa ❌ Rechazar y di qué hay que corregir, o {eximir}."
 
 
+def aplazados(repo: Path) -> list[str]:
+    """Los cambios que pidieron respuestas con los requisitos ya aprobados y quedaron para la siguiente entrega
+    (changes/aplazados.md, lo escribe el notario): una línea por petición, con su frase para el cliente si la tiene."""
+    out = []
+    for bloque in re.split(r"^- ", _leer(repo / "changes" / "aplazados.md"), flags=re.M)[1:]:
+        cli = re.search(r"Para el cliente: (.+)", bloque)
+        out.append(_corta((cli.group(1) if cli else bloque.splitlines()[0]).strip(), 300))
+    return out
+
+
 def puerta_entrega(repo: Path, proyecto: str, gate_md: str, rc: int, fases_aceptadas: list[str], unica: bool = False,
                    video: bool = False, capturas: int = 0, tests_editados: int = 0, rev: dict | None = None,
                    imp: list | None = None, parcial: list[str] | None = None) -> dict:
@@ -938,6 +963,10 @@ def _puerta_entrega(repo: Path, proyecto: str, gate_md: str, rc: int, fases_acep
         partes.append("\n".join(_agrupa(_lineas_veredictos(repo, filas, rev))))
     partes += _bloque_impugnaciones(repo, imp)
     partes += _bloque_revisar(rev)
+    ap = aplazados(repo)
+    if ap:   # lo que pidieron respuestas a mitad de camino: documentado, no aplicado; se pide con /cambio si se quiere
+        partes.append("📌 Cambios que se pidieron por el camino y quedaron para la siguiente entrega (están en "
+                      "changes/aplazados.md; si los quieres, pídelos con /cambio):\n" + "\n".join(f"• {x}" for x in ap))
     if unica:   # plan compacto: una sola fase, sin puerta propia; se acepta aquí con su demo
         partes.append("🧩 Se hizo en una sola fase: al aceptar la entrega aceptas también esa fase.")
         partes.append(_bloque_tests(repo, None, tests_editados))
@@ -979,14 +1008,14 @@ def puerta_preguntas(proyecto: str, fase: str, diseno: bool = False) -> dict:
     «diseno», son las dudas del diseño, juntas y antes de hacer el plan."""
     if diseno:
         partes = [f"🧩 Antes de hacer el plan de «{proyecto}» hay que decidir esto (todas las dudas del diseño, juntas).",
-                  "Al responder, se hace el plan con tus respuestas. Si alguna pide cambiar los requisitos, antes te llega "
-                  "su puerta de requisitos con lo que cambia.",
+                  "Al responder, se hace el plan con tus respuestas. Si alguna pide cambiar los requisitos ya aprobados, "
+                  "no se reabren a mitad de camino: queda anotada para la siguiente entrega.",
                   "👉 Elige en los botones Q (la recomendada ya está marcada) y pulsa ✅ Responder."]
         return {"titulo": "Dudas antes del plan", "texto": "\n\n".join(partes)}
     que = f"La FASE-{fase}" if fase else "El mantenimiento"
     partes = [f"⏸ {que} de «{proyecto}» se ha parado: para seguir necesita que decidas esto.",
-              f"Al responder, {que[0].lower() + que[1:]} sigue con tus respuestas. Si alguna pide cambiar los requisitos, "
-              "antes te llega su puerta de requisitos con lo que cambia.",
+              f"Al responder, {que[0].lower() + que[1:]} sigue con tus respuestas. Si alguna pide cambiar los requisitos "
+              "ya aprobados, no se reabren a mitad de camino: queda anotada para la siguiente entrega.",
               "👉 Elige en los botones Q (la recomendada ya está marcada) y pulsa ✅ Responder."]
     return {"titulo": f"Preguntas de la FASE-{fase}" if fase else "Preguntas del mantenimiento", "texto": "\n\n".join(partes)}
 
@@ -1556,12 +1585,19 @@ def _efecto_txt(e: dict) -> str:
     return {"accion": "🛠 lanza trabajo", "req-change": "📝 abre un cambio de requisitos", "?": "❔ efecto desconocido"}.get(e.get("efecto"), "")
 
 
+# Puertas en las que una respuesta que pide cambiar los requisitos NO reabre los requisitos: queda anotada para la
+# siguiente entrega (lib/transiciones.json, «respuestas: aplazar» de su verbo de aprobar; tests/transiciones.sh
+# comprueba que coinciden)
+TIPOS_APLAZAN = ("plan", "fase", "preguntas")
+APLAZA_TXT = "📌 queda anotado para la siguiente entrega (los requisitos aprobados no se reabren a mitad de camino)"
+
 LANZARA_DEFECTO = "👉 Si firmas sin tocar los botones Q, esto lanzará: "
 LANZARA_MARCADO = "👉 Con lo que has marcado en los botones Q, firmar lanzará: "
 
 
-def _lanzara(elegidas: list[tuple[int, dict]], marcado: bool = False) -> str:
-    """La línea «👉 … esto lanzará: …» de [(n, efecto de la opción elegida)]."""
+def _lanzara(elegidas: list[tuple[int, dict]], marcado: bool = False, aplaza: bool = False) -> str:
+    """La línea «👉 … esto lanzará: …» de [(n, efecto de la opción elegida)]. Con «aplaza», un req-change no abre un
+    cambio: se anota para la siguiente entrega (lo que hará el notario en esas puertas)."""
     lanza = {"accion": [], "req-change": [], "ninguno": [], "?": []}
     tests_aut, tests_end = [], []
     for n, e in elegidas:
@@ -1573,8 +1609,8 @@ def _lanzara(elegidas: list[tuple[int, dict]], marcado: bool = False) -> str:
         else:
             lanza.setdefault(ef, []).append(f"Q{n}")
     partes = [f"🛠 lanza trabajo: {', '.join(lanza['accion'])}" if lanza["accion"] else "",
-              (f"📝 abre un cambio de requisitos (antes de seguir te llega su puerta): {', '.join(lanza['req-change'])}"
-               if lanza["req-change"] else ""),
+              ((f"{APLAZA_TXT}: " if aplaza else "📝 abre un cambio de requisitos (antes de seguir te llega su puerta): ")
+               + ", ".join(lanza["req-change"]) if lanza["req-change"] else ""),
               f"✏️ autoriza editar tests que ya existían: {', '.join(tests_aut)}" if tests_aut else "",
               f"🔩 autoriza endurecer tests que ya existían: {', '.join(tests_end)}" if tests_end else "",
               f"❔ efecto desconocido: {', '.join(lanza['?'])}" if lanza["?"] else "",
@@ -1598,7 +1634,7 @@ def resumen_lanzara(puerta: dict, elecciones: dict) -> str:
         e = (q.get("efectos") or {}).get(letra)
         if e:
             elegidas.append((int(q["n"]), e))
-    return _lanzara(elegidas, marcado) if elegidas else ""
+    return _lanzara(elegidas, marcado, puerta.get("tipo") in TIPOS_APLAZAN) if elegidas else ""
 
 
 def texto_con_lanzara(puerta: dict, elecciones: dict) -> str:
@@ -1611,7 +1647,7 @@ def texto_con_lanzara(puerta: dict, elecciones: dict) -> str:
                   lambda _: nueva, texto, count=1, flags=re.M)
 
 
-def preguntas(ficheros: list[Path]) -> str:
+def preguntas(ficheros: list[Path], tipo: str = "") -> str:
     """Las preguntas abiertas, numeradas como los botones Q1, Q2…, con la recomendada marcada. Cada una con su frase
     «Para el cliente» delante y lo técnico plegado en una línea; cada opción dice qué lanza (su efecto); al final, qué
     lanzará firmar sin tocar nada (club: un plan firmó 21 recomendadas de golpe sin ver que tres lanzaban trabajo)."""
@@ -1632,6 +1668,8 @@ def preguntas(ficheros: list[Path]) -> str:
         for letra, txt, rec in ops:
             e = efecto(b, letra)
             marca = _efecto_txt(e)
+            if e.get("efecto") == "req-change" and tipo in TIPOS_APLAZAN:
+                marca = "📌 se anota para la siguiente entrega"
             lineas.append(f"   {letra}) {e.get('cliente') or _MARCA_CAMBIO.sub('', txt).strip()}{'  ⭐ recomendada' if rec else ''}"
                           + (f"  ({marca})" if marca else ""))
             if rec:
@@ -1642,7 +1680,7 @@ def preguntas(ficheros: list[Path]) -> str:
         bloques.append("\n".join(lineas))
     if not bloques:
         return ""
-    resumen = _lanzara(recomendadas)
+    resumen = _lanzara(recomendadas, aplaza=tipo in TIPOS_APLAZAN)
     return ("\n\n❓ Antes, " + ("una pregunta" if len(bloques) == 1 else f"{len(bloques)} preguntas")
             + " (la recomendada ya está marcada en los botones Q):\n\n" + "\n\n".join(bloques) + "\n\n" + resumen)
 
@@ -1774,5 +1812,5 @@ if __name__ == "__main__":
         r = puerta_fallo(proyecto, json.loads(_leer(Path(a.fallo)) or "{}") if a.fallo else {})
     else:
         sys.exit(f"tipo de puerta desconocido: {a.tipo}")
-    r["texto"] += preguntas(ficheros_preguntas(repo))
+    r["texto"] += preguntas(ficheros_preguntas(repo), a.tipo)
     print(json.dumps(r, ensure_ascii=False))

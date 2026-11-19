@@ -9,9 +9,11 @@ description: "Requirements: capture customer needs verbatim, write EARS requirem
 >
 > En este arnés **no leas de vuelta las necesidades ni pidas la aprobación** (pasos de `AskUserQuestion` y
 > `references/approval.md` §6): escribe o completa `requirements/` con la petición literal, deja
-> `REQUIREMENTS.md` en `Status: Review`, anota en `.sdd/questions-requirements-engineer.json` lo que necesite al
-> cliente (clase C, con el formato de `references/async-questions.md`: «Para el cliente:» y un `efecto:` por opción;
-> la que cambia un requisito ya aprobado es `req-change`) y termina. La lectura de vuelta y la aprobación son la **puerta de requisitos**: la persona
+> `REQUIREMENTS.md` en `Status: Review`, escribe con su valor por defecto lo que el encargo deja abierto y anótalo en
+> la sección `## Supuestos` (clase S de `references/modo-arnes.md`: la persona los ve juntos en la puerta), anota en
+> `.sdd/questions-requirements-engineer.json` solo lo que no tenga un valor prudente y cambie lo que el cliente ve o
+> paga (clase C, como mucho 3, con el formato de `references/async-questions.md`: «Para el cliente:» y un `efecto:`
+> por opción; la que cambia un requisito ya aprobado es `req-change`) y termina. La lectura de vuelta y la aprobación son la **puerta de requisitos**: la persona
 > decide desde su canal y el notario hace el commit de aprobación y el tag `requirements-vN`.
 
 # Requirements Engineer (SWEBOK v4)

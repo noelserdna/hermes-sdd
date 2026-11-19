@@ -210,10 +210,11 @@ Answer:
 Q
 puerta g8c plan; t=$(mktemp); jq '.tablero = "repo" | .tarjeta = "t_1" | .titulo = "Plan por fases"' .sdd/hermes/puertas/g8c.json > "$t" && mv "$t" .sdd/hermes/puertas/g8c.json
 decidir g8c conforme telegram 111; PATH="$T/bin:$PATH" firmar g8c
-I=$(ls intent/INT-*.md 2>/dev/null | tail -1)
-[ $rc -eq 0 ] && [ -n "$I" ] && grep -q "Añadir cuatro REQ" "$I" && grep -q "Q-x-005" "$I" && grep -q "Cambio INT-" "$T/klog" \
-  && ! grep -q "Implementar FASE" "$T/klog" && echo "$out" | grep -q "lanza un cambio de requisitos" \
-  && ok "respuesta «Añadir REQ con sdd-req-change»: lanza un cambio de requisitos y no el tramo siguiente" || bad "cambio por respuesta: $out $(cat "$T/klog")"
+# (con los requisitos ya aprobados no se reabren a mitad de camino: el cambio queda en changes/aplazados.md, con su
+# commit, y sigue el tramo de siempre; antes lanzaba /cambio — 7 de las 8 vueltas de material-montana1-5)
+[ $rc -eq 0 ] && grep -q "Añadir cuatro REQ" changes/aplazados.md && grep -q "Q-x-005" changes/aplazados.md \
+  && git log -1 --format=%s -- changes/aplazados.md | grep -q "deferred" && ! grep -q "Cambio INT-" "$T/klog" && ! echo "$out" | grep -q "cambio de requisitos" \
+  && ok "respuesta «Añadir REQ con sdd-req-change» al aprobar el plan: queda aplazada (changes/aplazados.md) y sigue el tramo" || bad "cambio por respuesta: $out $(cat "$T/klog")"
 # … y una respuesta que no pide cambio sigue con el tramo de siempre
 cat > .sdd/questions-x.md <<'Q'
 ## Q-x-006 [OPEN] skill=x
@@ -250,9 +251,8 @@ Answer:
 Q
 : > "$T/klog"; puerta g8f preguntas 5; t=$(mktemp); jq '.tablero = "repo" | .tarjeta = "t_6" | .titulo = "Preguntas de la FASE-5"' .sdd/hermes/puertas/g8f.json > "$t" && mv "$t" .sdd/hermes/puertas/g8f.json
 decidir g8f respondo telegram 111; PATH="$T/bin:$PATH" firmar g8f
-I=$(ls -t intent/INT-*.md | head -1)
-[ $rc -eq 0 ] && grep -q "haya-027" "$I" && grep -q "Cambio INT-" "$T/klog" && ! grep -q "Implementar FASE-5" "$T/klog" \
-  && ok "preguntas de una FASE: una respuesta (req-change) lanza el cambio, no la FASE" || bad "preguntas req-change: $out $(cat "$T/klog")"
+[ $rc -eq 0 ] && grep -q "haya-027" changes/aplazados.md && ! grep -q "Cambio INT-" "$T/klog" && grep -q "Implementar FASE-5" "$T/klog" \
+  && ok "preguntas de una FASE: una respuesta (req-change) queda aplazada y la FASE sigue" || bad "preguntas req-change: $out $(cat "$T/klog")"
 # 8g. lanzar.sh respuestas: primero la tarjeta que aplica las respuestas; el tramo siguiente cuelga de ella
 : > "$T/klog"; puerta g8g fase 0; t=$(mktemp); jq '.titulo = "Aceptar FASE-0"' .sdd/hermes/puertas/g8g.json > "$t" && mv "$t" .sdd/hermes/puertas/g8g.json
 PATH="$T/bin:$PATH" bash "$ROOT/lanzar.sh" respuestas "$R" g8g acepto >/dev/null 2>&1
