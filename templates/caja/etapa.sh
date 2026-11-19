@@ -15,16 +15,19 @@ if [ -f package.json ] && grep -q '"@playwright/test"' package.json; then
   npx playwright install chromium >/dev/null 2>&1 || true
 fi
 AJUSTES='{"enabledPlugins":{"sdd-pipeline@noelserdna":false},"permissions":{"deny":["Edit(.sdd/hermes/decisiones/**)","Edit(.sdd/hermes/puertas/**)","Edit(wiki/**)"]}}'
-ARGS=(-p "$(cat .sdd/hermes/caja/prompt.txt)" --output-format json --plugin-dir /arnes/metodo --settings "$AJUSTES" --dangerously-skip-permissions)
+# stream-json: cada mensaje y cada herramienta queda en la transcripción (qué ficheros abre, cuántos turnos busca);
+# su última línea, {"type":"result"…}, es el mismo resultado que daba --output-format json
+ARGS=(-p "$(cat .sdd/hermes/caja/prompt.txt)" --output-format stream-json --verbose --plugin-dir /arnes/metodo --settings "$AJUSTES" --dangerously-skip-permissions)
 [ -n "${MODELO:-}" ] && ARGS+=(--model "$MODELO")
 [ -n "${TOPE_USD:-}" ] && ARGS+=(--max-budget-usd "$TOPE_USD")
 rc=0
-timeout $(( ${TOPE_MIN:-60} * 60 )) claude "${ARGS[@]}" > "$S/claude.json" 2> "$S/claude.err" || rc=$?
+timeout $(( ${TOPE_MIN:-60} * 60 )) claude "${ARGS[@]}" > "$S/transcripcion.jsonl" 2> "$S/claude.err" || rc=$?
 echo "$rc" > "$S/rc"
+grep '"type":"result"' "$S/transcripcion.jsonl" | tail -1 > "$S/claude.json" || true
 # Recoger: commits nuevos en un bundle, lo que quedó sin commit en un parche y lo ignorado permitido en un tar
 [ "$(git rev-parse HEAD)" = "$BASE" ] || git bundle create "$S/commits.bundle" "$BASE..HEAD" 2>/dev/null
 git diff HEAD --binary > "$S/pendiente.patch"
 L=(); for f in pipeline-state.json .sdd evidencias; do [ -e "$f" ] && L+=("$f"); done
 [ ${#L[@]} -eq 0 ] || tar czf "$S/ignorados.tgz" --exclude=.sdd/hermes/caja --exclude=.sdd/entregas \
-  --exclude=.sdd/hermes/lock --exclude=.sdd/hermes/decisiones --exclude=.sdd/hermes/puertas "${L[@]}"
+  --exclude=.sdd/hermes/lock --exclude=.sdd/hermes/decisiones --exclude=.sdd/hermes/puertas --exclude=.sdd/wiki "${L[@]}"
 exit 0

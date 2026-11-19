@@ -480,6 +480,45 @@ def _partida(texto: str) -> int:
     return n or len(re.findall(r"^\s*(?:[-*]|\d+[.)])\s+\S", texto, re.M)) or len(re.findall(r"^#{2,4}\s+\S", texto, re.M))
 
 
+def jev_requisitos(repo: Path) -> dict:
+    """La ayuda de Jev para la puerta de requisitos (no decide nada): qué requisito cubre cada necesidad del cliente
+    (`sdd-jev.mjs needs`) y los supuestos ordenados por lo probable que es que el cliente los quiera distintos
+    (scripts/jev/supuestos.json). Lo deja en .sdd/hermes/jev-requisitos.json para el texto de la puerta. Sin Jev
+    (sin clave, apagado) o si falla, {} y la puerta sale como siempre. Evaluado sobre 28 puertas reales: no detecta por sí
+    solo lo que una persona rechazaría, así que solo ordena lo que la persona revisa."""
+    import subprocess, tempfile
+    repo = Path(repo)
+    cli = SDD_CLI.parent / "sdd-jev.mjs"
+    out = {}
+    try:
+        if subprocess.run(["node", str(cli), "status"], capture_output=True, timeout=20).returncode != 0:
+            return {}
+        r = subprocess.run(["node", str(cli), "needs", str(repo / "requirements/CUSTOMER-NEEDS.md"),
+                            str(repo / "requirements/REQUIREMENTS.md"), "--json"], capture_output=True, text=True, timeout=120)
+        if r.returncode in (0, 1) and r.stdout.strip():
+            n = json.loads(r.stdout)
+            out["necesidades"] = len(n.get("items") or [])
+            out["dudosas"] = [{"id": it["id"], "p_ninguno": round(((it.get("answers") or {}).get("covered_by") or {}).get("p", {}).get("none", 0), 2)}
+                              for it in n.get("items") or [] if ((it.get("answers") or {}).get("covered_by") or {}).get("choice") == "none"]
+        sup = supuestos(repo)
+        if sup:
+            enc = " ".join(l[2:] for l in _leer(repo / "intent" / "INT-001.md").splitlines() if l.startswith("> "))
+            with tempfile.TemporaryDirectory() as d:
+                (Path(d) / "i.jsonl").write_text("\n".join(json.dumps({"id": str(k), "state": {"encargo": enc, "supuesto": x}}, ensure_ascii=False)
+                                                          for k, x in enumerate(sup)))
+                r = subprocess.run(["node", str(cli), "judge", "--questions", str(SDD_CLI.parent / "jev" / "supuestos.json"),
+                                    "--items", str(Path(d) / "i.jsonl")], capture_output=True, text=True, timeout=120)
+            if r.returncode == 0 and r.stdout.strip():
+                puntos = {int(it["id"]): it["answers"]["objetable"]["score"] for it in json.loads(r.stdout).get("items") or []}
+                out["supuestos"] = [{"texto": sup[k], "puntos": round(v, 2)} for k, v in sorted(puntos.items(), key=lambda kv: -kv[1])]
+    except (OSError, ValueError, KeyError, subprocess.SubprocessError):
+        return out
+    if out:
+        (repo / ".sdd" / "hermes").mkdir(parents=True, exist_ok=True)
+        (repo / ".sdd" / "hermes" / "jev-requisitos.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    return out
+
+
 def supuestos(repo: Path) -> list[str]:
     """Las líneas de la sección «## Supuestos» de requirements/REQUIREMENTS.md: lo que el encargo dejaba abierto y se
     escribió con un valor por defecto en vez de preguntarlo (clase S de references/modo-arnes.md)."""
@@ -565,9 +604,24 @@ def puerta_requisitos(repo: Path, proyecto: str, version: str = "", cambio: dict
     if web:
         partes.append(web)
     sup = supuestos(repo)
+    jev = json.loads(_leer(repo / ".sdd" / "hermes" / "jev-requisitos.json") or "{}") if (repo / ".sdd" / "hermes" / "jev-requisitos.json").exists() else {}
+    if jev.get("necesidades"):   # ayuda de Jev (jev_requisitos): no decide nada, señala dónde mirar
+        dud = jev.get("dudosas") or []
+        partes.append(f"🤖 Jev ha comprobado tus {jev['necesidades']} necesidades contra los requisitos: "
+                      + ("todas tienen un requisito que las cubre." if not dud else
+                         f"en {len(dud)} no ve claro qué requisito las cubre ({', '.join(d['id'] for d in dud)}); míralas en requirements/CUSTOMER-NEEDS.md."))
     if sup:   # clase S (references/modo-arnes.md): lo que el encargo dejaba abierto, con su valor por defecto
-        partes.append(f"🧩 Lo que hemos supuesto porque no lo decías ({len(sup)}); si alguno no vale, dilo con ✏️:\n"
-                      + "\n".join(f"• {x}" for x in sup))
+        orden = [x["texto"] for x in jev.get("supuestos") or [] if x.get("texto") in sup]
+        if len(orden) == len(sup):   # ordenados por Jev: primero los que más probablemente quieras distintos
+            top = [x["texto"] for x in jev["supuestos"][:3] if x.get("puntos", 0) >= 1.5]
+            resto = [x for x in orden if x not in top]
+            partes.append(f"🧩 Lo que hemos supuesto porque no lo decías ({len(sup)}); si alguno no vale, dilo con ✏️:"
+                          + (("\n👀 Mira sobre todo estos (los que más pueden no ser como los quieres):\n" + "\n".join(f"• {x}" for x in top)
+                              + ("\nEl resto:" if resto else "")) if top else "")
+                          + "\n" + "\n".join(f"• {x}" for x in resto))
+        else:
+            partes.append(f"🧩 Lo que hemos supuesto porque no lo decías ({len(sup)}); si alguno no vale, dilo con ✏️:\n"
+                          + "\n".join(f"• {x}" for x in sup))
     return {"titulo": titulo, "texto": "\n\n".join(partes) + _cierre_requisitos(extras)}
 
 
@@ -1764,6 +1818,8 @@ if __name__ == "__main__":
         print(normalizar_preguntas(Path(sys.argv[2]))); sys.exit(0)
     if sys.argv[1:2] == ["respuestas"]:
         sys.exit(_cli_respuestas(sys.argv[2:]))
+    if sys.argv[1:2] == ["jev-requisitos"]:   # jev-requisitos <repo>  (puerta.sh, antes del texto de la puerta de requisitos)
+        print(json.dumps(jev_requisitos(Path(sys.argv[2])), ensure_ascii=False)); sys.exit(0)
     if sys.argv[1:2] == ["preguntas-json"]:   # preguntas-json <ficheros questions-*.md|json…>  (puerta.sh: los botones Q)
         print(json.dumps(preguntas_json(sys.argv[2:]), ensure_ascii=False)); sys.exit(0)
     if sys.argv[1:2] == ["cerrar-huecos"]:    # cerrar-huecos <hoy> "<TASK-…>" <ficheros…>  (etapa.sh huecos)

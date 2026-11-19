@@ -10,6 +10,9 @@ requisitos (`requirements/`), las especificaciones (`spec/`), el plan (`plan/`),
 - File names: lowercase, hyphens, no spaces (e.g., `politica-de-prestamos.md`). Pages in Spanish.
 - Every wiki page starts with YAML frontmatter (see below).
 - Use `[[wikilinks]]` between pages (at least 2 outbound links per page).
+- **Los artefactos del método tienen su propia wiki generada**, al día antes de cada etapa: `../.sdd/wiki/index.md` y una
+  página por identificador, `../.sdd/wiki/<ID>.md` (definición, relacionados, quién lo cita, código, tests, veredicto).
+  Consúltala para responder sobre requisitos, casos de uso, pantallas, ADRs o fases; no la edites ni la copies aquí.
 - **Enlazar, no copiar**: cite method artifacts by id — `REQ-F-004`, `REQ-F-004 AC2`, `FASE-1`, `INT-002`,
   `DEC-001`, a gate (`puerta g179…`), a commit or tag (`fase-1-accepted`) — never paste their text here.
 - When updating a page, bump `updated`. Every new page goes into `index.md`; every action is appended to `log.md`.

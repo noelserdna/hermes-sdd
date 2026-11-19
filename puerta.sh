@@ -127,6 +127,9 @@ case "$TIPO" in
       EXTRA+=(--cambio "$INT" --anadidos "$ANADIDOS" --quitados "$QUITADOS")
     fi
     [ -f .sdd/hermes/adopcion ] && EXTRA+=(--adopcion 1)
+    # Ayuda de Jev para quien revisa (no decide): necesidades sin requisito claro y supuestos ordenados
+    rm -f .sdd/hermes/jev-requisitos.json
+    [ "${SDD_JEV:-}" = off ] || python3 "$TEXTOS" jev-requisitos "$REPO" >/dev/null 2>&1 || true
     [ -f .sdd/hermes/requisitos-de-partida.md ] && [ ! -f .sdd/hermes/cambio-actual ] && EXTRA+=(--partida .sdd/hermes/requisitos-de-partida.md)
     OPCIONES='[{"verbo":"acepto","etiqueta":"✅ Apruebo"},{"verbo":"cambios","etiqueta":"✏️ Falta o sobra algo","texto":true}]' ;;
   ruta)   # un botón por ruta configurada (SDD → Configuración → Rutas), la recomendada primero; cada opción guarda las

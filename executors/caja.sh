@@ -103,6 +103,8 @@ wait "$PID_C" || echo "el contenedor terminó con error" >> "$ERR"
 rm -f "$ENVF"
 MIN=$(( ($(date +%s) - INICIO) / 60 ))
 cp "$S/claude.json" "$OUT" 2>/dev/null; cat "$S/claude.err" >> "$ERR" 2>/dev/null
+# la transcripción de la sesión (qué leyó y qué hizo): para medir, nunca para decidir; comprimida, junto al run
+[ -s "$S/transcripcion.jsonl" ] && gzip -c "$S/transcripcion.jsonl" > "$DIR/runs/$RUN.transcripcion.jsonl.gz" 2>/dev/null
 [ -s "$S/base" ] || salir failed "la caja terminó sin dejar su trabajo: $(tail -c 300 "$ERR" | tr '\n' ' ')" "{\"minutes\":$MIN}"
 
 # ── 3. Validar y aplicar (lib/caja-aplicar.sh: las mismas reglas que la caja de GitHub) ──────────────────────────────

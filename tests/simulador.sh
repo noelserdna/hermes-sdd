@@ -12,6 +12,7 @@ set -uo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 fail=0; ok() { echo "ok   $1"; }; bad() { echo "FAIL $1"; fail=1; }
 command -v hermes >/dev/null 2>&1 || { echo "SKIP sin hermes: el simulador usa el kanban real"; exit 0; }
+export SDD_JEV=off   # sin red: el simulador no manda nada a Jev
 BASE=$(mktemp -d); [ -n "${CONSERVAR:-}" ] && echo "directorio: $BASE" || trap 'rm -rf "$BASE"' EXIT
 
 # ── piezas ──────────────────────────────────────────────────────────────────────────────────────────────────────────

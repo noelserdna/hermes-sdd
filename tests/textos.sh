@@ -739,4 +739,22 @@ assert "Lo que hemos supuesto porque no lo decías (2)" in t and "• La sesión
 (d / "requirements/REQUIREMENTS.md").write_text("# R\n\n## Traceability\n")
 assert "supuesto" not in T.puerta_requisitos(d, "p", "1.0")["texto"]
 PY
+# Ayuda de Jev en la puerta de requisitos (jev_requisitos): necesidades sin requisito claro y supuestos ordenados, con
+# los 3 que más conviene mirar arriba; sin su fichero, la puerta sale como siempre
+python3 - "$ROOT/plugin/hermes-sdd" <<'PY' && ok "puerta de requisitos: la ayuda de Jev señala necesidades dudosas y ordena los supuestos (sin decidir nada)" || bad "ayuda de Jev en requisitos"
+import sys, tempfile, json
+sys.path.insert(0, sys.argv[1]); import hsdd_textos as T
+from pathlib import Path
+d = Path(tempfile.mkdtemp()); (d / "requirements").mkdir(); (d / ".sdd/hermes").mkdir(parents=True)
+(d / "requirements/REQUIREMENTS.md").write_text("# R\n\n## Supuestos\n\n- Contraseña de 8 caracteres.\n- Los datos se guardan 2 años.\n- La reserva dura 14 días.\n")
+sin = T.puerta_requisitos(d, "p", "1.0")["texto"]
+assert "🤖 Jev" not in sin and "Mira sobre todo" not in sin, sin
+(d / ".sdd/hermes/jev-requisitos.json").write_text(json.dumps({"necesidades": 9, "dudosas": [{"id": "N-008", "p_ninguno": 0.8}],
+  "supuestos": [{"texto": "Los datos se guardan 2 años.", "puntos": 2.3}, {"texto": "La reserva dura 14 días.", "puntos": 1.6},
+                {"texto": "Contraseña de 8 caracteres.", "puntos": 0.8}]}))
+t = T.puerta_requisitos(d, "p", "1.0")["texto"]
+assert "Jev ha comprobado tus 9 necesidades" in t and "N-008" in t, t
+i = t.index("Mira sobre todo"); r = t.index("El resto:")
+assert i < t.index("Los datos se guardan 2 años.") < t.index("La reserva dura 14 días.") < r < t.index("Contraseña de 8 caracteres."), t
+PY
 exit $fail

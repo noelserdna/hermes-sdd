@@ -1,0 +1,15 @@
+{
+  "description": "Puerta de requisitos (hermes-sdd): ordena los supuestos (sección «## Supuestos» de REQUIREMENTS.md, clase S de references/modo-arnes.md) por lo probable que es que el cliente los quiera distintos, para enseñarle primero los que más conviene mirar. Un ítem por supuesto, state = {encargo: la petición literal del cliente, supuesto: una línea}. Solo ordena: nunca aprueba ni rechaza nada.",
+  "questions": {
+    "objetable": {
+      "type": "score",
+      "instructions": "A customer asked for a piece of software with the words in `encargo`. Where the request did not say, the team wrote down the assumption `supuesto` and built it that way. Judge how likely it is that THIS customer, reading the assumption, would want it different.",
+      "criteria": [
+        "Any customer would accept it: it is the usual choice, or it follows directly from what the customer wrote.",
+        "A reasonable choice, though this customer could prefer another equally reasonable option; little would change for them.",
+        "It shapes something the customer or their users will notice in daily use (a limit, a deadline, who can do what, what happens in a common case), and they may well want it different.",
+        "It goes against, narrows or adds to what the customer wrote, or decides something only the customer can decide (money, legal, privacy, who is responsible)."
+      ]
+    }
+  }
+}
