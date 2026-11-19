@@ -144,5 +144,25 @@ async def jev_grande():
     j = await m.bucle._consultar_jev({"id": "g1"})
     ok(j.get("error") == "HTTP 500" and tamanos == [90000], "Jev: otro error no se reintenta aquí")
 asyncio.run(jev_grande())
+
+# 7. Reglas antes del modelo (hsdd_nucleo.regla_jev): una puerta limpia de plan la firma una regla en nombre de Jev sin
+#    llamarlo; una vetada va a una persona sin llamarlo; una de requisitos iniciales sí se le pregunta
+async def reglas():
+    m = cargar("hsdd_r"); llamadas = []
+    async def modelo(puerta):
+        llamadas.append(puerta["id"]); return {"choice": "acepto", "p": 0.95, "modelo": "jev"}
+    m.bucle._consultar_jev = modelo; m._consultar_jev = modelo   # el bucle lo llama a través del paquete (P)
+    (HOME / "jev.json").write_text(json.dumps({"defecto": "auto"}))
+    def puerta(gid, tipo, opciones, **extra):
+        d = {"id": gid, "tipo": tipo, "estado": "abierta", "repo": str(R), "tablero": "repo", "opciones": opciones, **extra}
+        (HOME / f"puertas/{gid}.json").write_text(json.dumps(d)); return d
+    pl = await m.bucle._jev_en_puerta(HOME / "puertas/gr1.json", puerta("gr1", "plan", [{"verbo": "conforme", "etiqueta": "✅"}]))
+    fa = await m.bucle._jev_en_puerta(HOME / "puertas/gr2.json", puerta("gr2", "fase", [{"verbo": "acepto", "etiqueta": "✅"}], bloqueo=True))
+    rq = await m.bucle._jev_en_puerta(HOME / "puertas/gr3.json", puerta("gr3", "requisitos", [{"verbo": "acepto", "etiqueta": "✅"}]))
+    ok(pl.get("estado") == "decidida" and pl["jev"].get("regla") and pl["jev"]["decide"], f"regla: el plan limpio lo firma una regla ({pl.get('jev')})")
+    ok(not fa["jev"]["decide"] and "calidad" in fa["jev"]["motivo"], "regla: la FASE bloqueada va a una persona")
+    ok(llamadas == ["gr3"], f"regla: al modelo solo se le pregunta por los requisitos iniciales ({llamadas})")
+    (HOME / "jev.json").unlink()
+asyncio.run(reglas())
 shutil.rmtree(T, ignore_errors=True)
 sys.exit(1 if fallos else 0)

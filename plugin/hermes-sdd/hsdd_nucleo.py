@@ -532,11 +532,47 @@ def puede_jev(puerta: dict, cfg: dict | None = None) -> tuple[bool, str]:
         return False, "una opción autoriza editar tests que ya existían: la elige una persona"
     if antiguas and re.search(r"art\.?\s*12\b|decisi[oó]n humana|una persona autoriza|human decision", texto, re.I):
         return False, "una pregunta la reserva el método a una persona (editar tests que ya existían)"
-    if (puerta.get("encargado") or {}).get("graves"):   # revisión mecánica del encargado (hsdd_revision.py)
+    if graves_jev(puerta):   # revisión mecánica del encargado (hsdd_revision.py)
         return False, "el encargado marcó un aviso grave (lo decide una persona)"
+    # Un requisito que solo comprueba una persona a mano (inspección o demo): su «🔍 Lo he revisado» es de una persona
+    if puerta.get("revisar"):
+        return False, "hay algo que solo puede comprobar una persona a mano (inspección)"
     if not verbos_jev(puerta):
         return False, "ninguna opción de esta puerta se puede elegir sin escribir un motivo"
     return True, f"modo {modo}"
+
+
+def graves_jev(puerta: dict) -> int:
+    """Avisos graves del encargado que quitan la puerta a Jev. En la entrega no cuentan los de capturas
+    («captura-mal-tomada») de FASEs que ya pasaron su puerta: se aceptaron una a una (montana3, montana4 y taller2: tres
+    entregas a una persona por 10 avisos así, y las tres se aceptaron tal cual)."""
+    enc = puerta.get("encargado") or {}
+    if puerta.get("tipo") == "entrega" and isinstance(enc.get("avisos"), list):
+        return sum(1 for a in enc["avisos"] if a.get("grave") and a.get("codigo") != "captura-mal-tomada")
+    return int(enc.get("graves") or 0)
+
+
+def regla_jev(puerta: dict) -> tuple[str, str] | None:
+    """(verbo, regla) cuando la decisión no necesita juicio: una regla la firma en nombre de Jev, con la misma ventana
+    para deshacer, sin preguntar al modelo. None: lo juzga Jev (requisitos iniciales, ruta no fijada, mantenimiento).
+    Se llama solo si puede_jev no la veta. Sobre las 113 puertas decididas de 5 pruebas montana, club y los talleres,
+    esta política firma 55 (hoy 21) sin firmar ninguna que la persona rechazara (análisis del 18-nov-2026): Jev, con
+    p 0,5-0,8, pedía persona en puertas que la persona aceptaba tal cual."""
+    tipo, ops = puerta.get("tipo"), verbos_jev(puerta)
+    if tipo == "ruta":
+        fijada = next((o["verbo"] for o in puerta.get("opciones") or [] if o.get("fijada") and o["verbo"] in ops), None)
+        return (fijada, "la ruta la fijó el cliente al crear el proyecto") if fijada else None
+    if tipo == "requisitos" and puerta.get("por_respuestas") and "acepto" in ops:
+        return "acepto", "el cambio sale de respuestas que la persona ya eligió"
+    if tipo == "preguntas" and "respondo" in ops:
+        return "respondo", "las respuestas recomendadas: la persona delegó en ellas"
+    if tipo == "plan" and "conforme" in ops:
+        return "conforme", "plan sin avisos graves de la revisión"
+    if tipo in ("fase", "entrega") and "acepto" in ops:
+        return "acepto", "sin bloqueo, sin tests tocados, sin inspecciones ni avisos graves"
+    if tipo == "fallo" and "reintento" in ops:
+        return "reintento", "primer fallo de la etapa"
+    return None
 
 
 def _preguntas_jev() -> dict:
@@ -632,7 +668,7 @@ def aplicar_jev(gid: str, juicio: dict) -> dict:
         if not jev["decide"]:
             escribir(idx, puerta)
             return puerta
-        prueba = {"modelo": juicio.get("modelo", ""), "p": f"{float(juicio['p']):.3f}", "modo": modo,
+        prueba = {"modelo": juicio.get("modelo", ""), "p": f"{float(juicio['p']):.3f}", "modo": modo, "regla": juicio.get("regla", ""),
                   "demo": "no vista" if puerta.get("tipo") == "fase" or puerta.get("unica") else ""}
         return _registrar(idx, puerta, juicio["choice"], "",
                           {"persona": JEV, "canal": JEV, "id": juicio.get("modelo") or "jev"},
@@ -667,7 +703,9 @@ def describir_jev(puerta: dict) -> str:
                 else "🤖 Jev, el asistente que decide por ti, no ha podido responder: decides tú.")
     seguro = f"{round(float(j.get('p') or 0) * 100)} %"
     eleccion = j.get("choice")
-    if eleccion in verbos_jev(puerta):
+    if eleccion in verbos_jev(puerta) and j.get("regla"):
+        linea = f"🤖 Jev lo aprueba por regla ({verbos_jev(puerta)[eleccion]}): {j['regla']}."
+    elif eleccion in verbos_jev(puerta):
         linea = f"🤖 Jev aprobaría esto ({verbos_jev(puerta)[eleccion]}), con un {seguro} de seguridad."
     else:
         # Una regla le impide decidir (no pasa la comprobación, aviso grave…): eso, no «está seguro al 100 %»

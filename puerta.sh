@@ -252,11 +252,13 @@ jq -n --arg id "$ID" --arg t "$TIPO" --arg f "$FASE" --arg b "$BOARD" --arg s "$
   --argjson ad "$([ -f .sdd/hermes/adopcion ] && echo true || echo false)" \
   --argjson hz "$([ "$TIPO" = mantenimiento ] && cat .sdd/hermes/mantenimiento/hallazgos.json || echo null)" \
   --argjson fa "$([ "$TIPO" = fallo ] && cat .sdd/hermes/fallo.json || echo null)" \
+  --argjson pr "$([ "$TIPO" = requisitos ] && [ -n "${INT:-}" ] && grep -q '^Origen: puerta ' "intent/$INT.md" 2>/dev/null && echo true || echo false)" \
   --argjson te "${EDIT:-0}" --argjson bl "$BLOQUEO" --argjson un "${UNICA:-false}" --argjson rv "$(cat "$REV_JSON")" \
   --argjson en "$(jq -c '{avisos, graves}' <<< "$ENC")" --argjson pe "$PREG_ERROR" \
   '{id:$id, tipo:$t, fase:$f, tablero:$b, tarjeta:"", adopcion:$ad, sha:$s, creada:$c, repo:$r, titulo:$ti, texto:$tx,
     opciones:$o, demo:$v, preguntas:$q, preguntas_error:$pe, hallazgos:$hz, tests_editados:$te, bloqueo:$bl, unica:$un,
-    revisar:(($rv // {}).revisar // []), encargado:$en} + (if $fa then {fallo:$fa} else {} end)' > ".sdd/hermes/puertas/$ID.json"
+    revisar:(($rv // {}).revisar // []), encargado:$en} + (if $fa then {fallo:$fa} else {} end)
+    + (if $pr then {por_respuestas:true} else {} end)' > ".sdd/hermes/puertas/$ID.json"
 # La copia del repo es lo que se mostró (la lee el notario) y no lleva estado: el estado vive solo en el índice global
 # y solo cambia por las transiciones del núcleo (hsdd_nucleo.py transicion). Una puerta nueva del mismo proyecto, tipo y
 # FASE sustituye a la que siguiera abierta (club: reabrir la entrega dejaba dos puertas de entrega abiertas a la vez):

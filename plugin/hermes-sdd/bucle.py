@@ -140,7 +140,15 @@ async def _jev_en_puerta(idx: Path, p: dict) -> dict:
     """Si el proyecto tiene a Jev activo y aún no ha juzgado esta puerta, lo juzga (y decide si el modo lo deja)."""
     if p.get("estado") != "abierta" or "jev" in p or N.modo_jev(p.get("tablero", "")) == "humano":
         return p
-    juicio = await P._consultar_jev(p)
+    # Vetada: va a una persona y no se gasta una llamada al modelo. Una regla: firma sin juicio. Si no, lo juzga Jev.
+    puede, _ = N.puede_jev(p)
+    regla = N.regla_jev(p) if puede else None
+    if not puede:
+        juicio = {"choice": "persona", "p": 1.0, "confidence": 1.0, "modelo": "regla:veto"}
+    elif regla:
+        juicio = {"choice": regla[0], "p": 1.0, "confidence": 1.0, "modelo": "regla", "regla": regla[1]}
+    else:
+        juicio = await P._consultar_jev(p)
     try:
         p = N.aplicar_jev(p["id"], juicio)
     except N.Rechazo:

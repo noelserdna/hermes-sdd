@@ -233,4 +233,40 @@ assert list(N.verbos_jev({"tipo": "fallo", "opciones": ops})) == ["reintento"]
 assert N.puede_jev({"tipo": "fallo", "opciones": ops, "fallo": {"veces": 1}}, cfg)[0]
 assert not N.puede_jev({"tipo": "fallo", "opciones": ops, "fallo": {"veces": 2}}, cfg)[0]
 PY
+# Reglas (hsdd_nucleo.regla_jev): lo que no necesita juicio lo firma una regla en nombre de Jev, sin preguntar al
+# modelo; lo vetado va a una persona; el resto lo juzga Jev. Sobre 113 puertas reales: 59 firmadas (antes 21), ninguna
+# de las que la persona rechazó.
+python3 - "$ROOT/plugin/hermes-sdd" <<'PY' && ok "reglas: firman lo limpio (ruta fijada, cambio por respuestas, dudas, plan, FASE, entrega, primer fallo) y dejan a Jev o a la persona lo demás" || bad "reglas de Jev"
+import importlib.util, sys
+s = importlib.util.spec_from_file_location("N", sys.argv[1] + "/hsdd_nucleo.py"); N = importlib.util.module_from_spec(s); s.loader.exec_module(N)
+cfg = {"defecto": "auto"}
+def op(*vs, fijada=None): return [{"verbo": v, "etiqueta": v, **({"fijada": True} if v == fijada else {})} for v in vs]
+def caso(**p):
+    p = {"tablero": "x", **p}
+    puede, motivo = N.puede_jev(p, cfg)
+    return (N.regla_jev(p) or ("jev", ""))[0] if puede else "persona"
+fase = dict(tipo="fase", opciones=op("ver", "acepto", "observaciones", "rechazo"))
+casos = {
+    "ruta fijada": (caso(tipo="ruta", opciones=op("ruta-ligera", "ruta-completa", fijada="ruta-completa")), "ruta-completa"),
+    "ruta sin fijar": (caso(tipo="ruta", opciones=op("ruta-ligera", "ruta-completa")), "jev"),
+    "requisitos iniciales": (caso(tipo="requisitos", opciones=op("acepto")), "jev"),
+    "requisitos por respuestas": (caso(tipo="requisitos", opciones=op("acepto"), por_respuestas=True), "acepto"),
+    "dudas": (caso(tipo="preguntas", opciones=op("respondo")), "respondo"),
+    "dudas con editar-test": (caso(tipo="preguntas", opciones=op("respondo"), preguntas=[{"recomendada": "A", "efectos": {"A": {"efecto": "editar-test", "declarado": True}}}]), "persona"),
+    "plan": (caso(tipo="plan", opciones=op("conforme")), "conforme"),
+    "plan con aviso grave": (caso(tipo="plan", opciones=op("conforme"), encargado={"graves": 1}), "persona"),
+    "FASE limpia": (caso(**fase), "acepto"),
+    "FASE bloqueada": (caso(**fase, bloqueo=True), "persona"),
+    "FASE con tests tocados": (caso(**fase, tests_editados=1), "persona"),
+    "FASE con inspección": (caso(**fase, revisar=[{"req": "REQ-C-001"}]), "persona"),
+    "entrega con avisos de capturas ya aceptadas": (caso(tipo="entrega", opciones=op("acepto"), encargado={"graves": 3, "avisos": [{"grave": True, "codigo": "captura-mal-tomada"}] * 3}), "acepto"),
+    "entrega con otro aviso grave": (caso(tipo="entrega", opciones=op("acepto"), encargado={"graves": 1, "avisos": [{"grave": True, "codigo": "desplegable"}]}), "persona"),
+    "primer fallo": (caso(tipo="fallo", opciones=op("reintento", "paro"), fallo={"veces": 1}), "reintento"),
+    "segundo fallo": (caso(tipo="fallo", opciones=op("reintento", "paro"), fallo={"veces": 2}), "persona"),
+    "mantenimiento": (caso(tipo="mantenimiento", opciones=op("cambio")), "jev"),
+}
+mal = {k: v for k, v in casos.items() if v[0] != v[1]}
+assert not mal, mal
+assert N.describir_jev({"tipo": "plan", "opciones": op("conforme"), "jev": {"choice": "conforme", "p": 1, "regla": "plan sin avisos graves de la revisión", "decide": True}}).startswith("🤖 Jev lo aprueba por regla")
+PY
 exit $fail

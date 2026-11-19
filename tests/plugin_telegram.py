@@ -146,7 +146,8 @@ async def formulario_y_operacion():
 
 async def jev():
     # Jev en modo auto: el bucle lo consulta antes de publicar, decide, y el mensaje sale ya decidido con Deshacer
-    juicios = {"j_1": {"choice": "conforme", "p": 0.96, "confidence": "high", "modelo": "jev-test"},
+    # (puertas de requisitos iniciales: las que siguen yendo al modelo; un plan limpio ya lo firma una regla, sin él)
+    juicios = {"j_1": {"choice": "acepto", "p": 0.96, "confidence": "high", "modelo": "jev-test"},
                "j_2": {"choice": "persona", "p": 0.8, "confidence": "medium", "modelo": "jev-test"}}
     consultadas = []
     async def falso_jev(p):
@@ -155,8 +156,8 @@ async def jev():
     (HOME / "jev.json").write_text(json.dumps({"defecto": "humano", "proyectos": {"local": "auto"}}))
     for gid in ("j_1", "j_2"):
         (HOME / f"puertas/{gid}.json").write_text(json.dumps({
-            "id": gid, "tipo": "plan", "tablero": "", "repo": str(R), "titulo": "Plan", "texto": "3 FASEs", "estado": "abierta",
-            "opciones": [{"verbo": "conforme", "etiqueta": "✅ Conforme"}, {"verbo": "cambios", "etiqueta": "✏️ Cambiar", "texto": True}]}))
+            "id": gid, "tipo": "requisitos", "tablero": "", "repo": str(R), "titulo": "Requisitos", "texto": "12 requisitos", "estado": "abierta",
+            "opciones": [{"verbo": "acepto", "etiqueta": "✅ Apruebo"}, {"verbo": "cambios", "etiqueta": "✏️ Falta o sobra algo", "texto": True}]}))
     for f in HOME.glob("puertas/t_*.json"):   # las de las otras pruebas, fuera del bucle
         f.unlink()
     for f in HOME.glob("puertas/f*.json"):
@@ -166,7 +167,7 @@ async def jev():
     j1 = json.loads((HOME / "puertas/j_1.json").read_text()); j2 = json.loads((HOME / "puertas/j_2.json").read_text())
     ok(j1["estado"] == "decidida" and j1["decision"]["actor"]["canal"] == "jev", "auto: el bucle consulta a Jev y registra su decisión")
     textos = [t for t, _ in bot.enviados[antes:]]
-    ok(any("Jev lo ha decidido por ti: ✅ Conforme (seguridad 96 %)" in t and "↩ Deshacer" in t for t in textos),
+    ok(any("Jev lo ha decidido por ti: ✅ Apruebo (seguridad 96 %)" in t and "↩ Deshacer" in t for t in textos),
        "el mensaje dice, en claro, que decidió Jev, con su seguridad y hasta cuándo se puede deshacer")
     kb = [b.callback_data for t, k in bot.enviados[antes:] if "Jev lo ha decidido" in t for f in k.inline_keyboard for b in f]
     ok(kb == ["g:deshacer:j_1"], f"y trae el botón Deshacer ({kb})")

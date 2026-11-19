@@ -11,6 +11,27 @@ dejas hacer lo eliges tú, proyecto a proyecto.
 | `piloto` | recomienda en todas, y decide él las puertas de **ruta** y **plan** | Jev en ruta y plan; tú en el resto |
 | `auto` | decide cualquier puerta: requisitos, FASEs, entrega y mantenimiento | Jev, salvo en los casos de abajo |
 
+
+## Reglas antes del modelo (desde noviembre de 2026)
+
+No todas las puertas necesitan juicio. Antes de preguntar al modelo, el gateway mira la puerta
+(`hsdd_nucleo.puede_jev` y `regla_jev`):
+
+1. **Va a una persona, sin llamar al modelo:** bloqueo de calidad, tests que ya existían tocados, una recomendada que
+   autoriza editar tests, algo que solo se comprueba a mano (inspección), un aviso grave del encargado (en la entrega
+   no cuentan los de capturas de FASEs ya aceptadas), una etapa que vuelve a fallar.
+2. **La firma una regla, en nombre de Jev y con la misma ventana para deshacer:** la ruta que fijó el cliente, un
+   cambio de requisitos que sale de respuestas que la persona ya eligió, unas dudas (con sus recomendadas), un plan sin
+   avisos graves, una FASE o entrega sin nada de lo del punto 1, y el primer reintento de una etapa que falló. El
+   canal lo dice: «🤖 Jev lo aprueba por regla (…): <la regla>».
+3. **Lo juzga el modelo, con su umbral:** los requisitos iniciales, una ruta no fijada y el mantenimiento.
+
+Por qué: en las pruebas de noviembre Jev firmaba 21 de 113 puertas y no detectó ninguna de las decisiones negativas
+de la persona (todas las paraba ya un veto). Con p entre 0,5 y 0,8 pedía persona en puertas que la persona aceptaba
+tal cual; en FASE y entrega leía el informe de aceptación con impugnaciones ya cerradas y pedía persona en 18 de 20.
+Sobre esas mismas 113 puertas, estas reglas firman 59 sin firmar ninguna que la persona rechazara; en 8 la persona
+había añadido observaciones o elegido otra respuesta (para eso está la ventana de deshacer).
+
 ## Cómo se elige
 
 ```bash
