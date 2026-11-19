@@ -295,7 +295,7 @@ PY
 grep -q 'criterio, fijada}' "$ROOT/puerta.sh" && ok "puerta.sh guarda «fijada» en los botones de la ruta" || bad "fijada se pierde en puerta.sh"
 # la forma que pide la granularidad, comprobada (antes, prosa del prompt): plan compacto de una FASE sin ficheros de
 # más; tareas dentro de su tope y sin tareas de «verificar criterios»
-python3 - "$ROOT/plugin/hermes-sdd" "$T" <<'PY' && ok "forma del plan y de las tareas según la granularidad: comprobada" || bad "forma"
+python3 - "$ROOT/plugin/hermes-sdd" "$T" <<'PY' && ok "forma del plan y de las tareas según la granularidad: comprobada (también el tope de FASEs)" || bad "forma"
 import sys; from pathlib import Path; sys.path.insert(0, sys.argv[1]); import hsdd_plan as P
 r = Path(sys.argv[2]) / "forma"; (r / "plan" / "fases").mkdir(parents=True); (r / "task").mkdir()
 (r / "plan" / "PLAN.md").write_text("> **Plan-Size:** compact\n"); (r / "plan" / "fases" / "FASE-0-SKELETON.md").write_text("x")
@@ -310,5 +310,12 @@ assert any("8 tareas" in x for x in f) and any("TASK-F0-008" in x for x in f) an
 assert not any("tareas;" in x for x in P.forma(r, "tareas", "fina")), P.forma(r, "tareas", "fina")
 (r / "task" / "TASK-FASE-0.md").write_text("- [ ] TASK-F0-001 Porción\n- [ ] TASK-F0-002 Porción\n- [ ] TASK-F0-003 Verify all FASE-0 criteria end to end | `tests/e2e/viaje.spec.js`\n")
 assert not any("TASK-F0-003" in x for x in P.forma(r, "tareas", "compacta")), P.forma(r, "tareas", "compacta")
+# tope de FASEs (material-montana6: 9 FASEs con granularidad normal; cada una cuesta su ronda fija)
+n = Path(sys.argv[2]) / "fases"; (n / "plan" / "fases").mkdir(parents=True)
+for i in range(6): (n / "plan" / "fases" / f"FASE-{i}-X.md").write_text("x")
+assert not any("FASEs;" in x for x in P.forma(n, "plan", "normal")), P.forma(n, "plan", "normal")
+for i in range(6, 9): (n / "plan" / "fases" / f"FASE-{i}-X.md").write_text("x")
+assert any("tiene 9 FASEs" in x and "como mucho 6" in x for x in P.forma(n, "plan", "normal")), P.forma(n, "plan", "normal")
+assert not any("FASEs;" in x for x in P.forma(n, "plan", "fina")), P.forma(n, "plan", "fina")
 PY
 exit $fail

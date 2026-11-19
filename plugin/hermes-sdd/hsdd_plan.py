@@ -98,6 +98,10 @@ TAREA = re.compile(r"^\s*- \[[ xX]\] (TASK-[A-Za-z0-9-]+)(.*)$", re.M)
 VERIFICAR = re.compile(r"\b(verif\w*|comprob\w*|check)\b.{0,40}\b(criteri\w*|constraint\w*|restricci\w*|acceptance)\b", re.I)
 RECORRIDO = re.compile(r"e2e|end to end|journey|recorrido|playwright|\.spec\.", re.I)
 TOPES = {"compacta": (3, 6), "normal": (2, 10)}   # normal: «unas 4 a 8», con margen; fina: sin tope
+# FASEs como mucho, según la granularidad. Cada FASE cuesta unos 21 min fijos (implementar + aceptar + su puerta) se
+# entregue lo que se entregue (análisis de variabilidad, 18-nov): material-montana6 repartió 33 requisitos en 9 FASEs
+# (montana2-5: 4-7) y el corte de la FASE-2 llevó menos requisitos que nunca
+MAX_FASES = {"compacta": 1, "normal": 6, "fina": 10}
 
 
 def forma(repo, que: str, gran: str) -> list:
@@ -107,6 +111,10 @@ def forma(repo, que: str, gran: str) -> list:
     if que == "plan":
         if any("HARDENING" in f.name.upper() for f in fases) and gran in ("compacta", "normal"):
             out.append("hay una FASE de endurecimiento (HARDENING): sus criterios medidos van en la FASE que entrega el recorrido que miden")
+        tope = MAX_FASES.get(gran)
+        if gran != "compacta" and tope and len(fases) > tope:
+            out.append(f"el plan tiene {len(fases)} FASEs; con granularidad {gran} van como mucho {tope}: junta en una FASE "
+                       "los recorridos del mismo actor o los que comparten pantallas")
         if gran == "compacta":
             if [f.name.split("-")[1] for f in fases] != ["0"]:
                 out.append(f"un plan compacto tiene exactamente una FASE, la FASE-0 (hay {len(fases)}: {', '.join(f.name for f in fases)})")

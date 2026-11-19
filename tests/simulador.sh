@@ -180,10 +180,12 @@ esc_descarto() {
 #    puerta de entrega de las FASEs 0 y 1 y, aceptada, queda la etiqueta entrega-1 (material-montana2..5 lo hicieron así)
 esc_entrega() {
   nuevo entrega '{}' || return
+  # el corte se programa al empezar (lanzar.sh entregar --tras 1): nadie tiene que estar mirando para cortar
+  # (material-montana6: las reglas firmaron las FASEs solas y, cortando a mano, se hizo una de más)
+  bash "$ROOT/lanzar.sh" entregar "$R" --tras 1 >>"$LOG" 2>&1
   decide_e() {
     local p=$1 t; t=$(jq -r '.tipo + ":" + (.fase // "")' "$HERMES_SDD_HOME/puertas/$p.json")
     case "$t" in
-      fase:1) decide "$p" acepto && bash "$ROOT/lanzar.sh" entregar "$R" >>"$LOG" 2>&1 ;;
       # la grabación tiene un requisito de cobertura sin medir: la entrega sale bloqueada y solo vale eximirlo (N25 en
       # material-montana3: «eximo» dejó la puerta en error)
       entrega:) if jq -e '.bloqueo' "$HERMES_SDD_HOME/puertas/$p.json" >/dev/null; then decide "$p" eximo "La cobertura se mide al terminar todas las FASEs"
@@ -192,7 +194,7 @@ esc_entrega() {
     esac
   }
   correr decide_e 60
-  git -C "$R" tag -l | grep -qx entrega-1 && ok "entrega: /entregar tras la FASE-1 acaba en la etiqueta entrega-1" \
+  git -C "$R" tag -l | grep -qx entrega-1 && ok "entrega: el corte programado (entregar --tras 1) se lanza solo y acaba en la etiqueta entrega-1" \
     || bad "entrega: sin entrega-1 ($(git -C "$R" tag -l | tr '\n' ' '); $(grep -E 'PUERTA|NOTARIO|Cierre' "$LOG" | tail -3 | tr '\n' ' '))"
   tarjetas | jq -e '[.[] | select((.title | startswith("Implementar FASE-2")) and (.status == "done" or .status == "running"))] | length == 0' >/dev/null \
     && ok "entrega: la FASE-2 que estaba en cola no se ejecuta" || bad "entrega: la FASE-2 se ejecutó"

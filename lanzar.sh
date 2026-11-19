@@ -329,6 +329,12 @@ tramo_requisitos_otra_vez() { tarjeta "Requisitos (cambios)" - 40m requisitos; }
 tramo_tras_ruta() { tras_ruta; }
 tramo_ruta_otra_vez() { tarjeta "Ruta (otra vez)" - 20m ruta; }
 tramo_fases_o_cierre() {  # la primera FASE sin aceptar o, si no queda ninguna (un cambio sin FASE nueva), el cierre
+  # Corte programado (lanzar.sh entregar --tras N): aceptada la FASE N, se entrega lo aceptado en vez de seguir. Antes
+  # había que estar mirando para cortar a mano (material-montana6: las reglas firmaron las FASEs solas y se hizo una de más)
+  local CORTE; CORTE=$(cat "$REPO/.sdd/hermes/entregar-tras" 2>/dev/null || true)   # set -e: sin corte, sigue
+  if [ -n "$CORTE" ] && git -C "$REPO" rev-parse -q --verify "refs/tags/fase-$CORTE-accepted" >/dev/null; then
+    rm -f "$REPO/.sdd/hermes/entregar-tras"; bash "$ROOT/lanzar.sh" entregar "$REPO"; return
+  fi
   local N; N=$(primera_sin_aceptar)
   if [ -n "$N" ]; then fase_n "$N"; else cierre; fi
 }
@@ -420,6 +426,15 @@ case "$CMD" in
 
   entregar)     # entrega parcial: lo aceptado hasta ahora (tags fase-N-accepted) se entrega ya; el resto del plan sigue
                 # pendiente y se retoma con el encadenado normal (material-montana: no había forma de cortar y entregar)
+                # entregar <repo> --tras N: programado; se entrega en cuanto se acepte la FASE N (sin mirar)
+    if [ "${3:-}" = --tras ]; then
+      [[ "${4:-}" =~ ^[0-9]+$ ]] || { echo "uso: lanzar.sh entregar <repo> --tras <N>" >&2; exit 2; }
+      mkdir -p "$REPO/.sdd/hermes"
+      if ! git -C "$REPO" rev-parse -q --verify "refs/tags/fase-$4-accepted" >/dev/null; then
+        echo "$4" > "$REPO/.sdd/hermes/entregar-tras"; echo "Entrega programada: en cuanto se acepte la FASE-$4"; exit 0
+      fi
+      rm -f "$REPO/.sdd/hermes/entregar-tras"   # ya aceptada: se entrega ahora
+    fi
     F=$(git -C "$REPO" tag -l 'fase-*-accepted' | sed -E 's/fase-([0-9]+)-accepted/\1/' | sort -n | tr '\n' ' ' | sed 's/ $//')
     [ -n "$F" ] || { echo "No hay ninguna FASE aceptada: no hay nada que entregar" >&2; exit 2; }
     TOTAL=$(ls "$REPO"/plan/fases/FASE-*.md 2>/dev/null | wc -l | tr -d ' ')
