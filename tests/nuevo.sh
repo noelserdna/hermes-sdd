@@ -178,4 +178,12 @@ PY
 rechazo
 rechazo
 {} sonnet" ] && ok "cambios por etapa (traducidos a cada ejecutor), validados; elegir un perfil los quita" || bad "por etapa: $o"
+# ── sin identidad de git (máquina nueva, PcWindows 20/11/2026): rechazo claro ANTES de crear nada ──────────────────
+printf '[user]\n\tuseConfigOnly = true\n' > "$T/gitconfig-vacio"
+o=$(env -u GIT_AUTHOR_NAME -u GIT_AUTHOR_EMAIL -u GIT_COMMITTER_NAME -u GIT_COMMITTER_EMAIL -u EMAIL \
+    GIT_CONFIG_GLOBAL="$T/gitconfig-vacio" GIT_CONFIG_NOSYSTEM=1 $NUEVO sin-identidad "$QUE" 2>&1); rc=$?
+[ $rc -ne 0 ] && echo "$o" | grep -q 'git no sabe quién eres' && echo "$o" | grep -q 'git config --global user.name' \
+  && ok "sin identidad de git: rechazo que dice cómo ponerla" || bad "sin identidad: rc=$rc $o"
+[ ! -e "$T/proyectos/sin-identidad" ] && ok "sin identidad de git: no deja la carpeta a medias" \
+  || bad "sin identidad: quedó $(ls -A "$T/proyectos/sin-identidad" | tr '\n' ' ')"
 exit $fail

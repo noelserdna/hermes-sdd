@@ -471,6 +471,10 @@ def nuevo_proyecto(nombre: str, que: str, stack: str | None = None, carpeta: str
         raise Rechazo(f"Ya hay un tablero {tablero} en el kanban; elige otro nombre")
     if not shutil.which("git", path=env["PATH"]):
         raise Rechazo("No encuentro git")
+    # Sin identidad, el primer commit falla (máquina nueva: PcWindows, 20/11/2026): se dice antes de crear nada
+    if subprocess.run(["git", "var", "GIT_COMMITTER_IDENT"], capture_output=True, env=env, cwd=str(Path.home())).returncode != 0:
+        raise Rechazo("git no sabe quién eres y no podría hacer el primer commit. Ponlo una vez con:\n"
+                      "git config --global user.name \"Tu nombre\"\ngit config --global user.email \"tu@correo\"")
 
     def git(*a):
         r = subprocess.run(["git", "-C", str(repo), *a], capture_output=True, text=True, env=env)
@@ -478,15 +482,25 @@ def nuevo_proyecto(nombre: str, que: str, stack: str | None = None, carpeta: str
             raise Rechazo(f"git {a[0]} falló: {(r.stderr or r.stdout).strip()[-300:]}")
         return r.stdout
 
+    existia = repo.exists()
     repo.mkdir(parents=True, exist_ok=True)
-    git("init", "-q", "-b", "main")
-    (repo / "AGENTS.md").write_text(agents_md(nombre, st, que))
-    (repo / "intent").mkdir(exist_ok=True)
-    (repo / "intent" / "INT-001.md").write_text(intent_md(que))
-    (repo / ".gitignore").write_text(GITIGNORE)
-    copiar_plantilla(st["id"], repo)
-    git("add", "-A")
-    git("commit", "-q", "-m", f"chore: proyecto {tablero} (stack {st['id']}) con la petición inicial")
+    try:
+        git("init", "-q", "-b", "main")
+        (repo / "AGENTS.md").write_text(agents_md(nombre, st, que))
+        (repo / "intent").mkdir(exist_ok=True)
+        (repo / "intent" / "INT-001.md").write_text(intent_md(que))
+        (repo / ".gitignore").write_text(GITIGNORE)
+        copiar_plantilla(st["id"], repo)
+        git("add", "-A")
+        git("commit", "-q", "-m", f"chore: proyecto {tablero} (stack {st['id']}) con la petición inicial")
+    except Exception:
+        # nada a medias: lo que se creó aquí se quita (la carpeta ya existía vacía → se deja vacía)
+        if existia:
+            for hijo in repo.iterdir():
+                shutil.rmtree(hijo) if hijo.is_dir() and not hijo.is_symlink() else hijo.unlink()
+        else:
+            shutil.rmtree(repo, ignore_errors=True)
+        raise
     if jev:
         N.poner_modo(jev, tablero)
     if ruta:   # la ruta fijada al crear el proyecto: será la recomendada en su puerta de ruta
