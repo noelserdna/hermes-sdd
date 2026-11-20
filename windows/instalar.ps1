@@ -50,12 +50,13 @@ $url = "https://raw.githubusercontent.com/noelserdna/hermes-sdd/$Rama/windows/pr
 & wsl.exe -d $Distro --cd "~" -- bash -lc "curl -fsSL $url -o /tmp/hsdd-preparar.sh && bash /tmp/hsdd-preparar.sh"
 if ($LASTEXITCODE -ne 0) { Aviso "preparar-ubuntu.sh termino con error ($LASTEXITCODE). Revisa la salida de arriba."; exit $LASTEXITCODE }
 
-Paso "4/6 systemd"
+Paso "4/6 systemd y PATH limpio"
 $pid1 = ((& wsl.exe -d $Distro -- ps -p 1 -o comm=) -join "").Trim()
-if ($pid1 -ne "systemd") {
+$conWin = ((& wsl.exe -d $Distro -- sh -c 'echo "$PATH" | grep -c /mnt/') -join "").Trim()
+if ($pid1 -ne "systemd" -or $conWin -ne "0") {
   & wsl.exe --terminate $Distro | Out-Null
-  Ok "Ubuntu reiniciado para activar systemd"
-} else { Ok "activo" }
+  Ok "Ubuntu reiniciado: systemd activo y sin el PATH de Windows"
+} else { Ok "ya estaba" }
 
 Paso "5/6 Mantener Ubuntu despierto al iniciar sesion"
 $tarea = "hermes-sdd WSL"

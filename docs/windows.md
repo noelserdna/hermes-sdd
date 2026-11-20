@@ -30,7 +30,9 @@ Ubuntu, y Telegram y el panel web se usan desde Windows como siempre.
 4. El script hace el resto. Puedes repetirlo cuando quieras: lo que ya está hecho se salta.
    - Comprueba que Ubuntu está en WSL2.
    - Dentro de Ubuntu ([`windows/preparar-ubuntu.sh`](../windows/preparar-ubuntu.sh)): instala `git jq rsync python3
-     perl openssl`, Node 22, Hermes Agent y Claude Code, activa systemd y clona el arnés en `~/hermes-sdd`.
+     perl openssl`, Node 22, **Docker** (la caja donde trabaja el agente; en macOS es Apple container), Hermes Agent y
+     Claude Code; activa systemd, **quita de Ubuntu el PATH de Windows** (si no, puede colarse el `node` o el `docker`
+     de Windows) y clona el arnés en `~/hermes-sdd`. Te avisa si git no sabe quién eres.
    - Crea la tarea programada **«hermes-sdd WSL»**, que mantiene Ubuntu encendido mientras tienes la sesión abierta.
      Sin ella, WSL apaga Ubuntu al cerrar la última ventana y con él el gateway: dejarían de llegarte las puertas.
    - Con `-NoDormir` (desde un clon: `powershell -ExecutionPolicy Bypass -File windows\instalar.ps1 -NoDormir`),
@@ -40,7 +42,10 @@ Ubuntu, y Telegram y el panel web se usan desde Windows como siempre.
    ```bash
    # 1. Configura Hermes (modelo, clave del proveedor y Telegram en el gateway) siguiendo su guía
    hermes config set kanban.auto_decompose false
+   git config --global user.name "Tu nombre"; git config --global user.email "tu@correo"   # si te lo avisó
    claude                                   # inicia sesión en Claude Code una vez
+   claude setup-token                       # el token de la caja: copia la cadena sk-ant-oat01-…
+   bash ~/hermes-sdd/caja-token.sh          # y pégala aquí (no se ve); queda en ~/.hermes/hermes-sdd/caja-token (600)
    cd ~/hermes-sdd && bash instalar.sh      # perfiles, plugin y aprobadores.json
    hermes gateway restart
    bash tests/todo.sh                       # todas las pruebas, sin LLM: deben salir "ok"
@@ -58,12 +63,14 @@ Lo mismo, paso a paso, por si prefieres ver cada comando.
    sudo apt update && sudo apt install -y git jq rsync python3 perl openssl curl
    # Node 22. El de apt en Ubuntu 24.04 es el 18: el arnés funciona con él, pero Playwright (capturas y vídeos de las demos) no
    curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - && sudo apt install -y nodejs
-   curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash      # Hermes Agent
+   sudo apt install -y docker.io && sudo usermod -aG docker $USER          # la caja del agente
+   curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash -s -- --non-interactive   # Hermes Agent
    curl -fsSL https://claude.ai/install.sh | bash                          # Claude Code
-   printf '[boot]\nsystemd=true\n' | sudo tee -a /etc/wsl.conf             # el gateway como servicio
+   printf '[boot]\nsystemd=true\n[interop]\nappendWindowsPath=false\n' | sudo tee -a /etc/wsl.conf   # servicio y PATH limpio
    ```
 
-   Reinicia Ubuntu para activar systemd: en PowerShell, `wsl --shutdown`.
+   Reinicia Ubuntu para que se aplique: en PowerShell, `wsl --terminate Ubuntu`. El instalador de Hermes, sin
+   `--non-interactive`, abre su asistente y se queda esperando (la configuración se hace después).
 3. **El arnés**: clónalo **dentro de tu home de Ubuntu**, no en `/mnt/c/...`. El disco de Windows es entre 10 y 100
    veces más lento desde WSL y en él `chmod 600` no protege tus claves (el instalador avisa si lo detecta).
 
@@ -92,6 +99,41 @@ Lo mismo, paso a paso, por si prefieres ver cada comando.
   proyecto, después de `npm install`: `npx playwright install --with-deps chromium`. La versión del navegador debe
   coincidir con la de Playwright del proyecto, por eso se instala ahí y no de forma global.
 
+## Manejarlo desde otro ordenador por SSH
+
+Si el Windows hace de servidor (Hermes y las etapas allí; tú, o tu Claude Code, en otro ordenador):
+
+1. En PowerShell como administrador, el servidor SSH de Windows y tu clave (con un usuario administrador, la clave va
+   en un fichero aparte con permisos estrictos):
+
+   ```powershell
+   Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+   Start-Service sshd; Set-Service sshd -StartupType Automatic
+   Add-Content C:\ProgramData\ssh\administrators_authorized_keys "<tu clave pública>"
+   icacls C:\ProgramData\ssh\administrators_authorized_keys /inheritance:r /grant "*S-1-5-32-544:F" /grant "*S-1-5-18:F"
+   # que «ssh» entre directo en Ubuntu, no en cmd:
+   New-ItemProperty -Path HKLM:\SOFTWARE\OpenSSH -Name DefaultShell -Value C:\Windows\System32\bash.exe -PropertyType String -Force
+   New-ItemProperty -Path HKLM:\SOFTWARE\OpenSSH -Name DefaultShellCommandOption -Value "-c" -PropertyType String -Force
+   ```
+
+2. Trampas de ese montaje:
+   - `bash.exe` sustituye las `$VARIABLES` antes de que las vea bash: manda los scripts por la entrada,
+     `ssh pc 'bash -s' <<'FIN' … FIN`.
+   - `scp` no sirve (usa el sftp de Windows): copia con `ssh pc 'cat > fichero' < fichero` o con `rsync`.
+   - Lo que dejes en segundo plano muere si WSL apaga Ubuntu: por eso la tarea «hermes-sdd WSL».
+   - Con `sudo` sin contraseña para tu usuario (`/etc/sudoers.d/…`) se puede instalar sin estar delante.
+
+## Llevarte Hermes de otro ordenador
+
+Instala como arriba y copia, sin secretos: `~/.hermes/config.yaml`, `SOUL.md`, `memories/` y de
+`~/.hermes/hermes-sdd/`: `lecciones/`, `aprobadores.json`, `jev.json`, `mantenimiento.json`, `sdd.json`, `actas/` y
+`puertas/`. Después:
+- en `aprobadores.json`, el canal `local` y `dashboard` son tu usuario **de Ubuntu** (no el del otro ordenador);
+- `encargados.json` apunta a las carpetas de los proyectos del otro ordenador: no lo copies (o déjalo en `{}`);
+- en `.env`, quita lo que solo valía allí (rutas `/Users/…`, `TERMINAL_ENV=docker` si no lo usas);
+- los secretos (`.env`, `auth.json`) por un canal seguro, con permisos 600; el token de la caja, con `caja-token.sh`;
+- un bot de Telegram solo admite **un** gateway: para el del otro ordenador antes de arrancar este.
+
 ## Problemas frecuentes
 
 | Síntoma | Causa y solución |
@@ -102,6 +144,10 @@ Lo mismo, paso a paso, por si prefieres ver cada comando.
 | Una etapa se corta a la mitad | El equipo se suspendió. Repite `instalar.ps1 -NoDormir` o desactiva la suspensión enchufado. |
 | `Executable doesn't exist … ms-playwright` | Falta el navegador de Playwright. En el proyecto: `npx playwright install --with-deps chromium`. |
 | `wsl -l -v` muestra versión 1 | `wsl --set-version Ubuntu 2`. |
+| Una etapa falla: «no hay token de Claude para la caja» | `claude setup-token` y `bash ~/hermes-sdd/caja-token.sh`. |
+| La caja falla con «Permission denied» en `/salida` | Arnés anterior al 20/11/2026: actualiza (`git pull && bash instalar.sh`); la imagen se construye ahora con tu uid. |
+| Un proyecto nuevo falla: «git no sabe quién eres» | `git config --global user.name "…"` y `user.email "…"`. |
+| `echo $PATH` en Ubuntu tiene rutas `/mnt/c/…` | Falta `appendWindowsPath=false` en `/etc/wsl.conf` (lo pone `preparar-ubuntu.sh`); `wsl --terminate Ubuntu`. |
 
 ## ¿Y sin WSL, en Windows "nativo"?
 
