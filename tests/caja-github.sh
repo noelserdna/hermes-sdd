@@ -130,7 +130,7 @@ grep -q 'repo create yo/proyecto-caja --public' "$T/gh2.log" && ok "crea el repo
 [ "$(jq -r .ejecutor .sdd/hermes/hermes-sdd.json)" = github ] && git ls-files --error-unmatch .github/workflows/sdd-etapa.yml >/dev/null 2>&1 \
   && ok "el proyecto queda con ejecutor github y el workflow de la caja commiteado" || bad "workflow: $(git ls-files | head)"
 [ "$(git -C "$T/nuevo.git" rev-parse main 2>/dev/null)" = "$(git rev-parse HEAD)" ] && ok "y subido a la rama por defecto (el workflow tiene que estar ahí)" || bad "push"
-echo "$o" | grep -q 'falta el token de Claude en yo/proyecto-caja' && echo "$o" | grep -q 'pbpaste' && ok "avisa de que falta el token y cómo ponerlo" || bad "aviso: $o"
+echo "$o" | grep -q 'falta el token de Claude en yo/proyecto-caja' && echo "$o" | grep -q 'caja-token.sh yo/proyecto-caja' && ok "avisa de que falta el token y cómo ponerlo" || bad "aviso: $o"
 # con el token en el llavero, el repo nuevo lo recibe solo (sin mostrarlo)
 printf '#!/usr/bin/env bash\ncase "$*" in *"-s hermes-sdd-caja -w"*) echo " sk-ant-oat01-falsofalsofalsofalsofalsofalsofalsofalso " ;; *) exit 44 ;; esac\n' > "$T/bin2/security"
 cat >> "$T/bin2/gh" <<G

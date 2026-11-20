@@ -17,7 +17,7 @@
 #
 # Configuración (.sdd/hermes/hermes-sdd.json → "caja"): {"runtime": "container"|"docker", "memoria": "4G", "cpus": 4}.
 # Por defecto, Apple container si está; si no, docker. Imagen: hermes-sdd-caja:<versión de templates/caja>, que se
-# construye sola la primera vez. Token: $CLAUDE_CODE_OAUTH_TOKEN o el llavero (caja-token.sh, servicio hermes-sdd-caja).
+# construye sola la primera vez. Token: $CLAUDE_CODE_OAUTH_TOKEN o lo guardado con caja-token.sh (lib/token-caja.sh).
 # Última línea de stdout: JSON {outcome: done|failed|scheduled, reason, run, session_id, cost_usd, turns, minutes, resumen}
 set -uo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -53,8 +53,9 @@ if [ "$RT" = container ]; then
     salir failed "Apple container no está en marcha: «container system start»"
 fi
 [ -z "$(git status --porcelain --untracked-files=no)" ] || salir failed "el proyecto tiene cambios sin commit: la caja empieza desde un commit"
-TOKEN=${CLAUDE_CODE_OAUTH_TOKEN:-$(security find-generic-password -s hermes-sdd-caja -w 2>/dev/null | tr -d '[:space:]')}
-[ -n "$TOKEN" ] || salir failed "no hay token de Claude para la caja: ponlo con caja-token.sh (claude setup-token)"
+. "$ROOT/lib/token-caja.sh"
+TOKEN=$(token_caja)
+[ -n "$TOKEN" ] || salir failed "no hay token de Claude para la caja: $(token_caja_ayuda)"
 VER=$(cat "$ROOT/templates/caja/Containerfile" | shasum | cut -c1-12)
 IMG="hermes-sdd-caja:$VER"; BARGS=()
 # Docker en Linux (WSL incluido): los montajes conservan el uid del anfitrión; el agente de la caja debe ser el mismo

@@ -79,6 +79,13 @@ img=$(grep '^build' "$T/log" | grep -o 'hermes-sdd-caja:[^ ]*' | head -1)
 [ -n "$img" ] && echo "$img" | grep -q -- "-u$U\$" && grep '^run' "$T/log" | grep -q -- "$img" \
   && ok "docker en Linux: su propia etiqueta de imagen (…-u$U), la misma que se lanza" || bad "linux img: $img / $(grep '^run' "$T/log" | grep -o 'hermes-sdd-caja:[^ ]*')"
 [ "$(echo "$o" | jq -r .outcome)" = done ] && ok "docker en Linux: la etapa termina" || bad "linux: $o"
+# Sin $CLAUDE_CODE_OAUTH_TOKEN en Linux: el token guardado con caja-token.sh (fichero 600 del arnés) llega a la caja
+mkdir -p "$T/hsdd"; ( umask 077; echo sk-ant-oat01-del-fichero > "$T/hsdd/caja-token" ); : > "$T/log"; rm -f "$T/log.env"
+r=$(proyecto linux2); echo '{"caja":{"runtime":"docker"}}' > "$r/.sdd/hermes/hermes-sdd.json"
+o=$(env -u CLAUDE_CODE_OAUTH_TOKEN FALSO_CAJA=bien FALSO_LOG="$T/log" PATH="$T/bin:$PATH" HERMES_SDD_HOME="$T/hsdd" \
+    HERMES_SDD_CAJA_CACHE="$T/cache" bash "$ROOT/executors/caja.sh" "$r" implementar-0 "haz la tarea" | tail -1)
+[ "$(echo "$o" | jq -r .outcome)" = done ] && grep -q "CLAUDE_CODE_OAUTH_TOKEN=sk-ant-oat01-del-fichero" "$T/log.env" 2>/dev/null \
+  && ok "Linux sin variable: la caja usa el token guardado con caja-token.sh" || bad "token de fichero: $o"
 rm -f "$T/bin/uname" "$T/bin/docker"
 [ $fail = 0 ] && echo "tests/caja-local.sh: all passed"
 exit $fail
