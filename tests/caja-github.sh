@@ -122,6 +122,8 @@ case "$*" in *"boards list"*) echo '[]' ;; esac
 H
 printf '#!/usr/bin/env bash\nexit 44\n' > "$T/bin2/security"   # sin token en el llavero
 chmod +x "$T/bin2/gh" "$T/bin2/hermes" "$T/bin2/security"
+# el llavero es cosa de macOS (lib/token-caja.sh): estos casos simulan un Mac también cuando se corren en Linux
+printf '#!/usr/bin/env bash\n[ "$1" = -s ] && echo Darwin || /usr/bin/uname "$@"\n' > "$T/bin2/uname"; chmod +x "$T/bin2/uname"
 echo '{"ejecutor": "github"}' > "$HERMES_SDD_HOME/sdd.json"
 P2="$T/Proyecto-Caja"; mkdir -p "$P2"; cd "$P2"; git init -q -b main; git config user.email t@t; git config user.name t
 echo x > README.md; git add -A; git commit -qm init
