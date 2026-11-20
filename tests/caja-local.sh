@@ -65,5 +65,20 @@ for modo in decision fuera ajeno; do
   [ "$(echo "$o" | jq -r .outcome)" = failed ] && [ "$(git -C "$r" rev-parse HEAD)" = "$antes" ] && [ ! -f "$r/.sdd/hermes/decisiones/falsa.json" ] \
     && ok "caja que devuelve «${modo}»: no se aplica nada ($(echo "$o" | jq -r .reason | cut -c1-70))" || bad "$modo: $o"
 done
+# ── Docker en Linux (PcWindows/WSL2, 20/11/2026): los ficheros montados conservan el uid del anfitrión. Una imagen con
+# el usuario 1001 no puede leer ni escribir el proyecto de andre (1000): se construye con el uid de quien la lanza.
+cp "$T/bin/container" "$T/bin/docker"
+printf '#!/usr/bin/env bash\n[ "$1" = -s ] && echo Linux || /usr/bin/uname "$@"\n' > "$T/bin/uname"; chmod +x "$T/bin/uname"
+sed -i.bak 's/^\[ "\$1" = run \] || exit 0$/[ "$1 $2" = "image inspect" ] \&\& exit 1\n[ "$1" = run ] || exit 0/' "$T/bin/docker"
+r=$(proyecto linux); echo '{"caja":{"runtime":"docker"}}' > "$r/.sdd/hermes/hermes-sdd.json"; : > "$T/log"
+o=$(corre "$r" bien)
+U=$(id -u)
+grep -E "^build .*--build-arg CAJA_UID=$U( |$)" "$T/log" >/dev/null && ok "docker en Linux: la imagen se construye con el uid de quien la lanza ($U)" \
+  || bad "linux build: $(grep '^build' "$T/log")"
+img=$(grep '^build' "$T/log" | grep -o 'hermes-sdd-caja:[^ ]*' | head -1)
+[ -n "$img" ] && echo "$img" | grep -q -- "-u$U\$" && grep '^run' "$T/log" | grep -q -- "$img" \
+  && ok "docker en Linux: su propia etiqueta de imagen (…-u$U), la misma que se lanza" || bad "linux img: $img / $(grep '^run' "$T/log" | grep -o 'hermes-sdd-caja:[^ ]*')"
+[ "$(echo "$o" | jq -r .outcome)" = done ] && ok "docker en Linux: la etapa termina" || bad "linux: $o"
+rm -f "$T/bin/uname" "$T/bin/docker"
 [ $fail = 0 ] && echo "tests/caja-local.sh: all passed"
 exit $fail

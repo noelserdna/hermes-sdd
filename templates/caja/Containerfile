@@ -10,8 +10,10 @@ RUN apt-get update \
  && npx -y playwright@1 install-deps chromium \
  && rm -rf /var/lib/apt/lists/* /root/.npm
 RUN npm i -g @anthropic-ai/claude-code && rm -rf /root/.npm
-# Claude Code no acepta saltarse permisos como root: el agente es un usuario normal
-RUN useradd -m -u 1001 -s /bin/bash caja && mkdir -p /cache /proyecto /salida && chown caja /cache /proyecto /salida
+# Claude Code no acepta saltarse permisos como root: el agente es un usuario normal. Con Docker en Linux los ficheros
+# montados conservan el uid del anfitrión: caja.sh pasa CAJA_UID=$(id -u) (-o: puede coincidir con «node», 1000)
+ARG CAJA_UID=1001
+RUN useradd -m -o -u "$CAJA_UID" -s /bin/bash caja && mkdir -p /cache /proyecto /salida && chown caja /cache /proyecto /salida
 ENV PLAYWRIGHT_BROWSERS_PATH=/cache/ms-playwright npm_config_cache=/cache/npm DISABLE_AUTOUPDATER=1 SDD_EXECUTOR=hermes
 USER caja
 WORKDIR /proyecto

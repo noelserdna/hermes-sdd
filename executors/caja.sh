@@ -56,9 +56,12 @@ fi
 TOKEN=${CLAUDE_CODE_OAUTH_TOKEN:-$(security find-generic-password -s hermes-sdd-caja -w 2>/dev/null | tr -d '[:space:]')}
 [ -n "$TOKEN" ] || salir failed "no hay token de Claude para la caja: ponlo con caja-token.sh (claude setup-token)"
 VER=$(cat "$ROOT/templates/caja/Containerfile" | shasum | cut -c1-12)
-IMG="hermes-sdd-caja:$VER"
+IMG="hermes-sdd-caja:$VER"; BARGS=()
+# Docker en Linux (WSL incluido): los montajes conservan el uid del anfitrión; el agente de la caja debe ser el mismo
+# usuario o no puede leer ni escribir el proyecto (PcWindows, 20/11/2026). Apple container y Docker en macOS traducen.
+if [ "$RT" = docker ] && [ "$(uname -s)" = Linux ]; then IMG="$IMG-u$(id -u)"; BARGS=(--build-arg "CAJA_UID=$(id -u)"); fi
 if ! "$RT" image inspect "$IMG" >/dev/null 2>&1; then
-  "$RT" build -t "$IMG" -f "$ROOT/templates/caja/Containerfile" "$ROOT/templates/caja" >>"$ERR" 2>&1 ||
+  "$RT" build -t "$IMG" ${BARGS[@]+"${BARGS[@]}"} -f "$ROOT/templates/caja/Containerfile" "$ROOT/templates/caja" >>"$ERR" 2>&1 ||
     salir failed "no se pudo construir la imagen de la caja ($IMG): $(tail -c 300 "$ERR" | tr '\n' ' ')"
   # el constructor de Apple container es otra máquina de 2 GB: con 8 GB en el Mac no puede quedarse encendido
   [ "$RT" = container ] && container builder stop >/dev/null 2>&1
