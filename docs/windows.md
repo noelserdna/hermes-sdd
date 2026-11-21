@@ -35,6 +35,8 @@ Ubuntu, y Telegram y el panel web se usan desde Windows como siempre.
      de Windows) y clona el arnés en `~/hermes-sdd`. Te avisa si git no sabe quién eres.
    - Crea la tarea programada **«hermes-sdd WSL»**, que mantiene Ubuntu encendido mientras tienes la sesión abierta.
      Sin ella, WSL apaga Ubuntu al cerrar la última ventana y con él el gateway: dejarían de llegarte las puertas.
+     Se lanza al iniciar sesión y **cada 5 minutos**: si algo apaga WSL (`wsl --shutdown`, una actualización), vuelve
+     a encenderlo sola. Repetir el instalador actualiza una tarea de antes, que solo tenía el inicio de sesión.
    - Con `-NoDormir` (desde un clon: `powershell -ExecutionPolicy Bypass -File windows\instalar.ps1 -NoDormir`),
      además impide que el equipo se suspenda enchufado. Una etapa dura entre 10 y 30 minutos y la suspensión la corta.
 5. Lo que el script no puede hacer por ti, porque son tus claves. Abre «Ubuntu» y:
@@ -80,7 +82,8 @@ Lo mismo, paso a paso, por si prefieres ver cada comando.
    ```
 
    Después, el paso 5 de la instalación automática.
-4. **Ubuntu siempre encendido:** crea en el Programador de tareas de Windows una tarea «al iniciar sesión» que ejecute
+4. **Ubuntu siempre encendido:** crea en el Programador de tareas de Windows una tarea «al iniciar sesión» y que se
+   repita cada 5 minutos (sin abrir otra instancia si ya está en marcha) que ejecute
    `wsl.exe -d Ubuntu --exec sleep infinity`. Para el gateway como servicio de usuario, sigue la guía de Hermes para
    WSL (<https://hermes-agent.nousresearch.com/docs/user-guide/windows-wsl-quickstart>) y ejecuta
    `sudo loginctl enable-linger $USER`.
@@ -140,7 +143,7 @@ Instala como arriba y copia, sin secretos: `~/.hermes/config.yaml`, `SOUL.md`, `
 |---|---|
 | `$'\r': command not found` al ejecutar un `.sh` | El fichero tiene finales de línea de Windows (CRLF). Clona desde Ubuntu, no desde Windows, con `git config --global core.autocrlf input`. |
 | Todo va muy lento | El repo está en `/mnt/c/…`. Muévelo a `~`. |
-| No llegan las puertas por Telegram | Ubuntu se apagó. Comprueba que la tarea «hermes-sdd WSL» está activa (Programador de tareas) y ejecuta `hermes gateway restart`. |
+| No llegan las puertas por Telegram | Ubuntu se apagó. Comprueba que la tarea «hermes-sdd WSL» está activa (Programador de tareas) y ejecuta `hermes gateway restart`. Si la tarea solo tiene el disparador «Al iniciar sesión», repite `instalar.ps1`: la versión nueva la relanza cada 5 minutos. |
 | Una etapa se corta a la mitad | El equipo se suspendió. Repite `instalar.ps1 -NoDormir` o desactiva la suspensión enchufado. |
 | `Executable doesn't exist … ms-playwright` | Falta el navegador de Playwright. En el proyecto: `npx playwright install --with-deps chromium`. |
 | `wsl -l -v` muestra versión 1 | `wsl --set-version Ubuntu 2`. |

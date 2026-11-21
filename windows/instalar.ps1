@@ -10,7 +10,7 @@
 #   2. Ubuntu en WSL2 (no WSL1)
 #   3. Dentro de Ubuntu: paquetes, Node 22, Hermes, Claude Code, clon en ~/hermes-sdd e instalar.sh
 #   4. Reinicia Ubuntu si hace falta para activar systemd
-#   5. Tarea programada «hermes-sdd WSL» al iniciar sesión: mantiene Ubuntu (y el gateway) despierto
+#   5. Tarea programada «hermes-sdd WSL» al iniciar sesión y cada 5 minutos: mantiene Ubuntu (y el gateway) despierto
 #   6. -NoDormir: el equipo no se suspende enchufado (una etapa dura de 10 a 30 minutos)
 param(
   [string]$Distro = "Ubuntu",
@@ -58,18 +58,23 @@ if ($pid1 -ne "systemd" -or $conWin -ne "0") {
   Ok "Ubuntu reiniciado: systemd activo y sin el PATH de Windows"
 } else { Ok "ya estaba" }
 
-Paso "5/6 Mantener Ubuntu despierto al iniciar sesion"
+Paso "5/6 Mantener Ubuntu despierto"
+# Al iniciar sesion y, ademas, cada 5 minutos: si algo apaga WSL (wsl --shutdown, una actualizacion) o muere el
+# «sleep infinity», la tarea vuelve a lanzarlo; mientras corre, IgnoreNew no abre otra (material-montana10: con solo
+# el inicio de sesion, Ubuntu y el gateway se quedaron apagados hasta que alguien entro por ssh)
 $tarea = "hermes-sdd WSL"
 try {
-  if (-not (Get-ScheduledTask -TaskName $tarea -ErrorAction SilentlyContinue)) {
-    $accion = New-ScheduledTaskAction -Execute "wsl.exe" -Argument "-d $Distro --exec sleep infinity"
-    $cuando = New-ScheduledTaskTrigger -AtLogOn -User "$env:USERDOMAIN\$env:USERNAME"
-    $ajustes = New-ScheduledTaskSettingsSet -ExecutionTimeLimit ([TimeSpan]::Zero) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -Hidden
-    Register-ScheduledTask -TaskName $tarea -Action $accion -Trigger $cuando -Settings $ajustes `
-      -Description "Mantiene $Distro (y el gateway de Hermes) en marcha para hermes-sdd" | Out-Null
-  }
+  $accion = New-ScheduledTaskAction -Execute "wsl.exe" -Argument "-d $Distro --exec sleep infinity"
+  # la cuenta tal como la conoce Windows (por ssh, USERDOMAIN dice «WORKGROUP» y el registro falla)
+  $yo = [Security.Principal.WindowsIdentity]::GetCurrent().Name
+  $alEntrar = New-ScheduledTaskTrigger -AtLogOn -User $yo
+  $cada5 = New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Minutes 5)
+  $ajustes = New-ScheduledTaskSettingsSet -ExecutionTimeLimit ([TimeSpan]::Zero) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
+    -Hidden -MultipleInstances IgnoreNew
+  Register-ScheduledTask -TaskName $tarea -Action $accion -Trigger @($alEntrar, $cada5) -Settings $ajustes -Force `
+    -Description "Mantiene $Distro (y el gateway de Hermes) en marcha para hermes-sdd" | Out-Null
   Start-ScheduledTask -TaskName $tarea
-  Ok "tarea '$tarea' activa"
+  Ok "tarea '$tarea' activa (al iniciar sesion y cada 5 minutos)"
 } catch { Aviso "no pude crear la tarea programada ($($_.Exception.Message)). Ver docs/windows.md, apartado 4." }
 
 Paso "6/6 Suspension"
