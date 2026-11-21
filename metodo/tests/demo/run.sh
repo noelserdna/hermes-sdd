@@ -13,7 +13,7 @@ cat > "$r/requirements/REQUIREMENTS.md" <<'MD'
 - **Acceptance criteria:**
   - GIVEN "Casco" is free WHEN "lucia" books it THEN the user sees "Reserva creada: Casco del 2026-12-11 al 2026-12-13"
     - Se ve: "Reserva creada: {material} del {desde} al {hasta}" en Mis reservas
-  - GIVEN no free unit WHEN "lucia" books THEN the user sees "No quedan unidades libres"
+  - GIVEN no free unit WHEN "lucia" books THEN the user sees "No quedan unidades libres" and no booking is created
     - Se ve: "No quedan unidades libres" en Material
   - GIVEN a booking WHEN it is stored THEN the store keeps it
     - No visible: lo comprueba el almacén
@@ -59,6 +59,11 @@ j() { printf '%s' "$out" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on
   && pass "guion: el caso de uso con su flujo principal, sus extensiones con su AC y sus criterios" || bad "uc: $out"
 [ "$(j 'j.workflows[0].id + "|" + j.workflows[0].pasos[0].uc + "|" + j.workflows[0].navegacion[0].celdas[0]')" = "WF-001|UC-002|Material" ] \
   && pass "guion: el workflow de la FASE con sus pasos y su navegación" || bad "wf: $out"
+# El THEN entero de cada criterio en el guion: el texto en off dice también lo que no es un texto de «Se ve» (que no se
+# crea la reserva), porque Jev lo compara con el criterio (gastos-cena2: 14 de 23 vídeos no lo decían)
+[ "$(j 'j.criterios[1].then')" = 'the user sees "No quedan unidades libres" and no booking is created' ] \
+  && grep -qF '  El criterio pide: the user sees "No quedan unidades libres" and no booking is created' "$r/.sdd/demo/GUION-FASE-1.md" \
+  && pass "guion: cada criterio con su THEN entero, para narrar también lo que no es un texto" || bad "then: $(j 'j.criterios[1].then')"
 grep -q '^## UC-002 — Reservar material para unas fechas' "$r/.sdd/demo/GUION-FASE-1.md" && grep -q 'Navegación:' "$r/.sdd/demo/GUION-FASE-1.md" \
   && pass "guion: .sdd/demo/GUION-FASE-1.md legible" || bad "md"
 mkdir -p "$r/evidencias/FASE-1"

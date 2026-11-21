@@ -480,24 +480,124 @@ def _partida(texto: str) -> int:
     return n or len(re.findall(r"^\s*(?:[-*]|\d+[.)])\s+\S", texto, re.M)) or len(re.findall(r"^#{2,4}\s+\S", texto, re.M))
 
 
-def jev_requisitos(repo: Path) -> dict:
-    """La ayuda de Jev para la puerta de requisitos (no decide nada): qué requisito cubre cada necesidad del cliente
-    (`sdd-jev.mjs needs`) y los supuestos ordenados por lo probable que es que el cliente los quiera distintos
-    (scripts/jev/supuestos.json). Lo deja en .sdd/hermes/jev-requisitos.json para el texto de la puerta. Sin Jev
-    (sin clave, apagado) o si falla, {} y la puerta sale como siempre. Evaluado sobre 28 puertas reales: no detecta por sí
-    solo lo que una persona rechazaría, así que solo ordena lo que la persona revisa."""
-    import os, subprocess, tempfile
-    repo = Path(repo)
-    cli = SDD_CLI.parent / "sdd-jev.mjs"
-    out = {}
-    # La llama puerta.sh dentro de la estación, cuyo perfil no lleva la clave (que no la vean las sesiones de las etapas):
-    # sin ella en el entorno, la del .env de Hermes, solo para estas llamadas (montana8, M8-1: la puerta salió sin ayuda)
+def _jev_env() -> dict:
+    """El entorno para sdd-jev.mjs. Lo llama puerta.sh dentro de la estación, cuyo perfil no lleva la clave (que no la
+    vean las sesiones de las etapas): sin ella en el entorno, la del .env de Hermes, solo para estas llamadas
+    (montana8, M8-1: la puerta salió sin ayuda)."""
+    import os
     env = dict(os.environ)
     if not env.get("TYPESAFE_API_KEY"):
         sdd = Path(env.get("HERMES_SDD_HOME") or Path.home() / ".hermes" / "hermes-sdd")
         for l in _leer(sdd.parent / ".env").splitlines():
             if l.startswith("TYPESAFE_API_KEY="):
                 env["TYPESAFE_API_KEY"] = l.split("=", 1)[1].strip().strip("'\"")
+    return env
+
+
+def narraciones_fase(repo: Path, fase: str) -> list[dict]:
+    """Un ítem por criterio con vídeo narrado en evidencias/FASE-<N>/*.narracion.json: {criterio (REQ-…-ACn), req, ac,
+    texto (el GIVEN/WHEN/THEN literal), se_ve, narracion (todas las frases de su vídeo, en orden)}."""
+    repo = Path(repo)
+    md = _leer(repo / "requirements" / "REQUIREMENTS.md")
+    crits, vistas = _criterios(md), _vistas_criterios(md)
+    out, vistos = [], set()
+    for f in sorted((repo / "evidencias" / f"FASE-{fase}").glob("*.narracion.json")):
+        try:
+            n = json.loads(f.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        frases = [str(x.get("texto") or "").strip() for x in sorted(n.get("narraciones") or [], key=lambda x: float(x.get("t") or 0))]
+        for c in dict.fromkeys(x.get("criterio") for x in n.get("narraciones") or [] if x.get("criterio")):
+            m = re.match(r"^(REQ-[A-Z]+-[0-9A-Za-z]+)-AC(\d+)$", str(c))
+            if not m or c in vistos:
+                continue
+            req, ac = m.group(1), int(m.group(2))
+            lista = crits.get(req) or []
+            if not 1 <= ac <= len(lista):
+                continue
+            vistos.add(c)
+            v = vistas.get(lista[ac - 1])
+            out.append({"criterio": c, "req": req, "ac": ac, "texto": lista[ac - 1],
+                        "se_ve": f"{v[0]}: {v[1]}" if v else "", "narracion": [x for x in frases if x]})
+    return out
+
+
+def jev_narracion(repo: Path, fase: str) -> dict:
+    """Jev lee el texto en off de cada vídeo de la FASE y juzga si cuenta lo que pide su criterio (scripts/jev/
+    narracion.json): {revisados, contradicen: [{criterio, puntos}], incompletos: […]} o {error}. Lo deja en
+    .sdd/hermes/jev-narracion-<N>.json para la puerta (texto) y para hsdd_nucleo.puede_jev: con vídeo, Jev solo firma la
+    FASE si la revisión se hizo y ningún texto contradice su criterio; los incompletos (no dicen todo el THEN) se avisan."""
+    import subprocess, tempfile
+    repo = Path(repo)
+    items = narraciones_fase(repo, fase)
+    if not items:
+        out = {"revisados": 0, "contradicen": [], "incompletos": []}
+    else:
+        cli, preguntas = SDD_CLI.parent / "sdd-jev.mjs", SDD_CLI.parent / "jev" / "narracion.json"
+        umbrales = json.loads(_leer(preguntas) or "{}").get("thresholds") or {}
+        contradice, incompleto = umbrales.get("contradice_below", 0.5), umbrales.get("flag_below", 1.5)
+        env = _jev_env()
+        try:
+            with tempfile.TemporaryDirectory() as d:
+                (Path(d) / "i.jsonl").write_text("\n".join(json.dumps({"id": x["criterio"], "state": {
+                    "criterio": x["texto"], "se_ve": x["se_ve"], "narracion": x["narracion"]}}, ensure_ascii=False) for x in items))
+                r = subprocess.run(["node", str(cli), "judge", "--questions", str(preguntas), "--items", str(Path(d) / "i.jsonl")],
+                                   capture_output=True, text=True, timeout=300, env=env)
+            j = json.loads(r.stdout) if r.stdout.strip() else {}
+            if r.returncode == 3:
+                out = {"error": "Jev está apagado o sin clave"}
+            elif r.returncode != 0 or j.get("errors") or len(j.get("items") or []) != len(items):
+                out = {"error": (((j.get("errors") or [{}])[0].get("error")) or r.stderr.strip() or f"salida {r.returncode}")[:300]}
+            else:
+                puntos = {it["id"]: float(it["answers"]["cumple"]["score"]) for it in j["items"]}
+                out = {"revisados": len(items), "modelo": j.get("model") or "",
+                       "contradicen": [{"criterio": c, "puntos": round(p, 2)} for c, p in puntos.items() if p < contradice],
+                       "incompletos": [{"criterio": c, "puntos": round(p, 2)} for c, p in puntos.items() if contradice <= p < incompleto]}
+        except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as e:
+            out = {"error": f"no se pudo preguntar a Jev ({e.__class__.__name__})"}
+    (repo / ".sdd" / "hermes").mkdir(parents=True, exist_ok=True)
+    (repo / ".sdd" / "hermes" / f"jev-narracion-{fase}.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    return out
+
+
+def linea_narracion(repo: Path, fase: str) -> str:
+    """La línea de la puerta con la revisión del texto en off (jev_narracion); "" si no se hizo."""
+    f = Path(repo) / ".sdd" / "hermes" / f"jev-narracion-{fase}.json"
+    if not f.exists():
+        return ""
+    try:
+        r = json.loads(f.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return ""
+    if r.get("error"):
+        return f"🤖 Jev no pudo revisar el texto en off de los vídeos ({r['error']}): míralos tú."
+    if not r.get("revisados"):
+        return ""
+    nombres = lambda xs: [re.sub(r"-AC(\d+)$", r" AC\1", x["criterio"]) for x in xs or []]
+    lista = lambda xs: ", ".join(xs[:8]) + ("…" if len(xs) > 8 else "")
+    mal, corto = nombres(r.get("contradicen")), nombres(r.get("incompletos"))
+    linea = f"🤖 Jev ha leído el texto en off de {_plural(r['revisados'], 'vídeo', 'vídeos')}"
+    if not mal and not corto:
+        return linea + ": cada uno cuenta lo que pide su criterio."
+    partes = []
+    if mal:
+        partes.append(f"‼️ en {len(mal)} lo narrado contradice su criterio ({lista(mal)}): míralos en el vídeo")
+    if corto:
+        partes.append(f"en {len(corto)} no dice todo lo que pide el criterio ({lista(corto)})")
+    return linea + ": " + "; ".join(partes) + "."
+
+
+def jev_requisitos(repo: Path) -> dict:
+    """La ayuda de Jev para la puerta de requisitos (no decide nada): qué requisito cubre cada necesidad del cliente
+    (`sdd-jev.mjs needs`) y los supuestos ordenados por lo probable que es que el cliente los quiera distintos
+    (scripts/jev/supuestos.json). Lo deja en .sdd/hermes/jev-requisitos.json para el texto de la puerta. Sin Jev
+    (sin clave, apagado) o si falla, {} y la puerta sale como siempre. Evaluado sobre 28 puertas reales: no detecta por sí
+    solo lo que una persona rechazaría, así que solo ordena lo que la persona revisa."""
+    import subprocess, tempfile
+    repo = Path(repo)
+    cli = SDD_CLI.parent / "sdd-jev.mjs"
+    out = {}
+    env = _jev_env()
     run = lambda *a, **k: subprocess.run(*a, env=env, **k)
     try:
         if run(["node", str(cli), "status"], capture_output=True, timeout=20).returncode != 0:
@@ -998,6 +1098,8 @@ def puerta_fase(repo: Path, proyecto: str, fase: str, gate_md: str, rc: int, tes
     partes.append(_bloque_tests(repo, fase, tests_editados))
     demo = [x for x in ((f"vídeo" if video else ""), (_plural(capturas, "captura", "capturas") if capturas else "")) if x]
     partes.append(f"🎬 Demo: {' y '.join(demo)}." if demo else "🎬 Esta fase no trae demo (ni vídeo ni capturas).")
+    if video and (ln := linea_narracion(repo, fase)):
+        partes.append(ln)
     partes.append(_que_pulsar(rc, rev, "aceptarla", "aceptarla con observaciones", "rechazarla", demo=True))
     return {"titulo": f"Aceptar FASE-{fase}", "texto": "\n\n".join(partes)}
 
@@ -1080,6 +1182,8 @@ def _puerta_entrega(repo: Path, proyecto: str, gate_md: str, rc: int, fases_acep
         partes.append(_bloque_tests(repo, None, tests_editados))
         demo = [x for x in (("vídeo" if video else ""), (_plural(capturas, "captura", "capturas") if capturas else "")) if x]
         partes.append(f"🎬 Demo: {' y '.join(demo)}." if demo else "🎬 No hay demo (ni vídeo ni capturas).")
+        if video and (ln := linea_narracion(repo, "0")):
+            partes.append(ln)
         partes.append(_que_pulsar(rc, rev, "aceptar la entrega", "aceptarla con observaciones", "rechazarla", demo=True))
     else:
         if fases_aceptadas:
@@ -1874,6 +1978,8 @@ if __name__ == "__main__":
         sys.exit(_cli_respuestas(sys.argv[2:]))
     if sys.argv[1:2] == ["jev-requisitos"]:   # jev-requisitos <repo>  (puerta.sh, antes del texto de la puerta de requisitos)
         print(json.dumps(jev_requisitos(Path(sys.argv[2])), ensure_ascii=False)); sys.exit(0)
+    if sys.argv[1:2] == ["jev-narracion"]:    # jev-narracion <repo> <fase>  (puerta.sh, puerta de FASE con vídeo)
+        print(json.dumps(jev_narracion(Path(sys.argv[2]), sys.argv[3]), ensure_ascii=False)); sys.exit(0)
     if sys.argv[1:2] == ["preguntas-json"]:   # preguntas-json <ficheros questions-*.md|json…>  (puerta.sh: los botones Q)
         print(json.dumps(preguntas_json(sys.argv[2:]), ensure_ascii=False)); sys.exit(0)
     if sys.argv[1:2] == ["cerrar-huecos"]:    # cerrar-huecos <hoy> "<TASK-…>" <ficheros…>  (etapa.sh huecos)

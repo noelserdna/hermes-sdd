@@ -91,7 +91,10 @@ export function demoScript(root, fase) {
       const fr = fraseCriterio(r, r.sees?.[i]);
       if (!fr) return;
       const uc = (id.match(/^AC-(\d{3})-/) || [])[1] ? `UC-${id.match(/^AC-(\d{3})-/)[1]}` : null;
-      criterios.push({ id, req: r.id, ac: n, uc: uc && ucs.has(uc) ? uc : null, frase: fr.frase, visible: fr.visible,
+      // The whole THEN too: the voice-over must also say what is not a «Se ve» text (nothing changes, only one is
+      // left, it is still there after a reload); Jev compares the voice-over with the criterion (gastos-cena2)
+      const then = (String(c).match(/\bTHEN\s+([\s\S]*)$/) || [])[1]?.trim() || null;
+      criterios.push({ id, req: r.id, ac: n, uc: uc && ucs.has(uc) ? uc : null, frase: fr.frase, visible: fr.visible, then,
         ve: (r.sees?.[i]?.texts || []).map((x) => x.text), pantalla: r.sees?.[i]?.where || null });
     });
   }
@@ -102,10 +105,14 @@ export function demoScript(root, fase) {
   return { fase: String(fase), plan: fs.file, workflows: wfs, casos_de_uso: casos, criterios };
 }
 
+const lineasCriterio = (c) => [`- ${c.id}: ${c.frase}`, ...(c.then ? [`  El criterio pide: ${c.then}`] : [])];
+
 export function scriptMarkdown(g) {
   const L = [`# Guion de la demo — FASE-${g.fase}`, "",
     "Cada criterio se enseña de dos maneras: se DICE (narrar: rótulo y voz) y se VE (captura con sus textos «Se ve:»).",
-    "Narra con la frase exacta de cada criterio justo antes de su captura; los pasos del caso de uso, con tus palabras.", ""];
+    "Narra con la frase exacta de cada criterio justo antes de su captura; los pasos del caso de uso, con tus palabras.",
+    "Si «El criterio pide» algo más que esos textos (que algo no cambie, que solo quede uno, que no se añada, que siga tras",
+    "recargar), dilo también, en castellano y con los datos del test, en la narración de ese criterio.", ""];
   for (const w of g.workflows) {
     L.push(`## ${w.id} — ${w.titulo}`, "");
     for (const p of w.pasos) L.push(`${p.n}. ${p.nombre}${p.uc ? ` (${p.uc})` : ""}`);
@@ -117,11 +124,11 @@ export function scriptMarkdown(g) {
     u.flujo.forEach((x, i) => L.push(`${i + 1}. ${x}`));
     if (u.extensiones.length) { L.push("", "Extensiones:"); for (const e of u.extensiones) L.push(`- ${e.texto}${e.criterios.length ? ` (${e.criterios.join(", ")})` : ""}`); }
     L.push("", "Criterios:");
-    for (const c of g.criterios.filter((x) => x.uc === u.id)) L.push(`- ${c.id}: ${c.frase}`);
+    for (const c of g.criterios.filter((x) => x.uc === u.id)) L.push(...lineasCriterio(c));
     L.push("");
   }
   const sueltos = g.criterios.filter((c) => !c.uc);
-  if (sueltos.length) { L.push("## Otros criterios de la FASE", ""); for (const c of sueltos) L.push(`- ${c.id}: ${c.frase}`); L.push(""); }
+  if (sueltos.length) { L.push("## Otros criterios de la FASE", ""); for (const c of sueltos) L.push(...lineasCriterio(c)); L.push(""); }
   return L.join("\n");
 }
 

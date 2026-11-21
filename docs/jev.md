@@ -25,6 +25,11 @@ No todas las puertas necesitan juicio. Antes de preguntar al modelo, el gateway 
    cambio de requisitos que sale de respuestas que la persona ya eligió, unas dudas (con sus recomendadas), un plan sin
    avisos graves, una FASE (o una entrega sin demo) sin nada de lo del punto 1, y el primer reintento de una etapa que falló. El
    canal lo dice: «🤖 Jev lo aprueba por regla (…): <la regla>».
+   Una FASE con vídeo, además, solo si Jev ha leído su **texto en off** y ninguno contradice su criterio: Jev no ve el
+   vídeo, pero lee lo que se narra en cada uno y lo compara con el GIVEN/WHEN/THEN (`hsdd_textos.jev_narracion`,
+   pregunta en `metodo/scripts/jev/narracion.json`). Si contradice (otros datos, otro resultado) o no se pudo revisar,
+   la decide una persona; si solo se deja parte del THEN, la puerta lo avisa. Calibrado con los 23 vídeos de
+   gastos-cena2: contradicción 0, incompleto ≈1, completo ≥1,5.
 3. **Lo juzga el modelo, con su umbral:** los requisitos iniciales, una ruta no fijada y el mantenimiento.
 
 Por qué: en las pruebas de noviembre Jev firmaba 21 de 113 puertas y no detectó ninguna de las decisiones negativas

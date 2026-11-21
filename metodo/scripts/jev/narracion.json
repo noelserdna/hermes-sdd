@@ -1,0 +1,18 @@
+{
+  "description": "Puerta de FASE (hermes-sdd, hsdd_textos.jev_narracion): Jev no ve el vídeo de la demo, pero lee su texto en off. Un ítem por criterio con vídeo, state = {criterio: el GIVEN/WHEN/THEN literal, se_ve: su línea «Se ve:», narracion: las frases narradas en su vídeo, en orden}. Por debajo de contradice_below el texto en off contradice su criterio y la FASE la decide una persona; por debajo de flag_below está incompleto (no dice todo el THEN) y la puerta lo avisa. Calibrado el 21/11/2026 con los 23 vídeos de gastos-cena2: contradicciones 0,0; incompletos ≈1,0; completos ≥1,5. Nunca aprueba nada por sí solo.",
+  "thresholds": {
+    "contradice_below": 0.5,
+    "flag_below": 1.5
+  },
+  "questions": {
+    "cumple": {
+      "type": "score",
+      "instructions": "A demo video was recorded for the acceptance criterion `criterio` (GIVEN/WHEN/THEN; `se_ve` lists the texts the screen must show). `narracion` is the voice-over of that video, in order: what was set up, what the user did and what appeared on screen. Judge whether the voice-over tells the criterion being met. What matters is the THEN: every outcome it requires must be said. Starting data or steps the voice-over does not repeat are fine as long as nothing it says contradicts the GIVEN or the WHEN; paraphrase, translation and extra detail are fine. Different data, a different action, or an outcome that is missing, partial or different are not.",
+      "criteria": [
+        "The voice-over contradicts the criterion or is about something else: different data or action, a different outcome, or an error",
+        "The voice-over agrees with the criterion but leaves out part of the outcome its THEN requires (a text, a value, or a condition such as «only» or «no other»)",
+        "The voice-over agrees with the criterion and says the whole outcome its THEN requires"
+      ]
+    }
+  }
+}

@@ -151,6 +151,10 @@ case "$TIPO" in
     VIDEO=$(ls evidencias/FASE-"$FASE"/*.mp4 evidencias/FASE-"$FASE"/*.webm evidencias/FASE-"$FASE"/*.mov 2>/dev/null | head -1 || true)
     CAPTURAS=$( (ls evidencias/FASE-"$FASE"/*.png evidencias/FASE-"$FASE"/*.jpg 2>/dev/null || true) | wc -l | tr -d ' ')
     EXTRA+=(--gate-md "$GATE_MD" --rc "$rc" --tests-editados "$EDIT" --video "$([ -n "$VIDEO" ] && echo 1 || echo 0)" --capturas "$CAPTURAS")
+    # Jev no ve el vídeo, pero lee su texto en off: ¿cuenta cada uno lo que pide su criterio? (sin esto, con vídeo, Jev
+    # no firma la FASE: hsdd_nucleo.puede_jev)
+    rm -f ".sdd/hermes/jev-narracion-$FASE.json"
+    if [ -n "$VIDEO" ]; then python3 "$TEXTOS" jev-narracion "$REPO" "$FASE" >/dev/null 2>&1 || true; NARR=".sdd/hermes/jev-narracion-$FASE.json"; fi
     OPCIONES='[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1},{"verbo":"acepto","etiqueta":"✅ Aceptar","paso":2},{"verbo":"observaciones","etiqueta":"📝 Con observaciones","texto":true,"paso":2},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'
     revisar --fase "$FASE"; EXTRA+=(--revisar "$REV_JSON")
     if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then impugnaciones "$rc" --fase "$FASE"; EXTRA+=(--impugnaciones "$IMP_JSON"); fi
@@ -178,6 +182,8 @@ case "$TIPO" in
       BASE=$(git describe --tags --abbrev=0 --match 'requirements-v*' 2>/dev/null || git rev-list --max-parents=0 HEAD)
       EDIT=$(sin_autorizar global "$(tests_editados "$BASE")")
       EXTRA+=(--unica 1 --video "$([ -n "$VIDEO" ] && echo 1 || echo 0)" --capturas "$CAPTURAS" --tests-editados "$EDIT")
+      rm -f .sdd/hermes/jev-narracion-0.json   # el texto en off, para quien acepta (la entrega con demo es de una persona)
+      if [ -n "$VIDEO" ]; then python3 "$TEXTOS" jev-narracion "$REPO" 0 >/dev/null 2>&1 || true; NARR=.sdd/hermes/jev-narracion-0.json; fi
       OPCIONES='[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1},{"verbo":"acepto","etiqueta":"✅ Acepto la entrega","paso":2},{"verbo":"observaciones","etiqueta":"📝 Con observaciones","texto":true,"paso":2},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'
     fi
     revisar; EXTRA+=(--revisar "$REV_JSON")
@@ -258,10 +264,11 @@ jq -n --arg id "$ID" --arg t "$TIPO" --arg f "$FASE" --arg b "$BOARD" --arg s "$
   --argjson pr "$([ "$TIPO" = requisitos ] && [ -n "${INT:-}" ] && grep -q '^Origen: puerta ' "intent/$INT.md" 2>/dev/null && echo true || echo false)" \
   --argjson te "${EDIT:-0}" --argjson bl "$BLOQUEO" --argjson un "${UNICA:-false}" --argjson rv "$(cat "$REV_JSON")" \
   --argjson en "$(jq -c '{avisos, graves}' <<< "$ENC")" --argjson pe "$PREG_ERROR" \
+  --argjson na "$( { [ -n "${NARR:-}" ] && jq -c . "$NARR" 2>/dev/null; } || echo null)" \
   '{id:$id, tipo:$t, fase:$f, tablero:$b, tarjeta:"", adopcion:$ad, sha:$s, creada:$c, repo:$r, titulo:$ti, texto:$tx,
     opciones:$o, demo:$v, preguntas:$q, preguntas_error:$pe, hallazgos:$hz, tests_editados:$te, bloqueo:$bl, unica:$un,
     revisar:(($rv // {}).revisar // []), encargado:$en} + (if $fa then {fallo:$fa} else {} end)
-    + (if $pr then {por_respuestas:true} else {} end)' > ".sdd/hermes/puertas/$ID.json"
+    + (if $pr then {por_respuestas:true} else {} end) + (if $na then {narracion:$na} else {} end)' > ".sdd/hermes/puertas/$ID.json"
 # La copia del repo es lo que se mostró (la lee el notario) y no lleva estado: el estado vive solo en el índice global
 # y solo cambia por las transiciones del núcleo (hsdd_nucleo.py transicion). Una puerta nueva del mismo proyecto, tipo y
 # FASE sustituye a la que siguiera abierta (club: reabrir la entrega dejaba dos puertas de entrega abiertas a la vez):

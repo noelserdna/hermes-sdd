@@ -538,6 +538,18 @@ def puede_jev(puerta: dict, cfg: dict | None = None) -> tuple[bool, str]:
     # Jev la aceptó por regla a los 3 s y la entrega salió sin que nadie viera la demo)
     if tipo == "entrega" and (puerta.get("demo") or any(o.get("verbo") == "ver" for o in puerta.get("opciones") or [])):
         return False, "la entrega tiene demo: la acepta una persona que la haya visto"
+    # Una FASE con vídeo: Jev no lo ve, pero lee su texto en off (hsdd_textos.jev_narracion). Solo la firma si esa
+    # revisión se hizo y ningún texto contradice su criterio; si no, la decide una persona que vea el vídeo. Un texto
+    # incompleto (cuenta bien, pero no dice todo el THEN) solo se avisa en la puerta
+    if tipo == "fase" and puerta.get("demo"):
+        nar = puerta.get("narracion") or {}
+        if not nar or nar.get("error"):
+            return False, "Jev no ha podido revisar el texto en off de la demo: la acepta una persona que la vea"
+        if not nar.get("revisados"):
+            return False, "la demo no tiene texto en off que Jev pueda revisar: la acepta una persona que la vea"
+        if nar.get("contradicen"):
+            mal = ", ".join(str(x.get("criterio")) for x in nar["contradicen"][:5])
+            return False, f"Jev ve que el texto en off contradice su criterio ({mal}): lo mira una persona en el vídeo"
     # Un requisito que solo comprueba una persona a mano (inspección o demo): su «🔍 Lo he revisado» es de una persona
     if puerta.get("revisar"):
         return False, "hay algo que solo puede comprobar una persona a mano (inspección)"

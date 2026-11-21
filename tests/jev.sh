@@ -257,6 +257,15 @@ casos = {
     "plan": (caso(tipo="plan", opciones=op("conforme")), "conforme"),
     "plan con aviso grave": (caso(tipo="plan", opciones=op("conforme"), encargado={"graves": 1}), "persona"),
     "FASE limpia": (caso(**fase), "acepto"),
+    # Una FASE con vídeo: Jev no lo ve, pero lee su texto en off y juzga si cumple cada criterio (jev_narracion). Sin
+    # esa revisión, o si un texto no cumple su criterio, la decide una persona
+    "FASE con demo sin revisar el texto en off": (caso(**fase, demo="v.mp4"), "persona"),
+    "FASE con demo y revisión fallida": (caso(**fase, demo="v.mp4", narracion={"error": "Jev no respondió"}), "persona"),
+    "FASE con demo sin texto en off": (caso(**fase, demo="v.mp4", narracion={"revisados": 0, "contradicen": [], "incompletos": []}), "persona"),
+    "FASE con demo y un texto que contradice su criterio": (caso(**fase, demo="v.mp4", narracion={"revisados": 3, "contradicen": [{"criterio": "REQ-F-001-AC2"}], "incompletos": []}), "persona"),
+    # incompleto (cuenta bien, pero no dice todo el THEN): se avisa en la puerta, no le quita la decisión a Jev
+    "FASE con demo y un texto incompleto": (caso(**fase, demo="v.mp4", narracion={"revisados": 3, "contradicen": [], "incompletos": [{"criterio": "REQ-F-001-AC2"}]}), "acepto"),
+    "FASE con demo y texto en off que cumple": (caso(**fase, demo="v.mp4", narracion={"revisados": 3, "contradicen": [], "incompletos": []}), "acepto"),
     "FASE bloqueada": (caso(**fase, bloqueo=True), "persona"),
     "FASE con tests tocados": (caso(**fase, tests_editados=1), "persona"),
     "FASE con inspección": (caso(**fase, revisar=[{"req": "REQ-C-001"}]), "persona"),

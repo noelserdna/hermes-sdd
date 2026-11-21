@@ -778,4 +778,54 @@ assert "Jev ha comprobado tus 9 necesidades" in t and "N-008" in t, t
 i = t.index("Mira sobre todo"); r = t.index("El resto:")
 assert i < t.index("Los datos se guardan 2 años.") < t.index("La reserva dura 14 días.") < r < t.index("Contraseña de 8 caracteres."), t
 PY
+# Texto en off de la demo (jev_narracion): Jev no ve el vídeo, pero lee lo que se narra en cada uno y juzga si cumple
+# el criterio que enseña (GIVEN/WHEN/THEN). Lo deja en .sdd/hermes/jev-narracion-<N>.json y la puerta lo cuenta
+cat > "$T/jevfalso.mjs" <<'JS'
+import http from "node:http";
+const srv = http.createServer((req, res) => { let b = ""; req.on("data", (d) => b += d).on("end", () => {
+  const s = JSON.stringify(JSON.parse(b).state.narracion); const score = s.includes("Beto") ? 0 : s.includes("Carla") ? 1 : 2;
+  res.writeHead(200, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ model: "jev-falso", answers: { cumple: { type: "score", score, confidence: 0.9, probabilities: {} } } }));
+}); });
+srv.listen(0, "127.0.0.1", () => console.log(srv.address().port));
+JS
+node "$T/jevfalso.mjs" > "$T/puerto-n" & SRVN=$!
+for _ in $(seq 50); do [ -s "$T/puerto-n" ] && break; sleep 0.1; done
+SDD_JEV= SDD_JEV_URL="http://127.0.0.1:$(cat "$T/puerto-n")" TYPESAFE_API_KEY=x python3 - "$ROOT/plugin/hermes-sdd" "$T" <<'PY' && ok "texto en off: Jev juzga lo narrado contra cada criterio y la puerta de FASE lo cuenta" || bad "revisión del texto en off"
+import sys, json
+sys.path.insert(0, sys.argv[1]); import hsdd_textos as T
+from pathlib import Path
+d = Path(sys.argv[2]) / "narr"; (d / "requirements").mkdir(parents=True); (d / "evidencias/FASE-1").mkdir(parents=True)
+(d / "requirements/REQUIREMENTS.md").write_text("""### REQ-F-001: Apuntar
+- **Statement:** x
+  - GIVEN no attendees WHEN the user adds "Ana" with 60,00 € THEN the user sees "Ana — ha pagado 60,00 €"
+    - Se ve: "Ana — ha pagado 60,00 €" en la lista
+  - GIVEN "Ana" exists WHEN the user adds "ana" THEN the user sees "Ya hay un asistente llamado «ana»"
+    - Se ve: "Ya hay un asistente llamado «ana»" en el formulario
+  - GIVEN any data WHEN it is calculated THEN it takes under 2 seconds
+    - No visible: lo mide un test de rendimiento
+""")
+ev = d / "evidencias/FASE-1"
+(ev / "a.narracion.json").write_text(json.dumps({"video": "a.webm", "narraciones": [
+    {"t": 0.1, "texto": "Apuntamos a Ana con 60 €"}, {"t": 0.5, "texto": "Se ve «Ana — ha pagado 60,00 €».", "criterio": "REQ-F-001-AC1"}]}))
+(ev / "b.narracion.json").write_text(json.dumps({"video": "b.webm", "narraciones": [
+    {"t": 0.1, "texto": "Apuntamos a Beto dos veces"}, {"t": 0.5, "texto": "Se ve «Ya hay un asistente».", "criterio": "REQ-F-001-AC2"}]}))
+(ev / "c.narracion.json").write_text(json.dumps({"video": "c.webm", "narraciones": [
+    {"t": 0.1, "texto": "Calculamos con Carla"}, {"t": 0.5, "texto": "Tarda poco.", "criterio": "REQ-F-001-AC3"}]}))
+items = T.narraciones_fase(d, "1")
+assert [(x["criterio"], x["narracion"][0]) for x in items][:2] == [("REQ-F-001-AC1", "Apuntamos a Ana con 60 €"), ("REQ-F-001-AC2", "Apuntamos a Beto dos veces")], items
+assert items[0]["texto"].startswith("GIVEN no attendees") and "Ana — ha pagado 60,00 €" in items[0]["se_ve"], items[0]
+r = T.jev_narracion(d, "1")
+# puntos < 0,5: contradice su criterio (bloquea); por debajo de 1,5: incompleto (se avisa)
+assert r["revisados"] == 3 and [x["criterio"] for x in r["contradicen"]] == ["REQ-F-001-AC2"] and [x["criterio"] for x in r["incompletos"]] == ["REQ-F-001-AC3"], r
+assert json.loads((d / ".sdd/hermes/jev-narracion-1.json").read_text()) == r
+l = T.linea_narracion(d, "1")
+assert "texto en off" in l and "contradice" in l and "REQ-F-001 AC2" in l and "REQ-F-001 AC3" in l, l
+assert l.index("REQ-F-001 AC2") < l.index("REQ-F-001 AC3"), l
+# sin vídeos narrados: nada que revisar; sin Jev: lo dice (no vale como «todo bien»)
+assert T.jev_narracion(d, "2") == {"revisados": 0, "contradicen": [], "incompletos": []}
+import os; os.environ.pop("TYPESAFE_API_KEY"); os.environ["SDD_JEV"] = "off"
+assert T.jev_narracion(d, "1").get("error"), T.jev_narracion(d, "1")
+PY
+kill $SRVN; wait $SRVN 2>/dev/null
 exit $fail
