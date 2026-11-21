@@ -542,14 +542,22 @@ case "$CMD" in
     puertas_repo() {  # «id estado» de las puertas de este repo
       local f; for f in "$HS"/puertas/*.json; do [ -f "$f" ] && jq -r --arg r "$REPO" 'select(.repo == $r) | "\(.id) \(.estado)"' "$f" 2>/dev/null; done; return 0
     }
-    N0=$(lineas); VISTAS=$(puertas_repo | sort); T0=$(date +%s)
+    # Lo ya avisado se recuerda entre llamadas (.sdd/hermes/esperar-*): la puerta de FASE se abre en el mismo segundo
+    # que «aceptar … done» y, si cada llamada partiera de lo que ve al arrancar, una de las dos se perdía (material-montana10)
+    CUR="$REPO/.sdd/hermes/esperar-linea"; AVIS="$REPO/.sdd/hermes/esperar-avisadas"
+    N0=$(cat "$CUR" 2>/dev/null || true); case "$N0" in ''|*[!0-9]*) N0=$(lineas) ;; esac; [ "$N0" -le "$(lineas)" ] || N0=$(lineas)
+    mkdir -p "$REPO/.sdd/hermes"; echo "$N0" > "$CUR"
+    if [ -f "$AVIS" ]; then VISTAS=$(sort -u "$AVIS"); else VISTAS=$(puertas_repo | sort); printf '%s\n' "$VISTAS" > "$AVIS"; fi
+    T0=$(date +%s)
     while :; do
       if [ "$(lineas)" -gt "$N0" ]; then
+        echo $((N0 + 1)) > "$CUR"
         sed -n "$((N0 + 1))p" "$EJ" | jq -r '"ETAPA \(.etapa)\(if .fase then " FASE-\(.fase)" else "" end) \(.resultado): \(.resumen // .motivo // "")"'
         exit 0
       fi
       NUEVA=$(comm -13 <(printf '%s\n' "$VISTAS") <(puertas_repo | sort) | grep -E ' (abierta|error)$' | head -1 || true)
       if [ -n "$NUEVA" ]; then
+        echo "$NUEVA" >> "$AVIS"
         jq -r --arg e "${NUEVA##* }" '"PUERTA \(.id) \(.tipo)\(if (.fase // "") != "" then " FASE-\(.fase)" else "" end) \($e): \(if $e == "error" then ((.error // "") | gsub("\n"; " ") | .[0:200]) else (.titulo // "") end)"' \
           "$HS/puertas/${NUEVA%% *}.json"
         exit 0

@@ -72,7 +72,15 @@ esp --max 20; jq '.estado = "error" | .error = "HEAD no es el commit mostrado"' 
 esp --tag 'entrega-*' --max 20; git tag entrega-1
 [ "$(fin_esp)" = "TAG entrega-1" ] && ok "esperar --tag: aparece el tag" || bad "esperar tag: $(cat "$T/esp")"
 o=$(bash "$ROOT/lanzar.sh" esperar "$R" --max 1); [ $? = 3 ] && [ "$o" = TIEMPO ] && ok "esperar --max: sin nada, TIEMPO y sale con 3" || bad "tiempo: $o"
-rm -f "$HERMES_SDD_HOME/puertas/g7.json"
+# La puerta de FASE se abre en el mismo segundo que «aceptar … done» (material-montana10): esperar da la etapa y la
+# siguiente llamada no puede tragarse la puerta por haberla visto ya abierta al arrancar; cada una se avisa una vez
+esp --max 20; jq -n --arg r "$R" '{id:"g8", tipo:"fase", fase:"3", repo:$r, titulo:"Aceptar FASE-3", estado:"abierta"}' > "$HERMES_SDD_HOME/puertas/g8.json"
+echo '{"etapa":"aceptar","fase":"3","resultado":"done","resumen":"listos"}' >> .sdd/hermes/etapas.jsonl
+e1=$(fin_esp); esp --max 20; e2=$(fin_esp)
+printf '%s\n' "$e1" "$e2" | sort | tr '\n' '|' | grep -qx "ETAPA aceptar FASE-3 done: listos|PUERTA g8 fase FASE-3 abierta: Aceptar FASE-3|" \
+  && ok "esperar: etapa y puerta a la vez, las dos se avisan" || bad "esperar etapa+puerta: «${e1}» «${e2}»"
+o=$(bash "$ROOT/lanzar.sh" esperar "$R" --max 1); [ "$o" = TIEMPO ] && ok "esperar: una puerta ya avisada no se repite" || bad "repite: $o"
+rm -f "$HERMES_SDD_HOME/puertas/g7.json" "$HERMES_SDD_HOME/puertas/g8.json"
 # 8. vigía: gateway callado, aparcada que nadie reanuda, lista que el kanban no despacha
 python3 - "$ROOT/plugin/hermes-sdd/hsdd_proyectos.py" "$R" > "$T/v" 2>&1 <<'PY'
 import importlib.util, json, sys, time

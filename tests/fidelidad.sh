@@ -388,6 +388,17 @@ t = F.norm(F.ocr(Path(sys.argv[2])))
 assert F.norm("Vivienda 2ºB") in t and "ocupada" in t, t
 PY
 fi
+# Linux (material-montana10): sin swiftc (Vision es de macOS) el OCR no tumba la comprobación entera: lee con tesseract
+# si está y, si no, no lee nada (cuenta lo comprobado por el test)
+mkdir -p "$T/sin-swift/bin"; printf '#!/bin/sh\necho "Vivienda 2ºB · Ocupada"\n' > "$T/sin-swift/bin/tesseract"; chmod +x "$T/sin-swift/bin/tesseract"
+HERMES_SDD_HOME="$T/sin-swift/home" python3 - "$ROOT/plugin/hermes-sdd" "$T/sin-swift" <<'PY' && ok "OCR sin swiftc: tesseract si está; si no, sin lectura y sin caerse" || bad "ocr sin swiftc"
+import sys, os; sys.path.insert(0, sys.argv[1]); import hsdd_fidelidad as F
+from pathlib import Path
+os.environ["PATH"] = sys.argv[2] + "/bin"
+assert "Ocupada" in F.ocr(Path("/no/existe.png")), F._CACHE_OCR
+F._CACHE_OCR.clear(); os.environ["PATH"] = sys.argv[2] + "/vacio"
+assert F.ocr(Path("/no/existe.png")) == ""
+PY
 # taller3: un e2e que pasó en la etapa (su JUnit) y falla en este ordenador no es «tests rotos» (grave): es el entorno
 python3 - "$ROOT/plugin/hermes-sdd" "$T" <<'PY' && ok "mutantes: el JUnit de la etapa distingue tests rotos de un entorno local que falla" || bad "junit de la etapa"
 import sys; sys.path.insert(0, sys.argv[1]); import hsdd_fidelidad as F

@@ -494,12 +494,35 @@ def _jev_env() -> dict:
     return env
 
 
+def _escenarios_bdd(repo: Path) -> dict:
+    """{AC-NNN-NN: (REQ-id, n.º de criterio)} de las etiquetas de spec/tests/BDD-*.md («Scenario: AC-006-01 — … [REQ-F-006
+    AC1]»), como scenarioIndex de metodo/scripts/lib/acceptance.mjs; un escenario sin criterio en su etiqueta no sale."""
+    res = {}
+    for f in sorted((Path(repo) / "spec" / "tests").glob("BDD-*.md")):
+        for l in _leer(f).splitlines():
+            if not re.match(r"^\s*(?:#{1,6}\s*)?(?:\*\*)?(?:Scenario(?: Outline)?|Escenario|Esquema del escenario)\b", l, re.I):
+                continue
+            ids = [f"AC-{a}-{b}" for a, b in re.findall(r"\bAC-(\d{3,})-(\d{2,})(?!\d)", l, re.I)]
+            tags = []
+            for b in re.findall(r"\[([^\]]*)\]", l):
+                cur = None
+                for tok in [t for t in re.split(r"[\s,;]+", b) if t]:
+                    if re.fullmatch(r"REQ-[A-Z]+(?:-[A-Z0-9]+)*-\d+", tok):
+                        cur = tok
+                    elif cur and re.fullmatch(r"AC\d+", tok, re.I):
+                        tags.append((cur, int(tok[2:])))
+            for i in ids:
+                if tags:
+                    res.setdefault(i.upper(), tags[0])
+    return res
+
+
 def narraciones_fase(repo: Path, fase: str) -> list[dict]:
     """Un ítem por criterio con vídeo narrado en evidencias/FASE-<N>/*.narracion.json: {criterio (REQ-…-ACn), req, ac,
     texto (el GIVEN/WHEN/THEN literal), se_ve, narracion (todas las frases de su vídeo, en orden)}."""
     repo = Path(repo)
     md = _leer(repo / "requirements" / "REQUIREMENTS.md")
-    crits, vistas = _criterios(md), _vistas_criterios(md)
+    crits, vistas, escenarios = _criterios(md), _vistas_criterios(md), _escenarios_bdd(repo)
     out, vistos = [], set()
     for f in sorted((repo / "evidencias" / f"FASE-{fase}").glob("*.narracion.json")):
         try:
@@ -509,9 +532,15 @@ def narraciones_fase(repo: Path, fase: str) -> list[dict]:
         frases = [str(x.get("texto") or "").strip() for x in sorted(n.get("narraciones") or [], key=lambda x: float(x.get("t") or 0))]
         for c in dict.fromkeys(x.get("criterio") for x in n.get("narraciones") or [] if x.get("criterio")):
             m = re.match(r"^(REQ-[A-Z]+-[0-9A-Za-z]+)-AC(\d+)$", str(c))
-            if not m or c in vistos:
+            if m:
+                req, ac = m.group(1), int(m.group(2))
+            elif str(c).upper() in escenarios:   # el guion nombra el criterio por su escenario BDD (material-montana10)
+                req, ac = escenarios[str(c).upper()]
+            else:
                 continue
-            req, ac = m.group(1), int(m.group(2))
+            c = f"{req}-AC{ac}"
+            if c in vistos:
+                continue
             lista = crits.get(req) or []
             if not 1 <= ac <= len(lista):
                 continue
@@ -769,6 +798,37 @@ def _cambios_pedidos(repo: Path) -> str:
     lim = lambda xs: xs[:8] + ([f"… y {len(xs) - 8} más"] if len(xs) > 8 else [])
     return (bloque + "\nQué cambia respecto a lo que viste:\n"
             + "\n".join([f"➕ {x}" for x in lim(mas)] + [f"➖ {x}" for x in lim(menos)]))
+
+
+def _rechazo_previo(repo: Path, fase: str) -> str:
+    """Si la última decisión de esta FASE fue ❌ rechazo, lo que pidió la persona y lo hecho desde la puerta rechazada
+    (los commits desde su sha, sin los informes que el pipeline escribe solo). material-montana10, E-6: la puerta nueva
+    no lo decía y había que buscar en acceptance.json si el hallazgo quedó resuelto. "" si no."""
+    import subprocess
+    h = repo / ".sdd" / "hermes"
+    ultima = None
+    for l in _leer(h / "puertas.jsonl").splitlines():
+        try:
+            x = json.loads(l)
+        except ValueError:
+            continue
+        if isinstance(x, dict) and x.get("tipo") == "fase" and str(x.get("fase")) == str(fase) and x.get("verbo"):
+            ultima = x
+    if not ultima or ultima.get("verbo") != "rechazo":
+        return ""
+    bloque = f"❌ Rechazaste la versión anterior:\n«{_corta(ultima.get('texto') or '', 400)}»"
+    try:
+        sha = json.loads(_leer(h / "puertas" / f"{ultima.get('puerta')}.json") or "{}").get("sha") or ""
+    except ValueError:
+        sha = ""
+    if not sha:
+        return bloque
+    r = subprocess.run(["git", "-C", str(repo), "log", "--reverse", "--format=%s", f"{sha}..HEAD"], capture_output=True, text=True)
+    hechos = [x for x in r.stdout.splitlines() if x.strip() and not re.match(r"^docs\((acceptance|status|demo)\)", x)]
+    if r.returncode or not hechos:
+        return bloque + "\nDesde entonces no hay ningún cambio en el código: mira si lo pedido está resuelto."
+    lim = hechos[:8] + ([f"… y {len(hechos) - 8} más"] if len(hechos) > 8 else [])
+    return bloque + "\nLo hecho desde entonces:\n" + "\n".join(f"• {x}" for x in lim)
 
 
 def _texto_para_comparar(repo: Path) -> str:
@@ -1091,6 +1151,8 @@ def puerta_fase(repo: Path, proyecto: str, fase: str, gate_md: str, rc: int, tes
         cabeza = ("⛔ No pasa la comprobación: hay requisitos que fallan o sin comprobar. No se puede aceptar tal cual: "
                   "recházala para que se corrija o, si lo que falta puede esperar, acéptala sin ello.")
     partes = [f"🧪 La FASE-{fase} de «{proyecto}» está lista para revisar.", cabeza]
+    if (rp := _rechazo_previo(Path(repo), fase)):
+        partes.append(rp)
     if filas:
         partes.append("\n".join(_agrupa(_lineas_veredictos(repo, filas, rev))))
     partes += _bloque_impugnaciones(repo, imp)

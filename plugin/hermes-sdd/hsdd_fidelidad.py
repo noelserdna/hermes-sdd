@@ -368,9 +368,12 @@ def vinculos(repo: Path, acc: dict) -> list[dict]:
 
 # ── 3. capturas (OCR) ───────────────────────────────────────────────────────────────────────────────────────────────
 def _ocr_bin() -> Path | None:
+    """El lector de Vision (macOS), compilado una vez con swiftc; None si no hay swiftc (Linux) o no compila."""
     b = HOME / "bin" / "hsdd-ocr"
     if b.exists() and b.stat().st_mtime >= OCR_SWIFT.stat().st_mtime:
         return b
+    if not shutil.which("swiftc"):
+        return None
     b.parent.mkdir(parents=True, exist_ok=True)
     r = subprocess.run(["swiftc", "-O", "-o", str(b), str(OCR_SWIFT)], capture_output=True, text=True)
     return b if r.returncode == 0 else None
@@ -380,10 +383,21 @@ _CACHE_OCR: dict[str, str] = {}
 
 
 def ocr(img: Path) -> str:
+    """El texto de una captura: Vision en macOS, tesseract si está (Linux: material-montana10 se cayó entero por no
+    haber swiftc) y, sin ninguno, "" (solo cuenta lo que el test comprobó visible)."""
     k = str(img)
     if k not in _CACHE_OCR:
         b = _ocr_bin()
-        _CACHE_OCR[k] = subprocess.run([str(b), k], capture_output=True, text=True).stdout if b else ""
+        if b:
+            cmd = [str(b), k]
+        elif shutil.which("tesseract"):
+            cmd = ["tesseract", k, "-", "-l", "spa+eng"]
+        else:
+            cmd = None
+        try:
+            _CACHE_OCR[k] = subprocess.run(cmd, capture_output=True, text=True, timeout=60).stdout if cmd else ""
+        except (OSError, subprocess.SubprocessError):
+            _CACHE_OCR[k] = ""
     return _CACHE_OCR[k]
 
 

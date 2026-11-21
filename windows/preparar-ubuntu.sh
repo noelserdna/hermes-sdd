@@ -7,7 +7,7 @@
 #
 # Se puede repetir: lo que ya está instalado se salta.
 #   1. paquetes del sistema (git jq rsync python3 perl openssl,    5. Hermes Agent y Claude Code si faltan
-#      ffmpeg y espeak-ng: la voz en off de las demos)
+#      ffmpeg y espeak-ng: la voz en off de las demos; tesseract: leer capturas)
 #   2. Node 22 si no hay un Node ≥ 20                              6. identidad de git (avisa si falta)
 #   3. Docker, para la caja local donde trabaja el agente          7. clon en ~/hermes-sdd (si no se ejecuta desde uno)
 #   4. WSL: systemd y sin el PATH de Windows                       8. instalar.sh, si Hermes ya tiene un modelo configurado
@@ -26,9 +26,11 @@ export PATH="$HOME/.local/bin:$PATH"
 paso "1/8 Paquetes del sistema"
 root apt-get update -qq
 # ffmpeg y espeak-ng: los vídeos de la demo con voz en off (sdd demo narrate; en macOS la voz es «say»). Sin ellos, mp4
-# sin voz (gastos-cena2 en PcWindows: «0 frase(s), sin voz: no hay TTS»)
-root env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq git jq rsync python3 perl openssl curl ca-certificates ffmpeg espeak-ng >/dev/null
-ok "git jq rsync python3 perl openssl curl ffmpeg espeak-ng"
+# sin voz (gastos-cena2 en PcWindows: «0 frase(s), sin voz: no hay TTS»). tesseract: la comprobación de fidelidad lee
+# las capturas (en macOS con Vision); sin él solo cuenta lo que el test comprobó visible (material-montana10)
+root env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq git jq rsync python3 perl openssl curl ca-certificates ffmpeg espeak-ng \
+  tesseract-ocr tesseract-ocr-spa >/dev/null
+ok "git jq rsync python3 perl openssl curl ffmpeg espeak-ng tesseract"
 
 paso "2/8 Node.js"
 mayor=$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)

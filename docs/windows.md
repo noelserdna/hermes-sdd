@@ -30,7 +30,7 @@ Ubuntu, y Telegram y el panel web se usan desde Windows como siempre.
 4. El script hace el resto. Puedes repetirlo cuando quieras: lo que ya está hecho se salta.
    - Comprueba que Ubuntu está en WSL2.
    - Dentro de Ubuntu ([`windows/preparar-ubuntu.sh`](../windows/preparar-ubuntu.sh)): instala `git jq rsync python3
-     perl openssl`, `ffmpeg` y `espeak-ng` (la voz en off de las demos), Node 22, **Docker** (la caja donde trabaja el agente; en macOS es Apple container), Hermes Agent y
+     perl openssl`, `ffmpeg` y `espeak-ng` (la voz en off de las demos), `tesseract-ocr` (leer las capturas), Node 22, **Docker** (la caja donde trabaja el agente; en macOS es Apple container), Hermes Agent y
      Claude Code; activa systemd, **quita de Ubuntu el PATH de Windows** (si no, puede colarse el `node` o el `docker`
      de Windows) y clona el arnés en `~/hermes-sdd`. Te avisa si git no sabe quién eres.
    - Crea la tarea programada **«hermes-sdd WSL»**, que mantiene Ubuntu encendido mientras tienes la sesión abierta.
@@ -145,6 +145,7 @@ Instala como arriba y copia, sin secretos: `~/.hermes/config.yaml`, `SOUL.md`, `
 | `Executable doesn't exist … ms-playwright` | Falta el navegador de Playwright. En el proyecto: `npx playwright install --with-deps chromium`. |
 | `wsl -l -v` muestra versión 1 | `wsl --set-version Ubuntu 2`. |
 | Los vídeos de la demo salen sin voz («sin voz: no hay TTS») | `sudo apt install espeak-ng ffmpeg` (lo pone `preparar-ubuntu.sh`). |
+| La puerta de entrega avisa «hsdd_fidelidad falló» | Arnés anterior a material-montana10 (pedía `swiftc`): `git pull && bash instalar.sh`. Con `tesseract-ocr tesseract-ocr-spa` también lee las capturas. |
 | Una etapa falla: «no hay token de Claude para la caja» | `claude setup-token` y `bash ~/hermes-sdd/caja-token.sh`. |
 | La caja falla con «Permission denied» en `/salida` | Arnés anterior al 20/11/2026: actualiza (`git pull && bash instalar.sh`); la imagen se construye ahora con tu uid. |
 | Un proyecto nuevo falla: «git no sabe quién eres» | `git config --global user.name "…"` y `user.email "…"`. |

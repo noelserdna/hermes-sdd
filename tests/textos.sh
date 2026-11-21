@@ -826,6 +826,41 @@ assert l.index("REQ-F-001 AC2") < l.index("REQ-F-001 AC3"), l
 assert T.jev_narracion(d, "2") == {"revisados": 0, "contradicen": [], "incompletos": []}
 import os; os.environ.pop("TYPESAFE_API_KEY"); os.environ["SDD_JEV"] = "off"
 assert T.jev_narracion(d, "1").get("error"), T.jev_narracion(d, "1")
+# Con escenarios BDD (material-montana10) el guion da a cada criterio el id de su escenario («AC-001-02»), que lleva el
+# criterio en su etiqueta de spec/tests/BDD-*.md; un escenario sin etiqueta no es un criterio del requisito
+(d / "spec/tests").mkdir(parents=True)
+(d / "spec/tests/BDD-UC-001.md").write_text("""Scenario: AC-001-01 — Ana [REQ-F-001 AC1]
+Scenario: AC-001-02 — dos veces [REQ-F-001 AC2]
+Scenario: AC-001-09 — no existe
+""")
+(d / "evidencias/FASE-3").mkdir(parents=True)
+(d / "evidencias/FASE-3/e.narracion.json").write_text(json.dumps({"video": "e.webm", "narraciones": [
+    {"t": 0.1, "texto": "Apuntamos a Beto dos veces"}, {"t": 0.5, "texto": "Se ve «Ya hay un asistente».", "criterio": "AC-001-02"}]}))
+(d / "evidencias/FASE-3/f.narracion.json").write_text(json.dumps({"video": "f.webm", "narraciones": [
+    {"t": 0.5, "texto": "No existe.", "criterio": "AC-001-09"}]}))
+items = T.narraciones_fase(d, "3")
+assert [(x["criterio"], x["req"], x["ac"]) for x in items] == [("REQ-F-001-AC2", "REQ-F-001", 2)], items
+assert items[0]["texto"].startswith('GIVEN "Ana" exists'), items[0]
+PY
+# Tras ❌ rechazar una FASE (material-montana10, E-6), la puerta siguiente recuerda lo que se pidió y lo que se hizo desde
+# la puerta rechazada (sus commits, sin los de informes); había que buscarlo en acceptance.json
+python3 - "$ROOT/plugin/hermes-sdd" "$T" <<'PY' && ok "puerta de FASE tras un rechazo: lo pedido y lo hecho desde entonces" || bad "puerta tras rechazo"
+import sys, json, subprocess
+sys.path.insert(0, sys.argv[1]); import hsdd_textos as T
+from pathlib import Path
+d = Path(sys.argv[2]) / "rech"; (d / ".sdd/hermes/puertas").mkdir(parents=True)
+g = lambda *a: subprocess.run(["git", "-C", str(d), *a], check=True, capture_output=True, text=True).stdout.strip()
+g("init", "-q"); g("config", "user.email", "t@t"); g("config", "user.name", "t")
+g("commit", "-q", "--allow-empty", "-m", "feat(socios): restablecer"); sha = g("rev-parse", "HEAD")
+(d / ".sdd/hermes/puertas/g1.json").write_text(json.dumps({"id": "g1", "tipo": "fase", "fase": "3", "sha": sha}))
+(d / ".sdd/hermes/puertas.jsonl").write_text(json.dumps({"puerta": "g0", "tipo": "fase", "fase": "2", "verbo": "rechazo", "texto": "otra fase"}) + "\n"
+    + json.dumps({"puerta": "g1", "tipo": "fase", "fase": "3", "verbo": "rechazo", "texto": "Restablecer tiene que levantar el bloqueo"}) + "\n")
+g("commit", "-q", "--allow-empty", "-m", "fix(socios): restablecer la contrasena levanta el bloqueo de la cuenta")
+g("commit", "-q", "--allow-empty", "-m", "docs(acceptance): acceptance report at abc")
+t = T.puerta_fase(d, "p", "3", "", 0, 0, False, 0)["texto"]
+assert "Rechazaste la versión anterior" in t and "Restablecer tiene que levantar el bloqueo" in t, t
+assert "restablecer la contrasena levanta el bloqueo" in t and "acceptance report" not in t and "otra fase" not in t, t
+assert "Rechazaste" not in T.puerta_fase(d, "p", "1", "", 0, 0, False, 0)["texto"]
 PY
 kill $SRVN; wait $SRVN 2>/dev/null
 exit $fail
