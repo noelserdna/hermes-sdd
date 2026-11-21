@@ -534,6 +534,10 @@ def puede_jev(puerta: dict, cfg: dict | None = None) -> tuple[bool, str]:
         return False, "una pregunta la reserva el método a una persona (editar tests que ya existían)"
     if graves_jev(puerta):   # revisión mecánica del encargado (hsdd_revision.py)
         return False, "el encargado marcó un aviso grave (lo decide una persona)"
+    # La entrega con vídeo la acepta una persona que lo ha visto: Jev no puede verlo (gastos-cena y gastos-cena2, G-6:
+    # Jev la aceptó por regla a los 3 s y la entrega salió sin que nadie viera la demo)
+    if tipo == "entrega" and (puerta.get("demo") or any(o.get("verbo") == "ver" for o in puerta.get("opciones") or [])):
+        return False, "la entrega tiene demo: la acepta una persona que la haya visto"
     # Un requisito que solo comprueba una persona a mano (inspección o demo): su «🔍 Lo he revisado» es de una persona
     if puerta.get("revisar"):
         return False, "hay algo que solo puede comprobar una persona a mano (inspección)"

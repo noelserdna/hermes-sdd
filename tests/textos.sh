@@ -739,6 +739,27 @@ assert "Lo que hemos supuesto porque no lo decías (2)" in t and "• La sesión
 (d / "requirements/REQUIREMENTS.md").write_text("# R\n\n## Traceability\n")
 assert "supuesto" not in T.puerta_requisitos(d, "p", "1.0")["texto"]
 PY
+# Tras «✏️ cambios» en la primera versión, la puerta nueva empieza por lo que pidió la persona y lo que cambió en el
+# resumen respecto a la anterior (gastos-cena2, C-3: había que ir al fichero para ver que el cambio se aplicó)
+python3 - "$ROOT/plugin/hermes-sdd" <<'PY' && ok "puerta de requisitos tras pedir cambios: enseña lo pedido y qué cambió respecto a la anterior" || bad "cambio pedido en la puerta de requisitos"
+import sys, tempfile, json
+sys.path.insert(0, sys.argv[1]); import hsdd_textos as T
+from pathlib import Path
+d = Path(tempfile.mkdtemp()); (d / "requirements").mkdir(); (d / ".sdd/hermes/puertas").mkdir(parents=True)
+(d / "requirements/REQUIREMENTS.md").write_text("# R\n\n## Supuestos\n\n- Máximo 30 asistentes.\n- El mínimo de verdad: se agrupan los saldos.\n")
+assert "Pediste cambios" not in T.puerta_requisitos(d, "p", "1.0")["texto"]
+(d / ".sdd/hermes/puertas/g1.json").write_text(json.dumps({"id": "g1", "tipo": "requisitos", "texto": "🧩 Supuestos:\n• Máximo 30 asistentes.\n• Como mucho n − 1 pagos."}))
+(d / ".sdd/hermes/puertas.jsonl").write_text(json.dumps({"puerta": "g1", "tipo": "requisitos", "verbo": "cambios", "persona": "yo", "texto": "Quiero el mínimo de verdad"}) + "\n")
+t = T.puerta_requisitos(d, "p", "1.0")["texto"]
+i = t.index("✏️ Pediste cambios")
+assert "«Quiero el mínimo de verdad»" in t[i:], t
+assert "➕ El mínimo de verdad: se agrupan los saldos." in t and "➖ Como mucho n − 1 pagos." in t, t
+assert "Máximo 30 asistentes.\n" not in t[i:t.index("🧩")], t   # lo que no cambió no sale en el bloque
+assert i < t.index("🧩"), t
+# aprobada después, una versión nueva ya no lo enseña
+with open(d / ".sdd/hermes/puertas.jsonl", "a") as f: f.write(json.dumps({"puerta": "g2", "tipo": "requisitos", "verbo": "acepto"}) + "\n")
+assert "Pediste cambios" not in T.puerta_requisitos(d, "p", "1.0")["texto"]
+PY
 # Ayuda de Jev en la puerta de requisitos (jev_requisitos): necesidades sin requisito claro y supuestos ordenados, con
 # los 3 que más conviene mirar arriba; sin su fichero, la puerta sale como siempre
 python3 - "$ROOT/plugin/hermes-sdd" <<'PY' && ok "puerta de requisitos: la ayuda de Jev señala necesidades dudosas y ordena los supuestos (sin decidir nada)" || bad "ayuda de Jev en requisitos"

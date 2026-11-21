@@ -576,6 +576,10 @@ export function validateChallenge(ch, reqs, { root, testPaths = [], evidenceDir 
     const n = acNumber(ch.ac);
     if (n === null || Number.isNaN(n) || n < 1) errors.push("--ac N is required (the criterion the finding is about: 2 or AC2)");
     else if (n > Math.max(1, req.criteria.length)) errors.push(`${ch.req} has ${req.criteria.length} criteria; AC${n} does not exist`);
+    // A criterion marked «No visible» puts nothing on screen: there is no capture to judge, its test proves it
+    // (gastos-cena2, C-5: WRONG-CAPTURE on a performance criterion blocked the delivery gate)
+    else if (ch.category === "WRONG-CAPTURE" && req.sees?.[n - 1]?.none)
+      errors.push(`${ch.req} AC${n} is «No visible: ${req.sees[n - 1].none}»: it has no capture to judge; if its test does not prove it, use WEAKENED-ASSERT, MOCK-ONLY or NOT-IMPLEMENTED`);
     else if (norm(ch.quote) && req.criteria[n - 1] && !norm(req.criteria[n - 1]).toLowerCase().includes(norm(ch.quote).toLowerCase()))
       warnings.push(`--quote is not a literal part of ${ch.req} AC${n} (\`sdd req show ${ch.req} --ac ${n}\`)`);
   }

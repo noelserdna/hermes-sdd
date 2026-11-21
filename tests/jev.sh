@@ -237,7 +237,7 @@ PY
 # Reglas (hsdd_nucleo.regla_jev): lo que no necesita juicio lo firma una regla en nombre de Jev, sin preguntar al
 # modelo; lo vetado va a una persona; el resto lo juzga Jev. Sobre 113 puertas reales: 59 firmadas (antes 21), ninguna
 # de las que la persona rechazó.
-python3 - "$ROOT/plugin/hermes-sdd" <<'PY' && ok "reglas: firman lo limpio (ruta fijada, cambio por respuestas, dudas, plan, FASE, entrega, primer fallo) y dejan a Jev o a la persona lo demás" || bad "reglas de Jev"
+python3 - "$ROOT/plugin/hermes-sdd" <<'PY' && ok "reglas: firman lo limpio (ruta fijada, cambio por respuestas, dudas, plan, FASE, entrega sin demo, primer fallo) y dejan a Jev o a la persona lo demás" || bad "reglas de Jev"
 import importlib.util, sys
 s = importlib.util.spec_from_file_location("N", sys.argv[1] + "/hsdd_nucleo.py"); N = importlib.util.module_from_spec(s); s.loader.exec_module(N)
 cfg = {"defecto": "auto"}
@@ -261,6 +261,10 @@ casos = {
     "FASE con tests tocados": (caso(**fase, tests_editados=1), "persona"),
     "FASE con inspección": (caso(**fase, revisar=[{"req": "REQ-C-001"}]), "persona"),
     "entrega con avisos de capturas ya aceptadas": (caso(tipo="entrega", opciones=op("acepto"), encargado={"graves": 3, "avisos": [{"grave": True, "codigo": "captura-mal-tomada"}] * 3}), "acepto"),
+    # gastos-cena (G-6) y gastos-cena2: Jev aceptó la entrega por regla a los 3 s y nadie vio la demo. La entrega con
+    # vídeo la acepta una persona, que lo ha visto
+    "entrega con demo": (caso(tipo="entrega", opciones=op("ver", "acepto", "observaciones", "rechazo"), demo="evidencias/FASE-0/x.mp4"), "persona"),
+    "entrega de FASE única con demo": (caso(tipo="entrega", opciones=op("ver", "acepto"), demo="evidencias/FASE-0/x.mp4", unica=True), "persona"),
     "entrega con otro aviso grave": (caso(tipo="entrega", opciones=op("acepto"), encargado={"graves": 1, "avisos": [{"grave": True, "codigo": "desplegable"}]}), "persona"),
     "primer fallo": (caso(tipo="fallo", opciones=op("reintento", "paro"), fallo={"veces": 1}), "reintento"),
     "segundo fallo": (caso(tipo="fallo", opciones=op("reintento", "paro"), fallo={"veces": 2}), "persona"),

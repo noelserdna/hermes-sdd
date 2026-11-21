@@ -595,6 +595,9 @@ def puerta_requisitos(repo: Path, proyecto: str, version: str = "", cambio: dict
         partes.append(f"📝 Esto es lo que vamos a construir para «{proyecto}»{v}.")
         if pet:
             partes.append(f"🗣 Lo que pediste:\n«{_corta(pet, 500)}»")
+        pedido = _cambios_pedidos(repo)
+        if pedido:
+            partes.append(pedido)
         if partida:   # requisitos casi listos que trajo la persona (preparados con el encargado): depurados, no reescritos
             n = _partida(partida)
             partes.append(f"📄 Partías de tus requisitos{f' ({n})' if n else ''}: los he depurado sin cambiar lo que pedían "
@@ -632,6 +635,48 @@ def puerta_requisitos(repo: Path, proyecto: str, version: str = "", cambio: dict
             partes.append(f"🧩 Lo que hemos supuesto porque no lo decías ({len(sup)}); si alguno no vale, dilo con ✏️:\n"
                           + "\n".join(f"• {x}" for x in sup))
     return {"titulo": titulo, "texto": "\n\n".join(partes) + _cierre_requisitos(extras)}
+
+
+def _cambios_pedidos(repo: Path) -> str:
+    """Si la última decisión de requisitos fue «✏️ cambios», lo que pidió la persona y las líneas del resumen que
+    cambiaron respecto a aquella puerta (gastos-cena2, C-3: el resumen nuevo salía entero, igual que el anterior, y había
+    que abrir el fichero para ver que el cambio se aplicó). "" si no."""
+    h = repo / ".sdd" / "hermes"
+    ultima = None
+    for l in _leer(h / "puertas.jsonl").splitlines():
+        try:
+            x = json.loads(l)
+        except ValueError:
+            continue
+        if isinstance(x, dict) and x.get("tipo") == "requisitos" and x.get("verbo"):
+            ultima = x
+    if not ultima or ultima.get("verbo") != "cambios":
+        return ""
+    bloque = f"✏️ Pediste cambios en la versión anterior:\n«{_corta(ultima.get('texto') or '', 400)}»"
+    try:
+        antes = json.loads(_leer(h / "puertas" / f"{ultima.get('puerta')}.json") or "{}").get("texto") or ""
+    except ValueError:
+        antes = ""
+    if not antes:
+        return bloque
+    vinetas = lambda t: [l[2:].strip() for l in t.splitlines() if l.startswith("• ")]
+    ahora = [x for x in vinetas(_texto_para_comparar(repo))]
+    viejas = vinetas(antes)
+    mas = [x for x in dict.fromkeys(ahora) if x not in viejas]
+    menos = [x for x in dict.fromkeys(viejas) if x not in ahora]
+    if not mas and not menos:
+        return bloque + "\nEn este resumen no cambia ninguna línea: el cambio está en el detalle (requirements/REQUIREMENTS.md)."
+    lim = lambda xs: xs[:8] + ([f"… y {len(xs) - 8} más"] if len(xs) > 8 else [])
+    return (bloque + "\nQué cambia respecto a lo que viste:\n"
+            + "\n".join([f"➕ {x}" for x in lim(mas)] + [f"➖ {x}" for x in lim(menos)]))
+
+
+def _texto_para_comparar(repo: Path) -> str:
+    """Las viñetas del resumen de la primera versión tal como saldrían ahora (sin el bloque de cambios)."""
+    reqs = requisitos(repo)
+    lineas = [f"• {_texto_req(r)}" for r in reqs]
+    web = _bloque_web(repo, cambio=False)
+    return "\n".join(lineas + ([web] if web else []) + [f"• {x}" for x in supuestos(repo)])
 
 
 def _peticion_por_respuestas(repo: Path, proyecto: str, pet: str) -> str:

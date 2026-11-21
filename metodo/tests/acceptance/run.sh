@@ -972,6 +972,12 @@ expect "a capture of the evidence dir without a line → 0, pinned by sha256" "$
 printf 'png2' > "$repo/evidencias/FASE-1/AC-001-01.png"
 run accept challenge list --json
 expect "stale when the cited capture changed" "$(js 'j.challenges.find(x=>x.id==="CH-006").stale_reason')" "capture evidencias/FASE-1/AC-001-01.png changed"
+# WRONG-CAPTURE on a criterion marked «No visible» (gastos-cena2, C-5: a verifier asked a capture of a performance
+# criterion): there is no capture to judge, the test is what proves it → rejected, pointing at the test categories
+perl -0pi -e 's/(THEN task 1 "Buy milk" is pending[^\n]*\n)/$1   - No visible: lo prueba el test de la lista\n/' "$repo/requirements/REQUIREMENTS.md"
+run accept challenge add --why "no hay captura" --req REQ-F-001 --ac 1 --category WRONG-CAPTURE --quote 'Buy milk' --evidence evidencias/FASE-1/AC-001-01.png --verifier v --counter confirmed
+expect "WRONG-CAPTURE on a «No visible» criterion → 2" "$rc" 2; has "says why: nothing on screen to capture" "No visible"
+( cd "$repo" && git checkout -q -- requirements/REQUIREMENTS.md )
 rm -rf "$repo/evidencias"
 
 # adversarial plan: the mechanical coverage critic

@@ -19,10 +19,11 @@ No todas las puertas necesitan juicio. Antes de preguntar al modelo, el gateway 
 
 1. **Va a una persona, sin llamar al modelo:** bloqueo de calidad, tests que ya existían tocados, una recomendada que
    autoriza editar tests, algo que solo se comprueba a mano (inspección), un aviso grave del encargado (en la entrega
-   no cuentan los de capturas de FASEs ya aceptadas), una etapa que vuelve a fallar.
+   no cuentan los de capturas de FASEs ya aceptadas), una etapa que vuelve a fallar, y **la entrega con demo**: la
+   acepta una persona que haya visto el vídeo (Jev no puede verlo).
 2. **La firma una regla, en nombre de Jev y con la misma ventana para deshacer:** la ruta que fijó el cliente, un
    cambio de requisitos que sale de respuestas que la persona ya eligió, unas dudas (con sus recomendadas), un plan sin
-   avisos graves, una FASE o entrega sin nada de lo del punto 1, y el primer reintento de una etapa que falló. El
+   avisos graves, una FASE (o una entrega sin demo) sin nada de lo del punto 1, y el primer reintento de una etapa que falló. El
    canal lo dice: «🤖 Jev lo aprueba por regla (…): <la regla>».
 3. **Lo juzga el modelo, con su umbral:** los requisitos iniciales, una ruta no fijada y el mantenimiento.
 

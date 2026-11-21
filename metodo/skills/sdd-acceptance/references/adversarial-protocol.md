@@ -71,7 +71,8 @@ Rules:
    and check that they show the criterion's literal (the text, the state, the screen): the texts of its `Se ve:`
    line when it has one (`req show --json` → `criteria[].sees`), else the literal of its THEN. A capture of another screen,
    an error page, a loading state or the weakened text is a WRONG-CAPTURE finding. A missing capture is not your
-   finding: the ledger already marks that criterion `unshown`.
+   finding: the ledger already marks that criterion `unshown`. A criterion marked `No visible:` (`sees.none`) has no
+   capture to check: judge its test with the other rules; the CLI rejects a WRONG-CAPTURE on it.
 6. Before a SPEC-QUESTION, read the customer's decisions: `node "{SDD}" questions list --json` (ANSWERED questions
    and their answers). If the customer already decided what the criterion leaves open, that decision is the answer:
    it is not a SPEC-QUESTION. If the code contradicts the criterion or a customer decision (a time zone, a message,
