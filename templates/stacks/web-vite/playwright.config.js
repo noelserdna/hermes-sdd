@@ -7,8 +7,11 @@ import { readdirSync } from 'node:fs';
 import path from 'node:path';
 
 const root = execSync('git rev-parse --show-toplevel').toString().trim();
-const fase = process.env.SDD_FASE ?? '0';
-export const evidenceDir = path.join(root, process.env.SDD_EVIDENCE_DIR ?? 'evidencias', `FASE-${fase}`);
+const fase = process.env.SDD_FASE ?? '';
+// Sin SDD_FASE (la suite entera: la que corre el agente al implementar o el cierre) graba aparte, en evidencias/sin-fase:
+// no es la evidencia de ninguna FASE (material-montana10: pisaba evidencias/FASE-0 y su JUnit)
+const carpeta = fase ? `FASE-${fase}` : 'sin-fase';
+export const evidenceDir = path.join(root, process.env.SDD_EVIDENCE_DIR ?? 'evidencias', carpeta);
 const port = process.env.PORT ?? '5173';
 // Con SDD_FASE=N corren solo los recorridos de esa FASE (tests/e2e/fase-N-*.spec.js) si los hay: aceptar una FASE no
 // vuelve a grabar las anteriores (material-montana3: la FASE-1 grababa también los 18 vídeos de la FASE-0). Sin
@@ -25,7 +28,7 @@ export default defineConfig({
   workers: 1,
   outputDir: path.join(evidenceDir, '.playwright'),
   // Un JUnit por FASE: el cierre de una entrega lee el de cada FASE entregada (antes se pisaban y solo quedaba el último)
-  reporter: [['list'], ['junit', { outputFile: path.join(root, `.sdd/junit/playwright-fase-${fase}.xml`) }]],
+  reporter: [['list'], ['junit', { outputFile: path.join(root, `.sdd/junit/playwright-${fase ? `fase-${fase}` : 'sin-fase'}.xml`) }]],
   use: {
     baseURL: process.env.BASE_URL || `http://127.0.0.1:${port}`,
     screenshot: 'on',

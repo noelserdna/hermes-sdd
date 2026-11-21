@@ -186,4 +186,16 @@ o=$(env -u GIT_AUTHOR_NAME -u GIT_AUTHOR_EMAIL -u GIT_COMMITTER_NAME -u GIT_COMM
   && ok "sin identidad de git: rechazo que dice cómo ponerla" || bad "sin identidad: rc=$rc $o"
 [ ! -e "$T/proyectos/sin-identidad" ] && ok "sin identidad de git: no deja la carpeta a medias" \
   || bad "sin identidad: quedó $(ls -A "$T/proyectos/sin-identidad" | tr '\n' ' ')"
+# La plantilla de Playwright sin SDD_FASE (la suite entera que corre el agente al implementar o el cierre) no graba en
+# evidencias/FASE-0 ni pisa su JUnit: material-montana10 acabó con 70 narraciones en FASE-0 (26 al abrir su puerta)
+PW="$T/pw"; mkdir -p "$PW/node_modules/@playwright/test" "$PW/tests/e2e"; git -C "$PW" init -q
+cp "$ROOT/templates/stacks/web-vite/playwright.config.js" "$PW/"
+echo '{"type":"module"}' > "$PW/package.json"
+printf '{"name":"@playwright/test","type":"module","main":"i.js"}' > "$PW/node_modules/@playwright/test/package.json"
+echo 'export const defineConfig = (c) => c; export const devices = new Proxy({}, { get: () => ({}) });' > "$PW/node_modules/@playwright/test/i.js"
+pwcfg() { (cd "$PW" && env "$@" node --input-type=module -e "const c = (await import('./playwright.config.js')).default; console.log(c.outputDir + ' ' + c.reporter[1][1].outputFile)"); }
+o0=$(pwcfg -u SDD_FASE); o2=$(pwcfg SDD_FASE=2)
+case "$o0" in *evidencias/FASE-0*|*playwright-fase-0.xml*) bad "sin SDD_FASE graba en FASE-0: $o0" ;;
+  *evidencias/sin-fase/.playwright*playwright-sin-fase.xml) case "$o2" in *evidencias/FASE-2/.playwright*playwright-fase-2.xml) ok "plantilla Playwright: sin SDD_FASE graba aparte (no pisa la FASE-0)" ;; *) bad "con SDD_FASE=2: $o2" ;; esac ;;
+  *) bad "sin SDD_FASE: $o0" ;; esac
 exit $fail

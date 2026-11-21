@@ -82,7 +82,7 @@ export const test = base.extend({
     estado.delete(testInfo.testId);
     if (!video) return;
     await page.close();
-    const wf = videoId ?? testInfo.title.match(/WF-\d{3}/)?.[0] ?? `FASE-${process.env.SDD_FASE ?? '0'}`;
+    const wf = videoId ?? testInfo.title.match(/WF-\d{3}/)?.[0] ?? (process.env.SDD_FASE ? `FASE-${process.env.SDD_FASE}` : 'SIN-FASE');
     const id = `${wf}-${testInfo.title.slice(0, 40).replace(/[^A-Za-z0-9-]+/g, '-')}`;
     mkdirSync(evidenceDir, { recursive: true });
     const file = path.join(evidenceDir, `${id}.webm`);

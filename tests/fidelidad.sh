@@ -399,6 +399,25 @@ assert "Ocupada" in F.ocr(Path("/no/existe.png")), F._CACHE_OCR
 F._CACHE_OCR.clear(); os.environ["PATH"] = sys.argv[2] + "/vacio"
 assert F.ocr(Path("/no/existe.png")) == ""
 PY
+# Una palabra en plural tras un {hueco} concuerda con él (material-montana10: «({n} días de retraso)» con «1 día»)
+python3 - "$ROOT/plugin/hermes-sdd" <<'PY' && ok "plantillas: el plural tras un hueco también vale en singular" || bad "plural en plantilla"
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_fidelidad as F
+ps = F.plantilla_partes("Multa de {importe} € a {socio} ({n} días de retraso)")
+for t in ("Multa de 2 € a Lucía (1 día de retraso)", "Multa de 6 € a Pablo (3 días de retraso)"):
+    assert all(F.en_texto(p, t) for p in ps), (ps, t)
+assert not all(F.en_texto(p, "Multa de 2 € a Lucía (1 hora de retraso)") for p in ps), ps
+assert all(F.en_texto(p, "1 unidad libre") for p in F.plantilla_partes("{n} unidades libre"))
+assert not F.en_texto("día(s) de retraso", "diario de retraso")
+PY
+python3 - "$ROOT/plugin/hermes-sdd" "$T" <<'PY' && ok "evidencias/sin-fase (la suite sin SDD_FASE) no cuenta como evidencia" || bad "sin-fase en _sidecars"
+import sys, json; sys.path.insert(0, sys.argv[1]); import hsdd_fidelidad as F
+from pathlib import Path
+r = Path(sys.argv[2]) / "sinfase"; (r / "evidencias/sin-fase").mkdir(parents=True); (r / "evidencias/FASE-1").mkdir(parents=True)
+(r / "evidencias/sin-fase/a.json").write_text(json.dumps({"criterio": "AC-001-01", "test": "t", "sha256": "aa"}))
+(r / "evidencias/FASE-1/b.json").write_text(json.dumps({"criterio": "AC-001-02", "test": "t", "sha256": "bb"}))
+sha, ruta = F._sidecars(r, "evidencias")
+assert list(sha) == ["bb"] and list(ruta) == ["evidencias/FASE-1/b"], (sha, ruta)
+PY
 # taller3: un e2e que pasó en la etapa (su JUnit) y falla en este ordenador no es «tests rotos» (grave): es el entorno
 python3 - "$ROOT/plugin/hermes-sdd" "$T" <<'PY' && ok "mutantes: el JUnit de la etapa distingue tests rotos de un entorno local que falla" || bad "junit de la etapa"
 import sys; sys.path.insert(0, sys.argv[1]); import hsdd_fidelidad as F

@@ -82,9 +82,28 @@ def partes(texto: str) -> tuple[str, str]:
     return (texto[:m.start()], texto[m.end():]) if m else (texto, "")
 
 
+_NO_PLURAL = {"más", "menos", "dos", "tres", "seis", "antes", "después", "mes", "lunes", "martes", "miércoles", "jueves",
+              "viernes", "es", "has", "pues", "tras", "atrás"}
+
+
+def plural_tras_hueco(t: str) -> str:
+    """Una palabra en plural justo tras un {hueco} concuerda con él, como «(s)»/«(es)» (la convención que un criterio
+    puede escribir a mano): «({n} días de retraso)» → «({n} día(s) de retraso)», «{n} unidades» → «{n} unidad(es)»
+    (material-montana10: el cliente pidió «1 día» y la fidelidad seguía exigiendo «días»). Igual que pluralAfterSlot
+    de metodo/scripts/sdd-jev.mjs."""
+    def f(m):
+        hueco, w = m.group(1), m.group(2)
+        if w.lower() in _NO_PLURAL:
+            return m.group(0)
+        if w.lower().endswith("es") and re.search(r"[dlnrzjy]$", w[:-2], re.I):
+            return f"{hueco}{w[:-2]}(es)"
+        return f"{hueco}{w[:-1]}(s)"
+    return re.sub(r"(\{[^{}]+\}\s+)([^\W\d_]+s)(?![^\W\d_]|\()", f, t)
+
+
 def plantilla_partes(t: str) -> list[str]:
     """Las partes fijas de una plantilla («Hola, {usuario}» → ["Hola,"]): lo que no cambia con quién la lee."""
-    return [x.strip() for x in re.split(r"\{[^{}]+\}", t) if re.search(r"\w", x)]
+    return [x.strip() for x in re.split(r"\{[^{}]+\}", plural_tras_hueco(t)) if re.search(r"\w", x)]
 
 
 def se_ve(c: dict) -> tuple[list[tuple[str, bool]], str | None] | None:
@@ -105,8 +124,10 @@ def en_texto(lit: str, texto: str) -> bool:
     # «palabra entera» solo en los extremos que son letra o cifra: una parte fija de plantilla puede empezar en signo
     # («, del» de «{material}, del {inicio}») y lo que va pegado delante es el hueco ya rellenado (montana8, M8-8)
     antes = r"(?<![a-z0-9])" if re.match(r"[a-z0-9]", a) else ""
-    despues = r"(?![a-z0-9])" if re.search(r"[a-z0-9]$", a) else ""
-    if re.search(antes + re.escape(a) + despues, t):
+    despues = r"(?![a-z0-9])" if re.search(r"[a-z0-9]$|\((?:s|es)\)$", a) else ""
+    # «(s)»/«(es)»: singular o plural, como lo enseñe la pantalla («día(s) de retraso» está en «1 día de retraso»)
+    cuerpo = "".join(f"(?:{x[1:-1]})?" if i % 2 else re.escape(x) for i, x in enumerate(re.split(r"(\((?:s|es)\))", a)))
+    if re.search(antes + cuerpo + despues, t):
         return True
     a2 = a.replace(" ", "")
     return len(a2) >= 8 and a2 in t.replace(" ", "")
@@ -414,6 +435,8 @@ def _sidecars(repo: Path, dir_: str) -> tuple[dict, dict]:
     if not base.is_dir():
         return por_sha, por_ruta
     for p in base.rglob("*.json"):
+        if p.relative_to(base).parts[0] == "sin-fase":   # la suite sin SDD_FASE no es evidencia de ninguna FASE (montana10)
+            continue
         try:
             j = json.loads(p.read_text(encoding="utf-8"))
         except (OSError, ValueError):

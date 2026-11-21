@@ -179,7 +179,7 @@ export function lintCaptures({ root, reqs, scenarios = [], ledger = null, scope 
               message: `the capture "${id}" of ${t.req} AC${t.ac} does not pass the criterion's «Se ve» texts: call it with { ve: [${sv.texts.map((x) => JSON.stringify(x.text)).join(", ")}] } so the helper asserts them on screen before the screenshot` });
             continue;
           }
-          const falta = sv.texts.filter((x) => (x.template ? templateParts(x.text) : [x.text]).some((p) => !callTxt.includes(p)));
+          const falta = sv.texts.filter((x) => (x.template ? templateParts(x.text) : [x.text]).some((p) => !saysPart(callTxt, p)));
           if (falta.length)
             findings.push({ code: "C-06", severity: veM[1] ? "error" : "warning", file: f.rel, line, req: t.req, ac: t.ac,
               message: `the capture "${id}" of ${t.req} AC${t.ac} does not assert ${falta.map((x) => `«${x.text}»`).join(", ")} from its «Se ve» line${veM[1] ? "" : " (ve is not an inline list: check it by hand)"}` });

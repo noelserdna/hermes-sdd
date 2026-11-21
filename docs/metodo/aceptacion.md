@@ -123,6 +123,11 @@ La CLI no pregunta: rechaza.
 - `sdd accept --junit-sha SHA` con código sucio → exit 2 («commit first»). Sin `--junit-sha` y con el árbol sucio, avisa por stderr y la evidencia cuenta como obsoleta.
 - `sdd accept record …` (salvo `waiver`, `challenge-dismissal`, `literal-exception` y `floor-exception`, que no observan nada del código) y `sdd accept measure` con código sucio → exit 2. `--allow-dirty` lo permite y queda grabado como `dirty: true` en el registro.
 - Un FAIL arreglado después de capturar es código nuevo: commit y volver al paso 1.
+- Los textos «Se ve» con huecos son plantillas: una palabra en plural justo tras un hueco concuerda con él, igual que
+  si el criterio escribiera «día(s)»: «({n} días de retraso)» vale para «1 día» y para «3 días» (en `sdd lint
+  --captures` y en la fidelidad).
+- La suite e2e lanzada sin `SDD_FASE` (la comprobación del implementador, el cierre) graba en `evidencias/sin-fase/` y
+  `.sdd/junit/playwright-sin-fase.xml`: no es evidencia de ninguna FASE y la aceptación no la lee.
 
 ## Ronda adversarial
 

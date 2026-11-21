@@ -289,5 +289,25 @@ rm -rf "$nr/evidencias/FASE-1" "$nr/plan"
 printf '# P\n\n## SDD Stack Profile\n\n- narration: off\n' > "$nr/CLAUDE.md"; rm "$nr/evidencias/FASE-0/WF-001-x.narracion.json"
 nrun; expect "narration: off → no C-07/C-08" "$(js 'j.findings.filter(f=>/C-0[78]/.test(f.code)).length')" 0
 
+# A plural word right after a {placeholder} agrees with it: «({n} días de retraso)» is shown «(1 día de retraso)» and
+# «(3 días de retraso)» (material-montana10: the customer asked for «1 día» and C-06 kept demanding «días»)
+pl=$(node --input-type=module -e "
+import { templateParts } from '$ROOT/scripts/sdd-jev.mjs'; import { saysPart } from '$ROOT/scripts/lib/captures-lint.mjs';
+const ps = templateParts('Multa de {importe} € a {socio} ({n} días de retraso)'), u = templateParts('{n} unidades libres');
+const ok = (t, xs) => xs.every((p) => saysPart(t, p));
+console.log([ok('Multa de 2 € a Lucía (1 día de retraso)', ps), ok('Multa de 6 € a Pablo (3 días de retraso)', ps),
+  ok('1 unidad libres', u), ok('2 unidades libres', u), ok('Multa de 2 € a Lucía (1 hora de retraso)', ps)].join())")
+expect "templates: a plural after a placeholder also matches the singular (día/días, unidad/unidades)" "$pl" "true,true,true,true,false"
+
+# evidencias/sin-fase (the whole suite run without SDD_FASE) is no FASE's evidence: acceptance does not read it
+sf=$(mktemp -d); mkdir -p "$sf/evidencias/sin-fase" "$sf/evidencias/FASE-1"
+printf x > "$sf/evidencias/sin-fase/a.png"; printf x > "$sf/evidencias/FASE-1/b.png"
+printf '{"criterio":"AC-001-01","test":"t"}' > "$sf/evidencias/sin-fase/a.json"; printf '{"criterio":"AC-001-02","test":"t"}' > "$sf/evidencias/FASE-1/b.json"
+sfo=$(node --input-type=module -e "
+import { scanEvidence, scanSidecars } from '$ROOT/scripts/lib/acceptance.mjs';
+console.log(scanEvidence('$sf', 'evidencias').map((x) => x.rel).join() + ' ' + [...scanSidecars('$sf', 'evidencias').byStem.keys()].join())")
+expect "evidencias/sin-fase: not scanned as evidence" "$sfo" "evidencias/FASE-1/b.png evidencias/FASE-1/b"
+rm -rf "$sf"
+
 [ "$fail" = 0 ] && echo "tests/captures: all passed"
 exit $fail

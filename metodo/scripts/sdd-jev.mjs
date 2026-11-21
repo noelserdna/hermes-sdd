@@ -195,7 +195,16 @@ function addSees(cur, m) {
 }
 /** The fixed parts of a template («Hola, {usuario}» → ["Hola,"]): what a test carries verbatim. */
 export function templateParts(t) {
-  return String(t).split(/\{[^{}]+\}/).map((x) => x.trim()).filter((x) => /[\p{L}\p{N}]/u.test(x));
+  return pluralAfterSlot(t).split(/\{[^{}]+\}/).map((x) => x.trim()).filter((x) => /[\p{L}\p{N}]/u.test(x));
+}
+
+/** A plural word right after a {placeholder} agrees with it, as «(s)»/«(es)» (the convention a criterion can write by
+ *  hand): «({n} días de retraso)» → «({n} día(s) de retraso)», «{n} unidades» → «{n} unidad(es)», so «1 día» and «3
+ *  días» both show the template (material-montana10: the customer asked for «1 día» and C-06 kept demanding «días»). */
+const NOT_PLURAL = new Set(["más", "menos", "dos", "tres", "seis", "antes", "después", "mes", "lunes", "martes", "miércoles", "jueves", "viernes", "es", "has", "pues", "tras", "atrás"]);
+export function pluralAfterSlot(t) {
+  return String(t).replace(/(\{[^{}]+\}\s+)(\p{L}+s)(?![\p{L}(])/gu, (m, slot, w) => NOT_PLURAL.has(w.toLowerCase()) ? m :
+    /es$/i.test(w) && /[dlnrzjy]$/i.test(w.slice(0, -2)) ? `${slot}${w.slice(0, -2)}(es)` : `${slot}${w.slice(0, -1)}(s)`);
 }
 
 // Returns one object per `### REQ-…` block: {id, type (F|NF|C|other), title, statement, criteria[], priority

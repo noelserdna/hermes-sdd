@@ -360,6 +360,11 @@ export function evidenceSettings(root) {
   return { visual: VISUAL_MODES.includes(v) ? v : "required", dir, video: VISUAL_MODES.includes(cv) ? cv : "warn" };
 }
 
+/** What the whole e2e suite records when run without SDD_FASE (the implementer's check, the closing run): no FASE's
+ *  evidence, so acceptance does not read it (material-montana10: those runs filled evidencias/FASE-0 and its captures
+ *  were bound to criteria they did not show). */
+export const NO_FASE_DIR = "sin-fase";
+
 /** The capture helper's sidecars (`captura(page, info, id, { ve })` writes AC-001-02.json next to AC-001-02.png):
  *  { criterio, test, titulo, ve[], url, imagen, sha256 } per JSON file under the evidence dir, indexed by the image's
  *  sha256 and by its path without extension. A JUnit attachment (a copy of the PNG) finds its sidecar by sha256. */
@@ -370,7 +375,7 @@ export function scanSidecars(root, dir) {
     try { entries = readdirSync(d, { withFileTypes: true }); } catch { return; }
     for (const e of entries) {
       const p = path.join(d, e.name);
-      if (e.isDirectory()) { if (!e.name.startsWith(".")) walk(p); continue; }
+      if (e.isDirectory()) { if (!e.name.startsWith(".") && !(d === top && e.name === NO_FASE_DIR)) walk(p); continue; }
       if (!e.isFile() || !/\.json$/i.test(e.name) || e.name === "manifest.json") continue;
       let j;
       try { j = JSON.parse(readFileSync(p, "utf8")); } catch { continue; }
@@ -381,7 +386,8 @@ export function scanSidecars(root, dir) {
       byStem.set(toPosix(path.relative(root, p)).replace(/\.json$/i, ""), sc);
     }
   };
-  walk(path.resolve(root, dir));
+  const top = path.resolve(root, dir);
+  walk(top);
   return { bySha, byStem };
 }
 const CRITERION_NAME = /(?:^|[^A-Za-z0-9])(?:AC[-_ ]\d{3,}[-_ ]\d{2,}|REQ[-_ ][A-Z]+[-_ ]\d+[-_ ]AC\d+)(?!\d)/i;
@@ -453,7 +459,7 @@ export function scanEvidence(root, dir) {
     try { entries = readdirSync(d, { withFileTypes: true }); } catch { return; }
     for (const e of entries) {
       const p = path.join(d, e.name);
-      if (e.isDirectory()) walk(p);
+      if (e.isDirectory()) { if (!(d === base && e.name === NO_FASE_DIR)) walk(p); }
       else if (e.isFile()) {
         const kind = attachmentKind(e.name);
         if (kind === "image" || kind === "video") out.push({ abs: p, rel: toPosix(path.relative(root, p)), kind, mtimeMs: statSync(p).mtimeMs });
