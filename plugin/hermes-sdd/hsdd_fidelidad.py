@@ -632,7 +632,8 @@ def _en_caja(cmd: list[str], copia: Path, caja: tuple[str, str, Path]) -> list[s
         d = Path(os.readlink(nm))
         d = d if d.is_absolute() else copia / d
         vol.append(f"{d}:{d}")
-    return [rt, "run", "--rm", "--name", f"hsdd-mut-{os.getpid()}-{len(cmd)}-{abs(hash(tuple(cmd))) % 10**8}",
+    import threading   # un nombre por copia e hilo: varias copias corren a la vez la misma orden
+    return [rt, "run", "--rm", "--name", f"hsdd-mut-{os.getpid()}-{threading.get_ident() % 10**6}-{abs(hash((str(copia), *cmd))) % 10**8}",
             "-u", str(os.getuid()), "-e", "HOME=/tmp", *[x for v in vol for x in ("-v", v)], "-w", str(copia), img, *cmd]
 
 
@@ -756,7 +757,24 @@ def _prefijo_en_codigo(lit: str, fuentes: list) -> str:
     return ""
 
 
-def mutantes(repo: Path, copia: Path, acc: dict, solo_must: bool = True, stats: dict | None = None) -> list[dict]:
+def _un_mutante(copia: Path, con_rel: list[str], lit: str, e2e: list, uni: list, sueltos: list) -> tuple:
+    """Muta `lit` en esos ficheros de `copia`, ejecuta y restaura → (muere_e2e, muere_uni, muere_suelto). Para al primer
+    fallo y, si un e2e ya lo detecta, no corre los unitarios: el resultado es el mismo (material-montana11: 45 min)."""
+    originales = {copia / r: (copia / r).read_text(encoding="utf-8", errors="replace") for r in con_rel}
+    try:
+        for f, t in originales.items():
+            f.write_text(_muta(t, lit), encoding="utf-8")
+        muere_e2e = bool(e2e) and not _ejecuta(copia, ["npx", "playwright", "test", "--max-failures=1", *e2e])
+        muere_uni = (not muere_e2e) and bool(uni) and not _ejecuta(copia, ["npx", "vitest", "run", "--bail=1", *uni], 5)
+        muere_suelto = (not muere_e2e) and bool(sueltos) and not _ejecuta(copia, ["npx", "playwright", "test", "--max-failures=1", *sueltos])
+    finally:
+        for f, t in originales.items():
+            f.write_text(t, encoding="utf-8")
+    return muere_e2e, muere_uni, muere_suelto
+
+
+def mutantes(repo: Path, copia: Path, acc: dict, solo_must: bool = True, stats: dict | None = None,
+             copias: list[Path] | None = None) -> list[dict]:
     """Para cada texto que un criterio dice que se ve: se cambia en el código de la app (src/) de la copia y se
     ejecutan los tests que el método enlaza a ese criterio. Si todos siguen pasando, el criterio está «verificado»
     sin que ningún test lo compruebe. Se separa si lo detecta un e2e (lo que se ve en el vídeo) o solo un unitario.
@@ -769,6 +787,8 @@ def mutantes(repo: Path, copia: Path, acc: dict, solo_must: bool = True, stats: 
     stats.update({"de_cache": 0, "ejecutados": 0})
     soporte = _hash_ficheros(copia, _soporte_tests(copia))
     app = _hash_ficheros(copia, [str(p.relative_to(copia)) for p in (copia / "src").rglob("*") if p.is_file()])
+    pendientes: dict = {}   # clave → lo que hace falta para ejecutar ese mutante
+    huecos: list = []       # (posición en out, base, clave, ficheros, e2e sueltos): se rellenan al final
     for r in acc.get("requirements", []):
         if (solo_must and r.get("priority") != "Must") or not _en_alcance(acc, r):
             continue
@@ -834,29 +854,45 @@ def mutantes(repo: Path, copia: Path, acc: dict, solo_must: bool = True, stats: 
                 if clave not in cache and pkey in persistente["r"]:
                     cache[clave] = tuple(persistente["r"][pkey]["r"])
                     stats["de_cache"] += 1
-                if clave not in cache:
+                con_rel = [str(p.relative_to(copia)) for p in con]
+                if clave not in cache and clave not in pendientes:
                     stats["ejecutados"] += 1
-                    originales = {p: p.read_text(encoding="utf-8", errors="replace") for p in con}
-                    try:
-                        for p, t in originales.items():
-                            p.write_text(_muta(t, lit), encoding="utf-8")
-                        muere_e2e = bool(e2e) and not _ejecuta(copia, ["npx", "playwright", "test", *e2e])
-                        muere_uni = bool(uni) and not _ejecuta(copia, ["npx", "vitest", "run", *uni], 5)
-                        muere_suelto = (not muere_e2e) and bool(sueltos) and not _ejecuta(copia, ["npx", "playwright", "test", *sueltos])
-                    finally:
-                        for p, t in originales.items():
-                            p.write_text(t, encoding="utf-8")
-                    cache[clave] = (muere_e2e, muere_uni, muere_suelto)
-                    persistente["r"][pkey] = {"r": list(cache[clave]), "t": time.time()}
-                    _guardar_cache(repo, persistente)   # tras cada mutante: si la etapa se corta, lo hecho no se pierde
-                muere_e2e, muere_uni, muere_suelto = cache[clave]
-                res = ("lo detecta un e2e" if muere_e2e
-                       else "lo detecta un e2e que el método no enlaza a este criterio" if muere_suelto
-                       else "solo lo detecta un unitario" if muere_uni
-                       else "sin tests que lo comprueben" if not (e2e or uni) else "NINGÚN test lo detecta")
-                out.append({**base, "resultado": res, "en": [str(p.relative_to(copia)) for p in con], "e2e_sueltos": sueltos if muere_suelto else [],
-                            "grave": not (muere_e2e or muere_uni or muere_suelto),
-                            "solo_unitario": muere_uni and not (muere_e2e or muere_suelto)})
+                    pendientes[clave] = (con_rel, lit, e2e, uni, sueltos, pkey)
+                out.append(None)
+                huecos.append((len(out) - 1, base, clave, con_rel, sueltos))
+    # Los mutantes pendientes, repartidos entre las copias (cada una muta un texto a la vez): mismo resultado y mismo
+    # orden que de uno en uno (material-montana11: 49 textos, 45 min de uno en uno)
+    if pendientes:
+        import queue, threading
+        libres: "queue.Queue[Path]" = queue.Queue()
+        for c in (copias or [copia]):
+            libres.put(Path(c))
+        cerrojo = threading.Lock()
+
+        def trabajo(clave):
+            c = libres.get()
+            try:
+                con_rel, lit, e2e, uni, sueltos, pkey = pendientes[clave]
+                r = _un_mutante(c, con_rel, lit, e2e, uni, sueltos)
+            finally:
+                libres.put(c)
+            with cerrojo:
+                cache[clave] = r
+                persistente["r"][pkey] = {"r": list(r), "t": time.time()}
+                _guardar_cache(repo, persistente)   # tras cada mutante: si la etapa se corta, lo hecho no se pierde
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=len(copias or [copia])) as ex:
+            list(ex.map(trabajo, list(pendientes)))
+    for i, base, clave, con_rel, sueltos in huecos:
+        muere_e2e, muere_uni, muere_suelto = cache[clave]
+        e2e, uni = base["e2e"], base["unitarios"]
+        res = ("lo detecta un e2e" if muere_e2e
+               else "lo detecta un e2e que el método no enlaza a este criterio" if muere_suelto
+               else "solo lo detecta un unitario" if muere_uni
+               else "sin tests que lo comprueben" if not (e2e or uni) else "NINGÚN test lo detecta")
+        out[i] = {**base, "resultado": res, "en": con_rel, "e2e_sueltos": sueltos if muere_suelto else [],
+                  "grave": not (muere_e2e or muere_uni or muere_suelto),
+                  "solo_unitario": muere_uni and not (muere_e2e or muere_suelto)}
     _guardar_cache(repo, persistente)
     return out
 
@@ -892,11 +928,21 @@ def de_aceptacion(repo: Path, fase: str | None, con_mutantes: bool = True) -> di
            "vinculos": [x for x in vinculos(repo, acc) if x.get("grave")], "lint_capturas": lint_capturas(repo, fase)}
     if con_mutantes and (repo / "src").is_dir():
         copia = Path(tempfile.mkdtemp(prefix="hsdd-mut-")) / "c"
+        extra: list[Path] = []
         try:
             subprocess.run(["git", "-C", str(repo), "worktree", "add", "-q", "--detach", str(copia), "HEAD"], check=True,
                            capture_output=True)
             if (repo / "node_modules").is_dir():
                 (copia / "node_modules").symlink_to(repo / "node_modules")
+                # más copias para mutar varios textos a la vez (HSDD_MUT_COPIAS, 3 por omisión; material-montana11: 45 min
+                # de uno en uno). Comparten node_modules: los e2e de cada copia levantan su propio servidor
+                n = int(os.environ.get("HSDD_MUT_COPIAS", "3") or 1)
+                for k in range(1, max(1, n)):
+                    c = copia.parent / f"c{k}"
+                    if subprocess.run(["git", "-C", str(repo), "worktree", "add", "-q", "--detach", str(c), "HEAD"],
+                                      capture_output=True).returncode == 0:
+                        (c / "node_modules").symlink_to(repo / "node_modules")
+                        extra.append(c)
             elif (copia / "package.json").exists():
                 # Con la caja de GitHub el repo local no tiene node_modules (se instalaron en la caja): sin ellos la línea
                 # base de los e2e fallaba y salía «sus tests ya fallan» como grave (taller3). Se instalan en la copia, como
@@ -909,12 +955,13 @@ def de_aceptacion(repo: Path, fase: str | None, con_mutantes: bool = True) -> di
                 if "@playwright/test" in (copia / "package.json").read_text(errors="replace"):
                     subprocess.run(["npx", "playwright", "install", "chromium"], cwd=copia, capture_output=True, timeout=600)
             res["mutantes_cache"] = {}
-            res["mutantes"] = mutantes(repo, copia, acc, stats=res["mutantes_cache"])
+            res["mutantes"] = mutantes(repo, copia, acc, stats=res["mutantes_cache"], copias=[copia, *extra])
         except Exception as e:   # sin copia no hay mutantes: se dice, no se inventa
             res["mutantes_error"] = str(e)[:300]
         finally:
-            subprocess.run(["pkill", "-f", f"{copia}/node_modules/"], capture_output=True)   # servidores que dejaron los e2e
-            subprocess.run(["git", "-C", str(repo), "worktree", "remove", "--force", str(copia)], capture_output=True)
+            for c in (copia, *extra):
+                subprocess.run(["pkill", "-f", f"{c}/node_modules/"], capture_output=True)   # servidores que dejaron los e2e
+                subprocess.run(["git", "-C", str(repo), "worktree", "remove", "--force", str(c)], capture_output=True)
             shutil.rmtree(copia.parent, ignore_errors=True)
     res["graves"] = sum(1 for k in ("congelados", "capturas", "mutantes", "vinculos", "lint_capturas") for x in res.get(k, []) if x.get("grave")) \
         + sum(1 for x in res["coherencia"] if x.get("grave"))

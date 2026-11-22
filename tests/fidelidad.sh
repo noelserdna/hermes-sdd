@@ -350,6 +350,41 @@ jq -n '{graves: 1, error: "hsdd_fidelidad falló"}' > .sdd/hermes/fidelidad-1.js
 ) | tee "$T/arreglo.out"; { grep -q '^FAIL' "$T/arreglo.out" || [ "$(grep -c '^ok' "$T/arreglo.out")" != 3 ]; } && { echo "FAIL pasadas de arreglo: no terminó"; fail=1; }
 grep -q 'select(.state == "open" and .category != "SPEC-QUESTION")' "$ROOT/etapa.sh" && ok "las dudas del criterio no lanzan la pasada de arreglo" || bad "SPEC-QUESTION en el arreglo"
 cd "$R"
+# 4h bis. mutantes más rápidos sin quitar ninguno (material-montana11: 49 textos, 45 min en la caja): el e2e mutado
+# para al primer fallo; si un e2e lo detecta no se corren además los unitarios (no cambia el resultado); y los textos
+# se reparten entre varias copias a la vez, con el mismo resultado y en el mismo orden que de uno en uno
+python3 - "$ROOT/plugin/hermes-sdd" "$T/mutpar" <<'PY' && ok "mutantes: paran al primer fallo, sin unitarios si ya lo vio un e2e, y en paralelo en varias copias con el mismo resultado" || bad "mutantes rápidos"
+import sys, threading, time; sys.path.insert(0, sys.argv[1]); import hsdd_fidelidad as F
+from pathlib import Path
+R = Path(sys.argv[2])
+def copia(n):
+    C = R / f"c{n}"
+    for d in ("src", "tests/e2e"): (C / d).mkdir(parents=True, exist_ok=True)
+    (C / "src" / "app.js").write_text("export const a = 'Texto uno'\nexport const b = 'Texto dos'\nexport const c = 'Texto tres'\nexport const d = 'Texto cuatro'\n")
+    (C / "tests" / "e2e" / "a.spec.js").write_text("test('REQ-F-001 AC1', ...)\n"); (C / "tests" / "u.test.js").write_text("it('REQ-F-001 AC1')\n")
+    return C
+copias = [copia(n) for n in range(3)]
+textos = ["Texto uno", "Texto dos", "Texto tres", "Texto cuatro"]
+acc = {"requirements": [{"id": "REQ-F-001", "priority": "Must", "criteria": [{"n": k + 1, "text": f"GIVEN x WHEN y THEN ve «{t}»",
+       "tests": [{"file": "tests/e2e/a.spec.js", "name": "REQ-F-001 AC1", "report": "e2e"}, {"file": "tests/u.test.js", "name": "REQ-F-001 AC1"}]}
+       for k, t in enumerate(textos)]}]}
+cmds, vivos, pico, lock = [], [0], [0], threading.Lock()
+def ejecuta(copia, cmd, minutos=10):
+    with lock: cmds.append(cmd); vivos[0] += 1; pico[0] = max(pico[0], vivos[0])
+    time.sleep(0.05)
+    mutado = "MUTANTE" in (copia / "src" / "app.js").read_text()
+    with lock: vivos[0] -= 1
+    return not mutado or "Texto cuatro" not in (copia / "src" / "app.js").read_text()   # el cuarto no lo nota nadie
+F._ejecuta = ejecuta
+out = F.mutantes(R, copias[0], acc, copias=copias)
+assert [x["texto"] for x in out] == textos, out
+assert [x["resultado"] for x in out] == ["lo detecta un e2e"] * 3 + ["NINGÚN test lo detecta"], out
+mutados = [c for c in cmds if c[:3] == ["npx", "playwright", "test"]]
+assert all("--max-failures=1" in c for c in mutados[2:]), mutados   # tras la línea base (2 intentos como mucho)
+# un unitario mutado solo para el texto que el e2e no detectó
+assert sum(1 for c in cmds if c[:3] == ["npx", "vitest", "run"]) <= 2 + 1, cmds
+assert pico[0] >= 2, pico
+PY
 # 4h. caché de mutantes por hash (fuente + test + mutación): un mutante ya ejecutado no se repite (re-aceptación, cierre);
 # cambiar el fichero que lo contiene, su test o un helper lo invalida; una línea base que falla no se guarda
 python3 - "$ROOT/plugin/hermes-sdd" "$T/mut" <<'PY' && ok "mutantes: caché por hash en .sdd/hermes, invalidada al cambiar la fuente, el test o un helper" || bad "caché de mutantes"
