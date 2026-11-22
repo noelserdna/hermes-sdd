@@ -195,7 +195,8 @@ function addSees(cur, m) {
   // paired with the line that shows it (material-montana12 G-12)
   const lines = [...(prev.lines || []), ...(p.none === null ? [{ texts: p.texts.map((t) => t.text), raw: m[2] }] : [])];
   const nones = (prev.nones || 0) + (p.none === null ? 0 : 1);
-  cur.sees[i] = { texts: [...prev.texts, ...p.texts], where: prev.where || p.where, none: prev.none || p.none, lines, nones };
+  const noneLines = [...(prev.noneLines || []), ...(p.none === null ? [] : [p.none])];
+  cur.sees[i] = { texts: [...prev.texts, ...p.texts], where: prev.where || p.where, none: prev.none || p.none, lines, nones, noneLines };
 }
 /** The fixed parts of a template («Hola, {usuario}» → ["Hola,"]): what a test carries verbatim. */
 export function templateParts(t) {
@@ -374,8 +375,34 @@ export function uncoveredClauses(criterion, sees) {
   return left;
 }
 
+// «No visible» whose way of checking is a screen (rows of a list, a page, a button, logging in, opening a route): that
+// is seen in the browser, so it is a «Se ve» line and the video shows it (material-montana12 G-4: 12 of 23 «No
+// visible» lines were things the browser shows, and the voice could not promise them)
+const ON_SCREEN = /\b(filas?|lista|pantalla|bot[oó]n|botones|opci[oó]n|p[aá]gina|muestra|se ve|abrir|abre|intentando|entrar|Entrar|Mis reservas|Mis multas)\b|"\/[a-z-]+"/u;
+const TRULY_HIDDEN = /ninguna pantalla|no (?:sale|aparece) en (?:ninguna )?pantalla|ya no puede entrar|solo (?:lo refleja|se guarda)/iu;
+/** A template's example: a quoted text without {slots} that fits it, in the criterion or in one of its «Se ve» lines. */
+function hasExample(t, criterion, sees) {
+  const fixed = t.split(/\{[^{}]+\}/);
+  if (fixed.join("").replace(/[\s.,:;]/g, "").length < 2) return true;   // only a slot («{material}»): nothing to show
+  const re = new RegExp(`^${fixed.map((x) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join(".+")}$`, "u");
+  const hay = `${criterion} ${(sees.lines || []).map((l) => l.raw).join(" ")}`;
+  return [...hay.matchAll(SEE_QUOTES)].map((m) => m[1] ?? m[2] ?? m[3]).some((q) => !/\{/.test(q) && re.test(q));
+}
+
 export function checkSees(active) {
   const w = [];
+  for (const r of active.filter((x) => x.type === "F")) {
+    r.criteria.forEach((c, i) => {
+      const sv = (r.sees || [])[i];
+      if (!sv) return;
+      for (const t of new Set((sv.texts || []).filter((x) => x.template).map((x) => x.text)))
+        if (!hasExample(t, c, sv))
+          w.push({ code: "template-no-example", id: r.id, msg: `${r.id} AC${i + 1}: «${t}» has no example with the data of the criterion: add it to its «Se ve» line as (ejemplo con datos: "<the text filled in>") — the person approves what the web will say, not the slots (material-montana12 G-2)` });
+      for (const n of sv.noneLines || [])
+        if (ON_SCREEN.test(n.split(/:\s/).slice(1).join(": ") || n) && !TRULY_HIDDEN.test(n))
+          w.push({ code: "no-visible-on-screen", id: r.id, msg: `${r.id} AC${i + 1}: «No visible: ${n.slice(0, 90)}» is checked on a screen: write it as a «Se ve» line (what the browser shows, and when), so the video demonstrates it; «No visible» only for what no screen shows` });
+    });
+  }
   // Every clause of a criterion's THEN is seen or declared not visible (material-montana11: 28 criteria promised in
   // the THEN more than their «Se ve» checked, and the voice-over said it as if the video showed it)
   for (const r of active.filter((x) => x.type === "F")) {

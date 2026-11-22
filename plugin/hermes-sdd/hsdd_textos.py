@@ -242,7 +242,9 @@ def _ejemplo(plantilla: str, criterio: str) -> str:
     if len("".join(trozos).strip(" .,:;")) < 2:
         return ""
     patron = "(.+?)".join(re.escape(t) for t in trozos)
-    return next((q for q in _COMILLAS.findall(criterio) if re.fullmatch(patron, q)), "")
+    # un ejemplo nunca lleva huecos: la plantilla citada tal cual no es su ejemplo (material-montana12 G-2: «… multa de
+    # {importe} €» (p. ej. lo mismo))
+    return next((q for q in _COMILLAS.findall(criterio) if "{" not in q and re.fullmatch(patron, q)), "")
 
 
 def _sin_parentesis(linea: str) -> str:
@@ -299,7 +301,11 @@ def textos_web(texto: str) -> list[dict]:
                 datos.setdefault(t, []).append(t in dato)
                 if (pantalla.lower(), t) not in vistos:
                     vistos.add((pantalla.lower(), t))
-                    out.append({"pantalla": pantalla, "texto": t, "ejemplo": _ejemplo(t, criterio)})
+                    # el ejemplo, del criterio o de la propia línea «Se ve» («(ejemplo con datos: "Hola, Lucía")»)
+                    out.append({"pantalla": pantalla, "texto": t, "ejemplo": _ejemplo(t, f"{criterio} {s.group(1)}")})
+                elif "{" in t:   # el mismo texto ya visto sin ejemplo: este caso lo da
+                    x = next(x for x in out if (x["pantalla"].lower(), x["texto"]) == (pantalla.lower(), t))
+                    x["ejemplo"] = x["ejemplo"] or _ejemplo(t, f"{criterio} {s.group(1)}")
     # una pantalla dicha como ruta («/organizadora») que solo repite textos ya vistos en una pantalla con nombre sobra
     con_nombre = {x["texto"] for x in out if not x["pantalla"].startswith("/")}
     out = [x for x in out if not (x["pantalla"].startswith("/") and x["texto"] in con_nombre)]

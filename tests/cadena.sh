@@ -349,4 +349,27 @@ let s = ""; process.stdin.on("data", (d) => { s += d }).on("end", () => {
 });' > "$tmp/g10.out"
 [ "$(cat "$tmp/g10.out")" = ok ] && ok "montana12 G-10/G-15/G-19: la cartela sin códigos, con las líneas «Se ve», y la voz sin «(ejemplo con datos…)»" || mal "montana12 G-10/15/19: $(cat "$tmp/g10.out")"
 
+
+# G-2: la puerta de requisitos enseñaba «No puedes reservar hasta pagar tu multa de {importe} €» (p. ej. lo mismo) y,
+# con los requisitos finales, «Hola, {nombre}» sin ejemplo aunque su línea «Se ve» lo trae («(ejemplo con datos: "Hola,
+# Lucía")»). Un ejemplo nunca lleva {huecos}; se busca también en la línea «Se ve»; y la plantilla que no tiene ninguno
+# se dice (template-no-example), para que la pasada de requisitos lo añada
+python3 - "$AQUI/plugin/hermes-sdd" "$AQUI/tests/fixtures/banco" <<'PY' && ok "montana12 G-2: cada plantilla de la puerta con su ejemplo real (o ninguno, nunca ella misma)" || mal "montana12 G-2: ejemplos de plantilla"
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_textos as T
+from pathlib import Path
+B = Path(sys.argv[2])
+fin = [x for x in T.textos_web((B / "material-montana12/requirements/REQUIREMENTS.md").read_text()) if "{" in x["texto"] and x["texto"] != "{material}"]
+assert all(x["ejemplo"] and "{" not in x["ejemplo"] for x in fin), [x for x in fin if not x["ejemplo"] or "{" in x["ejemplo"]]
+v1 = T.textos_web((B / "parches/montana12-REQUIREMENTS-4d06cdd.md").read_text())
+assert not [x for x in v1 if "{" in (x["ejemplo"] or "")], [x for x in v1 if "{" in (x["ejemplo"] or "")]
+PY
+avisos() {  # avisos <requisitos o ""> → «<template-no-example> <no-visible-on-screen>» sobre una copia de montana12
+  local d="$tmp/av"; rm -rf "$d"; cp -R "$m12" "$d"; [ -n "$1" ] && cp "$1" "$d/requirements/REQUIREMENTS.md"
+  (cd "$d" && git init -q && node "$SDD" lint --needs --json 2>/dev/null || true) | node -e 'let s="";process.stdin.on("data",(d)=>{s+=d}).on("end",()=>{const w=JSON.parse(s).warnings||[];console.log(w.filter((x)=>x.code==="template-no-example").length+" "+w.filter((x)=>x.code==="no-visible-on-screen").length)})'
+}
+P="$AQUI/tests/fixtures/banco/parches"; a="$(avisos "$P/montana12-REQUIREMENTS-7a34766.md")"; b="$(avisos "$P/montana12-REQUIREMENTS-4d06cdd.md")"; f="$(avisos "")"
+# G-2 en el primer borrador (7a34766: «… multa de {importe} €», «Retraso: {días} días», «{nombre} — Multa…» sin ejemplo) y
+# G-4 en el segundo (4d06cdd: 12 «No visible» que se ven en el navegador); los requisitos finales no avisan de nada
+[ "${a% *}" -ge 3 ] && [ "${b#* }" -ge 10 ] && [ "$f" = "0 0" ] && ok "montana12 G-2/G-4: avisa de plantillas sin ejemplo ($a) y de «No visible» que se ven en el navegador ($b), y no de los finales" || mal "montana12 G-2/G-4: 7a34766=«$a» 4d06cdd=«$b» final=«$f» (sin-ejemplo no-visible-en-pantalla)"
+
 exit $fallo

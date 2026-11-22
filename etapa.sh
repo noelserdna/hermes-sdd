@@ -455,10 +455,12 @@ requisitos_visibles() {  # requisitos_visibles <clave-de-estado> <skill>
   local w j
   # con huella: en material-montana12 la pasada no llamó al ejecutor teniendo 22 casos y no quedó rastro de por qué
   j=$(node "$SDD" lint --needs --json 2>.sdd/hermes/requisitos-visibles.err) || true
-  w=$(printf '%s' "$j" | jq -r '[.warnings[]? | select(.code == "then-not-seen") | .msg] | .[:40] | join("\n")' 2>>.sdd/hermes/requisitos-visibles.err) || true
+  # y las plantillas sin ejemplo y los «No visible» que se ven en el navegador (material-montana12 G-2, G-4: los tuvo
+  # que pedir el cliente en dos vueltas)
+  w=$(printf '%s' "$j" | jq -r '[.warnings[]? | select(.code == "then-not-seen" or .code == "template-no-example" or .code == "no-visible-on-screen") | .msg] | .[:40] | join("\n")' 2>>.sdd/hermes/requisitos-visibles.err) || true
   printf '%s node=%s bytes=%s casos=%s\n' "$(date -u +%FT%TZ)" "$(command -v node || echo NO)" "${#j}" "$(printf '%s' "$w" | grep -c . || true)" >> .sdd/hermes/requisitos-visibles.log
   [ -z "$w" ] && return 0
-  claude_etapa "$1" "/$2 — $ARNES Some criteria promise in their THEN more than their «Se ve» line checks. For each one below, ONLY ADD lines under the criterion — never change the criterion, its THEN or its examples: a «- Se ve: \"<text>\" en <pantalla>» line with the text that shows that clause on screen when the app can show it, or a «- No visible: <that clause, in plain Spanish>: <how a test checks it>» line when nothing on screen shows it (references/requirements-template.md, «Every clause of the THEN»). Commit as «docs(requirements): what each criterion shows».
+  claude_etapa "$1" "/$2 — $ARNES Some criteria promise in their THEN more than their «Se ve» line checks. For each one below, ONLY ADD lines under the criterion — never change the criterion, its THEN or its examples: a «- Se ve: \"<text>\" en <pantalla>» line with the text that shows that clause on screen when the app can show it, or a «- No visible: <that clause, in plain Spanish>: <how a test checks it>» line when nothing on screen shows it (references/requirements-template.md, «Every clause of the THEN»). «No visible» is only for what NO screen shows: what is done or seen in the browser (logging in, counting the rows of a list, a button that is or is not there, opening a page) becomes a «Se ve» line with its condition («… en Entrar cuando Marta entra con su contraseña antigua»), replacing that «No visible» line. A «Se ve» text with {slots} gets its example with the criterion's data at the end of its line: (ejemplo con datos: "<the text filled in>"). Commit as «docs(requirements): what each criterion shows».
 $w"
 }
 ejemplos_coherentes() {  # ejemplos_coherentes <clave-de-estado> <skill>: un ejemplo que contradice lo que dice de sí
