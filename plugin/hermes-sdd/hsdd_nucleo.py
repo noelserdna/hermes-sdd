@@ -406,8 +406,10 @@ MODOS = ("humano", "consejo", "piloto", "auto")
 # umbrales_auto: en auto, un umbral propio por tipo de puerta. El plan, 0.6: equivocarse es barato (se rehace con
 # «cambios», nada se ha programado) y lo que importa ya lo comprueban reglas duras (lint del plan, tamaño, pantallas de
 # otra FASE); material-montana4: Jev dio el plan por bueno con 0.56 y esperó a una persona
+# demo_persona: una FASE con vídeo la acepta una persona que lo vea (Andrés, tras material-montana11: 17 decisiones y
+# ninguna demo vista; «cuando se pide que el humano revise», en las pruebas lo hace quien supervisa, viéndolo)
 JEV_DEFECTO = {"defecto": "humano", "proyectos": {}, "piloto": ["ruta", "plan"], "umbral": 0.9, "umbral_auto": 0.8,
-               "umbrales_auto": {"plan": 0.6}}
+               "umbrales_auto": {"plan": 0.6}, "demo_persona": True}
 
 
 def config_jev() -> dict:
@@ -542,6 +544,8 @@ def puede_jev(puerta: dict, cfg: dict | None = None) -> tuple[bool, str]:
     # revisión se hizo y ningún texto contradice su criterio; si no, la decide una persona que vea el vídeo. Un texto
     # incompleto (cuenta bien, pero no dice todo el THEN) solo se avisa en la puerta
     if tipo == "fase" and puerta.get("demo"):
+        if cfg.get("demo_persona", JEV_DEFECTO["demo_persona"]):
+            return False, "la FASE tiene demo: la acepta una persona que vea el vídeo y oiga la voz (demo_persona)"
         nar = puerta.get("narracion") or {}
         if not nar or nar.get("error"):
             return False, "Jev no ha podido revisar el texto en off de la demo: la acepta una persona que la vea"

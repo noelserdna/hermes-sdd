@@ -408,6 +408,31 @@ revision_independiente() {  # ronda adversarial + hsdd_fidelidad de la FASE $FAS
   done
 }
 
+# Autoevaluación contra el objetivo (Andrés, tras material-montana11: «que él mismo se evalúe y, si ve que no lo ha
+# hecho, vuelva a empezar o afine»): con la demo montada, Jev lee cada narración y hsdd_expediente mira, criterio a
+# criterio, prueba, captura, vídeo, voz y revisión. Lo que falte y pueda completar el implementador vuelve a él con
+# la lista, y se recalcula; hasta `rondas_expediente` pasadas (1 de serie). Lo que quede llega a la puerta.
+autoevaluacion() {
+  local max n f
+  [ -d "evidencias/FASE-$FASE" ] || return 0
+  max=$(jq -r '.rondas_expediente // 1' .sdd/hermes/hermes-sdd.json 2>/dev/null || echo 1)
+  n=$(cat ".sdd/hermes/expediente-arreglo-$FASE" 2>/dev/null || echo 0)
+  case "$n" in ''|*[!0-9]*) n=0 ;; esac
+  expediente_fase() {
+    ls "evidencias/FASE-$FASE"/*.narracion.json >/dev/null 2>&1 && python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" jev-narracion "$REPO" "$FASE" >/dev/null 2>&1
+    python3 "$ROOT/plugin/hermes-sdd/hsdd_expediente.py" "$REPO" "$FASE" --faltan 2>/dev/null || true
+  }
+  f=$(expediente_fase)
+  while [ "$n" -lt "$max" ] && [ -n "$f" ]; do
+    claude_etapa task-implementer "/sdd-task-implementer --fase=$FASE — $ARNES SELF-CHECK of FASE-$FASE against its goal: every visible criterion must arrive DEMONSTRATED — its test passes, its capture (captura with its «Se ve» texts) and a video that narrates it, where the live demonstration shows the criterion's GIVEN data, does its WHEN in the browser and ends on its THEN, and a voice-over that says exactly that (Jev compares it with the criterion). These criteria are not demonstrated yet; for each one add a task to task/TASK-FASE-$FASE.md and complete what is missing (one commit each; tests stay green; a test that already existed when an earlier FASE was accepted is NOT edited: write an [OPEN] question with «sdd questions add --role task-implementer» instead):
+$f"
+    MODELO_PASO=$(modelo_veredictos) claude_etapa acceptance "/sdd-acceptance --fase $FASE — $ARNES Recompute the verdicts, captures and demo of FASE-$FASE after the self-check fixes. Do not sign off.$(no_repitas "$FASE")"
+    narrar_demo "$FASE"
+    n=$((n + 1)); echo "$n" > ".sdd/hermes/expediente-arreglo-$FASE"
+    f=$(expediente_fase)
+  done
+}
+
 no_hecho() {  # la explicación del ejecutor cuando termina sin hacer la etapa (su primer párrafo tras la línea stage=…)
   echo "$RES" | jq -r '.resumen // .reason // ""' | grep -v '^stage=' | grep -v '^ *$' | head -1 | cut -c1-300
 }
@@ -701,7 +726,7 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
     # Tras un rechazo, que todas las tareas estén hechas no termina la FASE: cada punto del rechazo es trabajo nuevo
     # (tareas nuevas en task/TASK-FASE-N.md, test primero, un commit cada una). Lo que exige tocar requirements/ no
     # lo puede hacer: deja una pregunta [OPEN] en vez de saltárselo. Sin ningún commit nuevo la etapa falla.
-    rm -f ".sdd/hermes/fidelidad-arreglo-$FASE"
+    rm -f ".sdd/hermes/fidelidad-arreglo-$FASE" ".sdd/hermes/expediente-arreglo-$FASE"
     RECH=""; ANTES=$(git rev-parse HEAD)
     [ -s "$FB" ] && RECH=" This FASE comes back with a person's request (a rejection at its acceptance gate or newly approved requirements): all tasks being done does NOT finish it. Treat every point of the person's request above as new work: add the tasks it needs to task/TASK-FASE-$FASE.md and implement them (test-first, one commit each), including the missing captures and the literal letter of each criterion in its test. If a point needs a change to requirements/ or to the plan (outside your reach), do not skip it: write an [OPEN] question with «sdd questions add --role task-implementer» explaining what change is needed."
     OBS=""; [ -s .sdd/hermes/feedback/observaciones.txt ] && OBS=" The person accepted earlier FASEs with these observations, still pending: add a task for each one to task/TASK-FASE-$FASE.md and do it in this FASE too (they may touch earlier FASEs' captures or screens; tests that already existed are not edited — write an [OPEN] question if one would need it): $(cat .sdd/hermes/feedback/observaciones.txt | tr '\n' ' ')"
@@ -776,6 +801,7 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
     # Mutantes de los Must de la FASE (una vez, sobre lo que verá la persona): lo que encuentren llega a la puerta
     python3 "$ROOT/plugin/hermes-sdd/hsdd_fidelidad.py" aceptacion "$REPO" --fase "$FASE" >/dev/null 2>&1 || jq -n '{graves: 1, error: "hsdd_fidelidad falló: no hay comprobación de fidelidad"}' > ".sdd/hermes/fidelidad-$FASE.json"   # un fallo no deja valer el JSON anterior
     narrar_demo "$FASE"
+    autoevaluacion
     P=$(puerta fase "$FASE") || falla "no se pudo abrir la puerta de la FASE-$FASE"
     fin "$RES" "Veredictos y demo de la FASE-$FASE listos" "$P" ;;
 

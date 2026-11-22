@@ -264,8 +264,18 @@ casos = {
     "FASE con demo sin texto en off": (caso(**fase, demo="v.mp4", narracion={"revisados": 0, "contradicen": [], "incompletos": []}), "persona"),
     "FASE con demo y un texto que contradice su criterio": (caso(**fase, demo="v.mp4", narracion={"revisados": 3, "contradicen": [{"criterio": "REQ-F-001-AC2"}], "incompletos": []}), "persona"),
     # incompleto (cuenta bien, pero no dice todo el THEN): se avisa en la puerta, no le quita la decisión a Jev
-    "FASE con demo y un texto incompleto": (caso(**fase, demo="v.mp4", narracion={"revisados": 3, "contradicen": [], "incompletos": [{"criterio": "REQ-F-001-AC2"}]}), "acepto"),
-    "FASE con demo y texto en off que cumple": (caso(**fase, demo="v.mp4", narracion={"revisados": 3, "contradicen": [], "incompletos": []}), "acepto"),
+    # Andrés, tras material-montana11 (17 decisiones sin que nadie viera una demo): una FASE con vídeo la revisa una
+    # persona que lo vea (demo_persona, sí por defecto). Con demo_persona: false, Jev firma si el texto en off cumple
+    "FASE con demo y texto en off que cumple": (caso(**fase, demo="v.mp4", narracion={"revisados": 3, "contradicen": [], "incompletos": []}), "persona"),
+}
+cfg["demo_persona"] = False
+casos |= {
+    "FASE con demo y un texto incompleto, sin demo_persona": (caso(**fase, demo="v.mp4", narracion={"revisados": 3, "contradicen": [], "incompletos": [{"criterio": "REQ-F-001-AC2"}]}), "acepto"),
+    "FASE con demo y texto en off que cumple, sin demo_persona": (caso(**fase, demo="v.mp4", narracion={"revisados": 3, "contradicen": [], "incompletos": []}), "acepto"),
+    "FASE con demo y un texto que contradice, sin demo_persona": (caso(**fase, demo="v.mp4", narracion={"revisados": 3, "contradicen": [{"criterio": "REQ-F-001-AC2"}], "incompletos": []}), "persona"),
+}
+cfg["demo_persona"] = True
+casos |= {
     "FASE bloqueada": (caso(**fase, bloqueo=True), "persona"),
     "FASE con tests tocados": (caso(**fase, tests_editados=1), "persona"),
     "FASE con inspección": (caso(**fase, revisar=[{"req": "REQ-C-001"}]), "persona"),

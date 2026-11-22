@@ -111,4 +111,30 @@ nw() { printf '%s' "$w" | node -e 'let s="";process.stdin.on("data",(d)=>{s+=d})
 [ "$(nw 'x.length >= 20 && x.some((w)=>/REQ-F-002 AC4/.test(w.msg) && /old one/.test(w.msg)) && !x.some((w)=>/REQ-F-002 AC1\b/.test(w.msg))')" = true ] \
   && ok "montana11 etapa 3: las cláusulas del THEN que ni se ven ni se declaran no visibles salen en el lint de requisitos" || mal "montana11 etapa 3: then-not-seen $(nw 'x.length')"
 
+# Etapa 4: el expediente de cada criterio (prueba, captura, vídeo, voz, revisión de Jev, visible). FASE-1 de montana11:
+# REQ-F-003 AC9 con la narración que Jev dio por incompleta y que nadie corrigió antes de la puerta
+python3 - "$AQUI/plugin/hermes-sdd" "$m11" <<'PY' && ok "montana11 etapa 4: el expediente marca REQ-F-003 AC9 incompleto por la revisión de Jev, y solo los criterios de la FASE" || mal "montana11 etapa 4: expediente"
+import sys
+sys.path.insert(0, sys.argv[1])
+import hsdd_expediente as E
+e = E.expediente(sys.argv[2], "1", medios=False)
+x = {c["criterio"]: c for c in e["criterios"]}
+assert e["resumen"]["criterios"] == 14, e["resumen"]
+assert x["REQ-F-003-AC9"]["piezas"]["revisión"] is False and x["REQ-F-003-AC9"]["estado"] == "incompleto", x["REQ-F-003-AC9"]
+assert all(c["piezas"]["prueba"] and c["piezas"]["captura"] and c["piezas"]["vídeo"] for c in e["criterios"]), e
+# lo que puede completar el implementador, sin lo que es de los requisitos (visible)
+assert [c["criterio"] for c in E.arreglables(e)] == ["REQ-F-003-AC9"], E.arreglables(e)
+PY
+
+# La puerta de la FASE dice cuántos criterios llegan demostrados y cuáles no, con lo que les falta
+python3 - "$AQUI/plugin/hermes-sdd" "$m11" <<'PY' && ok "montana11 etapa 4: la puerta enseña el expediente («7 de 14 criterios demostrados» y lo que falta)" || mal "montana11 etapa 4: puerta sin expediente"
+import sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[1])
+import hsdd_expediente as E, hsdd_textos as T
+E.guardar(Path(sys.argv[2]), "1", medios=False)
+l = T.linea_expediente(Path(sys.argv[2]), "1")
+assert l.startswith("🧾 Demostrados: 7 de 14 criterios") and "REQ-F-003 AC9" in l and "Jev" in l, l
+PY
+
 exit $fallo

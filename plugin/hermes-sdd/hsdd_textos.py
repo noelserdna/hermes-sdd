@@ -591,6 +591,26 @@ def jev_narracion(repo: Path, fase: str) -> dict:
     return out
 
 
+def linea_expediente(repo: Path, fase: str, maximo: int = 8) -> str:
+    """La línea de la puerta con el expediente de la FASE (hsdd_expediente: prueba, captura, vídeo, voz, revisión y
+    visible por criterio): cuántos llegan demostrados y qué les falta a los demás; "" si no se calculó."""
+    f = Path(repo) / ".sdd" / "hermes" / f"expediente-{fase}.json"
+    try:
+        e = json.loads(f.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return ""
+    r = e.get("resumen") or {}
+    if not r.get("criterios"):
+        return ""
+    l = f"🧾 Demostrados: {r.get('demostrados', 0)} de {r['criterios']} criterios (prueba, captura, vídeo con voz y revisión)."
+    malos = [x for x in e.get("criterios", []) if x.get("faltan")]
+    if malos:
+        l += "\nLes falta:" + "".join(f"\n• {x['req']} AC{x['ac']}: {'; '.join(x['faltan'])}" for x in malos[:maximo])
+        if len(malos) > maximo:
+            l += f"\n… y {len(malos) - maximo} más"
+    return l
+
+
 def linea_narracion(repo: Path, fase: str) -> str:
     """La línea de la puerta con la revisión del texto en off (jev_narracion); "" si no se hizo."""
     f = Path(repo) / ".sdd" / "hermes" / f"jev-narracion-{fase}.json"
@@ -1164,6 +1184,8 @@ def puerta_fase(repo: Path, proyecto: str, fase: str, gate_md: str, rc: int, tes
     partes.append(f"🎬 Demo: {' y '.join(demo)}." if demo else "🎬 Esta fase no trae demo (ni vídeo ni capturas).")
     if video and (ln := linea_narracion(repo, fase)):
         partes.append(ln)
+    if le := linea_expediente(repo, fase):
+        partes.append(le)
     partes.append(_que_pulsar(rc, rev, "aceptarla", "aceptarla con observaciones", "rechazarla", demo=True))
     return {"titulo": f"Aceptar FASE-{fase}", "texto": "\n\n".join(partes)}
 

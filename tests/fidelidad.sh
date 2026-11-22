@@ -229,7 +229,9 @@ python3 - "$ROOT/plugin/hermes-sdd" <<'PY' && ok "mutantes: nice -n 10, --worker
 import os, sys; sys.path.insert(0, sys.argv[1]); import hsdd_fidelidad as F
 c = F._comando(["npx", "playwright", "test", "tests/e2e/a.spec.js"])
 assert c == ["nice", "-n", "10", "npx", "playwright", "test", "--workers=2", "tests/e2e/a.spec.js"], c
-assert F._comando(["npx", "vitest", "run", "x.test.js"])[-2:] == ["--maxWorkers=2", "x.test.js"]
+# con --maxWorkers vitest 2 exige --minWorkers que no lo supere: sin él, «options.minThreads and options.maxThreads must
+# not conflict» y no corre ningún unitario (material-montana11 en la caja: 35 de 49 textos sin comprobar)
+assert F._comando(["npx", "vitest", "run", "x.test.js"])[-3:] == ["--maxWorkers=2", "--minWorkers=1", "x.test.js"], F._comando(["npx", "vitest", "run", "x.test.js"])
 os.environ["HSDD_MUT_WORKERS"] = "1"; os.environ["HSDD_MUT_NICE"] = "0"
 assert F._comando(["npx", "playwright", "test"]) == ["npx", "playwright", "test", "--workers=1"]
 PY

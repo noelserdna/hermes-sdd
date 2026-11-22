@@ -644,7 +644,7 @@ def _comando(cmd: list[str], copia: Path | None = None) -> list[str]:
     if cmd[:3] == ["npx", "playwright", "test"] and not any(a.startswith("--workers") for a in cmd):
         cmd.insert(3, f"--workers={w}")
     elif cmd[:3] == ["npx", "vitest", "run"] and not any(a.startswith("--maxWorkers") for a in cmd):
-        cmd.insert(3, f"--maxWorkers={w}")
+        cmd[3:3] = [f"--maxWorkers={w}", "--minWorkers=1"]   # vitest 2: sin un mínimo que no lo supere, no arranca
     n = os.environ.get("HSDD_MUT_NICE", "10").strip()
     if n and n != "0" and shutil.which("nice"):
         cmd = ["nice", "-n", n, *cmd]
