@@ -22,4 +22,14 @@ echo "$d" | grep -q 'sdd lint --arch: src/features/entregar/entregar.js:1 A-01' 
 printf '# App\n\n## SDD Stack Profile\n- lint: false\n' > AGENTS.md
 jq '.scripts.lint = "false"' package.json > p.tmp && mv p.tmp package.json
 echo "$(duras_implementar)" | grep -q '^lint (false)' && ok "el lint del Stack Profile en rojo: regla rota" || bad "lint: $(duras_implementar)"
+# lib/plantilla-versiones.txt tiene cada versión anterior de la plantilla de evidencias (si no, un proyecto creado con
+# ella no se pondría al día y fallaría la regla dura: material-montana12 G-6)
+if git -C "$ROOT" rev-parse >/dev/null 2>&1; then
+  F=templates/stacks/web-vite/tests/e2e/fixtures/evidence.js; falta=""
+  for h in $(git -C "$ROOT" log --format=%h -- "$F"); do
+    s=$(git -C "$ROOT" show "$h:$F" | shasum -a 256 | cut -d' ' -f1)
+    cmp -s <(git -C "$ROOT" show "$h:$F") "$ROOT/$F" || grep -qx "$s" "$ROOT/lib/plantilla-versiones.txt" || falta="$falta $h"
+  done
+  [ -z "$falta" ] && ok "cada versión anterior de la plantilla de evidencias está en lib/plantilla-versiones.txt" || bad "faltan en lib/plantilla-versiones.txt las versiones de:$falta"
+fi
 exit $fail

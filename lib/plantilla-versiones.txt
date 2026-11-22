@@ -1,0 +1,6 @@
+# sha256 de cada versión publicada de templates/stacks/web-vite/tests/e2e/fixtures/evidence.js (las anteriores a la actual): un proyecto con una de ellas se pone al día (lib/comun.sh plantilla_al_dia). Al cambiar la plantilla, añadir la que se sustituye: tests/duras.sh lo comprueba.
+046caeaf4fc4c962653375f33ee8e802a56aa0c0cfaea230f8714dede75b365c
+23d524261b56529c347e64abf0bd56be8200da837155b689aff01fabc55e6f0b
+fb8f2385459e4eb2cdb29a13089cabadf8773c6250eb48e1524de52472eb6153
+2791cbc5f67df4667a73e01ab74c45cb0bec9a7bfd4d93fef0f74764e2e15b2a
+eb8b895b1a590dbf5f010538aeed7f83bd4c52e8763101df11008be243b28d72

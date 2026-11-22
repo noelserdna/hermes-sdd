@@ -196,4 +196,31 @@ head -2 "$g5/.sdd/hermes/etapas.jsonl" > "$g5/e" && mv "$g5/e" "$g5/.sdd/hermes/
 e="$(HERMES_SDD_HOME="$hs" HERMES_SDD_ESPERA_INTERVALO_S=0.2 bash "$AQUI/lanzar.sh" esperar "$g5" --max 2 || true)"
 [ "${e%%:*}" = "PUERTA g179535243959a8 requisitos abierta" ] && ok "montana12 G-5: la puerta ya abierta al empezar a esperar se avisa" || mal "montana12 G-5: esperar dice «${e}»"
 
+
+# G-9 (montana12 AC-009-01): entre «entra» y «Reserva cancelada» el webm tenía un solo fotograma: el clic no se grabó y
+# ninguna cámara lenta lo enseña. La grabación de evidencias (SDD_FASE) va con slowMo; la suite del agente y los
+# mutantes (sin SDD_FASE), a toda velocidad
+pw="$tmp/pw"; mkdir -p "$pw/node_modules/@playwright/test" "$pw/tests/e2e/fixtures"; (cd "$pw" && git init -q)
+cp "$AQUI/templates/stacks/web-vite/playwright.config.js" "$pw/"; cp "$AQUI/templates/stacks/web-vite/tests/e2e/fixtures/evidence.js" "$pw/tests/e2e/fixtures/"
+printf '{"name":"@playwright/test","type":"module","main":"index.js"}' > "$pw/node_modules/@playwright/test/package.json"
+printf 'export const defineConfig = (c) => c; export const devices = { "Desktop Chrome": {} }; export const expect = {}; export const test = { extend: (o) => o };\n' > "$pw/node_modules/@playwright/test/index.js"
+printf '{"type":"module"}' > "$pw/package.json"
+sm() { (cd "$pw" && node --input-type=module -e 'const f = (await import(process.cwd() + "/tests/e2e/fixtures/evidence.js")).test.launchOptions; let v; await f[0]({ launchOptions: {} }, (x) => { v = x; }); console.log(v?.slowMo ?? 0)'); }
+a="$(SDD_FASE=1 sm)"; b="$(env -u SDD_FASE bash -c "$(declare -f sm); pw=$pw; sm")"
+[ "${a:-0}" -ge 100 ] && [ "$b" = 0 ] && ok "montana12 G-9: las evidencias se graban con slowMo ($a ms) y la suite del agente no" || mal "montana12 G-9: slowMo con SDD_FASE=${a}, sin él=${b}"
+
+
+# G-6: montana12 se creó con la plantilla de evidencias de un arnés anterior; al actualizar el arnés, la regla dura la
+# daba por «tocada» y la FASE-0 falló dos veces. Una versión anterior de la plantilla se pone al día con su propio
+# commit; la que el agente tocó (no es ninguna versión del arnés) sigue siendo una regla rota
+g6="$tmp/g6"; rm -rf "$g6"; cp -R "$m12" "$g6"
+(cd "$g6" && git init -q -b main && git add -A && git -c user.email=t@t -c user.name=t commit -qm banco)
+d="$(cd "$g6" && ROOT="$AQUI" SDD="$SDD" FASE=0 bash -c '. "$ROOT/lib/comun.sh"; plantilla_al_dia >/dev/null 2>&1; duras_implementar' 2>&1 | grep 'evidence.js' || true)"
+if [ -z "$d" ] && cmp -s "$g6/tests/e2e/fixtures/evidence.js" "$AQUI/templates/stacks/web-vite/tests/e2e/fixtures/evidence.js" \
+   && git -C "$g6" log -1 --format=%s | grep -q 'plantilla'; then ok "montana12 G-6: la plantilla anterior se pone al día con su commit y no es una regla rota"
+else mal "montana12 G-6: ${d:-no se puso al día} ($(git -C "$g6" log -1 --format=%s))"; fi
+echo "// el agente la toca" >> "$g6/tests/e2e/fixtures/evidence.js"; git -C "$g6" -c user.email=t@t -c user.name=t commit -qam toca
+d="$(cd "$g6" && ROOT="$AQUI" SDD="$SDD" FASE=0 bash -c '. "$ROOT/lib/comun.sh"; plantilla_al_dia >/dev/null 2>&1; duras_implementar' 2>&1 | grep 'evidence.js' || true)"
+[ -n "$d" ] && ok "montana12 G-6: la plantilla tocada por el agente sigue siendo una regla rota" || mal "montana12 G-6: la tocada se dio por buena"
+
 exit $fallo

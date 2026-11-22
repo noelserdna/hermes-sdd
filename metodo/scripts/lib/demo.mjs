@@ -221,32 +221,55 @@ export function wavSeconds(file) {
 }
 /** What a person needs to read a caption (seconds): the pause the tests used to make, now made in the film. */
 export const readingSeconds = (text) => Math.min(8, Math.max(1.5, String(text || "").length * 0.065));
+function videoSize(file) {
+  const r = spawnSync("ffprobe", ["-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", file], { encoding: "utf8" });
+  const [w, h] = (r.stdout || "").trim().split(",").map(Number);
+  return w > 0 && h > 0 ? [w, h] : null;
+}
 function videoSeconds(file) {
   const r = spawnSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", file], { encoding: "utf8" });
   const d = parseFloat((r.stdout || "").trim());
   return Number.isFinite(d) && d > 0 ? d : null;
 }
+/** How long after its caption appears the frame of a sentence is taken (the helper `narrar` waits 0.2 s for it to paint). */
+export const LEAD = 0.2;
+/** The action between two sentences lasts at least this long in the film (slowed down, at most MAX_SLOW times). */
+export const MIN_ACTION = 1.2, MAX_SLOW = 4;
+const r2 = (x) => Math.round(x * 100) / 100;
 /**
- * The film's timeline: the test runs at full speed (the helper `narrar` no longer waits), so where a sentence needs
- * more time than the test left before the next one, the last frame of that stretch is frozen for the difference.
- * items: [{t, d}] sorted by t (start in the test video, seconds needed). Returns pieces [{from, to|null, freeze}] of
- * the source video and, per item, its offset in the film.
+ * The film's timeline: the test runs at full speed (the helper `narrar` does not wait), so each sentence is said over
+ * the frame where its caption has just appeared — before the action it announces — frozen as long as its voice needs;
+ * then the action plays, slowed down when it is too fast to follow (material-montana12 G-9: the frame frozen was the
+ * last one before the next sentence, so «Lucía pulsa Cancelar» was said over «Reserva cancelada» and the click lasted
+ * 0.1 s). items: [{t, d, hold?, image?, until?}] sorted by t (start in the test video, seconds needed). An item with
+ * `image` (the card that presents the criterion) is shown as that still image for its voice, and the video goes on
+ * from `until` (when the test left the card): the card does not depend on the recording (G-8: a webm without it).
+ * Returns pieces [{from, to|null, freeze, slow?} | {image, still}] and, per item, its offset in the film.
  */
 export function filmTimeline(items, duration = null, pad = 0.4) {
   const pieces = [], offsets = [];
-  if (items.length && items[0].t > 0.05) pieces.push({ from: 0, to: items[0].t, freeze: 0 });
-  let added = 0;
+  let at = 0;
+  if (items.length && items[0].t > 0.05 && !items[0].image) { pieces.push({ from: 0, to: items[0].t, freeze: 0 }); at = items[0].t; }
   items.forEach((x, j) => {
-    const next = j + 1 < items.length ? items[j + 1].t : duration;
-    const gap = next === null ? 0 : Math.max(0, next - x.t);
-    offsets.push(x.t + added);
-    // `hold` (seconds): the frame to freeze is the item's own, `hold` after it starts, not the last one before the
-    // next sentence — the card that presents the criterion is gone by then (the test has already opened the app)
-    const hold = x.hold > 0 && (next === null || x.t + x.hold < next) ? x.hold : 0;
-    const freeze = Math.max(0, Math.round((x.d + pad - (hold || gap)) * 100) / 100);
-    if (hold) pieces.push({ from: x.t, to: x.t + hold, freeze }, { from: x.t + hold, to: j + 1 < items.length ? next : null, freeze: 0 });
-    else pieces.push({ from: x.t, to: j + 1 < items.length ? next : null, freeze });
-    added += freeze;
+    const last = j + 1 >= items.length;
+    const end = last ? duration : items[j + 1].t;
+    offsets.push(r2(at));
+    let f;
+    if (x.image) {
+      const still = r2(x.d + pad);
+      pieces.push({ image: x.image, still }); at += still;
+      f = Math.max(x.t, Math.min(x.until ?? x.t + (x.hold || LEAD), end ?? Infinity));
+    } else {
+      f = Math.min(x.t + (x.hold > 0 ? x.hold : LEAD), end ?? Infinity);
+      const freeze = Math.max(0, r2(x.d + pad - (f - x.t)));
+      pieces.push({ from: x.t, to: f, freeze }); at += (f - x.t) + freeze;
+    }
+    if (end === null || end > f) {
+      const len = end === null ? null : end - f;
+      const slow = !last && !x.image && len > 0 && len < MIN_ACTION ? r2(Math.min(MAX_SLOW, MIN_ACTION / len)) : 1;
+      pieces.push({ from: f, to: last ? null : end, freeze: 0, ...(slow > 1 ? { slow } : {}) });
+      at += len === null ? 0 : len * slow;
+    }
   });
   return { pieces, offsets };
 }
@@ -268,7 +291,9 @@ export function narrate(root, fase, { tts: pref, voice } = {}) {
     const tmp = mkdtempSync(path.join(os.tmpdir(), "sdd-voz-"));
     // Each sentence: its start in the test video and the time it needs (its voice, or the time to read its caption)
     // `voz`: what is said when it is more than the caption (the presentation of the criterion that opens the video)
-    const items = (n.narraciones || []).map((x) => ({ t: Math.max(0, Number(x.t) || 0), texto: x.voz || x.texto, hold: x.presentacion ? 0.3 : 0 }))
+    // `imagen`: the card that presents the criterion, saved by the fixture apart from the video (G-8)
+    const items = (n.narraciones || []).map((x) => ({ t: Math.max(0, Number(x.t) || 0), texto: x.voz || x.texto, hold: x.presentacion ? 0.3 : 0,
+      ...(x.presentacion && x.imagen && existsSync(path.join(dir, x.imagen)) ? { image: path.join(dir, x.imagen), until: Number(x.hasta) || undefined } : {}) }))
       .sort((a, b) => a.t - b.t)
       .map((x, i) => {
         const wav = path.join(tmp, `s${i}.wav`);
@@ -277,14 +302,21 @@ export function narrate(root, fase, { tts: pref, voice } = {}) {
       });
     const { pieces, offsets } = filmTimeline(items, items.length ? videoSeconds(video) : null);
     const segs = items.map((x, i) => ({ wav: x.wav, ms: Math.round(offsets[i] * 1000) })).filter((s) => s.wav);
-    const frozen = Math.round(pieces.reduce((a, p) => a + p.freeze, 0) * 10) / 10;
+    const frozen = Math.round(pieces.reduce((a, p) => a + (p.freeze || p.still || 0), 0) * 10) / 10;
     const args = ["-y", "-loglevel", "error", "-i", video];
     for (const s of segs) args.push("-i", s.wav);
     const graph = [];
     let vout = "0:v";
     if (pieces.length) {
-      pieces.forEach((p, k) => graph.push(`[0:v]trim=start=${p.from}${p.to !== null ? `:end=${p.to}` : ""},setpts=PTS-STARTPTS` +
-        `${p.freeze > 0 ? `,tpad=stop_mode=clone:stop_duration=${p.freeze}` : ""}[v${k}]`));
+      // every piece to the video's size and 25 fps (the card is a still image; a slowed piece changes its timestamps)
+      const [w, h] = videoSize(video) || [1280, 720];
+      const norm = `scale=${w}:${h}:force_original_aspect_ratio=decrease,pad=${w}:${h}:(ow-iw)/2:(oh-ih)/2,setsar=1,fps=25,format=yuv420p`;
+      let extra = segs.length + 1;
+      pieces.forEach((p, k) => {
+        if (p.image) { args.push("-loop", "1", "-t", String(p.still), "-i", p.image); graph.push(`[${extra++}:v]${norm},trim=duration=${p.still}[v${k}]`); return; }
+        graph.push(`[0:v]trim=start=${p.from}${p.to !== null ? `:end=${p.to}` : ""},setpts=${p.slow ? `(PTS-STARTPTS)*${p.slow}` : "PTS-STARTPTS"},${norm}` +
+          `${p.freeze > 0 ? `,tpad=stop_mode=clone:stop_duration=${p.freeze}` : ""}[v${k}]`);
+      });
       graph.push(`${pieces.map((_, k) => `[v${k}]`).join("")}concat=n=${pieces.length}:v=1:a=0[film]`);
       vout = "[film]";
     }

@@ -57,6 +57,20 @@ video_fase() {
   { ls evidencias/FASE-"$1"/MONTAJE-*.mp4 2>/dev/null; ls evidencias/FASE-"$1"/*.mp4 evidencias/FASE-"$1"/*.webm evidencias/FASE-"$1"/*.mov 2>/dev/null; } | head -1 || true
 }
 
+# plantilla_al_dia: si tests/e2e/fixtures/evidence.js es una versión ANTERIOR de la plantilla del arnés (está en
+# lib/plantilla-versiones.txt), la pone al día con su propio commit; si no es ninguna versión del arnés, la tocó el
+# agente y no se toca aquí (es una regla dura rota). material-montana12 G-6: un proyecto creado con el arnés anterior
+# fallaba la regla dura dos veces al actualizar el arnés
+plantilla_al_dia() {  # en el repo
+  local t h; t=$(ls "$ROOT"/templates/stacks/*/tests/e2e/fixtures/evidence.js 2>/dev/null | head -1)
+  [ -f tests/e2e/fixtures/evidence.js ] && [ -n "$t" ] && ! cmp -s "$t" tests/e2e/fixtures/evidence.js || return 0
+  h=$(shasum -a 256 tests/e2e/fixtures/evidence.js 2>/dev/null || sha256sum tests/e2e/fixtures/evidence.js); h=${h%% *}
+  grep -qx "$h" "$ROOT/lib/plantilla-versiones.txt" || return 0
+  cp "$t" tests/e2e/fixtures/evidence.js
+  git add tests/e2e/fixtures/evidence.js && git commit -q -m "chore(arnés): plantilla de evidencias al día" -m "La versión anterior de tests/e2e/fixtures/evidence.js pasa a la del arnés instalado (no es un cambio del agente)." \
+    -- tests/e2e/fixtures/evidence.js && echo "plantilla de evidencias puesta al día"
+}
+
 # narrar_demo <fase>: la voz en off de los vídeos narrados de la FASE (sdd demo narrate, en esta máquina: say o
 # espeak-ng y ffmpeg) → evidencias/FASE-N/*.mp4, el vídeo que se ve en la puerta y en Telegram. Sin TTS, mp4 sin voz.
 narrar_demo() {

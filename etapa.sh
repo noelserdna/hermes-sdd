@@ -734,6 +734,7 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
 
   implementar)
     [ -n "$FASE" ] || falla "falta la FASE"
+    plantilla_al_dia || true   # una versión anterior de la plantilla de evidencias, al día (G-6)
     # Un [PLAN GAP] pendiente no lo puede hacer el implementador: lo completa la etapa huecos (incidente hola-astro)
     ! grep -qE '^- \[ \] .*\[PLAN GAP\]' "task/TASK-FASE-$FASE.md" 2>/dev/null ||
       falla "la FASE-$FASE tiene tareas [PLAN GAP]: antes hay que completarlas (lanzar.sh rehacer $REPO $FASE)"
@@ -803,6 +804,7 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
 
   aceptar)
     [ -n "$FASE" ] || falla "falta la FASE"
+    plantilla_al_dia || true   # una versión anterior de la plantilla de evidencias, al día (G-6)
     # Veredictos y re-veredictos: pocos turnos que ejecutan la CLI, con el modelo barato del perfil (club: 9,47 $ con el
     # de la etapa). La ronda adversarial y el implementador siguen con el de la etapa.
     MV=$(modelo_veredictos)
@@ -835,6 +837,7 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
     fin "$RES" "Línea base propuesta a partir del código" "$P" ;;
 
   cierre)
+    plantilla_al_dia || true   # la grabación final, con la plantilla de evidencias del arnés instalado (G-6)
     # Primero, que arranque como en producción: su arreglo cambia código, y medir antes dejaba caducadas las pruebas
     # recién pasadas (material-montana3: el arreglo de `npm start` llegó tras medir y la entrega se rechazó una vez)
     desplegable

@@ -83,8 +83,13 @@ async function presentar(page, testInfo) {
     ${p.no_visible ? `<dt class="nv">No se ve</dt><dd class="nv">${esc(p.no_visible)}</dd>` : ''}</dl>
   </body></html>`);
   const s = de(testInfo);
-  s.narraciones.push({ t: (Date.now() - s.t0) / 1000, texto: `Requisito ${p.requisito}: ${p.titulo}. Criterio ${p.n} de ${p.total}.`, voz: p.voz, presentacion: c.id });
+  const entrada = { t: (Date.now() - s.t0) / 1000, texto: `Requisito ${p.requisito}: ${p.titulo}. Criterio ${p.n} de ${p.total}.`, voz: p.voz, presentacion: c.id };
+  s.narraciones.push(entrada);
   await page.waitForTimeout(400);
+  // la cartela también como imagen: el vídeo narrado la pone delante con su voz aunque la grabación no la recoja
+  // (material-montana12 G-8: un webm empezó ya en la app). `hasta`: cuándo deja el test la cartela
+  s.cartela = await page.screenshot();
+  entrada.hasta = (Date.now() - s.t0) / 1000;
 }
 
 /**
@@ -126,6 +131,12 @@ export const captureCriterion = captura;
 /** Un vídeo por test, con el nombre de su workflow (WF-NNN del título, o test.use({ videoId })) y su locución. */
 export const test = base.extend({
   videoId: [undefined, { option: true }],
+  // La grabación de evidencias (SDD_FASE) va despacio para que el vídeo enseñe cada clic y cada texto tecleado
+  // (material-montana12 G-9: entre entrar y «Reserva cancelada» el vídeo tenía un solo fotograma). La suite del agente
+  // y los mutantes corren sin SDD_FASE, a toda velocidad. Aquí y no en playwright.config.js: esa la ajusta cada proyecto
+  launchOptions: [async ({ launchOptions }, use) => {
+    await use(process.env.SDD_FASE ? { ...launchOptions, slowMo: launchOptions?.slowMo || 250 } : launchOptions);
+  }, { scope: 'worker' }],
   page: async ({ page, videoId }, use, testInfo) => {
     de(testInfo).t0 = Date.now();
     await presentar(page, testInfo);
@@ -140,6 +151,12 @@ export const test = base.extend({
     mkdirSync(evidenceDir, { recursive: true });
     const file = path.join(evidenceDir, `${id}.webm`);
     await video.saveAs(file);
+    if (s?.cartela) {
+      mkdirSync(path.join(evidenceDir, 'cartelas'), { recursive: true });
+      writeFileSync(path.join(evidenceDir, 'cartelas', `${id}.png`), s.cartela);
+      const p = s.narraciones.find((n) => n.presentacion);
+      if (p) p.imagen = `cartelas/${id}.png`;
+    }
     if (s?.narraciones.length)
       writeFileSync(path.join(evidenceDir, `${id}.narracion.json`), JSON.stringify({
         video: `${id}.webm`, test: testInfo.titlePath.slice(1).join(' › '), titulo: testInfo.title, narraciones: s.narraciones,

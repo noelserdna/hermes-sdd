@@ -80,15 +80,15 @@ tl=$(node --input-type=module -e '
 import { filmTimeline, readingSeconds } from "'"$(dirname "$SDD")"'/lib/demo.mjs";
 const r = filmTimeline([{ t: 1, d: 3 }, { t: 2, d: 0.5 }, { t: 6, d: 2 }], 7);
 console.log(JSON.stringify({ f: r.pieces.map((p) => p.freeze), o: r.offsets, rd: readingSeconds("x".repeat(40)) }));')
-[ "$tl" = '{"f":[0,2.4,0,1.4],"o":[1,4.4,8.4],"rd":2.6}' ] \
-  && pass "narrate: congela lo que falta para cada frase y retrasa las siguientes lo mismo" || bad "filmTimeline: $tl"
+[ "$tl" = '{"f":[0,3.2,0,0.7,0,2.2,0],"o":[1,5.6,10.3],"rd":2.6}' ] \
+  && pass "narrate: congela cada frase al salir su rótulo lo que pide su voz, y la acción corta va más lenta" || bad "filmTimeline: $tl"
 # la cartela que presenta el criterio se congela en su propio fotograma (hold), no en el último antes de la frase
 # siguiente: para entonces el test ya abrió la app (material-montana11: el vídeo de prueba congelaba una página en blanco)
 tl=$(node --input-type=module -e '
 import { filmTimeline } from "'"$(dirname "$SDD")"'/lib/demo.mjs";
 const r = filmTimeline([{ t: 0, d: 10, hold: 0.3 }, { t: 1.3, d: 1 }], 5);
 console.log(JSON.stringify({ p: r.pieces.map((p) => [p.from, p.to, p.freeze]), o: r.offsets }));')
-[ "$tl" = '{"p":[[0,0.3,10.1],[0.3,1.3,0],[1.3,null,0]],"o":[0,11.4]}' ] \
+[ "$tl" = '{"p":[[0,0.3,10.1],[0.3,1.3,0],[1.3,1.5,1.2],[1.5,null,0]],"o":[0,11.6]}' ] \
   && pass "narrate: la presentación del criterio se congela en su fotograma y la demostración sigue después" || bad "filmTimeline hold: $tl"
 # un criterio con parte visible y parte no visible: la cartela y su voz dicen qué no se ve (material-montana11)
 pr=$(node --input-type=module -e '
@@ -119,5 +119,41 @@ if command -v ffmpeg >/dev/null 2>&1 && ffmpeg -hide_banner -encoders 2>/dev/nul
   out=$(cd "$m" && node "$SDD" demo montaje --fase 1 --json)
   [ "$(j 'j.clips.join()')" = "v-a.mp4,v-b.mp4" ] && pass "montaje: rehacerlo no se incluye a sí mismo" || bad "montaje repetido: $out"
 else pass "montaje: sin ffmpeg con libx264 en esta máquina, no se prueba"; fi
+# G-9 (montana12, FASE-1 AC-009-01, tiempos reales; el webm medía 2,92 s): «Lucía pulsa Cancelar» se decía con la
+# imagen congelada al FINAL de su tramo, ya con «Reserva cancelada», y el clic duraba 0,1 s: no se veía la acción.
+# Mientras suena cada frase se ve el momento en que aparece su rótulo (antes de la acción) y después la acción, a una
+# velocidad que se pueda seguir
+g9=$(node --input-type=module -e '
+import { filmTimeline, readingSeconds } from "'"$(dirname "$SDD")"'/lib/demo.mjs";
+import { readFileSync, readdirSync } from "node:fs";
+const dir = "'"$(cd "$(dirname "$0")/../../.." && pwd)"'/tests/fixtures/banco/material-montana12/evidencias/FASE-1";
+const n = JSON.parse(readFileSync(dir + "/" + readdirSync(dir).find((f) => f.includes("AC-009-01") && f.endsWith(".narracion.json")), "utf8"));
+const dur = 2.92;
+const items = n.narraciones.map((x) => ({ t: x.t, d: readingSeconds(x.voz || x.texto), ...(x.presentacion ? { hold: 0.3 } : {}) }));
+const { pieces, offsets } = filmTimeline(items, dur);
+const at = (T) => { let a = 0; for (const p of pieces) { const to = p.to ?? dur, k = p.slow || 1, play = (to - p.from) * k;
+  if (T < a + play) return p.from + (T - a) / k; a += play; if (T < a + p.freeze) return to; a += p.freeze; } return dur; };
+const mal = [];
+items.forEach((x, i) => { if (i === 0) return; const s = at(offsets[i] + x.d / 2); if (s < x.t || s > x.t + 0.4) mal.push(`frase ${i}: se ve ${s.toFixed(2)} s, su rótulo sale en ${x.t}`); });
+const filmDe = (a, b) => { let f = 0; for (const p of pieces) { const to = p.to ?? dur, k = p.slow || 1; f += Math.max(0, Math.min(to, b) - Math.max(p.from, a)) * k; } return f; };
+const accion = filmDe(items[1].t, items[2].t);
+if (accion < 1) mal.push(`la acción entre la frase 1 y la 2 dura ${accion.toFixed(2)} s en el vídeo`);
+console.log(mal.join("; ") || "ok");')
+[ "$g9" = ok ] && pass "narrate (montana12 G-9): cada frase se oye sobre el momento de su rótulo y la acción se ve después" || bad "narrate G-9: $g9"
+# G-8 (montana12, FASE-0 AC-002-01): el webm empezó ya en «Entrar», sin la cartela, y la voz del requisito sonó sobre
+# el formulario. La cartela es una imagen que el fixture guarda aparte (cartelas/<vídeo>.png) y la película la pone
+# delante con su voz, la haya grabado o no el vídeo; la acción sigue a velocidad que se pueda seguir
+if command -v ffmpeg >/dev/null 2>&1 && ffmpeg -hide_banner -encoders 2>/dev/null | grep -q libx264; then
+  c="$tmp/g8"; mkdir -p "$c/evidencias/FASE-0/cartelas"; (cd "$c" && git init -q)
+  ffmpeg -loglevel error -f lavfi -i color=c=white:s=320x240:d=2.2 -c:v libvpx -b:v 100k "$c/evidencias/FASE-0/v.webm"
+  ffmpeg -loglevel error -f lavfi -i color=c=0x0f172a:s=320x240 -frames:v 1 "$c/evidencias/FASE-0/cartelas/v.png"
+  printf '{"video":"v.webm","narraciones":[{"t":0.01,"texto":"Requisito REQ-F-001","voz":"Requisito funcional 1: Entrar y salir. Tiene 8 criterios de aceptación.","presentacion":"AC-002-01","imagen":"cartelas/v.png","hasta":0.42},{"t":0.63,"texto":"Lucía entra"},{"t":1.03,"texto":"Lucía pulsa Salir"}]}' > "$c/evidencias/FASE-0/v.narracion.json"
+  (cd "$c" && node "$SDD" demo narrate --fase 0 --tts none >/dev/null 2>&1)
+  luz() { ffmpeg -v error -ss "$1" -i "$c/evidencias/FASE-0/v.mp4" -frames:v 1 -vf scale=1:1 -f rawvideo -pix_fmt gray - 2>/dev/null | od -An -tu1 | tr -d ' '; }
+  l1=$(luz 1); l8=$(luz 6.5)
+  [ -n "$l1" ] && [ "$l1" -lt 60 ] && [ -n "$l8" ] && [ "$l8" -gt 200 ] \
+    && pass "narrate (montana12 G-8): la cartela sale con su voz aunque el vídeo no la grabara" || bad "narrate G-8: luz en 1 s=$l1 (cartela oscura), al final=$l8"
+fi
 [ $fail = 0 ] && echo "metodo/tests/demo: all passed"
+
 exit $fail
