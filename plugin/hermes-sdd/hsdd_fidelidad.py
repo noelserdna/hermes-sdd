@@ -599,7 +599,44 @@ def _muta(texto: str, lit: str) -> str:
     return "\n".join(l if _COMENTARIO.match(l) else l.replace(lit, "MUTANTE") for l in texto.split("\n"))
 
 
-def _comando(cmd: list[str]) -> list[str]:
+def _caja() -> tuple[str, str, Path] | None:
+    """La caja donde corren las etapas, si sirve para los mutantes: Docker en Linux con su imagen ya construida
+    (executors/caja.sh: hermes-sdd-caja:<sha1 del Containerfile>-u<uid>) → (docker, imagen, caché de navegadores).
+    HSDD_MUT_CAJA=0 la apaga. En macOS los tests corren bien fuera y Apple container monta distinto: None."""
+    import hashlib, platform
+    if os.environ.get("HSDD_MUT_CAJA", "").strip() == "0" or platform.system() != "Linux" or not shutil.which("docker"):
+        return None
+    cf = Path(__file__).resolve().parents[2] / "templates" / "caja" / "Containerfile"
+    try:
+        img = f"hermes-sdd-caja:{hashlib.sha1(cf.read_bytes()).hexdigest()[:12]}-u{os.getuid()}"
+    except OSError:
+        return None
+    if subprocess.run(["docker", "image", "inspect", img], capture_output=True).returncode != 0:
+        return None
+    return "docker", img, Path(os.environ.get("HERMES_SDD_CAJA_CACHE", Path.home() / ".cache" / "hermes-sdd-caja"))
+
+
+def _en_caja(cmd: list[str], copia: Path, caja: tuple[str, str, Path]) -> list[str]:
+    """La orden dentro de la caja: la copia (un git worktree) y lo que enlaza fuera de ella montados en su misma ruta:
+    el .git del repo (solo lectura) y sus node_modules (vite escribe su caché ahí)."""
+    rt, img, cache = caja
+    vol = [f"{copia}:{copia}", f"{cache}:/cache"]
+    g = copia / ".git"
+    if g.is_file():
+        m = re.match(r"gitdir:\s*(.+)", g.read_text(errors="replace").strip())
+        if m:
+            comun = Path(m.group(1)).parent.parent   # <repo>/.git/worktrees/<n> → <repo>/.git
+            vol.append(f"{comun}:{comun}:ro")
+    nm = copia / "node_modules"
+    if nm.is_symlink():   # su destino tal cual: es la ruta que el contenedor seguirá al leer el enlace
+        d = Path(os.readlink(nm))
+        d = d if d.is_absolute() else copia / d
+        vol.append(f"{d}:{d}")
+    return [rt, "run", "--rm", "--name", f"hsdd-mut-{os.getpid()}-{len(cmd)}-{abs(hash(tuple(cmd))) % 10**8}",
+            "-u", str(os.getuid()), "-e", "HOME=/tmp", *[x for v in vol for x in ("-v", v)], "-w", str(copia), img, *cmd]
+
+
+def _comando(cmd: list[str], copia: Path | None = None) -> list[str]:
     """La suite con poca prioridad y pocos workers: los mutantes corren mientras Hermes trabaja (club: con la máquina a
     load 12, Hermes perdió un worker). HSDD_MUT_WORKERS (2 por omisión) y HSDD_MUT_NICE (10; 0 = sin nice)."""
     w = os.environ.get("HSDD_MUT_WORKERS", "2").strip() or "2"
@@ -611,14 +648,19 @@ def _comando(cmd: list[str]) -> list[str]:
     n = os.environ.get("HSDD_MUT_NICE", "10").strip()
     if n and n != "0" and shutil.which("nice"):
         cmd = ["nice", "-n", n, *cmd]
-    return cmd
+    # en la caja, como la etapa que escribió los tests (material-montana11: fuera, 47 de 49 textos sin comprobar)
+    caja = _caja() if copia is not None else None
+    return _en_caja(cmd, Path(copia), caja) if caja else cmd
 
 
 def _ejecuta(copia: Path, cmd: list[str], minutos: int = 10) -> bool:
     """True si la suite pasa."""
     try:
-        return subprocess.run(_comando(cmd), cwd=copia, capture_output=True, text=True, timeout=minutos * 60).returncode == 0
+        c = _comando(cmd, copia)
+        return subprocess.run(c, cwd=copia, capture_output=True, text=True, timeout=minutos * 60).returncode == 0
     except subprocess.TimeoutExpired:
+        if c[:2] == ["docker", "run"]:   # el cliente muere con el tiempo; el contenedor no
+            subprocess.run(["docker", "kill", c[c.index("--name") + 1]], capture_output=True)
         return False
 
 

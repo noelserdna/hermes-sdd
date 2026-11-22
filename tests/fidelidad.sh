@@ -233,6 +233,24 @@ assert F._comando(["npx", "vitest", "run", "x.test.js"])[-2:] == ["--maxWorkers=
 os.environ["HSDD_MUT_WORKERS"] = "1"; os.environ["HSDD_MUT_NICE"] = "0"
 assert F._comando(["npx", "playwright", "test"]) == ["npx", "playwright", "test", "--workers=1"]
 PY
+# 4f bis. los mutantes corren en la caja, como la etapa que hizo los tests (material-montana11 en PcWindows: fuera de
+# la caja a Chromium le faltaban bibliotecas y luego el primer e2e agotaba su tiempo; 47 de 49 textos sin comprobar)
+python3 - "$ROOT/plugin/hermes-sdd" "$T" <<'PY' && ok "mutantes: con la caja (Docker en Linux), cada pasada corre dentro, con la copia, sus node_modules y el .git montados" || bad "mutantes en la caja"
+import os, sys; sys.path.insert(0, sys.argv[1]); import hsdd_fidelidad as F
+from pathlib import Path
+T = Path(sys.argv[2]) / "cajamut"; repo = T / "repo"; copia = T / "copia"
+(repo / ".git" / "worktrees" / "c").mkdir(parents=True); (repo / "node_modules").mkdir(); copia.mkdir()
+(copia / ".git").write_text(f"gitdir: {repo}/.git/worktrees/c\n"); (copia / "node_modules").symlink_to(repo / "node_modules")
+F._caja = lambda: ("docker", "hermes-sdd-caja:abc-u1000", T / "cache")
+c = F._comando(["npx", "playwright", "test", "a.spec.js"], copia)
+assert c[:3] == ["docker", "run", "--rm"] and "hermes-sdd-caja:abc-u1000" in c, c
+v = [c[i + 1] for i, x in enumerate(c) if x == "-v"]
+assert f"{repo}/.git:{repo}/.git:ro" in v and f"{repo}/node_modules:{repo}/node_modules" in v and f"{copia}:{copia}" in v \
+    and f"{T}/cache:/cache" in v, v
+assert c[c.index("-w") + 1] == str(copia) and c[-4:] == ["test", "--workers=2", "a.spec.js"][-3:] or c[-3:] == ["test", "--workers=2", "a.spec.js"], c
+F._caja = lambda: None
+assert F._comando(["npx", "playwright", "test"], copia)[0] != "docker"
+PY
 python3 - "$ROOT/plugin/hermes-sdd" "$T" <<'PY' && ok "revisión de la puerta: mutantes_error, textos «no está en el código», capturas sin comprobar y lint de capturas" || bad "revisión fidelidad"
 import json, sys; sys.path.insert(0, sys.argv[1]); import hsdd_revision as V
 from pathlib import Path
