@@ -90,5 +90,12 @@ const r = filmTimeline([{ t: 0, d: 10, hold: 0.3 }, { t: 1.3, d: 1 }], 5);
 console.log(JSON.stringify({ p: r.pieces.map((p) => [p.from, p.to, p.freeze]), o: r.offsets }));')
 [ "$tl" = '{"p":[[0,0.3,10.1],[0.3,1.3,0],[1.3,null,0]],"o":[0,11.4]}' ] \
   && pass "narrate: la presentación del criterio se congela en su fotograma y la demostración sigue después" || bad "filmTimeline hold: $tl"
+# un criterio con parte visible y parte no visible: la cartela y su voz dicen qué no se ve (material-montana11)
+pr=$(node --input-type=module -e '
+import { presentacion } from "'"$(dirname "$SDD")"'/lib/demo.mjs";
+const r = { id: "REQ-F-002", title: "Gestionar socios", plain: null, criteria: ["a", "b"] };
+const p = presentacion(r, 2, { titulos: ["Alta", "Restablecer"], pasos: [{ k: "Entonces", texto: "ve \"Hecho\"" }], noVisible: "entra con la nueva: lo comprueba el test de la API" });
+console.log(JSON.stringify({ nv: p.no_visible, voz: p.voz }));')
+case "$pr" in *'"nv":"entra con la nueva: lo comprueba el test de la API"'*'Esto no se ve en pantalla: entra con la nueva: lo comprueba el test de la API. Ahora, la demostración.'*) pass "presentación: lo que no se ve se escribe y se dice como tal";; *) bad "presentación no visible: $pr";; esac
 [ $fail = 0 ] && echo "metodo/tests/demo: all passed"
 exit $fail

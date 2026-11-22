@@ -423,6 +423,16 @@ $errs"
   errs=$(node "$SDD" lint --needs 2>&1 | grep '^error' | head -5) || true
   [ -z "$errs" ] || falla "sdd lint --needs sigue con errores: $(echo "$errs" | tr '\n' ' ')"
 }
+# Cada cláusula del THEN se ve («Se ve») o se declara no visible («No visible»): el vídeo y su voz solo prometen lo que
+# se ve (material-montana11: 27 criterios prometían más). Una pasada que solo AÑADE esas líneas; lo que quede, la
+# puerta de requisitos lo enseña como aviso (hsdd_textos)
+requisitos_visibles() {  # requisitos_visibles <clave-de-estado> <skill>
+  local w
+  w=$(node "$SDD" lint --needs --json 2>/dev/null | jq -r '[.warnings[]? | select(.code == "then-not-seen") | .msg] | .[:40] | join("\n")' 2>/dev/null) || true
+  [ -z "$w" ] && return 0
+  claude_etapa "$1" "/$2 — $ARNES Some criteria promise in their THEN more than their «Se ve» line checks. For each one below, ONLY ADD lines under the criterion — never change the criterion, its THEN or its examples: a «- Se ve: \"<text>\" en <pantalla>» line with the text that shows that clause on screen when the app can show it, or a «- No visible: <that clause, in plain Spanish>: <how a test checks it>» line when nothing on screen shows it (references/requirements-template.md, «Every clause of the THEN»). Commit as «docs(requirements): what each criterion shows».
+$w"
+}
 ejemplos_coherentes() {  # ejemplos_coherentes <clave-de-estado> <skill>: un ejemplo que contradice lo que dice de sí
   # mismo («haya-27» (8 caracteres), «jueves …» que no es jueves) se corrige una vez; lo que quede lo ve la persona
   # en la puerta como aviso grave del encargado (sala: «haya-27» llegó aprobado hasta la implementación)
@@ -476,6 +486,7 @@ case "$ETAPA" in
       touch .sdd/hermes/requisitos-depurados
     else RES='{"outcome":"done","reason":"requisitos ya escritos"}'; fi
     requisitos_legibles requirements-engineer sdd-requirements-engineer
+    requisitos_visibles requirements-engineer sdd-requirements-engineer
     ejemplos_coherentes requirements-engineer sdd-requirements-engineer
     { sed -i.bak -E 's/^> \*\*Status:\*\* *Approved.*/> **Status:** Review/' requirements/REQUIREMENTS.md && rm -f requirements/REQUIREMENTS.md.bak; } 2>/dev/null || true
     git add requirements/ && { git diff --cached --quiet || git commit -qm "docs(requirements): requirements ready for review"; }
@@ -772,6 +783,7 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
     INT=$(cat .sdd/hermes/cambio-actual 2>/dev/null) || falla "no hay ningún cambio en curso (.sdd/hermes/cambio-actual)"
     claude_etapa req-change "/sdd-req-change --batch --cascade=manual --file intent/$INT.md — $ARNES Apply this change request to requirements/ as the next version (Version +1, Status: Review). Answered questions are decisions: write their chosen option as is. For a detail the request leaves open (a figure, a limit, a wording), write the sensible default in the requirement and do not open a question about it; never open a question whose recommended option is req-change."
     requisitos_legibles req-change sdd-req-change
+    requisitos_visibles req-change sdd-req-change
     ejemplos_coherentes req-change sdd-req-change
     P=$(puerta requisitos) || falla "no se pudo abrir la puerta de requisitos"
     fin "$RES" "Cambio $INT aplicado a los requisitos (pendiente de aprobar)" "$P" ;;

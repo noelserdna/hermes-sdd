@@ -104,4 +104,11 @@ pj() { printf '%s' "$g" | node -e 'let s="";process.stdin.on("data",(d)=>{s+=d})
 v="$(pj 'p.voz')"
 case "$v" in "Requisito funcional 2: Gestionar las cuentas de socios."*"Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 4: Restablecer contraseña. Dado que "*"cuando fija la nueva"*"entonces el usuario ve"*"Contraseña restablecida"*) ok "montana11 presentación: la voz presenta requisito, criterios y el criterio que se demuestra";; *) mal "montana11 presentación: voz «$v»";; esac
 
+# Etapa 3: cada cláusula del THEN se ve (en «Se ve») o se declara no visible (en «No visible»); si no, la voz acaba
+# prometiendo lo que el vídeo no enseña (montana11, REQ-F-002 AC4: «entra con la nueva y no con la antigua», por API)
+w="$(cd "$m11" && node "$SDD" lint --needs --json 2>/dev/null || true)"
+nw() { printf '%s' "$w" | node -e 'let s="";process.stdin.on("data",(d)=>{s+=d}).on("end",()=>{const j=JSON.parse(s);const x=(j.warnings||[]).filter((w)=>w.code==="then-not-seen");process.stdout.write(String(eval(process.argv[1])))})' "$1"; }
+[ "$(nw 'x.length >= 20 && x.some((w)=>/REQ-F-002 AC4/.test(w.msg) && /old one/.test(w.msg)) && !x.some((w)=>/REQ-F-002 AC1\b/.test(w.msg))')" = true ] \
+  && ok "montana11 etapa 3: las cláusulas del THEN que ni se ven ni se declaran no visibles salen en el lint de requisitos" || mal "montana11 etapa 3: then-not-seen $(nw 'x.length')"
+
 exit $fallo

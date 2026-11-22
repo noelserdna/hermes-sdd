@@ -292,8 +292,56 @@ const givenData = (c) => {
 };
 /** Warnings of the «Se ve» contract for REQ-F: a criterion without `Se ve:` nor `No visible:` (no-sees), and a text
  *  addressed to the user shown by a single example (one-actor). */
+/** The clauses of a criterion's THEN: split at « and »/« y »/«, and» outside quotes («the user sees "A" and the list
+ *  keeps a single "B"» → two). What one clause promises must be seen or be declared not visible. */
+export function thenClauses(criterion) {
+  const s = String(criterion || "");
+  const at = s.search(/\b(?:THEN|ENTONCES)\b/);
+  if (at < 0) return [];
+  const then = s.slice(at).replace(/^\S+\s+/, "");
+  const masked = then.replace(SEE_QUOTES, (m) => "\u0001".repeat(m.length));
+  const out = []; let from = 0;
+  for (const m of masked.matchAll(/,?\s+(?:and|y|e)\s+(?!(?:not|no)\b)|,\s+(?=(?:and|y)\b)/giu)) {
+    out.push(then.slice(from, m.index)); from = m.index + m[0].length;
+  }
+  out.push(then.slice(from));
+  return out.map((x) => x.trim().replace(/[.;]+$/, "")).filter((x) => /[\p{L}\p{N}]/u.test(x));
+}
+const norm1 = (x) => String(x).normalize("NFC").toLowerCase().replace(/\s+/g, " ").trim();
+/** Is a THEN clause covered by its «Se ve» (one of its quoted texts is a «Se ve» text, or an instance of a template,
+ *  or the clause only says what «Se ve» says) or by its «No visible» (which names it)? */
+export function clauseCovered(clause, sees) {
+  if (!sees) return false;
+  const quoted = [...clause.matchAll(SEE_QUOTES)].map((m) => norm1(m[1] ?? m[2] ?? m[3]));
+  const texts = (sees.texts || []).map((t) => t.text);
+  const fits = (q) => texts.some((t) => {
+    if (!/\{[^{}]+\}/.test(t)) return norm1(t) === q || q.includes(norm1(t)) || norm1(t).includes(q);
+    const re = new RegExp(`^${norm1(t).split(/\{[^{}]+\}/).map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join(".+")}$`, "u");
+    return re.test(q);
+  });
+  if (quoted.length && quoted.some(fits)) return true;
+  // «No visible: <la cláusula o sus palabras clave>: cómo se comprueba»
+  const none = norm1(sees.none || "");
+  if (none) {
+    const words = norm1(clause).replace(SEE_QUOTES, " ").split(/[^\p{L}\p{N}]+/u).filter((x) => x.length > 3);
+    if (words.length && words.filter((x) => none.includes(x)).length * 2 >= words.length) return true;
+  }
+  return false;
+}
+
 export function checkSees(active) {
   const w = [];
+  // Every clause of a criterion's THEN is seen or declared not visible (material-montana11: 28 criteria promised in
+  // the THEN more than their «Se ve» checked, and the voice-over said it as if the video showed it)
+  for (const r of active.filter((x) => x.type === "F")) {
+    r.criteria.forEach((c, i) => {
+      const sv = (r.sees || [])[i];
+      if (!sv) return;
+      const left = thenClauses(c).filter((cl) => !clauseCovered(cl, sv));
+      if (left.length)
+        w.push({ code: "then-not-seen", id: r.id, msg: `${r.id} AC${i + 1}: ${left.map((x) => `«${x}»`).join(", ")} is in the THEN but neither in its «Se ve» nor in a «No visible» line: add the text that shows it on screen to «Se ve», or write «- No visible: <that clause>: <how a test checks it>» — the video and its voice-over can only promise what is seen` });
+    });
+  }
   for (const r of active.filter((x) => x.type === "F")) {
     const sees = r.sees || [];
     const without = r.criteria.map((_, i) => i).filter((i) => !sees[i]).map((i) => `AC${i + 1}`);

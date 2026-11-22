@@ -103,7 +103,7 @@ const tipoReq = (id) => (/^REQ-NF-/.test(id) ? "no funcional" : /^REQ-F-/.test(i
  * para_el_cliente, criterios [{ n, titulo, actual }], pasos of this criterion) and what the voice says (voz). Built by
  * the method from the requirements and the BDD scenarios; the test helper shows it, no agent writes it.
  */
-export function presentacion(req, n, { titulos = [], pasos = [], frase = null } = {}) {
+export function presentacion(req, n, { titulos = [], pasos = [], frase = null, noVisible = null } = {}) {
   const total = req.criteria.length;
   const criterios = req.criteria.map((_, i) => ({ n: i + 1, titulo: titulos[i] || `Criterio ${i + 1}`, actual: i + 1 === n }));
   const num = Number((req.id.match(/(\d+)$/) || [])[1]);
@@ -115,8 +115,11 @@ export function presentacion(req, n, { titulos = [], pasos = [], frase = null } 
     const une = { Dado: "Dado que", Cuando: "cuando", Entonces: "entonces", Y: "y", Pero: "pero" };
     voz.push(pasos.map((p, i) => `${i && p.k !== "Y" && p.k !== "Pero" ? ", " : i ? " " : ""}${i ? une[p.k].toLowerCase() : une[p.k]} ${hablado(p.texto)}`).join("") + ".");
   } else if (frase) voz.push(hablado(frase) + ".");
+  // what no screen shows is said as such, so the demonstration never seems to promise it (material-montana11)
+  if (noVisible) voz.push(`Esto no se ve en pantalla: ${hablado(noVisible)}.`);
   voz.push("Ahora, la demostración.");
-  return { requisito: req.id, titulo: req.title, para_el_cliente: req.plain || null, n, total, criterios, pasos, voz: voz.join(" ") };
+  return { requisito: req.id, titulo: req.title, para_el_cliente: req.plain || null, n, total, criterios, pasos,
+    no_visible: noVisible || null, voz: voz.join(" ") };
 }
 
 /** The script of FASE N (see the header). */
@@ -145,7 +148,8 @@ export function demoScript(root, fase) {
       const then = (String(c).match(/\bTHEN\s+([\s\S]*)$/) || [])[1]?.trim() || null;
       criterios.push({ id, req: r.id, ac: n, uc: uc && ucs.has(uc) ? uc : null, frase: fr.frase, visible: fr.visible, then,
         ve: (r.sees?.[i]?.texts || []).map((x) => x.text), pantalla: r.sees?.[i]?.where || null,
-        presentacion: presentacion(r, n, { titulos: r.criteria.map((_, k) => tituloDe(r.id, k + 1)), pasos: pasosDe.get(id) || [], frase: fr.frase }) });
+        presentacion: presentacion(r, n, { titulos: r.criteria.map((_, k) => tituloDe(r.id, k + 1)), pasos: pasosDe.get(id) || [], frase: fr.frase,
+          noVisible: fr.visible ? r.sees?.[i]?.none || null : null }) });
     });
   }
   const usados = new Set(criterios.map((c) => c.uc).filter(Boolean));
