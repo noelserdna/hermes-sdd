@@ -328,4 +328,25 @@ printf '#!/bin/sh\necho "{\\"type\\":\\"result\\",\\"result\\":\\"ok\\"}"\n' > "
 HOME="$tmp/g3-home" PATH="$tmp/g3-bin:$PATH" CAJA_PROYECTO="$g3" CAJA_SALIDA="$tmp/g3-sal" CAJA_ARNES="$AQUI" bash "$AQUI/templates/caja/etapa.sh" >/dev/null 2>&1
 grep -q '^+++ b/.claude/sdd/lib/match.mjs' "$tmp/g3-sal/pendiente.patch" && ok "montana12 G-3: el fichero nuevo de la copia del CLI vuelve de la caja" || mal "montana12 G-3: match.mjs no vuelve de la caja"
 
+
+# G-10, G-15, G-19 (guiones de montana12): la cartela enseñaba códigos («error `E_SIN_UNIDADES`»), la voz leía
+# «(ejemplo con datos: "Retraso: 3 días")» y la cartela de AC-005-01 solo decía lo del BDD («ve Contraseña provisional
+# guardada»), sin las líneas «Se ve» que pedí en requisitos (entrar con la nueva y no con la antigua)
+g10="$(cd "$m12" && for n in 0 1 2 3 4 5; do node "$SDD" demo script --fase $n --json 2>/dev/null; echo "@@@"; done)"
+printf '%s' "$g10" | node -e '
+let s = ""; process.stdin.on("data", (d) => { s += d }).on("end", () => {
+  const gs = s.split("@@@").filter((l) => l.trim()).map((l) => JSON.parse(l)); const mal = [];
+  for (const g of gs) for (const c of g.criterios) {
+    const p = c.presentacion || {};
+    for (const x of p.pasos || []) if (/`|\bE_[A-Z_]{4,}/.test(x.texto)) mal.push(`G-10 ${c.id}: ${x.texto}`);
+    if (/ejemplo con datos/i.test(`${c.frase} ${p.voz}`)) mal.push(`G-19 ${c.id}`);
+  }
+  const c = gs.flatMap((g) => g.criterios).find((x) => x.id === "AC-005-01");
+  const sv = (c?.presentacion?.se_ve || []).join(" | ");
+  if (!/Correo o contraseña incorrectos/.test(sv) || !/Elige una contraseña nueva/.test(sv)) mal.push(`G-15 AC-005-01 se_ve: ${sv}`);
+  if (!/Correo o contraseña incorrectos/.test(c?.presentacion?.voz || "")) mal.push("G-15 AC-005-01: la voz no lo dice");
+  console.log(mal.slice(0, 6).join("; ") || "ok");
+});' > "$tmp/g10.out"
+[ "$(cat "$tmp/g10.out")" = ok ] && ok "montana12 G-10/G-15/G-19: la cartela sin códigos, con las líneas «Se ve», y la voz sin «(ejemplo con datos…)»" || mal "montana12 G-10/15/19: $(cat "$tmp/g10.out")"
+
 exit $fallo

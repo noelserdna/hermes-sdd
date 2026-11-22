@@ -72,7 +72,7 @@ async function presentar(page, testInfo) {
     ol{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 24px}
     li{color:#94a3b8;font-size:15px} li.actual{color:#fff;font-weight:700} li.actual::after{content:"  ◀ este vídeo";color:#fbbf24;font-weight:600}
     dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;background:#1e293b;border-left:4px solid #fbbf24;border-radius:6px;padding:12px 16px}
-    dt{font-weight:700;color:#fbbf24} dd{margin:0} .nv{color:#93c5fd}
+    dt{font-weight:700;color:#fbbf24} dd{margin:0} .nv{color:#93c5fd} .sv{color:#86efac}
   </style></head><body data-sdd-presentacion="${esc(c.id)}">
     <div class="id">REQUISITO ${esc(p.requisito)}</div><h1>${esc(p.titulo)}</h1>
     ${p.para_el_cliente ? `<p class="pide">${esc(p.para_el_cliente)}</p>` : ''}
@@ -80,6 +80,7 @@ async function presentar(page, testInfo) {
     <ol>${p.criterios.map((x) => `<li class="${x.actual ? 'actual' : ''}">${x.n}. ${esc(x.titulo)}</li>`).join('')}</ol>
     <h2>Criterio ${p.n} de ${p.total} · ${esc(c.id)}</h2>
     <dl>${p.pasos.length ? p.pasos.map((x) => `<dt>${esc(x.k)}</dt><dd>${esc(x.texto)}</dd>`).join('') : `<dt>Se demuestra</dt><dd>${esc(c.frase)}</dd>`}
+    ${(p.se_ve || []).map((x, i) => `<dt class="sv">${i ? '' : 'Se ve'}</dt><dd class="sv">${esc(x)}</dd>`).join('')}
     ${p.no_visible ? `<dt class="nv">No se ve</dt><dd class="nv">${esc(p.no_visible)}</dd>` : ''}</dl>
   </body></html>`);
   const s = de(testInfo);

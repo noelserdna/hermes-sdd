@@ -34,9 +34,9 @@ Criterios:
   El criterio pide: the user sees "Máximo 14 días por reserva"
 - AC-007-07: Reservar material. En Reservar se ve «Máximo 5 unidades por reserva».
   El criterio pide: the user sees "Máximo 5 unidades por reserva"
-- AC-007-08: Reservar material. En Reservar (ejemplo con datos: "No puedes reservar hasta pagar tu multa de 6 €") se ve «No puedes reservar hasta pagar tu multa de {importe} €» y «Aún no tienes reservas».
+- AC-007-08: Reservar material. En Reservar se ve «No puedes reservar hasta pagar tu multa de {importe} €» y «Aún no tienes reservas».
   El criterio pide: the user sees "No puedes reservar hasta pagar tu multa de 6 €" and no reservation is created
-- AC-007-09: Reservar material. En Reservar (ejemplo con datos: "No puedes reservar hasta pagar tu multa de 2 €") se ve «No puedes reservar hasta pagar tu multa de {importe} €».
+- AC-007-09: Reservar material. En Reservar se ve «No puedes reservar hasta pagar tu multa de {importe} €».
   El criterio pide: the user sees "No puedes reservar hasta pagar tu multa de 2 €"
 
 ## UC-008 — Ver mis reservas
@@ -53,7 +53,7 @@ Extensiones:
 - 4b. Sin reservas → texto "Aún no tienes reservas". (AC-008-03, AC-008-04)
 
 Criterios:
-- AC-008-01: Mis reservas y cancelar. En Mis reservas (ejemplo con datos: "2 × Casco del 2026-12-05 al 2026-12-07 — Reservada") se ve «{cantidad} × {material} del {inicio} al {fin} — {estado}».
+- AC-008-01: Mis reservas y cancelar. En Mis reservas se ve «{cantidad} × {material} del {inicio} al {fin} — {estado}».
   El criterio pide: the user sees "2 × Casco del 2026-12-05 al 2026-12-07 — Reservada" and no reservation of other members
 - AC-008-02: Mis reservas y cancelar. En Mis reservas, en la fila de esa reserva y sin botón "Cancelar" se ve «No se puede cancelar: empieza hoy».
   El criterio pide: the user sees "No se puede cancelar: empieza hoy" and no "Cancelar" button

@@ -253,6 +253,9 @@
       "texto": "ve \"Socio creado: Marta Ruiz\" y \"Marta Ruiz — Activo\" en Socios"
      }
     ],
+    "se_ve": [
+     "\"Socio creado: {nombre}\" y \"Marta Ruiz — Activo\" en Socios"
+    ],
     "no_visible": null,
     "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 1: alta correcta. Dado que el encargado en Socios, cuando registra Marta Ruiz, marta@club.test, contraseña Provisional1, entonces ve Socio creado: Marta Ruiz y Marta Ruiz — Activo en Socios. Ahora, la demostración."
    }
@@ -334,15 +337,19 @@
      },
      {
       "k": "Entonces",
-      "texto": "error `E_SOCIO_DUPLICADO` y ve \"Ya existe un socio con ese correo\" en Socios"
+      "texto": "ve \"Ya existe un socio con ese correo\" en Socios"
      },
      {
       "k": "Y",
       "texto": "ve una sola fila \"Marta Ruiz — Activo\""
      }
     ],
+    "se_ve": [
+     "\"Ya existe un socio con ese correo\" en Socios",
+     "una sola fila \"Marta Ruiz — Activo\" en la lista de Socios (no aparece repetida tras el segundo intento)"
+    ],
     "no_visible": null,
-    "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 2: correo repetido y replay. Dado que Marta Ruiz existe, cuando el encargado registra marta@club.test otra vez, entonces error E_SOCIO_DUPLICADO y ve Ya existe un socio con ese correo en Socios y ve una sola fila Marta Ruiz — Activo. Ahora, la demostración."
+    "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 2: correo repetido y replay. Dado que Marta Ruiz existe, cuando el encargado registra marta@club.test otra vez, entonces ve Ya existe un socio con ese correo en Socios y ve una sola fila Marta Ruiz — Activo. En la demostración se ve: Ya existe un socio con ese correo en Socios; una sola fila Marta Ruiz — Activo en la lista de Socios (no aparece repetida tras el segundo intento). Ahora, la demostración."
    }
   },
   {
@@ -417,11 +424,14 @@
      },
      {
       "k": "Entonces",
-      "texto": "error `E_CONTRASENA_CORTA` y ve \"La contraseña debe tener al menos 8 caracteres\" en Socios"
+      "texto": "ve \"La contraseña debe tener al menos 8 caracteres\" en Socios"
      }
     ],
+    "se_ve": [
+     "\"La contraseña debe tener al menos 8 caracteres\" en Socios"
+    ],
     "no_visible": null,
-    "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 3: contraseña corta. cuando la contraseña provisional es corta, entonces error E_CONTRASENA_CORTA y ve La contraseña debe tener al menos 8 caracteres en Socios. Ahora, la demostración."
+    "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 3: contraseña corta. Cuando la contraseña provisional es corta, entonces ve La contraseña debe tener al menos 8 caracteres en Socios. Ahora, la demostración."
    }
   },
   {
@@ -501,8 +511,13 @@
       "texto": "ve \"Elige una contraseña nueva\" en Cambiar contraseña"
      }
     ],
+    "se_ve": [
+     "\"Elige una contraseña nueva\" en Cambiar contraseña",
+     "\"Elige una contraseña nueva\" en Cambiar contraseña cuando Marta intenta abrir \"/mis-reservas\" sin haberla cambiado",
+     "\"La contraseña debe tener al menos 8 caracteres\" en Cambiar contraseña cuando Marta envía \"corta\""
+    ],
     "no_visible": null,
-    "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 4: primer acceso. cuando Marta entra con su contraseña provisional, entonces ve Elige una contraseña nueva en Cambiar contraseña. Ahora, la demostración."
+    "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 4: primer acceso. Cuando Marta entra con su contraseña provisional, entonces ve Elige una contraseña nueva en Cambiar contraseña. En la demostración se ve: Elige una contraseña nueva en Cambiar contraseña; Elige una contraseña nueva en Cambiar contraseña cuando Marta intenta abrir /mis-reservas sin haberla cambiado; La contraseña debe tener al menos 8 caracteres en Cambiar contraseña cuando Marta envía corta. Ahora, la demostración."
    }
   },
   {
@@ -582,8 +597,13 @@
       "texto": "ve \"Contraseña provisional guardada para Marta Ruiz\" en Socios"
      }
     ],
+    "se_ve": [
+     "\"Contraseña provisional guardada para {nombre}\" en Socios",
+     "\"Elige una contraseña nueva\" en Cambiar contraseña cuando Marta entra con \"marta@club.test\" y \"Otra12345\"",
+     "\"Correo o contraseña incorrectos\" en Entrar cuando Marta entra con \"marta@club.test\" y su contraseña antigua"
+    ],
     "no_visible": null,
-    "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 5: provisional guardada. cuando el encargado fija Otra12345 para Marta, entonces ve Contraseña provisional guardada para Marta Ruiz en Socios. Ahora, la demostración."
+    "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 5: provisional guardada. Cuando el encargado fija Otra12345 para Marta, entonces ve Contraseña provisional guardada para Marta Ruiz en Socios. En la demostración se ve: Elige una contraseña nueva en Cambiar contraseña cuando Marta entra con marta@club.test y Otra12345; Correo o contraseña incorrectos en Entrar cuando Marta entra con marta@club.test y su contraseña antigua. Ahora, la demostración."
    }
   },
   {
@@ -666,8 +686,12 @@
       "texto": "ve \"Socio dado de baja: Marta Ruiz\" en Socios"
      }
     ],
+    "se_ve": [
+     "\"Socio dado de baja: {nombre}\" en Socios",
+     "\"Correo o contraseña incorrectos\" en Entrar cuando Marta intenta entrar con su correo y su contraseña después de la baja"
+    ],
     "no_visible": null,
-    "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 6: baja correcta. Dado que Marta Ruiz sin préstamos abiertos ni multas pendientes, cuando el encargado la da de baja, entonces ve Socio dado de baja: Marta Ruiz en Socios. Ahora, la demostración."
+    "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 6: baja correcta. Dado que Marta Ruiz sin préstamos abiertos ni multas pendientes, cuando el encargado la da de baja, entonces ve Socio dado de baja: Marta Ruiz en Socios. En la demostración se ve: Correo o contraseña incorrectos en Entrar cuando Marta intenta entrar con su correo y su contraseña después de la baja. Ahora, la demostración."
    }
   },
   {
@@ -748,15 +772,19 @@
      },
      {
       "k": "Entonces",
-      "texto": "error `E_BAJA_PRESTAMOS` y ve \"No se puede dar de baja: tiene material sin devolver\" y \"Lucía Gil — Activo\" en Socios"
+      "texto": "ve \"No se puede dar de baja: tiene material sin devolver\" y \"Lucía Gil — Activo\" en Socios"
      },
      {
       "k": "Y",
       "texto": "Lucía entra y ve \"Hola, Lucía\" en Mis reservas"
      }
     ],
+    "se_ve": [
+     "\"No se puede dar de baja: tiene material sin devolver\" y \"Lucía Gil — Activo\" en Socios",
+     "\"Hola, {nombre}\" en Mis reservas cuando Lucía entra después con su correo y su contraseña"
+    ],
     "no_visible": null,
-    "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 7: material sin devolver. Dado que Lucía tiene 1 préstamo sin devolver, cuando el encargado la da de baja, entonces error E_BAJA_PRESTAMOS y ve No se puede dar de baja: tiene material sin devolver y Lucía Gil — Activo en Socios y Lucía entra y ve Hola, Lucía en Mis reservas. Ahora, la demostración."
+    "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 7: material sin devolver. Dado que Lucía tiene 1 préstamo sin devolver, cuando el encargado la da de baja, entonces ve No se puede dar de baja: tiene material sin devolver y Lucía Gil — Activo en Socios y Lucía entra y ve Hola, Lucía en Mis reservas. En la demostración se ve: No se puede dar de baja: tiene material sin devolver y Lucía Gil — Activo en Socios; Hola, nombre en Mis reservas cuando Lucía entra después con su correo y su contraseña. Ahora, la demostración."
    }
   },
   {
@@ -835,11 +863,14 @@
      },
      {
       "k": "Entonces",
-      "texto": "error `E_BAJA_MULTAS` y ve \"No se puede dar de baja: tiene multas sin pagar\" en Socios"
+      "texto": "ve \"No se puede dar de baja: tiene multas sin pagar\" en Socios"
      }
     ],
+    "se_ve": [
+     "\"No se puede dar de baja: tiene multas sin pagar\" en Socios"
+    ],
     "no_visible": null,
-    "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 8: multa pendiente. Dado que Pablo tiene una multa pendiente de 4 €, cuando el encargado lo da de baja, entonces error E_BAJA_MULTAS y ve No se puede dar de baja: tiene multas sin pagar en Socios. Ahora, la demostración."
+    "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 8: multa pendiente. Dado que Pablo tiene una multa pendiente de 4 €, cuando el encargado lo da de baja, entonces ve No se puede dar de baja: tiene multas sin pagar en Socios. Ahora, la demostración."
    }
   },
   {
@@ -926,8 +957,12 @@
       "texto": "Lucía reserva lo mismo y ve \"Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07\" en Mis reservas"
      }
     ],
+    "se_ve": [
+     "\"Socio dado de baja: {nombre}\" en Socios",
+     "\"Reserva creada: {cantidad} × {material} del {inicio} al {fin}\" en Mis reservas cuando Lucía reserva las mismas unidades y fechas que tenía Marta"
+    ],
     "no_visible": null,
-    "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 9: reserva futura cancelada. Dado que Marta tiene 2 × Casco del 2026-12-05 al 2026-12-07, cuando el encargado la da de baja, entonces ve Socio dado de baja: Marta Ruiz en Socios y Lucía reserva lo mismo y ve Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07 en Mis reservas. Ahora, la demostración."
+    "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 9: reserva futura cancelada. Dado que Marta tiene 2 × Casco del 2026-12-05 al 2026-12-07, cuando el encargado la da de baja, entonces ve Socio dado de baja: Marta Ruiz en Socios y Lucía reserva lo mismo y ve Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07 en Mis reservas. En la demostración se ve: Reserva creada: cantidad × material del inicio al fin en Mis reservas cuando Lucía reserva las mismas unidades y fechas que tenía Marta. Ahora, la demostración."
    }
   }
  ]

@@ -69,8 +69,26 @@ export function fraseCriterio(req, sees) {
   if (!sees.texts?.length) return null;
   const textos = sees.texts.map((x) => `«${x.text}»`);
   const lista = textos.length > 1 ? `${textos.slice(0, -1).join(", ")} y ${textos.at(-1)}` : textos[0];
-  return { frase: `${req.title}. ${sees.where ? `En ${sees.where} se` : "Se"} ve ${lista}.`, visible: true };
+  const where = sinEjemplo(sees.where);
+  return { frase: `${req.title}. ${where ? `En ${where} se` : "Se"} ve ${lista}.`, visible: true };
 }
+/** Without «(ejemplo con datos: …)»: the example is for whoever writes the test, not something to say or show
+ *  (material-montana12 G-19: the voice read the parenthesis). */
+export const sinEjemplo = (t) => (t == null ? t : String(t).replace(/\s*\((?:ejemplo|p\. ?ej\.?|e\.g\.|example)[^()]*\)/gi, "").replace(/\s+/g, " ").trim());
+/** A BDD step for the customer: without technical codes (`E_SIN_UNIDADES`, «error `E_X` y …»; G-10). */
+export function pasoCliente(t) {
+  const orig = String(t || "");
+  let x = orig
+    .replace(/\berror\s+`[A-Z0-9_]+`\s*(?:y\s+|[:;,]\s*)?/g, "")
+    .replace(/\s*\(`[A-Z0-9_]+`\)/g, "")
+    .replace(/`[A-Z0-9_]{3,}`/g, "un error")
+    .replace(/\s+/g, " ").trim();
+  if (x !== orig && /^[«"“]/.test(x) && !/^[«"“]/.test(orig)) x = `ve ${x}`;   // «error `E_X`: "…"» → «ve "…"»
+  return x || "ve un mensaje de error";
+}
+/** The «Se ve» lines of a criterion as the customer reads them: each line, without its example in parenthesis (G-15:
+ *  the card had only the BDD scenario and missed what was asked in the requirements). */
+export const lineasSeVe = (sees) => (sees?.lines || []).map((l) => sinEjemplo(l.raw)).filter(Boolean);
 
 // ------------------------------------------------------------------ the criterion, presented before it is shown
 const PASO = { given: "Dado", dado: "Dado", dada: "Dado", when: "Cuando", cuando: "Cuando", then: "Entonces", entonces: "Entonces",
@@ -103,7 +121,8 @@ const tipoReq = (id) => (/^REQ-NF-/.test(id) ? "no funcional" : /^REQ-F-/.test(i
  * para_el_cliente, criterios [{ n, titulo, actual }], pasos of this criterion) and what the voice says (voz). Built by
  * the method from the requirements and the BDD scenarios; the test helper shows it, no agent writes it.
  */
-export function presentacion(req, n, { titulos = [], pasos = [], frase = null, noVisible = null } = {}) {
+export function presentacion(req, n, { titulos = [], pasos: crudos = [], frase = null, noVisible = null, seVe = [] } = {}) {
+  const pasos = crudos.map((p) => ({ ...p, texto: pasoCliente(p.texto) }));
   const total = req.criteria.length;
   const criterios = req.criteria.map((_, i) => ({ n: i + 1, titulo: titulos[i] || `Criterio ${i + 1}`, actual: i + 1 === n }));
   const num = Number((req.id.match(/(\d+)$/) || [])[1]);
@@ -113,13 +132,20 @@ export function presentacion(req, n, { titulos = [], pasos = [], frase = null, n
     : `Tiene un criterio de aceptación${titulos[0] ? `: ${hablado(titulos[0])}` : ""}, y este vídeo lo demuestra.`);
   if (pasos.length) {
     const une = { Dado: "Dado que", Cuando: "cuando", Entonces: "entonces", Y: "y", Pero: "pero" };
-    voz.push(pasos.map((p, i) => `${i && p.k !== "Y" && p.k !== "Pero" ? ", " : i ? " " : ""}${i ? une[p.k].toLowerCase() : une[p.k]} ${hablado(p.texto)}`).join("") + ".");
+    const frase = pasos.map((p, i) => `${i && p.k !== "Y" && p.k !== "Pero" ? ", " : i ? " " : ""}${i ? une[p.k].toLowerCase() : une[p.k]} ${hablado(p.texto)}`).join("") + ".";
+    voz.push(frase.charAt(0).toUpperCase() + frase.slice(1));
   } else if (frase) voz.push(hablado(frase) + ".");
+  // what the demonstration shows, line by line from the requirement (G-15)
+  // (a line that is a template already said with its data in the «Entonces» is not repeated; {x} is said as «x»)
+  const dicho = hablado(pasos.map((p) => p.texto).join(" "));
+  const yaDicho = (l) => /\{[^{}]+\}/.test(l) && hablado(l).split(/\{[^{}]+\}/).map((x) => x.trim()).filter(Boolean).every((x) => dicho.includes(x.replace(/\s+en\s+.*$/, "")));
+  const decir = seVe.filter((l) => !yaDicho(l)).map((l) => hablado(l).replace(/\{([^{}]+)\}/g, "$1"));
+  if (decir.length && (seVe.length > 1 || !pasos.length)) voz.push(`En la demostración se ve: ${decir.join("; ")}.`);
   // what no screen shows is said as such, so the demonstration never seems to promise it (material-montana11)
   if (noVisible) voz.push(`Esto no se ve en pantalla: ${hablado(noVisible)}.`);
   voz.push("Ahora, la demostración.");
   return { requisito: req.id, titulo: req.title, para_el_cliente: req.plain || null, n, total, criterios, pasos,
-    no_visible: noVisible || null, voz: voz.join(" ") };
+    se_ve: seVe, no_visible: noVisible || null, voz: voz.join(" ") };
 }
 
 /** The script of FASE N (see the header). */
@@ -149,7 +175,7 @@ export function demoScript(root, fase) {
       criterios.push({ id, req: r.id, ac: n, uc: uc && ucs.has(uc) ? uc : null, frase: fr.frase, visible: fr.visible, then,
         ve: (r.sees?.[i]?.texts || []).map((x) => x.text), pantalla: r.sees?.[i]?.where || null,
         presentacion: presentacion(r, n, { titulos: r.criteria.map((_, k) => tituloDe(r.id, k + 1)), pasos: pasosDe.get(id) || [], frase: fr.frase,
-          noVisible: fr.visible ? r.sees?.[i]?.none || null : null }) });
+          noVisible: fr.visible ? r.sees?.[i]?.none || null : null, seVe: lineasSeVe(r.sees?.[i]) }) });
     });
   }
   const usados = new Set(criterios.map((c) => c.uc).filter(Boolean));
