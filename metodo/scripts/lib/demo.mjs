@@ -259,7 +259,7 @@ export function narrate(root, fase, { tts: pref, voice } = {}) {
   if (!has("ffmpeg")) return [{ error: "ffmpeg is not installed: no mp4 (brew install ffmpeg / apt-get install ffmpeg)" }];
   const tts = pickTts(pref);
   const out = [];
-  for (const f of readdirSync(dir).filter((x) => x.endsWith(".narracion.json")).sort()) {
+  for (const f of readdirSync(dir).filter((x) => x.endsWith(".narracion.json") && !MONTAJE.test(x)).sort()) {
     let n;
     try { n = JSON.parse(read(path.join(dir, f))); } catch { out.push({ video: f, error: "unreadable narration file" }); continue; }
     const video = path.join(dir, n.video || f.replace(/\.narracion\.json$/, ".webm"));
@@ -305,11 +305,74 @@ export function narrate(root, fase, { tts: pref, voice } = {}) {
   return out;
 }
 
+// ------------------------------------------------------------------ montage
+const MONTAJE = /^MONTAJE-/;
+/** Concatenate mp4 clips into `out` (H.264 + AAC; a clip without audio gets silence, so every clip keeps its place). */
+function concatMp4(clips, out) {
+  const conAudio = (f) => /audio/.test(spawnSync("ffprobe", ["-v", "error", "-select_streams", "a", "-show_entries", "stream=codec_type", "-of", "csv=p=0", f], { encoding: "utf8" }).stdout || "");
+  const args = ["-y", "-loglevel", "error"];
+  const graph = [];
+  clips.forEach((c, i) => {
+    args.push("-i", c);
+    // every clip to the same size and frame rate, and silence where a clip has no voice
+    graph.push(`[${i}:v]scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2,fps=25,setsar=1[v${i}]`);
+    graph.push(conAudio(c) ? `[${i}:a]aresample=44100,aformat=channel_layouts=mono[a${i}]` : `anullsrc=r=44100:cl=mono,atrim=0:${videoSeconds(c) || 1}[a${i}]`);
+  });
+  graph.push(`${clips.map((_, i) => `[v${i}][a${i}]`).join("")}concat=n=${clips.length}:v=1:a=1[v][a]`);
+  args.push("-filter_complex", graph.join(";"), "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "veryfast",
+    "-crf", "28", "-c:a", "aac", "-b:a", "96k", "-movflags", "+faststart", out);
+  const r = spawnSync("ffmpeg", args, { encoding: "utf8" });
+  return r.status === 0 ? null : (r.stderr || "").trim().slice(-300);
+}
+/**
+ * The FASE montage (evidencias/FASE-N/MONTAJE-FASE-N.mp4): the narrated video of each criterion, in the order of the
+ * script (requirement, then criterion), so whoever reviews the gate watches every criterion one after another
+ * (material-montana11: the gate showed 1 video of 7 to 16). With `entrega`, evidencias/ENTREGA/MONTAJE-ENTREGA.mp4
+ * joins the montages of every FASE. Returns { out, clips } or { error }.
+ */
+export function montage(root, { fase = null, entrega = false } = {}) {
+  if (!has("ffmpeg")) return { error: "ffmpeg is not installed: no montage" };
+  const prof = stackProfile(root);
+  const ev = path.join(root, prof.evidence_dir || "evidencias");
+  let clips = [], out;
+  if (entrega) {
+    const fases = existsSync(ev) ? readdirSync(ev).filter((d) => /^FASE-\d+$/.test(d)).sort((a, b) => Number(a.slice(5)) - Number(b.slice(5))) : [];
+    clips = fases.map((d) => path.join(ev, d, `MONTAJE-${d}.mp4`)).filter((f) => existsSync(f));
+    mkdirSync(path.join(ev, "ENTREGA"), { recursive: true });
+    out = path.join(ev, "ENTREGA", "MONTAJE-ENTREGA.mp4");
+  } else {
+    const dir = path.join(ev, `FASE-${fase}`);
+    if (!existsSync(dir)) return { error: `no evidence for FASE-${fase}` };
+    let guion = [];
+    try { guion = JSON.parse(read(path.join(root, ".sdd", "demo", `GUION-FASE-${fase}.json`))).criterios || []; } catch { /* no script */ }
+    const orden = (id) => { const k = guion.findIndex((c) => c.id === id || `${c.req}-AC${c.ac}` === id); return k < 0 ? 1e6 : k; };
+    for (const f of readdirSync(dir).filter((x) => x.endsWith(".narracion.json") && !MONTAJE.test(x))) {
+      let n; try { n = JSON.parse(read(path.join(dir, f))); } catch { continue; }
+      const mp4 = path.join(dir, (n.video || f.replace(/\.narracion\.json$/, ".webm")).replace(/\.webm$/, ".mp4"));
+      if (!existsSync(mp4)) continue;
+      const ids = (n.narraciones || []).map((x) => x.presentacion || x.criterio).filter(Boolean);
+      clips.push({ mp4, k: ids.length ? Math.min(...ids.map(orden)) : 1e6 });
+    }
+    clips = clips.sort((a, b) => a.k - b.k || a.mp4.localeCompare(b.mp4)).map((c) => c.mp4);
+    out = path.join(dir, `MONTAJE-FASE-${fase}.mp4`);
+  }
+  if (!clips.length) return { error: "no narrated mp4 to join", clips: [] };
+  const error = concatMp4(clips, out);
+  return error ? { error, clips: clips.map((c) => path.basename(c)) } : { out: path.relative(root, out), clips: clips.map((c) => path.basename(c)) };
+}
+
 export function runDemo(argv, { prog = "sdd" } = {}) {
   const sub = argv[0];
   const opt = (k) => { const i = argv.indexOf(`--${k}`); return i >= 0 ? argv[i + 1] : undefined; };
   const root = path.resolve(opt("repo") || ".");
   const fase = opt("fase");
+  if (sub === "montaje") {
+    if (fase === undefined && !argv.includes("--entrega")) { console.error(`usage: ${prog} demo montaje --fase N | --entrega [--json]`); return 2; }
+    const r = montage(root, { fase, entrega: argv.includes("--entrega") });
+    if (argv.includes("--json")) console.log(JSON.stringify(r, null, 2));
+    else console.log(r.error ? `${prog}: demo montaje: ${r.error}` : `${r.out} (${r.clips.length} vídeo(s))`);
+    return r.error ? 1 : 0;
+  }
   if (!["script", "narrate"].includes(sub) || fase === undefined) {
     console.error(`usage: ${prog} demo script --fase N [--json] | ${prog} demo narrate --fase N [--tts say|espeak-ng|none] [--voice V]`);
     return 2;

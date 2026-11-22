@@ -365,13 +365,14 @@ async def _enviar_demo(bot, chat_id: int, puerta: dict) -> None:
     if carpeta is None:
         await bot.send_message(chat_id=chat_id, text="Esta fase no trae demo (ni vídeo ni capturas). Decide con el resumen de la puerta.")
         return
-    videos = sorted([*carpeta.glob("*.mp4"), *carpeta.glob("*.webm"), *carpeta.glob("*.mov")])
+    v = P.N.video_demo(puerta)   # el montaje de todos los criterios, si lo hay
+    videos = [v] if v else []
     if videos and videos[0].stat().st_size < 49_000_000:
         with videos[0].open("rb") as f:   # Telegram reproduce mp4; el resto llega como documento
             if videos[0].suffix == ".mp4":
-                await bot.send_video(chat_id=chat_id, video=f, caption=f"Demo FASE-{P.N.fase_demo(puerta)}")
+                await bot.send_video(chat_id=chat_id, video=f, caption=(f"Demo FASE-{P.N.fase_demo(puerta)}" if P.N.fase_demo(puerta) else "Demo de la entrega"))
             else:
-                await bot.send_document(chat_id=chat_id, document=f, caption=f"Demo FASE-{P.N.fase_demo(puerta)} ({videos[0].name})")
+                await bot.send_document(chat_id=chat_id, document=f, caption=(f"Demo FASE-{P.N.fase_demo(puerta)}" if P.N.fase_demo(puerta) else "Demo de la entrega") + f" ({videos[0].name})")
     fotos = sorted(carpeta.glob("*.png"))[:10]
     if len(fotos) >= 2:
         abiertos = [p.open("rb") for p in fotos]

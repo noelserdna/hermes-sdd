@@ -97,5 +97,27 @@ const r = { id: "REQ-F-002", title: "Gestionar socios", plain: null, criteria: [
 const p = presentacion(r, 2, { titulos: ["Alta", "Restablecer"], pasos: [{ k: "Entonces", texto: "ve \"Hecho\"" }], noVisible: "entra con la nueva: lo comprueba el test de la API" });
 console.log(JSON.stringify({ nv: p.no_visible, voz: p.voz }));')
 case "$pr" in *'"nv":"entra con la nueva: lo comprueba el test de la API"'*'Esto no se ve en pantalla: entra con la nueva: lo comprueba el test de la API. Ahora, la demostración.'*) pass "presentación: lo que no se ve se escribe y se dice como tal";; *) bad "presentación no visible: $pr";; esac
+# montaje de la FASE: un mp4 con los vídeos de cada criterio en el orden del guion (requisito y criterio), para que
+# quien revisa vea todos seguidos (material-montana11: la puerta enseñaba 1 vídeo de 7 a 16); y el de la entrega, con
+# los montajes de todas las FASEs
+if command -v ffmpeg >/dev/null 2>&1 && ffmpeg -hide_banner -encoders 2>/dev/null | grep -q libx264; then
+  m="$tmp/mont"; mkdir -p "$m/evidencias/FASE-1" "$m/evidencias/FASE-2" "$m/.sdd/demo"; (cd "$m" && git init -q)
+  hacer() { ffmpeg -loglevel error -f lavfi -i "color=c=$2:s=320x240:d=$3" -f lavfi -i "sine=d=$3" -shortest -c:v libx264 -pix_fmt yuv420p -c:a aac "$m/evidencias/FASE-$1/$4.mp4"
+    printf '{"video":"%s.webm","narraciones":[{"t":0,"texto":"x","criterio":"%s"}]}' "$4" "$5" > "$m/evidencias/FASE-$1/$4.narracion.json"; }
+  hacer 1 red 1 v-b AC-002-02; hacer 1 blue 2 v-a AC-002-01; hacer 2 green 1 v-c AC-003-01
+  printf '{"criterios":[{"id":"AC-002-01","req":"REQ-F-002","ac":1},{"id":"AC-002-02","req":"REQ-F-002","ac":2}]}' > "$m/.sdd/demo/GUION-FASE-1.json"
+  printf '{"criterios":[{"id":"AC-003-01","req":"REQ-F-003","ac":1}]}' > "$m/.sdd/demo/GUION-FASE-2.json"
+  out=$(cd "$m" && node "$SDD" demo montaje --fase 1 --json); rc=$?
+  dur() { ffprobe -v error -show_entries format=duration -of csv=p=0 "$1" | cut -d. -f1; }
+  [ $rc = 0 ] && [ "$(j 'j.clips.join()')" = "v-a.mp4,v-b.mp4" ] && [ -s "$m/evidencias/FASE-1/MONTAJE-FASE-1.mp4" ] && [ "$(dur "$m/evidencias/FASE-1/MONTAJE-FASE-1.mp4")" = 3 ] \
+    && pass "montaje: la FASE en un mp4, criterio a criterio en el orden del guion" || bad "montaje fase: $rc $out"
+  (cd "$m" && node "$SDD" demo montaje --fase 2 >/dev/null)
+  out=$(cd "$m" && node "$SDD" demo montaje --entrega --json); rc=$?
+  [ $rc = 0 ] && [ -s "$m/evidencias/ENTREGA/MONTAJE-ENTREGA.mp4" ] && [ "$(dur "$m/evidencias/ENTREGA/MONTAJE-ENTREGA.mp4")" = 4 ] \
+    && pass "montaje: la entrega con los montajes de todas las FASEs" || bad "montaje entrega: $rc $out"
+  # el montaje no es un vídeo de criterio: ni se narra ni entra en otro montaje
+  out=$(cd "$m" && node "$SDD" demo montaje --fase 1 --json)
+  [ "$(j 'j.clips.join()')" = "v-a.mp4,v-b.mp4" ] && pass "montaje: rehacerlo no se incluye a sí mismo" || bad "montaje repetido: $out"
+else pass "montaje: sin ffmpeg con libx264 en esta máquina, no se prueba"; fi
 [ $fail = 0 ] && echo "metodo/tests/demo: all passed"
 exit $fail

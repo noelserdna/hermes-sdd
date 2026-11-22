@@ -862,5 +862,18 @@ assert "Rechazaste la versión anterior" in t and "Restablecer tiene que levanta
 assert "restablecer la contrasena levanta el bloqueo" in t and "acceptance report" not in t and "otra fase" not in t, t
 assert "Rechazaste" not in T.puerta_fase(d, "p", "1", "", 0, 0, False, 0)["texto"]
 PY
+# La entrega de varias FASEs trae el montaje de todas: lo dice, pide verlo primero y es ese vídeo el que se envía
+# (material-montana11: sin demo, Jev la aceptó a los 14 s; la puerta de FASE enseñaba 1 vídeo de 7 a 16)
+python3 - "$ROOT/plugin/hermes-sdd" "$T" <<'PY' && ok "entrega con montaje: lo dice, se ve primero y se envía el montaje" || bad "entrega con montaje"
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_textos as X, hsdd_nucleo as N
+from pathlib import Path
+r = Path(sys.argv[2]) / "montaje"; (r / "evidencias" / "ENTREGA").mkdir(parents=True); (r / "evidencias" / "FASE-1").mkdir(parents=True)
+(r / "evidencias" / "ENTREGA" / "MONTAJE-ENTREGA.mp4").write_bytes(b"x"); (r / "evidencias" / "FASE-1" / "a.mp4").write_bytes(b"x")
+(r / "evidencias" / "FASE-1" / "MONTAJE-FASE-1.mp4").write_bytes(b"x")
+t = X.puerta_entrega(r, "p", "", 0, ["fase-1-accepted"], video=True)["texto"]
+assert "montaje de todas las fases" in t and "(✅)" not in t, t
+assert N.video_demo({"repo": str(r), "tipo": "entrega", "demo": "evidencias/ENTREGA/MONTAJE-ENTREGA.mp4"}).name == "MONTAJE-ENTREGA.mp4"
+assert N.video_demo({"repo": str(r), "tipo": "fase", "fase": "1"}).name == "MONTAJE-FASE-1.mp4"
+PY
 kill $SRVN; wait $SRVN 2>/dev/null
 exit $fail

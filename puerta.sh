@@ -148,7 +148,8 @@ case "$TIPO" in
     # FASE-1: ampliar un `import { a, b }` mandaba la puerta a una persona y la tuvo esperando 7 h)
     BASE=$(git describe --tags --abbrev=0 --match 'fase-*-accepted' 2>/dev/null || git describe --tags --abbrev=0 --match 'requirements-v*' 2>/dev/null || git rev-list --max-parents=0 HEAD)
     EDIT=$(sin_autorizar "$FASE" "$(tests_editados "$BASE")")
-    VIDEO=$(ls evidencias/FASE-"$FASE"/*.mp4 evidencias/FASE-"$FASE"/*.webm evidencias/FASE-"$FASE"/*.mov 2>/dev/null | head -1 || true)
+    # el montaje (todos los criterios seguidos) si lo hay; si no, el primer vídeo (material-montana11: 1 de 7 a 16)
+    VIDEO=$(ls evidencias/FASE-"$FASE"/MONTAJE-*.mp4 evidencias/FASE-"$FASE"/*.mp4 evidencias/FASE-"$FASE"/*.webm evidencias/FASE-"$FASE"/*.mov 2>/dev/null | head -1 || true)
     CAPTURAS=$( (ls evidencias/FASE-"$FASE"/*.png evidencias/FASE-"$FASE"/*.jpg 2>/dev/null || true) | wc -l | tr -d ' ')
     EXTRA+=(--gate-md "$GATE_MD" --rc "$rc" --tests-editados "$EDIT" --video "$([ -n "$VIDEO" ] && echo 1 || echo 0)" --capturas "$CAPTURAS")
     # Jev no ve el vídeo, pero lee su texto en off: ¿cuenta cada uno lo que pide su criterio? (sin esto, con vídeo, Jev
@@ -177,7 +178,7 @@ case "$TIPO" in
     if [ -f .sdd/hermes/granularidad-plan ] && [ "$(cat .sdd/hermes/granularidad-plan)" != fina ] && [ "$(ls plan/fases/FASE-*.md 2>/dev/null | wc -l | tr -d ' ')" = 1 ] \
        && ! git tag -l 'fase-*-accepted' | grep -q .; then
       UNICA=true
-      VIDEO=$(ls evidencias/FASE-0/*.mp4 evidencias/FASE-0/*.webm evidencias/FASE-0/*.mov 2>/dev/null | head -1 || true)
+      VIDEO=$(ls evidencias/FASE-0/MONTAJE-*.mp4 evidencias/FASE-0/*.mp4 evidencias/FASE-0/*.webm evidencias/FASE-0/*.mov 2>/dev/null | head -1 || true)
       CAPTURAS=$( (ls evidencias/FASE-0/*.png evidencias/FASE-0/*.jpg 2>/dev/null || true) | wc -l | tr -d ' ')
       BASE=$(git describe --tags --abbrev=0 --match 'requirements-v*' 2>/dev/null || git rev-list --max-parents=0 HEAD)
       EDIT=$(sin_autorizar global "$(tests_editados "$BASE")")
@@ -186,9 +187,15 @@ case "$TIPO" in
       if [ -n "$VIDEO" ]; then python3 "$TEXTOS" jev-narracion "$REPO" 0 >/dev/null 2>&1 || true; NARR=.sdd/hermes/jev-narracion-0.json; fi
       OPCIONES='[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1},{"verbo":"acepto","etiqueta":"✅ Acepto la entrega","paso":2},{"verbo":"observaciones","etiqueta":"📝 Con observaciones","texto":true,"paso":2},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'
     fi
+    # Varias FASEs: la demo de la entrega es el montaje de todas (montaje_entrega). Con ella, ▶ Ver demo primero y la
+    # acepta una persona que la ve (material-montana11: sin demo, Jev aceptó la entrega a los 14 s)
+    if [ "$UNICA" != true ] && [ -s evidencias/ENTREGA/MONTAJE-ENTREGA.mp4 ]; then
+      VIDEO=evidencias/ENTREGA/MONTAJE-ENTREGA.mp4; CONDEMO=true; EXTRA+=(--video 1)
+      OPCIONES='[{"verbo":"ver","etiqueta":"▶ Ver demo","paso":1},{"verbo":"acepto","etiqueta":"✅ Acepto la entrega","paso":2},{"verbo":"observaciones","etiqueta":"📝 Con observaciones","texto":true,"paso":2},{"verbo":"rechazo","etiqueta":"❌ Rechazar","texto":true,"paso":2}]'
+    fi
     revisar; EXTRA+=(--revisar "$REV_JSON")
     if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then impugnaciones "$rc"; EXTRA+=(--impugnaciones "$IMP_JSON"); fi
-    PASO=$([ "$UNICA" = true ] && echo '{paso:2}' || echo '{}')
+    PASO=$({ [ "$UNICA" = true ] || [ "${CONDEMO:-}" = true ]; } && echo '{paso:2}' || echo '{}')
     if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then
       if solo_rev; then   # solo faltan inspecciones: se confirman aquí mismo
         OPCIONES=$(echo "$OPCIONES" | jq -c --argjson r "$REVISADO" "[.[] | select(.verbo == \"ver\")] + [\$r + $PASO] + [.[] | select(.verbo == \"rechazo\")]")

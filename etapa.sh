@@ -847,6 +847,7 @@ Do it without changing behaviour: requirements/ and spec/ stay as they are and e
     # Fidelidad global antes de entregar: tests congelados, capturas, mutantes de todos los Must y coherencia
     # (en una entrega parcial, sin mutantes: los de lo que aún no se hizo saldrían todos «sin comprobar»)
     python3 "$ROOT/plugin/hermes-sdd/hsdd_fidelidad.py" aceptacion "$REPO" $(parcial && echo --sin-mutantes) >/dev/null 2>&1 || jq -n '{graves: 1, error: "hsdd_fidelidad falló: no hay comprobación de fidelidad"}' > .sdd/hermes/fidelidad-global.json
+    unica "$REPO" || montaje_entrega
     P=$(puerta entrega) || falla "no se pudo abrir la puerta de entrega"
     [ -n "${RES:-}" ] || RES='{"outcome":"done","reason":"ok"}'
     fin "$RES" "Cierre: puerta de calidad $(parcial && echo "de la entrega parcial (FASEs $(tr '\n' ' ' < .sdd/hermes/entrega-parcial | sed 's/ $//'))" || echo global) calculada" "$P" ;;

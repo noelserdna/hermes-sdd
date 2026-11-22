@@ -56,4 +56,12 @@ duras_implementar() {  # usa $SDD, $FASE y $ROOT; en el directorio del repo
 narrar_demo() {
   case "$(perfil narration)" in required|warn) ;; *) return 0 ;; esac
   node "$SDD" demo narrate --fase "$1" > .sdd/hermes/demo-narrada-$1.txt 2>&1 || true
+  # y el montaje: todos los criterios de la FASE seguidos, en el orden del guion (lo que enseña la puerta)
+  node "$SDD" demo montaje --fase "$1" >> .sdd/hermes/demo-narrada-$1.txt 2>&1 || true
+}
+# montaje_entrega: los montajes de todas las FASEs en evidencias/ENTREGA/MONTAJE-ENTREGA.mp4 (la demo de la entrega:
+# con ella la acepta una persona que la ve; material-montana11: sin demo, Jev la aceptó a los 14 s)
+montaje_entrega() {
+  case "$(perfil narration)" in required|warn) ;; *) return 0 ;; esac
+  node "$SDD" demo montaje --entrega > .sdd/hermes/demo-entrega.txt 2>&1 || true
 }

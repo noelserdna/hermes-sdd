@@ -776,7 +776,22 @@ def fase_demo(puerta: dict) -> str:
 def carpeta_demo(puerta: dict) -> Path | None:
     fase = fase_demo(puerta)
     carpeta = Path(puerta["repo"]) / "evidencias" / f"FASE-{fase}" if fase else None
+    # la entrega de varias FASEs: su demo es el montaje de todas (evidencias/ENTREGA/MONTAJE-ENTREGA.mp4)
+    if carpeta is None and puerta.get("tipo") == "entrega" and str(puerta.get("demo") or "").startswith("evidencias/ENTREGA/"):
+        carpeta = Path(puerta["repo"]) / "evidencias" / "ENTREGA"
     return carpeta if carpeta is not None and carpeta.is_dir() else None
+
+
+def video_demo(puerta: dict) -> Path | None:
+    """El vídeo que se enseña: el de la puerta (el montaje, si lo hay) o, si no, el primero de su carpeta."""
+    d = puerta.get("demo")
+    if d and (Path(puerta["repo"]) / d).is_file():
+        return Path(puerta["repo"]) / d
+    carpeta = carpeta_demo(puerta)
+    if carpeta is None:
+        return None
+    vs = sorted([*carpeta.glob("MONTAJE-*.mp4")]) or sorted([*carpeta.glob("*.mp4"), *carpeta.glob("*.webm"), *carpeta.glob("*.mov")])
+    return vs[0] if vs else None
 
 
 def evidencias(puerta: dict) -> list:

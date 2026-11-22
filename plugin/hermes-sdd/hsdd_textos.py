@@ -1274,7 +1274,9 @@ def _puerta_entrega(repo: Path, proyecto: str, gate_md: str, rc: int, fases_acep
     else:
         if fases_aceptadas:
             partes.append(f"Fases aceptadas: {len(fases_aceptadas)}.")
-        partes.append(_que_pulsar(rc, rev, "aceptar la entrega (✅)", "aceptarla con observaciones", "rechazarla", demo=False))
+        if video:   # el montaje de todas las FASEs (montaje_entrega): se ve antes de aceptar
+            partes.append("🎬 Demo: el montaje de todas las fases, requisito a requisito y criterio a criterio, con su voz.")
+        partes.append(_que_pulsar(rc, rev, "aceptar la entrega" + ("" if video else " (✅)"), "aceptarla con observaciones", "rechazarla", demo=video))
     return {"titulo": "Entrega final", "texto": "\n\n".join(partes)}
 
 
