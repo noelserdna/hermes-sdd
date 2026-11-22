@@ -1,0 +1,30 @@
+{
+ "video": "SIN-FASE-AC-011-01-REQ-F-005-AC3-el-pr-stamo-de-L.webm",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-01 REQ-F-005 AC3 el préstamo de Lucía acaba el 2026-12-07 y Pablo lo devuelve ese día: ve «Devuelto a tiempo» y «No hay multas»",
+ "titulo": "AC-011-01 REQ-F-005 AC3 el préstamo de Lucía acaba el 2026-12-07 y Pablo lo devuelve ese día: ve «Devuelto a tiempo» y «No hay multas»",
+ "narraciones": [
+  {
+   "t": 0.012,
+   "texto": "Requisito REQ-F-005: Entregar y recibir el material. Criterio 3 de 10.",
+   "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 3: a tiempo. cuando el encargado marca la devolución el 2026-12-07, entonces ve Devuelto a tiempo en Panel del encargado y no existe ninguna multa y Lucía ve No tienes multas en Mis multas. Ahora, la demostración.",
+   "presentacion": "AC-011-01"
+  },
+  {
+   "t": 0.838,
+   "texto": "Es 7 de diciembre. Lucía trae los dos cascos y Pablo los encuentra en «Vuelven hoy»"
+  },
+  {
+   "t": 1.045,
+   "texto": "Pulsa Devolver"
+  },
+  {
+   "t": 1.35,
+   "texto": "Lucía entra con su cuenta y abre Mis multas desde el menú"
+  },
+  {
+   "t": 1.893,
+   "texto": "Entregar y recibir el material. En Panel del encargado se ve «Devuelto a tiempo» y «No hay multas», y Lucía ve «No tienes multas» en Mis multas: no existe ninguna multa.",
+   "criterio": "AC-011-01"
+  }
+ ]
+}

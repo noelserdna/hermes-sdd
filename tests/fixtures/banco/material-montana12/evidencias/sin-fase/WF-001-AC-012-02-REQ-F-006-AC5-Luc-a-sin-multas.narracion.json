@@ -1,0 +1,22 @@
+{
+ "video": "WF-001-AC-012-02-REQ-F-006-AC5-Luc-a-sin-multas.webm",
+ "test": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-012-02 REQ-F-006 AC5 Lucía sin multas abre «Mis multas»: ve «No tienes multas»",
+ "titulo": "AC-012-02 REQ-F-006 AC5 Lucía sin multas abre «Mis multas»: ve «No tienes multas»",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-006: Multas y bloqueo hasta pagarlas. Criterio 5 de 7.",
+   "voz": "Requisito funcional 6: Multas y bloqueo hasta pagarlas. El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 5: sin multas. Dado que Lucía Gil no tiene multas, cuando Lucía abre Mis multas, entonces ve No tienes multas en Mis multas. Ahora, la demostración.",
+   "presentacion": "AC-012-02"
+  },
+  {
+   "t": 0.796,
+   "texto": "Lucía no tiene ninguna multa. Abre Mis multas desde el menú"
+  },
+  {
+   "t": 1.067,
+   "texto": "Multas y bloqueo hasta pagarlas. En Mis multas se ve «No tienes multas».",
+   "criterio": "AC-012-02"
+  }
+ ]
+}

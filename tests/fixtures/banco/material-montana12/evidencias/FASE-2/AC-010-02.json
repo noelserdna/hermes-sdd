@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-010-02",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-010-02 REQ-F-005 AC2 la reserva de Lucía acaba de entregarse y «Entregar» se envía otra vez: Pablo ve «Ya estaba entregada» y un solo préstamo",
+ "titulo": "AC-010-02 REQ-F-005 AC2 la reserva de Lucía acaba de entregarse y «Entregar» se envía otra vez: Pablo ve «Ya estaba entregada» y un solo préstamo",
+ "ve": [
+  "Ya estaba entregada",
+  "Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07"
+ ],
+ "narrado": "Entregar y recibir el material. En Panel del encargado se ve «Ya estaba entregada» y «Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07»: el préstamo sigue siendo uno solo.",
+ "url": "http://127.0.0.1:5173/panel",
+ "imagen": "AC-010-02.png",
+ "sha256": "sha256:47d881030092951dc6221945d95433e45e34d7098c60c3506ed588ab89d78455",
+ "at": "2026-11-22T20:34:25.110Z"
+}

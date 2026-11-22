@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-007-06",
+ "test": "FASE-1 · Reservar material (REQ-F-003) › AC-007-06 REQ-F-003 AC6 Lucía pide 15 días (2026-12-01..2026-12-15) y ve «Máximo 14 días por reserva»",
+ "titulo": "AC-007-06 REQ-F-003 AC6 Lucía pide 15 días (2026-12-01..2026-12-15) y ve «Máximo 14 días por reserva»",
+ "ve": [
+  "Máximo 14 días por reserva"
+ ],
+ "narrado": "Reservar material. En Reservar se ve «Máximo 14 días por reserva».",
+ "url": "http://127.0.0.1:5173/reservar",
+ "imagen": "AC-007-06.png",
+ "sha256": "sha256:25cca15674228e26a67fd56a6b465ad8855c1e3d1653b46f21b45bbf9915c714",
+ "at": "2026-11-22T19:42:43.876Z"
+}

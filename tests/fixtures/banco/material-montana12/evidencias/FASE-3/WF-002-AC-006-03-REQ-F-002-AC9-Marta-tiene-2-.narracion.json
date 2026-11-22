@@ -1,0 +1,26 @@
+{
+ "video": "WF-002-AC-006-03-REQ-F-002-AC9-Marta-tiene-2-.webm",
+ "test": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-03 REQ-F-002 AC9 Marta tiene 2 × Casco del 2026-12-05 al 2026-12-07 y Pablo la da de baja: ve «Socio dado de baja: Marta Ruiz» y Lucía reserva lo mismo: «Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07»",
+ "titulo": "AC-006-03 REQ-F-002 AC9 Marta tiene 2 × Casco del 2026-12-05 al 2026-12-07 y Pablo la da de baja: ve «Socio dado de baja: Marta Ruiz» y Lucía reserva lo mismo: «Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07»",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-002: Alta, baja y contraseña de los socios. Criterio 9 de 9.",
+   "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 9: reserva futura cancelada. Dado que Marta tiene 2 × Casco del 2026-12-05 al 2026-12-07, cuando el encargado la da de baja, entonces ve Socio dado de baja: Marta Ruiz en Socios y Lucía reserva lo mismo y ve Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07 en Mis reservas. Ahora, la demostración.",
+   "presentacion": "AC-006-03"
+  },
+  {
+   "t": 0.83,
+   "texto": "Marta tiene reservados los dos cascos del 5 al 7 de diciembre. Pablo abre Socios y la da de baja"
+  },
+  {
+   "t": 1.205,
+   "texto": "Sus unidades quedan libres: Pablo sale, Lucía entra y reserva los mismos dos cascos para las mismas fechas"
+  },
+  {
+   "t": 1.845,
+   "texto": "Alta, baja y contraseña de los socios. En Socios se ve «Socio dado de baja: Marta Ruiz» y Lucía, con los mismos dos cascos y las mismas fechas, ve «Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07»: las unidades de Marta quedaron libres.",
+   "criterio": "AC-006-03"
+  }
+ ]
+}

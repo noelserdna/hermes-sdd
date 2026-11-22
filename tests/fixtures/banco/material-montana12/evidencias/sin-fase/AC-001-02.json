@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-02",
+ "test": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-02 REQ-F-001 AC2 Pablo, el encargado, entra y ve «Hola, Pablo» en el Panel del encargado",
+ "titulo": "AC-001-02 REQ-F-001 AC2 Pablo, el encargado, entra y ve «Hola, Pablo» en el Panel del encargado",
+ "ve": [
+  "Hola, Pablo"
+ ],
+ "narrado": "Entrar y salir. En Panel del encargado se ve «Hola, Pablo».",
+ "url": "http://127.0.0.1:5173/panel",
+ "imagen": "AC-001-02.png",
+ "sha256": "sha256:b1d95b1a3e139817ca0ad1ca4ce298e9ee077420035394f1f04743f603a0c5a7",
+ "at": "2026-11-22T19:42:04.059Z"
+}

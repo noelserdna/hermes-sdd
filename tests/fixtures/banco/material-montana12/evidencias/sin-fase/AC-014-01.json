@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-014-01",
+ "test": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-014-01 REQ-F-006 AC7 Pablo Sanz con una multa pendiente de 6 € y Lucía Gil con una pagada de 2 €, el encargado abre «Multas»: ve las dos filas con su estado",
+ "titulo": "AC-014-01 REQ-F-006 AC7 Pablo Sanz con una multa pendiente de 6 € y Lucía Gil con una pagada de 2 €, el encargado abre «Multas»: ve las dos filas con su estado",
+ "ve": [
+  "Pablo Sanz — Multa de 6 € — Pendiente",
+  "Lucía Gil — Multa de 2 € — Pagada"
+ ],
+ "narrado": "Multas y bloqueo hasta pagarlas. En Multas se ve «Pablo Sanz — Multa de 6 € — Pendiente» y «Lucía Gil — Multa de 2 € — Pagada».",
+ "url": "http://127.0.0.1:5173/multas",
+ "imagen": "AC-014-01.png",
+ "sha256": "sha256:ba233c5e9b332efa36d4d960e940da7e0632d1d400b9ec50ce368f533cc5917e",
+ "at": "2026-11-22T19:44:07.966Z"
+}

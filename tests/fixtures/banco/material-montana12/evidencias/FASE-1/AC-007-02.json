@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-007-02",
+ "test": "FASE-1 · Reservar material (REQ-F-003) › AC-007-02 REQ-F-003 AC2 con «Tienda» a 2 y 1 reservada por Lucía, Pablo pide 2 y ve «solo queda 1 de Tienda el 2026-12-06»",
+ "titulo": "AC-007-02 REQ-F-003 AC2 con «Tienda» a 2 y 1 reservada por Lucía, Pablo pide 2 y ve «solo queda 1 de Tienda el 2026-12-06»",
+ "ve": [
+  "No hay unidades libres: solo queda 1 de Tienda el 2026-12-06",
+  "Aún no tienes reservas"
+ ],
+ "narrado": "Reservar material. En Reservar se ve «No hay unidades libres: solo queda 1 de Tienda el 2026-12-06» y «Aún no tienes reservas»: no se crea ninguna reserva.",
+ "url": "http://127.0.0.1:5173/reservar",
+ "imagen": "AC-007-02.png",
+ "sha256": "sha256:d345ecdb3734fcabf9f945184384b5ae185de2a2616b62cc6141bfb2979ce37a",
+ "at": "2026-11-22T20:33:51.093Z"
+}

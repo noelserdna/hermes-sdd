@@ -1,0 +1,26 @@
+{
+ "video": "WF-001-AC-013-01-REQ-F-006-AC2-Pablo-con-una-mu.webm",
+ "test": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-013-01 REQ-F-006 AC2 Pablo con una multa pendiente de 6 €, el encargado pulsa «Marcar pagada»: ve «Multa pagada» y Pablo reserva 1 × Casco del 2026-12-10 al 2026-12-11",
+ "titulo": "AC-013-01 REQ-F-006 AC2 Pablo con una multa pendiente de 6 €, el encargado pulsa «Marcar pagada»: ve «Multa pagada» y Pablo reserva 1 × Casco del 2026-12-10 al 2026-12-11",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-006: Multas y bloqueo hasta pagarlas. Criterio 2 de 7.",
+   "voz": "Requisito funcional 6: Multas y bloqueo hasta pagarlas. El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 2: pago levanta el bloqueo. Dado que Pablo Sanz tiene una multa pendiente de 6 €, cuando el encargado pulsa Marcar pagada, entonces ve Multa pagada en Multas y Pablo reserva 1 × Tienda del 2026-12-10 al 2026-12-11 y ve Reserva creada: 1 × Tienda del 2026-12-10 al 2026-12-11 en Mis reservas y no ve No puedes reservar hasta pagar tu multa de 6 € en Reservar. Ahora, la demostración.",
+   "presentacion": "AC-013-01"
+  },
+  {
+   "t": 0.819,
+   "texto": "Pablo Sanz debe una multa de 6 euros. Jorge, el encargado, abre Multas y pulsa «Marcar pagada» en su fila"
+  },
+  {
+   "t": 1.145,
+   "texto": "Jorge sale y Pablo entra: con la multa pagada ya puede reservar un casco del 10 al 11 de diciembre"
+  },
+  {
+   "t": 1.789,
+   "texto": "Multas y bloqueo hasta pagarlas. En Multas se ve «Multa pagada» y Pablo, ya sin multa pendiente, ve «Reserva creada: 1 × Casco del 2026-12-10 al 2026-12-11».",
+   "criterio": "AC-013-01"
+  }
+ ]
+}

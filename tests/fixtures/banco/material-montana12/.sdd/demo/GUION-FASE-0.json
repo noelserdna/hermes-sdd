@@ -1,0 +1,1172 @@
+{
+ "fase": "0",
+ "plan": "plan/fases/FASE-0-SKELETON.md",
+ "workflows": [],
+ "casos_de_uso": [
+  {
+   "id": "UC-001",
+   "titulo": "Entrar",
+   "fichero": "spec/use-cases/UC-001-entrar.md",
+   "flujo": [
+    "Usuario: envía correo y contraseña en Entrar.",
+    "Sistema: comprueba bloqueo de cuenta (`LOGIN_MAX_FAILURES`, `LOGIN_LOCK_MINUTES`; RN-001) y credenciales (RN-007).",
+    "Sistema: abre la sesión y muestra la página de su rol (API-001-01).",
+    "Usuario: abre una página privada; Sistema: autoriza con sesión y rol, caduca tras `SESSION_IDLE_MINUTES` sin actividad (API-001-08; INV-SOC-005, RN-002)."
+   ],
+   "extensiones": [
+    {
+     "texto": "3a. `mustChangePassword` → se muestra Cambiar contraseña (UC-004; INV-SOC-006).",
+     "criterios": []
+    },
+    {
+     "texto": "2a. pasados `LOGIN_LOCK_MINUTES` desde el bloqueo, la contraseña correcta entra.",
+     "criterios": [
+      "AC-001-05"
+     ]
+    },
+    {
+     "texto": "3b. rol encargado → Panel del encargado.",
+     "criterios": [
+      "AC-001-02"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-001-01",
+    "AC-001-02",
+    "AC-001-03",
+    "AC-001-04",
+    "AC-001-05",
+    "AC-001-06",
+    "AC-001-07"
+   ]
+  },
+  {
+   "id": "UC-002",
+   "titulo": "Salir",
+   "fichero": "spec/use-cases/UC-002-salir.md",
+   "flujo": [
+    "Usuario: pulsa \"Salir\".",
+    "Sistema: invalida la sesión (API-001-02, RN-003).",
+    "Sistema: muestra el formulario Entrar.",
+    "Usuario: vuelve atrás con el navegador; Sistema: exige sesión para toda página privada (API-001-08, RN-020)."
+   ],
+   "extensiones": [
+    {
+     "texto": "4a. el usuario vuelve atrás → se muestra Entrar sin datos de socios.",
+     "criterios": [
+      "AC-002-02"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-002-01"
+   ]
+  },
+  {
+   "id": "UC-007",
+   "titulo": "Reservar material",
+   "fichero": "spec/use-cases/UC-007-reservar-material.md",
+   "flujo": [
+    "Socio: abre \"Reservar\"; el sistema autoriza (API-001-08) y ofrece solo tipos con unidades > 0 (API-003-03, INV-MAT-003).",
+    "Socio: elige tipo, cantidad, fecha de inicio y de fin, y envía.",
+    "System: comprueba que no hay multa pendiente (INV-MUL-002, RN-016; WF-001 paso 7 al pagarla).",
+    "System: valida en orden fecha pasada, fin anterior, `MAX_RESERVATION_DAYS`, `MAX_UNITS_PER_RESERVATION` (RN-010, INV-RES-001..003).",
+    "System: calcula libres por día desde las reservas (ADR-001, RN-009, INV-RES-004).",
+    "System: crea la reserva Reservada (WF-001 paso 1) y muestra \"Mis reservas\"."
+   ],
+   "extensiones": [
+    {
+     "texto": "1a. Tipo con 0 unidades → no se ofrece.",
+     "criterios": [
+      "AC-007-10"
+     ]
+    },
+    {
+     "texto": "3a. Multa ya pagada (WF-001 paso 7) → sigue en 4.",
+     "criterios": []
+    }
+   ],
+   "criterios": [
+    "AC-007-10"
+   ]
+  },
+  {
+   "id": "UC-015",
+   "titulo": "Añadir unidades de material",
+   "fichero": "spec/use-cases/UC-015-anadir-unidades.md",
+   "flujo": [
+    "Encargado: abre \"Material\"; el sistema lo autoriza y lista tipos con su total (API-003-03).",
+    "Encargado: indica nombre y cantidad y envía.",
+    "System: valida nombre no vacío y cantidad entera ≥ 1 (RN-017).",
+    "System: busca el tipo sin distinguir mayúsculas; si no existe lo crea (INV-MAT-004).",
+    "System: suma la cantidad y muestra la lista actualizada."
+   ],
+   "extensiones": [
+    {
+     "texto": "4a. Tipo nuevo → se crea con la cantidad como total.",
+     "criterios": [
+      "AC-015-02"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-015-01",
+    "AC-015-02"
+   ]
+  },
+  {
+   "id": "UC-016",
+   "titulo": "Retirar unidades rotas",
+   "fichero": "spec/use-cases/UC-016-retirar-unidades.md",
+   "flujo": [
+    "Encargado: elige tipo y cantidad de baja en \"Material\" y envía; el sistema autoriza (API-001-08).",
+    "System: valida cantidad entera ≥ 1 (RN-017).",
+    "System: comprueba que la cantidad no supera el total (INV-MAT-001).",
+    "System: comprueba cada día desde hoy `total − n ≥ ocupadas` (INV-MAT-002, RN-009, ADR-001).",
+    "System: reduce el total y muestra la lista actualizada."
+   ],
+   "extensiones": [],
+   "criterios": [
+    "AC-016-01",
+    "AC-016-02",
+    "AC-016-03"
+   ]
+  }
+ ],
+ "criterios": [
+  {
+   "id": "AC-001-01",
+   "req": "REQ-F-001",
+   "ac": 1,
+   "uc": "UC-001",
+   "frase": "Entrar y salir. En Mis reservas se ve «Hola, {nombre}».",
+   "visible": true,
+   "then": "the user sees \"Hola, Lucía\" in the page \"Mis reservas\"",
+   "ve": [
+    "Hola, {nombre}"
+   ],
+   "pantalla": "Mis reservas",
+   "presentacion": {
+    "requisito": "REQ-F-001",
+    "titulo": "Entrar y salir",
+    "para_el_cliente": "Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras.",
+    "n": 1,
+    "total": 8,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "socio entra",
+      "actual": true
+     },
+     {
+      "n": 2,
+      "titulo": "encargado entra",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "contraseña errónea",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "bloqueo tras fallos",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "fin del bloqueo",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "sesión caducada",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "salir",
+      "actual": false
+     },
+     {
+      "n": 8,
+      "titulo": "visitante sin sesión",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "socio \"lucia@club.test\" con contraseña \"Cumbre2026!\""
+     },
+     {
+      "k": "Cuando",
+      "texto": "introduce ambos en Entrar"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Hola, Lucía\" en la página \"Mis reservas\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 1: Entrar y salir. Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras. Tiene 8 criterios de aceptación. Este vídeo demuestra el criterio 1: socio entra. Dado que socio lucia@club.test con contraseña Cumbre2026!, cuando introduce ambos en Entrar, entonces ve Hola, Lucía en la página Mis reservas. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-001-02",
+   "req": "REQ-F-001",
+   "ac": 2,
+   "uc": "UC-001",
+   "frase": "Entrar y salir. En Panel del encargado se ve «Hola, {nombre}».",
+   "visible": true,
+   "then": "the user sees \"Hola, Pablo\" in the page \"Panel del encargado\"",
+   "ve": [
+    "Hola, {nombre}"
+   ],
+   "pantalla": "Panel del encargado",
+   "presentacion": {
+    "requisito": "REQ-F-001",
+    "titulo": "Entrar y salir",
+    "para_el_cliente": "Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras.",
+    "n": 2,
+    "total": 8,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "socio entra",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "encargado entra",
+      "actual": true
+     },
+     {
+      "n": 3,
+      "titulo": "contraseña errónea",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "bloqueo tras fallos",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "fin del bloqueo",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "sesión caducada",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "salir",
+      "actual": false
+     },
+     {
+      "n": 8,
+      "titulo": "visitante sin sesión",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "encargado \"pablo@club.test\" con contraseña \"Piolet2026!\""
+     },
+     {
+      "k": "Cuando",
+      "texto": "introduce ambos en Entrar"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Hola, Pablo\" en la página \"Panel del encargado\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 1: Entrar y salir. Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras. Tiene 8 criterios de aceptación. Este vídeo demuestra el criterio 2: encargado entra. Dado que encargado pablo@club.test con contraseña Piolet2026!, cuando introduce ambos en Entrar, entonces ve Hola, Pablo en la página Panel del encargado. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-001-03",
+   "req": "REQ-F-001",
+   "ac": 3,
+   "uc": "UC-001",
+   "frase": "Entrar y salir. En Entrar se ve «Correo o contraseña incorrectos».",
+   "visible": true,
+   "then": "the user sees \"Correo o contraseña incorrectos\"",
+   "ve": [
+    "Correo o contraseña incorrectos"
+   ],
+   "pantalla": "Entrar",
+   "presentacion": {
+    "requisito": "REQ-F-001",
+    "titulo": "Entrar y salir",
+    "para_el_cliente": "Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras.",
+    "n": 3,
+    "total": 8,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "socio entra",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "encargado entra",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "contraseña errónea",
+      "actual": true
+     },
+     {
+      "n": 4,
+      "titulo": "bloqueo tras fallos",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "fin del bloqueo",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "sesión caducada",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "salir",
+      "actual": false
+     },
+     {
+      "n": 8,
+      "titulo": "visitante sin sesión",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Cuando",
+      "texto": "\"lucia@club.test\" introduce una contraseña incorrecta"
+     },
+     {
+      "k": "Entonces",
+      "texto": "error `E_CREDENCIALES` y ve \"Correo o contraseña incorrectos\" en Entrar"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 1: Entrar y salir. Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras. Tiene 8 criterios de aceptación. Este vídeo demuestra el criterio 3: contraseña errónea. cuando lucia@club.test introduce una contraseña incorrecta, entonces error E_CREDENCIALES y ve Correo o contraseña incorrectos en Entrar. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-001-04",
+   "req": "REQ-F-001",
+   "ac": 4,
+   "uc": "UC-001",
+   "frase": "Entrar y salir. En Entrar se ve «Cuenta bloqueada. Vuelve a intentarlo en 15 minutos».",
+   "visible": true,
+   "then": "the user sees \"Cuenta bloqueada. Vuelve a intentarlo en 15 minutos\"",
+   "ve": [
+    "Cuenta bloqueada. Vuelve a intentarlo en 15 minutos"
+   ],
+   "pantalla": "Entrar",
+   "presentacion": {
+    "requisito": "REQ-F-001",
+    "titulo": "Entrar y salir",
+    "para_el_cliente": "Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras.",
+    "n": 4,
+    "total": 8,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "socio entra",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "encargado entra",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "contraseña errónea",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "bloqueo tras fallos",
+      "actual": true
+     },
+     {
+      "n": 5,
+      "titulo": "fin del bloqueo",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "sesión caducada",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "salir",
+      "actual": false
+     },
+     {
+      "n": 8,
+      "titulo": "visitante sin sesión",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "\"lucia@club.test\" falló 5 veces seguidas"
+     },
+     {
+      "k": "Cuando",
+      "texto": "1 minuto después introduce la contraseña correcta"
+     },
+     {
+      "k": "Entonces",
+      "texto": "error `E_CUENTA_BLOQUEADA` y ve \"Cuenta bloqueada. Vuelve a intentarlo en 15 minutos\" en Entrar"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 1: Entrar y salir. Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras. Tiene 8 criterios de aceptación. Este vídeo demuestra el criterio 4: bloqueo tras fallos. Dado que lucia@club.test falló 5 veces seguidas, cuando 1 minuto después introduce la contraseña correcta, entonces error E_CUENTA_BLOQUEADA y ve Cuenta bloqueada. Vuelve a intentarlo en 15 minutos en Entrar. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-001-05",
+   "req": "REQ-F-001",
+   "ac": 5,
+   "uc": "UC-001",
+   "frase": "Entrar y salir. En Mis reservas se ve «Hola, {nombre}».",
+   "visible": true,
+   "then": "the user sees \"Hola, Lucía\"",
+   "ve": [
+    "Hola, {nombre}"
+   ],
+   "pantalla": "Mis reservas",
+   "presentacion": {
+    "requisito": "REQ-F-001",
+    "titulo": "Entrar y salir",
+    "para_el_cliente": "Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras.",
+    "n": 5,
+    "total": 8,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "socio entra",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "encargado entra",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "contraseña errónea",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "bloqueo tras fallos",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "fin del bloqueo",
+      "actual": true
+     },
+     {
+      "n": 6,
+      "titulo": "sesión caducada",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "salir",
+      "actual": false
+     },
+     {
+      "n": 8,
+      "titulo": "visitante sin sesión",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "\"lucia@club.test\" fue bloqueada hace 15 minutos"
+     },
+     {
+      "k": "Cuando",
+      "texto": "introduce la contraseña correcta"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Hola, Lucía\" en la página \"Mis reservas\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 1: Entrar y salir. Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras. Tiene 8 criterios de aceptación. Este vídeo demuestra el criterio 5: fin del bloqueo. Dado que lucia@club.test fue bloqueada hace 15 minutos, cuando introduce la contraseña correcta, entonces ve Hola, Lucía en la página Mis reservas. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-001-06",
+   "req": "REQ-F-001",
+   "ac": 6,
+   "uc": "UC-001",
+   "frase": "Entrar y salir. En Entrar se ve «Entrar».",
+   "visible": true,
+   "then": "the user sees the form \"Entrar\"",
+   "ve": [
+    "Entrar"
+   ],
+   "pantalla": "Entrar",
+   "presentacion": {
+    "requisito": "REQ-F-001",
+    "titulo": "Entrar y salir",
+    "para_el_cliente": "Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras.",
+    "n": 6,
+    "total": 8,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "socio entra",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "encargado entra",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "contraseña errónea",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "bloqueo tras fallos",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "fin del bloqueo",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "sesión caducada",
+      "actual": true
+     },
+     {
+      "n": 7,
+      "titulo": "salir",
+      "actual": false
+     },
+     {
+      "n": 8,
+      "titulo": "visitante sin sesión",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "una sesión con 30 minutos sin actividad"
+     },
+     {
+      "k": "Cuando",
+      "texto": "abre cualquier página"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve el formulario \"Entrar\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 1: Entrar y salir. Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras. Tiene 8 criterios de aceptación. Este vídeo demuestra el criterio 6: sesión caducada. Dado que una sesión con 30 minutos sin actividad, cuando abre cualquier página, entonces ve el formulario Entrar. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-002-01",
+   "req": "REQ-F-001",
+   "ac": 7,
+   "uc": "UC-002",
+   "frase": "Entrar y salir. En Entrar se ve «Entrar» y «Entrar».",
+   "visible": true,
+   "then": "the user sees the form \"Entrar\" and going back does not show private data",
+   "ve": [
+    "Entrar",
+    "Entrar"
+   ],
+   "pantalla": "Entrar",
+   "presentacion": {
+    "requisito": "REQ-F-001",
+    "titulo": "Entrar y salir",
+    "para_el_cliente": "Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras.",
+    "n": 7,
+    "total": 8,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "socio entra",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "encargado entra",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "contraseña errónea",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "bloqueo tras fallos",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "fin del bloqueo",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "sesión caducada",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "salir",
+      "actual": true
+     },
+     {
+      "n": 8,
+      "titulo": "visitante sin sesión",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "un usuario con sesión"
+     },
+     {
+      "k": "Cuando",
+      "texto": "pulsa \"Salir\""
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve el formulario \"Entrar\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 1: Entrar y salir. Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras. Tiene 8 criterios de aceptación. Este vídeo demuestra el criterio 7: salir. Dado que un usuario con sesión, cuando pulsa Salir, entonces ve el formulario Entrar. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-001-07",
+   "req": "REQ-F-001",
+   "ac": 8,
+   "uc": "UC-001",
+   "frase": "Entrar y salir. En Entrar se ve «Entrar».",
+   "visible": true,
+   "then": "the user sees the form \"Entrar\"",
+   "ve": [
+    "Entrar"
+   ],
+   "pantalla": "Entrar",
+   "presentacion": {
+    "requisito": "REQ-F-001",
+    "titulo": "Entrar y salir",
+    "para_el_cliente": "Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras.",
+    "n": 8,
+    "total": 8,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "socio entra",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "encargado entra",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "contraseña errónea",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "bloqueo tras fallos",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "fin del bloqueo",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "sesión caducada",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "salir",
+      "actual": false
+     },
+     {
+      "n": 8,
+      "titulo": "visitante sin sesión",
+      "actual": true
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Cuando",
+      "texto": "abre \"/mis-reservas\" sin sesión"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve el formulario \"Entrar\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 1: Entrar y salir. Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras. Tiene 8 criterios de aceptación. Este vídeo demuestra el criterio 8: visitante sin sesión. cuando abre /mis-reservas sin sesión, entonces ve el formulario Entrar. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-015-01",
+   "req": "REQ-F-007",
+   "ac": 1,
+   "uc": "UC-015",
+   "frase": "Inventario. En Material se ve «{material}: {total} unidades».",
+   "visible": true,
+   "then": "the user sees \"Cuerda: 6 unidades\" in \"Material\"",
+   "ve": [
+    "{material}: {total} unidades"
+   ],
+   "pantalla": "Material",
+   "presentacion": {
+    "requisito": "REQ-F-007",
+    "titulo": "Inventario",
+    "para_el_cliente": "El encargado añade material nuevo y da de baja las unidades rotas. Si una unidad rota hace falta para una reserva ya hecha, la web se lo avisa en lugar de dejarla sin material.",
+    "n": 1,
+    "total": 6,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "añadir a un tipo",
+      "actual": true
+     },
+     {
+      "n": 2,
+      "titulo": "tipo nuevo",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "baja correcta",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "unidades necesarias",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "baja repetida",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "tipos ofrecidos",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "\"Cuerda\" tiene 4 unidades"
+     },
+     {
+      "k": "Cuando",
+      "texto": "añade 2 unidades de Cuerda"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Cuerda: 6 unidades\" en \"Material\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 7: Inventario. El encargado añade material nuevo y da de baja las unidades rotas. Si una unidad rota hace falta para una reserva ya hecha, la web se lo avisa en lugar de dejarla sin material. Tiene 6 criterios de aceptación. Este vídeo demuestra el criterio 1: añadir a un tipo. Dado que Cuerda tiene 4 unidades, cuando añade 2 unidades de Cuerda, entonces ve Cuerda: 6 unidades en Material. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-015-02",
+   "req": "REQ-F-007",
+   "ac": 2,
+   "uc": "UC-015",
+   "frase": "Inventario. En Material se ve «{material}: {total} unidades».",
+   "visible": true,
+   "then": "the user sees \"Mosquetón: 10 unidades\"",
+   "ve": [
+    "{material}: {total} unidades"
+   ],
+   "pantalla": "Material",
+   "presentacion": {
+    "requisito": "REQ-F-007",
+    "titulo": "Inventario",
+    "para_el_cliente": "El encargado añade material nuevo y da de baja las unidades rotas. Si una unidad rota hace falta para una reserva ya hecha, la web se lo avisa en lugar de dejarla sin material.",
+    "n": 2,
+    "total": 6,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "añadir a un tipo",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "tipo nuevo",
+      "actual": true
+     },
+     {
+      "n": 3,
+      "titulo": "baja correcta",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "unidades necesarias",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "baja repetida",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "tipos ofrecidos",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Cuando",
+      "texto": "añade \"Mosquetón\" con 10 unidades"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Mosquetón: 10 unidades\" en \"Material\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 7: Inventario. El encargado añade material nuevo y da de baja las unidades rotas. Si una unidad rota hace falta para una reserva ya hecha, la web se lo avisa en lugar de dejarla sin material. Tiene 6 criterios de aceptación. Este vídeo demuestra el criterio 2: tipo nuevo. cuando añade Mosquetón con 10 unidades, entonces ve Mosquetón: 10 unidades en Material. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-016-01",
+   "req": "REQ-F-007",
+   "ac": 3,
+   "uc": "UC-016",
+   "frase": "Inventario. En Material se ve «{material}: {total} unidades».",
+   "visible": true,
+   "then": "the user sees \"Cuerda: 5 unidades\"",
+   "ve": [
+    "{material}: {total} unidades"
+   ],
+   "pantalla": "Material",
+   "presentacion": {
+    "requisito": "REQ-F-007",
+    "titulo": "Inventario",
+    "para_el_cliente": "El encargado añade material nuevo y da de baja las unidades rotas. Si una unidad rota hace falta para una reserva ya hecha, la web se lo avisa en lugar de dejarla sin material.",
+    "n": 3,
+    "total": 6,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "añadir a un tipo",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "tipo nuevo",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "baja correcta",
+      "actual": true
+     },
+     {
+      "n": 4,
+      "titulo": "unidades necesarias",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "baja repetida",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "tipos ofrecidos",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "\"Cuerda\" tiene 6 unidades sin préstamos ni reservas"
+     },
+     {
+      "k": "Cuando",
+      "texto": "retira 1 unidad rota"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Cuerda: 5 unidades\" en \"Material\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 7: Inventario. El encargado añade material nuevo y da de baja las unidades rotas. Si una unidad rota hace falta para una reserva ya hecha, la web se lo avisa en lugar de dejarla sin material. Tiene 6 criterios de aceptación. Este vídeo demuestra el criterio 3: baja correcta. Dado que Cuerda tiene 6 unidades sin préstamos ni reservas, cuando retira 1 unidad rota, entonces ve Cuerda: 5 unidades en Material. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-016-02",
+   "req": "REQ-F-007",
+   "ac": 4,
+   "uc": "UC-016",
+   "frase": "Inventario. En Material (ejemplo con datos: \"Tienda: 2 unidades\") se ve «No se puede dar de baja: hay {n} unidades de {material} necesarias el {día}» y «{material}: {total} unidades».",
+   "visible": true,
+   "then": "the user sees \"No se puede dar de baja: hay 2 unidades de Tienda necesarias el 2026-12-06\" and \"Tienda: 2 unidades\"",
+   "ve": [
+    "No se puede dar de baja: hay {n} unidades de {material} necesarias el {día}",
+    "{material}: {total} unidades"
+   ],
+   "pantalla": "Material (ejemplo con datos: \"Tienda: 2 unidades\")",
+   "presentacion": {
+    "requisito": "REQ-F-007",
+    "titulo": "Inventario",
+    "para_el_cliente": "El encargado añade material nuevo y da de baja las unidades rotas. Si una unidad rota hace falta para una reserva ya hecha, la web se lo avisa en lugar de dejarla sin material.",
+    "n": 4,
+    "total": 6,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "añadir a un tipo",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "tipo nuevo",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "baja correcta",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "unidades necesarias",
+      "actual": true
+     },
+     {
+      "n": 5,
+      "titulo": "baja repetida",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "tipos ofrecidos",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "\"Tienda\" tiene 2 unidades, ambas reservadas el 2026-12-06"
+     },
+     {
+      "k": "Cuando",
+      "texto": "retira 1 unidad"
+     },
+     {
+      "k": "Entonces",
+      "texto": "error `E_BAJA_UNIDADES_NECESARIAS`: \"No se puede dar de baja: hay 2 unidades de Tienda necesarias el 2026-12-06\""
+     },
+     {
+      "k": "Y",
+      "texto": "ve \"Tienda: 2 unidades\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 7: Inventario. El encargado añade material nuevo y da de baja las unidades rotas. Si una unidad rota hace falta para una reserva ya hecha, la web se lo avisa en lugar de dejarla sin material. Tiene 6 criterios de aceptación. Este vídeo demuestra el criterio 4: unidades necesarias. Dado que Tienda tiene 2 unidades, ambas reservadas el 2026-12-06, cuando retira 1 unidad, entonces error E_BAJA_UNIDADES_NECESARIAS: No se puede dar de baja: hay 2 unidades de Tienda necesarias el 2026-12-06 y ve Tienda: 2 unidades. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-016-03",
+   "req": "REQ-F-007",
+   "ac": 5,
+   "uc": "UC-016",
+   "frase": "Inventario. En Material (ejemplo con datos: \"Cuerda: 0 unidades\") se ve «No hay tantas unidades para dar de baja» y «{material}: {total} unidades».",
+   "visible": true,
+   "then": "the user sees \"No hay tantas unidades para dar de baja\" and \"Cuerda: 0 unidades\"",
+   "ve": [
+    "No hay tantas unidades para dar de baja",
+    "{material}: {total} unidades"
+   ],
+   "pantalla": "Material (ejemplo con datos: \"Cuerda: 0 unidades\")",
+   "presentacion": {
+    "requisito": "REQ-F-007",
+    "titulo": "Inventario",
+    "para_el_cliente": "El encargado añade material nuevo y da de baja las unidades rotas. Si una unidad rota hace falta para una reserva ya hecha, la web se lo avisa en lugar de dejarla sin material.",
+    "n": 5,
+    "total": 6,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "añadir a un tipo",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "tipo nuevo",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "baja correcta",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "unidades necesarias",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "baja repetida",
+      "actual": true
+     },
+     {
+      "n": 6,
+      "titulo": "tipos ofrecidos",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "\"Cuerda\" tuvo 1 unidad y el encargado la retiró (stock 0)"
+     },
+     {
+      "k": "Cuando",
+      "texto": "envía la misma baja otra vez"
+     },
+     {
+      "k": "Entonces",
+      "texto": "error `E_BAJA_UNIDADES_INSUFICIENTES`: \"No hay tantas unidades para dar de baja\""
+     },
+     {
+      "k": "Y",
+      "texto": "ve \"Cuerda: 0 unidades\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 7: Inventario. El encargado añade material nuevo y da de baja las unidades rotas. Si una unidad rota hace falta para una reserva ya hecha, la web se lo avisa en lugar de dejarla sin material. Tiene 6 criterios de aceptación. Este vídeo demuestra el criterio 5: baja repetida. Dado que Cuerda tuvo 1 unidad y el encargado la retiró (stock 0), cuando envía la misma baja otra vez, entonces error E_BAJA_UNIDADES_INSUFICIENTES: No hay tantas unidades para dar de baja y ve Cuerda: 0 unidades. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-007-10",
+   "req": "REQ-F-007",
+   "ac": 6,
+   "uc": "UC-007",
+   "frase": "Inventario. En Reservar (ejemplo con datos: \"Casco\") se ve «{material}», «Casco» y «Cuerda».",
+   "visible": true,
+   "then": "the user sees \"Casco\" among the types and \"Cuerda\" does not offer reservation",
+   "ve": [
+    "{material}",
+    "Casco",
+    "Cuerda"
+   ],
+   "pantalla": "Reservar (ejemplo con datos: \"Casco\")",
+   "presentacion": {
+    "requisito": "REQ-F-007",
+    "titulo": "Inventario",
+    "para_el_cliente": "El encargado añade material nuevo y da de baja las unidades rotas. Si una unidad rota hace falta para una reserva ya hecha, la web se lo avisa en lugar de dejarla sin material.",
+    "n": 6,
+    "total": 6,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "añadir a un tipo",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "tipo nuevo",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "baja correcta",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "unidades necesarias",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "baja repetida",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "tipos ofrecidos",
+      "actual": true
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "\"Casco\" tiene 6 unidades y \"Cuerda\" 0"
+     },
+     {
+      "k": "Cuando",
+      "texto": "un socio abre \"Reservar\""
+     },
+     {
+      "k": "Entonces",
+      "texto": "la lista de tipos muestra \"Casco\" y no ofrece \"Cuerda\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 7: Inventario. El encargado añade material nuevo y da de baja las unidades rotas. Si una unidad rota hace falta para una reserva ya hecha, la web se lo avisa en lugar de dejarla sin material. Tiene 6 criterios de aceptación. Este vídeo demuestra el criterio 6: tipos ofrecidos. Dado que Casco tiene 6 unidades y Cuerda 0, cuando un socio abre Reservar, entonces la lista de tipos muestra Casco y no ofrece Cuerda. Ahora, la demostración."
+   }
+  }
+ ]
+}

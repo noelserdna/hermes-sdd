@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-012-03",
+ "test": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-012-03 REQ-F-006 AC6 Marta sin multas mientras Pablo tiene una abre «Mis multas»: ve «No tienes multas» y nada de Pablo",
+ "titulo": "AC-012-03 REQ-F-006 AC6 Marta sin multas mientras Pablo tiene una abre «Mis multas»: ve «No tienes multas» y nada de Pablo",
+ "ve": [
+  "No tienes multas"
+ ],
+ "narrado": "Multas y bloqueo hasta pagarlas. En Mis multas se ve «No tienes multas»: la multa de 6 euros de Pablo no aparece en la lista de Marta.",
+ "url": "http://127.0.0.1:5173/mis-multas",
+ "imagen": "AC-012-03.png",
+ "sha256": "sha256:4734fd1af9e448dc995fac239b86e658434f409887060d8f98cd24dfbe01f098",
+ "at": "2026-11-22T20:35:30.414Z"
+}

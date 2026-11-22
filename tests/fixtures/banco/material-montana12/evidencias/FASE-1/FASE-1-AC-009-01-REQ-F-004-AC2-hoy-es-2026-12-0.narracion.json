@@ -1,0 +1,26 @@
+{
+ "video": "FASE-1-AC-009-01-REQ-F-004-AC2-hoy-es-2026-12-0.webm",
+ "test": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-009-01 REQ-F-004 AC2 hoy es 2026-12-04 y Lucía cancela su reserva del 2026-12-05: ve «Reserva cancelada», su estado «Cancelada» y sus unidades libres",
+ "titulo": "AC-009-01 REQ-F-004 AC2 hoy es 2026-12-04 y Lucía cancela su reserva del 2026-12-05: ve «Reserva cancelada», su estado «Cancelada» y sus unidades libres",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-004: Mis reservas y cancelar. Criterio 2 de 6.",
+   "voz": "Requisito funcional 4: Mis reservas y cancelar. El socio ve sus reservas y las puede cancelar hasta el día antes de que empiecen. Tiene 6 criterios de aceptación. Este vídeo demuestra el criterio 2: cancelar y liberar. Dado que hoy es 2026-12-04, cuando Lucía pulsa Cancelar, entonces ve Reserva cancelada y 2 × Casco del 2026-12-05 al 2026-12-07 — Cancelada en Mis reservas y Pablo Sanz reserva 5 × Casco esas fechas y ve Reserva creada: 5 × Casco del 2026-12-05 al 2026-12-07. Ahora, la demostración.",
+   "presentacion": "AC-009-01"
+  },
+  {
+   "t": 0.514,
+   "texto": "Hoy es 4 de diciembre. Lucía abre Mis reservas y pulsa Cancelar en su reserva del 5 al 7"
+  },
+  {
+   "t": 1.079,
+   "texto": "Las 2 unidades han quedado libres: Lucía reserva ahora 5 cascos esos mismos días, algo que antes no cabía"
+  },
+  {
+   "t": 1.501,
+   "texto": "Mis reservas y cancelar. En Mis reservas se ve «Reserva cancelada», «2 × Casco del 2026-12-05 al 2026-12-07 — Cancelada» y «Reserva creada: 5 × Casco del 2026-12-05 al 2026-12-07»: la reserva queda Cancelada y sus unidades, libres.",
+   "criterio": "AC-009-01"
+  }
+ ]
+}

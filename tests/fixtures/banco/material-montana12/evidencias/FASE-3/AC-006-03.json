@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-006-03",
+ "test": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-03 REQ-F-002 AC9 Marta tiene 2 × Casco del 2026-12-05 al 2026-12-07 y Pablo la da de baja: ve «Socio dado de baja: Marta Ruiz» y Lucía reserva lo mismo: «Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07»",
+ "titulo": "AC-006-03 REQ-F-002 AC9 Marta tiene 2 × Casco del 2026-12-05 al 2026-12-07 y Pablo la da de baja: ve «Socio dado de baja: Marta Ruiz» y Lucía reserva lo mismo: «Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07»",
+ "ve": [
+  "Socio dado de baja: Marta Ruiz",
+  "Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07"
+ ],
+ "narrado": "Alta, baja y contraseña de los socios. En Socios se ve «Socio dado de baja: Marta Ruiz» y Lucía, con los mismos dos cascos y las mismas fechas, ve «Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07»: las unidades de Marta quedaron libres.",
+ "url": "http://127.0.0.1:5173/mis-reservas",
+ "imagen": "AC-006-03.png",
+ "sha256": "sha256:717a32c0b84d9f404bd357d8c0ff5a409e8e6910695b423da07bb10db19c29f7",
+ "at": "2026-11-22T20:35:15.241Z"
+}

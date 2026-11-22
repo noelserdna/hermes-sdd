@@ -1,0 +1,26 @@
+{
+ "video": "SIN-FASE-AC-018-03-REQ-F-009-AC3-la-junta-busca-.webm",
+ "test": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-03 REQ-F-009 AC3 la junta busca «zzz»: ve «Ningún socio coincide»",
+ "titulo": "AC-018-03 REQ-F-009 AC3 la junta busca «zzz»: ve «Ningún socio coincide»",
+ "narraciones": [
+  {
+   "t": 0.012,
+   "texto": "Requisito REQ-F-009: Historial de un socio para la junta. Criterio 3 de 4.",
+   "voz": "Requisito funcional 9: Historial de un socio para la junta. La junta busca a cualquier socio y ve sus préstamos y multas, sin poder cambiar nada. Tiene 4 criterios de aceptación. Este vídeo demuestra el criterio 3: sin coincidencias. cuando la junta busca zzz, entonces error E_BUSQUEDA_VACIA y ve Ningún socio coincide en Historial del socio. Ahora, la demostración.",
+   "presentacion": "AC-018-03"
+  },
+  {
+   "t": 0.594,
+   "texto": "Elena, de la junta, entra y se encuentra en Historial del socio"
+  },
+  {
+   "t": 1.074,
+   "texto": "Escribe «zzz» en «Buscar por nombre o correo» y pulsa Buscar"
+  },
+  {
+   "t": 1.366,
+   "texto": "Historial de un socio para la junta. En Historial del socio se ve «Ningún socio coincide»: no se muestra ningún historial.",
+   "criterio": "AC-018-03"
+  }
+ ]
+}

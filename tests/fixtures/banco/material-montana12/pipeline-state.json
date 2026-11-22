@@ -1,0 +1,847 @@
+{
+  "sddVersion": "__SDD_VERSION__",
+  "hooksVersion": 3,
+  "currentStage": "task-implementer",
+  "lastUpdated": "2026-11-22T20:36:48Z",
+  "route": {
+    "decidedAt": "2026-11-22T13:57:51Z",
+    "factors": {
+      "external_customer": {
+        "p": 0.8,
+        "value": "yes"
+      },
+      "sensitive_data": {
+        "p": 0.75,
+        "value": "yes"
+      },
+      "multi_actor": {
+        "p": 0.97,
+        "value": "yes"
+      },
+      "integrations": {
+        "p": 0.05,
+        "value": "no"
+      },
+      "ui_flows": {
+        "p": 0.92,
+        "value": "yes"
+      },
+      "long_lived": {
+        "p": 0.6,
+        "value": "doubt"
+      },
+      "complex_state": {
+        "p": 0.82,
+        "value": "yes"
+      }
+    },
+    "facts": {
+      "req_f": 9,
+      "req_nf": 3,
+      "req_c": 2,
+      "must": 11,
+      "needs": 10,
+      "needs_out": 0,
+      "has_code": false,
+      "has_profile": true,
+      "stack_declared": true,
+      "req_nf_perf": 1
+    },
+    "stages": {
+      "requirements-engineer": {
+        "run": true,
+        "reason": "core"
+      },
+      "specifications-engineer": {
+        "run": true,
+        "reason": "run: 9 REQ-F (> 8), several user types, sensitive data, complex state"
+      },
+      "spec-auditor": {
+        "run": true,
+        "reason": "run: 9 REQ-F (> 5), sensitive data, external customer"
+      },
+      "test-planner": {
+        "run": true,
+        "reason": "run: UI screens, 9 REQ-F (> 8), external customer"
+      },
+      "plan-architect": {
+        "run": true,
+        "reason": "core"
+      },
+      "task-generator": {
+        "run": true,
+        "reason": "core"
+      },
+      "task-implementer": {
+        "run": true,
+        "reason": "core"
+      },
+      "acceptance": {
+        "run": true,
+        "reason": "core"
+      },
+      "security-auditor": {
+        "run": true,
+        "reason": "run: sensitive data"
+      },
+      "ux-designer": {
+        "run": true,
+        "reason": "run: UI screens"
+      },
+      "tech-designer": {
+        "run": true,
+        "reason": "run: complex state"
+      },
+      "gap-detector": {
+        "run": true,
+        "reason": "run: formal specs run, gaps are checked against them"
+      }
+    },
+    "artifacts": {
+      "test-matrix": {
+        "make": true,
+        "reason": "make: 9 REQ-F (> 8)"
+      },
+      "perf-scenarios": {
+        "make": true,
+        "reason": "make: 1 REQ-NF about speed or load"
+      },
+      "traceability-matrix": {
+        "make": "generated",
+        "reason": "generated with sdd trace matrix --out spec/TRACEABILITY-MATRIX.md, never written by hand"
+      }
+    },
+    "doubts": [
+      "long_lived"
+    ],
+    "escalations": [],
+    "confirmedBy": "Andres Leon (Cliente) vía local",
+    "reqHash": "sha256:c5b5761508d981643bd2d206dd09513cea450321c3185e5ce23d0b0a34cf1638"
+  },
+  "stages": {
+    "requirements-engineer": {
+      "status": "done",
+      "outputHash": null,
+      "lastRun": "2026-11-22T13:55:33Z",
+      "staleReason": null,
+      "summary": {
+        "artifacts": [
+          {
+            "file": "requirements/REQUIREMENTS.md",
+            "label": "Requirements Document"
+          },
+          {
+            "file": "requirements/CUSTOMER-NEEDS.md",
+            "label": "Customer Needs"
+          }
+        ],
+        "metrics": {
+          "total_requirements": 14,
+          "functional": 9,
+          "nonfunctional": 3,
+          "constraints": 2,
+          "needs": 10,
+          "needs_out_of_scope": 0,
+          "must_ratio": 0.92,
+          "approved_tag": null
+        },
+        "highlights": [
+          "Cada criterio dice qué se ve (Se ve) o No visible con su comprobación",
+          "Textos con huecos de multa y retraso con ejemplo con datos",
+          "Panel del encargado lista también lo que hay por entregar"
+        ],
+        "nextStep": "Approve requirements (gate 1)",
+        "generatedAt": "2026-11-22T12:53:28.334Z"
+      }
+    },
+    "specifications-engineer": {
+      "status": "done",
+      "outputHash": null,
+      "lastRun": "2026-11-22T14:08:53.948Z",
+      "staleReason": null,
+      "summary": {
+        "artifacts": [
+          {
+            "file": "spec/CLARIFICATIONS-PENDING.md",
+            "label": "CLARIFICATIONS-PENDING"
+          },
+          {
+            "file": "spec/CLARIFICATIONS.md",
+            "label": "CLARIFICATIONS"
+          },
+          {
+            "file": "spec/DERIVED-SPECS.md",
+            "label": "DERIVED-SPECS"
+          },
+          {
+            "file": "spec/README.md",
+            "label": "README"
+          },
+          {
+            "file": "spec/TRACEABILITY-MATRIX.md",
+            "label": "TRACEABILITY-MATRIX"
+          },
+          {
+            "file": "spec/VALUE-REGISTRY.md",
+            "label": "VALUE-REGISTRY"
+          },
+          {
+            "file": "spec/adr/ADR-001-disponibilidad-por-dia.md",
+            "label": "ADR-001-disponibilidad-por-dia"
+          },
+          {
+            "file": "spec/adr/ADR-002-estados-derivados.md",
+            "label": "ADR-002-estados-derivados"
+          },
+          {
+            "file": "spec/adr/ADR-003-baja-logica.md",
+            "label": "ADR-003-baja-logica"
+          },
+          {
+            "file": "spec/adr/ADR-004-multa-al-devolver.md",
+            "label": "ADR-004-multa-al-devolver"
+          },
+          {
+            "file": "spec/adr/ADR-005-operaciones-idempotentes.md",
+            "label": "ADR-005-operaciones-idempotentes"
+          },
+          {
+            "file": "spec/contracts/API-cuentas.md",
+            "label": "API-cuentas"
+          },
+          {
+            "file": "spec/contracts/API-material.md",
+            "label": "API-material"
+          },
+          {
+            "file": "spec/contracts/API-multas.md",
+            "label": "API-multas"
+          },
+          {
+            "file": "spec/contracts/API-prestamos.md",
+            "label": "API-prestamos"
+          },
+          {
+            "file": "spec/contracts/EVENTS-cuentas.md",
+            "label": "EVENTS-cuentas"
+          },
+          {
+            "file": "spec/contracts/EVENTS-material.md",
+            "label": "EVENTS-material"
+          },
+          {
+            "file": "spec/contracts/EVENTS-multas.md",
+            "label": "EVENTS-multas"
+          },
+          {
+            "file": "spec/contracts/EVENTS-prestamos.md",
+            "label": "EVENTS-prestamos"
+          },
+          {
+            "file": "spec/contracts/PERMISSIONS-MATRIX.md",
+            "label": "PERMISSIONS-MATRIX"
+          },
+          {
+            "file": "spec/domain/01-GLOSSARY.md",
+            "label": "01-GLOSSARY"
+          },
+          {
+            "file": "spec/domain/02-ENTITIES.md",
+            "label": "02-ENTITIES"
+          },
+          {
+            "file": "spec/domain/03-VALUE-OBJECTS.md",
+            "label": "03-VALUE-OBJECTS"
+          },
+          {
+            "file": "spec/domain/04-STATES.md",
+            "label": "04-STATES"
+          },
+          {
+            "file": "spec/domain/05-INVARIANTS.md",
+            "label": "05-INVARIANTS"
+          },
+          {
+            "file": "spec/nfr/LIMITS.md",
+            "label": "LIMITS"
+          },
+          {
+            "file": "spec/nfr/MAINTAINABILITY.md",
+            "label": "MAINTAINABILITY"
+          },
+          {
+            "file": "spec/nfr/PERFORMANCE.md",
+            "label": "PERFORMANCE"
+          },
+          {
+            "file": "spec/nfr/SECURITY.md",
+            "label": "SECURITY"
+          },
+          {
+            "file": "spec/tests/BDD-UC-001.md",
+            "label": "BDD-UC-001"
+          },
+          {
+            "file": "spec/tests/BDD-UC-002.md",
+            "label": "BDD-UC-002"
+          },
+          {
+            "file": "spec/tests/BDD-UC-003.md",
+            "label": "BDD-UC-003"
+          },
+          {
+            "file": "spec/tests/BDD-UC-004.md",
+            "label": "BDD-UC-004"
+          },
+          {
+            "file": "spec/tests/BDD-UC-005.md",
+            "label": "BDD-UC-005"
+          },
+          {
+            "file": "spec/tests/BDD-UC-006.md",
+            "label": "BDD-UC-006"
+          },
+          {
+            "file": "spec/tests/BDD-UC-007.md",
+            "label": "BDD-UC-007"
+          },
+          {
+            "file": "spec/tests/BDD-UC-008.md",
+            "label": "BDD-UC-008"
+          },
+          {
+            "file": "spec/tests/BDD-UC-009.md",
+            "label": "BDD-UC-009"
+          },
+          {
+            "file": "spec/tests/BDD-UC-010.md",
+            "label": "BDD-UC-010"
+          },
+          {
+            "file": "spec/tests/BDD-UC-011.md",
+            "label": "BDD-UC-011"
+          },
+          {
+            "file": "spec/tests/BDD-UC-012.md",
+            "label": "BDD-UC-012"
+          },
+          {
+            "file": "spec/tests/BDD-UC-013.md",
+            "label": "BDD-UC-013"
+          },
+          {
+            "file": "spec/tests/BDD-UC-014.md",
+            "label": "BDD-UC-014"
+          },
+          {
+            "file": "spec/tests/BDD-UC-015.md",
+            "label": "BDD-UC-015"
+          },
+          {
+            "file": "spec/tests/BDD-UC-016.md",
+            "label": "BDD-UC-016"
+          },
+          {
+            "file": "spec/tests/BDD-UC-017.md",
+            "label": "BDD-UC-017"
+          },
+          {
+            "file": "spec/tests/BDD-UC-018.md",
+            "label": "BDD-UC-018"
+          },
+          {
+            "file": "spec/tests/BDD-UC-019.md",
+            "label": "BDD-UC-019"
+          },
+          {
+            "file": "spec/tests/PROPERTY-TESTS.md",
+            "label": "PROPERTY-TESTS"
+          },
+          {
+            "file": "spec/use-cases/UC-001-entrar.md",
+            "label": "UC-001-entrar"
+          },
+          {
+            "file": "spec/use-cases/UC-002-salir.md",
+            "label": "UC-002-salir"
+          },
+          {
+            "file": "spec/use-cases/UC-003-alta-socio.md",
+            "label": "UC-003-alta-socio"
+          },
+          {
+            "file": "spec/use-cases/UC-004-cambiar-contrasena.md",
+            "label": "UC-004-cambiar-contrasena"
+          },
+          {
+            "file": "spec/use-cases/UC-005-restablecer-contrasena.md",
+            "label": "UC-005-restablecer-contrasena"
+          },
+          {
+            "file": "spec/use-cases/UC-006-baja-socio.md",
+            "label": "UC-006-baja-socio"
+          },
+          {
+            "file": "spec/use-cases/UC-007-reservar-material.md",
+            "label": "UC-007-reservar-material"
+          },
+          {
+            "file": "spec/use-cases/UC-008-mis-reservas.md",
+            "label": "UC-008-mis-reservas"
+          },
+          {
+            "file": "spec/use-cases/UC-009-cancelar-reserva.md",
+            "label": "UC-009-cancelar-reserva"
+          },
+          {
+            "file": "spec/use-cases/UC-010-entregar-reserva.md",
+            "label": "UC-010-entregar-reserva"
+          },
+          {
+            "file": "spec/use-cases/UC-011-recibir-devolucion.md",
+            "label": "UC-011-recibir-devolucion"
+          },
+          {
+            "file": "spec/use-cases/UC-012-mis-multas.md",
+            "label": "UC-012-mis-multas"
+          },
+          {
+            "file": "spec/use-cases/UC-013-marcar-multa-pagada.md",
+            "label": "UC-013-marcar-multa-pagada"
+          },
+          {
+            "file": "spec/use-cases/UC-014-ver-multas.md",
+            "label": "UC-014-ver-multas"
+          },
+          {
+            "file": "spec/use-cases/UC-015-anadir-unidades.md",
+            "label": "UC-015-anadir-unidades"
+          },
+          {
+            "file": "spec/use-cases/UC-016-retirar-unidades.md",
+            "label": "UC-016-retirar-unidades"
+          },
+          {
+            "file": "spec/use-cases/UC-017-panel-encargado.md",
+            "label": "UC-017-panel-encargado"
+          },
+          {
+            "file": "spec/use-cases/UC-018-historial-socio.md",
+            "label": "UC-018-historial-socio"
+          },
+          {
+            "file": "spec/use-cases/UC-019-depurar-historial.md",
+            "label": "UC-019-depurar-historial"
+          },
+          {
+            "file": "spec/workflows/WF-001-ciclo-prestamo.md",
+            "label": "WF-001-ciclo-prestamo"
+          },
+          {
+            "file": "spec/workflows/WF-002-alta-primer-acceso.md",
+            "label": "WF-002-alta-primer-acceso"
+          }
+        ],
+        "metrics": {
+          "use_cases": 19,
+          "workflows": 2,
+          "api_contracts": 4,
+          "bdd_scenarios": 110,
+          "invariants": 33,
+          "adrs": 5,
+          "spec_chars": 130892,
+          "spec_budget_chars": 120000,
+          "mode": "fanout",
+          "spec_agents": 4
+        },
+        "highlights": [
+          "19 casos de uso, 110 escenarios BDD, 33 invariantes y 4 contratos (Style operations) para 9 REQ-F",
+          "9 supuestos Tier 1 [PENDING REQ] en DERIVED-SPECS.md (>3: revisar en la puerta o con sdd-req-change); ninguno contradice un REQ",
+          "spec/ 131k caracteres: 9 % sobre el presupuesto de 120k (9 casos de uso con muchas excepciones)",
+          "Los ejemplos con «Pablo» mezclan encargado y socio: resuelto en RN-008 sin reabrir requisitos"
+        ],
+        "nextStep": "Run /sdd-spec-auditor",
+        "generatedAt": "2026-11-22T14:08:53.948Z"
+      }
+    },
+    "spec-auditor": {
+      "status": "done",
+      "outputHash": null,
+      "lastRun": "2026-11-22T14:13:13.643Z",
+      "staleReason": null,
+      "summary": {
+        "artifacts": [
+          {
+            "file": "audits/AUDIT-BASELINE.md",
+            "label": "Audit Baseline"
+          }
+        ],
+        "metrics": {
+          "total_findings": 24,
+          "critical": 0,
+          "high": 2,
+          "medium": 13,
+          "low": 9,
+          "batched_findings": 6,
+          "gate_result": "CONDITIONAL",
+          "audit_cycle": 1,
+          "topFindingCategories": [
+            "CAT-03",
+            "CAT-05",
+            "CAT-06"
+          ],
+          "report_chars": 11528,
+          "mode": "fanout"
+        },
+        "highlights": [
+          "24 findings abiertos: 0 P0, 2 P1, 13 P2, 9 P3",
+          "Gate: CONDITIONAL — P1 abiertos CON-001, CON-002 (con pregunta)",
+          "fanout: 4 auditors (sonnet)",
+          "Mode Fix: depuración alineada con RN-033 en 5 documentos"
+        ],
+        "nextStep": "Run /sdd-test-planner",
+        "templateImprovements": [
+          "UC: exigir fila de error para id inexistente y orden de validación",
+          "Contratos: listar E_ALMACEN_NO_DISPONIBLE en toda escritura",
+          "BDD/PROP: fijar el valor frontera de cada límite"
+        ],
+        "generatedAt": "2026-11-22T14:13:13.643Z"
+      }
+    },
+    "test-planner": {
+      "status": "done",
+      "outputHash": null,
+      "lastRun": "2026-11-22T14:21:52Z",
+      "staleReason": null,
+      "summary": {
+        "artifacts": [
+          {
+            "file": "test/TEST-PLAN.md",
+            "label": "Test Strategy"
+          },
+          {
+            "file": "test/E2E-SCENARIOS.md",
+            "label": "E2E"
+          },
+          {
+            "file": "test/PERF-SCENARIOS.md",
+            "label": "Performance"
+          },
+          {
+            "file": "test/TEST-MATRIX-UC-001..019.md",
+            "label": "Matrices"
+          }
+        ],
+        "metrics": {
+          "bdd_scenarios": 110,
+          "test_matrices": 19,
+          "matrix_cases": 271,
+          "perf_scenarios": 3,
+          "e2e_scenarios": 25,
+          "visual_criteria": 66,
+          "visual_criteria_covered": 66,
+          "smoke_deploy_scenarios": 0,
+          "replay_rows": 22,
+          "race_rows": 14,
+          "test_gaps": 7,
+          "test_chars": 110584,
+          "mode": "fanout",
+          "matrix_agents": 6
+        },
+        "highlights": [
+          "Planificado contra spec con gate CONDITIONAL (CON-001, CON-002 abiertos)",
+          "271 casos de matriz, 30 con undefined in spec y 43 hallazgos para el auditor",
+          "test/ ocupa 110 584 caracteres, sobre el presupuesto de 65 000 (19 UC, 66 criterios visuales)",
+          "2 criterios No visible sin captura"
+        ],
+        "nextStep": "Run /sdd-plan-architect",
+        "generatedAt": "2026-11-22T14:21:30.018Z"
+      }
+    },
+    "plan-architect": {
+      "status": "done",
+      "outputHash": null,
+      "lastRun": "2026-11-22T14:31:58Z",
+      "staleReason": null,
+      "summary": {
+        "artifacts": [
+          {
+            "file": "plan/PLAN.md",
+            "label": "Master plan"
+          },
+          {
+            "file": "plan/ARCHITECTURE.md",
+            "label": "Architecture"
+          },
+          {
+            "file": "plan/CLARIFY-LOG.md",
+            "label": "Clarify log"
+          },
+          {
+            "file": "plan/RESEARCH.md",
+            "label": "Research (skipped)"
+          },
+          {
+            "file": "plan/fases/README.md",
+            "label": "FASE index"
+          },
+          {
+            "file": "plan/fases/FASE-0-SKELETON.md",
+            "label": "FASE 0: Entrar y material"
+          },
+          {
+            "file": "plan/fases/FASE-1-RESERVAS.md",
+            "label": "FASE 1: Reservas"
+          },
+          {
+            "file": "plan/fases/FASE-2-ENTREGAS.md",
+            "label": "FASE 2: Entregas y panel"
+          },
+          {
+            "file": "plan/fases/FASE-3-SOCIOS.md",
+            "label": "FASE 3: Socios"
+          },
+          {
+            "file": "plan/fases/FASE-4-MULTAS.md",
+            "label": "FASE 4: Multas"
+          },
+          {
+            "file": "plan/fases/FASE-5-JUNTA.md",
+            "label": "FASE 5: Junta y retención"
+          },
+          {
+            "file": "plan/fase-plans/PLAN-FASE-0.md",
+            "label": "Plan FASE 0"
+          },
+          {
+            "file": "plan/fase-plans/PLAN-FASE-1.md",
+            "label": "Plan FASE 1"
+          },
+          {
+            "file": "plan/fase-plans/PLAN-FASE-2.md",
+            "label": "Plan FASE 2"
+          },
+          {
+            "file": "plan/fase-plans/PLAN-FASE-3.md",
+            "label": "Plan FASE 3"
+          },
+          {
+            "file": "plan/fase-plans/PLAN-FASE-4.md",
+            "label": "Plan FASE 4"
+          },
+          {
+            "file": "plan/fase-plans/PLAN-FASE-5.md",
+            "label": "Plan FASE 5"
+          }
+        ],
+        "metrics": {
+          "total_fases": 6,
+          "plan_style": "vertical",
+          "demo_steps": 55,
+          "components": 7,
+          "adrs_created": 0,
+          "clarify_questions": 0,
+          "research_items": 0,
+          "plan_chars": 87014,
+          "plan_budget_chars": 136000,
+          "operation_mapping": "existing"
+        },
+        "highlights": [
+          "6 entregas verticales sin HARDENING: REQ-NF-002 se mide en FASE-2 junto al panel; REQ-NF-001/003 se juzgan en FASE-5",
+          "Aplicadas las 3 respuestas del cliente (sesión >30 min, baja repetida avisa, datos de bajas borrados a los 3 años) como D-PA-001..003; aún no están en spec/",
+          "FASE-0 y FASE-3 llevan 4 UC (aviso P-SIZE) para no pasar de 6 FASEs",
+          "Hasta FASE-3 los socios se siembran con demo/sembrar.mjs"
+        ],
+        "nextStep": "Run /sdd-task-generator",
+        "generatedAt": "2026-11-22T14:31:58Z"
+      }
+    },
+    "task-generator": {
+      "status": "done",
+      "outputHash": null,
+      "lastRun": "2026-11-22T14:38:29.051Z",
+      "staleReason": null,
+      "summary": {
+        "artifacts": [
+          {
+            "file": "task/TASK-FASE-0.md",
+            "label": "FASE 0 Tasks"
+          },
+          {
+            "file": "task/TASK-FASE-1.md",
+            "label": "FASE 1 Tasks"
+          },
+          {
+            "file": "task/TASK-FASE-2.md",
+            "label": "FASE 2 Tasks"
+          },
+          {
+            "file": "task/TASK-FASE-3.md",
+            "label": "FASE 3 Tasks"
+          },
+          {
+            "file": "task/TASK-FASE-4.md",
+            "label": "FASE 4 Tasks"
+          },
+          {
+            "file": "task/TASK-FASE-5.md",
+            "label": "FASE 5 Tasks"
+          },
+          {
+            "file": "task/TASK-ORDER.md",
+            "label": "Implementation order"
+          },
+          {
+            "file": "task/TASK-INDEX.md",
+            "label": "Task index"
+          }
+        ],
+        "metrics": {
+          "total_tasks": 41,
+          "parallelizable_pct": 0,
+          "safe_revert": 39,
+          "coupled_revert": 0,
+          "migration_revert": 1,
+          "config_revert": 1,
+          "streamsPerFase": {
+            "0": 1,
+            "1": 1,
+            "2": 1,
+            "3": 1,
+            "4": 1,
+            "5": 1
+          },
+          "mode": "sequential",
+          "task_agents": 0,
+          "format": "full"
+        },
+        "highlights": [
+          "Generación secuencial (sin fan-out) por presupuesto: los 6 planes caben en el hilo principal y comparten ids y write-sets",
+          "41 tareas en 6 entregas (9, 7, 7, 7, 5, 6); todas en serie (un bloque A por FASE)",
+          "FASE-0 tiene 9 tareas por llevar 4 casos de uso; app desplegable desde TASK-F0-001 (build, start con PORT/HOST, README)",
+          "Los recorridos solo cubren los pasos de la demo (política de tests del cliente): 28 avisos V-21 esperados",
+          "Decisiones del cliente aplicadas: sesión > 30 min, aviso de baja repetida, borrado de datos a los 3 años"
+        ],
+        "nextStep": "Run /sdd-task-implementer --fase=0",
+        "generatedAt": "2026-11-22T14:38:29.051Z"
+      }
+    },
+    "task-implementer": {
+      "status": "done",
+      "outputHash": null,
+      "lastRun": "2026-11-22T19:37:52.520Z",
+      "staleReason": null,
+      "summary": {
+        "artifacts": [
+          "src/server/servicios/historial.js",
+          "src/server/servicios/depurar.js",
+          "src/server/http/rutas.js",
+          "src/server/http/plugin.js",
+          "src/ui/paginas/historial.js",
+          "demo/sembrar.mjs",
+          "tests/integration/historial.test.js",
+          "tests/integration/depurar.test.js",
+          "tests/integration/aislamiento.test.js",
+          "tests/unit/ui/historial.test.js",
+          "tests/e2e/fase-5.spec.js",
+          "feedback/IMPL-FEEDBACK-FASE-5.md",
+          "acceptance/ACCEPTANCE-REPORT.md"
+        ],
+        "metrics": {
+          "tasks_completed": 6,
+          "tasks_remaining": 1,
+          "commits": 12,
+          "tests_passed": 317,
+          "tests_failed": 0,
+          "mode": "sequential",
+          "pauses": 1,
+          "stack": "vite-vitest",
+          "profile_source": "declared",
+          "inline_p_tasks": 0,
+          "floor_errors": 0,
+          "review_findings": 2
+        },
+        "highlights": [
+          "FASE-5: historial de solo lectura para la junta, depuración a 3 años y borrado de datos personales; REQ-F-009, REQ-NF-001 y REQ-NF-003 VERIFIED (10/10)",
+          "317 unit/integración, 71 e2e, lint, build, lint --captures y --quotes sin errores",
+          "TASK-F5-007 (observación Q1 de FASE-4) bloqueada: Q-task-implementer-008 pide permiso firmado para editar tests/e2e/fase-2.spec.js",
+          "Revisión independiente: 2 hallazgos (copia .bak con datos personales; bajas sin fecha) en IMPL-FEEDBACK-FASE-5",
+          "Sin etiqueta fase-5-verified: queda TASK-F5-007 y 2 hallazgos por encaminar"
+        ],
+        "nextStep": "Contestar Q-task-implementer-008 y puerta de aceptación de FASE-5",
+        "generatedAt": "2026-11-22T19:37:52.520Z"
+      }
+    },
+    "security-auditor": {
+      "status": "done",
+      "outputHash": null,
+      "lastRun": "2026-11-22T14:21:53Z",
+      "staleReason": null
+    },
+    "tech-designer": {
+      "status": "done",
+      "outputHash": null,
+      "lastRun": "2026-11-22T14:21:53Z",
+      "staleReason": null
+    },
+    "ux-designer": {
+      "status": "done",
+      "outputHash": null,
+      "lastRun": "2026-11-22T14:21:53Z",
+      "staleReason": null
+    },
+    "acceptance": {
+      "outputHash": null,
+      "lastRun": "2026-11-22T20:36:48Z",
+      "staleReason": null,
+      "status": "done",
+      "summary": {
+        "artifacts": [
+          "acceptance/ACCEPTANCE-REPORT.md"
+        ],
+        "metrics": {
+          "must_total": 2,
+          "must_verified": 2,
+          "must_waived": 0,
+          "failing": 0,
+          "missing": 0,
+          "stale_evidence": 0,
+          "goal": "met",
+          "gate_exit": 4,
+          "loop_cycles": 0,
+          "loop_stop": null,
+          "test_edits": 0,
+          "floor_errors": 0,
+          "evaluated_sha": "11ca658fd04ac1eea6ed2b07456a4a469c52b903",
+          "mode": "check",
+          "unshown": 0,
+          "literal_gaps": 0
+        },
+        "highlights": [
+          "FASE-5: REQ-F-009, REQ-NF-001 y REQ-NF-003 VERIFIED con la suite vitest recapturada en 11ca658 (318/318)",
+          "Gate exit 4: el desafío CH-011 (REQ-NF-001 AC3, Must) sigue abierto: el texto de la lista de socios no coincide con el criterio",
+          "Pregunta abierta Q-acceptance-003: «Acceso denegado» o «No tienes permiso para ver esta página» al abrir la lista de socios",
+          "CH-012 (Should, REQ-NF-003 AC2) queda stale tras dfea343: pendiente de una ronda adversarial incremental",
+          "Sin firma ni registros humanos: la aceptación la decide la persona en la puerta"
+        ],
+        "nextStep": "Responder Q-acceptance-003 y resolver o descartar CH-011; después, ronda adversarial incremental para CH-012 y puerta de FASE-5"
+      }
+    },
+    "gap-detector": {
+      "status": "done",
+      "lastRun": "2026-11-22T20:27:10.132Z"
+    }
+  },
+  "summary": {
+    "artifacts": [
+      {
+        "path": ".sdd/gap-analysis.json",
+        "label": "Gap Analysis Results"
+      },
+      {
+        "path": "audits/GAP-ANALYSIS-REVIEW.md",
+        "label": "Gap review"
+      }
+    ]
+  }
+}

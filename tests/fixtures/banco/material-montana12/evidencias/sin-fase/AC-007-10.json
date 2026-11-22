@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-007-10",
+ "test": "FASE-0 · Material (REQ-F-007) › AC-007-10 REQ-F-007 AC6 con «Casco» a 6 y «Cuerda» a 0, un socio abre Reservar y ve «Casco» entre los tipos sin que se ofrezca «Cuerda»",
+ "titulo": "AC-007-10 REQ-F-007 AC6 con «Casco» a 6 y «Cuerda» a 0, un socio abre Reservar y ve «Casco» entre los tipos sin que se ofrezca «Cuerda»",
+ "ve": [
+  "Casco",
+  "Cuerda"
+ ],
+ "narrado": "Inventario. En Reservar se ve «Casco» entre los tipos, y «Cuerda», que está sin unidades, no se ofrece.",
+ "url": "http://127.0.0.1:5173/reservar",
+ "imagen": "AC-007-10.png",
+ "sha256": "sha256:7c814865c24d1b668c00fe47772075cc70cbd4c201d1af8c1cbd0b45d732084c",
+ "at": "2026-11-22T19:42:27.077Z"
+}

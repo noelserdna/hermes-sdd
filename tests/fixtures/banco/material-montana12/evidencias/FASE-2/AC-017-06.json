@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-017-06",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-06 REQ-F-008 AC6 Lucía, socia, abre «/panel»: ve «No tienes permiso para ver esta página»",
+ "titulo": "AC-017-06 REQ-F-008 AC6 Lucía, socia, abre «/panel»: ve «No tienes permiso para ver esta página»",
+ "ve": [
+  "Sin permiso",
+  "No tienes permiso para ver esta página"
+ ],
+ "narrado": "Qué hay prestado y qué vuelve cada día. Al abrir /panel se ve la pantalla «Sin permiso» con «No tienes permiso para ver esta página», sin ningún dato del panel.",
+ "url": "http://127.0.0.1:5173/panel",
+ "imagen": "AC-017-06.png",
+ "sha256": "sha256:e0193794ba8e3759b0bb7fe9f7e32b9fc60649a72b3aa7e98159595f9e7fe516",
+ "at": "2026-11-22T20:34:50.277Z"
+}

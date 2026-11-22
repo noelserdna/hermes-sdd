@@ -1,0 +1,341 @@
+{
+ "fase": "2",
+ "criterios": [
+  {
+   "criterio": "REQ-F-005-AC1",
+   "req": "REQ-F-005",
+   "ac": 1,
+   "ids": [
+    "AC-010-01",
+    "REQ-F-005-AC1"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-005-AC2",
+   "req": "REQ-F-005",
+   "ac": 2,
+   "ids": [
+    "AC-010-02",
+    "REQ-F-005-AC2"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": false
+   },
+   "faltan": [
+    "su THEN promete lo que no se ve ni se declara no visible: «the loan is still one»"
+   ],
+   "estado": "incompleto"
+  },
+  {
+   "criterio": "REQ-F-005-AC3",
+   "req": "REQ-F-005",
+   "ac": 3,
+   "ids": [
+    "AC-011-01",
+    "REQ-F-005-AC3"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-005-AC4",
+   "req": "REQ-F-005",
+   "ac": 4,
+   "ids": [
+    "AC-011-02",
+    "REQ-F-005-AC4"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-005-AC5",
+   "req": "REQ-F-005",
+   "ac": 5,
+   "ids": [
+    "AC-011-03",
+    "REQ-F-005-AC5"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-005-AC6",
+   "req": "REQ-F-005",
+   "ac": 6,
+   "ids": [
+    "AC-011-04",
+    "REQ-F-005-AC6"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": false
+   },
+   "faltan": [
+    "su THEN promete lo que no se ve ni se declara no visible: «the fine is still 1 of 6 €»"
+   ],
+   "estado": "incompleto"
+  },
+  {
+   "criterio": "REQ-F-005-AC7",
+   "req": "REQ-F-005",
+   "ac": 7,
+   "ids": [
+    "AC-010-04",
+    "REQ-F-005-AC7"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": false
+   },
+   "faltan": [
+    "su THEN promete lo que no se ve ni se declara no visible: «its units are free»"
+   ],
+   "estado": "incompleto"
+  },
+  {
+   "criterio": "REQ-F-005-AC8",
+   "req": "REQ-F-005",
+   "ac": 8,
+   "ids": [
+    "AC-010-03",
+    "REQ-F-005-AC8"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-005-AC9",
+   "req": "REQ-F-005",
+   "ac": 9,
+   "ids": [
+    "AC-017-08",
+    "REQ-F-005-AC9"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": false
+   },
+   "faltan": [
+    "su THEN promete lo que no se ve ni se declara no visible: «the fine is not created until the return is marked»"
+   ],
+   "estado": "incompleto"
+  },
+  {
+   "criterio": "REQ-F-005-AC10",
+   "req": "REQ-F-005",
+   "ac": 10,
+   "ids": [
+    "AC-017-09",
+    "REQ-F-005-AC10"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-008-AC1",
+   "req": "REQ-F-008",
+   "ac": 1,
+   "ids": [
+    "AC-017-01",
+    "REQ-F-008-AC1"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-008-AC2",
+   "req": "REQ-F-008",
+   "ac": 2,
+   "ids": [
+    "AC-017-02",
+    "REQ-F-008-AC2"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-008-AC3",
+   "req": "REQ-F-008",
+   "ac": 3,
+   "ids": [
+    "AC-017-03",
+    "REQ-F-008-AC3"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-008-AC4",
+   "req": "REQ-F-008",
+   "ac": 4,
+   "ids": [
+    "AC-017-04",
+    "REQ-F-008-AC4"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-008-AC5",
+   "req": "REQ-F-008",
+   "ac": 5,
+   "ids": [
+    "AC-017-05",
+    "REQ-F-008-AC5"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-008-AC6",
+   "req": "REQ-F-008",
+   "ac": 6,
+   "ids": [
+    "AC-017-06",
+    "REQ-F-008-AC6"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-008-AC7",
+   "req": "REQ-F-008",
+   "ac": 7,
+   "ids": [
+    "AC-017-07",
+    "REQ-F-008-AC7"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  }
+ ],
+ "resumen": {
+  "criterios": 17,
+  "demostrados": 13,
+  "incompletos": 4
+ }
+}

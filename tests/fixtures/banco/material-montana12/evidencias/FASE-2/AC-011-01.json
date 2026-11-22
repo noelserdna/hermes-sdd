@@ -1,0 +1,15 @@
+{
+ "criterio": "AC-011-01",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-01 REQ-F-005 AC3 el préstamo de Lucía acaba el 2026-12-07 y Pablo lo devuelve ese día: ve «Devuelto a tiempo» y «No hay multas»",
+ "titulo": "AC-011-01 REQ-F-005 AC3 el préstamo de Lucía acaba el 2026-12-07 y Pablo lo devuelve ese día: ve «Devuelto a tiempo» y «No hay multas»",
+ "ve": [
+  "Devuelto a tiempo",
+  "No hay multas",
+  "No tienes multas"
+ ],
+ "narrado": "Entregar y recibir el material. En Panel del encargado se ve «Devuelto a tiempo» y «No hay multas», y Lucía ve «No tienes multas» en Mis multas: no existe ninguna multa.",
+ "url": "http://127.0.0.1:5173/mis-multas",
+ "imagen": "AC-011-01.png",
+ "sha256": "sha256:7d4d22ba2e179e439325026da50cfd81626954ac0e9a8dc741b7f05ea23f15fc",
+ "at": "2026-11-22T20:34:31.160Z"
+}

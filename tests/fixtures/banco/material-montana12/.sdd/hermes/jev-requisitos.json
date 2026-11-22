@@ -1,0 +1,74 @@
+{
+ "necesidades": 10,
+ "dudosas": [],
+ "supuestos": [
+  {
+   "texto": "Solo se guarda nombre, correo, contraseña cifrada y el historial; el historial se borra a los 3 años.",
+   "puntos": 2.64
+  },
+  {
+   "texto": "Una reserva dura como máximo 14 días y 5 unidades por tipo: evita que una persona acapare el material; es una cifra prudente.",
+   "puntos": 2.08
+  },
+  {
+   "texto": "Una reserva que nadie recoge antes de que acabe su fecha de fin pasa a «No recogida» y libera las unidades; no hay multa por no recogerla.",
+   "puntos": 2.01
+  },
+  {
+   "texto": "La multa se crea al marcar la devolución, no antes; si algo no se devuelve nunca, el encargado lo ve como retraso en su panel.",
+   "puntos": 1.87
+  },
+  {
+   "texto": "Dar de baja a un socio con material sin devolver o multas pendientes se rechaza; sus reservas futuras se cancelan al darlo de baja.",
+   "puntos": 1.75
+  },
+  {
+   "texto": "Contraseña olvidada: la restablece el encargado con una provisional; evita enviar correos, que la petición no pide.",
+   "puntos": 1.69
+  },
+  {
+   "texto": "La multa pendiente impide reservar de nuevo, pero no cancela las reservas ya hechas.",
+   "puntos": 1.62
+  },
+  {
+   "texto": "Contraseña mínima de 8 caracteres, bloqueo de 15 minutos tras 5 fallos seguidos y sesión que caduca a los 30 minutos sin actividad: valores habituales en webs de socios.",
+   "puntos": 1.39
+  },
+  {
+   "texto": "Más del 60 % de los requisitos son Must porque casi todo lo pedido es imprescindible para que el préstamo funcione.",
+   "puntos": 1.39
+  },
+  {
+   "texto": "Dar de baja unidades que hacen falta para préstamos o reservas ya hechas se rechaza para no dejar a nadie sin material.",
+   "puntos": 1.36
+  },
+  {
+   "texto": "El encargado también ve la lista de socios y sus multas; la junta no ve el panel del encargado ni modifica nada.",
+   "puntos": 1.35
+  },
+  {
+   "texto": "Las fechas de inicio y fin de una reserva se cuentan ambas; el retraso se cuenta en días naturales después de la fecha de fin; devolver el mismo día de fin no tiene multa.",
+   "puntos": 1.33
+  },
+  {
+   "texto": "Un socio dado de baja que intenta entrar ve el mismo «Correo o contraseña incorrectos»: no se dice si la cuenta existió.",
+   "puntos": 1.19
+  },
+  {
+   "texto": "La junta y el encargado existen como cuentas dadas de alta fuera de la web (datos iniciales); la web solo da de alta socios.",
+   "puntos": 0.96
+  },
+  {
+   "texto": "Las cuentas las crea el encargado (con contraseña provisional que el socio cambia al entrar); la petición no dice quién las da de alta y así no hay registro abierto a cualquiera.",
+   "puntos": 0.82
+  },
+  {
+   "texto": "«Hasta el día antes» = se puede cancelar mientras hoy sea anterior a la fecha de inicio.",
+   "puntos": 0.52
+  },
+  {
+   "texto": "El panel del encargado también lista las reservas por entregar (sin ellas no podría pulsar «Entregar»); la lista de multas del encargado muestra todas con su estado, pendientes y pagadas.",
+   "puntos": 0.48
+  }
+ ]
+}

@@ -1,0 +1,857 @@
+{
+  "$schema": "sdd-adversarial-plan-v1",
+  "evaluated_sha": "8d9200242e000ddc6dbdd2b6e4bffe230c8d8f82",
+  "dirty": false,
+  "generatedAt": "2026-11-22T18:15:51.259Z",
+  "scope": {
+    "fase": 3
+  },
+  "code_paths": [
+    "src"
+  ],
+  "adversarial_gate": "enforce",
+  "incremental": {
+    "since": "18445894f06ca77f08d038780180626bc22465d3",
+    "baseline": ".sdd/hermes/adversarial-FASE-3.json",
+    "changed_files": [],
+    "criteria": 9,
+    "recheck": 0,
+    "carried": 9
+  },
+  "fases": [
+    {
+      "fase": 3,
+      "file": "plan/fases/FASE-3-SOCIOS.md",
+      "header": true,
+      "requirements": [
+        {
+          "id": "REQ-F-002",
+          "title": "Alta, baja y contraseña de los socios",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN the encargado registers a member with name, email and a temporary password of at least 8 characters THE system SHALL create the account, and WHEN the encargado removes a member without open loans or fines THE system SHALL disable the account",
+          "reqHash": "sha256:2bcb12ecaf5862d6436b6aae932c0cb3a3a5f92401224af1587bc5889a4feba0",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN the encargado in \"Socios\" WHEN he registers \"Marta Ruiz\", \"marta@club.test\", password \"Provisional1\" THEN the user sees \"Socio creado: Marta Ruiz\" and \"Marta Ruiz\" in the list",
+              "scenarios": [
+                "AC-003-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-01 REQ-F-002 AC1 Pablo registra a «Marta Ruiz» con «marta@club.test» y la contraseña «Provisional1»: ve «Socio creado: Marta Ruiz» y «Marta Ruiz — Activo»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-01 REQ-F-002 AC1 Pablo registra a «Marta Ruiz» con «marta@club.test» y la contraseña «Provisional1»: ve «Socio creado: Marta Ruiz» y «Marta Ruiz — Activo»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-01 REQ-F-002 AC1 Pablo registra a «Marta Ruiz» con «marta@club.test» y la contraseña «Provisional1»: ve «Socio creado: Marta Ruiz» y «Marta Ruiz — Activo»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-01 REQ-F-002 AC1 Pablo registra a «Marta Ruiz» con «marta@club.test» y la contraseña «Provisional1»: ve «Socio creado: Marta Ruiz» y «Marta Ruiz — Activo»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2dd1c-iz»-y-«Marta-Ruiz-—-Activo»-chromium/attachments/AC-003-01-96bc13639414bc31a25e9df6bd35a548eb70c34f.png",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2dd1c-iz»-y-«Marta-Ruiz-—-Activo»-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--2dd1c-iz»-y-«Marta-Ruiz-—-Activo»-chromium/attachments/AC-003-01-152ed0bb3098e4aa2efbc669b18341981b9b3b5d.png",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--2dd1c-iz»-y-«Marta-Ruiz-—-Activo»-chromium/test-finished-1.png",
+                "evidencias/FASE-3/AC-003-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2dd1c-iz»-y-«Marta-Ruiz-—-Activo»-chromium/attachments/AC-003-01-96bc13639414bc31a25e9df6bd35a548eb70c34f.png": "sha256:15a872e0750c192e282c500161584a08138286f3366c39e1a524094339820d84",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2dd1c-iz»-y-«Marta-Ruiz-—-Activo»-chromium/test-finished-1.png": "sha256:15a872e0750c192e282c500161584a08138286f3366c39e1a524094339820d84",
+                "evidencias/FASE-3/AC-003-01.png": "sha256:15a872e0750c192e282c500161584a08138286f3366c39e1a524094339820d84",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--2dd1c-iz»-y-«Marta-Ruiz-—-Activo»-chromium/attachments/AC-003-01-152ed0bb3098e4aa2efbc669b18341981b9b3b5d.png": "sha256:15a872e0750c192e282c500161584a08138286f3366c39e1a524094339820d84",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--2dd1c-iz»-y-«Marta-Ruiz-—-Activo»-chromium/test-finished-1.png": "sha256:15a872e0750c192e282c500161584a08138286f3366c39e1a524094339820d84"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Socio creado: {nombre}",
+                    "template": true
+                  },
+                  {
+                    "text": "Marta Ruiz — Activo",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2dd1c-iz»-y-«Marta-Ruiz-—-Activo»-chromium/attachments/AC-003-01-96bc13639414bc31a25e9df6bd35a548eb70c34f.png",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2dd1c-iz»-y-«Marta-Ruiz-—-Activo»-chromium/test-finished-1.png",
+                "evidencias/FASE-3/AC-003-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2dd1c-iz»-y-«Marta-Ruiz-—-Activo»-chromium/attachments/WF-002-AC-003-01-REQ-F-002-AC1-Pablo-registra-a-366e6980b2c626b7add9d70ccc15c568021ed6e8.webm",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2dd1c-iz»-y-«Marta-Ruiz-—-Activo»-chromium/video.webm",
+                "evidencias/FASE-3/WF-002-AC-003-01-REQ-F-002-AC1-Pablo-registra-a.mp4",
+                "evidencias/FASE-3/WF-002-AC-003-01-REQ-F-002-AC1-Pablo-registra-a.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 2,
+              "text": "GIVEN \"Marta Ruiz\" exists WHEN the encargado registers \"marta@club.test\" again THEN the user sees \"Ya existe un socio con ese correo\" and the list has one \"Marta Ruiz\"",
+              "scenarios": [
+                "AC-003-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-02 REQ-F-002 AC2 «Marta Ruiz» ya existe y Pablo registra otra vez «marta@club.test»: ve «Ya existe un socio con ese correo» y una sola «Marta Ruiz — Activo»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-02 REQ-F-002 AC2 «Marta Ruiz» ya existe y Pablo registra otra vez «marta@club.test»: ve «Ya existe un socio con ese correo» y una sola «Marta Ruiz — Activo»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-02 REQ-F-002 AC2 «Marta Ruiz» ya existe y Pablo registra otra vez «marta@club.test»: ve «Ya existe un socio con ese correo» y una sola «Marta Ruiz — Activo»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-02 REQ-F-002 AC2 «Marta Ruiz» ya existe y Pablo registra otra vez «marta@club.test»: ve «Ya existe un socio con ese correo» y una sola «Marta Ruiz — Activo»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--db50c--sola-«Marta-Ruiz-—-Activo»-chromium/attachments/AC-003-02-2976a8b9e9441a95daf309686cbd8bd98cb804f1.png",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--db50c--sola-«Marta-Ruiz-—-Activo»-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--db50c--sola-«Marta-Ruiz-—-Activo»-chromium/attachments/AC-003-02-677d58e77b42628a2b8b3efe51c8eba9ce36e5c9.png",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--db50c--sola-«Marta-Ruiz-—-Activo»-chromium/test-finished-1.png",
+                "evidencias/FASE-3/AC-003-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--db50c--sola-«Marta-Ruiz-—-Activo»-chromium/attachments/AC-003-02-2976a8b9e9441a95daf309686cbd8bd98cb804f1.png": "sha256:686657ddf4c74af75b6576742058baceaadf576267000412cf42a9479ad93f42",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--db50c--sola-«Marta-Ruiz-—-Activo»-chromium/test-finished-1.png": "sha256:a429660ab4ab9afc5cbda020652c744bbb3240102d7a50bdab75d76b9580143d",
+                "evidencias/FASE-3/AC-003-02.png": "sha256:686657ddf4c74af75b6576742058baceaadf576267000412cf42a9479ad93f42",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--db50c--sola-«Marta-Ruiz-—-Activo»-chromium/attachments/AC-003-02-677d58e77b42628a2b8b3efe51c8eba9ce36e5c9.png": "sha256:686657ddf4c74af75b6576742058baceaadf576267000412cf42a9479ad93f42",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--db50c--sola-«Marta-Ruiz-—-Activo»-chromium/test-finished-1.png": "sha256:a429660ab4ab9afc5cbda020652c744bbb3240102d7a50bdab75d76b9580143d"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Ya existe un socio con ese correo",
+                    "template": false
+                  },
+                  {
+                    "text": "Marta Ruiz — Activo",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--db50c--sola-«Marta-Ruiz-—-Activo»-chromium/attachments/AC-003-02-2976a8b9e9441a95daf309686cbd8bd98cb804f1.png",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--db50c--sola-«Marta-Ruiz-—-Activo»-chromium/test-finished-1.png",
+                "evidencias/FASE-3/AC-003-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--db50c--sola-«Marta-Ruiz-—-Activo»-chromium/attachments/WF-002-AC-003-02-REQ-F-002-AC2-Marta-Ruiz-ya--afc31bf5473798a2dc1fbfc2a9fbaef57b633dc4.webm",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--db50c--sola-«Marta-Ruiz-—-Activo»-chromium/video.webm",
+                "evidencias/FASE-3/WF-002-AC-003-02-REQ-F-002-AC2-Marta-Ruiz-ya-.mp4",
+                "evidencias/FASE-3/WF-002-AC-003-02-REQ-F-002-AC2-Marta-Ruiz-ya-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 3,
+              "text": "GIVEN the form WHEN the temporary password is \"corta\" THEN the user sees \"La contraseña debe tener al menos 8 caracteres\"",
+              "scenarios": [
+                "AC-003-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-03 REQ-F-002 AC3 Pablo escribe la contraseña provisional «corta»: ve «La contraseña debe tener al menos 8 caracteres»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-03 REQ-F-002 AC3 Pablo escribe la contraseña provisional «corta»: ve «La contraseña debe tener al menos 8 caracteres»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-03 REQ-F-002 AC3 Pablo escribe la contraseña provisional «corta»: ve «La contraseña debe tener al menos 8 caracteres»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-03 REQ-F-002 AC3 Pablo escribe la contraseña provisional «corta»: ve «La contraseña debe tener al menos 8 caracteres»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d13ec-ener-al-menos-8-caracteres»-chromium/attachments/AC-003-03-bd65426efb185a9e0148e7a68bc18d84fedb8d29.png",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d13ec-ener-al-menos-8-caracteres»-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--d13ec-ener-al-menos-8-caracteres»-chromium/attachments/AC-003-03-fdc11e94b725f176c78ea9062c482a55b6ba281c.png",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--d13ec-ener-al-menos-8-caracteres»-chromium/test-finished-1.png",
+                "evidencias/FASE-3/AC-003-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d13ec-ener-al-menos-8-caracteres»-chromium/attachments/AC-003-03-bd65426efb185a9e0148e7a68bc18d84fedb8d29.png": "sha256:133deca8355d0ce65c3e3babf34ec77320cdefd822b26984091a7c0a387c906a",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d13ec-ener-al-menos-8-caracteres»-chromium/test-finished-1.png": "sha256:d3395cd416b20897f28dbe7e8ea046ce54d7b9bb25082de9028020b3d3d0f71a",
+                "evidencias/FASE-3/AC-003-03.png": "sha256:133deca8355d0ce65c3e3babf34ec77320cdefd822b26984091a7c0a387c906a",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--d13ec-ener-al-menos-8-caracteres»-chromium/attachments/AC-003-03-fdc11e94b725f176c78ea9062c482a55b6ba281c.png": "sha256:133deca8355d0ce65c3e3babf34ec77320cdefd822b26984091a7c0a387c906a",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--d13ec-ener-al-menos-8-caracteres»-chromium/test-finished-1.png": "sha256:d3395cd416b20897f28dbe7e8ea046ce54d7b9bb25082de9028020b3d3d0f71a"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "La contraseña debe tener al menos 8 caracteres",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d13ec-ener-al-menos-8-caracteres»-chromium/attachments/AC-003-03-bd65426efb185a9e0148e7a68bc18d84fedb8d29.png",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d13ec-ener-al-menos-8-caracteres»-chromium/test-finished-1.png",
+                "evidencias/FASE-3/AC-003-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d13ec-ener-al-menos-8-caracteres»-chromium/attachments/WF-002-AC-003-03-REQ-F-002-AC3-Pablo-escribe-la-61ab039026244932414289c7b8a579d537ee35d4.webm",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d13ec-ener-al-menos-8-caracteres»-chromium/video.webm",
+                "evidencias/FASE-3/WF-002-AC-003-03-REQ-F-002-AC3-Pablo-escribe-la.mp4",
+                "evidencias/FASE-3/WF-002-AC-003-03-REQ-F-002-AC3-Pablo-escribe-la.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 4,
+              "text": "GIVEN Marta enters with her temporary password WHEN she logs in THEN the user sees \"Elige una contraseña nueva\" and she cannot continue until she sets one of at least 8 characters",
+              "scenarios": [
+                "AC-004-01",
+                "AC-004-02",
+                "AC-004-03"
+              ],
+              "tests": [
+                {
+                  "name": "INV-SOC-006 authorize con contraseña provisional > AC-004-02 solo se permiten salir y cambiar la contraseña; cualquier otra operación pide cambiarla",
+                  "file": "tests/unit/autorizar-provisional.test.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "INV-SOC-006 authorize con contraseña provisional > AC-004-02 de las páginas solo se abre /cambiar-contrasena; el resto lleva allí, también las que el rol no tiene",
+                  "file": "tests/unit/autorizar-provisional.test.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "INV-SOC-006 el router y Entrar con contraseña provisional > AC-004-02 una página que el servidor contesta con «cambiar» lleva a /cambiar-contrasena y pinta esa página",
+                  "file": "tests/unit/ui/cambiar-contrasena.test.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "INV-SOC-006 el router y Entrar con contraseña provisional > AC-004-01 entrar con la provisional deja en los avisos «Elige una contraseña nueva para seguir usando la web» y navega a Cambiar contraseña",
+                  "file": "tests/unit/ui/cambiar-contrasena.test.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "UC-004 · API-001-03 changePassword > AC-004-02 INV-SOC-006 entrar con la provisional lleva a /cambiar-contrasena y todo lo demás pide cambiarla",
+                  "file": "tests/integration/socios.test.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "UC-004 · API-001-03 changePassword > AC-004-03 una contraseña corta se rechaza con E_CONTRASENA_CORTA y la cuenta sigue provisional",
+                  "file": "tests/integration/socios.test.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-004-01 REQ-F-002 AC4 Marta entra con su contraseña provisional: ve «Elige una contraseña nueva» y no sigue hasta elegir una de 8 caracteres o más",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-004-01 REQ-F-002 AC4 Marta entra con su contraseña provisional: ve «Elige una contraseña nueva» y no sigue hasta elegir una de 8 caracteres o más",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-004-01 REQ-F-002 AC4 Marta entra con su contraseña provisional: ve «Elige una contraseña nueva» y no sigue hasta elegir una de 8 caracteres o más",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-004-01 REQ-F-002 AC4 Marta entra con su contraseña provisional: ve «Elige una contraseña nueva» y no sigue hasta elegir una de 8 caracteres o más",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--dff3c-r-una-de-8-caracteres-o-más-chromium/attachments/AC-004-01-2a2d530ff1e40a37b33f70c3f05b19642b5d42a1.png",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--dff3c-r-una-de-8-caracteres-o-más-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--dff3c-r-una-de-8-caracteres-o-más-chromium/attachments/AC-004-01-4a6440c0e8313e7d21482a87e940e64be00ad54d.png",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--dff3c-r-una-de-8-caracteres-o-más-chromium/test-finished-1.png",
+                "evidencias/FASE-3/AC-004-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--dff3c-r-una-de-8-caracteres-o-más-chromium/attachments/AC-004-01-2a2d530ff1e40a37b33f70c3f05b19642b5d42a1.png": "sha256:3e6c8b409f730a0b96f89f6a56f92df42621da8586805711d250e6fa16f6a1db",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--dff3c-r-una-de-8-caracteres-o-más-chromium/test-finished-1.png": "sha256:d7618ce16520c31b37e45a129f211a00e40eeee4c7a90c94ee227b6820f286e2",
+                "evidencias/FASE-3/AC-004-01.png": "sha256:3e6c8b409f730a0b96f89f6a56f92df42621da8586805711d250e6fa16f6a1db",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--dff3c-r-una-de-8-caracteres-o-más-chromium/attachments/AC-004-01-4a6440c0e8313e7d21482a87e940e64be00ad54d.png": "sha256:3e6c8b409f730a0b96f89f6a56f92df42621da8586805711d250e6fa16f6a1db",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--dff3c-r-una-de-8-caracteres-o-más-chromium/test-finished-1.png": "sha256:d7618ce16520c31b37e45a129f211a00e40eeee4c7a90c94ee227b6820f286e2"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Elige una contraseña nueva",
+                    "template": false
+                  },
+                  {
+                    "text": "Elige una contraseña nueva",
+                    "template": false
+                  },
+                  {
+                    "text": "La contraseña debe tener al menos 8 caracteres",
+                    "template": false
+                  }
+                ],
+                "where": "Cambiar contraseña",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--dff3c-r-una-de-8-caracteres-o-más-chromium/attachments/AC-004-01-2a2d530ff1e40a37b33f70c3f05b19642b5d42a1.png",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--dff3c-r-una-de-8-caracteres-o-más-chromium/test-finished-1.png",
+                "evidencias/FASE-3/AC-004-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--dff3c-r-una-de-8-caracteres-o-más-chromium/attachments/WF-002-AC-004-01-REQ-F-002-AC4-Marta-entra-con--50baa086a9eebb48bb84a918de2c1147d4f81533.webm",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--dff3c-r-una-de-8-caracteres-o-más-chromium/video.webm",
+                "evidencias/FASE-3/WF-002-AC-004-01-REQ-F-002-AC4-Marta-entra-con-.mp4",
+                "evidencias/FASE-3/WF-002-AC-004-01-REQ-F-002-AC4-Marta-entra-con-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 5,
+              "text": "GIVEN Marta forgot her password WHEN the encargado sets \"Otra12345\" for her THEN the user sees \"Contraseña provisional guardada para Marta Ruiz\" and Marta can enter with \"Otra12345\" and no longer with her old password",
+              "scenarios": [
+                "AC-005-01",
+                "AC-005-02",
+                "AC-005-03"
+              ],
+              "tests": [
+                {
+                  "name": "UC-005 · INV-SOC-004 · restablecer la contraseña levanta el bloqueo (CH-010, Q-acceptance-002) > AC-005-01 REQ-F-002 AC5 Marta, con la cuenta bloqueada por fallos, entra en el acto con «Otra12345» tras restablecerla Pablo, y ya no con la antigua",
+                  "file": "tests/integration/restablecer-bloqueo.test.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "UC-005 · INV-SOC-004 · restablecer la contraseña levanta el bloqueo (CH-010, Q-acceptance-002) > AC-005-01 REQ-F-002 AC5 Marta, con la cuenta bloqueada por fallos, entra en el acto con «Otra12345» tras restablecerla Pablo, y ya no con la antigua",
+                  "file": "tests/integration/restablecer-bloqueo.test.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "UC-005 · API-001-05 resetMemberPassword > AC-005-02 AC-005-03 INV-SOC-102 la provisional se guarda cifrada, Marta entra con ella y debe elegir otra, y la antigua ya no vale",
+                  "file": "tests/integration/socios.test.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "UC-005 · API-001-05 resetMemberPassword > AC-005-02 AC-005-03 INV-SOC-102 la provisional se guarda cifrada, Marta entra con ella y debe elegir otra, y la antigua ya no vale",
+                  "file": "tests/integration/socios.test.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-005-01 REQ-F-002 AC5 Marta olvidó su contraseña y Pablo fija «Otra12345» para ella: ve «Contraseña provisional guardada para Marta Ruiz»; Marta entra con «Otra12345» y ya no con la antigua",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-005-01 REQ-F-002 AC5 Marta olvidó su contraseña y Pablo fija «Otra12345» para ella: ve «Contraseña provisional guardada para Marta Ruiz»; Marta entra con «Otra12345» y ya no con la antigua",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-005-01 REQ-F-002 AC5 Marta olvidó su contraseña y Pablo fija «Otra12345» para ella: ve «Contraseña provisional guardada para Marta Ruiz»; Marta entra con «Otra12345» y ya no con la antigua",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-005-01 REQ-F-002 AC5 Marta olvidó su contraseña y Pablo fija «Otra12345» para ella: ve «Contraseña provisional guardada para Marta Ruiz»; Marta entra con «Otra12345» y ya no con la antigua",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--5ed99-345»-y-ya-no-con-la-antigua-chromium/attachments/AC-005-01-070097d4a361d590ea530d0bf9bc53bd6b8bad7f.png",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--5ed99-345»-y-ya-no-con-la-antigua-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--5ed99-345»-y-ya-no-con-la-antigua-chromium/attachments/AC-005-01-18815acd2d9eecec5b0086c081d41364d011333e.png",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--5ed99-345»-y-ya-no-con-la-antigua-chromium/test-finished-1.png",
+                "evidencias/FASE-3/AC-005-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--5ed99-345»-y-ya-no-con-la-antigua-chromium/attachments/AC-005-01-070097d4a361d590ea530d0bf9bc53bd6b8bad7f.png": "sha256:3f1bd7510d11d99481e26013c31663ce2915570ac7137bf202f14a3cd7901123",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--5ed99-345»-y-ya-no-con-la-antigua-chromium/test-finished-1.png": "sha256:3f1bd7510d11d99481e26013c31663ce2915570ac7137bf202f14a3cd7901123",
+                "evidencias/FASE-3/AC-005-01.png": "sha256:3f1bd7510d11d99481e26013c31663ce2915570ac7137bf202f14a3cd7901123",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--5ed99-345»-y-ya-no-con-la-antigua-chromium/attachments/AC-005-01-18815acd2d9eecec5b0086c081d41364d011333e.png": "sha256:74d83e1ca520ad9790ce2f4d6585410f5786e2a693f118f5de093de872448a87",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--5ed99-345»-y-ya-no-con-la-antigua-chromium/test-finished-1.png": "sha256:4c50189206d452d524e9e5928b66eff77cb9a50b3774cb51c2dd5a9ef320e16f"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Contraseña provisional guardada para {nombre}",
+                    "template": true
+                  },
+                  {
+                    "text": "Elige una contraseña nueva",
+                    "template": false
+                  },
+                  {
+                    "text": "Correo o contraseña incorrectos",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--5ed99-345»-y-ya-no-con-la-antigua-chromium/attachments/AC-005-01-070097d4a361d590ea530d0bf9bc53bd6b8bad7f.png",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--5ed99-345»-y-ya-no-con-la-antigua-chromium/test-finished-1.png",
+                "evidencias/FASE-3/AC-005-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--5ed99-345»-y-ya-no-con-la-antigua-chromium/attachments/WF-002-AC-005-01-REQ-F-002-AC5-Marta-olvid-su--828a1bfedc8ad2c253f6536c9b76d9d5a3a8d7f0.webm",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--5ed99-345»-y-ya-no-con-la-antigua-chromium/video.webm",
+                "evidencias/FASE-3/WF-002-AC-005-01-REQ-F-002-AC5-Marta-olvid-su-.mp4",
+                "evidencias/FASE-3/WF-002-AC-005-01-REQ-F-002-AC5-Marta-olvid-su-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 6,
+              "text": "GIVEN Marta has no open loans and no pending fines WHEN the encargado removes her THEN the user sees \"Socio dado de baja: Marta Ruiz\" and she can no longer log in",
+              "scenarios": [
+                "AC-006-01",
+                "AC-006-02"
+              ],
+              "tests": [
+                {
+                  "name": "UC-006 · API-001-06 removeMember > AC-006-02 INV-SOC-008 INV-SOC-007 la baja guarda bajaEn y conserva los datos; Marta ya no entra y recibe E_CREDENCIALES, y su sesión abierta se cierra",
+                  "file": "tests/integration/socios.test.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-01 REQ-F-002 AC6 Marta no tiene préstamos abiertos ni multas pendientes y Pablo la da de baja: ve «Socio dado de baja: Marta Ruiz» y Marta ya no entra",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-01 REQ-F-002 AC6 Marta no tiene préstamos abiertos ni multas pendientes y Pablo la da de baja: ve «Socio dado de baja: Marta Ruiz» y Marta ya no entra",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-01 REQ-F-002 AC6 Marta no tiene préstamos abiertos ni multas pendientes y Pablo la da de baja: ve «Socio dado de baja: Marta Ruiz» y Marta ya no entra",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-01 REQ-F-002 AC6 Marta no tiene préstamos abiertos ni multas pendientes y Pablo la da de baja: ve «Socio dado de baja: Marta Ruiz» y Marta ya no entra",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d7e76-a-Ruiz»-y-Marta-ya-no-entra-chromium/attachments/AC-006-01-f7a9497e54a6fdf60655443cc76ea64a87401112.png",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d7e76-a-Ruiz»-y-Marta-ya-no-entra-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--d7e76-a-Ruiz»-y-Marta-ya-no-entra-chromium/attachments/AC-006-01-d16d843c767eaa9f6b0430670ed5b49359ffad63.png",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--d7e76-a-Ruiz»-y-Marta-ya-no-entra-chromium/test-finished-1.png",
+                "evidencias/FASE-3/AC-006-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d7e76-a-Ruiz»-y-Marta-ya-no-entra-chromium/attachments/AC-006-01-f7a9497e54a6fdf60655443cc76ea64a87401112.png": "sha256:9b07d4dfff1d0b21a34043a12e585584d07de11fde9475c2ce0f3ba46df0b6f8",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d7e76-a-Ruiz»-y-Marta-ya-no-entra-chromium/test-finished-1.png": "sha256:9b07d4dfff1d0b21a34043a12e585584d07de11fde9475c2ce0f3ba46df0b6f8",
+                "evidencias/FASE-3/AC-006-01.png": "sha256:9b07d4dfff1d0b21a34043a12e585584d07de11fde9475c2ce0f3ba46df0b6f8",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--d7e76-a-Ruiz»-y-Marta-ya-no-entra-chromium/attachments/AC-006-01-d16d843c767eaa9f6b0430670ed5b49359ffad63.png": "sha256:3f1d7fc02d4d0f757bead86524ae0441cd840698151f98f158e92d563bc0cc7c",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--d7e76-a-Ruiz»-y-Marta-ya-no-entra-chromium/test-finished-1.png": "sha256:4619bf6c2b016f4eae1a1be4f4d245f23c4ecc7dc0e9954e61e23bc794d75053"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Socio dado de baja: {nombre}",
+                    "template": true
+                  },
+                  {
+                    "text": "Correo o contraseña incorrectos",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d7e76-a-Ruiz»-y-Marta-ya-no-entra-chromium/attachments/AC-006-01-f7a9497e54a6fdf60655443cc76ea64a87401112.png",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d7e76-a-Ruiz»-y-Marta-ya-no-entra-chromium/test-finished-1.png",
+                "evidencias/FASE-3/AC-006-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d7e76-a-Ruiz»-y-Marta-ya-no-entra-chromium/attachments/WF-002-AC-006-01-REQ-F-002-AC6-Marta-no-tiene-p-43bf26f9dcc47b669c2db017efa86b8533e4203e.webm",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d7e76-a-Ruiz»-y-Marta-ya-no-entra-chromium/video.webm",
+                "evidencias/FASE-3/WF-002-AC-006-01-REQ-F-002-AC6-Marta-no-tiene-p.mp4",
+                "evidencias/FASE-3/WF-002-AC-006-01-REQ-F-002-AC6-Marta-no-tiene-p.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 7,
+              "text": "GIVEN Lucía has 1 loan not yet returned WHEN the encargado removes her THEN the user sees \"No se puede dar de baja: tiene material sin devolver\" and her account stays active",
+              "scenarios": [
+                "AC-006-04"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-04 REQ-F-002 AC7 Lucía tiene 1 préstamo sin devolver y Pablo la da de baja: ve «No se puede dar de baja: tiene material sin devolver» y «Lucía Gil — Activo»; Lucía sigue entrando",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-04 REQ-F-002 AC7 Lucía tiene 1 préstamo sin devolver y Pablo la da de baja: ve «No se puede dar de baja: tiene material sin devolver» y «Lucía Gil — Activo»; Lucía sigue entrando",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-04 REQ-F-002 AC7 Lucía tiene 1 préstamo sin devolver y Pablo la da de baja: ve «No se puede dar de baja: tiene material sin devolver» y «Lucía Gil — Activo»; Lucía sigue entrando",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-04 REQ-F-002 AC7 Lucía tiene 1 préstamo sin devolver y Pablo la da de baja: ve «No se puede dar de baja: tiene material sin devolver» y «Lucía Gil — Activo»; Lucía sigue entrando",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2a920-ctivo»-Lucía-sigue-entrando-chromium/attachments/AC-006-04-2ec3932fe694936ca050f28fa778a8fb643153d7.png",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2a920-ctivo»-Lucía-sigue-entrando-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--2a920-ctivo»-Lucía-sigue-entrando-chromium/attachments/AC-006-04-36ffa53de8f724463962681eae380bba5ab1af28.png",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--2a920-ctivo»-Lucía-sigue-entrando-chromium/test-finished-1.png",
+                "evidencias/FASE-3/AC-006-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2a920-ctivo»-Lucía-sigue-entrando-chromium/attachments/AC-006-04-2ec3932fe694936ca050f28fa778a8fb643153d7.png": "sha256:cf308195de79f371b30d69915f67e13732938f501e04ce92ee37e698df822ce2",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2a920-ctivo»-Lucía-sigue-entrando-chromium/test-finished-1.png": "sha256:0eead4f518fd23b94c85f5f284cf8f96e4380f113802134989c25a3dbce6bf50",
+                "evidencias/FASE-3/AC-006-04.png": "sha256:cf308195de79f371b30d69915f67e13732938f501e04ce92ee37e698df822ce2",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--2a920-ctivo»-Lucía-sigue-entrando-chromium/attachments/AC-006-04-36ffa53de8f724463962681eae380bba5ab1af28.png": "sha256:cf308195de79f371b30d69915f67e13732938f501e04ce92ee37e698df822ce2",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--2a920-ctivo»-Lucía-sigue-entrando-chromium/test-finished-1.png": "sha256:0eead4f518fd23b94c85f5f284cf8f96e4380f113802134989c25a3dbce6bf50"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No se puede dar de baja: tiene material sin devolver",
+                    "template": false
+                  },
+                  {
+                    "text": "Lucía Gil — Activo",
+                    "template": false
+                  },
+                  {
+                    "text": "Hola, {nombre}",
+                    "template": true
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2a920-ctivo»-Lucía-sigue-entrando-chromium/attachments/AC-006-04-2ec3932fe694936ca050f28fa778a8fb643153d7.png",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2a920-ctivo»-Lucía-sigue-entrando-chromium/test-finished-1.png",
+                "evidencias/FASE-3/AC-006-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2a920-ctivo»-Lucía-sigue-entrando-chromium/attachments/WF-002-AC-006-04-REQ-F-002-AC7-Luc-a-tiene-1-pr-084b0cf3e06bcf466c3d37588604132e67eb81c3.webm",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2a920-ctivo»-Lucía-sigue-entrando-chromium/video.webm",
+                "evidencias/FASE-3/WF-002-AC-006-04-REQ-F-002-AC7-Luc-a-tiene-1-pr.mp4",
+                "evidencias/FASE-3/WF-002-AC-006-04-REQ-F-002-AC7-Luc-a-tiene-1-pr.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 8,
+              "text": "GIVEN Pablo has a pending fine of 4 € WHEN the encargado removes him THEN the user sees \"No se puede dar de baja: tiene multas sin pagar\"",
+              "scenarios": [
+                "AC-006-05"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-05 REQ-F-002 AC8 Pablo, socio, tiene una multa pendiente de 4 € y la encargada Nuria lo da de baja: ve «No se puede dar de baja: tiene multas sin pagar»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-05 REQ-F-002 AC8 Pablo, socio, tiene una multa pendiente de 4 € y la encargada Nuria lo da de baja: ve «No se puede dar de baja: tiene multas sin pagar»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-05 REQ-F-002 AC8 Pablo, socio, tiene una multa pendiente de 4 € y la encargada Nuria lo da de baja: ve «No se puede dar de baja: tiene multas sin pagar»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-05 REQ-F-002 AC8 Pablo, socio, tiene una multa pendiente de 4 € y la encargada Nuria lo da de baja: ve «No se puede dar de baja: tiene multas sin pagar»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--6380f-aja-tiene-multas-sin-pagar»-chromium/attachments/AC-006-05-099711fa4613e5eb7585b2b580324bdffe53a601.png",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--6380f-aja-tiene-multas-sin-pagar»-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--6380f-aja-tiene-multas-sin-pagar»-chromium/attachments/AC-006-05-e4fcb31830f57c6b653a6d7031d57caf62153e4b.png",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--6380f-aja-tiene-multas-sin-pagar»-chromium/test-finished-1.png",
+                "evidencias/FASE-3/AC-006-05.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--6380f-aja-tiene-multas-sin-pagar»-chromium/attachments/AC-006-05-099711fa4613e5eb7585b2b580324bdffe53a601.png": "sha256:7406448ecb75efd7d44e7d96bb14740f3c415d26a05b07915a9f1059538935a9",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--6380f-aja-tiene-multas-sin-pagar»-chromium/test-finished-1.png": "sha256:7406448ecb75efd7d44e7d96bb14740f3c415d26a05b07915a9f1059538935a9",
+                "evidencias/FASE-3/AC-006-05.png": "sha256:7406448ecb75efd7d44e7d96bb14740f3c415d26a05b07915a9f1059538935a9",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--6380f-aja-tiene-multas-sin-pagar»-chromium/attachments/AC-006-05-e4fcb31830f57c6b653a6d7031d57caf62153e4b.png": "sha256:7406448ecb75efd7d44e7d96bb14740f3c415d26a05b07915a9f1059538935a9",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--6380f-aja-tiene-multas-sin-pagar»-chromium/test-finished-1.png": "sha256:7406448ecb75efd7d44e7d96bb14740f3c415d26a05b07915a9f1059538935a9"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No se puede dar de baja: tiene multas sin pagar",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--6380f-aja-tiene-multas-sin-pagar»-chromium/attachments/AC-006-05-099711fa4613e5eb7585b2b580324bdffe53a601.png",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--6380f-aja-tiene-multas-sin-pagar»-chromium/test-finished-1.png",
+                "evidencias/FASE-3/AC-006-05.png"
+              ],
+              "videos": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--6380f-aja-tiene-multas-sin-pagar»-chromium/attachments/WF-002-AC-006-05-REQ-F-002-AC8-Pablo-socio-ti-85e5d0aa9f29e5510be415efb2a70e87aab89497.webm",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--6380f-aja-tiene-multas-sin-pagar»-chromium/video.webm",
+                "evidencias/FASE-3/WF-002-AC-006-05-REQ-F-002-AC8-Pablo-socio-ti.mp4",
+                "evidencias/FASE-3/WF-002-AC-006-05-REQ-F-002-AC8-Pablo-socio-ti.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 9,
+              "text": "GIVEN Marta has 1 future reservation WHEN the encargado removes her THEN the user sees \"Socio dado de baja: Marta Ruiz\", her reservation is cancelled and its units become free",
+              "scenarios": [
+                "AC-006-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-03 REQ-F-002 AC9 Marta tiene 2 × Casco del 2026-12-05 al 2026-12-07 y Pablo la da de baja: ve «Socio dado de baja: Marta Ruiz» y Lucía reserva lo mismo: «Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-03 REQ-F-002 AC9 Marta tiene 2 × Casco del 2026-12-05 al 2026-12-07 y Pablo la da de baja: ve «Socio dado de baja: Marta Ruiz» y Lucía reserva lo mismo: «Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-03 REQ-F-002 AC9 Marta tiene 2 × Casco del 2026-12-05 al 2026-12-07 y Pablo la da de baja: ve «Socio dado de baja: Marta Ruiz» y Lucía reserva lo mismo: «Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-03 REQ-F-002 AC9 Marta tiene 2 × Casco del 2026-12-05 al 2026-12-07 y Pablo la da de baja: ve «Socio dado de baja: Marta Ruiz» y Lucía reserva lo mismo: «Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07»",
+                  "file": "fase-3-alta-primer-acceso.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--3681b-l-2026-12-05-al-2026-12-07»-chromium/attachments/AC-006-03-1936ec791a4fc1a27c22e0970aa22ad24c1f4abd.png",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--3681b-l-2026-12-05-al-2026-12-07»-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--3681b-l-2026-12-05-al-2026-12-07»-chromium/attachments/AC-006-03-84bcddd4da26d0415a579afa27fb9a1db3303609.png",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--3681b-l-2026-12-05-al-2026-12-07»-chromium/test-finished-1.png",
+                "evidencias/FASE-3/AC-006-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--3681b-l-2026-12-05-al-2026-12-07»-chromium/attachments/AC-006-03-1936ec791a4fc1a27c22e0970aa22ad24c1f4abd.png": "sha256:d5a49c0a0b39987c892f0553ef6eb0334097cbe8615cf557887b1e96b41d66d1",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--3681b-l-2026-12-05-al-2026-12-07»-chromium/test-finished-1.png": "sha256:d5a49c0a0b39987c892f0553ef6eb0334097cbe8615cf557887b1e96b41d66d1",
+                "evidencias/FASE-3/AC-006-03.png": "sha256:d5a49c0a0b39987c892f0553ef6eb0334097cbe8615cf557887b1e96b41d66d1",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--3681b-l-2026-12-05-al-2026-12-07»-chromium/attachments/AC-006-03-84bcddd4da26d0415a579afa27fb9a1db3303609.png": "sha256:bb86bbdfeb670328be80bfd49e6621095e78ea2d05c262ab08d50da2fb8403a4",
+                "evidencias/sin-fase/.playwright/fase-3-alta-primer-acceso--3681b-l-2026-12-05-al-2026-12-07»-chromium/test-finished-1.png": "sha256:c58d5ff1641eab16ce81974ae49ad625e33175e2ce339d47e9d0b995aab23dad"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Socio dado de baja: {nombre}",
+                    "template": true
+                  },
+                  {
+                    "text": "Reserva creada: {cantidad} × {material} del {inicio} al {fin}",
+                    "template": true
+                  }
+                ],
+                "where": "Socios",
+                "none": "la reserva de Marta queda en estado \"Cancelada\": solo se guarda en el fichero de datos, porque Marta ya no puede entrar y ninguna pantalla muestra reservas de un socio dado de baja"
+              },
+              "shown_by": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--3681b-l-2026-12-05-al-2026-12-07»-chromium/attachments/AC-006-03-1936ec791a4fc1a27c22e0970aa22ad24c1f4abd.png",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--3681b-l-2026-12-05-al-2026-12-07»-chromium/test-finished-1.png",
+                "evidencias/FASE-3/AC-006-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--3681b-l-2026-12-05-al-2026-12-07»-chromium/attachments/WF-002-AC-006-03-REQ-F-002-AC9-Marta-tiene-2--7c7bd2bbb58439eb63486fdeb628a5ee0243d74c.webm",
+                "evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--3681b-l-2026-12-05-al-2026-12-07»-chromium/video.webm",
+                "evidencias/FASE-3/WF-002-AC-006-03-REQ-F-002-AC9-Marta-tiene-2-.mp4",
+                "evidencias/FASE-3/WF-002-AC-006-03-REQ-F-002-AC9-Marta-tiene-2-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            }
+          ],
+          "candidate_files": [
+            "src/server/app.js",
+            "src/server/http/autorizar.js",
+            "src/server/http/rutas.js",
+            "src/server/mensajes.js",
+            "src/server/servicios/cuentas.js",
+            "src/server/servicios/sesiones.js",
+            "src/ui/api.js",
+            "src/ui/componentes.js",
+            "src/ui/estilos.css",
+            "src/ui/main.js",
+            "src/ui/paginas/cambiar-contrasena.js",
+            "src/ui/paginas/entrar.js",
+            "src/ui/paginas/socios.js",
+            "src/ui/router.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        }
+      ],
+      "unknown_requirements": [],
+      "tasks": [
+        "TASK-F3-001",
+        "TASK-F3-002",
+        "TASK-F3-003",
+        "TASK-F3-004",
+        "TASK-F3-005",
+        "TASK-F3-006",
+        "TASK-F3-007",
+        "TASK-F3-008",
+        "TASK-F3-009",
+        "TASK-F3-010",
+        "TASK-F3-011",
+        "TASK-F3-012",
+        "TASK-F3-013"
+      ],
+      "candidate_files": [
+        "src/server/app.js",
+        "src/server/http/autorizar.js",
+        "src/server/http/rutas.js",
+        "src/server/mensajes.js",
+        "src/server/servicios/cuentas.js",
+        "src/server/servicios/sesiones.js",
+        "src/server/store/almacen-json.js",
+        "src/server/store/migraciones.js",
+        "src/ui/api.js",
+        "src/ui/campo-fecha.js",
+        "src/ui/componentes.js",
+        "src/ui/estilos.css",
+        "src/ui/main.js",
+        "src/ui/paginas/cambiar-contrasena.js",
+        "src/ui/paginas/entrar.js",
+        "src/ui/paginas/panel.js",
+        "src/ui/paginas/reservar.js",
+        "src/ui/paginas/socios.js",
+        "src/ui/router.js",
+        "src/ui/textos.js"
+      ],
+      "incremental": {
+        "criteria": 9,
+        "recheck": 0
+      }
+    }
+  ],
+  "uncovered": [
+    {
+      "id": "REQ-C-001",
+      "title": "Textos en español",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-002",
+      "title": "Stack del proyecto",
+      "priority": "Must"
+    }
+  ],
+  "fases_without_header": [],
+  "criteria_without_test": [],
+  "coverage_gaps": 2
+}

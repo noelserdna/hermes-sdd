@@ -1,0 +1,18 @@
+{
+ "peticiones": [],
+ "por_aplicar": [
+  "Q-task-implementer-007: Dos pruebas e2e de la FASE-0 fallan a veces en la suite completa, también en el commit 3712fd9 (antes de cualquier código de la FASE-4): tests/e2e/fase-0.spec.js:84 AC-001-04 (el bucle de 5 intentos pulsa «Entrar» mientras el login anterior sigue en vuelo; entrar.js ignora un envío si hay otro pendiente, así que solo se cuentan 4 fallos y el sexto login responde «Correo o contraseña incorrectos» en vez de «Cuenta bloqueada…») y :320 «sigue en el servidor tras pararlo y arrancarlo» (page.goto net::ERR_ABORTED justo tras reiniciar en el puerto 5175). Las dos pasan si se ejecutan solas. Son pruebas aceptadas de la FASE-0: esta etapa no puede editarlas sin un registro test-edit firmado.\nRespuesta elegida: A) Hacer que las dos pruebas esperen a la respuesta de cada login y al servidor reiniciado antes del paso siguiente, sin quitar ninguna comprobación\nPara el cliente: Dos pruebas antiguas de la entrega 0 fallan a veces (no siempre) aunque la web funciona bien: van con demasiada prisa. ¿Se permite retocarlas solo para que esperen a que termine cada paso, sin quitarles ninguna comprobación? → A) Sí, se retocan solo para que esperen; siguen comprobando lo mismo\nTests ya existentes que se autoriza ENDURECER (solo estos, y solo para que comprueben más: ni quitar asserts ni dejar de citar su criterio; firmado en acceptance/decisions.jsonl): tests/e2e/fase-0.spec.js"
+ ],
+ "autorizaciones": [
+  {
+   "pregunta": "Q-task-implementer-007",
+   "letra": "A",
+   "ficheros": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "endurecer": true,
+   "motivo": "Dos pruebas e2e de la FASE-0 fallan a veces en la suite completa, también en el commit 3712fd9 (antes de cualquier código de la FASE-4): tests/e2e/fase-0.spec.js:84 AC-001-04 (el bucle de 5 intentos pulsa «Entrar» mientras el login anterior sigue en vuelo; entrar.js ignora un envío si hay otro pendiente, así que solo se cuentan 4 fallos y el sexto login responde «Correo o contraseña incorrectos» en vez de «Cuenta bloqueada…») y :320 «sigue en el servidor tras pararlo y arrancarlo» (page.goto net::ERR_ABORTED justo tras reiniciar en el puerto 5175). Las…"
+  }
+ ],
+ "abiertas": []
+}

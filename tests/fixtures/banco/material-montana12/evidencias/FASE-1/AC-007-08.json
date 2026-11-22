@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-007-08",
+ "test": "FASE-1 · Reservar material (REQ-F-003) › AC-007-08 REQ-F-003 AC8 Pablo con una multa pendiente de 6 € intenta reservar y ve «No puedes reservar hasta pagar tu multa de 6 €»",
+ "titulo": "AC-007-08 REQ-F-003 AC8 Pablo con una multa pendiente de 6 € intenta reservar y ve «No puedes reservar hasta pagar tu multa de 6 €»",
+ "ve": [
+  "No puedes reservar hasta pagar tu multa de 6 €",
+  "Aún no tienes reservas"
+ ],
+ "narrado": "Reservar material. En Reservar se ve «No puedes reservar hasta pagar tu multa de 6 €» y «Aún no tienes reservas»: no se crea ninguna reserva.",
+ "url": "http://127.0.0.1:5173/reservar",
+ "imagen": "AC-007-08.png",
+ "sha256": "sha256:6389c3453461437e6a4296bf0a917a7cc043259f3c9d21e408907fb6f9bc1382",
+ "at": "2026-11-22T20:34:02.020Z"
+}

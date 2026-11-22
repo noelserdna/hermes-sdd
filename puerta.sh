@@ -149,7 +149,7 @@ case "$TIPO" in
     BASE=$(git describe --tags --abbrev=0 --match 'fase-*-accepted' 2>/dev/null || git describe --tags --abbrev=0 --match 'requirements-v*' 2>/dev/null || git rev-list --max-parents=0 HEAD)
     EDIT=$(sin_autorizar "$FASE" "$(tests_editados "$BASE")")
     # el montaje (todos los criterios seguidos) si lo hay; si no, el primer vídeo (material-montana11: 1 de 7 a 16)
-    VIDEO=$(ls evidencias/FASE-"$FASE"/MONTAJE-*.mp4 evidencias/FASE-"$FASE"/*.mp4 evidencias/FASE-"$FASE"/*.webm evidencias/FASE-"$FASE"/*.mov 2>/dev/null | head -1 || true)
+    VIDEO=$(video_fase "$FASE")
     CAPTURAS=$( (ls evidencias/FASE-"$FASE"/*.png evidencias/FASE-"$FASE"/*.jpg 2>/dev/null || true) | wc -l | tr -d ' ')
     EXTRA+=(--gate-md "$GATE_MD" --rc "$rc" --tests-editados "$EDIT" --video "$([ -n "$VIDEO" ] && echo 1 || echo 0)" --capturas "$CAPTURAS")
     # Jev no ve el vídeo, pero lee su texto en off: ¿cuenta cada uno lo que pide su criterio? (sin esto, con vídeo, Jev
@@ -178,7 +178,7 @@ case "$TIPO" in
     if [ -f .sdd/hermes/granularidad-plan ] && [ "$(cat .sdd/hermes/granularidad-plan)" != fina ] && [ "$(ls plan/fases/FASE-*.md 2>/dev/null | wc -l | tr -d ' ')" = 1 ] \
        && ! git tag -l 'fase-*-accepted' | grep -q .; then
       UNICA=true
-      VIDEO=$(ls evidencias/FASE-0/MONTAJE-*.mp4 evidencias/FASE-0/*.mp4 evidencias/FASE-0/*.webm evidencias/FASE-0/*.mov 2>/dev/null | head -1 || true)
+      VIDEO=$(video_fase 0)
       CAPTURAS=$( (ls evidencias/FASE-0/*.png evidencias/FASE-0/*.jpg 2>/dev/null || true) | wc -l | tr -d ' ')
       BASE=$(git describe --tags --abbrev=0 --match 'requirements-v*' 2>/dev/null || git rev-list --max-parents=0 HEAD)
       EDIT=$(sin_autorizar global "$(tests_editados "$BASE")")

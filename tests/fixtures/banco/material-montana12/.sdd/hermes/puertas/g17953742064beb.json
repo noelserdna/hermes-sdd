@@ -1,0 +1,101 @@
+{
+  "id": "g17953742064beb",
+  "tipo": "fase",
+  "fase": "4",
+  "tablero": "material-montana12",
+  "tarjeta": "t_16c54a34",
+  "adopcion": false,
+  "sha": "210af3b3aadece08586026119d9b4a73f11ef5ae",
+  "creada": "2026-11-22T19:03:26Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana12",
+  "titulo": "Aceptar FASE-4",
+  "texto": "🧭 Encargado: 4 avisos (2 graves: Jev no puede aprobar esta puerta solo)\n‼️ REQ-F-005 AC3: ningún test de este criterio comprueba «No tienes multas»\n‼️ REQ-F-005 AC9: ningún test de este criterio comprueba «No tienes multas»\n• La FASE-4 añadió 567 líneas de tests para 133 de código (4.3×): revisa si los tests prueban lo que piden los criterios\n• 1 texto(s) que los criterios dicen que se ven no están tal cual en el código de la app («Pablo Sanz — Multa de 6 € — Pagada»): o la app los compone (y nadie comprueba la plantilla) o no los enseña\n\n🧪 La FASE-4 de «material-montana12» está lista para revisar.\n\n✅ Todo en orden: el requisito de esta fase funciona y está comprobado.\n\n✅ Multas y bloqueo hasta pagarlas: funciona y está comprobado (7 de 7 criterios)\n\n🛡 No se ha tocado ningún test que ya existía (ni sus ayudas ni su configuración).\n\n🎬 Demo: vídeo y 7 capturas.\n\n🤖 Jev ha leído el texto en off de 7 vídeos: cada uno cuenta lo que pide su criterio.\n\n🧾 Demostrados: 6 de 7 criterios (prueba, captura, vídeo con voz y revisión).\nLes falta:\n• REQ-F-006 AC2: su THEN promete lo que no se ve ni se declara no visible: «Pablo can reserve again»\n\n👉 Pulsa ▶ Ver demo; después podrás aceptarla, aceptarla con observaciones o rechazarla.\n\n❓ Antes, una pregunta (la recomendada ya está marcada en los botones Q):\n\n1. Dos pruebas antiguas de la entrega 0 fallan a veces (no siempre) aunque la web funciona bien: van con demasiada prisa. ¿Se permite retocarlas solo para que esperen a que termine cada paso, sin quitarles ninguna comprobación?\n   🔧 Detalle técnico: Dos pruebas e2e de la FASE-0 fallan a veces en la suite completa, también en el commit 3712fd9 (antes de cualquier código de la FASE-4): tests/e2e/fase-0.spec.…\n   A) Sí, se retocan solo para que esperen; siguen comprobando lo mismo  ⭐ recomendada  (🔩 autoriza endurecer tests/e2e/fase-0.spec.js)\n   B) No se tocan; se repite la suite hasta que pasen\n\n👉 Si firmas sin tocar los botones Q, esto lanzará: 🔩 autoriza endurecer tests que ya existían: tests/e2e/fase-0.spec.js (Q1).",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Aceptar",
+      "paso": 2
+    },
+    {
+      "verbo": "observaciones",
+      "etiqueta": "📝 Con observaciones",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-4/MONTAJE-FASE-4.mp4",
+  "preguntas": [
+    {
+      "n": 1,
+      "id": "Q-task-implementer-007",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "endurecer-test",
+          "ficheros": [
+            "tests/e2e/fase-0.spec.js"
+          ],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "Dos pruebas antiguas de la entrega 0 fallan a veces (no siempre) aunque la web funciona bien: van con demasiada prisa. ¿Se permite retocarlas solo para que esperen a que termine cada paso, sin quitarles ninguna comprobación?"
+    }
+  ],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": false,
+        "codigo": "tests-de-mas",
+        "texto": "La FASE-4 añadió 567 líneas de tests para 133 de código (4.3×): revisa si los tests prueban lo que piden los criterios"
+      },
+      {
+        "grave": true,
+        "codigo": "test-sin-el-texto",
+        "texto": "REQ-F-005 AC3: ningún test de este criterio comprueba «No tienes multas»"
+      },
+      {
+        "grave": true,
+        "codigo": "test-sin-el-texto",
+        "texto": "REQ-F-005 AC9: ningún test de este criterio comprueba «No tienes multas»"
+      },
+      {
+        "grave": false,
+        "codigo": "texto-fuera-del-codigo",
+        "texto": "1 texto(s) que los criterios dicen que se ven no están tal cual en el código de la app («Pablo Sanz — Multa de 6 € — Pagada»): o la app los compone (y nadie comprueba la plantilla) o no los enseña"
+      }
+    ],
+    "graves": 2
+  },
+  "narracion": {
+    "revisados": 7,
+    "modelo": "jev-1.14.0",
+    "contradicen": [],
+    "incompletos": []
+  }
+}

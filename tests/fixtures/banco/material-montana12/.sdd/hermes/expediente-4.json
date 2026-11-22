@@ -1,0 +1,145 @@
+{
+ "fase": "4",
+ "criterios": [
+  {
+   "criterio": "REQ-F-006-AC1",
+   "req": "REQ-F-006",
+   "ac": 1,
+   "ids": [
+    "AC-012-01",
+    "REQ-F-006-AC1"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-006-AC2",
+   "req": "REQ-F-006",
+   "ac": 2,
+   "ids": [
+    "AC-013-01",
+    "REQ-F-006-AC2"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": false
+   },
+   "faltan": [
+    "su THEN promete lo que no se ve ni se declara no visible: «Pablo can reserve again»"
+   ],
+   "estado": "incompleto"
+  },
+  {
+   "criterio": "REQ-F-006-AC3",
+   "req": "REQ-F-006",
+   "ac": 3,
+   "ids": [
+    "AC-013-02",
+    "REQ-F-006-AC3"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-006-AC4",
+   "req": "REQ-F-006",
+   "ac": 4,
+   "ids": [
+    "AC-013-03",
+    "REQ-F-006-AC4"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-006-AC5",
+   "req": "REQ-F-006",
+   "ac": 5,
+   "ids": [
+    "AC-012-02",
+    "REQ-F-006-AC5"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-006-AC6",
+   "req": "REQ-F-006",
+   "ac": 6,
+   "ids": [
+    "AC-012-03",
+    "REQ-F-006-AC6"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-006-AC7",
+   "req": "REQ-F-006",
+   "ac": 7,
+   "ids": [
+    "AC-014-01",
+    "REQ-F-006-AC7"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  }
+ ],
+ "resumen": {
+  "criterios": 7,
+  "demostrados": 6,
+  "incompletos": 1
+ }
+}

@@ -1,0 +1,14 @@
+{
+  "verbo": "observaciones",
+  "texto": "Q1: A (ya lo autoricé en la FASE-1, Q-task-implementer-001). He visto los 17 vídeos: entregar, devolver, multas, el panel y los permisos hacen lo que piden sus criterios. Tres observaciones: 1) en el Panel del encargado la sección Multas dice «No tienes multas», que le habla a un socio; para el encargado debe decir «No hay multas». 2) Los campos de fecha salen como mm/dd/yyyy: la web está en español, que se vean como día/mes/año. 3) En «No recogida» la voz dice que las unidades quedan libres pero el vídeo no lo enseña: que se vea (por ejemplo, otro socio reserva esas unidades esas fechas).",
+  "actor": {
+    "persona": "yo",
+    "canal": "local",
+    "id": "andre"
+  },
+  "prueba": {
+    "host": "DESKTOP-7HT2139",
+    "demo": "no vista"
+  },
+  "at": "2026-11-22T16:52:15Z"
+}

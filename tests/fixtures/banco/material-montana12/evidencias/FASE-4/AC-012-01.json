@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-012-01",
+ "test": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-012-01 REQ-F-006 AC1 Pablo con una multa pendiente de 6 € abre «Mis multas»: ve «Multa de 6 € — Pendiente»",
+ "titulo": "AC-012-01 REQ-F-006 AC1 Pablo con una multa pendiente de 6 € abre «Mis multas»: ve «Multa de 6 € — Pendiente»",
+ "ve": [
+  "Multa de 6 € — Pendiente"
+ ],
+ "narrado": "Multas y bloqueo hasta pagarlas. En Mis multas se ve «Multa de 6 € — Pendiente».",
+ "url": "http://127.0.0.1:5173/mis-multas",
+ "imagen": "AC-012-01.png",
+ "sha256": "sha256:8868025b096974715965b6485e4f8ecf055ce6e6a9c131b565d7e831de753259",
+ "at": "2026-11-22T20:35:19.977Z"
+}

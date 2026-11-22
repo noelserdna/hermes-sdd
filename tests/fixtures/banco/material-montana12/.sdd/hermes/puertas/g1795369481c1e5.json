@@ -1,0 +1,126 @@
+{
+  "id": "g1795369481c1e5",
+  "tipo": "fase",
+  "fase": "3",
+  "tablero": "material-montana12",
+  "tarjeta": "t_471aad43",
+  "adopcion": false,
+  "sha": "4329268072abe24d06659640403cc6076da3aeba",
+  "creada": "2026-11-22T17:44:41Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana12",
+  "titulo": "Aceptar FASE-3",
+  "texto": "🧭 Encargado: 4 avisos (2 graves: Jev no puede aprobar esta puerta solo)\n‼️ REQ-F-005 AC3: ningún test de este criterio comprueba «No tienes multas»\n‼️ REQ-F-005 AC9: ningún test de este criterio comprueba «No tienes multas»\n• Test ya aceptado cambiado con autorización (tests/e2e/fase-0.spec.js): quita 1 aserción(es) — Q-task-implementer-002: Andres Leon (Cliente), puerta g1795366184146b\n• 3 texto(s) que los criterios dicen que se ven no están tal cual en el código de la app («Marta Ruiz — Activo», «Lucía Gil — Activo»): o la app los compone (y nadie comprueba la plantilla) o no los enseña\n\n🧪 La FASE-3 de «material-montana12» está lista para revisar.\n\n⛔ Los requisitos pasan sus tests, pero la revisión independiente ha encontrado algo que no prueban.\n\n⚠️ Alta, baja y contraseña de los socios: pasa sus pruebas, pero la revisión independiente duda de que lo comprueben (CH-010) (9 de 9 criterios)\n\n🤔 La revisión independiente tiene dudas sobre lo que pide el propio requisito; esto es tuyo:\n• CH-010 · Alta, baja y contraseña de los socios: «Marta can enter with \"Otra12345\"»\n  ❓ Si una socia olvidó la contraseña y se equivocó varias veces, su cuenta puede estar bloqueada. Al restablecerle la contraseña, el bloqueo sigue y no podría entrar hasta que caduque. El requisito no dice si el restablecimiento debe desbloqu…\n\n✏️ Si una duda es del propio criterio (está mal escrito o contradice otro), pulsa ✏️ Corregir el requisito y di cómo tiene que quedar: se lanza un cambio de requisitos y la fase se rehace con el criterio bueno. Si no es un fallo, 🗑 Descártala con su número y por qué.\n\n✏️ Se han cambiado 3 tests que ya existían, con la autorización que firmaste:\n• tests/e2e/fase-0.spec.js: autorizado (Q-task-implementer-002) — quita 1 aserción(es)\n   quita: await expect(page.getByRole('button', { name: 'Reservar' })).toHaveCount(0);\n• tests/e2e/fase-2.spec.js: autorizado (Q-task-implementer-003)\n   quita: await expect(page.locator('.multas .vacio')).toHaveText('No tienes multas'); // sin multa · await expect(page.locator('.multas .vacio')).toHaveText('No tienes…\n   pone: await expect(page.locator('.multas .vacio')).toHaveText('No hay multas'); // sin multa · await expect(page.locator('.multas .vacio')).toHaveText('No hay multas…\n• tests/unit/ui/panel.test.js: autorizado (Q-task-implementer-003)\n   quita: expect(sin.main.querySelector('.multas .vacio').textContent).toBe('No tienes multas');\n   pone: expect(sin.main.querySelector('.multas .vacio').textContent).toBe('No hay multas');\n\n🎬 Demo: vídeo y 9 capturas.\n\n🤖 Jev ha leído el texto en off de 9 vídeos: cada uno cuenta lo que pide su criterio.\n\n🧾 Demostrados: 4 de 9 criterios (prueba, captura, vídeo con voz y revisión).\nLes falta:\n• REQ-F-002 AC4: su THEN promete lo que no se ve ni se declara no visible: «she cannot continue until she sets one of at least 8 characters»\n• REQ-F-002 AC5: su THEN promete lo que no se ve ni se declara no visible: «Marta can enter with \"Otra12345\" and no longer with her old password»\n• REQ-F-002 AC6: su THEN promete lo que no se ve ni se declara no visible: «she can no longer log in»\n• REQ-F-002 AC7: su THEN promete lo que no se ve ni se declara no visible: «her account stays active»\n• REQ-F-002 AC9: su THEN promete lo que no se ve ni se declara no visible: «its units become free»\n\n👉 Pulsa ▶ Ver demo; después ❌ Rechazar para que se arregle, o 🗑 Descartar las que no sean un fallo (escribe su número, p. ej. CH-005, y por qué; la puerta vuelve sin ellas).\n\n❓ Antes, 2 preguntas (la recomendada ya está marcada en los botones Q):\n\n1. Si el encargado restablece la contraseña de un socio que tenía la cuenta bloqueada por fallos, ¿el socio puede entrar en ese momento con la nueva contraseña, o tiene que esperar a que se levante el bloqueo?\n   🔧 Detalle técnico: REQ-F-002 AC5 dice que tras el restablecimiento del encargado el socio entra con la nueva contraseña y ya no con la antigua. Pero si el socio falló la contrase…\n   A) Sí, al restablecer la contraseña el socio puede entrar en el acto con la nueva  ⭐ recomendada  (🛠 lanza trabajo)\n   B) No, el socio espera a que caduque el bloqueo  (📌 se anota para la siguiente entrega)\n\n2. El requisito pide que Lucía vea «No tienes multas» en su pantalla de multas, que no existe hasta la entrega 4: ¿se enseña entonces o se cambia el requisito?\n   🔧 Detalle técnico: REQ-F-005 AC3 y AC9 piden ver «No tienes multas» en «Mis multas» cuando Lucía la abre. ¿Cómo se deja esa línea «Se ve» hasta que exista esa pantalla?\n   A) Se enseña cuando exista la pantalla, en la entrega 4  ⭐ recomendada\n   B) Cambiar el requisito para que diga lo que enseña hoy la web  (📌 se anota para la siguiente entrega)\n\n👉 Si firmas sin tocar los botones Q, esto lanzará: 🛠 lanza trabajo: Q1 · sin más efecto: Q2.",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "corrijo",
+      "etiqueta": "✏️ Corregir el requisito",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "descarto",
+      "etiqueta": "🗑 Descartar una impugnación",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-3/MONTAJE-FASE-3.mp4",
+  "preguntas": [
+    {
+      "n": 1,
+      "id": "Q-acceptance-002",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "accion",
+          "ficheros": [
+            "src/server/servicios/cuentas.js"
+          ],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "req-change",
+          "ficheros": [
+            "requirements/REQUIREMENTS.md"
+          ],
+          "declarado": true
+        }
+      },
+      "cliente": "Si el encargado restablece la contraseña de un socio que tenía la cuenta bloqueada por fallos, ¿el socio puede entrar en ese momento con la nueva contraseña, o tiene que esperar a que se levante el bloqueo?"
+    },
+    {
+      "n": 2,
+      "id": "Q-task-implementer-005",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "req-change",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "El requisito pide que Lucía vea «No tienes multas» en su pantalla de multas, que no existe hasta la entrega 4: ¿se enseña entonces o se cambia el requisito?"
+    }
+  ],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 1,
+  "bloqueo": true,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": false,
+        "codigo": "test-congelado-autorizado",
+        "texto": "Test ya aceptado cambiado con autorización (tests/e2e/fase-0.spec.js): quita 1 aserción(es) — Q-task-implementer-002: Andres Leon (Cliente), puerta g1795366184146b"
+      },
+      {
+        "grave": true,
+        "codigo": "test-sin-el-texto",
+        "texto": "REQ-F-005 AC3: ningún test de este criterio comprueba «No tienes multas»"
+      },
+      {
+        "grave": true,
+        "codigo": "test-sin-el-texto",
+        "texto": "REQ-F-005 AC9: ningún test de este criterio comprueba «No tienes multas»"
+      },
+      {
+        "grave": false,
+        "codigo": "texto-fuera-del-codigo",
+        "texto": "3 texto(s) que los criterios dicen que se ven no están tal cual en el código de la app («Marta Ruiz — Activo», «Lucía Gil — Activo»): o la app los compone (y nadie comprueba la plantilla) o no los enseña"
+      }
+    ],
+    "graves": 2
+  },
+  "narracion": {
+    "revisados": 9,
+    "modelo": "jev-1.14.0",
+    "contradicen": [],
+    "incompletos": []
+  }
+}

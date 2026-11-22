@@ -1,0 +1,14 @@
+{
+  "verbo": "descarto",
+  "texto": "CH-001: ya lo decidí en las dudas (Q-spec-auditor-001: la sesión se cierra al pasar de 30 minutos; con 30 exactos sigue abierta). El código y la prueba con 31 minutos cumplen esa decisión.",
+  "actor": {
+    "persona": "yo",
+    "canal": "local",
+    "id": "andre"
+  },
+  "prueba": {
+    "host": "DESKTOP-7HT2139",
+    "demo": "no vista"
+  },
+  "at": "2026-11-22T15:17:03Z"
+}

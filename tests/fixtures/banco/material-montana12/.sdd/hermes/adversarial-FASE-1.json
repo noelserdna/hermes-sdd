@@ -1,0 +1,1212 @@
+{
+  "$schema": "sdd-adversarial-plan-v1",
+  "evaluated_sha": "0db0b30ef8c32aeb76749e83cc72a807edd3e6a1",
+  "dirty": false,
+  "generatedAt": "2026-11-22T15:56:31.699Z",
+  "scope": {
+    "fase": 1
+  },
+  "code_paths": [
+    "src"
+  ],
+  "adversarial_gate": "enforce",
+  "incremental": {
+    "since": "aad6862d64781c09ec0fe60c0ac3c7d612090394",
+    "baseline": ".sdd/hermes/adversarial-FASE-1.json",
+    "changed_files": [
+      "tests/e2e/fase-1.spec.js"
+    ],
+    "criteria": 15,
+    "recheck": 4,
+    "carried": 11
+  },
+  "fases": [
+    {
+      "fase": 1,
+      "file": "plan/fases/FASE-1-RESERVAS.md",
+      "header": true,
+      "requirements": [
+        {
+          "id": "REQ-F-003",
+          "title": "Reservar material",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN a socio without pending fines chooses an item type, a quantity and start and end dates with enough free units on every day of the range THE system SHALL create the reservation",
+          "reqHash": "sha256:e9d6b6ae23889903d154b4a8e859ad667b57be1e8aeecc65ac9cc235582739a3",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN \"Casco\" has 6 units and none reserved on 2026-12-05..2026-12-07 WHEN Lucía reserves 2 cascos for those dates THEN the user sees \"Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07\" in \"Mis reservas\"",
+              "scenarios": [
+                "AC-007-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-01 REQ-F-003 AC1 Lucía reserva 2 × Casco del 2026-12-05 al 2026-12-07 y ve «Reserva creada» en Mis reservas",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-01 REQ-F-003 AC1 Lucía reserva 2 × Casco del 2026-12-05 al 2026-12-07 y ve «Reserva creada» en Mis reservas",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-01 REQ-F-003 AC1 Lucía reserva 2 × Casco del 2026-12-05 al 2026-12-07 y ve «Reserva creada» en Mis reservas",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-01 REQ-F-003 AC1 Lucía reserva 2 × Casco del 2026-12-05 al 2026-12-07 y ve «Reserva creada» en Mis reservas",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b751e-rva-creada»-en-Mis-reservas-chromium/attachments/AC-007-01-4306d94acfe20531d269123cf13d2b3d78a46c89.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b751e-rva-creada»-en-Mis-reservas-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-b751e-rva-creada»-en-Mis-reservas-chromium/attachments/AC-007-01-ec1b1a91a467ee8477a175e37093c69871bbdedc.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-b751e-rva-creada»-en-Mis-reservas-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b751e-rva-creada»-en-Mis-reservas-chromium/attachments/AC-007-01-4306d94acfe20531d269123cf13d2b3d78a46c89.png": "sha256:ebda6ff7200d0589658a3b798ee0794fc0c4900d5b1d70d1fe8f38e310635e34",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b751e-rva-creada»-en-Mis-reservas-chromium/test-finished-1.png": "sha256:ebda6ff7200d0589658a3b798ee0794fc0c4900d5b1d70d1fe8f38e310635e34",
+                "evidencias/FASE-1/AC-007-01.png": "sha256:ebda6ff7200d0589658a3b798ee0794fc0c4900d5b1d70d1fe8f38e310635e34",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-b751e-rva-creada»-en-Mis-reservas-chromium/attachments/AC-007-01-ec1b1a91a467ee8477a175e37093c69871bbdedc.png": "sha256:ebda6ff7200d0589658a3b798ee0794fc0c4900d5b1d70d1fe8f38e310635e34",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-b751e-rva-creada»-en-Mis-reservas-chromium/test-finished-1.png": "sha256:ebda6ff7200d0589658a3b798ee0794fc0c4900d5b1d70d1fe8f38e310635e34"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Reserva creada: {cantidad} × {material} del {inicio} al {fin}",
+                    "template": true
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b751e-rva-creada»-en-Mis-reservas-chromium/attachments/AC-007-01-4306d94acfe20531d269123cf13d2b3d78a46c89.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b751e-rva-creada»-en-Mis-reservas-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b751e-rva-creada»-en-Mis-reservas-chromium/attachments/FASE-1-AC-007-01-REQ-F-003-AC1-Luc-a-reserva-2--af91646f0620e2083dbb90eb009c90ff94938088.webm",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b751e-rva-creada»-en-Mis-reservas-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-AC-007-01-REQ-F-003-AC1-Luc-a-reserva-2-.mp4",
+                "evidencias/FASE-1/FASE-1-AC-007-01-REQ-F-003-AC1-Luc-a-reserva-2-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 2,
+              "text": "GIVEN \"Tienda\" has 2 units and Lucía reserved 1 for 2026-12-05..2026-12-07 WHEN Pablo reserves 2 tiendas for 2026-12-06..2026-12-08 THEN the user sees \"No hay unidades libres: solo queda 1 de Tienda el 2026-12-06\" and no reservation is created",
+              "scenarios": [
+                "AC-007-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-02 REQ-F-003 AC2 con «Tienda» a 2 y 1 reservada por Lucía, Pablo pide 2 y ve «solo queda 1 de Tienda el 2026-12-06»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-02 REQ-F-003 AC2 con «Tienda» a 2 y 1 reservada por Lucía, Pablo pide 2 y ve «solo queda 1 de Tienda el 2026-12-06»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-02 REQ-F-003 AC2 con «Tienda» a 2 y 1 reservada por Lucía, Pablo pide 2 y ve «solo queda 1 de Tienda el 2026-12-06»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-02 REQ-F-003 AC2 con «Tienda» a 2 y 1 reservada por Lucía, Pablo pide 2 y ve «solo queda 1 de Tienda el 2026-12-06»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-a04af--1-de-Tienda-el-2026-12-06»-chromium/attachments/AC-007-02-901bf09742151b35cdc33bccde1e3e6c1c114fd5.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-a04af--1-de-Tienda-el-2026-12-06»-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-a04af--1-de-Tienda-el-2026-12-06»-chromium/attachments/AC-007-02-1cd0c0f7dbb214d8a56c172b7b580f66aa67514d.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-a04af--1-de-Tienda-el-2026-12-06»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-a04af--1-de-Tienda-el-2026-12-06»-chromium/attachments/AC-007-02-901bf09742151b35cdc33bccde1e3e6c1c114fd5.png": "sha256:c1064fe1648d8ab05a2b44b3bfca276588a61caa28d4b2254abe6aa978c09685",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-a04af--1-de-Tienda-el-2026-12-06»-chromium/test-finished-1.png": "sha256:c1064fe1648d8ab05a2b44b3bfca276588a61caa28d4b2254abe6aa978c09685",
+                "evidencias/FASE-1/AC-007-02.png": "sha256:c1064fe1648d8ab05a2b44b3bfca276588a61caa28d4b2254abe6aa978c09685",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-a04af--1-de-Tienda-el-2026-12-06»-chromium/attachments/AC-007-02-1cd0c0f7dbb214d8a56c172b7b580f66aa67514d.png": "sha256:f2caa01290d7d957d7f8f63c3d5266cf6ef28f83788baa7bef32ab3e0149fafa",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-a04af--1-de-Tienda-el-2026-12-06»-chromium/test-finished-1.png": "sha256:f2caa01290d7d957d7f8f63c3d5266cf6ef28f83788baa7bef32ab3e0149fafa"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No hay unidades libres: solo queda {libres} de {material} el {día}",
+                    "template": true
+                  },
+                  {
+                    "text": "Aún no tienes reservas",
+                    "template": false
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-a04af--1-de-Tienda-el-2026-12-06»-chromium/attachments/AC-007-02-901bf09742151b35cdc33bccde1e3e6c1c114fd5.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-a04af--1-de-Tienda-el-2026-12-06»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-a04af--1-de-Tienda-el-2026-12-06»-chromium/attachments/FASE-1-AC-007-02-REQ-F-003-AC2-con-Tienda-a-2-3317a2faf4a7bd099eb403ab3a319eff94cb9748.webm",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-a04af--1-de-Tienda-el-2026-12-06»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-AC-007-02-REQ-F-003-AC2-con-Tienda-a-2.mp4",
+                "evidencias/FASE-1/FASE-1-AC-007-02-REQ-F-003-AC2-con-Tienda-a-2.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "challenge CH-002 stale",
+                "test changed: tests/e2e/fase-1.spec.js",
+                "capture changed: evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-a04af--1-de-Tienda-el-2026-12-06»-chromium/attachments/AC-007-02-901bf09742151b35cdc33bccde1e3e6c1c114fd5.png, evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-a04af--1-de-Tienda-el-2026-12-06»-chromium/test-finished-1.png, evidencias/FASE-1/AC-007-02.png"
+              ]
+            },
+            {
+              "n": 3,
+              "text": "GIVEN \"Linterna\" has 3 units and Lucía just reserved 2 for 2026-12-05..2026-12-07 WHEN the same form is submitted again THEN the user sees \"No hay unidades libres: solo queda 1 de Linterna el 2026-12-05\" and Lucía still has one reservation of 2",
+              "scenarios": [
+                "AC-007-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-03 REQ-F-003 AC3 Lucía repite el formulario de 2 × Linterna y ve «solo queda 1 de Linterna el 2026-12-05» con una sola reserva",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-03 REQ-F-003 AC3 Lucía repite el formulario de 2 × Linterna y ve «solo queda 1 de Linterna el 2026-12-05» con una sola reserva",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-03 REQ-F-003 AC3 Lucía repite el formulario de 2 × Linterna y ve «solo queda 1 de Linterna el 2026-12-05» con una sola reserva",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-03 REQ-F-003 AC3 Lucía repite el formulario de 2 × Linterna y ve «solo queda 1 de Linterna el 2026-12-05» con una sola reserva",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-fbd82-12-05»-con-una-sola-reserva-chromium/attachments/AC-007-03-b6f4ad49bc6429bcc8bc7a3250e7557193bdfe4a.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-fbd82-12-05»-con-una-sola-reserva-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-fbd82-12-05»-con-una-sola-reserva-chromium/attachments/AC-007-03-acbf5b69b4d9b702f9231a2de0b1c6b69e92217f.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-fbd82-12-05»-con-una-sola-reserva-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-fbd82-12-05»-con-una-sola-reserva-chromium/attachments/AC-007-03-b6f4ad49bc6429bcc8bc7a3250e7557193bdfe4a.png": "sha256:25a93c892a01d64a6e64f0c769dc409e6f612ce277ebbf6272883a033bd7994d",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-fbd82-12-05»-con-una-sola-reserva-chromium/test-finished-1.png": "sha256:25a93c892a01d64a6e64f0c769dc409e6f612ce277ebbf6272883a033bd7994d",
+                "evidencias/FASE-1/AC-007-03.png": "sha256:25a93c892a01d64a6e64f0c769dc409e6f612ce277ebbf6272883a033bd7994d",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-fbd82-12-05»-con-una-sola-reserva-chromium/attachments/AC-007-03-acbf5b69b4d9b702f9231a2de0b1c6b69e92217f.png": "sha256:75a1c1cb8bbb647edfdf0f67957af0b5a553a17614008c1b9411489b5a312656",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-fbd82-12-05»-con-una-sola-reserva-chromium/test-finished-1.png": "sha256:75a1c1cb8bbb647edfdf0f67957af0b5a553a17614008c1b9411489b5a312656"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No hay unidades libres: solo queda {libres} de {material} el {día}",
+                    "template": true
+                  },
+                  {
+                    "text": "2 × Linterna del 2026-12-05 al 2026-12-07 — Reservada",
+                    "template": false
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-fbd82-12-05»-con-una-sola-reserva-chromium/attachments/AC-007-03-b6f4ad49bc6429bcc8bc7a3250e7557193bdfe4a.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-fbd82-12-05»-con-una-sola-reserva-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-fbd82-12-05»-con-una-sola-reserva-chromium/attachments/FASE-1-AC-007-03-REQ-F-003-AC3-Luc-a-repite-el--835906e37351480895ccd2dca39e7309ff5c0199.webm",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-fbd82-12-05»-con-una-sola-reserva-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-AC-007-03-REQ-F-003-AC3-Luc-a-repite-el-.mp4",
+                "evidencias/FASE-1/FASE-1-AC-007-03-REQ-F-003-AC3-Luc-a-repite-el-.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "challenge CH-003 stale",
+                "test changed: tests/e2e/fase-1.spec.js",
+                "capture changed: evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-fbd82-12-05»-con-una-sola-reserva-chromium/attachments/AC-007-03-b6f4ad49bc6429bcc8bc7a3250e7557193bdfe4a.png, evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-fbd82-12-05»-con-una-sola-reserva-chromium/test-finished-1.png, evidencias/FASE-1/AC-007-03.png"
+              ]
+            },
+            {
+              "n": 4,
+              "text": "GIVEN today is 2026-11-22 WHEN a socio picks the start date 2026-11-21 THEN the user sees \"La fecha de inicio no puede ser pasada\"",
+              "scenarios": [
+                "AC-007-04"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-04 REQ-F-003 AC4 hoy es 2026-11-22 y Lucía elige inicio 2026-11-21: ve «La fecha de inicio no puede ser pasada»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-04 REQ-F-003 AC4 hoy es 2026-11-22 y Lucía elige inicio 2026-11-21: ve «La fecha de inicio no puede ser pasada»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-04 REQ-F-003 AC4 hoy es 2026-11-22 y Lucía elige inicio 2026-11-21: ve «La fecha de inicio no puede ser pasada»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-04 REQ-F-003 AC4 hoy es 2026-11-22 y Lucía elige inicio 2026-11-21: ve «La fecha de inicio no puede ser pasada»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-2d8bb-inicio-no-puede-ser-pasada»-chromium/attachments/AC-007-04-3917da30bd1eeaa0767dd0949622b108b74c207d.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-2d8bb-inicio-no-puede-ser-pasada»-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-2d8bb-inicio-no-puede-ser-pasada»-chromium/attachments/AC-007-04-0669ffc01263fe2194d6265396daf4a8411fa758.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-2d8bb-inicio-no-puede-ser-pasada»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-2d8bb-inicio-no-puede-ser-pasada»-chromium/attachments/AC-007-04-3917da30bd1eeaa0767dd0949622b108b74c207d.png": "sha256:eb1b2e94fc56be4cc47f1b2b0398186b341d96c11caf294ef89b8fe5e95ca611",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-2d8bb-inicio-no-puede-ser-pasada»-chromium/test-finished-1.png": "sha256:eb1b2e94fc56be4cc47f1b2b0398186b341d96c11caf294ef89b8fe5e95ca611",
+                "evidencias/FASE-1/AC-007-04.png": "sha256:eb1b2e94fc56be4cc47f1b2b0398186b341d96c11caf294ef89b8fe5e95ca611",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-2d8bb-inicio-no-puede-ser-pasada»-chromium/attachments/AC-007-04-0669ffc01263fe2194d6265396daf4a8411fa758.png": "sha256:eb1b2e94fc56be4cc47f1b2b0398186b341d96c11caf294ef89b8fe5e95ca611",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-2d8bb-inicio-no-puede-ser-pasada»-chromium/test-finished-1.png": "sha256:eb1b2e94fc56be4cc47f1b2b0398186b341d96c11caf294ef89b8fe5e95ca611"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "La fecha de inicio no puede ser pasada",
+                    "template": false
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-2d8bb-inicio-no-puede-ser-pasada»-chromium/attachments/AC-007-04-3917da30bd1eeaa0767dd0949622b108b74c207d.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-2d8bb-inicio-no-puede-ser-pasada»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-2d8bb-inicio-no-puede-ser-pasada»-chromium/attachments/FASE-1-AC-007-04-REQ-F-003-AC4-hoy-es-2026-11-2-12ecb9fce32a124ca4cd0ac38e56d13ffa122fcd.webm",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-2d8bb-inicio-no-puede-ser-pasada»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-AC-007-04-REQ-F-003-AC4-hoy-es-2026-11-2.mp4",
+                "evidencias/FASE-1/FASE-1-AC-007-04-REQ-F-003-AC4-hoy-es-2026-11-2.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 5,
+              "text": "GIVEN the form WHEN the end date 2026-12-01 is before the start 2026-12-05 THEN the user sees \"La fecha de fin no puede ser anterior a la de inicio\"",
+              "scenarios": [
+                "AC-007-05"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-05 REQ-F-003 AC5 Lucía pone fin 2026-12-01 antes del inicio 2026-12-05 y ve «La fecha de fin no puede ser anterior a la de inicio»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-05 REQ-F-003 AC5 Lucía pone fin 2026-12-01 antes del inicio 2026-12-05 y ve «La fecha de fin no puede ser anterior a la de inicio»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-05 REQ-F-003 AC5 Lucía pone fin 2026-12-01 antes del inicio 2026-12-05 y ve «La fecha de fin no puede ser anterior a la de inicio»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-05 REQ-F-003 AC5 Lucía pone fin 2026-12-01 antes del inicio 2026-12-05 y ve «La fecha de fin no puede ser anterior a la de inicio»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-a2482-er-anterior-a-la-de-inicio»-chromium/attachments/AC-007-05-c7dea2a1002ebbf1bd7cabd0f97de05a95a565f5.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-a2482-er-anterior-a-la-de-inicio»-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-a2482-er-anterior-a-la-de-inicio»-chromium/attachments/AC-007-05-88ecc8360aef063e7d6fdfcd2387adcecd7d3cc1.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-a2482-er-anterior-a-la-de-inicio»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-05.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-a2482-er-anterior-a-la-de-inicio»-chromium/attachments/AC-007-05-c7dea2a1002ebbf1bd7cabd0f97de05a95a565f5.png": "sha256:0562433d78a9840a038c8aa6e2b1da0d28dd33c9643f4af633718e5bfd9568a5",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-a2482-er-anterior-a-la-de-inicio»-chromium/test-finished-1.png": "sha256:0562433d78a9840a038c8aa6e2b1da0d28dd33c9643f4af633718e5bfd9568a5",
+                "evidencias/FASE-1/AC-007-05.png": "sha256:0562433d78a9840a038c8aa6e2b1da0d28dd33c9643f4af633718e5bfd9568a5",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-a2482-er-anterior-a-la-de-inicio»-chromium/attachments/AC-007-05-88ecc8360aef063e7d6fdfcd2387adcecd7d3cc1.png": "sha256:0562433d78a9840a038c8aa6e2b1da0d28dd33c9643f4af633718e5bfd9568a5",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-a2482-er-anterior-a-la-de-inicio»-chromium/test-finished-1.png": "sha256:0562433d78a9840a038c8aa6e2b1da0d28dd33c9643f4af633718e5bfd9568a5"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "La fecha de fin no puede ser anterior a la de inicio",
+                    "template": false
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-a2482-er-anterior-a-la-de-inicio»-chromium/attachments/AC-007-05-c7dea2a1002ebbf1bd7cabd0f97de05a95a565f5.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-a2482-er-anterior-a-la-de-inicio»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-05.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-a2482-er-anterior-a-la-de-inicio»-chromium/attachments/FASE-1-AC-007-05-REQ-F-003-AC5-Luc-a-pone-fin-2-94116674bac26ed531cb4292bfb64f2285556922.webm",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-a2482-er-anterior-a-la-de-inicio»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-AC-007-05-REQ-F-003-AC5-Luc-a-pone-fin-2.mp4",
+                "evidencias/FASE-1/FASE-1-AC-007-05-REQ-F-003-AC5-Luc-a-pone-fin-2.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 6,
+              "text": "GIVEN the form WHEN a socio asks for 15 days (2026-12-01..2026-12-15) THEN the user sees \"Máximo 14 días por reserva\"",
+              "scenarios": [
+                "AC-007-06"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-06 REQ-F-003 AC6 Lucía pide 15 días (2026-12-01..2026-12-15) y ve «Máximo 14 días por reserva»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-06 REQ-F-003 AC6 Lucía pide 15 días (2026-12-01..2026-12-15) y ve «Máximo 14 días por reserva»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-06 REQ-F-003 AC6 Lucía pide 15 días (2026-12-01..2026-12-15) y ve «Máximo 14 días por reserva»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-06 REQ-F-003 AC6 Lucía pide 15 días (2026-12-01..2026-12-15) y ve «Máximo 14 días por reserva»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-69472-Máximo-14-días-por-reserva»-chromium/attachments/AC-007-06-51efc9a0733787cf3a6f8c0b5483898fab75b870.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-69472-Máximo-14-días-por-reserva»-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-69472-Máximo-14-días-por-reserva»-chromium/attachments/AC-007-06-4080c0fcb395f0b366764a07142fdd972f404d13.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-69472-Máximo-14-días-por-reserva»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-06.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-69472-Máximo-14-días-por-reserva»-chromium/attachments/AC-007-06-51efc9a0733787cf3a6f8c0b5483898fab75b870.png": "sha256:42b0919125b2c65175b050d88dd3625cba3bda5c1610a08a4c004682a19b1beb",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-69472-Máximo-14-días-por-reserva»-chromium/test-finished-1.png": "sha256:42b0919125b2c65175b050d88dd3625cba3bda5c1610a08a4c004682a19b1beb",
+                "evidencias/FASE-1/AC-007-06.png": "sha256:42b0919125b2c65175b050d88dd3625cba3bda5c1610a08a4c004682a19b1beb",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-69472-Máximo-14-días-por-reserva»-chromium/attachments/AC-007-06-4080c0fcb395f0b366764a07142fdd972f404d13.png": "sha256:42b0919125b2c65175b050d88dd3625cba3bda5c1610a08a4c004682a19b1beb",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-69472-Máximo-14-días-por-reserva»-chromium/test-finished-1.png": "sha256:42b0919125b2c65175b050d88dd3625cba3bda5c1610a08a4c004682a19b1beb"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Máximo 14 días por reserva",
+                    "template": false
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-69472-Máximo-14-días-por-reserva»-chromium/attachments/AC-007-06-51efc9a0733787cf3a6f8c0b5483898fab75b870.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-69472-Máximo-14-días-por-reserva»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-06.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-69472-Máximo-14-días-por-reserva»-chromium/attachments/FASE-1-AC-007-06-REQ-F-003-AC6-Luc-a-pide-15-d--3d81ce3145a26f68d3315b2e13ab4b32005532ff.webm",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-69472-Máximo-14-días-por-reserva»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-AC-007-06-REQ-F-003-AC6-Luc-a-pide-15-d-.mp4",
+                "evidencias/FASE-1/FASE-1-AC-007-06-REQ-F-003-AC6-Luc-a-pide-15-d-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 7,
+              "text": "GIVEN the form WHEN a socio asks for 6 units of one type THEN the user sees \"Máximo 5 unidades por reserva\"",
+              "scenarios": [
+                "AC-007-07"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-07 REQ-F-003 AC7 Lucía pide 6 unidades de un tipo y ve «Máximo 5 unidades por reserva»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-07 REQ-F-003 AC7 Lucía pide 6 unidades de un tipo y ve «Máximo 5 unidades por reserva»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-07 REQ-F-003 AC7 Lucía pide 6 unidades de un tipo y ve «Máximo 5 unidades por reserva»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-07 REQ-F-003 AC7 Lucía pide 6 unidades de un tipo y ve «Máximo 5 unidades por reserva»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b1fb4-imo-5-unidades-por-reserva»-chromium/attachments/AC-007-07-6c478d496f792a1b0b1983c04cea96e57ddee88c.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b1fb4-imo-5-unidades-por-reserva»-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-b1fb4-imo-5-unidades-por-reserva»-chromium/attachments/AC-007-07-f69a04e0b68838e8248b1f85467710a831539876.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-b1fb4-imo-5-unidades-por-reserva»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-07.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b1fb4-imo-5-unidades-por-reserva»-chromium/attachments/AC-007-07-6c478d496f792a1b0b1983c04cea96e57ddee88c.png": "sha256:06e5e7642c5c2af8b7c01690d1f8f6bce07c56a591e9b356e4f0be471d15fdf3",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b1fb4-imo-5-unidades-por-reserva»-chromium/test-finished-1.png": "sha256:06e5e7642c5c2af8b7c01690d1f8f6bce07c56a591e9b356e4f0be471d15fdf3",
+                "evidencias/FASE-1/AC-007-07.png": "sha256:06e5e7642c5c2af8b7c01690d1f8f6bce07c56a591e9b356e4f0be471d15fdf3",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-b1fb4-imo-5-unidades-por-reserva»-chromium/attachments/AC-007-07-f69a04e0b68838e8248b1f85467710a831539876.png": "sha256:06e5e7642c5c2af8b7c01690d1f8f6bce07c56a591e9b356e4f0be471d15fdf3",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-b1fb4-imo-5-unidades-por-reserva»-chromium/test-finished-1.png": "sha256:06e5e7642c5c2af8b7c01690d1f8f6bce07c56a591e9b356e4f0be471d15fdf3"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Máximo 5 unidades por reserva",
+                    "template": false
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b1fb4-imo-5-unidades-por-reserva»-chromium/attachments/AC-007-07-6c478d496f792a1b0b1983c04cea96e57ddee88c.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b1fb4-imo-5-unidades-por-reserva»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-07.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b1fb4-imo-5-unidades-por-reserva»-chromium/attachments/FASE-1-AC-007-07-REQ-F-003-AC7-Luc-a-pide-6-uni-58c24c262a920ef067553f9a95667d9f9a93b7b0.webm",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b1fb4-imo-5-unidades-por-reserva»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-AC-007-07-REQ-F-003-AC7-Luc-a-pide-6-uni.mp4",
+                "evidencias/FASE-1/FASE-1-AC-007-07-REQ-F-003-AC7-Luc-a-pide-6-uni.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 8,
+              "text": "GIVEN Pablo has a pending fine of 6 € WHEN he tries to reserve THEN the user sees \"No puedes reservar hasta pagar tu multa de 6 €\" and no reservation is created",
+              "scenarios": [
+                "AC-007-08"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-08 REQ-F-003 AC8 Pablo con una multa pendiente de 6 € intenta reservar y ve «No puedes reservar hasta pagar tu multa de 6 €»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-08 REQ-F-003 AC8 Pablo con una multa pendiente de 6 € intenta reservar y ve «No puedes reservar hasta pagar tu multa de 6 €»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-08 REQ-F-003 AC8 Pablo con una multa pendiente de 6 € intenta reservar y ve «No puedes reservar hasta pagar tu multa de 6 €»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-08 REQ-F-003 AC8 Pablo con una multa pendiente de 6 € intenta reservar y ve «No puedes reservar hasta pagar tu multa de 6 €»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-5fd33-asta-pagar-tu-multa-de-6-€»-chromium/attachments/AC-007-08-a4959f40d70faf1633d2cc016c6c5c0a278c1ad4.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-5fd33-asta-pagar-tu-multa-de-6-€»-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-5fd33-asta-pagar-tu-multa-de-6-€»-chromium/attachments/AC-007-08-7d6ca0ae25692af2590db8f2ffbc074486dc6296.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-5fd33-asta-pagar-tu-multa-de-6-€»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-08.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-5fd33-asta-pagar-tu-multa-de-6-€»-chromium/attachments/AC-007-08-a4959f40d70faf1633d2cc016c6c5c0a278c1ad4.png": "sha256:f809be78c7179ecc1c23282f458fa0b8e0e45f0c39c110e28aeb1f19d89ee4ec",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-5fd33-asta-pagar-tu-multa-de-6-€»-chromium/test-finished-1.png": "sha256:f809be78c7179ecc1c23282f458fa0b8e0e45f0c39c110e28aeb1f19d89ee4ec",
+                "evidencias/FASE-1/AC-007-08.png": "sha256:f809be78c7179ecc1c23282f458fa0b8e0e45f0c39c110e28aeb1f19d89ee4ec",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-5fd33-asta-pagar-tu-multa-de-6-€»-chromium/attachments/AC-007-08-7d6ca0ae25692af2590db8f2ffbc074486dc6296.png": "sha256:923d5907eb340cf62c321de3ac3a99f9a196c4f11d8020faf179a12cfd3f3a44",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-5fd33-asta-pagar-tu-multa-de-6-€»-chromium/test-finished-1.png": "sha256:923d5907eb340cf62c321de3ac3a99f9a196c4f11d8020faf179a12cfd3f3a44"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No puedes reservar hasta pagar tu multa de {importe} €",
+                    "template": true
+                  },
+                  {
+                    "text": "Aún no tienes reservas",
+                    "template": false
+                  }
+                ],
+                "where": "Reservar (ejemplo con datos: \"No puedes reservar hasta pagar tu multa de 6 €\")",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-5fd33-asta-pagar-tu-multa-de-6-€»-chromium/attachments/AC-007-08-a4959f40d70faf1633d2cc016c6c5c0a278c1ad4.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-5fd33-asta-pagar-tu-multa-de-6-€»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-08.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-5fd33-asta-pagar-tu-multa-de-6-€»-chromium/attachments/FASE-1-AC-007-08-REQ-F-003-AC8-Pablo-con-una-mu-091494bd52044866dc5962ad90db27deadf95977.webm",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-5fd33-asta-pagar-tu-multa-de-6-€»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-AC-007-08-REQ-F-003-AC8-Pablo-con-una-mu.mp4",
+                "evidencias/FASE-1/FASE-1-AC-007-08-REQ-F-003-AC8-Pablo-con-una-mu.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "challenge CH-004 stale",
+                "test changed: tests/e2e/fase-1.spec.js",
+                "capture changed: evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-5fd33-asta-pagar-tu-multa-de-6-€»-chromium/attachments/AC-007-08-a4959f40d70faf1633d2cc016c6c5c0a278c1ad4.png, evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-5fd33-asta-pagar-tu-multa-de-6-€»-chromium/test-finished-1.png, evidencias/FASE-1/AC-007-08.png"
+              ]
+            },
+            {
+              "n": 9,
+              "text": "GIVEN Lucía has a pending fine of 2 € WHEN she tries to reserve THEN the user sees \"No puedes reservar hasta pagar tu multa de 2 €\"",
+              "scenarios": [
+                "AC-007-09"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-09 REQ-F-003 AC9 Lucía con una multa pendiente de 2 € intenta reservar y ve «No puedes reservar hasta pagar tu multa de 2 €»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-09 REQ-F-003 AC9 Lucía con una multa pendiente de 2 € intenta reservar y ve «No puedes reservar hasta pagar tu multa de 2 €»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-09 REQ-F-003 AC9 Lucía con una multa pendiente de 2 € intenta reservar y ve «No puedes reservar hasta pagar tu multa de 2 €»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-1 · Reservar material (REQ-F-003) › AC-007-09 REQ-F-003 AC9 Lucía con una multa pendiente de 2 € intenta reservar y ve «No puedes reservar hasta pagar tu multa de 2 €»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b9f79-asta-pagar-tu-multa-de-2-€»-chromium/attachments/AC-007-09-b121ae916c4aa1e4bac10b0c40e6d01a278725d9.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b9f79-asta-pagar-tu-multa-de-2-€»-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-b9f79-asta-pagar-tu-multa-de-2-€»-chromium/attachments/AC-007-09-c7b2b3e8dbaf184d6aae2547bda2f0c5f1dcdb04.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-b9f79-asta-pagar-tu-multa-de-2-€»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-09.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b9f79-asta-pagar-tu-multa-de-2-€»-chromium/attachments/AC-007-09-b121ae916c4aa1e4bac10b0c40e6d01a278725d9.png": "sha256:91389ac2137778c7ebf76ff670a620ab1336f569a5f0fd13a775e0d33c910a3e",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b9f79-asta-pagar-tu-multa-de-2-€»-chromium/test-finished-1.png": "sha256:91389ac2137778c7ebf76ff670a620ab1336f569a5f0fd13a775e0d33c910a3e",
+                "evidencias/FASE-1/AC-007-09.png": "sha256:91389ac2137778c7ebf76ff670a620ab1336f569a5f0fd13a775e0d33c910a3e",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-b9f79-asta-pagar-tu-multa-de-2-€»-chromium/attachments/AC-007-09-c7b2b3e8dbaf184d6aae2547bda2f0c5f1dcdb04.png": "sha256:91389ac2137778c7ebf76ff670a620ab1336f569a5f0fd13a775e0d33c910a3e",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Reservar-m-b9f79-asta-pagar-tu-multa-de-2-€»-chromium/test-finished-1.png": "sha256:91389ac2137778c7ebf76ff670a620ab1336f569a5f0fd13a775e0d33c910a3e"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No puedes reservar hasta pagar tu multa de {importe} €",
+                    "template": true
+                  }
+                ],
+                "where": "Reservar (ejemplo con datos: \"No puedes reservar hasta pagar tu multa de 2 €\")",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b9f79-asta-pagar-tu-multa-de-2-€»-chromium/attachments/AC-007-09-b121ae916c4aa1e4bac10b0c40e6d01a278725d9.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b9f79-asta-pagar-tu-multa-de-2-€»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-09.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b9f79-asta-pagar-tu-multa-de-2-€»-chromium/attachments/FASE-1-AC-007-09-REQ-F-003-AC9-Luc-a-con-una-mu-3d2563464cb2699acdef0280f011b46abddc5bb9.webm",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Reservar-m-b9f79-asta-pagar-tu-multa-de-2-€»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-AC-007-09-REQ-F-003-AC9-Luc-a-con-una-mu.mp4",
+                "evidencias/FASE-1/FASE-1-AC-007-09-REQ-F-003-AC9-Luc-a-con-una-mu.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            }
+          ],
+          "candidate_files": [
+            "src/server/dominio/fechas.js",
+            "src/server/http/rutas.js",
+            "src/server/mensajes.js",
+            "src/server/servicios/prestamos.js",
+            "src/ui/api.js",
+            "src/ui/componentes.js",
+            "src/ui/main.js",
+            "src/ui/paginas/reservar.js",
+            "src/ui/router.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        },
+        {
+          "id": "REQ-F-004",
+          "title": "Mis reservas y cancelar",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN a socio opens \"Mis reservas\" THE system SHALL list their own reservations with state, and WHEN they cancel one whose start date is after today THE system SHALL cancel it and free its units",
+          "reqHash": "sha256:197b409de807e2242bc7055544ece72d0179129a30350f741e1554ebc7766b24",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN Lucía has 2 × Casco 2026-12-05..2026-12-07 and no one else has reservations WHEN she opens \"Mis reservas\" THEN the user sees \"2 × Casco del 2026-12-05 al 2026-12-07 — Reservada\" and no reservation of other members",
+              "scenarios": [
+                "AC-008-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-01 REQ-F-004 AC1 Lucía abre Mis reservas y ve «2 × Casco del 2026-12-05 al 2026-12-07 — Reservada» sin las reservas de otros",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-01 REQ-F-004 AC1 Lucía abre Mis reservas y ve «2 × Casco del 2026-12-05 al 2026-12-07 — Reservada» sin las reservas de otros",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-01 REQ-F-004 AC1 Lucía abre Mis reservas y ve «2 × Casco del 2026-12-05 al 2026-12-07 — Reservada» sin las reservas de otros",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-01 REQ-F-004 AC1 Lucía abre Mis reservas y ve «2 × Casco del 2026-12-05 al 2026-12-07 — Reservada» sin las reservas de otros",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-5ec72-»-sin-las-reservas-de-otros-chromium/attachments/AC-008-01-2bea2889dd524a8cafd7084bf375dc12bcafae4f.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-5ec72-»-sin-las-reservas-de-otros-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-5ec72-»-sin-las-reservas-de-otros-chromium/attachments/AC-008-01-d6393607a7bc4874dc98b2e096b27900f09e50f9.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-5ec72-»-sin-las-reservas-de-otros-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-008-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-5ec72-»-sin-las-reservas-de-otros-chromium/attachments/AC-008-01-2bea2889dd524a8cafd7084bf375dc12bcafae4f.png": "sha256:9752613b42e3c1997e72e1235e473b1142c79981373620a5dbfcd7fbb1b35b58",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-5ec72-»-sin-las-reservas-de-otros-chromium/test-finished-1.png": "sha256:9752613b42e3c1997e72e1235e473b1142c79981373620a5dbfcd7fbb1b35b58",
+                "evidencias/FASE-1/AC-008-01.png": "sha256:9752613b42e3c1997e72e1235e473b1142c79981373620a5dbfcd7fbb1b35b58",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-5ec72-»-sin-las-reservas-de-otros-chromium/attachments/AC-008-01-d6393607a7bc4874dc98b2e096b27900f09e50f9.png": "sha256:9752613b42e3c1997e72e1235e473b1142c79981373620a5dbfcd7fbb1b35b58",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-5ec72-»-sin-las-reservas-de-otros-chromium/test-finished-1.png": "sha256:9752613b42e3c1997e72e1235e473b1142c79981373620a5dbfcd7fbb1b35b58"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{cantidad} × {material} del {inicio} al {fin} — {estado}",
+                    "template": true
+                  }
+                ],
+                "where": "Mis reservas (ejemplo con datos: \"2 × Casco del 2026-12-05 al 2026-12-07 — Reservada\")",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-5ec72-»-sin-las-reservas-de-otros-chromium/attachments/AC-008-01-2bea2889dd524a8cafd7084bf375dc12bcafae4f.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-5ec72-»-sin-las-reservas-de-otros-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-008-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-5ec72-»-sin-las-reservas-de-otros-chromium/attachments/FASE-1-AC-008-01-REQ-F-004-AC1-Luc-a-abre-Mis-r-932e50c53341482bb30026815f87223116e41e0f.webm",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-5ec72-»-sin-las-reservas-de-otros-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-AC-008-01-REQ-F-004-AC1-Luc-a-abre-Mis-r.mp4",
+                "evidencias/FASE-1/FASE-1-AC-008-01-REQ-F-004-AC1-Luc-a-abre-Mis-r.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 2,
+              "text": "GIVEN today is 2026-12-04 and her reservation starts 2026-12-05 WHEN Lucía presses \"Cancelar\" THEN the user sees \"Reserva cancelada\", its state \"Cancelada\" and its units become free",
+              "scenarios": [
+                "AC-009-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-009-01 REQ-F-004 AC2 hoy es 2026-12-04 y Lucía cancela su reserva del 2026-12-05: ve «Reserva cancelada», su estado «Cancelada» y sus unidades libres",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-009-01 REQ-F-004 AC2 hoy es 2026-12-04 y Lucía cancela su reserva del 2026-12-05: ve «Reserva cancelada», su estado «Cancelada» y sus unidades libres",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-009-01 REQ-F-004 AC2 hoy es 2026-12-04 y Lucía cancela su reserva del 2026-12-05: ve «Reserva cancelada», su estado «Cancelada» y sus unidades libres",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-009-01 REQ-F-004 AC2 hoy es 2026-12-04 y Lucía cancela su reserva del 2026-12-05: ve «Reserva cancelada», su estado «Cancelada» y sus unidades libres",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-90a68-lada»-y-sus-unidades-libres-chromium/attachments/AC-009-01-bd2c4d76657fc3b6a6fab3afa235697f888af829.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-90a68-lada»-y-sus-unidades-libres-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-90a68-lada»-y-sus-unidades-libres-chromium/attachments/AC-009-01-aeabf9274d8fc319c984dea8dbf07a7a97a7b0fa.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-90a68-lada»-y-sus-unidades-libres-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-009-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-90a68-lada»-y-sus-unidades-libres-chromium/attachments/AC-009-01-bd2c4d76657fc3b6a6fab3afa235697f888af829.png": "sha256:0ba05a471dacef4d864e84078964be061f11eb12e8ba7517458ab4573f64dc74",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-90a68-lada»-y-sus-unidades-libres-chromium/test-finished-1.png": "sha256:0ba05a471dacef4d864e84078964be061f11eb12e8ba7517458ab4573f64dc74",
+                "evidencias/FASE-1/AC-009-01.png": "sha256:0ba05a471dacef4d864e84078964be061f11eb12e8ba7517458ab4573f64dc74",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-90a68-lada»-y-sus-unidades-libres-chromium/attachments/AC-009-01-aeabf9274d8fc319c984dea8dbf07a7a97a7b0fa.png": "sha256:0ba05a471dacef4d864e84078964be061f11eb12e8ba7517458ab4573f64dc74",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-90a68-lada»-y-sus-unidades-libres-chromium/test-finished-1.png": "sha256:0ba05a471dacef4d864e84078964be061f11eb12e8ba7517458ab4573f64dc74"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Reserva cancelada",
+                    "template": false
+                  },
+                  {
+                    "text": "2 × Casco del 2026-12-05 al 2026-12-07 — Cancelada",
+                    "template": false
+                  },
+                  {
+                    "text": "Reserva creada: {cantidad} × {material} del {inicio} al {fin}",
+                    "template": true
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-90a68-lada»-y-sus-unidades-libres-chromium/attachments/AC-009-01-bd2c4d76657fc3b6a6fab3afa235697f888af829.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-90a68-lada»-y-sus-unidades-libres-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-009-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-90a68-lada»-y-sus-unidades-libres-chromium/attachments/FASE-1-AC-009-01-REQ-F-004-AC2-hoy-es-2026-12-0-f43d83ceb0fddc10f730c0766cf2f49daf8a4457.webm",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-90a68-lada»-y-sus-unidades-libres-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-AC-009-01-REQ-F-004-AC2-hoy-es-2026-12-0.mp4",
+                "evidencias/FASE-1/FASE-1-AC-009-01-REQ-F-004-AC2-hoy-es-2026-12-0.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 3,
+              "text": "GIVEN the reservation was just cancelled WHEN \"Cancelar\" is submitted again THEN the user sees \"La reserva ya estaba cancelada\" and the units are not freed twice",
+              "scenarios": [
+                "AC-009-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-009-02 REQ-F-004 AC3 Lucía repite «Cancelar» desde una pestaña vieja y ve «La reserva ya estaba cancelada»; las unidades no se liberan dos veces",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-009-02 REQ-F-004 AC3 Lucía repite «Cancelar» desde una pestaña vieja y ve «La reserva ya estaba cancelada»; las unidades no se liberan dos veces",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-009-02 REQ-F-004 AC3 Lucía repite «Cancelar» desde una pestaña vieja y ve «La reserva ya estaba cancelada»; las unidades no se liberan dos veces",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-009-02 REQ-F-004 AC3 Lucía repite «Cancelar» desde una pestaña vieja y ve «La reserva ya estaba cancelada»; las unidades no se liberan dos veces",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-ca8e0-des-no-se-liberan-dos-veces-chromium/attachments/AC-009-02-ef6d48c25d77f731f0fd4e6564775e6e8819c95a.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-ca8e0-des-no-se-liberan-dos-veces-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-ca8e0-des-no-se-liberan-dos-veces-chromium/attachments/AC-009-02-8209668dc092176d1dbf104cdfdc0466c802501b.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-ca8e0-des-no-se-liberan-dos-veces-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-009-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-ca8e0-des-no-se-liberan-dos-veces-chromium/attachments/AC-009-02-ef6d48c25d77f731f0fd4e6564775e6e8819c95a.png": "sha256:b3b439c9a8725b03a31013968f6a0d590ed50938402ffffbe2501e3b63fbd838",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-ca8e0-des-no-se-liberan-dos-veces-chromium/test-finished-1.png": "sha256:b3b439c9a8725b03a31013968f6a0d590ed50938402ffffbe2501e3b63fbd838",
+                "evidencias/FASE-1/AC-009-02.png": "sha256:b3b439c9a8725b03a31013968f6a0d590ed50938402ffffbe2501e3b63fbd838",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-ca8e0-des-no-se-liberan-dos-veces-chromium/attachments/AC-009-02-8209668dc092176d1dbf104cdfdc0466c802501b.png": "sha256:b3b439c9a8725b03a31013968f6a0d590ed50938402ffffbe2501e3b63fbd838",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-ca8e0-des-no-se-liberan-dos-veces-chromium/test-finished-1.png": "sha256:b3b439c9a8725b03a31013968f6a0d590ed50938402ffffbe2501e3b63fbd838"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "La reserva ya estaba cancelada",
+                    "template": false
+                  },
+                  {
+                    "text": "No hay unidades libres: solo queda 1 de Casco el 2026-12-05",
+                    "template": false
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-ca8e0-des-no-se-liberan-dos-veces-chromium/attachments/AC-009-02-ef6d48c25d77f731f0fd4e6564775e6e8819c95a.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-ca8e0-des-no-se-liberan-dos-veces-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-009-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-ca8e0-des-no-se-liberan-dos-veces-chromium/attachments/FASE-1-AC-009-02-REQ-F-004-AC3-Luc-a-repite-Ca-7331e39b0faf9b49069337663b5f707f35d833a9.webm",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-ca8e0-des-no-se-liberan-dos-veces-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-AC-009-02-REQ-F-004-AC3-Luc-a-repite-Ca.mp4",
+                "evidencias/FASE-1/FASE-1-AC-009-02-REQ-F-004-AC3-Luc-a-repite-Ca.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "challenge CH-005 stale"
+              ]
+            },
+            {
+              "n": 4,
+              "text": "GIVEN today is 2026-12-05 and her reservation starts 2026-12-05 WHEN she looks at it THEN the user sees \"No se puede cancelar: empieza hoy\" and no \"Cancelar\" button",
+              "scenarios": [
+                "AC-008-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-02 REQ-F-004 AC4 hoy es 2026-12-05 y la reserva de Lucía empieza hoy: ve «No se puede cancelar: empieza hoy» sin botón «Cancelar»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-02 REQ-F-004 AC4 hoy es 2026-12-05 y la reserva de Lucía empieza hoy: ve «No se puede cancelar: empieza hoy» sin botón «Cancelar»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-02 REQ-F-004 AC4 hoy es 2026-12-05 y la reserva de Lucía empieza hoy: ve «No se puede cancelar: empieza hoy» sin botón «Cancelar»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-02 REQ-F-004 AC4 hoy es 2026-12-05 y la reserva de Lucía empieza hoy: ve «No se puede cancelar: empieza hoy» sin botón «Cancelar»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-172d3-a-hoy»-sin-botón-«Cancelar»-chromium/attachments/AC-008-02-737201e69575c2881cee593a1331897bc00242f5.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-172d3-a-hoy»-sin-botón-«Cancelar»-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-172d3-a-hoy»-sin-botón-«Cancelar»-chromium/attachments/AC-008-02-edd45af218fea03fca6892d6528e4c1ec7954c53.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-172d3-a-hoy»-sin-botón-«Cancelar»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-008-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-172d3-a-hoy»-sin-botón-«Cancelar»-chromium/attachments/AC-008-02-737201e69575c2881cee593a1331897bc00242f5.png": "sha256:e84e2bc2879d68d6198c5c169a689a98c23da47e3c1620f4673d6b1058530ad3",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-172d3-a-hoy»-sin-botón-«Cancelar»-chromium/test-finished-1.png": "sha256:e84e2bc2879d68d6198c5c169a689a98c23da47e3c1620f4673d6b1058530ad3",
+                "evidencias/FASE-1/AC-008-02.png": "sha256:e84e2bc2879d68d6198c5c169a689a98c23da47e3c1620f4673d6b1058530ad3",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-172d3-a-hoy»-sin-botón-«Cancelar»-chromium/attachments/AC-008-02-edd45af218fea03fca6892d6528e4c1ec7954c53.png": "sha256:e84e2bc2879d68d6198c5c169a689a98c23da47e3c1620f4673d6b1058530ad3",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-172d3-a-hoy»-sin-botón-«Cancelar»-chromium/test-finished-1.png": "sha256:e84e2bc2879d68d6198c5c169a689a98c23da47e3c1620f4673d6b1058530ad3"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No se puede cancelar: empieza hoy",
+                    "template": false
+                  }
+                ],
+                "where": "Mis reservas, en la fila de esa reserva y sin botón \"Cancelar\"",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-172d3-a-hoy»-sin-botón-«Cancelar»-chromium/attachments/AC-008-02-737201e69575c2881cee593a1331897bc00242f5.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-172d3-a-hoy»-sin-botón-«Cancelar»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-008-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-172d3-a-hoy»-sin-botón-«Cancelar»-chromium/attachments/FASE-1-AC-008-02-REQ-F-004-AC4-hoy-es-2026-12-0-909f1ebec9d7423c5939661dab71767c4b9687e1.webm",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-172d3-a-hoy»-sin-botón-«Cancelar»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-AC-008-02-REQ-F-004-AC4-hoy-es-2026-12-0.mp4",
+                "evidencias/FASE-1/FASE-1-AC-008-02-REQ-F-004-AC4-hoy-es-2026-12-0.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 5,
+              "text": "GIVEN a new socio without reservations WHEN she opens \"Mis reservas\" THEN the user sees \"Aún no tienes reservas\"",
+              "scenarios": [
+                "AC-008-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-03 REQ-F-004 AC5 una socia nueva sin reservas abre Mis reservas y ve «Aún no tienes reservas»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-03 REQ-F-004 AC5 una socia nueva sin reservas abre Mis reservas y ve «Aún no tienes reservas»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-03 REQ-F-004 AC5 una socia nueva sin reservas abre Mis reservas y ve «Aún no tienes reservas»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-03 REQ-F-004 AC5 una socia nueva sin reservas abre Mis reservas y ve «Aún no tienes reservas»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-952d0-ve-«Aún-no-tienes-reservas»-chromium/attachments/AC-008-03-44f7d1e92c6c229c700306a573f7a534be10faca.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-952d0-ve-«Aún-no-tienes-reservas»-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-952d0-ve-«Aún-no-tienes-reservas»-chromium/attachments/AC-008-03-f63eb10ab03ab7f42dea8a392454899b056d7459.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-952d0-ve-«Aún-no-tienes-reservas»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-008-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-952d0-ve-«Aún-no-tienes-reservas»-chromium/attachments/AC-008-03-44f7d1e92c6c229c700306a573f7a534be10faca.png": "sha256:0d57ca42f07861099ab91caca4be1add033efc88d43ec9dd224a4be93ea35b63",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-952d0-ve-«Aún-no-tienes-reservas»-chromium/test-finished-1.png": "sha256:0d57ca42f07861099ab91caca4be1add033efc88d43ec9dd224a4be93ea35b63",
+                "evidencias/FASE-1/AC-008-03.png": "sha256:0d57ca42f07861099ab91caca4be1add033efc88d43ec9dd224a4be93ea35b63",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-952d0-ve-«Aún-no-tienes-reservas»-chromium/attachments/AC-008-03-f63eb10ab03ab7f42dea8a392454899b056d7459.png": "sha256:0d57ca42f07861099ab91caca4be1add033efc88d43ec9dd224a4be93ea35b63",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-952d0-ve-«Aún-no-tienes-reservas»-chromium/test-finished-1.png": "sha256:0d57ca42f07861099ab91caca4be1add033efc88d43ec9dd224a4be93ea35b63"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Aún no tienes reservas",
+                    "template": false
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-952d0-ve-«Aún-no-tienes-reservas»-chromium/attachments/AC-008-03-44f7d1e92c6c229c700306a573f7a534be10faca.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-952d0-ve-«Aún-no-tienes-reservas»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-008-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-952d0-ve-«Aún-no-tienes-reservas»-chromium/attachments/FASE-1-AC-008-03-REQ-F-004-AC5-una-socia-nueva--160069c9b32f1872dcacb883ab9a7143711b04c1.webm",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-952d0-ve-«Aún-no-tienes-reservas»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-AC-008-03-REQ-F-004-AC5-una-socia-nueva-.mp4",
+                "evidencias/FASE-1/FASE-1-AC-008-03-REQ-F-004-AC5-una-socia-nueva-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 6,
+              "text": "GIVEN Pablo is a socio with no reservations while Lucía has one WHEN he opens \"Mis reservas\" THEN the user sees \"Aún no tienes reservas\"",
+              "scenarios": [
+                "AC-008-04"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-04 REQ-F-004 AC6 Pablo, sin reservas mientras Lucía tiene una, abre Mis reservas y ve «Aún no tienes reservas»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-04 REQ-F-004 AC6 Pablo, sin reservas mientras Lucía tiene una, abre Mis reservas y ve «Aún no tienes reservas»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-04 REQ-F-004 AC6 Pablo, sin reservas mientras Lucía tiene una, abre Mis reservas y ve «Aún no tienes reservas»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-04 REQ-F-004 AC6 Pablo, sin reservas mientras Lucía tiene una, abre Mis reservas y ve «Aún no tienes reservas»",
+                  "file": "fase-1.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-f8fea-ve-«Aún-no-tienes-reservas»-chromium/attachments/AC-008-04-8b65f10611a22946f677f9ad18e433efa55389f2.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-f8fea-ve-«Aún-no-tienes-reservas»-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-f8fea-ve-«Aún-no-tienes-reservas»-chromium/attachments/AC-008-04-9fc0286e696eda5831ba606195a762197e294a4d.png",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-f8fea-ve-«Aún-no-tienes-reservas»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-008-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-f8fea-ve-«Aún-no-tienes-reservas»-chromium/attachments/AC-008-04-8b65f10611a22946f677f9ad18e433efa55389f2.png": "sha256:22d1b6ddc3a80ab12a3f71e0180ebe1b32c8527cdd341b6356aab5c61e70a61e",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-f8fea-ve-«Aún-no-tienes-reservas»-chromium/test-finished-1.png": "sha256:22d1b6ddc3a80ab12a3f71e0180ebe1b32c8527cdd341b6356aab5c61e70a61e",
+                "evidencias/FASE-1/AC-008-04.png": "sha256:22d1b6ddc3a80ab12a3f71e0180ebe1b32c8527cdd341b6356aab5c61e70a61e",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-f8fea-ve-«Aún-no-tienes-reservas»-chromium/attachments/AC-008-04-9fc0286e696eda5831ba606195a762197e294a4d.png": "sha256:22d1b6ddc3a80ab12a3f71e0180ebe1b32c8527cdd341b6356aab5c61e70a61e",
+                "evidencias/sin-fase/.playwright/fase-1-FASE-1-·-Mis-reserv-f8fea-ve-«Aún-no-tienes-reservas»-chromium/test-finished-1.png": "sha256:22d1b6ddc3a80ab12a3f71e0180ebe1b32c8527cdd341b6356aab5c61e70a61e"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Aún no tienes reservas",
+                    "template": false
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-f8fea-ve-«Aún-no-tienes-reservas»-chromium/attachments/AC-008-04-8b65f10611a22946f677f9ad18e433efa55389f2.png",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-f8fea-ve-«Aún-no-tienes-reservas»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-008-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-f8fea-ve-«Aún-no-tienes-reservas»-chromium/attachments/FASE-1-AC-008-04-REQ-F-004-AC6-Pablo-sin-reser-5736d76f7953e6c0c398b9ebdf95a3912aea91ee.webm",
+                "evidencias/FASE-1/.playwright/fase-1-FASE-1-·-Mis-reserv-f8fea-ve-«Aún-no-tienes-reservas»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-AC-008-04-REQ-F-004-AC6-Pablo-sin-reser.mp4",
+                "evidencias/FASE-1/FASE-1-AC-008-04-REQ-F-004-AC6-Pablo-sin-reser.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            }
+          ],
+          "candidate_files": [
+            "src/server/http/rutas.js",
+            "src/server/mensajes.js",
+            "src/server/servicios/prestamos.js",
+            "src/ui/main.js",
+            "src/ui/paginas/mis-reservas.js"
+          ],
+          "challenges_open": []
+        }
+      ],
+      "unknown_requirements": [],
+      "tasks": [
+        "TASK-F1-001",
+        "TASK-F1-002",
+        "TASK-F1-003",
+        "TASK-F1-004",
+        "TASK-F1-005",
+        "TASK-F1-006",
+        "TASK-F1-007",
+        "TASK-F1-008",
+        "TASK-F1-009",
+        "TASK-F1-010",
+        "TASK-F1-011",
+        "TASK-F1-012"
+      ],
+      "candidate_files": [
+        "src/server/dominio/estados.js",
+        "src/server/dominio/fechas.js",
+        "src/server/http/rutas.js",
+        "src/server/mensajes.js",
+        "src/server/servicios/prestamos.js",
+        "src/ui/api.js",
+        "src/ui/componentes.js",
+        "src/ui/estilos.css",
+        "src/ui/main.js",
+        "src/ui/paginas/mis-reservas.js",
+        "src/ui/paginas/reservar.js",
+        "src/ui/router.js",
+        "src/ui/textos.js"
+      ],
+      "incremental": {
+        "criteria": 15,
+        "recheck": 4
+      }
+    }
+  ],
+  "uncovered": [
+    {
+      "id": "REQ-C-001",
+      "title": "Textos en español",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-002",
+      "title": "Stack del proyecto",
+      "priority": "Must"
+    }
+  ],
+  "fases_without_header": [],
+  "criteria_without_test": [],
+  "coverage_gaps": 2
+}

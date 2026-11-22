@@ -1,0 +1,30 @@
+{
+ "video": "FASE-0-AC-002-01-REQ-F-001-AC7-Luc-a-pulsa-Sal.webm",
+ "test": "FASE-0 · Entrar y salir (REQ-F-001) › AC-002-01 REQ-F-001 AC7 Lucía pulsa «Salir», ve el formulario «Entrar» y al volver atrás no ve datos privados",
+ "titulo": "AC-002-01 REQ-F-001 AC7 Lucía pulsa «Salir», ve el formulario «Entrar» y al volver atrás no ve datos privados",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-001: Entrar y salir. Criterio 7 de 8.",
+   "voz": "Requisito funcional 1: Entrar y salir. Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras. Tiene 8 criterios de aceptación. Este vídeo demuestra el criterio 7: salir. Dado que un usuario con sesión, cuando pulsa Salir, entonces ve el formulario Entrar. Ahora, la demostración.",
+   "presentacion": "AC-002-01"
+  },
+  {
+   "t": 0.631,
+   "texto": "Lucía entra con su correo y su contraseña"
+  },
+  {
+   "t": 1.031,
+   "texto": "Lucía pulsa Salir"
+  },
+  {
+   "t": 1.306,
+   "texto": "Después vuelve atrás con el navegador"
+  },
+  {
+   "t": 1.539,
+   "texto": "Entrar y salir. En Entrar se ve «Entrar» y «Entrar», y al volver atrás no aparece ningún dato privado de Lucía.",
+   "criterio": "AC-002-01"
+  }
+ ]
+}

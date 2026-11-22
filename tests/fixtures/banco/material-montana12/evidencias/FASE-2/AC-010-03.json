@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-010-03",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-010-03 REQ-F-005 AC8 una reserva que empieza el 2026-12-10 y Pablo pulsa «Entregar» el 2026-12-05: ve «No se puede entregar antes de la fecha de inicio»",
+ "titulo": "AC-010-03 REQ-F-005 AC8 una reserva que empieza el 2026-12-10 y Pablo pulsa «Entregar» el 2026-12-05: ve «No se puede entregar antes de la fecha de inicio»",
+ "ve": [
+  "No se puede entregar antes de la fecha de inicio"
+ ],
+ "narrado": "Entregar y recibir el material. En Panel del encargado se ve «No se puede entregar antes de la fecha de inicio».",
+ "url": "http://127.0.0.1:5173/panel",
+ "imagen": "AC-010-03.png",
+ "sha256": "sha256:8cde8f20ab92c137dca7d6f19c6f075d118f2444d45d16983e5777322f5f9547",
+ "at": "2026-11-22T20:34:27.038Z"
+}

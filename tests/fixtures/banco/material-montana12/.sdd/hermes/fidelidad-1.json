@@ -1,0 +1,260 @@
+{
+ "repo": "/home/andre/proyectos-sdd/material-montana12",
+ "fase": "1",
+ "sha": "ada3e9b",
+ "congelados": [
+  {
+   "commit": "57a31be",
+   "asunto": "fix(e2e): restore accepted playwright.config.js; hoy.txt is read next to MM_RELOJ",
+   "fichero": "playwright.config.js",
+   "clase": "config",
+   "congelado_en": "fase-0-accepted",
+   "lineas_cambiadas": 1,
+   "debilitamiento": [],
+   "aserciones_quitadas": [],
+   "aserciones_puestas": [],
+   "autorizado": false,
+   "autorizacion": "ninguna autorización firmada por una persona nombra este fichero",
+   "grave": true
+  },
+  {
+   "commit": "c0abc18",
+   "asunto": "test(e2e): MM_HOY_FICHERO lets a journey live the day of its GIVEN",
+   "fichero": "playwright.config.js",
+   "clase": "config",
+   "congelado_en": "fase-0-accepted",
+   "lineas_cambiadas": 1,
+   "debilitamiento": [],
+   "aserciones_quitadas": [],
+   "aserciones_puestas": [],
+   "autorizado": false,
+   "autorizacion": "ninguna autorización firmada por una persona nombra este fichero",
+   "grave": true
+  }
+ ],
+ "capturas": [],
+ "coherencia": [],
+ "vinculos": [],
+ "lint_capturas": [],
+ "mutantes_cache": {
+  "de_cache": 0,
+  "ejecutados": 8
+ },
+ "mutantes": [
+  {
+   "req": "REQ-F-003",
+   "ac": 2,
+   "texto": "Aún no tienes reservas",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js",
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 3,
+   "texto": "2 × Linterna del 2026-12-05 al 2026-12-07 — Reservada",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 4,
+   "texto": "La fecha de inicio no puede ser pasada",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 5,
+   "texto": "La fecha de fin no puede ser anterior a la de inicio",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 6,
+   "texto": "Máximo 14 días por reserva",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 7,
+   "texto": "Máximo 5 unidades por reserva",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 8,
+   "texto": "Aún no tienes reservas",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js",
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 2,
+   "texto": "Reserva cancelada",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 2,
+   "texto": "2 × Casco del 2026-12-05 al 2026-12-07 — Cancelada",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 3,
+   "texto": "La reserva ya estaba cancelada",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 3,
+   "texto": "No hay unidades libres: solo queda 1 de Casco el 2026-12-05",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo compone el código y lo comprueba un e2e",
+   "grave": false,
+   "plantilla": "No hay unidades libres: solo queda"
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 4,
+   "texto": "No se puede cancelar: empieza hoy",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 5,
+   "texto": "Aún no tienes reservas",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js",
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 6,
+   "texto": "Aún no tienes reservas",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js",
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  }
+ ],
+ "graves": 2
+}

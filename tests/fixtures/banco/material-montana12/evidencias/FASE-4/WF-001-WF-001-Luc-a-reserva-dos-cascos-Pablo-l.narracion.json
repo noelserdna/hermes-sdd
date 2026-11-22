@@ -1,0 +1,31 @@
+{
+ "video": "WF-001-WF-001-Luc-a-reserva-dos-cascos-Pablo-l.webm",
+ "test": "WF-001 · Ciclo completo de un préstamo › WF-001 Lucía reserva dos cascos, Pablo los entrega y los recibe con retraso, ella ve su multa y no puede reservar hasta que Pablo la cobra",
+ "titulo": "WF-001 Lucía reserva dos cascos, Pablo los entrega y los recibe con retraso, ella ve su multa y no puede reservar hasta que Pablo la cobra",
+ "narraciones": [
+  {
+   "t": 0.089,
+   "texto": "Reservar. Lucía entra, abre Reservar y pide dos cascos desde hoy, 22 de noviembre, hasta el 23"
+  },
+  {
+   "t": 0.925,
+   "texto": "Entregar. Pablo, el encargado, abre el Panel y entrega los cascos a Lucía"
+  },
+  {
+   "t": 1.444,
+   "texto": "Devolver. Lucía trae los cascos el 27 de noviembre, cuatro días después de lo debido, y Pablo los recibe"
+  },
+  {
+   "t": 1.946,
+   "texto": "Multa por retraso. Lucía abre Mis multas y ve su multa pendiente; al intentar reservar de nuevo no puede"
+  },
+  {
+   "t": 2.639,
+   "texto": "Pagar la multa. Pablo abre Multas y pulsa «Marcar pagada»; si lo repite desde otra pestaña, solo le avisan de que ya estaba pagada"
+  },
+  {
+   "t": 3.571,
+   "texto": "Se levanta el bloqueo. Lucía reserva otra vez y en Mis multas su multa figura ya como pagada"
+  }
+ ]
+}

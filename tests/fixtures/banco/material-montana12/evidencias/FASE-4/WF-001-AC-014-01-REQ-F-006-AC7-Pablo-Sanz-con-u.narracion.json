@@ -1,0 +1,22 @@
+{
+ "video": "WF-001-AC-014-01-REQ-F-006-AC7-Pablo-Sanz-con-u.webm",
+ "test": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-014-01 REQ-F-006 AC7 Pablo Sanz con una multa pendiente de 6 € y Lucía Gil con una pagada de 2 €, el encargado abre «Multas»: ve las dos filas con su estado",
+ "titulo": "AC-014-01 REQ-F-006 AC7 Pablo Sanz con una multa pendiente de 6 € y Lucía Gil con una pagada de 2 €, el encargado abre «Multas»: ve las dos filas con su estado",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-006: Multas y bloqueo hasta pagarlas. Criterio 7 de 7.",
+   "voz": "Requisito funcional 6: Multas y bloqueo hasta pagarlas. El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 7: lista con estados. Dado que Pablo Sanz tiene una multa pendiente de 6 € y Lucía Gil una pagada de 2 €, cuando el encargado abre Multas, entonces ve Pablo Sanz — Multa de 6 € — Pendiente y ve Lucía Gil — Multa de 2 € — Pagada. Ahora, la demostración.",
+   "presentacion": "AC-014-01"
+  },
+  {
+   "t": 0.829,
+   "texto": "Pablo Sanz debe una multa de 6 euros y Lucía Gil ya pagó la suya de 2. Jorge, el encargado, abre Multas"
+  },
+  {
+   "t": 1.094,
+   "texto": "Multas y bloqueo hasta pagarlas. En Multas se ve «Pablo Sanz — Multa de 6 € — Pendiente» y «Lucía Gil — Multa de 2 € — Pagada».",
+   "criterio": "AC-014-01"
+  }
+ ]
+}

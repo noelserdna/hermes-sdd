@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-008-02",
+ "test": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-02 REQ-F-004 AC4 hoy es 2026-12-05 y la reserva de Lucía empieza hoy: ve «No se puede cancelar: empieza hoy» sin botón «Cancelar»",
+ "titulo": "AC-008-02 REQ-F-004 AC4 hoy es 2026-12-05 y la reserva de Lucía empieza hoy: ve «No se puede cancelar: empieza hoy» sin botón «Cancelar»",
+ "ve": [
+  "No se puede cancelar: empieza hoy"
+ ],
+ "narrado": "Mis reservas y cancelar. En Mis reservas, en la fila de esa reserva y sin botón «Cancelar», se ve «No se puede cancelar: empieza hoy».",
+ "url": "http://127.0.0.1:5173/mis-reservas",
+ "imagen": "AC-008-02.png",
+ "sha256": "sha256:7cd78f2aae775de848dc23e47a99311b2a1b7b44790aad7168dbc071dfdc2953",
+ "at": "2026-11-22T20:34:06.859Z"
+}

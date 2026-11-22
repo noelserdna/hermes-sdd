@@ -1,0 +1,22 @@
+{
+ "video": "WF-001-AC-012-01-REQ-F-006-AC1-Pablo-con-una-mu.webm",
+ "test": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-012-01 REQ-F-006 AC1 Pablo con una multa pendiente de 6 € abre «Mis multas»: ve «Multa de 6 € — Pendiente»",
+ "titulo": "AC-012-01 REQ-F-006 AC1 Pablo con una multa pendiente de 6 € abre «Mis multas»: ve «Multa de 6 € — Pendiente»",
+ "narraciones": [
+  {
+   "t": 0.021,
+   "texto": "Requisito REQ-F-006: Multas y bloqueo hasta pagarlas. Criterio 1 de 7.",
+   "voz": "Requisito funcional 6: Multas y bloqueo hasta pagarlas. El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 1: multa pendiente. Dado que Pablo Sanz tiene una multa pendiente de 6 €, cuando Pablo abre Mis multas, entonces ve Multa de 6 € — Pendiente en Mis multas. Ahora, la demostración.",
+   "presentacion": "AC-012-01"
+  },
+  {
+   "t": 0.744,
+   "texto": "Pablo debe una multa de 6 euros. Abre Mis multas desde el menú"
+  },
+  {
+   "t": 1.024,
+   "texto": "Multas y bloqueo hasta pagarlas. En Mis multas se ve «Multa de 6 € — Pendiente».",
+   "criterio": "AC-012-01"
+  }
+ ]
+}

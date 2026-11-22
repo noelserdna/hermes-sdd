@@ -1,0 +1,104 @@
+{
+  "id": "g17953573532e3d",
+  "tipo": "preguntas",
+  "fase": "",
+  "tablero": "material-montana12",
+  "tarjeta": "t_5b6f32b9",
+  "adopcion": false,
+  "sha": "39d256a3cec66b61411dead6528700fa7fb15630",
+  "creada": "2026-11-22T14:22:33Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana12",
+  "titulo": "Dudas antes del plan",
+  "texto": "🧩 Antes de hacer el plan de «material-montana12» hay que decidir esto (todas las dudas del diseño, juntas).\n\nAl responder, se hace el plan con tus respuestas. Si alguna pide cambiar los requisitos ya aprobados, no se reabren a mitad de camino: queda anotada para la siguiente entrega.\n\n👉 Elige en los botones Q (la recomendada ya está marcada) y pulsa ✅ Responder.\n\n❓ Antes, 3 preguntas (la recomendada ya está marcada en los botones Q):\n\n1. Cuando un socio se da de baja, ¿su nombre y correo deben borrarse pasado un tiempo o se guardan siempre?\n   🔧 Detalle técnico: La cuenta de un socio dado de baja (nombre, correo, hash) se conserva para siempre (ADR-003, RN-005) y RETENTION_YEARS solo depura reservas, préstamos y multas…\n   A) Se borran sus datos personales a los 3 años de la baja  ⭐ recomendada\n   B) Se guardan siempre, y queda escrito el motivo  (📌 se anota para la siguiente entrega)\n   C) Se borran al dar de baja  (📌 se anota para la siguiente entrega)\n\n2. Si un socio lleva exactamente 30 minutos sin tocar nada, ¿la sesión sigue abierta o ya se ha cerrado?\n   🔧 Detalle técnico: INV-SOC-005 caduca la sesión con `ahora − última actividad > 30 min` (con exactamente 30 min sigue viva) pero AC-001-06 pide ver Entrar con 30 minutos sin acti…\n   A) Se cierra al pasar de 30 minutos  ⭐ recomendada\n   B) Se cierra al cumplir los 30 minutos\n\n3. Si el encargado da de baja otra vez a un socio que ya está de baja, ¿qué debe ver?\n   🔧 Detalle técnico: UC-006 E4 trata la baja repetida de una cuenta ya de baja como replay sin código y sin cambios (RN-012, ADR-005), pero RN-027 y UC-006:50 exigen E_SOCIO_NO_ENC…\n   A) Un aviso de que ya estaba de baja  ⭐ recomendada\n   B) Un mensaje de error de socio no encontrado\n\n👉 Si firmas sin tocar los botones Q, esto lanzará: sin más efecto: Q1, Q2, Q3.",
+  "opciones": [
+    {
+      "verbo": "respondo",
+      "etiqueta": "✅ Responder"
+    }
+  ],
+  "demo": "",
+  "preguntas": [
+    {
+      "n": 1,
+      "id": "Q-security-auditor-001",
+      "opciones": [
+        "A",
+        "B",
+        "C"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "req-change",
+          "ficheros": [],
+          "declarado": true
+        },
+        "C": {
+          "efecto": "req-change",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "Cuando un socio se da de baja, ¿su nombre y correo deben borrarse pasado un tiempo o se guardan siempre?"
+    },
+    {
+      "n": 2,
+      "id": "Q-spec-auditor-001",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "Si un socio lleva exactamente 30 minutos sin tocar nada, ¿la sesión sigue abierta o ya se ha cerrado?"
+    },
+    {
+      "n": 3,
+      "id": "Q-spec-auditor-002",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "Si el encargado da de baja otra vez a un socio que ya está de baja, ¿qué debe ver?"
+    }
+  ],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [],
+    "graves": 0
+  }
+}

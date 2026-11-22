@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-007-05",
+ "test": "FASE-1 · Reservar material (REQ-F-003) › AC-007-05 REQ-F-003 AC5 Lucía pone fin 2026-12-01 antes del inicio 2026-12-05 y ve «La fecha de fin no puede ser anterior a la de inicio»",
+ "titulo": "AC-007-05 REQ-F-003 AC5 Lucía pone fin 2026-12-01 antes del inicio 2026-12-05 y ve «La fecha de fin no puede ser anterior a la de inicio»",
+ "ve": [
+  "La fecha de fin no puede ser anterior a la de inicio"
+ ],
+ "narrado": "Reservar material. En Reservar se ve «La fecha de fin no puede ser anterior a la de inicio».",
+ "url": "http://127.0.0.1:5173/reservar",
+ "imagen": "AC-007-05.png",
+ "sha256": "sha256:70b153a99ef1ff88f75d1c4660feeea137050d09d90a8baf518dff42542562dc",
+ "at": "2026-11-22T20:33:56.865Z"
+}

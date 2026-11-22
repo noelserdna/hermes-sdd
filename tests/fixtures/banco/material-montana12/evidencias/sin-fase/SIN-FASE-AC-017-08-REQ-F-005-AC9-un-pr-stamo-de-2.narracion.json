@@ -1,0 +1,26 @@
+{
+ "video": "SIN-FASE-AC-017-08-REQ-F-005-AC9-un-pr-stamo-de-2.webm",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-08 REQ-F-005 AC9 un préstamo de 2 × Casco acabó el 2026-12-07 sin devolver: Pablo abre el Panel el 2026-12-10 y ve «Retraso: 3 días» y «No hay multas»",
+ "titulo": "AC-017-08 REQ-F-005 AC9 un préstamo de 2 × Casco acabó el 2026-12-07 sin devolver: Pablo abre el Panel el 2026-12-10 y ve «Retraso: 3 días» y «No hay multas»",
+ "narraciones": [
+  {
+   "t": 0.024,
+   "texto": "Requisito REQ-F-005: Entregar y recibir el material. Criterio 9 de 10.",
+   "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 9: retraso de 3 días. Dado que el préstamo terminó el 2026-12-07 y no se devolvió, cuando abre el panel el 2026-12-10, entonces ve Retraso: 3 días junto al préstamo y Lucía ve No tienes multas en Mis multas. Ahora, la demostración.",
+   "presentacion": "AC-017-08"
+  },
+  {
+   "t": 0.565,
+   "texto": "Es 10 de diciembre y Lucía aún no ha devuelto los dos cascos que acabaron el 7. Pablo abre el Panel del encargado"
+  },
+  {
+   "t": 1.149,
+   "texto": "Lucía entra con su cuenta y abre Mis multas desde el menú"
+  },
+  {
+   "t": 1.683,
+   "texto": "Entregar y recibir el material. En Panel del encargado se ve «Retraso: 3 días» junto al préstamo y «No hay multas», y Lucía ve «No tienes multas» en Mis multas: la multa no se crea hasta marcar la devolución.",
+   "criterio": "AC-017-08"
+  }
+ ]
+}

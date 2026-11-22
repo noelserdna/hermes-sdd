@@ -1,0 +1,22 @@
+{
+ "video": "SIN-FASE-AC-008-02-REQ-F-004-AC4-hoy-es-2026-12-0.webm",
+ "test": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-02 REQ-F-004 AC4 hoy es 2026-12-05 y la reserva de Lucía empieza hoy: ve «No se puede cancelar: empieza hoy» sin botón «Cancelar»",
+ "titulo": "AC-008-02 REQ-F-004 AC4 hoy es 2026-12-05 y la reserva de Lucía empieza hoy: ve «No se puede cancelar: empieza hoy» sin botón «Cancelar»",
+ "narraciones": [
+  {
+   "t": 0.013,
+   "texto": "Requisito REQ-F-004: Mis reservas y cancelar. Criterio 4 de 6.",
+   "voz": "Requisito funcional 4: Mis reservas y cancelar. El socio ve sus reservas y las puede cancelar hasta el día antes de que empiecen. Tiene 6 criterios de aceptación. Este vídeo demuestra el criterio 4: empieza hoy. Dado que hoy es 2026-12-05 y la reserva de Lucía empieza 2026-12-05, cuando Lucía abre Mis reservas, entonces la fila muestra No se puede cancelar: empieza hoy (E_EMPIEZA_HOY) y la fila no tiene botón Cancelar. Ahora, la demostración.",
+   "presentacion": "AC-008-02"
+  },
+  {
+   "t": 0.52,
+   "texto": "Hoy es 5 de diciembre y la reserva de Lucía empieza hoy. Lucía entra y abre Mis reservas"
+  },
+  {
+   "t": 1.038,
+   "texto": "Mis reservas y cancelar. En Mis reservas, en la fila de esa reserva y sin botón «Cancelar», se ve «No se puede cancelar: empieza hoy».",
+   "criterio": "AC-008-02"
+  }
+ ]
+}

@@ -1,0 +1,22 @@
+{
+ "video": "SIN-FASE-AC-007-10-REQ-F-007-AC6-con-Casco-a-6-.webm",
+ "test": "FASE-0 · Material (REQ-F-007) › AC-007-10 REQ-F-007 AC6 con «Casco» a 6 y «Cuerda» a 0, un socio abre Reservar y ve «Casco» entre los tipos sin que se ofrezca «Cuerda»",
+ "titulo": "AC-007-10 REQ-F-007 AC6 con «Casco» a 6 y «Cuerda» a 0, un socio abre Reservar y ve «Casco» entre los tipos sin que se ofrezca «Cuerda»",
+ "narraciones": [
+  {
+   "t": 0.024,
+   "texto": "Requisito REQ-F-007: Inventario. Criterio 6 de 6.",
+   "voz": "Requisito funcional 7: Inventario. El encargado añade material nuevo y da de baja las unidades rotas. Si una unidad rota hace falta para una reserva ya hecha, la web se lo avisa en lugar de dejarla sin material. Tiene 6 criterios de aceptación. Este vídeo demuestra el criterio 6: tipos ofrecidos. Dado que Casco tiene 6 unidades y Cuerda 0, cuando un socio abre Reservar, entonces la lista de tipos muestra Casco y no ofrece Cuerda. Ahora, la demostración.",
+   "presentacion": "AC-007-10"
+  },
+  {
+   "t": 0.648,
+   "texto": "Lucía entra como socia y abre Reservar; hay 6 cascos y la cuerda está a 0"
+  },
+  {
+   "t": 1.139,
+   "texto": "Inventario. En Reservar se ve «Casco» entre los tipos, y «Cuerda», que está sin unidades, no se ofrece.",
+   "criterio": "AC-007-10"
+  }
+ ]
+}

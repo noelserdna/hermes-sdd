@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-013-03",
+ "test": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-013-03 REQ-F-006 AC4 Pablo con 2 multas pendientes de 2 € y 4 € y el encargado paga la de 4 €: ve «Multa pagada» y Pablo sigue viendo «No puedes reservar hasta pagar tu multa de 2 €»",
+ "titulo": "AC-013-03 REQ-F-006 AC4 Pablo con 2 multas pendientes de 2 € y 4 € y el encargado paga la de 4 €: ve «Multa pagada» y Pablo sigue viendo «No puedes reservar hasta pagar tu multa de 2 €»",
+ "ve": [
+  "Multa pagada",
+  "No puedes reservar hasta pagar tu multa de 2 €"
+ ],
+ "narrado": "Multas y bloqueo hasta pagarlas. En Multas se ve «Multa pagada» y Pablo sigue viendo «No puedes reservar hasta pagar tu multa de 2 €».",
+ "url": "http://127.0.0.1:5173/reservar",
+ "imagen": "AC-013-03.png",
+ "sha256": "sha256:cba258ac7d8412dc5770cbb2204b55e2a00cd8bf2e3402589779a8ba2b2e819b",
+ "at": "2026-11-22T20:35:27.204Z"
+}

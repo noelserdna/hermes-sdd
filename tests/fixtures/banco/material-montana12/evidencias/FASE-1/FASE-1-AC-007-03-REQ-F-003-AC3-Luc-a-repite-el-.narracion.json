@@ -1,0 +1,26 @@
+{
+ "video": "FASE-1-AC-007-03-REQ-F-003-AC3-Luc-a-repite-el-.webm",
+ "test": "FASE-1 · Reservar material (REQ-F-003) › AC-007-03 REQ-F-003 AC3 Lucía repite el formulario de 2 × Linterna y ve «solo queda 1 de Linterna el 2026-12-05» con una sola reserva",
+ "titulo": "AC-007-03 REQ-F-003 AC3 Lucía repite el formulario de 2 × Linterna y ve «solo queda 1 de Linterna el 2026-12-05» con una sola reserva",
+ "narraciones": [
+  {
+   "t": 0.023,
+   "texto": "Requisito REQ-F-003: Reservar material. Criterio 3 de 9.",
+   "voz": "Requisito funcional 3: Reservar material. El socio elige material, cantidad y fechas y lo reserva si quedan unidades libres todos esos días. Si no quedan, se lo dice. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 3: mismo formulario repetido. Dado que Linterna tiene 3 unidades y Lucía reservó 2 del 2026-12-05 al 2026-12-07, cuando se envía otra vez el mismo formulario, entonces error E_SIN_UNIDADES: No hay unidades libres: solo queda 1 de Linterna el 2026-12-05 y Mis reservas muestra una sola fila 2 × Linterna del 2026-12-05 al 2026-12-07 — Reservada. Ahora, la demostración.",
+   "presentacion": "AC-007-03"
+  },
+  {
+   "t": 0.827,
+   "texto": "Lucía abre Reservar y reserva 2 linternas del 5 al 7 de diciembre"
+  },
+  {
+   "t": 1.217,
+   "texto": "Vuelve a Reservar y envía exactamente el mismo formulario otra vez"
+  },
+  {
+   "t": 1.628,
+   "texto": "Reservar material. En Reservar se ve «No hay unidades libres: solo queda 1 de Linterna el 2026-12-05» y «2 × Linterna del 2026-12-05 al 2026-12-07 — Reservada»: Lucía sigue con una sola reserva de 2.",
+   "criterio": "AC-007-03"
+  }
+ ]
+}

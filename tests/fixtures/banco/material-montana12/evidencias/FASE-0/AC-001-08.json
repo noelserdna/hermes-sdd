@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-001-08",
+ "test": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-08 un socio que abre /material ve la página «Sin permiso» y ningún dato del encargado",
+ "titulo": "AC-001-08 un socio que abre /material ve la página «Sin permiso» y ningún dato del encargado",
+ "ve": [
+  "Sin permiso",
+  "No tienes permiso para ver esta página"
+ ],
+ "narrado": "La web muestra Sin permiso y no enseña nada del material",
+ "url": "http://127.0.0.1:5173/material",
+ "imagen": "AC-001-08.png",
+ "sha256": "sha256:a23b3ae8452cb4172cce3f6554baef458ef031464bd3393b06683c583a873b27",
+ "at": "2026-11-22T20:33:27.257Z"
+}

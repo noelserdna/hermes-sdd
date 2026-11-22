@@ -1,0 +1,14 @@
+{
+  "verbo": "rechazo",
+  "texto": "Q1: A. Q2: A. CH-010: lo mismo que Q1: al restablecer la contraseña se levanta el bloqueo y el socio entra en el acto con la nueva. Y un fallo que he visto en los vídeos: los avisos se quedan de una sesión a otra. El aviso del encargado «Socio dado de baja: Marta Ruiz» sigue en pantalla cuando después entra Lucía (lo ve en Mis reservas) y en la pantalla Entrar. Un socio no puede ver nada de otro: los avisos son de quien hizo la acción, se borran al salir y no pasan a otra sesión. Añadid una prueba que lo compruebe (el encargado da de baja a alguien, sale, entra un socio y no ve ese aviso).",
+  "actor": {
+    "persona": "yo",
+    "canal": "local",
+    "id": "andre"
+  },
+  "prueba": {
+    "host": "DESKTOP-7HT2139",
+    "demo": "no vista"
+  },
+  "at": "2026-11-22T17:47:29Z"
+}

@@ -547,7 +547,9 @@ case "$CMD" in
     CUR="$REPO/.sdd/hermes/esperar-linea"; AVIS="$REPO/.sdd/hermes/esperar-avisadas"
     N0=$(cat "$CUR" 2>/dev/null || true); case "$N0" in ''|*[!0-9]*) N0=$(lineas) ;; esac; [ "$N0" -le "$(lineas)" ] || N0=$(lineas)
     mkdir -p "$REPO/.sdd/hermes"; echo "$N0" > "$CUR"
-    if [ -f "$AVIS" ]; then VISTAS=$(sort -u "$AVIS"); else VISTAS=$(puertas_repo | sort); printf '%s\n' "$VISTAS" > "$AVIS"; fi
+    # La primera vez solo se da por visto lo cerrado: una puerta abierta (o en error) al empezar a esperar se avisa
+    # (montana12 G-5: la tercera puerta de requisitos ya estaba abierta, quedó «vista» sin decirse y se perdieron 54 min)
+    if [ -f "$AVIS" ]; then VISTAS=$(sort -u "$AVIS"); else VISTAS=$(puertas_repo | grep -Ev ' (abierta|error)$' | sort || true); printf '%s\n' "$VISTAS" > "$AVIS"; fi
     T0=$(date +%s)
     while :; do
       if [ "$(lineas)" -gt "$N0" ]; then

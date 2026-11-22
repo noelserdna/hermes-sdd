@@ -1,0 +1,15 @@
+{
+ "criterio": "AC-005-01",
+ "test": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-005-01 REQ-F-002 AC5 Marta olvidó su contraseña y Pablo fija «Otra12345» para ella: ve «Contraseña provisional guardada para Marta Ruiz»; Marta entra con «Otra12345» y ya no con la antigua",
+ "titulo": "AC-005-01 REQ-F-002 AC5 Marta olvidó su contraseña y Pablo fija «Otra12345» para ella: ve «Contraseña provisional guardada para Marta Ruiz»; Marta entra con «Otra12345» y ya no con la antigua",
+ "ve": [
+  "Contraseña provisional guardada para Marta Ruiz",
+  "Elige una contraseña nueva",
+  "Correo o contraseña incorrectos"
+ ],
+ "narrado": "Alta, baja y contraseña de los socios. En Socios se ve «Contraseña provisional guardada para Marta Ruiz»; Marta entra con «Otra12345» y ve «Elige una contraseña nueva», y con su contraseña antigua ve «Correo o contraseña incorrectos».",
+ "url": "http://127.0.0.1:5173/entrar",
+ "imagen": "AC-005-01.png",
+ "sha256": "sha256:46cf8d0ff77f482d90879c140aabd17487067681eb9e622f34c66db773c04422",
+ "at": "2026-11-22T20:35:06.644Z"
+}

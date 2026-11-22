@@ -1,0 +1,196 @@
+{
+ "fase": "3",
+ "criterios": [
+  {
+   "criterio": "REQ-F-002-AC1",
+   "req": "REQ-F-002",
+   "ac": 1,
+   "ids": [
+    "AC-003-01",
+    "REQ-F-002-AC1"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-002-AC2",
+   "req": "REQ-F-002",
+   "ac": 2,
+   "ids": [
+    "AC-003-02",
+    "REQ-F-002-AC2"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-002-AC3",
+   "req": "REQ-F-002",
+   "ac": 3,
+   "ids": [
+    "AC-003-03",
+    "REQ-F-002-AC3"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-002-AC4",
+   "req": "REQ-F-002",
+   "ac": 4,
+   "ids": [
+    "AC-004-01",
+    "AC-004-02",
+    "AC-004-03",
+    "REQ-F-002-AC4"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": false
+   },
+   "faltan": [
+    "su THEN promete lo que no se ve ni se declara no visible: «she cannot continue until she sets one of at least 8 characters»"
+   ],
+   "estado": "incompleto"
+  },
+  {
+   "criterio": "REQ-F-002-AC5",
+   "req": "REQ-F-002",
+   "ac": 5,
+   "ids": [
+    "AC-005-01",
+    "AC-005-02",
+    "AC-005-03",
+    "REQ-F-002-AC5"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": false
+   },
+   "faltan": [
+    "su THEN promete lo que no se ve ni se declara no visible: «Marta can enter with \"Otra12345\" and no longer with her old password»"
+   ],
+   "estado": "incompleto"
+  },
+  {
+   "criterio": "REQ-F-002-AC6",
+   "req": "REQ-F-002",
+   "ac": 6,
+   "ids": [
+    "AC-006-01",
+    "AC-006-02",
+    "REQ-F-002-AC6"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": false
+   },
+   "faltan": [
+    "su THEN promete lo que no se ve ni se declara no visible: «she can no longer log in»"
+   ],
+   "estado": "incompleto"
+  },
+  {
+   "criterio": "REQ-F-002-AC7",
+   "req": "REQ-F-002",
+   "ac": 7,
+   "ids": [
+    "AC-006-04",
+    "REQ-F-002-AC7"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": false
+   },
+   "faltan": [
+    "su THEN promete lo que no se ve ni se declara no visible: «her account stays active»"
+   ],
+   "estado": "incompleto"
+  },
+  {
+   "criterio": "REQ-F-002-AC8",
+   "req": "REQ-F-002",
+   "ac": 8,
+   "ids": [
+    "AC-006-05",
+    "REQ-F-002-AC8"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-002-AC9",
+   "req": "REQ-F-002",
+   "ac": 9,
+   "ids": [
+    "AC-006-03",
+    "REQ-F-002-AC9"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": false
+   },
+   "faltan": [
+    "su THEN promete lo que no se ve ni se declara no visible: «its units become free»"
+   ],
+   "estado": "incompleto"
+  }
+ ],
+ "resumen": {
+  "criterios": 9,
+  "demostrados": 4,
+  "incompletos": 5
+ }
+}

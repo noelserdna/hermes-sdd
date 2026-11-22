@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-007-07",
+ "test": "FASE-1 · Reservar material (REQ-F-003) › AC-007-07 REQ-F-003 AC7 Lucía pide 6 unidades de un tipo y ve «Máximo 5 unidades por reserva»",
+ "titulo": "AC-007-07 REQ-F-003 AC7 Lucía pide 6 unidades de un tipo y ve «Máximo 5 unidades por reserva»",
+ "ve": [
+  "Máximo 5 unidades por reserva"
+ ],
+ "narrado": "Reservar material. En Reservar se ve «Máximo 5 unidades por reserva».",
+ "url": "http://127.0.0.1:5173/reservar",
+ "imagen": "AC-007-07.png",
+ "sha256": "sha256:941abf952cb3a9997cc0f32394c97dbd5c389f621845394aede0e6ee6ad947f8",
+ "at": "2026-11-22T19:42:45.689Z"
+}

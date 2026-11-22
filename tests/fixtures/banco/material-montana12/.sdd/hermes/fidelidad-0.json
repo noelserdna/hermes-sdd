@@ -1,0 +1,159 @@
+{
+ "repo": "/home/andre/proyectos-sdd/material-montana12",
+ "fase": "0",
+ "sha": "617c51b",
+ "congelados": [],
+ "capturas": [],
+ "coherencia": [],
+ "vinculos": [],
+ "lint_capturas": [],
+ "mutantes_cache": {
+  "de_cache": 0,
+  "ejecutados": 4
+ },
+ "mutantes": [
+  {
+   "req": "REQ-F-001",
+   "ac": 3,
+   "texto": "Correo o contraseña incorrectos",
+   "e2e": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 4,
+   "texto": "Cuenta bloqueada. Vuelve a intentarlo en 15 minutos",
+   "e2e": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 6,
+   "texto": "Entrar",
+   "e2e": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js",
+    "src/ui/main.js",
+    "src/ui/paginas/entrar.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 7,
+   "texto": "Entrar",
+   "e2e": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js",
+    "src/ui/main.js",
+    "src/ui/paginas/entrar.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 7,
+   "texto": "Entrar",
+   "e2e": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js",
+    "src/ui/main.js",
+    "src/ui/paginas/entrar.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 8,
+   "texto": "Entrar",
+   "e2e": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js",
+    "src/ui/main.js",
+    "src/ui/paginas/entrar.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-007",
+   "ac": 5,
+   "texto": "No hay tantas unidades para dar de baja",
+   "e2e": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-007",
+   "ac": 6,
+   "texto": "Casco",
+   "e2e": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "dato del ejemplo: lo teclea el usuario, no es texto de la app",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-007",
+   "ac": 6,
+   "texto": "Cuerda",
+   "e2e": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "dato del ejemplo: lo teclea el usuario, no es texto de la app",
+   "grave": false
+  }
+ ],
+ "graves": 0
+}

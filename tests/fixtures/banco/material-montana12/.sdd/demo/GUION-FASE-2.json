@@ -1,0 +1,1552 @@
+{
+ "fase": "2",
+ "plan": "plan/fases/FASE-2-ENTREGAS.md",
+ "workflows": [],
+ "casos_de_uso": [
+  {
+   "id": "UC-007",
+   "titulo": "Reservar material",
+   "fichero": "spec/use-cases/UC-007-reservar-material.md",
+   "flujo": [
+    "Socio: abre \"Reservar\"; el sistema autoriza (API-001-08) y ofrece solo tipos con unidades > 0 (API-003-03, INV-MAT-003).",
+    "Socio: elige tipo, cantidad, fecha de inicio y de fin, y envía.",
+    "System: comprueba que no hay multa pendiente (INV-MUL-002, RN-016; WF-001 paso 7 al pagarla).",
+    "System: valida en orden fecha pasada, fin anterior, `MAX_RESERVATION_DAYS`, `MAX_UNITS_PER_RESERVATION` (RN-010, INV-RES-001..003).",
+    "System: calcula libres por día desde las reservas (ADR-001, RN-009, INV-RES-004).",
+    "System: crea la reserva Reservada (WF-001 paso 1) y muestra \"Mis reservas\"."
+   ],
+   "extensiones": [
+    {
+     "texto": "1a. Tipo con 0 unidades → no se ofrece.",
+     "criterios": [
+      "AC-007-10"
+     ]
+    },
+    {
+     "texto": "3a. Multa ya pagada (WF-001 paso 7) → sigue en 4.",
+     "criterios": []
+    }
+   ],
+   "criterios": []
+  },
+  {
+   "id": "UC-010",
+   "titulo": "Entregar reserva",
+   "fichero": "spec/use-cases/UC-010-entregar-reserva.md",
+   "flujo": [
+    "Encargado: pulsa \"Entregar\" en una reserva.",
+    "System: comprueba rol (API-001-08) y que la reserva existe.",
+    "System: comprueba estado y fechas contra `hoy` (RN-013, RN-022, INV-RES-007).",
+    "System: pasa la reserva a Prestada y guarda `deliveredOn` (WF-001 step 3).",
+    "System: muestra el aviso de entrega y el estado \"Prestada\" en Panel del encargado."
+   ],
+   "extensiones": [
+    {
+     "texto": "3a. Ya Prestada (envío repetido) → no cambia; sigue una sola fila de préstamo.",
+     "criterios": [
+      "AC-010-02"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-010-01",
+    "AC-010-02",
+    "AC-010-04",
+    "AC-010-03"
+   ]
+  },
+  {
+   "id": "UC-011",
+   "titulo": "Recibir devolución",
+   "fichero": "spec/use-cases/UC-011-recibir-devolucion.md",
+   "flujo": [
+    "Encargado: pulsa \"Devolver\" en un préstamo.",
+    "System: comprueba rol y que la reserva existe (API-001-08).",
+    "System: comprueba que está Prestada (SM-001).",
+    "System: calcula el retraso `returnedOn − endDate` (RN-014, INV-MUL-004, RN-022) y guarda la devolución (WF-001 step 4).",
+    "System: si retraso > 0, crea la multa Pendiente en la misma operación (WF-001 step 5, ADR-004, INV-MUL-001).",
+    "System: muestra en Panel del encargado \"Devuelto a tiempo\" o el aviso de retraso y multa, con \"día\"/\"días\" según RN-015."
+   ],
+   "extensiones": [
+    {
+     "texto": "4a. Retraso 0 → no se crea multa; el socio no ve ninguna.",
+     "criterios": [
+      "AC-011-01"
+     ]
+    },
+    {
+     "texto": "4b. Retraso de 1 día → singular.",
+     "criterios": [
+      "AC-011-03"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-011-01",
+    "AC-011-02",
+    "AC-011-03",
+    "AC-011-04"
+   ]
+  },
+  {
+   "id": "UC-017",
+   "titulo": "Ver panel del encargado",
+   "fichero": "spec/use-cases/UC-017-panel-encargado.md",
+   "flujo": [
+    "Encargado: abre \"Panel del encargado\" y, si quiere, elige una fecha.",
+    "System: comprueba la sesión y el rol (API-001-08, RN-020).",
+    "System: lista las Reservadas con inicio ≤ hoy ≤ fin como \"Por entregar\" con el botón \"Entregar\" (RN-018, INV-RES-007).",
+    "System: lista los Prestados; los de fin = hoy salen bajo \"Vuelven hoy\"; con fecha elegida, bajo \"Vuelven el {fecha}\" (RN-018).",
+    "System: marca \"Retraso\" en los Prestados con fin anterior a hoy, en \"día\"/\"días\" (RN-015, INV-MUL-004).",
+    "System: sin préstamos, muestra el aviso de lista vacía."
+   ],
+   "extensiones": [
+    {
+     "texto": "4a. Fecha elegida distinta de hoy → agrupa por esa fecha.",
+     "criterios": [
+      "AC-017-03"
+     ]
+    },
+    {
+     "texto": "5a. Retraso de 1 día → singular.",
+     "criterios": [
+      "AC-017-09"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-017-08",
+    "AC-017-09",
+    "AC-017-01",
+    "AC-017-02",
+    "AC-017-03",
+    "AC-017-04",
+    "AC-017-05",
+    "AC-017-06",
+    "AC-017-07"
+   ]
+  }
+ ],
+ "criterios": [
+  {
+   "id": "AC-010-01",
+   "req": "REQ-F-005",
+   "ac": 1,
+   "uc": "UC-010",
+   "frase": "Entregar y recibir el material. En Panel del encargado se ve «Entregado: {cantidad} × {material} a {nombre}» y «2 × Casco del 2026-12-05 al 2026-12-07 — Prestada».",
+   "visible": true,
+   "then": "the user sees \"Entregado: 2 × Casco a Lucía Gil\" and its state \"Prestada\"",
+   "ve": [
+    "Entregado: {cantidad} × {material} a {nombre}",
+    "2 × Casco del 2026-12-05 al 2026-12-07 — Prestada"
+   ],
+   "pantalla": "Panel del encargado",
+   "presentacion": {
+    "requisito": "REQ-F-005",
+    "titulo": "Entregar y recibir el material",
+    "para_el_cliente": "El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola.",
+    "n": 1,
+    "total": 10,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "entrega en fecha",
+      "actual": true
+     },
+     {
+      "n": 2,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "a tiempo",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "3 días de retraso",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "1 día de retraso",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "no recogida",
+      "actual": false
+     },
+     {
+      "n": 8,
+      "titulo": "antes de inicio",
+      "actual": false
+     },
+     {
+      "n": 9,
+      "titulo": "retraso de 3 días",
+      "actual": false
+     },
+     {
+      "n": 10,
+      "titulo": "retraso de 1 día",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "hoy es 2026-12-05"
+     },
+     {
+      "k": "Cuando",
+      "texto": "el encargado pulsa \"Entregar\""
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Entregado: 2 × Casco a Lucía Gil\""
+     },
+     {
+      "k": "Y",
+      "texto": "ve \"2 × Casco del 2026-12-05 al 2026-12-07 — Prestada\" en Panel del encargado"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 1: entrega en fecha. Dado que hoy es 2026-12-05, cuando el encargado pulsa Entregar, entonces ve Entregado: 2 × Casco a Lucía Gil y ve 2 × Casco del 2026-12-05 al 2026-12-07 — Prestada en Panel del encargado. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-010-02",
+   "req": "REQ-F-005",
+   "ac": 2,
+   "uc": "UC-010",
+   "frase": "Entregar y recibir el material. En Panel del encargado se ve «Ya estaba entregada» y «Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07».",
+   "visible": true,
+   "then": "the user sees \"Ya estaba entregada\" and the loan is still one",
+   "ve": [
+    "Ya estaba entregada",
+    "Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07"
+   ],
+   "pantalla": "Panel del encargado",
+   "presentacion": {
+    "requisito": "REQ-F-005",
+    "titulo": "Entregar y recibir el material",
+    "para_el_cliente": "El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola.",
+    "n": 2,
+    "total": 10,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "entrega en fecha",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "replay",
+      "actual": true
+     },
+     {
+      "n": 3,
+      "titulo": "a tiempo",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "3 días de retraso",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "1 día de retraso",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "no recogida",
+      "actual": false
+     },
+     {
+      "n": 8,
+      "titulo": "antes de inicio",
+      "actual": false
+     },
+     {
+      "n": 9,
+      "titulo": "retraso de 3 días",
+      "actual": false
+     },
+     {
+      "n": 10,
+      "titulo": "retraso de 1 día",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "la reserva acaba de entregarse"
+     },
+     {
+      "k": "Cuando",
+      "texto": "se envía \"Entregar\" otra vez"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Ya estaba entregada\" en Panel del encargado"
+     },
+     {
+      "k": "Y",
+      "texto": "ve una sola fila \"Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07\", no repetida"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 2: replay. Dado que la reserva acaba de entregarse, cuando se envía Entregar otra vez, entonces ve Ya estaba entregada en Panel del encargado y ve una sola fila Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07, no repetida. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-011-01",
+   "req": "REQ-F-005",
+   "ac": 3,
+   "uc": "UC-011",
+   "frase": "Entregar y recibir el material. En Panel del encargado se ve «Devuelto a tiempo» y «No tienes multas».",
+   "visible": true,
+   "then": "the user sees \"Devuelto a tiempo\" and no fine exists",
+   "ve": [
+    "Devuelto a tiempo",
+    "No tienes multas"
+   ],
+   "pantalla": "Panel del encargado",
+   "presentacion": {
+    "requisito": "REQ-F-005",
+    "titulo": "Entregar y recibir el material",
+    "para_el_cliente": "El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola.",
+    "n": 3,
+    "total": 10,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "entrega en fecha",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "a tiempo",
+      "actual": true
+     },
+     {
+      "n": 4,
+      "titulo": "3 días de retraso",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "1 día de retraso",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "no recogida",
+      "actual": false
+     },
+     {
+      "n": 8,
+      "titulo": "antes de inicio",
+      "actual": false
+     },
+     {
+      "n": 9,
+      "titulo": "retraso de 3 días",
+      "actual": false
+     },
+     {
+      "n": 10,
+      "titulo": "retraso de 1 día",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Cuando",
+      "texto": "el encargado marca la devolución el 2026-12-07"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Devuelto a tiempo\" en Panel del encargado"
+     },
+     {
+      "k": "Y",
+      "texto": "no existe ninguna multa"
+     },
+     {
+      "k": "Y",
+      "texto": "Lucía ve \"No tienes multas\" en Mis multas"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 3: a tiempo. cuando el encargado marca la devolución el 2026-12-07, entonces ve Devuelto a tiempo en Panel del encargado y no existe ninguna multa y Lucía ve No tienes multas en Mis multas. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-011-02",
+   "req": "REQ-F-005",
+   "ac": 4,
+   "uc": "UC-011",
+   "frase": "Entregar y recibir el material. En Panel del encargado (ejemplo con datos: \"Devuelto con 3 días de retraso: multa de 6 €\") se ve «Devuelto con {días} días de retraso: multa de {importe} €».",
+   "visible": true,
+   "then": "the user sees \"Devuelto con 3 días de retraso: multa de 6 €\"",
+   "ve": [
+    "Devuelto con {días} días de retraso: multa de {importe} €"
+   ],
+   "pantalla": "Panel del encargado (ejemplo con datos: \"Devuelto con 3 días de retraso: multa de 6 €\")",
+   "presentacion": {
+    "requisito": "REQ-F-005",
+    "titulo": "Entregar y recibir el material",
+    "para_el_cliente": "El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola.",
+    "n": 4,
+    "total": 10,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "entrega en fecha",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "a tiempo",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "3 días de retraso",
+      "actual": true
+     },
+     {
+      "n": 5,
+      "titulo": "1 día de retraso",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "no recogida",
+      "actual": false
+     },
+     {
+      "n": 8,
+      "titulo": "antes de inicio",
+      "actual": false
+     },
+     {
+      "n": 9,
+      "titulo": "retraso de 3 días",
+      "actual": false
+     },
+     {
+      "n": 10,
+      "titulo": "retraso de 1 día",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Cuando",
+      "texto": "el encargado marca la devolución el 2026-12-10"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Devuelto con 3 días de retraso: multa de 6 €\" en Panel del encargado"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 4: 3 días de retraso. cuando el encargado marca la devolución el 2026-12-10, entonces ve Devuelto con 3 días de retraso: multa de 6 € en Panel del encargado. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-011-03",
+   "req": "REQ-F-005",
+   "ac": 5,
+   "uc": "UC-011",
+   "frase": "Entregar y recibir el material. En Panel del encargado (ejemplo con datos: \"Devuelto con 1 día de retraso: multa de 2 €\") se ve «Devuelto con {días} día de retraso: multa de {importe} €».",
+   "visible": true,
+   "then": "the user sees \"Devuelto con 1 día de retraso: multa de 2 €\"",
+   "ve": [
+    "Devuelto con {días} día de retraso: multa de {importe} €"
+   ],
+   "pantalla": "Panel del encargado (ejemplo con datos: \"Devuelto con 1 día de retraso: multa de 2 €\")",
+   "presentacion": {
+    "requisito": "REQ-F-005",
+    "titulo": "Entregar y recibir el material",
+    "para_el_cliente": "El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola.",
+    "n": 5,
+    "total": 10,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "entrega en fecha",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "a tiempo",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "3 días de retraso",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "1 día de retraso",
+      "actual": true
+     },
+     {
+      "n": 6,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "no recogida",
+      "actual": false
+     },
+     {
+      "n": 8,
+      "titulo": "antes de inicio",
+      "actual": false
+     },
+     {
+      "n": 9,
+      "titulo": "retraso de 3 días",
+      "actual": false
+     },
+     {
+      "n": 10,
+      "titulo": "retraso de 1 día",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Cuando",
+      "texto": "se devuelve el 2026-12-08"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Devuelto con 1 día de retraso: multa de 2 €\" en Panel del encargado"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 5: 1 día de retraso. cuando se devuelve el 2026-12-08, entonces ve Devuelto con 1 día de retraso: multa de 2 € en Panel del encargado. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-011-04",
+   "req": "REQ-F-005",
+   "ac": 6,
+   "uc": "UC-011",
+   "frase": "Entregar y recibir el material. En Panel del encargado se ve «Ya estaba devuelta», «{nombre} — Multa de {importe} € — {estado}» y «Lucía Gil — Multa de 6 € — Pendiente».",
+   "visible": true,
+   "then": "the user sees \"Ya estaba devuelta\" and the fine is still 1 of 6 €",
+   "ve": [
+    "Ya estaba devuelta",
+    "{nombre} — Multa de {importe} € — {estado}",
+    "Lucía Gil — Multa de 6 € — Pendiente"
+   ],
+   "pantalla": "Panel del encargado",
+   "presentacion": {
+    "requisito": "REQ-F-005",
+    "titulo": "Entregar y recibir el material",
+    "para_el_cliente": "El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola.",
+    "n": 6,
+    "total": 10,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "entrega en fecha",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "a tiempo",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "3 días de retraso",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "1 día de retraso",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "replay",
+      "actual": true
+     },
+     {
+      "n": 7,
+      "titulo": "no recogida",
+      "actual": false
+     },
+     {
+      "n": 8,
+      "titulo": "antes de inicio",
+      "actual": false
+     },
+     {
+      "n": 9,
+      "titulo": "retraso de 3 días",
+      "actual": false
+     },
+     {
+      "n": 10,
+      "titulo": "retraso de 1 día",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "la devolución se marcó el 2026-12-10 con multa de 6 €"
+     },
+     {
+      "k": "Cuando",
+      "texto": "se envía \"Devolver\" otra vez"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Ya estaba devuelta\" en Panel del encargado"
+     },
+     {
+      "k": "Y",
+      "texto": "ve una sola fila \"Lucía Gil — Multa de 6 € — Pendiente\" en Multas, no repetida ni con otro importe"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 6: replay. Dado que la devolución se marcó el 2026-12-10 con multa de 6 €, cuando se envía Devolver otra vez, entonces ve Ya estaba devuelta en Panel del encargado y ve una sola fila Lucía Gil — Multa de 6 € — Pendiente en Multas, no repetida ni con otro importe. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-010-04",
+   "req": "REQ-F-005",
+   "ac": 7,
+   "uc": "UC-010",
+   "frase": "Entregar y recibir el material. sus unidades quedan libres: las fechas ya han pasado y ninguna pantalla permite reservar fechas pasadas (\"La fecha de inicio no puede ser pasada\"), así que solo lo refleja el cálculo de disponibilidad del fichero de datos",
+   "visible": false,
+   "then": "the user sees \"No recogida\" and its units are free",
+   "ve": [
+    "No recogida"
+   ],
+   "pantalla": "Panel del encargado",
+   "presentacion": {
+    "requisito": "REQ-F-005",
+    "titulo": "Entregar y recibir el material",
+    "para_el_cliente": "El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola.",
+    "n": 7,
+    "total": 10,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "entrega en fecha",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "a tiempo",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "3 días de retraso",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "1 día de retraso",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "no recogida",
+      "actual": true
+     },
+     {
+      "n": 8,
+      "titulo": "antes de inicio",
+      "actual": false
+     },
+     {
+      "n": 9,
+      "titulo": "retraso de 3 días",
+      "actual": false
+     },
+     {
+      "n": 10,
+      "titulo": "retraso de 1 día",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "nunca se entregó y hoy es 2026-12-08"
+     },
+     {
+      "k": "Cuando",
+      "texto": "el encargado abre la reserva"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"No recogida\" en Panel del encargado"
+     },
+     {
+      "k": "Y",
+      "texto": "error `E_NO_RECOGIDA`; sus unidades están libres, sin multa"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 7: no recogida. Dado que nunca se entregó y hoy es 2026-12-08, cuando el encargado abre la reserva, entonces ve No recogida en Panel del encargado y error E_NO_RECOGIDA; sus unidades están libres, sin multa. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-010-03",
+   "req": "REQ-F-005",
+   "ac": 8,
+   "uc": "UC-010",
+   "frase": "Entregar y recibir el material. En Panel del encargado se ve «No se puede entregar antes de la fecha de inicio».",
+   "visible": true,
+   "then": "the user sees \"No se puede entregar antes de la fecha de inicio\"",
+   "ve": [
+    "No se puede entregar antes de la fecha de inicio"
+   ],
+   "pantalla": "Panel del encargado",
+   "presentacion": {
+    "requisito": "REQ-F-005",
+    "titulo": "Entregar y recibir el material",
+    "para_el_cliente": "El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola.",
+    "n": 8,
+    "total": 10,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "entrega en fecha",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "a tiempo",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "3 días de retraso",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "1 día de retraso",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "no recogida",
+      "actual": false
+     },
+     {
+      "n": 8,
+      "titulo": "antes de inicio",
+      "actual": true
+     },
+     {
+      "n": 9,
+      "titulo": "retraso de 3 días",
+      "actual": false
+     },
+     {
+      "n": 10,
+      "titulo": "retraso de 1 día",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "una reserva del 2026-12-10 y hoy es 2026-12-05"
+     },
+     {
+      "k": "Cuando",
+      "texto": "el encargado pulsa \"Entregar\""
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"No se puede entregar antes de la fecha de inicio\" en Panel del encargado"
+     },
+     {
+      "k": "Y",
+      "texto": "error `E_ANTES_DE_INICIO` y la reserva sigue Reservada"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 8: antes de inicio. Dado que una reserva del 2026-12-10 y hoy es 2026-12-05, cuando el encargado pulsa Entregar, entonces ve No se puede entregar antes de la fecha de inicio en Panel del encargado y error E_ANTES_DE_INICIO y la reserva sigue Reservada. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-017-08",
+   "req": "REQ-F-005",
+   "ac": 9,
+   "uc": "UC-017",
+   "frase": "Entregar y recibir el material. En Panel del encargado (ejemplo con datos: \"Retraso: 3 días\") se ve «Retraso: {días} días» y «No tienes multas».",
+   "visible": true,
+   "then": "the user sees \"Retraso: 3 días\" next to the loan and the fine is not created until the return is marked",
+   "ve": [
+    "Retraso: {días} días",
+    "No tienes multas"
+   ],
+   "pantalla": "Panel del encargado (ejemplo con datos: \"Retraso: 3 días\")",
+   "presentacion": {
+    "requisito": "REQ-F-005",
+    "titulo": "Entregar y recibir el material",
+    "para_el_cliente": "El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola.",
+    "n": 9,
+    "total": 10,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "entrega en fecha",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "a tiempo",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "3 días de retraso",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "1 día de retraso",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "no recogida",
+      "actual": false
+     },
+     {
+      "n": 8,
+      "titulo": "antes de inicio",
+      "actual": false
+     },
+     {
+      "n": 9,
+      "titulo": "retraso de 3 días",
+      "actual": true
+     },
+     {
+      "n": 10,
+      "titulo": "retraso de 1 día",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "el préstamo terminó el 2026-12-07 y no se devolvió"
+     },
+     {
+      "k": "Cuando",
+      "texto": "abre el panel el 2026-12-10"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Retraso: 3 días\" junto al préstamo"
+     },
+     {
+      "k": "Y",
+      "texto": "Lucía ve \"No tienes multas\" en Mis multas"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 9: retraso de 3 días. Dado que el préstamo terminó el 2026-12-07 y no se devolvió, cuando abre el panel el 2026-12-10, entonces ve Retraso: 3 días junto al préstamo y Lucía ve No tienes multas en Mis multas. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-017-09",
+   "req": "REQ-F-005",
+   "ac": 10,
+   "uc": "UC-017",
+   "frase": "Entregar y recibir el material. En Panel del encargado (ejemplo con datos: \"Retraso: 1 día\") se ve «Retraso: {días} día».",
+   "visible": true,
+   "then": "the user sees \"Retraso: 1 día\"",
+   "ve": [
+    "Retraso: {días} día"
+   ],
+   "pantalla": "Panel del encargado (ejemplo con datos: \"Retraso: 1 día\")",
+   "presentacion": {
+    "requisito": "REQ-F-005",
+    "titulo": "Entregar y recibir el material",
+    "para_el_cliente": "El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola.",
+    "n": 10,
+    "total": 10,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "entrega en fecha",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "a tiempo",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "3 días de retraso",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "1 día de retraso",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "no recogida",
+      "actual": false
+     },
+     {
+      "n": 8,
+      "titulo": "antes de inicio",
+      "actual": false
+     },
+     {
+      "n": 9,
+      "titulo": "retraso de 3 días",
+      "actual": false
+     },
+     {
+      "n": 10,
+      "titulo": "retraso de 1 día",
+      "actual": true
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "el préstamo terminó el 2026-12-07 y no se devolvió"
+     },
+     {
+      "k": "Cuando",
+      "texto": "abre el panel el 2026-12-08"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Retraso: 1 día\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 10: retraso de 1 día. Dado que el préstamo terminó el 2026-12-07 y no se devolvió, cuando abre el panel el 2026-12-08, entonces ve Retraso: 1 día. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-017-01",
+   "req": "REQ-F-008",
+   "ac": 1,
+   "uc": "UC-017",
+   "frase": "Qué hay prestado y qué vuelve cada día. En Panel del encargado se ve «Prestado: {cantidad} × {material} — {nombre} — vuelve el {fecha}».",
+   "visible": true,
+   "then": "the user sees \"Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07\"",
+   "ve": [
+    "Prestado: {cantidad} × {material} — {nombre} — vuelve el {fecha}"
+   ],
+   "pantalla": "Panel del encargado",
+   "presentacion": {
+    "requisito": "REQ-F-008",
+    "titulo": "Qué hay prestado y qué vuelve cada día",
+    "para_el_cliente": "El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado.",
+    "n": 1,
+    "total": 7,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "préstamo",
+      "actual": true
+     },
+     {
+      "n": 2,
+      "titulo": "vuelven hoy",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "fecha elegida",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "sin préstamos",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "por entregar",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "socio",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "junta",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Cuando",
+      "texto": "el encargado abre el panel el 2026-12-05"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 8: Qué hay prestado y qué vuelve cada día. El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 1: préstamo. cuando el encargado abre el panel el 2026-12-05, entonces ve Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-017-02",
+   "req": "REQ-F-008",
+   "ac": 2,
+   "uc": "UC-017",
+   "frase": "Qué hay prestado y qué vuelve cada día. En Panel del encargado se ve «Vuelven hoy» y «Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07».",
+   "visible": true,
+   "then": "the user sees it under \"Vuelven hoy\"",
+   "ve": [
+    "Vuelven hoy",
+    "Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07"
+   ],
+   "pantalla": "Panel del encargado",
+   "presentacion": {
+    "requisito": "REQ-F-008",
+    "titulo": "Qué hay prestado y qué vuelve cada día",
+    "para_el_cliente": "El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado.",
+    "n": 2,
+    "total": 7,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "préstamo",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "vuelven hoy",
+      "actual": true
+     },
+     {
+      "n": 3,
+      "titulo": "fecha elegida",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "sin préstamos",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "por entregar",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "socio",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "junta",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Cuando",
+      "texto": "abre el panel el 2026-12-07"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Vuelven hoy\""
+     },
+     {
+      "k": "Y",
+      "texto": "ve \"Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 8: Qué hay prestado y qué vuelve cada día. El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 2: vuelven hoy. cuando abre el panel el 2026-12-07, entonces ve Vuelven hoy y ve Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-017-03",
+   "req": "REQ-F-008",
+   "ac": 3,
+   "uc": "UC-017",
+   "frase": "Qué hay prestado y qué vuelve cada día. En Panel del encargado se ve «Vuelven el {fecha}» y «Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07».",
+   "visible": true,
+   "then": "the user sees \"Vuelven el 2026-12-07\" with that loan",
+   "ve": [
+    "Vuelven el {fecha}",
+    "Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07"
+   ],
+   "pantalla": "Panel del encargado",
+   "presentacion": {
+    "requisito": "REQ-F-008",
+    "titulo": "Qué hay prestado y qué vuelve cada día",
+    "para_el_cliente": "El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado.",
+    "n": 3,
+    "total": 7,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "préstamo",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "vuelven hoy",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "fecha elegida",
+      "actual": true
+     },
+     {
+      "n": 4,
+      "titulo": "sin préstamos",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "por entregar",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "socio",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "junta",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Cuando",
+      "texto": "elige la fecha 2026-12-07 el 2026-12-05"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Vuelven el 2026-12-07\""
+     },
+     {
+      "k": "Y",
+      "texto": "ve \"Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 8: Qué hay prestado y qué vuelve cada día. El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 3: fecha elegida. cuando elige la fecha 2026-12-07 el 2026-12-05, entonces ve Vuelven el 2026-12-07 y ve Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-017-04",
+   "req": "REQ-F-008",
+   "ac": 4,
+   "uc": "UC-017",
+   "frase": "Qué hay prestado y qué vuelve cada día. En Panel del encargado se ve «No hay material prestado».",
+   "visible": true,
+   "then": "the user sees \"No hay material prestado\"",
+   "ve": [
+    "No hay material prestado"
+   ],
+   "pantalla": "Panel del encargado",
+   "presentacion": {
+    "requisito": "REQ-F-008",
+    "titulo": "Qué hay prestado y qué vuelve cada día",
+    "para_el_cliente": "El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado.",
+    "n": 4,
+    "total": 7,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "préstamo",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "vuelven hoy",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "fecha elegida",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "sin préstamos",
+      "actual": true
+     },
+     {
+      "n": 5,
+      "titulo": "por entregar",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "socio",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "junta",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "no hay préstamos"
+     },
+     {
+      "k": "Cuando",
+      "texto": "abre el panel"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"No hay material prestado\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 8: Qué hay prestado y qué vuelve cada día. El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 4: sin préstamos. Dado que no hay préstamos, cuando abre el panel, entonces ve No hay material prestado. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-017-05",
+   "req": "REQ-F-008",
+   "ac": 5,
+   "uc": "UC-017",
+   "frase": "Qué hay prestado y qué vuelve cada día. En Panel del encargado se ve «Por entregar: {cantidad} × {material} — {nombre} — desde el {fecha}» y «Entregar».",
+   "visible": true,
+   "then": "the user sees \"Por entregar: 2 × Casco — Lucía Gil — desde el 2026-12-05\" and the button \"Entregar\"",
+   "ve": [
+    "Por entregar: {cantidad} × {material} — {nombre} — desde el {fecha}",
+    "Entregar"
+   ],
+   "pantalla": "Panel del encargado",
+   "presentacion": {
+    "requisito": "REQ-F-008",
+    "titulo": "Qué hay prestado y qué vuelve cada día",
+    "para_el_cliente": "El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado.",
+    "n": 5,
+    "total": 7,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "préstamo",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "vuelven hoy",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "fecha elegida",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "sin préstamos",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "por entregar",
+      "actual": true
+     },
+     {
+      "n": 6,
+      "titulo": "socio",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "junta",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "Lucía tiene 2 × Casco reservados desde el 2026-12-05"
+     },
+     {
+      "k": "Cuando",
+      "texto": "abre el panel el 2026-12-05"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Por entregar: 2 × Casco — Lucía Gil — desde el 2026-12-05\""
+     },
+     {
+      "k": "Y",
+      "texto": "ve el botón \"Entregar\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 8: Qué hay prestado y qué vuelve cada día. El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 5: por entregar. Dado que Lucía tiene 2 × Casco reservados desde el 2026-12-05, cuando abre el panel el 2026-12-05, entonces ve Por entregar: 2 × Casco — Lucía Gil — desde el 2026-12-05 y ve el botón Entregar. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-017-06",
+   "req": "REQ-F-008",
+   "ac": 6,
+   "uc": "UC-017",
+   "frase": "Qué hay prestado y qué vuelve cada día. En Panel del encargado se ve «No tienes permiso para ver esta página».",
+   "visible": true,
+   "then": "the user sees \"No tienes permiso para ver esta página\"",
+   "ve": [
+    "No tienes permiso para ver esta página"
+   ],
+   "pantalla": "Panel del encargado",
+   "presentacion": {
+    "requisito": "REQ-F-008",
+    "titulo": "Qué hay prestado y qué vuelve cada día",
+    "para_el_cliente": "El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado.",
+    "n": 6,
+    "total": 7,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "préstamo",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "vuelven hoy",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "fecha elegida",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "sin préstamos",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "por entregar",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "socio",
+      "actual": true
+     },
+     {
+      "n": 7,
+      "titulo": "junta",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Cuando",
+      "texto": "un socio abre \"/panel\""
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"No tienes permiso para ver esta página\" en Panel del encargado"
+     },
+     {
+      "k": "Y",
+      "texto": "error `E_PAGINA_PROHIBIDA`"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 8: Qué hay prestado y qué vuelve cada día. El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 6: socio. cuando un socio abre /panel, entonces ve No tienes permiso para ver esta página en Panel del encargado y error E_PAGINA_PROHIBIDA. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-017-07",
+   "req": "REQ-F-008",
+   "ac": 7,
+   "uc": "UC-017",
+   "frase": "Qué hay prestado y qué vuelve cada día. En Panel del encargado se ve «No tienes permiso para ver esta página».",
+   "visible": true,
+   "then": "the user sees \"No tienes permiso para ver esta página\"",
+   "ve": [
+    "No tienes permiso para ver esta página"
+   ],
+   "pantalla": "Panel del encargado",
+   "presentacion": {
+    "requisito": "REQ-F-008",
+    "titulo": "Qué hay prestado y qué vuelve cada día",
+    "para_el_cliente": "El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado.",
+    "n": 7,
+    "total": 7,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "préstamo",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "vuelven hoy",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "fecha elegida",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "sin préstamos",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "por entregar",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "socio",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "junta",
+      "actual": true
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Cuando",
+      "texto": "una persona de la junta abre \"/panel\""
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"No tienes permiso para ver esta página\" en Panel del encargado"
+     },
+     {
+      "k": "Y",
+      "texto": "error `E_PAGINA_PROHIBIDA`"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 8: Qué hay prestado y qué vuelve cada día. El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 7: junta. cuando una persona de la junta abre /panel, entonces ve No tienes permiso para ver esta página en Panel del encargado y error E_PAGINA_PROHIBIDA. Ahora, la demostración."
+   }
+  }
+ ]
+}

@@ -1,0 +1,22 @@
+{
+ "video": "FASE-2-AC-010-04-REQ-F-005-AC7-la-reserva-acab-.webm",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-010-04 REQ-F-005 AC7 la reserva acabó el 2026-12-07 sin entregarse y Pablo abre el Panel el 2026-12-08: ve «No recogida» y no se entrega",
+ "titulo": "AC-010-04 REQ-F-005 AC7 la reserva acabó el 2026-12-07 sin entregarse y Pablo abre el Panel el 2026-12-08: ve «No recogida» y no se entrega",
+ "narraciones": [
+  {
+   "t": 0.01,
+   "texto": "Requisito REQ-F-005: Entregar y recibir el material. Criterio 7 de 10.",
+   "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 7: no recogida. Dado que nunca se entregó y hoy es 2026-12-08, cuando el encargado abre la reserva, entonces ve No recogida en Panel del encargado y error E_NO_RECOGIDA; sus unidades están libres, sin multa. Ahora, la demostración.",
+   "presentacion": "AC-010-04"
+  },
+  {
+   "t": 0.537,
+   "texto": "Es 8 de diciembre. La reserva de Lucía acabó el 7 sin que viniera a recogerla. Pablo abre el Panel"
+  },
+  {
+   "t": 1.063,
+   "texto": "Entregar y recibir el material. En Panel del encargado se ve «No recogida»: la reserva ya no se puede entregar, sus unidades quedan libres y no hay multa.",
+   "criterio": "AC-010-04"
+  }
+ ]
+}

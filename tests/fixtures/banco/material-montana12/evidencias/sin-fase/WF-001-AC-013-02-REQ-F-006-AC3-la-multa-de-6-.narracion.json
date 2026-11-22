@@ -1,0 +1,26 @@
+{
+ "video": "WF-001-AC-013-02-REQ-F-006-AC3-la-multa-de-6-.webm",
+ "test": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-013-02 REQ-F-006 AC3 la multa de 6 € de Pablo Sanz acaba de pagarse y se pulsa «Marcar pagada» otra vez: ve «La multa ya estaba pagada» y una sola «Pablo Sanz — Multa de 6 € — Pagada»",
+ "titulo": "AC-013-02 REQ-F-006 AC3 la multa de 6 € de Pablo Sanz acaba de pagarse y se pulsa «Marcar pagada» otra vez: ve «La multa ya estaba pagada» y una sola «Pablo Sanz — Multa de 6 € — Pagada»",
+ "narraciones": [
+  {
+   "t": 0.02,
+   "texto": "Requisito REQ-F-006: Multas y bloqueo hasta pagarlas. Criterio 3 de 7.",
+   "voz": "Requisito funcional 6: Multas y bloqueo hasta pagarlas. El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 3: replay. Dado que la multa de 6 € de Pablo Sanz acaba de pagarse, cuando se envía Marcar pagada otra vez, entonces ve La multa ya estaba pagada en Multas y ve Pablo Sanz — Multa de 6 € — Pagada en Multas y ve una sola fila Pablo Sanz — Multa de 6 € — Pagada, no repetida. Ahora, la demostración.",
+   "presentacion": "AC-013-02"
+  },
+  {
+   "t": 0.819,
+   "texto": "Jorge tiene abierta la lista de Multas, con la multa de 6 euros de Pablo Sanz todavía pendiente"
+  },
+  {
+   "t": 1.42,
+   "texto": "La multa se acaba de cobrar desde otra pestaña. Jorge pulsa «Marcar pagada» otra vez en la suya, que no se había enterado"
+  },
+  {
+   "t": 1.694,
+   "texto": "Multas y bloqueo hasta pagarlas. En Multas se ve «La multa ya estaba pagada» y «Pablo Sanz — Multa de 6 € — Pagada»: sigue siendo una sola multa de 6 euros y sigue Pagada.",
+   "criterio": "AC-013-02"
+  }
+ ]
+}

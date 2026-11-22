@@ -1,0 +1,22 @@
+{
+ "video": "FASE-2-AC-017-03-REQ-F-008-AC3-el-mismo-pr-stam.webm",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-03 REQ-F-008 AC3 el mismo préstamo y Pablo elige la fecha 2026-12-07 el 2026-12-05: ve «Vuelven el 2026-12-07» con ese préstamo",
+ "titulo": "AC-017-03 REQ-F-008 AC3 el mismo préstamo y Pablo elige la fecha 2026-12-07 el 2026-12-05: ve «Vuelven el 2026-12-07» con ese préstamo",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-008: Qué hay prestado y qué vuelve cada día. Criterio 3 de 7.",
+   "voz": "Requisito funcional 8: Qué hay prestado y qué vuelve cada día. El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 3: fecha elegida. cuando elige la fecha 2026-12-07 el 2026-12-05, entonces ve Vuelven el 2026-12-07 y ve Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07. Ahora, la demostración.",
+   "presentacion": "AC-017-03"
+  },
+  {
+   "t": 0.798,
+   "texto": "Es 5 de diciembre. Pablo quiere saber qué vuelve el 7 y elige esa fecha en el Panel"
+  },
+  {
+   "t": 1.077,
+   "texto": "Qué hay prestado y qué vuelve cada día. En Panel del encargado se ve «Vuelven el 2026-12-07» y debajo «Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07».",
+   "criterio": "AC-017-03"
+  }
+ ]
+}

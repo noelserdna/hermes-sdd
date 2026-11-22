@@ -1,0 +1,27 @@
+{
+ "video": "FASE-5-FASE-5-recorrido-de-la-depuraci-n-con-h.webm",
+ "test": "FASE-5 · Depuración del historial antiguo (UC-019) › FASE-5 recorrido de la depuración: con hoy = 2026-11-22 la junta ve a Marta con sus dos préstamos y, tras depurar dos veces, solo el de 2025-01-10",
+ "titulo": "FASE-5 recorrido de la depuración: con hoy = 2026-11-22 la junta ve a Marta con sus dos préstamos y, tras depurar dos veces, solo el de 2025-01-10",
+ "narraciones": [
+  {
+   "t": 0.178,
+   "texto": "Elena, de la junta, entra y busca a Marta, que tiene dos préstamos devueltos"
+  },
+  {
+   "t": 0.769,
+   "texto": "Hoy es 22 de noviembre de 2026 y el sistema lanza la depuración: borra lo cerrado hace más de tres años"
+  },
+  {
+   "t": 1.063,
+   "texto": "El préstamo que terminó el 1 de noviembre de 2023 ha desaparecido y el de 2025 sigue"
+  },
+  {
+   "t": 1.267,
+   "texto": "Se lanza la depuración otra vez: no cambia nada"
+  },
+  {
+   "t": 1.688,
+   "texto": "Sin cambios: Marta sigue con el préstamo de 2025, también tras recargar la página"
+  }
+ ]
+}

@@ -1,0 +1,26 @@
+{
+ "video": "FASE-2-AC-010-01-REQ-F-005-AC1-hoy-es-2026-12-0.webm",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-010-01 REQ-F-005 AC1 hoy es 2026-12-05 y Lucía tiene 2 × Casco reservados: Pablo pulsa «Entregar» y ve «Entregado: 2 × Casco a Lucía Gil»",
+ "titulo": "AC-010-01 REQ-F-005 AC1 hoy es 2026-12-05 y Lucía tiene 2 × Casco reservados: Pablo pulsa «Entregar» y ve «Entregado: 2 × Casco a Lucía Gil»",
+ "narraciones": [
+  {
+   "t": 0.036,
+   "texto": "Requisito REQ-F-005: Entregar y recibir el material. Criterio 1 de 10.",
+   "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 1: entrega en fecha. Dado que hoy es 2026-12-05, cuando el encargado pulsa Entregar, entonces ve Entregado: 2 × Casco a Lucía Gil y ve 2 × Casco del 2026-12-05 al 2026-12-07 — Prestada en Panel del encargado. Ahora, la demostración.",
+   "presentacion": "AC-010-01"
+  },
+  {
+   "t": 0.959,
+   "texto": "Es 5 de diciembre. Pablo, el encargado, abre el Panel y encuentra la reserva de dos cascos de Lucía por entregar"
+  },
+  {
+   "t": 1.172,
+   "texto": "Pulsa Entregar al darle el material a Lucía"
+  },
+  {
+   "t": 1.44,
+   "texto": "Entregar y recibir el material. En Panel del encargado se ve «Entregado: 2 × Casco a Lucía Gil» y «2 × Casco del 2026-12-05 al 2026-12-07 — Prestada».",
+   "criterio": "AC-010-01"
+  }
+ ]
+}

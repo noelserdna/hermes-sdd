@@ -1,0 +1,26 @@
+{
+ "video": "FASE-2-AC-011-04-REQ-F-005-AC6-la-devoluci-n-ac.webm",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-04 REQ-F-005 AC6 la devolución acaba de marcarse con multa de 6 € y «Devolver» se envía otra vez: Pablo ve «Ya estaba devuelta» y una sola multa de Lucía Gil",
+ "titulo": "AC-011-04 REQ-F-005 AC6 la devolución acaba de marcarse con multa de 6 € y «Devolver» se envía otra vez: Pablo ve «Ya estaba devuelta» y una sola multa de Lucía Gil",
+ "narraciones": [
+  {
+   "t": 0.023,
+   "texto": "Requisito REQ-F-005: Entregar y recibir el material. Criterio 6 de 10.",
+   "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 6: replay. Dado que la devolución se marcó el 2026-12-10 con multa de 6 €, cuando se envía Devolver otra vez, entonces ve Ya estaba devuelta en Panel del encargado y ve una sola fila Lucía Gil — Multa de 6 € — Pendiente en Multas, no repetida ni con otro importe. Ahora, la demostración.",
+   "presentacion": "AC-011-04"
+  },
+  {
+   "t": 0.852,
+   "texto": "Es 10 de diciembre. Pablo tiene abierto el Panel con el préstamo de Lucía, vencido hace tres días"
+  },
+  {
+   "t": 1.121,
+   "texto": "La devolución ya se marcó desde otra pestaña con una multa de 6 euros; aquí Pablo pulsa Devolver otra vez"
+  },
+  {
+   "t": 1.375,
+   "texto": "Entregar y recibir el material. En Panel del encargado se ve «Ya estaba devuelta» y «Lucía Gil — Multa de 6 € — Pendiente»: sigue habiendo una sola multa, de 6 euros.",
+   "criterio": "AC-011-04"
+  }
+ ]
+}

@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-010-01",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-010-01 REQ-F-005 AC1 hoy es 2026-12-05 y Lucía tiene 2 × Casco reservados: Pablo pulsa «Entregar» y ve «Entregado: 2 × Casco a Lucía Gil»",
+ "titulo": "AC-010-01 REQ-F-005 AC1 hoy es 2026-12-05 y Lucía tiene 2 × Casco reservados: Pablo pulsa «Entregar» y ve «Entregado: 2 × Casco a Lucía Gil»",
+ "ve": [
+  "Entregado: 2 × Casco a Lucía Gil",
+  "2 × Casco del 2026-12-05 al 2026-12-07 — Prestada"
+ ],
+ "narrado": "Entregar y recibir el material. En Panel del encargado se ve «Entregado: 2 × Casco a Lucía Gil» y «2 × Casco del 2026-12-05 al 2026-12-07 — Prestada».",
+ "url": "http://127.0.0.1:5173/panel",
+ "imagen": "AC-010-01.png",
+ "sha256": "sha256:7d29eb3686c36a5a16c0a0a69a27e9102c92db761fd9f5bf854240e491e3be98",
+ "at": "2026-11-22T19:43:05.816Z"
+}

@@ -1,0 +1,22 @@
+{
+ "video": "SIN-FASE-AC-001-07-REQ-F-001-AC8-un-visitante-sin.webm",
+ "test": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-07 REQ-F-001 AC8 un visitante sin sesión abre /mis-reservas y ve el formulario «Entrar»",
+ "titulo": "AC-001-07 REQ-F-001 AC8 un visitante sin sesión abre /mis-reservas y ve el formulario «Entrar»",
+ "narraciones": [
+  {
+   "t": 0.031,
+   "texto": "Requisito REQ-F-001: Entrar y salir. Criterio 8 de 8.",
+   "voz": "Requisito funcional 1: Entrar y salir. Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras. Tiene 8 criterios de aceptación. Este vídeo demuestra el criterio 8: visitante sin sesión. cuando abre /mis-reservas sin sesión, entonces ve el formulario Entrar. Ahora, la demostración.",
+   "presentacion": "AC-001-07"
+  },
+  {
+   "t": 0.759,
+   "texto": "Un visitante que no ha entrado abre la página Mis reservas"
+  },
+  {
+   "t": 1.02,
+   "texto": "Entrar y salir. En Entrar se ve «Entrar».",
+   "criterio": "AC-001-07"
+  }
+ ]
+}

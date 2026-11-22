@@ -1,0 +1,56 @@
+{
+  "id": "g1795376295722c",
+  "tipo": "preguntas",
+  "fase": "5",
+  "tablero": "material-montana12",
+  "tarjeta": "t_a89a6df9",
+  "adopcion": false,
+  "sha": "30ca43aa6b7d8faffdfffd4c802b3c56f846b49f",
+  "creada": "2026-11-22T19:38:15Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana12",
+  "titulo": "Preguntas de la FASE-5",
+  "texto": "⏸ La FASE-5 de «material-montana12» se ha parado: para seguir necesita que decidas esto.\n\nAl responder, la FASE-5 sigue con tus respuestas. Si alguna pide cambiar los requisitos ya aprobados, no se reabren a mitad de camino: queda anotada para la siguiente entrega.\n\n👉 Elige en los botones Q (la recomendada ya está marcada) y pulsa ✅ Responder.\n\n❓ Antes, una pregunta (la recomendada ya está marcada en los botones Q):\n\n1. Para que en los vídeos de «devolver a tiempo» y «retraso aún sin devolver» se vea la pantalla Mis multas de Lucía con «No tienes multas», hay que retocar esas dos pruebas antiguas de la entrega 2. ¿Das permiso?\n   🔧 Detalle técnico: ¿Se autoriza editar tests/e2e/fase-2.spec.js solo para que AC-011-01 (REQ-F-005 AC3) y AC-017-08 (REQ-F-005 AC9) abran «Mis multas» de Lucía tras lo que ya hac…\n   A) Sí, se retocan solo esas dos pruebas para enseñar «No tienes multas».  ⭐ recomendada  (✏️ autoriza editar tests/e2e/fase-2.spec.js)\n   B) No, se dejan como están.\n\n👉 Si firmas sin tocar los botones Q, esto lanzará: ✏️ autoriza editar tests que ya existían: tests/e2e/fase-2.spec.js (Q1).",
+  "opciones": [
+    {
+      "verbo": "respondo",
+      "etiqueta": "✅ Responder"
+    }
+  ],
+  "demo": "",
+  "preguntas": [
+    {
+      "n": 1,
+      "id": "Q-task-implementer-008",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "editar-test",
+          "ficheros": [
+            "tests/e2e/fase-2.spec.js"
+          ],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "Para que en los vídeos de «devolver a tiempo» y «retraso aún sin devolver» se vea la pantalla Mis multas de Lucía con «No tienes multas», hay que retocar esas dos pruebas antiguas de la entrega 2. ¿Das permiso?"
+    }
+  ],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [],
+    "graves": 0
+  }
+}

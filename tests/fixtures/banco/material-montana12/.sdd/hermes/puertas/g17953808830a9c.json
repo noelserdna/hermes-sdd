@@ -1,0 +1,55 @@
+{
+  "id": "g17953808830a9c",
+  "tipo": "entrega",
+  "fase": "",
+  "tablero": "material-montana12",
+  "tarjeta": "t_7f23fef1",
+  "adopcion": false,
+  "sha": "2edcf76fd094277bc935fca780d7f614ed71d985",
+  "creada": "2026-11-22T20:54:43Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana12",
+  "titulo": "Entrega final",
+  "texto": "🧭 Encargado: 1 aviso\n• 11 texto(s) que los criterios dicen que se ven no están tal cual en el código de la app («Marta Ruiz — Activo», «Lucía Gil — Activo», «2 × Linterna del 2026-12-05 al 2026-12-07 — Reservada», «2 × Casco del 2026-12-05 al 2026-12-07 — Cancelada», «2 × Casco del 2026-12-05 al 2026-12-07 — Prestada», «Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07»…): o la app los compone (y nadie comprueba la plantilla) o no los enseña\n\n🎁 «material-montana12» está terminado y listo para entregar.\n\n✅ Todo en orden: los 14 requisitos funcionan y están comprobados.\n\n✅ 14 requisitos funcionan y están comprobados: Entrar y salir; Alta, baja y contraseña de los socios; Reservar material; Mis reservas y cancelar; Entregar y recibir el material; Multas y bloqueo hasta pagarlas; Inventario; Qué hay prestado y qué vuelve cada día; Historial de un socio para la junta; Cada rol solo ve y hace lo suyo; Datos compart…\n\nFases aceptadas: 6.\n\n🎬 Demo: el montaje de todas las fases, requisito a requisito y criterio a criterio, con su voz.\n\n👉 Pulsa ▶ Ver demo; después podrás aceptar la entrega, aceptarla con observaciones o rechazarla.",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Acepto la entrega",
+      "paso": 2
+    },
+    {
+      "verbo": "observaciones",
+      "etiqueta": "📝 Con observaciones",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/ENTREGA/MONTAJE-ENTREGA.mp4",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": false,
+        "codigo": "texto-fuera-del-codigo",
+        "texto": "11 texto(s) que los criterios dicen que se ven no están tal cual en el código de la app («Marta Ruiz — Activo», «Lucía Gil — Activo», «2 × Linterna del 2026-12-05 al 2026-12-07 — Reservada», «2 × Casco del 2026-12-05 al 2026-12-07 — Cancelada», «2 × Casco del 2026-12-05 al 2026-12-07 — Prestada», «Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07»…): o la app los compone (y nadie comprueba la plantilla) o no los enseña"
+      }
+    ],
+    "graves": 0
+  }
+}

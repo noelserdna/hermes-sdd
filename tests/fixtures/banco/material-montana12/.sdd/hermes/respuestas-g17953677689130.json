@@ -1,0 +1,19 @@
+{
+ "peticiones": [],
+ "por_aplicar": [
+  "Q-task-implementer-003: ¿Se autoriza editar tests/unit/ui/panel.test.js y tests/e2e/fase-2.spec.js solo para (a) cambiar «No tienes multas» por «No hay multas» en las comprobaciones del Panel del encargado y (b) ampliar el test AC-010-04 para que se vea reservar de nuevo las unidades de la «No recogida»? Sin quitar ninguna comprobación existente.\nRespuesta elegida: A) Editar solo esas dos pruebas: nuevo texto «No hay multas» en las comprobaciones del Panel y, en AC-010-04, un paso final en el que otra socia reserva las mismas unidades y las consigue; no se quita ninguna comprobación\nPara el cliente: Para que el Panel del encargado diga «No hay multas» y para que el vídeo de «No recogida» enseñe que las unidades quedan libres, hay que retocar dos pruebas de la entrega 2 ya aceptada. ¿Autoriza retocarlas solo para eso, sin quitar nada de lo que comprueban? → A) Sí, se retocan solo esas dos pruebas para lo que pidió\nTests ya existentes que la persona autoriza editar (solo estos; firmado en acceptance/decisions.jsonl): tests/unit/ui/panel.test.js, tests/e2e/fase-2.spec.js"
+ ],
+ "autorizaciones": [
+  {
+   "pregunta": "Q-task-implementer-003",
+   "letra": "A",
+   "ficheros": [
+    "tests/unit/ui/panel.test.js",
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "endurecer": false,
+   "motivo": "¿Se autoriza editar tests/unit/ui/panel.test.js y tests/e2e/fase-2.spec.js solo para (a) cambiar «No tienes multas» por «No hay multas» en las comprobaciones del Panel del encargado y (b) ampliar el test AC-010-04 para que se vea reservar de nuevo las unidades de la «No recogida»? Sin quitar ninguna comprobación existente. → A) Editar solo esas dos pruebas: nuevo texto «No hay multas» en las comprobaciones del Panel y, en AC-010-04, un paso final en el que otra socia reserva las mismas unidades y las consigue; no se quita ninguna comprobación"
+  }
+ ],
+ "abiertas": []
+}

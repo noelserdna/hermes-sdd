@@ -1,0 +1,18 @@
+{
+ "peticiones": [],
+ "por_aplicar": [
+  "Q-task-implementer-008: ¿Se autoriza editar tests/e2e/fase-2.spec.js solo para que AC-011-01 (REQ-F-005 AC3) y AC-017-08 (REQ-F-005 AC9) abran «Mis multas» de Lucía tras lo que ya hacen y comprueben, narren y capturen «No tienes multas», manteniendo todas sus comprobaciones actuales?\nRespuesta elegida: A) Sí: se retocan solo esas dos pruebas para añadir el paso de Mis multas de Lucía; no se quita ninguna comprobación.\nPara el cliente: Para que en los vídeos de «devolver a tiempo» y «retraso aún sin devolver» se vea la pantalla Mis multas de Lucía con «No tienes multas», hay que retocar esas dos pruebas antiguas de la entrega 2. ¿Das permiso? → A) Sí, se retocan solo esas dos pruebas para enseñar «No tienes multas».\nTests ya existentes que la persona autoriza editar (solo estos; firmado en acceptance/decisions.jsonl): tests/e2e/fase-2.spec.js"
+ ],
+ "autorizaciones": [
+  {
+   "pregunta": "Q-task-implementer-008",
+   "letra": "A",
+   "ficheros": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "endurecer": false,
+   "motivo": "¿Se autoriza editar tests/e2e/fase-2.spec.js solo para que AC-011-01 (REQ-F-005 AC3) y AC-017-08 (REQ-F-005 AC9) abran «Mis multas» de Lucía tras lo que ya hacen y comprueben, narren y capturen «No tienes multas», manteniendo todas sus comprobaciones actuales? → A) Sí: se retocan solo esas dos pruebas para añadir el paso de Mis multas de Lucía; no se quita ninguna comprobación."
+  }
+ ],
+ "abiertas": []
+}

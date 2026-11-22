@@ -1,0 +1,105 @@
+/* Diseño visual de ux/ (DESIGN-TOKENS.json, UI-DESIGN-SYSTEM.md): colores, tipografía, formularios y listas legibles.
+   Sin texto ni comportamiento: solo estilos por etiqueta y clase. */
+:root {
+  --fondo: #F7F5F0; --superficie: #FFFFFF; --texto: #1F2933; --apagado: #52606D; --borde: #6B7785;
+  --primario: #1D5C4B; --primario-hover: #164A3C; --sobre-primario: #FFFFFF;
+  --peligro: #A32020; --sobre-peligro: #FFFFFF; --error: #A32020; --exito: #1B6B3A; --aviso: #7A4B00; --foco: #0B5FD6;
+  --ok-fondo: #DCF3E3; --ok-texto: #14532D; --alerta-fondo: #FFF3D6; --alerta-texto: #7A4B00;
+  --err-fondo: #FBE3E3; --err-texto: #8A1A1A; --neutro-fondo: #E4E7EB; --neutro-texto: #323F4B;
+  --radio: 0.5rem; --radio-s: 0.25rem; --sombra: 0 1px 3px #00000026; --objetivo: 44px;
+  --fuente: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fondo: #14191F; --superficie: #1E252D; --texto: #E8ECEF; --apagado: #A9B4BF; --borde: #8794A1;
+    --primario: #6FD1B1; --primario-hover: #8FE0C5; --sobre-primario: #0F1A16;
+    --peligro: #FF9B9B; --sobre-peligro: #1A0B0B; --error: #FF9B9B; --exito: #7FDDA0; --aviso: #F5C26B; --foco: #7DB2FF;
+    --ok-fondo: #7FDDA0; --ok-texto: #14191F; --alerta-fondo: #F5C26B; --alerta-texto: #14191F;
+    --err-fondo: #FF9B9B; --err-texto: #14191F; --neutro-fondo: #8794A1; --neutro-texto: #14191F;
+  }
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--fondo); color: var(--texto); font: 400 1rem/1.5 var(--fuente); }
+main { max-width: 72rem; margin: 0 auto; padding: 1.5rem 1rem 4.5rem; }
+h1 { font-size: 2rem; line-height: 1.25; margin: 0 0 1rem; }
+h2 { font-size: 1.25rem; line-height: 1.25; margin: 2rem 0 0.75rem; }
+a { color: var(--primario); font-weight: 500; }
+:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
+
+/* Cabecera: marca, saludo, navegación y «Salir» */
+.cabecera { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; padding: 0.75rem 1rem; background: var(--primario); color: var(--sobre-primario); }
+.cabecera strong { font-size: 1.25rem; }
+.cabecera .saludo { flex: 1; }
+.cabecera nav { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.cabecera a { display: inline-flex; align-items: center; min-height: var(--objetivo); padding: 0 0.75rem; color: var(--sobre-primario); border-radius: var(--radio-s); text-decoration: underline; }
+.cabecera a:hover { background: #ffffff26; }
+.cabecera button { background: transparent; color: var(--sobre-primario); border-color: var(--sobre-primario); }
+.cabecera :focus-visible { outline-color: var(--sobre-primario); }
+
+/* Formularios */
+form { display: grid; gap: 0.5rem; max-width: 28rem; margin: 1rem 0; padding: 1.5rem; background: var(--superficie); border-radius: var(--radio); box-shadow: var(--sombra); }
+label { font-weight: 600; }
+input, select { min-height: var(--objetivo); padding: 0.5rem 0.75rem; font: inherit; color: var(--texto); background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio-s); }
+.ayuda { color: var(--apagado); font-size: 0.875rem; }
+button { min-height: var(--objetivo); padding: 0 1rem; font: inherit; font-weight: 600; cursor: pointer; color: var(--primario); background: var(--superficie); border: 2px solid var(--primario); border-radius: var(--radio-s); }
+button:hover { background: var(--neutro-fondo); }
+button[type="submit"], button.principal { color: var(--sobre-primario); background: var(--primario); }
+button[type="submit"]:hover, button.principal:hover { background: var(--primario-hover); }
+button.peligro { color: var(--sobre-peligro); background: var(--peligro); border-color: var(--peligro); }
+button:disabled { opacity: 0.6; cursor: progress; }
+.entrar { max-width: 28rem; }
+.entrar > strong { display: block; margin-bottom: 0.5rem; color: var(--primario); font-size: 1.25rem; }
+
+/* Mensajes y avisos: texto con borde de color, en flujo */
+.mensajes:empty { display: none; }
+.mensajes p, .avisos p { margin: 0 0 0.75rem; padding: 0.75rem 1rem; border-left: 4px solid; border-radius: var(--radio-s); }
+.error { color: var(--err-texto); background: var(--err-fondo); border-color: var(--error); font-weight: 600; }
+.aviso { color: var(--ok-texto); background: var(--ok-fondo); border-color: var(--exito); }
+.avisos { max-width: 72rem; margin: 0 auto; padding: 1rem 1rem 0; }
+.avisos[hidden] { display: none; }
+.avisos .aviso { box-shadow: var(--sombra); }
+button.secundario { min-height: 36px; font-size: 0.875rem; }
+
+/* Listas: una tarjeta por fila */
+ul { list-style: none; margin: 1rem 0; padding: 0; display: grid; gap: 0.5rem; }
+li { padding: 0.75rem 1rem; background: var(--superficie); border-radius: var(--radio); box-shadow: var(--sombra); }
+li form { display: flex; flex-wrap: wrap; align-items: end; gap: 0.5rem; max-width: none; margin: 0.5rem 0 0; padding: 0; background: none; box-shadow: none; }
+ul.reservas li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; border-left: 6px solid var(--borde); }
+ul.reservas li.estado-reservada { border-left-color: var(--primario); }
+ul.reservas li.estado-prestada { border-left-color: var(--aviso); }
+ul.reservas li.estado-cancelada, ul.reservas li.estado-no-recogida { border-left-color: var(--error); }
+ul.reservas li.estado-devuelta { border-left-color: var(--exito); }
+.motivo { color: var(--apagado); font-style: italic; }
+.vacio, .sin-unidades { padding: 1rem; color: var(--apagado); background: var(--superficie); border-radius: var(--radio); }
+.confirmar { margin: 0.5rem 0 0; font-weight: 600; }
+
+@media (max-width: 767px) {
+  .cabecera { flex-direction: column; align-items: stretch; }
+  form, .entrar { max-width: none; }
+  ul.reservas li { flex-direction: column; align-items: stretch; }
+  ul.reservas li button { width: 100%; }
+}
+
+/* Panel del encargado (SCR-006): filas con su detalle, el retraso con texto (nunca solo color) y el botón de la fila */
+form.fecha { display: flex; flex-wrap: wrap; align-items: end; max-width: none; }
+ul.panel li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 1rem; border-left: 6px solid var(--primario); }
+ul.panel li .texto { flex: 1 1 22rem; font-weight: 600; }
+ul.panel li .detalle { color: var(--apagado); font-size: 0.875rem; }
+.retraso { padding: 0.125rem 0.5rem; color: var(--alerta-texto); background: var(--alerta-fondo); border-radius: var(--radio-s); font-weight: 600; }
+
+/* Socios (SCR-007) y Cambiar contraseña (SCR-002) */
+ul.socios li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; border-left: 6px solid var(--primario); }
+ul.socios li.estado-baja { border-left-color: var(--borde); }
+ul.socios li .texto { flex: 1 1 14rem; font-weight: 600; }
+ul.socios li form.en-fila, ul.socios li .confirmar { flex: 1 1 100%; }
+form .error { margin: 0; padding: 0.5rem 0.75rem; border-left: 4px solid; border-radius: var(--radio-s); }
+form .error[hidden] { display: none; }
+input[aria-invalid="true"] { border: 2px solid var(--error); }
+.con-boton { display: flex; gap: 0.5rem; }
+.con-boton input { flex: 1; }
+
+/* Historial del socio (SCR-010) */
+.solo-lectura { color: var(--apagado); margin: 0 0 1rem; }
+.historial h3 { font-size: 1.05rem; margin: 1rem 0 0.5rem; }
+.historial ul, .resultados ul { padding-left: 1.25rem; }

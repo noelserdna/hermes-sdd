@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-017-03",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-03 REQ-F-008 AC3 el mismo préstamo y Pablo elige la fecha 2026-12-07 el 2026-12-05: ve «Vuelven el 2026-12-07» con ese préstamo",
+ "titulo": "AC-017-03 REQ-F-008 AC3 el mismo préstamo y Pablo elige la fecha 2026-12-07 el 2026-12-05: ve «Vuelven el 2026-12-07» con ese préstamo",
+ "ve": [
+  "Vuelven el 2026-12-07",
+  "Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07"
+ ],
+ "narrado": "Qué hay prestado y qué vuelve cada día. En Panel del encargado se ve «Vuelven el 2026-12-07» y debajo «Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07».",
+ "url": "http://127.0.0.1:5173/panel",
+ "imagen": "AC-017-03.png",
+ "sha256": "sha256:f76e21ec854b411c11c761583db6be04783e7a299605119173707ee07e38914e",
+ "at": "2026-11-22T19:43:27.947Z"
+}

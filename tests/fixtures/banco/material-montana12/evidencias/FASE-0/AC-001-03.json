@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-03",
+ "test": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-03 REQ-F-001 AC3 Lucía escribe una contraseña errónea y ve «Correo o contraseña incorrectos»",
+ "titulo": "AC-001-03 REQ-F-001 AC3 Lucía escribe una contraseña errónea y ve «Correo o contraseña incorrectos»",
+ "ve": [
+  "Correo o contraseña incorrectos"
+ ],
+ "narrado": "Entrar y salir. En Entrar se ve «Correo o contraseña incorrectos».",
+ "url": "http://127.0.0.1:5173/mis-reservas",
+ "imagen": "AC-001-03.png",
+ "sha256": "sha256:52b2fc3b310194628e03c7f69df7aa3405a6ff52c463cc9dbfd44bf1bdcdef93",
+ "at": "2026-11-22T20:33:17.351Z"
+}

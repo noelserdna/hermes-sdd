@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-003-03",
+ "test": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-03 REQ-F-002 AC3 Pablo escribe la contraseña provisional «corta»: ve «La contraseña debe tener al menos 8 caracteres»",
+ "titulo": "AC-003-03 REQ-F-002 AC3 Pablo escribe la contraseña provisional «corta»: ve «La contraseña debe tener al menos 8 caracteres»",
+ "ve": [
+  "La contraseña debe tener al menos 8 caracteres"
+ ],
+ "narrado": "Alta, baja y contraseña de los socios. En Socios se ve «La contraseña debe tener al menos 8 caracteres», y Marta no se añade a la lista.",
+ "url": "http://127.0.0.1:5173/socios",
+ "imagen": "AC-003-03.png",
+ "sha256": "sha256:f9a250f15f6f671d4be997e3eed6f1ea60f2d33ca608450f7474c8fee0dcc9f0",
+ "at": "2026-11-22T20:35:00.950Z"
+}

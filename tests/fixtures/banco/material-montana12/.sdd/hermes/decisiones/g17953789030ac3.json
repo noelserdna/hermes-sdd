@@ -1,0 +1,14 @@
+{
+  "verbo": "descarto",
+  "texto": "Q1: A. CH-011: se mantiene «No tienes permiso para ver esta página», el mismo mensaje que el resto de páginas prohibidas; prefiero una sola forma de decirlo en toda la web.",
+  "actor": {
+    "persona": "yo",
+    "canal": "local",
+    "id": "andre"
+  },
+  "prueba": {
+    "host": "DESKTOP-7HT2139",
+    "demo": "no vista"
+  },
+  "at": "2026-11-22T20:23:52Z"
+}

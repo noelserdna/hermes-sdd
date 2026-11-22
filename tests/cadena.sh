@@ -175,4 +175,25 @@ q="$(cd "$f2" && node "$SDD" lint --quotes --json 2>/dev/null || true)"
 sev() { printf '%s' "$q" | node -e 'let s="";process.stdin.on("data",(d)=>{s+=d}).on("end",()=>{const j=JSON.parse(s);const x=j.findings.filter((f)=>f.code==="Q-03"&&f.req==="REQ-F-006"&&f.ac===2);process.stdout.write(x.map((f)=>f.file.split("/").pop()+":"+f.severity).join())})'; }
 [ "$(sev)" = "multas.test.js:warn" ] && ok "montana11 F-2: un unitario sin el literal, con el e2e del criterio que lo comprueba, es aviso y no error" || mal "montana11 F-2: Q-03 por fichero ($(sev))"
 
+# --- material-montana12
+m12="$(copia material-montana12)"
+
+# G-7: la puerta de la FASE enseña el montaje (todos los criterios), no el primer vídeo: `ls` ordena todo junto y
+# «AC-001-01.mp4» va antes que «MONTAJE-FASE-0.mp4» (montana12 FASE-0: la puerta enseñó 1 vídeo de 16)
+(cd "$m12" && for j in evidencias/FASE-0/*.narracion.json; do : > "${j%.narracion.json}.mp4"; done; : > evidencias/FASE-0/MONTAJE-FASE-0.mp4)
+v="$(cd "$m12" && ROOT="$AQUI" bash -c '. "$ROOT/lib/comun.sh"; video_fase 0')"
+[ "$v" = evidencias/FASE-0/MONTAJE-FASE-0.mp4 ] && ok "montana12 G-7: la puerta de la FASE-0 enseña su montaje" || mal "montana12 G-7: la puerta enseña $v"
+
+
+# G-5: la tercera puerta de requisitos (g179535243959a8, 14:00) estaba abierta cuando se llamó a `lanzar.sh esperar`
+# por primera vez; esa llamada la apuntó como «ya vista» sin decirla y ninguna otra la avisó (54 min perdidos). Las
+# puertas que ya están abiertas al empezar a esperar se avisan; solo lo cerrado se da por visto
+g5="$tmp/g5"; rm -rf "$g5"; cp -R "$m12" "$g5"; hs="$tmp/g5-hs"; mkdir -p "$hs/puertas"
+rm -f "$g5/.sdd/hermes/esperar-avisadas" "$g5/.sdd/hermes/esperar-linea"
+for p in "$g5"/.sdd/hermes/puertas/*.json; do jq --arg r "$g5" '.repo = $r' "$p" > "$hs/puertas/$(basename "$p")"; done
+for p in "$hs"/puertas/*.json; do jq '.estado = (if .id == "g179535243959a8" then "abierta" else "decidida" end)' "$p" > "$p.t" && mv "$p.t" "$p"; done
+head -2 "$g5/.sdd/hermes/etapas.jsonl" > "$g5/e" && mv "$g5/e" "$g5/.sdd/hermes/etapas.jsonl"
+e="$(HERMES_SDD_HOME="$hs" HERMES_SDD_ESPERA_INTERVALO_S=0.2 bash "$AQUI/lanzar.sh" esperar "$g5" --max 2 || true)"
+[ "${e%%:*}" = "PUERTA g179535243959a8 requisitos abierta" ] && ok "montana12 G-5: la puerta ya abierta al empezar a esperar se avisa" || mal "montana12 G-5: esperar dice «${e}»"
+
 exit $fallo

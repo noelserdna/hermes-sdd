@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-006-01",
+ "test": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-01 REQ-F-002 AC6 Marta no tiene préstamos abiertos ni multas pendientes y Pablo la da de baja: ve «Socio dado de baja: Marta Ruiz» y Marta ya no entra",
+ "titulo": "AC-006-01 REQ-F-002 AC6 Marta no tiene préstamos abiertos ni multas pendientes y Pablo la da de baja: ve «Socio dado de baja: Marta Ruiz» y Marta ya no entra",
+ "ve": [
+  "Socio dado de baja: Marta Ruiz",
+  "Correo o contraseña incorrectos"
+ ],
+ "narrado": "Alta, baja y contraseña de los socios. En Socios se ve «Socio dado de baja: Marta Ruiz» y Marta ya no puede entrar: ve «Correo o contraseña incorrectos».",
+ "url": "http://127.0.0.1:5173/entrar",
+ "imagen": "AC-006-01.png",
+ "sha256": "sha256:fe22e06261beeb0569a2dc094feedef77cac14785b0a8ee8fae2f43a0ac3c99c",
+ "at": "2026-11-22T20:35:08.877Z"
+}

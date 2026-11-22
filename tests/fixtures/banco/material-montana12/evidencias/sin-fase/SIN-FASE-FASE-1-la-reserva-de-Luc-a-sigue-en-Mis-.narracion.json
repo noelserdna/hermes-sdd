@@ -1,0 +1,23 @@
+{
+ "video": "SIN-FASE-FASE-1-la-reserva-de-Luc-a-sigue-en-Mis-.webm",
+ "test": "FASE-1 · Datos en el servidor (SPEC-PERF-002) › FASE-1 la reserva de Lucía sigue en Mis reservas tras pararlo y arrancarlo el servidor",
+ "titulo": "FASE-1 la reserva de Lucía sigue en Mis reservas tras pararlo y arrancarlo el servidor",
+ "narraciones": [
+  {
+   "t": 0.998,
+   "texto": "Lucía entra y reserva 2 cascos del 5 al 7 de diciembre"
+  },
+  {
+   "t": 1.789,
+   "texto": "Se para el servidor y se vuelve a arrancar"
+  },
+  {
+   "t": 2.948,
+   "texto": "Las sesiones se cierran al reiniciar: Lucía vuelve a entrar y abre Mis reservas"
+  },
+  {
+   "t": 3.62,
+   "texto": "Su reserva sigue ahí: los datos viven en el servidor, no en el navegador"
+  }
+ ]
+}

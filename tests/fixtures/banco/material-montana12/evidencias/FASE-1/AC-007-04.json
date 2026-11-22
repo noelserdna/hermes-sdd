@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-007-04",
+ "test": "FASE-1 · Reservar material (REQ-F-003) › AC-007-04 REQ-F-003 AC4 hoy es 2026-11-22 y Lucía elige inicio 2026-11-21: ve «La fecha de inicio no puede ser pasada»",
+ "titulo": "AC-007-04 REQ-F-003 AC4 hoy es 2026-11-22 y Lucía elige inicio 2026-11-21: ve «La fecha de inicio no puede ser pasada»",
+ "ve": [
+  "La fecha de inicio no puede ser pasada"
+ ],
+ "narrado": "Reservar material. En Reservar se ve «La fecha de inicio no puede ser pasada».",
+ "url": "http://127.0.0.1:5173/reservar",
+ "imagen": "AC-007-04.png",
+ "sha256": "sha256:f1bbff74907bad042c208fbf550ecc60e5fe9fdeea48e5a6f4417af363e49a8d",
+ "at": "2026-11-22T20:33:55.098Z"
+}

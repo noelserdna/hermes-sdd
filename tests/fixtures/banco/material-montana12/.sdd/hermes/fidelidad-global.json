@@ -1,0 +1,1031 @@
+{
+ "repo": "/home/andre/proyectos-sdd/material-montana12",
+ "fase": null,
+ "sha": "2edcf76",
+ "congelados": [],
+ "capturas": [],
+ "coherencia": [],
+ "vinculos": [],
+ "lint_capturas": [],
+ "mutantes_cache": {
+  "de_cache": 7,
+  "ejecutados": 33
+ },
+ "mutantes": [
+  {
+   "req": "REQ-F-001",
+   "ac": 3,
+   "texto": "Correo o contraseña incorrectos",
+   "e2e": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 4,
+   "texto": "Cuenta bloqueada. Vuelve a intentarlo en 15 minutos",
+   "e2e": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 6,
+   "texto": "Entrar",
+   "e2e": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js",
+    "src/ui/main.js",
+    "src/ui/paginas/entrar.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 7,
+   "texto": "Entrar",
+   "e2e": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js",
+    "src/ui/main.js",
+    "src/ui/paginas/entrar.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 7,
+   "texto": "Entrar",
+   "e2e": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js",
+    "src/ui/main.js",
+    "src/ui/paginas/entrar.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 8,
+   "texto": "Entrar",
+   "e2e": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js",
+    "src/ui/main.js",
+    "src/ui/paginas/entrar.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 1,
+   "texto": "Marta Ruiz — Activo",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 2,
+   "texto": "Ya existe un socio con ese correo",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 2,
+   "texto": "Marta Ruiz — Activo",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 3,
+   "texto": "La contraseña debe tener al menos 8 caracteres",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 4,
+   "texto": "Elige una contraseña nueva",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [
+    "tests/integration/socios.test.js",
+    "tests/unit/autorizar-provisional.test.js",
+    "tests/unit/ui/cambiar-contrasena.test.js"
+   ],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 4,
+   "texto": "Elige una contraseña nueva",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [
+    "tests/integration/socios.test.js",
+    "tests/unit/autorizar-provisional.test.js",
+    "tests/unit/ui/cambiar-contrasena.test.js"
+   ],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 4,
+   "texto": "La contraseña debe tener al menos 8 caracteres",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [
+    "tests/integration/socios.test.js",
+    "tests/unit/autorizar-provisional.test.js",
+    "tests/unit/ui/cambiar-contrasena.test.js"
+   ],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 5,
+   "texto": "Elige una contraseña nueva",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [
+    "tests/integration/restablecer-bloqueo.test.js",
+    "tests/integration/socios.test.js"
+   ],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 5,
+   "texto": "Correo o contraseña incorrectos",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [
+    "tests/integration/restablecer-bloqueo.test.js",
+    "tests/integration/socios.test.js"
+   ],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 6,
+   "texto": "Correo o contraseña incorrectos",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [
+    "tests/integration/socios.test.js"
+   ],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 7,
+   "texto": "No se puede dar de baja: tiene material sin devolver",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 7,
+   "texto": "Lucía Gil — Activo",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 8,
+   "texto": "No se puede dar de baja: tiene multas sin pagar",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 2,
+   "texto": "Aún no tienes reservas",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js",
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 3,
+   "texto": "2 × Linterna del 2026-12-05 al 2026-12-07 — Reservada",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 4,
+   "texto": "La fecha de inicio no puede ser pasada",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 5,
+   "texto": "La fecha de fin no puede ser anterior a la de inicio",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 6,
+   "texto": "Máximo 14 días por reserva",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 7,
+   "texto": "Máximo 5 unidades por reserva",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 8,
+   "texto": "Aún no tienes reservas",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js",
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 2,
+   "texto": "Reserva cancelada",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 2,
+   "texto": "2 × Casco del 2026-12-05 al 2026-12-07 — Cancelada",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 3,
+   "texto": "La reserva ya estaba cancelada",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 3,
+   "texto": "No hay unidades libres: solo queda 1 de Casco el 2026-12-05",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo compone el código y lo comprueba un e2e",
+   "grave": false,
+   "plantilla": "No hay unidades libres: solo queda"
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 4,
+   "texto": "No se puede cancelar: empieza hoy",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 5,
+   "texto": "Aún no tienes reservas",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js",
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 6,
+   "texto": "Aún no tienes reservas",
+   "e2e": [
+    "tests/e2e/fase-1.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js",
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 1,
+   "texto": "2 × Casco del 2026-12-05 al 2026-12-07 — Prestada",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 2,
+   "texto": "Ya estaba entregada",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 2,
+   "texto": "Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 3,
+   "texto": "Devuelto a tiempo",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 3,
+   "texto": "No tienes multas",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js",
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 6,
+   "texto": "Ya estaba devuelta",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 6,
+   "texto": "Lucía Gil — Multa de 6 € — Pendiente",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 8,
+   "texto": "No se puede entregar antes de la fecha de inicio",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 9,
+   "texto": "No tienes multas",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js",
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 2,
+   "texto": "Multa pagada",
+   "e2e": [
+    "tests/e2e/fase-4-ciclo-prestamo.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 3,
+   "texto": "La multa ya estaba pagada",
+   "e2e": [
+    "tests/e2e/fase-4-ciclo-prestamo.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 3,
+   "texto": "Pablo Sanz — Multa de 6 € — Pagada",
+   "e2e": [
+    "tests/e2e/fase-4-ciclo-prestamo.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 4,
+   "texto": "Multa pagada",
+   "e2e": [
+    "tests/e2e/fase-4-ciclo-prestamo.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 5,
+   "texto": "No tienes multas",
+   "e2e": [
+    "tests/e2e/fase-4-ciclo-prestamo.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js",
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 6,
+   "texto": "No tienes multas",
+   "e2e": [
+    "tests/e2e/fase-4-ciclo-prestamo.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js",
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-007",
+   "ac": 5,
+   "texto": "No hay tantas unidades para dar de baja",
+   "e2e": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-007",
+   "ac": 6,
+   "texto": "Casco",
+   "e2e": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "dato del ejemplo: lo teclea el usuario, no es texto de la app",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-007",
+   "ac": 6,
+   "texto": "Cuerda",
+   "e2e": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "dato del ejemplo: lo teclea el usuario, no es texto de la app",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 2,
+   "texto": "Vuelven hoy",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 2,
+   "texto": "Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 3,
+   "texto": "Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 4,
+   "texto": "No hay material prestado",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 5,
+   "texto": "Entregar",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js",
+    "src/ui/paginas/panel.js",
+    "src/server/servicios/panel.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 6,
+   "texto": "No tienes permiso para ver esta página",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 7,
+   "texto": "No tienes permiso para ver esta página",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-009",
+   "ac": 2,
+   "texto": "Sin préstamos ni multas",
+   "e2e": [
+    "tests/e2e/fase-5.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js",
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-009",
+   "ac": 3,
+   "texto": "Ningún socio coincide",
+   "e2e": [
+    "tests/e2e/fase-5.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-009",
+   "ac": 4,
+   "texto": "Historial del socio",
+   "e2e": [
+    "tests/e2e/fase-5.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-009",
+   "ac": 4,
+   "texto": "Entregar",
+   "e2e": [
+    "tests/e2e/fase-5.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js",
+    "src/ui/paginas/panel.js",
+    "src/server/servicios/panel.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-009",
+   "ac": 4,
+   "texto": "Devolver",
+   "e2e": [
+    "tests/e2e/fase-5.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-009",
+   "ac": 4,
+   "texto": "Marcar pagada",
+   "e2e": [
+    "tests/e2e/fase-5.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-009",
+   "ac": 4,
+   "texto": "Cancelar",
+   "e2e": [
+    "tests/e2e/fase-5.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js",
+    "src/ui/componentes.js",
+    "src/ui/paginas/mis-reservas.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  }
+ ],
+ "graves": 0
+}

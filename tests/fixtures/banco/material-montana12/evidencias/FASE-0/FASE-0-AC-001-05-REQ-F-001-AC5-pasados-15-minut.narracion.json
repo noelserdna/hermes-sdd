@@ -1,0 +1,26 @@
+{
+ "video": "FASE-0-AC-001-05-REQ-F-001-AC5-pasados-15-minut.webm",
+ "test": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-05 REQ-F-001 AC5 pasados 15 minutos del bloqueo Lucía entra y ve «Hola, Lucía»",
+ "titulo": "AC-001-05 REQ-F-001 AC5 pasados 15 minutos del bloqueo Lucía entra y ve «Hola, Lucía»",
+ "narraciones": [
+  {
+   "t": 0.022,
+   "texto": "Requisito REQ-F-001: Entrar y salir. Criterio 5 de 8.",
+   "voz": "Requisito funcional 1: Entrar y salir. Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras. Tiene 8 criterios de aceptación. Este vídeo demuestra el criterio 5: fin del bloqueo. Dado que lucia@club.test fue bloqueada hace 15 minutos, cuando introduce la contraseña correcta, entonces ve Hola, Lucía en la página Mis reservas. Ahora, la demostración.",
+   "presentacion": "AC-001-05"
+  },
+  {
+   "t": 0.664,
+   "texto": "Lucía se equivoca de contraseña cinco veces y su cuenta se bloquea"
+  },
+  {
+   "t": 1.521,
+   "texto": "Pasan quince minutos y Lucía escribe la contraseña correcta"
+  },
+  {
+   "t": 1.881,
+   "texto": "Entrar y salir. En Mis reservas se ve «Hola, Lucía», porque el bloqueo de quince minutos ya terminó.",
+   "criterio": "AC-001-05"
+  }
+ ]
+}

@@ -1,0 +1,26 @@
+{
+ "video": "SIN-FASE-AC-007-02-REQ-F-003-AC2-con-Tienda-a-2.webm",
+ "test": "FASE-1 · Reservar material (REQ-F-003) › AC-007-02 REQ-F-003 AC2 con «Tienda» a 2 y 1 reservada por Lucía, Pablo pide 2 y ve «solo queda 1 de Tienda el 2026-12-06»",
+ "titulo": "AC-007-02 REQ-F-003 AC2 con «Tienda» a 2 y 1 reservada por Lucía, Pablo pide 2 y ve «solo queda 1 de Tienda el 2026-12-06»",
+ "narraciones": [
+  {
+   "t": 0.01,
+   "texto": "Requisito REQ-F-003: Reservar material. Criterio 2 de 9.",
+   "voz": "Requisito funcional 3: Reservar material. El socio elige material, cantidad y fechas y lo reserva si quedan unidades libres todos esos días. Si no quedan, se lo dice. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 2: sin unidades. Dado que Tienda tiene 2 unidades y Lucía reservó 1 del 2026-12-05 al 2026-12-07, cuando Pablo Sanz reserva 2 de Tienda del 2026-12-06 al 2026-12-08, entonces error E_SIN_UNIDADES: No hay unidades libres: solo queda 1 de Tienda el 2026-12-06 y Pablo Sanz ve Aún no tienes reservas en Mis reservas. Ahora, la demostración.",
+   "presentacion": "AC-007-02"
+  },
+  {
+   "t": 0.767,
+   "texto": "Pablo, socio del club, abre Reservar y elige la tienda"
+  },
+  {
+   "t": 1.049,
+   "texto": "Pide 2 tiendas del 6 al 8 de diciembre, pero Lucía ya tiene una esos días"
+  },
+  {
+   "t": 1.36,
+   "texto": "Reservar material. En Reservar se ve «No hay unidades libres: solo queda 1 de Tienda el 2026-12-06» y «Aún no tienes reservas»: no se crea ninguna reserva.",
+   "criterio": "AC-007-02"
+  }
+ ]
+}

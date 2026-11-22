@@ -1,0 +1,24 @@
+{
+  "$schema": "sdd-acceptance-loop-v1",
+  "cycles": [
+    {
+      "cycle": 1,
+      "at": "2026-11-22T19:35:45.557Z",
+      "evaluated_sha": "992e2794e045cd2b171b3de37254cc2687a4cbab",
+      "progress": {
+        "verified": 2,
+        "waived": 0,
+        "failing": 0,
+        "missing": 0,
+        "challenged": 0,
+        "videos_missing": 0
+      },
+      "verdicts": {
+        "REQ-F-009": "VERIFIED",
+        "REQ-NF-001": "VERIFIED"
+      },
+      "stop": "goal"
+    }
+  ],
+  "max_cycles": 3
+}

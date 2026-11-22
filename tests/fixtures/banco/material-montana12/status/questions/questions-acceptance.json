@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "rol": "acceptance",
+  "preguntas": [
+    {
+      "id": "Q-acceptance-001",
+      "skill": "sdd-acceptance",
+      "contexto": "REQ-F-004 AC3 (AC-009-02, tests/e2e/fase-1.spec.js:265-289) · evidencias/FASE-1/AC-009-02.png · impugnación CH-005 (stale)",
+      "tema": "pantalla-del-aviso-ya-cancelada-y-sin-unidades",
+      "estado": "ANSWERED",
+      "pregunta": "REQ-F-004 AC3 pide ver en «Mis reservas» tanto «La reserva ya estaba cancelada» como «No hay unidades libres: solo queda 1 de Casco el 2026-12-05». La captura AC-009-02 muestra el primero en Reservar (tras pulsar Cancelar en Mis reservas y reservar de nuevo) y el segundo aviso solo sale en Reservar, nunca en Mis reservas. El criterio pasa en la suite, pero la captura no muestra la pantalla que su línea «Se ve» nombra, y su narración dice «Mis reservas» sobre una captura de Reservar. Hace falta decidir en qué pantalla debe verse cada texto.",
+      "para_cliente": "Cuando Lucía vuelve a pulsar «Cancelar» en una reserva ya cancelada, ¿el aviso «No hay unidades libres» debe verse también en «Mis reservas», o basta con verlo en «Reservar»?",
+      "opciones": [
+        {
+          "letra": "A",
+          "texto": "Mantener el comportamiento actual: «La reserva ya estaba cancelada» en Mis reservas y «No hay unidades libres» en Reservar. Corregir la línea «Se ve» de REQ-F-004 AC3 (vía /sdd-req-change) y la narración de AC-009-02 para que lo digan así; la captura queda como está",
+          "recomendada": true,
+          "efecto": "ninguno",
+          "cliente": "Sí, cada aviso se ve en la pantalla donde se produce",
+          "ficheros": []
+        },
+        {
+          "letra": "B",
+          "texto": "Mostrar «No hay unidades libres» también en Mis reservas al repetir Cancelar; cambia el código de la pantalla de Mis reservas y la prueba AC-009-02 para capturar ambos avisos allí",
+          "efecto": "editar-test",
+          "cliente": "Sí, quiero ver ambos avisos en Mis reservas",
+          "ficheros": [
+            "tests/e2e/fase-1.spec.js",
+            "src/ui/paginas/mis-reservas.js"
+          ]
+        }
+      ],
+      "bloquea": "verdict de REQ-F-004 AC3 (la captura no muestra la pantalla de su «Se ve»); fase-1 acceptance",
+      "respuesta": {
+        "letra": "A",
+        "como": "elegida por",
+        "quien": "Andres Leon (Cliente)",
+        "fecha": "2026-11-22"
+      }
+    },
+    {
+      "id": "Q-acceptance-002",
+      "skill": "sdd-acceptance",
+      "contexto": "REQ-F-002 AC5 (tests/e2e/fase-3-alta-primer-acceptance.spec.js) · CH-010 (inconclusive, Must, ronda adversarial de la FASE-3 en fcc5135) · src/server/servicios/cuentas.js:43 y :130",
+      "tema": "restablecer-contrasena-desbloquea-cuenta",
+      "estado": "ANSWERED",
+      "pregunta": "REQ-F-002 AC5 dice que tras el restablecimiento del encargado el socio entra con la nueva contraseña y ya no con la antigua. Pero si el socio falló la contraseña varias veces, su cuenta sigue bloqueada (INV-SOC-004): restablecer la contraseña no quita el bloqueo, así que no podría entrar con la nueva hasta que caduque. ¿El restablecimiento debe quitar el bloqueo?",
+      "para_cliente": "Si el encargado restablece la contraseña de un socio que tenía la cuenta bloqueada por fallos, ¿el socio puede entrar en ese momento con la nueva contraseña, o tiene que esperar a que se levante el bloqueo?",
+      "opciones": [
+        {
+          "letra": "A",
+          "texto": "Restablecer la contraseña quita el bloqueo y el contador de fallos de esa cuenta. Es lo que dice el criterio (entra con la nueva) y lo habitual cuando lo hace el encargado",
+          "recomendada": true,
+          "efecto": "accion",
+          "ficheros": [
+            "src/server/servicios/cuentas.js"
+          ],
+          "cliente": "Sí, al restablecer la contraseña el socio puede entrar en el acto con la nueva"
+        },
+        {
+          "letra": "B",
+          "texto": "El bloqueo sigue hasta que caduque. El criterio se reescribe para decir que con la nueva contraseña entra cuando termine el bloqueo",
+          "recomendada": false,
+          "efecto": "req-change",
+          "ficheros": [
+            "requirements/REQUIREMENTS.md"
+          ],
+          "cliente": "No, el socio espera a que caduque el bloqueo"
+        }
+      ],
+      "bloquea": "CH-010 (REQ-F-002 Must) · gate de la FASE-3 en salida 4",
+      "respuesta": {
+        "letra": "A",
+        "como": "elegida por",
+        "quien": "Andres Leon (Cliente)",
+        "fecha": "2026-11-22"
+      }
+    },
+    {
+      "id": "Q-acceptance-003",
+      "skill": "sdd-acceptance",
+      "contexto": "REQ-NF-001 AC3 (Must) · desafío CH-011 (SPEC-QUESTION, confirmado, abierto) · src/server/mensajes.js:5-6 (E_ACCESO_DENEGADO, E_PAGINA_PROHIBIDA) · src/server/http/autorizar.js:36 · tests/integration/aislamiento.test.js:98 · spec/CLARIFICATIONS.md RN-020",
+      "tema": "texto-al-abrir-lista-de-socios-sin-permiso",
+      "estado": "ANSWERED",
+      "pregunta": "REQ-NF-001 AC3 dice que, si un socio abre la lista de socios, la web responde «Acceso denegado». La web responde «No tienes permiso para ver esta página», porque RN-020 (spec/CLARIFICATIONS.md) manda ese texto al abrir una página no permitida (E_PAGINA_PROHIBIDA) y «Acceso denegado» para una operación o un dato ajeno (E_ACCESO_DENEGADO). La prueba tests/integration/aislamiento.test.js:98 comprueba el texto que da la web. Hay que decidir cuál de los dos textos vale para la lista de socios; la etapa de aceptación no lo decide.",
+      "para_cliente": "Cuando una socia abre la lista de socios, ¿la web debe decir «Acceso denegado», como pone la redacción acordada, o «No tienes permiso para ver esta página», como ya dice para las páginas que no se pueden abrir y como hace ahora?",
+      "opciones": [
+        {
+          "letra": "A",
+          "texto": "Mantener el comportamiento actual: al abrir la lista de socios sale «No tienes permiso para ver esta página», igual que en el resto de páginas prohibidas (RN-020). La diferencia con la redacción acordada se anota como supuesto para revisar en la próxima entrega.",
+          "recomendada": true,
+          "efecto": "ninguno",
+          "cliente": "Se mantiene el mensaje de página prohibida",
+          "ficheros": []
+        },
+        {
+          "letra": "B",
+          "texto": "Cambiar la lista de socios para que diga «Acceso denegado», solo en esa página. La implementación haría el cambio de código; la prueba de tests/integration/aislamiento.test.js:98 necesitaría su propia aprobación de edición.",
+          "efecto": "accion",
+          "cliente": "La lista de socios dice «Acceso denegado»",
+          "ficheros": []
+        }
+      ],
+      "bloquea": "Puerta de FASE-5 (sdd gate exit 4): el desafío CH-011 sigue abierto sobre REQ-NF-001 AC3, un Must. REQ-NF-001 queda VERIFIED en el informe, pero la FASE no se puede aceptar hasta que se resuelva o se descarte el desafío.",
+      "respuesta": {
+        "letra": "A",
+        "como": "elegida por",
+        "quien": "Andres Leon (Cliente)",
+        "fecha": "2026-11-22"
+      }
+    }
+  ]
+}

@@ -1,0 +1,1172 @@
+{
+  "$schema": "sdd-adversarial-plan-v1",
+  "evaluated_sha": "6d591b95c8434813432fa7867089445d3dbae5af",
+  "dirty": false,
+  "generatedAt": "2026-11-22T16:42:19.317Z",
+  "scope": {
+    "fase": 2
+  },
+  "code_paths": [
+    "src"
+  ],
+  "adversarial_gate": "enforce",
+  "incremental": {
+    "since": "17189e20851d968e09ba8272ed9fc5c045b96856",
+    "baseline": ".sdd/hermes/adversarial-FASE-2.json",
+    "changed_files": [
+      "src/server/servicios/panel.js",
+      "src/ui/paginas/panel.js",
+      "src/ui/textos.js",
+      "tests/e2e/fase-2.spec.js",
+      "tests/integration/panel.test.js",
+      "tests/unit/ui/panel.test.js"
+    ],
+    "criteria": 19,
+    "recheck": 17,
+    "carried": 2
+  },
+  "fases": [
+    {
+      "fase": 2,
+      "file": "plan/fases/FASE-2-ENTREGAS.md",
+      "header": true,
+      "requirements": [
+        {
+          "id": "REQ-F-005",
+          "title": "Entregar y recibir el material",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN the encargado marks a reservation as delivered on or after its start date THE system SHALL record the loan, and WHEN he marks it as returned THE system SHALL close the loan, free the units and create a fine of 2 € per day late",
+          "reqHash": "sha256:113efc63d51c88647539aa8427e11a5ad4df717715bfbcb168fba9018d71f818",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN today is 2026-12-05 and Lucía has 2 × Casco reserved from 2026-12-05 WHEN the encargado presses \"Entregar\" THEN the user sees \"Entregado: 2 × Casco a Lucía Gil\" and its state \"Prestada\"",
+              "scenarios": [
+                "AC-010-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-010-01 REQ-F-005 AC1 hoy es 2026-12-05 y Lucía tiene 2 × Casco reservados: Pablo pulsa «Entregar» y ve «Entregado: 2 × Casco a Lucía Gil»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-010-01 REQ-F-005 AC1 hoy es 2026-12-05 y Lucía tiene 2 × Casco reservados: Pablo pulsa «Entregar» y ve «Entregado: 2 × Casco a Lucía Gil»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-4002c-gado-2-×-Casco-a-Lucía-Gil»-chromium/attachments/AC-010-01-2ace181fa5b3542b5bb6c73a3f24ca358873175f.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-4002c-gado-2-×-Casco-a-Lucía-Gil»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-010-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-4002c-gado-2-×-Casco-a-Lucía-Gil»-chromium/attachments/AC-010-01-2ace181fa5b3542b5bb6c73a3f24ca358873175f.png": "sha256:23badbc52bea44462d16cdef0d5372758f06e3ff0e49ae70bd209fa0ec22cbc6",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-4002c-gado-2-×-Casco-a-Lucía-Gil»-chromium/test-finished-1.png": "sha256:23badbc52bea44462d16cdef0d5372758f06e3ff0e49ae70bd209fa0ec22cbc6",
+                "evidencias/FASE-2/AC-010-01.png": "sha256:23badbc52bea44462d16cdef0d5372758f06e3ff0e49ae70bd209fa0ec22cbc6"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Entregado: {cantidad} × {material} a {nombre}",
+                    "template": true
+                  },
+                  {
+                    "text": "2 × Casco del 2026-12-05 al 2026-12-07 — Prestada",
+                    "template": false
+                  }
+                ],
+                "where": "Panel del encargado",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-4002c-gado-2-×-Casco-a-Lucía-Gil»-chromium/attachments/AC-010-01-2ace181fa5b3542b5bb6c73a3f24ca358873175f.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-4002c-gado-2-×-Casco-a-Lucía-Gil»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-010-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-4002c-gado-2-×-Casco-a-Lucía-Gil»-chromium/attachments/FASE-2-AC-010-01-REQ-F-005-AC1-hoy-es-2026-12-0-653ff134554536d8d6d982850f62870f7aff8822.webm",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-4002c-gado-2-×-Casco-a-Lucía-Gil»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-AC-010-01-REQ-F-005-AC1-hoy-es-2026-12-0.mp4",
+                "evidencias/FASE-2/FASE-2-AC-010-01-REQ-F-005-AC1-hoy-es-2026-12-0.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/server/servicios/panel.js, src/ui/paginas/panel.js, src/ui/textos.js"
+              ]
+            },
+            {
+              "n": 2,
+              "text": "GIVEN the reservation was just delivered WHEN \"Entregar\" is submitted again THEN the user sees \"Ya estaba entregada\" and the loan is still one",
+              "scenarios": [
+                "AC-010-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-010-02 REQ-F-005 AC2 la reserva de Lucía acaba de entregarse y «Entregar» se envía otra vez: Pablo ve «Ya estaba entregada» y un solo préstamo",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-010-02 REQ-F-005 AC2 la reserva de Lucía acaba de entregarse y «Entregar» se envía otra vez: Pablo ve «Ya estaba entregada» y un solo préstamo",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-49b48-tregada»-y-un-solo-préstamo-chromium/attachments/AC-010-02-2e2b2cfb7278272455e7b2868240db47d36f4ffa.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-49b48-tregada»-y-un-solo-préstamo-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-010-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-49b48-tregada»-y-un-solo-préstamo-chromium/attachments/AC-010-02-2e2b2cfb7278272455e7b2868240db47d36f4ffa.png": "sha256:0506e0b1451f4708673e665ac107701a54392f8a3bae99e373bba75c297cfd0d",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-49b48-tregada»-y-un-solo-préstamo-chromium/test-finished-1.png": "sha256:0506e0b1451f4708673e665ac107701a54392f8a3bae99e373bba75c297cfd0d",
+                "evidencias/FASE-2/AC-010-02.png": "sha256:0506e0b1451f4708673e665ac107701a54392f8a3bae99e373bba75c297cfd0d"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Ya estaba entregada",
+                    "template": false
+                  },
+                  {
+                    "text": "Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07",
+                    "template": false
+                  }
+                ],
+                "where": "Panel del encargado",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-49b48-tregada»-y-un-solo-préstamo-chromium/attachments/AC-010-02-2e2b2cfb7278272455e7b2868240db47d36f4ffa.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-49b48-tregada»-y-un-solo-préstamo-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-010-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-49b48-tregada»-y-un-solo-préstamo-chromium/attachments/FASE-2-AC-010-02-REQ-F-005-AC2-la-reserva-de-Lu-efbfb7fd5430ffcec09451345136392d1a23b06f.webm",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-49b48-tregada»-y-un-solo-préstamo-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-AC-010-02-REQ-F-005-AC2-la-reserva-de-Lu.mp4",
+                "evidencias/FASE-2/FASE-2-AC-010-02-REQ-F-005-AC2-la-reserva-de-Lu.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/server/servicios/panel.js, src/ui/paginas/panel.js, src/ui/textos.js"
+              ]
+            },
+            {
+              "n": 3,
+              "text": "GIVEN the loan ends 2026-12-07 WHEN the encargado marks the return on 2026-12-07 THEN the user sees \"Devuelto a tiempo\" and no fine exists",
+              "scenarios": [
+                "AC-011-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-01 REQ-F-005 AC3 el préstamo de Lucía acaba el 2026-12-07 y Pablo lo devuelve ese día: ve «Devuelto a tiempo» y «No tienes multas»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-01 REQ-F-005 AC3 el préstamo de Lucía acaba el 2026-12-07 y Pablo lo devuelve ese día: ve «Devuelto a tiempo» y «No tienes multas»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-5ed64-iempo»-y-«No-tienes-multas»-chromium/attachments/AC-011-01-593a160eaf253631adfca7ee2b6bb8724700861c.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-5ed64-iempo»-y-«No-tienes-multas»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-011-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-5ed64-iempo»-y-«No-tienes-multas»-chromium/attachments/AC-011-01-593a160eaf253631adfca7ee2b6bb8724700861c.png": "sha256:0dcfa0a1606f94d186a69f28f6f88d0a798128d2184af700decf6cde3cd942d8",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-5ed64-iempo»-y-«No-tienes-multas»-chromium/test-finished-1.png": "sha256:0dcfa0a1606f94d186a69f28f6f88d0a798128d2184af700decf6cde3cd942d8",
+                "evidencias/FASE-2/AC-011-01.png": "sha256:0dcfa0a1606f94d186a69f28f6f88d0a798128d2184af700decf6cde3cd942d8"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Devuelto a tiempo",
+                    "template": false
+                  },
+                  {
+                    "text": "No tienes multas",
+                    "template": false
+                  }
+                ],
+                "where": "Panel del encargado",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-5ed64-iempo»-y-«No-tienes-multas»-chromium/attachments/AC-011-01-593a160eaf253631adfca7ee2b6bb8724700861c.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-5ed64-iempo»-y-«No-tienes-multas»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-011-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-5ed64-iempo»-y-«No-tienes-multas»-chromium/attachments/FASE-2-AC-011-01-REQ-F-005-AC3-el-pr-stamo-de-L-f5002ed7c02f8e030d157d5a838fcf83e20c03d5.webm",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-5ed64-iempo»-y-«No-tienes-multas»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-AC-011-01-REQ-F-005-AC3-el-pr-stamo-de-L.mp4",
+                "evidencias/FASE-2/FASE-2-AC-011-01-REQ-F-005-AC3-el-pr-stamo-de-L.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/server/servicios/panel.js, src/ui/paginas/panel.js, src/ui/textos.js"
+              ]
+            },
+            {
+              "n": 4,
+              "text": "GIVEN the loan ends 2026-12-07 WHEN the encargado marks the return on 2026-12-10 THEN the user sees \"Devuelto con 3 días de retraso: multa de 6 €\"",
+              "scenarios": [
+                "AC-011-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-02 REQ-F-005 AC4 el préstamo acaba el 2026-12-07 y Pablo lo devuelve el 2026-12-10: ve «Devuelto con 3 días de retraso: multa de 6 €»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-02 REQ-F-005 AC4 el préstamo acaba el 2026-12-07 y Pablo lo devuelve el 2026-12-10: ve «Devuelto con 3 días de retraso: multa de 6 €»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-457fd-as-de-retraso-multa-de-6-€»-chromium/attachments/AC-011-02-cbdc636f8a600edbc33740a24f3dc0f70ee7b6bb.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-457fd-as-de-retraso-multa-de-6-€»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-011-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-457fd-as-de-retraso-multa-de-6-€»-chromium/attachments/AC-011-02-cbdc636f8a600edbc33740a24f3dc0f70ee7b6bb.png": "sha256:b68ef86c73d86de14415756521dcb65f20a92c24c29f73f7ee9bfe6f68ec0d48",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-457fd-as-de-retraso-multa-de-6-€»-chromium/test-finished-1.png": "sha256:b68ef86c73d86de14415756521dcb65f20a92c24c29f73f7ee9bfe6f68ec0d48",
+                "evidencias/FASE-2/AC-011-02.png": "sha256:b68ef86c73d86de14415756521dcb65f20a92c24c29f73f7ee9bfe6f68ec0d48"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Devuelto con {días} días de retraso: multa de {importe} €",
+                    "template": true
+                  }
+                ],
+                "where": "Panel del encargado (ejemplo con datos: \"Devuelto con 3 días de retraso: multa de 6 €\")",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-457fd-as-de-retraso-multa-de-6-€»-chromium/attachments/AC-011-02-cbdc636f8a600edbc33740a24f3dc0f70ee7b6bb.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-457fd-as-de-retraso-multa-de-6-€»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-011-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-457fd-as-de-retraso-multa-de-6-€»-chromium/attachments/FASE-2-AC-011-02-REQ-F-005-AC4-el-pr-stamo-acab-b9691364ed691e48337089f5e698a46a69c48f08.webm",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-457fd-as-de-retraso-multa-de-6-€»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-AC-011-02-REQ-F-005-AC4-el-pr-stamo-acab.mp4",
+                "evidencias/FASE-2/FASE-2-AC-011-02-REQ-F-005-AC4-el-pr-stamo-acab.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/server/servicios/panel.js, src/ui/paginas/panel.js, src/ui/textos.js"
+              ]
+            },
+            {
+              "n": 5,
+              "text": "GIVEN the loan ends 2026-12-07 WHEN it is returned on 2026-12-08 THEN the user sees \"Devuelto con 1 día de retraso: multa de 2 €\"",
+              "scenarios": [
+                "AC-011-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-03 REQ-F-005 AC5 el préstamo acaba el 2026-12-07 y se devuelve el 2026-12-08: Pablo ve «Devuelto con 1 día de retraso: multa de 2 €»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-03 REQ-F-005 AC5 el préstamo acaba el 2026-12-07 y se devuelve el 2026-12-08: Pablo ve «Devuelto con 1 día de retraso: multa de 2 €»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-7fb3a-ía-de-retraso-multa-de-2-€»-chromium/attachments/AC-011-03-d2c2a3d9165251293d88146c687d78c114b34ae1.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-7fb3a-ía-de-retraso-multa-de-2-€»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-011-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-7fb3a-ía-de-retraso-multa-de-2-€»-chromium/attachments/AC-011-03-d2c2a3d9165251293d88146c687d78c114b34ae1.png": "sha256:62f59a2a99bfe339d541c0859e7bc18179d4f53bad230053824144f66973db9f",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-7fb3a-ía-de-retraso-multa-de-2-€»-chromium/test-finished-1.png": "sha256:62f59a2a99bfe339d541c0859e7bc18179d4f53bad230053824144f66973db9f",
+                "evidencias/FASE-2/AC-011-03.png": "sha256:62f59a2a99bfe339d541c0859e7bc18179d4f53bad230053824144f66973db9f"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Devuelto con {días} día de retraso: multa de {importe} €",
+                    "template": true
+                  }
+                ],
+                "where": "Panel del encargado (ejemplo con datos: \"Devuelto con 1 día de retraso: multa de 2 €\")",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-7fb3a-ía-de-retraso-multa-de-2-€»-chromium/attachments/AC-011-03-d2c2a3d9165251293d88146c687d78c114b34ae1.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-7fb3a-ía-de-retraso-multa-de-2-€»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-011-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-7fb3a-ía-de-retraso-multa-de-2-€»-chromium/attachments/FASE-2-AC-011-03-REQ-F-005-AC5-el-pr-stamo-acab-3cc32cd34503e980187799f8a8d323856c7b17d1.webm",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-7fb3a-ía-de-retraso-multa-de-2-€»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-AC-011-03-REQ-F-005-AC5-el-pr-stamo-acab.mp4",
+                "evidencias/FASE-2/FASE-2-AC-011-03-REQ-F-005-AC5-el-pr-stamo-acab.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/server/servicios/panel.js, src/ui/paginas/panel.js, src/ui/textos.js"
+              ]
+            },
+            {
+              "n": 6,
+              "text": "GIVEN the return was just marked with a fine of 6 € WHEN \"Devolver\" is submitted again THEN the user sees \"Ya estaba devuelta\" and the fine is still 1 of 6 €",
+              "scenarios": [
+                "AC-011-04"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-04 REQ-F-005 AC6 la devolución acaba de marcarse con multa de 6 € y «Devolver» se envía otra vez: Pablo ve «Ya estaba devuelta» y una sola multa de Lucía Gil",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-04 REQ-F-005 AC6 la devolución acaba de marcarse con multa de 6 € y «Devolver» se envía otra vez: Pablo ve «Ya estaba devuelta» y una sola multa de Lucía Gil",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-41747-una-sola-multa-de-Lucía-Gil-chromium/attachments/AC-011-04-f01937e6809d7ef900ebe6604b9af9c7251a3bbf.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-41747-una-sola-multa-de-Lucía-Gil-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-011-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-41747-una-sola-multa-de-Lucía-Gil-chromium/attachments/AC-011-04-f01937e6809d7ef900ebe6604b9af9c7251a3bbf.png": "sha256:08d520ff75ccba15c5bb0a2bc3c08a28339b52d057263238119837618d7b66e9",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-41747-una-sola-multa-de-Lucía-Gil-chromium/test-finished-1.png": "sha256:08d520ff75ccba15c5bb0a2bc3c08a28339b52d057263238119837618d7b66e9",
+                "evidencias/FASE-2/AC-011-04.png": "sha256:08d520ff75ccba15c5bb0a2bc3c08a28339b52d057263238119837618d7b66e9"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Ya estaba devuelta",
+                    "template": false
+                  },
+                  {
+                    "text": "{nombre} — Multa de {importe} € — {estado}",
+                    "template": true
+                  },
+                  {
+                    "text": "Lucía Gil — Multa de 6 € — Pendiente",
+                    "template": false
+                  }
+                ],
+                "where": "Panel del encargado",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-41747-una-sola-multa-de-Lucía-Gil-chromium/attachments/AC-011-04-f01937e6809d7ef900ebe6604b9af9c7251a3bbf.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-41747-una-sola-multa-de-Lucía-Gil-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-011-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-41747-una-sola-multa-de-Lucía-Gil-chromium/attachments/FASE-2-AC-011-04-REQ-F-005-AC6-la-devoluci-n-ac-7640fe5a02dbc33e894f5c633fd5682a406f11b9.webm",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-41747-una-sola-multa-de-Lucía-Gil-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-AC-011-04-REQ-F-005-AC6-la-devoluci-n-ac.mp4",
+                "evidencias/FASE-2/FASE-2-AC-011-04-REQ-F-005-AC6-la-devoluci-n-ac.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/server/servicios/panel.js, src/ui/paginas/panel.js, src/ui/textos.js"
+              ]
+            },
+            {
+              "n": 7,
+              "text": "GIVEN the reservation ended 2026-12-07 and was never delivered WHEN the encargado opens it on 2026-12-08 THEN the user sees \"No recogida\" and its units are free",
+              "scenarios": [
+                "AC-010-04"
+              ],
+              "tests": [
+                {
+                  "name": "API-002-06 getPanel (UC-017) > AC-010-04 RN-029 ADR-002 una Reservada con fin pasado sale en «noRecogidas» (hasta 7 días), sin multa, sin multa y sin cambiar nada",
+                  "file": "tests/integration/panel.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-010-04 REQ-F-005 AC7 la reserva acabó el 2026-12-07 sin entregarse y Pablo abre el Panel el 2026-12-08: ve «No recogida» y no se entrega",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-010-04 REQ-F-005 AC7 la reserva acabó el 2026-12-07 sin entregarse y Pablo abre el Panel el 2026-12-08: ve «No recogida» y no se entrega",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-78324-o-recogida»-y-no-se-entrega-chromium/attachments/AC-010-04-eaedec4661e6c893935317ed1597372f89cd0235.png",
+                "evidencias/FASE-2/AC-010-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-78324-o-recogida»-y-no-se-entrega-chromium/attachments/AC-010-04-eaedec4661e6c893935317ed1597372f89cd0235.png": "sha256:1bcf830e30a4cf145efff42b6db1fb412ee0fa865f46db64ed8e564be754df85",
+                "evidencias/FASE-2/AC-010-04.png": "sha256:db56fe03e617348abd5c7e286056ee24be3d72399d7495adbcce8c01f3a3b0d1"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No recogida",
+                    "template": false
+                  }
+                ],
+                "where": "Panel del encargado",
+                "none": "sus unidades quedan libres: las fechas ya han pasado y ninguna pantalla permite reservar fechas pasadas (\"La fecha de inicio no puede ser pasada\"), así que solo lo refleja el cálculo de disponibilidad del fichero de datos"
+              },
+              "shown_by": [
+                "evidencias/FASE-2/AC-010-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/FASE-2-AC-010-04-REQ-F-005-AC7-la-reserva-acab-.mp4",
+                "evidencias/FASE-2/FASE-2-AC-010-04-REQ-F-005-AC7-la-reserva-acab-.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "challenge CH-009 stale",
+                "test changed: tests/e2e/fase-2.spec.js",
+                "test changed: tests/integration/panel.test.js",
+                "bound tests changed",
+                "code changed: src/server/servicios/panel.js, src/ui/paginas/panel.js, src/ui/textos.js",
+                "capture changed: evidencias/FASE-2/AC-010-04.png, evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-78324-o-recogida»-y-no-se-entrega-chromium/test-finished-1.png"
+              ]
+            },
+            {
+              "n": 8,
+              "text": "GIVEN a reservation from 2026-12-10 WHEN the encargado presses \"Entregar\" on 2026-12-05 THEN the user sees \"No se puede entregar antes de la fecha de inicio\"",
+              "scenarios": [
+                "AC-010-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-010-03 REQ-F-005 AC8 una reserva que empieza el 2026-12-10 y Pablo pulsa «Entregar» el 2026-12-05: ve «No se puede entregar antes de la fecha de inicio»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-010-03 REQ-F-005 AC8 una reserva que empieza el 2026-12-10 y Pablo pulsa «Entregar» el 2026-12-05: ve «No se puede entregar antes de la fecha de inicio»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a812a-ntes-de-la-fecha-de-inicio»-chromium/attachments/AC-010-03-37e5e24f93eafbc9b3c3b140392e6b96d4656d0a.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a812a-ntes-de-la-fecha-de-inicio»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-010-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a812a-ntes-de-la-fecha-de-inicio»-chromium/attachments/AC-010-03-37e5e24f93eafbc9b3c3b140392e6b96d4656d0a.png": "sha256:80b22711f999bc43e19bb6a7f7ee4b5cd1e1de5d065c1ed4b903198b94c6ef56",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a812a-ntes-de-la-fecha-de-inicio»-chromium/test-finished-1.png": "sha256:80b22711f999bc43e19bb6a7f7ee4b5cd1e1de5d065c1ed4b903198b94c6ef56",
+                "evidencias/FASE-2/AC-010-03.png": "sha256:80b22711f999bc43e19bb6a7f7ee4b5cd1e1de5d065c1ed4b903198b94c6ef56"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No se puede entregar antes de la fecha de inicio",
+                    "template": false
+                  }
+                ],
+                "where": "Panel del encargado",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a812a-ntes-de-la-fecha-de-inicio»-chromium/attachments/AC-010-03-37e5e24f93eafbc9b3c3b140392e6b96d4656d0a.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a812a-ntes-de-la-fecha-de-inicio»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-010-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a812a-ntes-de-la-fecha-de-inicio»-chromium/attachments/FASE-2-AC-010-03-REQ-F-005-AC8-una-reserva-que--cf1c0b94c6845bca0e7659d7a04397f72daba60c.webm",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a812a-ntes-de-la-fecha-de-inicio»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-AC-010-03-REQ-F-005-AC8-una-reserva-que-.mp4",
+                "evidencias/FASE-2/FASE-2-AC-010-03-REQ-F-005-AC8-una-reserva-que-.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/server/servicios/panel.js, src/ui/paginas/panel.js, src/ui/textos.js"
+              ]
+            },
+            {
+              "n": 9,
+              "text": "GIVEN a loan of 2 × Casco that ended 2026-12-07 and was not returned WHEN the encargado opens \"Panel del encargado\" on 2026-12-10 THEN the user sees \"Retraso: 3 días\" next to the loan and the fine is not created until the return is marked",
+              "scenarios": [
+                "AC-017-08"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-08 REQ-F-005 AC9 un préstamo de 2 × Casco acabó el 2026-12-07 sin devolver: Pablo abre el Panel el 2026-12-10 y ve «Retraso: 3 días» y «No tienes multas»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-08 REQ-F-005 AC9 un préstamo de 2 × Casco acabó el 2026-12-07 sin devolver: Pablo abre el Panel el 2026-12-10 y ve «Retraso: 3 días» y «No tienes multas»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-9c902--días»-y-«No-tienes-multas»-chromium/attachments/AC-017-08-6e8121e3ec915fea0610e366e67aede637faf148.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-9c902--días»-y-«No-tienes-multas»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-017-08.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-9c902--días»-y-«No-tienes-multas»-chromium/attachments/AC-017-08-6e8121e3ec915fea0610e366e67aede637faf148.png": "sha256:541724019baca46425f469271a84de55221a3db4fa931a3954be01f67ad11251",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-9c902--días»-y-«No-tienes-multas»-chromium/test-finished-1.png": "sha256:541724019baca46425f469271a84de55221a3db4fa931a3954be01f67ad11251",
+                "evidencias/FASE-2/AC-017-08.png": "sha256:541724019baca46425f469271a84de55221a3db4fa931a3954be01f67ad11251"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Retraso: {días} días",
+                    "template": true
+                  },
+                  {
+                    "text": "No tienes multas",
+                    "template": false
+                  }
+                ],
+                "where": "Panel del encargado (ejemplo con datos: \"Retraso: 3 días\")",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-9c902--días»-y-«No-tienes-multas»-chromium/attachments/AC-017-08-6e8121e3ec915fea0610e366e67aede637faf148.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-9c902--días»-y-«No-tienes-multas»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-017-08.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-9c902--días»-y-«No-tienes-multas»-chromium/attachments/FASE-2-AC-017-08-REQ-F-005-AC9-un-pr-stamo-de-2-cc70d72dfa7e1da7c6576d58c470663b73b527d8.webm",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-9c902--días»-y-«No-tienes-multas»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-AC-017-08-REQ-F-005-AC9-un-pr-stamo-de-2.mp4",
+                "evidencias/FASE-2/FASE-2-AC-017-08-REQ-F-005-AC9-un-pr-stamo-de-2.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/server/servicios/panel.js, src/ui/paginas/panel.js, src/ui/textos.js"
+              ]
+            },
+            {
+              "n": 10,
+              "text": "GIVEN a loan that ended 2026-12-07 and was not returned WHEN the encargado opens \"Panel del encargado\" on 2026-12-08 THEN the user sees \"Retraso: 1 día\"",
+              "scenarios": [
+                "AC-017-09"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-09 REQ-F-005 AC10 un préstamo acabó el 2026-12-07 sin devolver: Pablo abre el Panel el 2026-12-08 y ve «Retraso: 1 día»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-09 REQ-F-005 AC10 un préstamo acabó el 2026-12-07 sin devolver: Pablo abre el Panel el 2026-12-08 y ve «Retraso: 1 día»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-03f1f--12-08-y-ve-«Retraso-1-día»-chromium/attachments/AC-017-09-50860971dcac348616e35c9752d29572b8f48318.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-03f1f--12-08-y-ve-«Retraso-1-día»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-017-09.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-03f1f--12-08-y-ve-«Retraso-1-día»-chromium/attachments/AC-017-09-50860971dcac348616e35c9752d29572b8f48318.png": "sha256:8244da7715867e34cc4da6accfe9fc43d7a01477fdc1a081c838effe0973bdcb",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-03f1f--12-08-y-ve-«Retraso-1-día»-chromium/test-finished-1.png": "sha256:8244da7715867e34cc4da6accfe9fc43d7a01477fdc1a081c838effe0973bdcb",
+                "evidencias/FASE-2/AC-017-09.png": "sha256:8244da7715867e34cc4da6accfe9fc43d7a01477fdc1a081c838effe0973bdcb"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Retraso: {días} día",
+                    "template": true
+                  }
+                ],
+                "where": "Panel del encargado (ejemplo con datos: \"Retraso: 1 día\")",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-03f1f--12-08-y-ve-«Retraso-1-día»-chromium/attachments/AC-017-09-50860971dcac348616e35c9752d29572b8f48318.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-03f1f--12-08-y-ve-«Retraso-1-día»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-017-09.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-03f1f--12-08-y-ve-«Retraso-1-día»-chromium/attachments/FASE-2-AC-017-09-REQ-F-005-AC10-un-pr-stamo-aca-31f8d26def11ab7122bd2fc191cf092e123da4d0.webm",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-03f1f--12-08-y-ve-«Retraso-1-día»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-AC-017-09-REQ-F-005-AC10-un-pr-stamo-aca.mp4",
+                "evidencias/FASE-2/FASE-2-AC-017-09-REQ-F-005-AC10-un-pr-stamo-aca.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/server/servicios/panel.js, src/ui/paginas/panel.js, src/ui/textos.js"
+              ]
+            }
+          ],
+          "candidate_files": [
+            "src/server/dominio/multas.js",
+            "src/server/http/rutas.js",
+            "src/server/mensajes.js",
+            "src/server/servicios/panel.js",
+            "src/server/servicios/prestamos.js",
+            "src/ui/api.js",
+            "src/ui/estilos.css",
+            "src/ui/main.js",
+            "src/ui/paginas/panel.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        },
+        {
+          "id": "REQ-F-008",
+          "title": "Qué hay prestado y qué vuelve cada día",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN the encargado opens \"Panel del encargado\" THE system SHALL list the reservations to deliver, the loans out, the returns due today and the late ones, and WHEN he picks another date THE system SHALL list the returns due that day",
+          "reqHash": "sha256:879ec2ca023397e07b48beb0bed9814f045b937a1ed59b3e0ebec5975ac87547",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN Lucía has 2 × Casco lent until 2026-12-07 WHEN the encargado opens the panel on 2026-12-05 THEN the user sees \"Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07\"",
+              "scenarios": [
+                "AC-017-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-01 REQ-F-008 AC1 Lucía tiene 2 × Casco prestados hasta el 2026-12-07 y Pablo abre el Panel el 2026-12-05: ve «Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-01 REQ-F-008 AC1 Lucía tiene 2 × Casco prestados hasta el 2026-12-07 y Pablo abre el Panel el 2026-12-05: ve «Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-4df8a-Gil-—-vuelve-el-2026-12-07»-chromium/attachments/AC-017-01-ef4def4ba75d692893c0024e7da9db6c837627c2.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-4df8a-Gil-—-vuelve-el-2026-12-07»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-017-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-4df8a-Gil-—-vuelve-el-2026-12-07»-chromium/attachments/AC-017-01-ef4def4ba75d692893c0024e7da9db6c837627c2.png": "sha256:d83c97cbb5a5be4d75749b1fc390a7bd3052858da55f1e081a32eb8dcf528a5c",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-4df8a-Gil-—-vuelve-el-2026-12-07»-chromium/test-finished-1.png": "sha256:d83c97cbb5a5be4d75749b1fc390a7bd3052858da55f1e081a32eb8dcf528a5c",
+                "evidencias/FASE-2/AC-017-01.png": "sha256:d83c97cbb5a5be4d75749b1fc390a7bd3052858da55f1e081a32eb8dcf528a5c"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Prestado: {cantidad} × {material} — {nombre} — vuelve el {fecha}",
+                    "template": true
+                  }
+                ],
+                "where": "Panel del encargado",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-4df8a-Gil-—-vuelve-el-2026-12-07»-chromium/attachments/AC-017-01-ef4def4ba75d692893c0024e7da9db6c837627c2.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-4df8a-Gil-—-vuelve-el-2026-12-07»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-017-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-4df8a-Gil-—-vuelve-el-2026-12-07»-chromium/attachments/FASE-2-AC-017-01-REQ-F-008-AC1-Luc-a-tiene-2--0b38448934de7951d39f178c16fc6536d8eccc46.webm",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-4df8a-Gil-—-vuelve-el-2026-12-07»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-AC-017-01-REQ-F-008-AC1-Luc-a-tiene-2-.mp4",
+                "evidencias/FASE-2/FASE-2-AC-017-01-REQ-F-008-AC1-Luc-a-tiene-2-.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/server/servicios/panel.js, src/ui/paginas/panel.js, src/ui/textos.js"
+              ]
+            },
+            {
+              "n": 2,
+              "text": "GIVEN the same loan WHEN the encargado opens the panel on 2026-12-07 THEN the user sees it under \"Vuelven hoy\"",
+              "scenarios": [
+                "AC-017-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-02 REQ-F-008 AC2 el mismo préstamo y Pablo abre el Panel el 2026-12-07: lo ve bajo «Vuelven hoy»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-02 REQ-F-008 AC2 el mismo préstamo y Pablo abre el Panel el 2026-12-07: lo ve bajo «Vuelven hoy»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-93603-07-lo-ve-bajo-«Vuelven-hoy»-chromium/attachments/AC-017-02-b75f0f7be40118c2cc899eab4f6c7ff8dad5f698.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-93603-07-lo-ve-bajo-«Vuelven-hoy»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-017-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-93603-07-lo-ve-bajo-«Vuelven-hoy»-chromium/attachments/AC-017-02-b75f0f7be40118c2cc899eab4f6c7ff8dad5f698.png": "sha256:d221be0d01c61876e451fc53557ad751a33f48295a9dd5394ccbd02dbec4dbd5",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-93603-07-lo-ve-bajo-«Vuelven-hoy»-chromium/test-finished-1.png": "sha256:d221be0d01c61876e451fc53557ad751a33f48295a9dd5394ccbd02dbec4dbd5",
+                "evidencias/FASE-2/AC-017-02.png": "sha256:d221be0d01c61876e451fc53557ad751a33f48295a9dd5394ccbd02dbec4dbd5"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Vuelven hoy",
+                    "template": false
+                  },
+                  {
+                    "text": "Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07",
+                    "template": false
+                  }
+                ],
+                "where": "Panel del encargado",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-93603-07-lo-ve-bajo-«Vuelven-hoy»-chromium/attachments/AC-017-02-b75f0f7be40118c2cc899eab4f6c7ff8dad5f698.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-93603-07-lo-ve-bajo-«Vuelven-hoy»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-017-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-93603-07-lo-ve-bajo-«Vuelven-hoy»-chromium/attachments/FASE-2-AC-017-02-REQ-F-008-AC2-el-mismo-pr-stam-408233e44bf1df6a12a87fddd022f158fb4d05b8.webm",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-93603-07-lo-ve-bajo-«Vuelven-hoy»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-AC-017-02-REQ-F-008-AC2-el-mismo-pr-stam.mp4",
+                "evidencias/FASE-2/FASE-2-AC-017-02-REQ-F-008-AC2-el-mismo-pr-stam.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/server/servicios/panel.js, src/ui/paginas/panel.js, src/ui/textos.js"
+              ]
+            },
+            {
+              "n": 3,
+              "text": "GIVEN the same loan WHEN the encargado picks the date 2026-12-07 on 2026-12-05 THEN the user sees \"Vuelven el 2026-12-07\" with that loan",
+              "scenarios": [
+                "AC-017-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-03 REQ-F-008 AC3 el mismo préstamo y Pablo elige la fecha 2026-12-07 el 2026-12-05: ve «Vuelven el 2026-12-07» con ese préstamo",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-03 REQ-F-008 AC3 el mismo préstamo y Pablo elige la fecha 2026-12-07 el 2026-12-05: ve «Vuelven el 2026-12-07» con ese préstamo",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-60347-026-12-07»-con-ese-préstamo-chromium/attachments/AC-017-03-5ad43f307e333565addb958ffff130f09022bcb3.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-60347-026-12-07»-con-ese-préstamo-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-017-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-60347-026-12-07»-con-ese-préstamo-chromium/attachments/AC-017-03-5ad43f307e333565addb958ffff130f09022bcb3.png": "sha256:a36596a78bbe2c0ae5edf84d213ce70ef9216dcbbc1599607ca5689a4819e435",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-60347-026-12-07»-con-ese-préstamo-chromium/test-finished-1.png": "sha256:a36596a78bbe2c0ae5edf84d213ce70ef9216dcbbc1599607ca5689a4819e435",
+                "evidencias/FASE-2/AC-017-03.png": "sha256:a36596a78bbe2c0ae5edf84d213ce70ef9216dcbbc1599607ca5689a4819e435"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Vuelven el {fecha}",
+                    "template": true
+                  },
+                  {
+                    "text": "Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07",
+                    "template": false
+                  }
+                ],
+                "where": "Panel del encargado",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-60347-026-12-07»-con-ese-préstamo-chromium/attachments/AC-017-03-5ad43f307e333565addb958ffff130f09022bcb3.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-60347-026-12-07»-con-ese-préstamo-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-017-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-60347-026-12-07»-con-ese-préstamo-chromium/attachments/FASE-2-AC-017-03-REQ-F-008-AC3-el-mismo-pr-stam-3827eac2cbc4f50951afcf427d63d6b5ea064933.webm",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-60347-026-12-07»-con-ese-préstamo-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-AC-017-03-REQ-F-008-AC3-el-mismo-pr-stam.mp4",
+                "evidencias/FASE-2/FASE-2-AC-017-03-REQ-F-008-AC3-el-mismo-pr-stam.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/server/servicios/panel.js, src/ui/paginas/panel.js, src/ui/textos.js"
+              ]
+            },
+            {
+              "n": 4,
+              "text": "GIVEN no loans WHEN the encargado opens the panel THEN the user sees \"No hay material prestado\"",
+              "scenarios": [
+                "AC-017-04"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-04 REQ-F-008 AC4 no hay préstamos y Pablo abre el Panel: ve «No hay material prestado»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-04 REQ-F-008 AC4 no hay préstamos y Pablo abre el Panel: ve «No hay material prestado»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a4cdc--«No-hay-material-prestado»-chromium/attachments/AC-017-04-b958e9a1c39bec7e4037adbdb128a270839c7fac.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a4cdc--«No-hay-material-prestado»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-017-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a4cdc--«No-hay-material-prestado»-chromium/attachments/AC-017-04-b958e9a1c39bec7e4037adbdb128a270839c7fac.png": "sha256:e82c2ce61e7c2c47f2e371641ba8fef030f7449a35ed0cef3e3c6b552e4ea067",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a4cdc--«No-hay-material-prestado»-chromium/test-finished-1.png": "sha256:e82c2ce61e7c2c47f2e371641ba8fef030f7449a35ed0cef3e3c6b552e4ea067",
+                "evidencias/FASE-2/AC-017-04.png": "sha256:e82c2ce61e7c2c47f2e371641ba8fef030f7449a35ed0cef3e3c6b552e4ea067"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No hay material prestado",
+                    "template": false
+                  }
+                ],
+                "where": "Panel del encargado",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a4cdc--«No-hay-material-prestado»-chromium/attachments/AC-017-04-b958e9a1c39bec7e4037adbdb128a270839c7fac.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a4cdc--«No-hay-material-prestado»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-017-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a4cdc--«No-hay-material-prestado»-chromium/attachments/FASE-2-AC-017-04-REQ-F-008-AC4-no-hay-pr-stamos-ad944aa8b7a84f698a7f2d8f2e3632d2b868ff03.webm",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a4cdc--«No-hay-material-prestado»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-AC-017-04-REQ-F-008-AC4-no-hay-pr-stamos.mp4",
+                "evidencias/FASE-2/FASE-2-AC-017-04-REQ-F-008-AC4-no-hay-pr-stamos.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/server/servicios/panel.js, src/ui/paginas/panel.js, src/ui/textos.js"
+              ]
+            },
+            {
+              "n": 5,
+              "text": "GIVEN Lucía has 2 × Casco reserved from 2026-12-05 WHEN the encargado opens the panel on 2026-12-05 THEN the user sees \"Por entregar: 2 × Casco — Lucía Gil — desde el 2026-12-05\" and the button \"Entregar\"",
+              "scenarios": [
+                "AC-017-05"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-05 REQ-F-008 AC5 Lucía tiene 2 × Casco reservados desde el 2026-12-05 y Pablo abre el Panel ese día: ve «Por entregar: 2 × Casco — Lucía Gil — desde el 2026-12-05» y el botón «Entregar»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-05 REQ-F-008 AC5 Lucía tiene 2 × Casco reservados desde el 2026-12-05 y Pablo abre el Panel ese día: ve «Por entregar: 2 × Casco — Lucía Gil — desde el 2026-12-05» y el botón «Entregar»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-d2b1b-2-05»-y-el-botón-«Entregar»-chromium/attachments/AC-017-05-9887ebc9350db3e91399967d287d0efcaa68144e.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-d2b1b-2-05»-y-el-botón-«Entregar»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-017-05.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-d2b1b-2-05»-y-el-botón-«Entregar»-chromium/attachments/AC-017-05-9887ebc9350db3e91399967d287d0efcaa68144e.png": "sha256:116ca64f5aeb9acab0c2c67d4a9758582cb4a57d538d8aa1a03180b18aceae9c",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-d2b1b-2-05»-y-el-botón-«Entregar»-chromium/test-finished-1.png": "sha256:116ca64f5aeb9acab0c2c67d4a9758582cb4a57d538d8aa1a03180b18aceae9c",
+                "evidencias/FASE-2/AC-017-05.png": "sha256:116ca64f5aeb9acab0c2c67d4a9758582cb4a57d538d8aa1a03180b18aceae9c"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Por entregar: {cantidad} × {material} — {nombre} — desde el {fecha}",
+                    "template": true
+                  },
+                  {
+                    "text": "Entregar",
+                    "template": false
+                  }
+                ],
+                "where": "Panel del encargado",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-d2b1b-2-05»-y-el-botón-«Entregar»-chromium/attachments/AC-017-05-9887ebc9350db3e91399967d287d0efcaa68144e.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-d2b1b-2-05»-y-el-botón-«Entregar»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-017-05.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-d2b1b-2-05»-y-el-botón-«Entregar»-chromium/attachments/FASE-2-AC-017-05-REQ-F-008-AC5-Luc-a-tiene-2--6bc7be6665ec07507f14d72dec95b78abe9fb268.webm",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-d2b1b-2-05»-y-el-botón-«Entregar»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-AC-017-05-REQ-F-008-AC5-Luc-a-tiene-2-.mp4",
+                "evidencias/FASE-2/FASE-2-AC-017-05-REQ-F-008-AC5-Luc-a-tiene-2-.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/server/servicios/panel.js, src/ui/paginas/panel.js, src/ui/textos.js"
+              ]
+            },
+            {
+              "n": 6,
+              "text": "GIVEN a socio WHEN he opens \"/panel\" THEN the user sees \"No tienes permiso para ver esta página\"",
+              "scenarios": [
+                "AC-017-06"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-06 REQ-F-008 AC6 Lucía, socia, abre «/panel»: ve «No tienes permiso para ver esta página»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-06 REQ-F-008 AC6 Lucía, socia, abre «/panel»: ve «No tienes permiso para ver esta página»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a0b35-rmiso-para-ver-esta-página»-chromium/attachments/AC-017-06-8ea2e1e03b0523639ede01dfa9e78f9a7d018bff.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a0b35-rmiso-para-ver-esta-página»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-017-06.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a0b35-rmiso-para-ver-esta-página»-chromium/attachments/AC-017-06-8ea2e1e03b0523639ede01dfa9e78f9a7d018bff.png": "sha256:73a946bcd95330ae6e3ec73b3ba2c482427bceaf501a8edb0c5dcce490de9436",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a0b35-rmiso-para-ver-esta-página»-chromium/test-finished-1.png": "sha256:73a946bcd95330ae6e3ec73b3ba2c482427bceaf501a8edb0c5dcce490de9436",
+                "evidencias/FASE-2/AC-017-06.png": "sha256:46e51953bbb3205ee226748714ee933190bdd2c5dbfb90fc8c0fce08e28bee57"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No tienes permiso para ver esta página",
+                    "template": false
+                  }
+                ],
+                "where": "Panel del encargado",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a0b35-rmiso-para-ver-esta-página»-chromium/attachments/AC-017-06-8ea2e1e03b0523639ede01dfa9e78f9a7d018bff.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a0b35-rmiso-para-ver-esta-página»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-017-06.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a0b35-rmiso-para-ver-esta-página»-chromium/attachments/FASE-2-AC-017-06-REQ-F-008-AC6-Luc-a-socia-ab-90fa8d334f30ed0636c124516bac256298c215bc.webm",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-a0b35-rmiso-para-ver-esta-página»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-AC-017-06-REQ-F-008-AC6-Luc-a-socia-ab.mp4",
+                "evidencias/FASE-2/FASE-2-AC-017-06-REQ-F-008-AC6-Luc-a-socia-ab.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "challenge CH-007 stale",
+                "test changed: tests/e2e/fase-2.spec.js",
+                "code changed: src/server/servicios/panel.js, src/ui/paginas/panel.js, src/ui/textos.js",
+                "capture changed: evidencias/FASE-2/AC-017-06.png"
+              ]
+            },
+            {
+              "n": 7,
+              "text": "GIVEN a junta member WHEN she opens \"/panel\" THEN the user sees \"No tienes permiso para ver esta página\"",
+              "scenarios": [
+                "AC-017-07"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-07 REQ-F-008 AC7 Elena, de la junta, abre «/panel»: ve «No tienes permiso para ver esta página»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-07 REQ-F-008 AC7 Elena, de la junta, abre «/panel»: ve «No tienes permiso para ver esta página»",
+                  "file": "fase-2.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-60e54-rmiso-para-ver-esta-página»-chromium/attachments/AC-017-07-69a61f1dd77fcb0e692bb3678502468bac8e9d56.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-60e54-rmiso-para-ver-esta-página»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-017-07.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-60e54-rmiso-para-ver-esta-página»-chromium/attachments/AC-017-07-69a61f1dd77fcb0e692bb3678502468bac8e9d56.png": "sha256:a13f3d30a2f8e7724b6392487de3630d8d905afd820eeee7c4eaba6b66292b06",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-60e54-rmiso-para-ver-esta-página»-chromium/test-finished-1.png": "sha256:a13f3d30a2f8e7724b6392487de3630d8d905afd820eeee7c4eaba6b66292b06",
+                "evidencias/FASE-2/AC-017-07.png": "sha256:b8ae157d0d7635ad55e2b8e3fb4f552b26dbb327db8bc15b5dbbb8eff3f3881a"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No tienes permiso para ver esta página",
+                    "template": false
+                  }
+                ],
+                "where": "Panel del encargado",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-60e54-rmiso-para-ver-esta-página»-chromium/attachments/AC-017-07-69a61f1dd77fcb0e692bb3678502468bac8e9d56.png",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-60e54-rmiso-para-ver-esta-página»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-017-07.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-60e54-rmiso-para-ver-esta-página»-chromium/attachments/FASE-2-AC-017-07-REQ-F-008-AC7-Elena-de-la-jun-453fcb9f5666f8125e7bb6e578597a456a5351db.webm",
+                "evidencias/FASE-2/.playwright/fase-2-FASE-2-·-Entregar-y-60e54-rmiso-para-ver-esta-página»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-AC-017-07-REQ-F-008-AC7-Elena-de-la-jun.mp4",
+                "evidencias/FASE-2/FASE-2-AC-017-07-REQ-F-008-AC7-Elena-de-la-jun.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "challenge CH-008 stale",
+                "test changed: tests/e2e/fase-2.spec.js",
+                "code changed: src/server/servicios/panel.js, src/ui/paginas/panel.js, src/ui/textos.js",
+                "capture changed: evidencias/FASE-2/AC-017-07.png"
+              ]
+            }
+          ],
+          "candidate_files": [
+            "src/server/http/rutas.js",
+            "src/server/mensajes.js",
+            "src/server/servicios/panel.js",
+            "src/ui/api.js",
+            "src/ui/estilos.css",
+            "src/ui/main.js",
+            "src/ui/paginas/panel.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        },
+        {
+          "id": "REQ-NF-002",
+          "title": "Datos compartidos entre dispositivos",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "THE system SHALL keep all data on a server shared by every user, so that a change made from one device is visible from another within 5 seconds of reloading",
+          "reqHash": "sha256:800b039426068b05185dcbd7971e4be778361803a2bcf5962c5cf526ae8a9443",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN Lucía reserves 2 × Casco in one browser WHEN the encargado opens the panel from a different browser THEN he sees her reservation",
+              "scenarios": [],
+              "tests": [
+                {
+                  "name": "REQ-NF-002 datos compartidos entre dispositivos y reinicios > REQ-NF-002 AC1 la reserva que hace Lucía desde una sesión sale en el panel de Pablo, en otra, en menos de SYNC_VISIBILITY_SECONDS",
+                  "file": "tests/integration/rendimiento.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [],
+              "capture_sha256": {},
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 2,
+              "text": "GIVEN the server restarts WHEN a user logs in THEN the reservations made before are still there",
+              "scenarios": [],
+              "tests": [
+                {
+                  "name": "REQ-NF-002 datos compartidos entre dispositivos y reinicios > REQ-NF-002 AC2 tras cerrar y volver a abrir el almacén siguen las reservas y los préstamos",
+                  "file": "tests/integration/rendimiento.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [],
+              "capture_sha256": {},
+              "recheck": false,
+              "recheck_reasons": []
+            }
+          ],
+          "candidate_files": [],
+          "challenges_open": []
+        }
+      ],
+      "unknown_requirements": [],
+      "tasks": [
+        "TASK-F2-001",
+        "TASK-F2-002",
+        "TASK-F2-003",
+        "TASK-F2-004",
+        "TASK-F2-005",
+        "TASK-F2-006",
+        "TASK-F2-007",
+        "TASK-F2-008",
+        "TASK-F2-009"
+      ],
+      "candidate_files": [
+        "src/server/dominio/multas.js",
+        "src/server/http/rutas.js",
+        "src/server/mensajes.js",
+        "src/server/servicios/panel.js",
+        "src/server/servicios/prestamos.js",
+        "src/ui/api.js",
+        "src/ui/estilos.css",
+        "src/ui/main.js",
+        "src/ui/paginas/panel.js",
+        "src/ui/textos.js"
+      ],
+      "incremental": {
+        "criteria": 19,
+        "recheck": 17
+      }
+    }
+  ],
+  "uncovered": [
+    {
+      "id": "REQ-C-001",
+      "title": "Textos en español",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-002",
+      "title": "Stack del proyecto",
+      "priority": "Must"
+    }
+  ],
+  "fases_without_header": [],
+  "criteria_without_test": [],
+  "coverage_gaps": 2
+}

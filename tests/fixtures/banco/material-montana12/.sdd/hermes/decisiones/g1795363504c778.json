@@ -1,0 +1,14 @@
+{
+  "verbo": "acepto",
+  "texto": "He visto los 16 vídeos: reservar, sus errores, Mis reservas y cancelar hacen lo que piden sus criterios. El aviso de playwright.config.js no es un cambio: se añadió una línea en c0abc18 y se quitó en 57a31be (diferencia cero).",
+  "actor": {
+    "persona": "yo",
+    "canal": "local",
+    "id": "andre"
+  },
+  "prueba": {
+    "host": "DESKTOP-7HT2139",
+    "demo": "no vista"
+  },
+  "at": "2026-11-22T16:06:55Z"
+}

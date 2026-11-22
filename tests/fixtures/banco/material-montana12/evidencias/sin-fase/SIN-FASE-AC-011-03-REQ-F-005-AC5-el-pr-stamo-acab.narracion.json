@@ -1,0 +1,22 @@
+{
+ "video": "SIN-FASE-AC-011-03-REQ-F-005-AC5-el-pr-stamo-acab.webm",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-03 REQ-F-005 AC5 el préstamo acaba el 2026-12-07 y se devuelve el 2026-12-08: Pablo ve «Devuelto con 1 día de retraso: multa de 2 €»",
+ "titulo": "AC-011-03 REQ-F-005 AC5 el préstamo acaba el 2026-12-07 y se devuelve el 2026-12-08: Pablo ve «Devuelto con 1 día de retraso: multa de 2 €»",
+ "narraciones": [
+  {
+   "t": 0.013,
+   "texto": "Requisito REQ-F-005: Entregar y recibir el material. Criterio 5 de 10.",
+   "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 5: 1 día de retraso. cuando se devuelve el 2026-12-08, entonces ve Devuelto con 1 día de retraso: multa de 2 € en Panel del encargado. Ahora, la demostración.",
+   "presentacion": "AC-011-03"
+  },
+  {
+   "t": 0.834,
+   "texto": "Es 8 de diciembre. Lucía devuelve los cascos con un día de retraso y Pablo pulsa Devolver"
+  },
+  {
+   "t": 1.086,
+   "texto": "Entregar y recibir el material. En Panel del encargado se ve «Devuelto con 1 día de retraso: multa de 2 €», en singular.",
+   "criterio": "AC-011-03"
+  }
+ ]
+}

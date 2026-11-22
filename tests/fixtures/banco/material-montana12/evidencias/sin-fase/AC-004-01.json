@@ -1,0 +1,15 @@
+{
+ "criterio": "AC-004-01",
+ "test": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-004-01 REQ-F-002 AC4 Marta entra con su contraseña provisional: ve «Elige una contraseña nueva» y no sigue hasta elegir una de 8 caracteres o más",
+ "titulo": "AC-004-01 REQ-F-002 AC4 Marta entra con su contraseña provisional: ve «Elige una contraseña nueva» y no sigue hasta elegir una de 8 caracteres o más",
+ "ve": [
+  "Elige una contraseña nueva",
+  "Elige una contraseña nueva",
+  "La contraseña debe tener al menos 8 caracteres"
+ ],
+ "narrado": "Alta, baja y contraseña de los socios. En Cambiar contraseña se ve «Elige una contraseña nueva», «Elige una contraseña nueva» y «La contraseña debe tener al menos 8 caracteres»: Marta no puede seguir hasta elegir una de 8 caracteres o más.",
+ "url": "http://127.0.0.1:5173/cambiar-contrasena",
+ "imagen": "AC-004-01.png",
+ "sha256": "sha256:3e6c8b409f730a0b96f89f6a56f92df42621da8586805711d250e6fa16f6a1db",
+ "at": "2026-11-22T19:43:41.668Z"
+}

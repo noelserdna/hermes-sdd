@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-008-04",
+ "test": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-04 REQ-F-004 AC6 Pablo, sin reservas mientras Lucía tiene una, abre Mis reservas y ve «Aún no tienes reservas»",
+ "titulo": "AC-008-04 REQ-F-004 AC6 Pablo, sin reservas mientras Lucía tiene una, abre Mis reservas y ve «Aún no tienes reservas»",
+ "ve": [
+  "Aún no tienes reservas"
+ ],
+ "narrado": "Mis reservas y cancelar. En Mis reservas se ve «Aún no tienes reservas», sin la reserva de Lucía.",
+ "url": "http://127.0.0.1:5173/mis-reservas",
+ "imagen": "AC-008-04.png",
+ "sha256": "sha256:647a9135b34124510232dddecef096ca31f107812744e6b9cdbc04845f9fdac6",
+ "at": "2026-11-22T20:34:09.806Z"
+}

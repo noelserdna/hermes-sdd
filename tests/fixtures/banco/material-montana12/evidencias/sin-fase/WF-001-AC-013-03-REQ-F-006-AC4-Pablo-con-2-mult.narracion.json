@@ -1,0 +1,26 @@
+{
+ "video": "WF-001-AC-013-03-REQ-F-006-AC4-Pablo-con-2-mult.webm",
+ "test": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-013-03 REQ-F-006 AC4 Pablo con 2 multas pendientes de 2 € y 4 € y el encargado paga la de 4 €: ve «Multa pagada» y Pablo sigue viendo «No puedes reservar hasta pagar tu multa de 2 €»",
+ "titulo": "AC-013-03 REQ-F-006 AC4 Pablo con 2 multas pendientes de 2 € y 4 € y el encargado paga la de 4 €: ve «Multa pagada» y Pablo sigue viendo «No puedes reservar hasta pagar tu multa de 2 €»",
+ "narraciones": [
+  {
+   "t": 0.021,
+   "texto": "Requisito REQ-F-006: Multas y bloqueo hasta pagarlas. Criterio 4 de 7.",
+   "voz": "Requisito funcional 6: Multas y bloqueo hasta pagarlas. El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 4: otra multa pendiente. Dado que Pablo Sanz tiene 2 multas pendientes de 2 € y 4 €, cuando el encargado paga la de 4 €, entonces ve Multa pagada en Multas y Pablo ve No puedes reservar hasta pagar tu multa de 2 € en Reservar. Ahora, la demostración.",
+   "presentacion": "AC-013-03"
+  },
+  {
+   "t": 0.904,
+   "texto": "Pablo Sanz debe dos multas, una de 2 euros y otra de 4. Jorge abre Multas y cobra la de 4 euros"
+  },
+  {
+   "t": 1.245,
+   "texto": "Jorge sale y Pablo entra: todavía le queda la multa de 2 euros, y al intentar reservar un casco del 10 al 11 de diciembre no le dejan"
+  },
+  {
+   "t": 1.842,
+   "texto": "Multas y bloqueo hasta pagarlas. En Multas se ve «Multa pagada» y Pablo sigue viendo «No puedes reservar hasta pagar tu multa de 2 €».",
+   "criterio": "AC-013-03"
+  }
+ ]
+}

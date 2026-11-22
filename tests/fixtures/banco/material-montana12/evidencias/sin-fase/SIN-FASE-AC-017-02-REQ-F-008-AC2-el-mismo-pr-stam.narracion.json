@@ -1,0 +1,22 @@
+{
+ "video": "SIN-FASE-AC-017-02-REQ-F-008-AC2-el-mismo-pr-stam.webm",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-02 REQ-F-008 AC2 el mismo préstamo y Pablo abre el Panel el 2026-12-07: lo ve bajo «Vuelven hoy»",
+ "titulo": "AC-017-02 REQ-F-008 AC2 el mismo préstamo y Pablo abre el Panel el 2026-12-07: lo ve bajo «Vuelven hoy»",
+ "narraciones": [
+  {
+   "t": 0.018,
+   "texto": "Requisito REQ-F-008: Qué hay prestado y qué vuelve cada día. Criterio 2 de 7.",
+   "voz": "Requisito funcional 8: Qué hay prestado y qué vuelve cada día. El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 2: vuelven hoy. cuando abre el panel el 2026-12-07, entonces ve Vuelven hoy y ve Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07. Ahora, la demostración.",
+   "presentacion": "AC-017-02"
+  },
+  {
+   "t": 0.562,
+   "texto": "Es 7 de diciembre, el día que acaba el préstamo. Pablo abre el Panel del encargado"
+  },
+  {
+   "t": 1.041,
+   "texto": "Qué hay prestado y qué vuelve cada día. En Panel del encargado se ve «Vuelven hoy» y debajo «Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07».",
+   "criterio": "AC-017-02"
+  }
+ ]
+}

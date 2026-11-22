@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-017-09",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-09 REQ-F-005 AC10 un préstamo acabó el 2026-12-07 sin devolver: Pablo abre el Panel el 2026-12-08 y ve «Retraso: 1 día»",
+ "titulo": "AC-017-09 REQ-F-005 AC10 un préstamo acabó el 2026-12-07 sin devolver: Pablo abre el Panel el 2026-12-08 y ve «Retraso: 1 día»",
+ "ve": [
+  "Retraso: 1 día"
+ ],
+ "narrado": "Entregar y recibir el material. En Panel del encargado se ve «Retraso: 1 día», en singular.",
+ "url": "http://127.0.0.1:5173/panel",
+ "imagen": "AC-017-09.png",
+ "sha256": "sha256:d5d0a1039274456805caf7f1755018f0330c8f01d87e3166fcdb78d9aab97914",
+ "at": "2026-11-22T19:43:23.121Z"
+}

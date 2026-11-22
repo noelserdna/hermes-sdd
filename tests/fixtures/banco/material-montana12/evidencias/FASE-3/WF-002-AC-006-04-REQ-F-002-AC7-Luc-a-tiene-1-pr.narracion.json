@@ -1,0 +1,26 @@
+{
+ "video": "WF-002-AC-006-04-REQ-F-002-AC7-Luc-a-tiene-1-pr.webm",
+ "test": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-04 REQ-F-002 AC7 Lucía tiene 1 préstamo sin devolver y Pablo la da de baja: ve «No se puede dar de baja: tiene material sin devolver» y «Lucía Gil — Activo»; Lucía sigue entrando",
+ "titulo": "AC-006-04 REQ-F-002 AC7 Lucía tiene 1 préstamo sin devolver y Pablo la da de baja: ve «No se puede dar de baja: tiene material sin devolver» y «Lucía Gil — Activo»; Lucía sigue entrando",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-002: Alta, baja y contraseña de los socios. Criterio 7 de 9.",
+   "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 7: material sin devolver. Dado que Lucía tiene 1 préstamo sin devolver, cuando el encargado la da de baja, entonces error E_BAJA_PRESTAMOS y ve No se puede dar de baja: tiene material sin devolver y Lucía Gil — Activo en Socios y Lucía entra y ve Hola, Lucía en Mis reservas. Ahora, la demostración.",
+   "presentacion": "AC-006-04"
+  },
+  {
+   "t": 0.796,
+   "texto": "Lucía Gil tiene un casco prestado sin devolver. Pablo abre Socios e intenta darla de baja"
+  },
+  {
+   "t": 1.168,
+   "texto": "Alta, baja y contraseña de los socios. En Socios se ve «No se puede dar de baja: tiene material sin devolver», «Lucía Gil — Activo» y «Hola, Pablo»: su cuenta sigue activa y Pablo sigue dentro.",
+   "criterio": "AC-006-04"
+  },
+  {
+   "t": 1.523,
+   "texto": "Y Lucía sigue pudiendo entrar: ve «Hola, Lucía» en Mis reservas"
+  }
+ ]
+}

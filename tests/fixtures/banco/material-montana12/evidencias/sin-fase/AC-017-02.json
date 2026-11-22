@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-017-02",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-02 REQ-F-008 AC2 el mismo préstamo y Pablo abre el Panel el 2026-12-07: lo ve bajo «Vuelven hoy»",
+ "titulo": "AC-017-02 REQ-F-008 AC2 el mismo préstamo y Pablo abre el Panel el 2026-12-07: lo ve bajo «Vuelven hoy»",
+ "ve": [
+  "Vuelven hoy",
+  "Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07"
+ ],
+ "narrado": "Qué hay prestado y qué vuelve cada día. En Panel del encargado se ve «Vuelven hoy» y debajo «Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07».",
+ "url": "http://127.0.0.1:5173/panel",
+ "imagen": "AC-017-02.png",
+ "sha256": "sha256:e9e1df7b4d568f7732213c10adff4310a96927a221dfa5a62386e78634a8b178",
+ "at": "2026-11-22T19:43:26.257Z"
+}

@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-008-03",
+ "test": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-03 REQ-F-004 AC5 una socia nueva sin reservas abre Mis reservas y ve «Aún no tienes reservas»",
+ "titulo": "AC-008-03 REQ-F-004 AC5 una socia nueva sin reservas abre Mis reservas y ve «Aún no tienes reservas»",
+ "ve": [
+  "Aún no tienes reservas"
+ ],
+ "narrado": "Mis reservas y cancelar. En Mis reservas se ve «Aún no tienes reservas».",
+ "url": "http://127.0.0.1:5173/mis-reservas",
+ "imagen": "AC-008-03.png",
+ "sha256": "sha256:34a1f613b678be30edebcac24ff38f839b36b331156b95967346ea54c3ce7eb4",
+ "at": "2026-11-22T19:42:53.899Z"
+}

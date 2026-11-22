@@ -1,0 +1,71 @@
+{
+  "id": "g1795363504c778",
+  "tipo": "fase",
+  "fase": "1",
+  "tablero": "material-montana12",
+  "tarjeta": "t_9572ca69",
+  "adopcion": false,
+  "sha": "afeb821e2ab877c8054a97468f69594909e0920a",
+  "creada": "2026-11-22T16:05:04Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana12",
+  "titulo": "Aceptar FASE-1",
+  "texto": "🧭 Encargado: 3 avisos (2 graves: Jev no puede aprobar esta puerta solo)\n‼️ Se cambió un test ya aceptado (playwright.config.js, 57a31be) sin que una persona lo autorizara\n‼️ Se cambió un test ya aceptado (playwright.config.js, c0abc18) sin que una persona lo autorizara\n• 2 texto(s) que los criterios dicen que se ven no están tal cual en el código de la app («2 × Linterna del 2026-12-05 al 2026-12-07 — Reservada», «2 × Casco del 2026-12-05 al 2026-12-07 — Cancelada»): o la app los compone (y nadie comprueba la plantilla) o no los enseña\n\n🧪 La FASE-1 de «material-montana12» está lista para revisar.\n\n✅ Todo en orden: los 2 requisitos de esta fase funcionan y están comprobados.\n\n✅ Reservar material: funciona y está comprobado (9 de 9 criterios)\n✅ Mis reservas y cancelar: funciona y está comprobado (6 de 6 criterios)\n\n⛔ Se ha cambiado 1 test que ya existía y no lo autorizó nadie con su firma: no debería aceptarse sin saber por qué.\n• playwright.config.js: SIN autorización firmada\n\n🎬 Demo: vídeo y 15 capturas.\n\n🤖 Jev ha leído el texto en off de 15 vídeos: cada uno cuenta lo que pide su criterio.\n\n🧾 Demostrados: 12 de 15 criterios (prueba, captura, vídeo con voz y revisión).\nLes falta:\n• REQ-F-003 AC3: su THEN promete lo que no se ve ni se declara no visible: «Lucía still has one reservation of 2»\n• REQ-F-004 AC2: su THEN promete lo que no se ve ni se declara no visible: «its units become free»\n• REQ-F-004 AC3: su THEN promete lo que no se ve ni se declara no visible: «the units are not freed twice»\n\n👉 Pulsa ▶ Ver demo; después podrás aceptarla, aceptarla con observaciones o rechazarla.",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Aceptar",
+      "paso": 2
+    },
+    {
+      "verbo": "observaciones",
+      "etiqueta": "📝 Con observaciones",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-1/FASE-1-AC-007-01-REQ-F-003-AC1-Luc-a-reserva-2-.mp4",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 1,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": true,
+        "codigo": "test-congelado",
+        "texto": "Se cambió un test ya aceptado (playwright.config.js, 57a31be) sin que una persona lo autorizara"
+      },
+      {
+        "grave": true,
+        "codigo": "test-congelado",
+        "texto": "Se cambió un test ya aceptado (playwright.config.js, c0abc18) sin que una persona lo autorizara"
+      },
+      {
+        "grave": false,
+        "codigo": "texto-fuera-del-codigo",
+        "texto": "2 texto(s) que los criterios dicen que se ven no están tal cual en el código de la app («2 × Linterna del 2026-12-05 al 2026-12-07 — Reservada», «2 × Casco del 2026-12-05 al 2026-12-07 — Cancelada»): o la app los compone (y nadie comprueba la plantilla) o no los enseña"
+      }
+    ],
+    "graves": 2
+  },
+  "narracion": {
+    "revisados": 15,
+    "modelo": "jev-1.14.0",
+    "contradicen": [],
+    "incompletos": []
+  }
+}

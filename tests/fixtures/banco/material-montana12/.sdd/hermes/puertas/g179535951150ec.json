@@ -1,0 +1,41 @@
+{
+  "id": "g179535951150ec",
+  "tipo": "fallo",
+  "fase": "0",
+  "tablero": "material-montana12",
+  "tarjeta": "t_635fc633",
+  "adopcion": false,
+  "sha": "d0d5440a1ef6884f72666eb4b347362233148298",
+  "creada": "2026-11-22T14:58:31Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana12",
+  "titulo": "Etapa parada: implementar FASE-0",
+  "texto": "⚠️ La etapa «implementar» de la FASE-0 de «material-montana12» no ha terminado.\n\nMotivo: la FASE-0 no cumple las reglas duras tras la pasada de arreglo: tests/e2e/fixtures/evidence.js cambió: es la plantilla del arnés (captura, vídeo y locución) y no se toca\n\n👉 🔁 Reintentar la vuelve a lanzar (lo ya hecho se conserva) · ⏹ Dejarla parada si hay que mirar algo antes.",
+  "opciones": [
+    {
+      "verbo": "reintento",
+      "etiqueta": "🔁 Reintentar"
+    },
+    {
+      "verbo": "paro",
+      "etiqueta": "⏹ Dejarla parada"
+    }
+  ],
+  "demo": "",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [],
+    "graves": 0
+  },
+  "fallo": {
+    "etapa": "implementar",
+    "fase": "0",
+    "motivo": "la FASE-0 no cumple las reglas duras tras la pasada de arreglo: tests/e2e/fixtures/evidence.js cambió: es la plantilla del arnés (captura, vídeo y locución) y no se toca",
+    "veces": 1
+  }
+}

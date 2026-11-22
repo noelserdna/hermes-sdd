@@ -1,0 +1,35 @@
+{
+ "video": "FASE-0-FASE-0-el-material-cargado-por-el-encarg.webm",
+ "test": "FASE-0 · Datos en el servidor (ADR-DRAFT-002) › FASE-0 el material cargado por el encargado sigue en el servidor tras pararlo y arrancarlo",
+ "titulo": "FASE-0 el material cargado por el encargado sigue en el servidor tras pararlo y arrancarlo",
+ "narraciones": [
+  {
+   "t": 1.367,
+   "texto": "Pablo, el encargado, entra en el club"
+  },
+  {
+   "t": 1.856,
+   "texto": "Pablo da de alta 2 piolets, un tipo nuevo"
+  },
+  {
+   "t": 2.147,
+   "texto": "Intenta dar de baja 3 cascos, pero 2 están reservados: la web se lo impide"
+  },
+  {
+   "t": 2.478,
+   "texto": "Da de baja solo 1 casco roto y quedan 2"
+  },
+  {
+   "t": 2.838,
+   "texto": "Se para el servidor y se vuelve a arrancar"
+  },
+  {
+   "t": 4.212,
+   "texto": "Las sesiones se cierran al reiniciar: Pablo vuelve a entrar y abre Material"
+  },
+  {
+   "t": 4.662,
+   "texto": "Siguen ahí los 2 piolets y los 2 cascos: los datos viven en el servidor"
+  }
+ ]
+}

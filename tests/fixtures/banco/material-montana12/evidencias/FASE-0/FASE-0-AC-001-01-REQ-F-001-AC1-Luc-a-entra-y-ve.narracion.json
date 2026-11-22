@@ -1,0 +1,22 @@
+{
+ "video": "FASE-0-AC-001-01-REQ-F-001-AC1-Luc-a-entra-y-ve.webm",
+ "test": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-01 REQ-F-001 AC1 Lucía entra y ve «Hola, Lucía» en Mis reservas",
+ "titulo": "AC-001-01 REQ-F-001 AC1 Lucía entra y ve «Hola, Lucía» en Mis reservas",
+ "narraciones": [
+  {
+   "t": 0.022,
+   "texto": "Requisito REQ-F-001: Entrar y salir. Criterio 1 de 8.",
+   "voz": "Requisito funcional 1: Entrar y salir. Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras. Tiene 8 criterios de aceptación. Este vídeo demuestra el criterio 1: socio entra. Dado que socio lucia@club.test con contraseña Cumbre2026!, cuando introduce ambos en Entrar, entonces ve Hola, Lucía en la página Mis reservas. Ahora, la demostración.",
+   "presentacion": "AC-001-01"
+  },
+  {
+   "t": 0.673,
+   "texto": "Lucía, socia del club, escribe su correo y su contraseña en el formulario y pulsa Entrar"
+  },
+  {
+   "t": 1.09,
+   "texto": "Entrar y salir. En Mis reservas se ve «Hola, Lucía».",
+   "criterio": "AC-001-01"
+  }
+ ]
+}

@@ -1,0 +1,22 @@
+{
+ "video": "FASE-1-AC-007-09-REQ-F-003-AC9-Luc-a-con-una-mu.webm",
+ "test": "FASE-1 · Reservar material (REQ-F-003) › AC-007-09 REQ-F-003 AC9 Lucía con una multa pendiente de 2 € intenta reservar y ve «No puedes reservar hasta pagar tu multa de 2 €»",
+ "titulo": "AC-007-09 REQ-F-003 AC9 Lucía con una multa pendiente de 2 € intenta reservar y ve «No puedes reservar hasta pagar tu multa de 2 €»",
+ "narraciones": [
+  {
+   "t": 0.014,
+   "texto": "Requisito REQ-F-003: Reservar material. Criterio 9 de 9.",
+   "voz": "Requisito funcional 3: Reservar material. El socio elige material, cantidad y fechas y lo reserva si quedan unidades libres todos esos días. Si no quedan, se lo dice. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 9: multa pendiente de Lucía. Dado que Lucía tiene una multa pendiente de 2 €, cuando intenta reservar, entonces error E_MULTA_PENDIENTE: No puedes reservar hasta pagar tu multa de 2 €. Ahora, la demostración.",
+   "presentacion": "AC-007-09"
+  },
+  {
+   "t": 0.796,
+   "texto": "Lucía debe una multa de 2 euros. Abre Reservar y pide un casco"
+  },
+  {
+   "t": 1.284,
+   "texto": "Reservar material. En Reservar se ve «No puedes reservar hasta pagar tu multa de 2 €».",
+   "criterio": "AC-007-09"
+  }
+ ]
+}

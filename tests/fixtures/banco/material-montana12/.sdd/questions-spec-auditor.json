@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "rol": "spec-auditor",
+  "preguntas": [
+    {
+      "id": "Q-spec-auditor-001",
+      "skill": "sdd-spec-auditor",
+      "contexto": "spec/domain/05-INVARIANTS.md:11 vs spec/tests/BDD-UC-001.md:31",
+      "tema": "limite-caducidad-sesion",
+      "estado": "ANSWERED",
+      "pregunta": "INV-SOC-005 caduca la sesión con `ahora − última actividad > 30 min` (con exactamente 30 min sigue viva) pero AC-001-06 pide ver Entrar con 30 minutos sin actividad; PROP-005 dice viva si ≤ SESSION_IDLE_MINUTES. El borde exacto se contradice.",
+      "para_cliente": "Si un socio lleva exactamente 30 minutos sin tocar nada, ¿la sesión sigue abierta o ya se ha cerrado?",
+      "opciones": [
+        {
+          "letra": "A",
+          "texto": "Con exactamente 30 min sigue viva; caduca al pasar de 30 (cambiar el ejemplo de AC-001-06 a 31 min)",
+          "recomendada": true,
+          "efecto": "ninguno",
+          "cliente": "Se cierra al pasar de 30 minutos",
+          "ficheros": []
+        },
+        {
+          "letra": "B",
+          "texto": "Con exactamente 30 min ya caducó (cambiar INV-SOC-005 y PROP-005 a ≥)",
+          "efecto": "ninguno",
+          "cliente": "Se cierra al cumplir los 30 minutos",
+          "ficheros": []
+        }
+      ],
+      "bloquea": "CON-002",
+      "respuesta": {
+        "letra": "A",
+        "como": "opción recomendada, aceptada por",
+        "quien": "Jev (regla) (Agente automático (modo auto))",
+        "fecha": "2026-11-22"
+      }
+    },
+    {
+      "id": "Q-spec-auditor-002",
+      "skill": "sdd-spec-auditor",
+      "contexto": "spec/use-cases/UC-006-baja-socio.md:46,50 vs spec/CLARIFICATIONS.md RN-012/RN-027",
+      "tema": "baja-repetida",
+      "estado": "ANSWERED",
+      "pregunta": "UC-006 E4 trata la baja repetida de una cuenta ya de baja como replay sin código y sin cambios (RN-012, ADR-005), pero RN-027 y UC-006:50 exigen E_SOCIO_NO_ENCONTRADO. Dos reglas dan resultados distintos para la misma acción.",
+      "para_cliente": "Si el encargado da de baja otra vez a un socio que ya está de baja, ¿qué debe ver?",
+      "opciones": [
+        {
+          "letra": "A",
+          "texto": "Aviso de que ya estaba de baja, sin error (replay, ADR-005); RN-027 solo para ids inexistentes",
+          "recomendada": true,
+          "efecto": "ninguno",
+          "cliente": "Un aviso de que ya estaba de baja",
+          "ficheros": []
+        },
+        {
+          "letra": "B",
+          "texto": "Error E_SOCIO_NO_ENCONTRADO también para baja repetida (RN-027 tal cual)",
+          "efecto": "ninguno",
+          "cliente": "Un mensaje de error de socio no encontrado",
+          "ficheros": []
+        }
+      ],
+      "bloquea": "CON-001",
+      "respuesta": {
+        "letra": "A",
+        "como": "opción recomendada, aceptada por",
+        "quien": "Jev (regla) (Agente automático (modo auto))",
+        "fecha": "2026-11-22"
+      }
+    }
+  ]
+}

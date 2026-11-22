@@ -1,0 +1,14 @@
+{
+  "verbo": "acepto",
+  "texto": "He visto el montaje de la entrega (57 min, las 6 fases) y los vídeos de cada fase al aceptarlas: los 14 requisitos hacen lo que piden. Nota: el montaje usa los vídeos de cada fase de cuando se aceptó, así que la FASE-0 sale sin estilo y la FASE-2 con fechas mm/dd/yyyy, que ya están arreglados en la app.",
+  "actor": {
+    "persona": "yo",
+    "canal": "local",
+    "id": "andre"
+  },
+  "prueba": {
+    "host": "DESKTOP-7HT2139",
+    "demo": "no vista"
+  },
+  "at": "2026-11-22T20:57:03Z"
+}

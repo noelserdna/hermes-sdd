@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-007-01",
+ "test": "FASE-1 · Reservar material (REQ-F-003) › AC-007-01 REQ-F-003 AC1 Lucía reserva 2 × Casco del 2026-12-05 al 2026-12-07 y ve «Reserva creada» en Mis reservas",
+ "titulo": "AC-007-01 REQ-F-003 AC1 Lucía reserva 2 × Casco del 2026-12-05 al 2026-12-07 y ve «Reserva creada» en Mis reservas",
+ "ve": [
+  "Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07"
+ ],
+ "narrado": "Reservar material. En Mis reservas se ve «Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07».",
+ "url": "http://127.0.0.1:5173/mis-reservas",
+ "imagen": "AC-007-01.png",
+ "sha256": "sha256:8700b1d3f26b03c9183cb06c09a4f398b09a9d7b0a431f22d2802f52c69ec3de",
+ "at": "2026-11-22T20:33:48.913Z"
+}

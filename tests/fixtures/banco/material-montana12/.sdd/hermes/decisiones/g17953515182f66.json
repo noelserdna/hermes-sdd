@@ -1,0 +1,13 @@
+{
+  "verbo": "cambios",
+  "texto": "Lo pedido está bien recogido y los supuestos me valen. Pido dos cosas: 1) Cada criterio tiene que decir qué se verá en pantalla para cada cosa que promete su resultado, o, si algo no se puede ver (por ejemplo que ya no puede entrar con la contraseña antigua, o que no se crea nada), decirlo como «No visible» y cómo se comprueba; hoy hay unos 22 criterios que prometen más de lo que dicen que se verá. 2) En los textos que dirá la web, los ejemplos de «No puedes reservar hasta pagar tu multa de {importe} €» y de «Retraso: {días} días» salen sin rellenar: pon un ejemplo con datos.",
+  "actor": {
+    "persona": "yo",
+    "canal": "local",
+    "id": "andre"
+  },
+  "prueba": {
+    "host": "DESKTOP-7HT2139"
+  },
+  "at": "2026-11-22T12:50:33Z"
+}

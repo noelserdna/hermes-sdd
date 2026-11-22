@@ -1,0 +1,13 @@
+{
+  "verbo": "reintento",
+  "texto": "La plantilla evidence.js se quedó en la versión anterior por un fallo de instalación del arnés, no la cambió el agente; ya está al día.",
+  "actor": {
+    "persona": "yo",
+    "canal": "local",
+    "id": "andre"
+  },
+  "prueba": {
+    "host": "DESKTOP-7HT2139"
+  },
+  "at": "2026-11-22T15:03:37Z"
+}

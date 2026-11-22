@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-017-04",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-04 REQ-F-008 AC4 no hay préstamos y Pablo abre el Panel: ve «No hay material prestado»",
+ "titulo": "AC-017-04 REQ-F-008 AC4 no hay préstamos y Pablo abre el Panel: ve «No hay material prestado»",
+ "ve": [
+  "No hay material prestado"
+ ],
+ "narrado": "Qué hay prestado y qué vuelve cada día. En Panel del encargado se ve «No hay material prestado».",
+ "url": "http://127.0.0.1:5173/panel",
+ "imagen": "AC-017-04.png",
+ "sha256": "sha256:f757b7946682c98fcfda52162cfd3ba9562c3ce5bbdba2fefd614b3f2482d8d8",
+ "at": "2026-11-22T19:43:29.555Z"
+}

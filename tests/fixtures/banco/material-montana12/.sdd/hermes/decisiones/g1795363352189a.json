@@ -1,0 +1,14 @@
+{
+  "verbo": "descarto",
+  "texto": "Q1: A. Q2: A. CH-006: cada aviso se ve en la pantalla donde se produce: «La reserva ya estaba cancelada» en Mis reservas y «No hay unidades libres…» en Reservar, que es lo que hace la app y enseña el vídeo.",
+  "actor": {
+    "persona": "yo",
+    "canal": "local",
+    "id": "andre"
+  },
+  "prueba": {
+    "host": "DESKTOP-7HT2139",
+    "demo": "no vista"
+  },
+  "at": "2026-11-22T16:04:58Z"
+}

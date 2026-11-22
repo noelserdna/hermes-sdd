@@ -1,0 +1,26 @@
+{
+ "video": "SIN-FASE-AC-001-06-REQ-F-001-AC6-con-la-sesi-n-de.webm",
+ "test": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-06 REQ-F-001 AC6 con la sesión de Lucía caducada por inactividad, cualquier página muestra «Entrar»",
+ "titulo": "AC-001-06 REQ-F-001 AC6 con la sesión de Lucía caducada por inactividad, cualquier página muestra «Entrar»",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-001: Entrar y salir. Criterio 6 de 8.",
+   "voz": "Requisito funcional 1: Entrar y salir. Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras. Tiene 8 criterios de aceptación. Este vídeo demuestra el criterio 6: sesión caducada. Dado que una sesión con 30 minutos sin actividad, cuando abre cualquier página, entonces ve el formulario Entrar. Ahora, la demostración.",
+   "presentacion": "AC-001-06"
+  },
+  {
+   "t": 0.617,
+   "texto": "Lucía entra y deja el navegador sin tocar nada"
+  },
+  {
+   "t": 1.008,
+   "texto": "Han pasado más de treinta minutos sin actividad y Lucía abre una página"
+  },
+  {
+   "t": 1.409,
+   "texto": "Entrar y salir. En Entrar se ve «Entrar», porque la sesión caducó por inactividad.",
+   "criterio": "AC-001-06"
+  }
+ ]
+}

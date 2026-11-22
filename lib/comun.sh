@@ -51,6 +51,12 @@ duras_implementar() {  # usa $SDD, $FASE y $ROOT; en el directorio del repo
   return 0
 }
 
+# video_fase <n>: el vídeo que enseña la puerta de la FASE: su montaje si lo hay; si no, el primer vídeo. Dos `ls`:
+# uno solo ordena todo junto y «FASE-0-AC-…» va antes que «MONTAJE-…» (montana12 G-7: la puerta enseñó 1 de 16)
+video_fase() {
+  { ls evidencias/FASE-"$1"/MONTAJE-*.mp4 2>/dev/null; ls evidencias/FASE-"$1"/*.mp4 evidencias/FASE-"$1"/*.webm evidencias/FASE-"$1"/*.mov 2>/dev/null; } | head -1 || true
+}
+
 # narrar_demo <fase>: la voz en off de los vídeos narrados de la FASE (sdd demo narrate, en esta máquina: say o
 # espeak-ng y ffmpeg) → evidencias/FASE-N/*.mp4, el vídeo que se ve en la puerta y en Telegram. Sin TTS, mp4 sin voz.
 narrar_demo() {

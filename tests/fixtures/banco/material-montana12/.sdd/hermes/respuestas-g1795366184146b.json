@@ -1,0 +1,18 @@
+{
+ "peticiones": [],
+ "por_aplicar": [
+  "Q-task-implementer-002: El test aceptado AC-007-10 de FASE-0 sigue comprobando que en Reservar hay 0 botones «Reservar» («todavía no: llega en FASE-1»). Desde FASE-1 ese botón existe y la prueba falla (verificado con SDD_FASE=0 npx playwright test --grep AC-007-10). La autorización de edición de Q-task-implementer-001 caducó al aceptar fase-1-accepted y el test se restauró (8c828aa). Sin un registro test-edit firmado nuevo no se puede quitar esa única comprobación obsoleta (línea 288).\nRespuesta elegida: A) Quitar solo la comprobación obsoleta de la línea 288 del test AC-007-10; el resto (Casco se ofrece, Cuerda no) queda igual\nPara el cliente: La prueba de la entrega 0 todavía exige que en Reservar no haya botón «Reservar», pero desde la entrega 1 sí lo hay, así que falla. ¿Autoriza quitar de nuevo solo esa comprobación? → A) Sí, se quita solo esa comprobación obsoleta\nTests ya existentes que la persona autoriza editar (solo estos; firmado en acceptance/decisions.jsonl): tests/e2e/fase-0.spec.js"
+ ],
+ "autorizaciones": [
+  {
+   "pregunta": "Q-task-implementer-002",
+   "letra": "A",
+   "ficheros": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "endurecer": false,
+   "motivo": "El test aceptado AC-007-10 de FASE-0 sigue comprobando que en Reservar hay 0 botones «Reservar» («todavía no: llega en FASE-1»). Desde FASE-1 ese botón existe y la prueba falla (verificado con SDD_FASE=0 npx playwright test --grep AC-007-10). La autorización de edición de Q-task-implementer-001 caducó al aceptar fase-1-accepted y el test se restauró (8c828aa). Sin un registro test-edit firmado nuevo no se puede quitar esa única comprobación obsoleta (línea 288). → A) Quitar solo la comprobación obsoleta de la línea 288 del test AC-007-10; el resto (Casc…"
+  }
+ ],
+ "abiertas": []
+}

@@ -1,0 +1,34 @@
+{
+ "video": "WF-002-AC-005-01-REQ-F-002-AC5-Marta-olvid-su-.webm",
+ "test": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-005-01 REQ-F-002 AC5 Marta olvidó su contraseña y Pablo fija «Otra12345» para ella: ve «Contraseña provisional guardada para Marta Ruiz»; Marta entra con «Otra12345» y ya no con la antigua",
+ "titulo": "AC-005-01 REQ-F-002 AC5 Marta olvidó su contraseña y Pablo fija «Otra12345» para ella: ve «Contraseña provisional guardada para Marta Ruiz»; Marta entra con «Otra12345» y ya no con la antigua",
+ "narraciones": [
+  {
+   "t": 0.021,
+   "texto": "Requisito REQ-F-002: Alta, baja y contraseña de los socios. Criterio 5 de 9.",
+   "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 5: provisional guardada. cuando el encargado fija Otra12345 para Marta, entonces ve Contraseña provisional guardada para Marta Ruiz en Socios. Ahora, la demostración.",
+   "presentacion": "AC-005-01"
+  },
+  {
+   "t": 0.523,
+   "texto": "Marta ha olvidado su contraseña y, probando, falla cinco veces: su cuenta se bloquea"
+  },
+  {
+   "t": 1.565,
+   "texto": "Pablo abre Socios y pulsa «Restablecer» en su fila"
+  },
+  {
+   "t": 2.004,
+   "texto": "Pablo sale. Marta entra con la contraseña provisional Otra12345, aunque su cuenta estuviera bloqueada, y la web le pide elegir otra"
+  },
+  {
+   "t": 2.434,
+   "texto": "Con su contraseña antigua, en cambio, ya no puede entrar"
+  },
+  {
+   "t": 2.87,
+   "texto": "Alta, baja y contraseña de los socios. En Socios se ve «Contraseña provisional guardada para Marta Ruiz»; Marta entra con «Otra12345» y ve «Elige una contraseña nueva», y con su contraseña antigua ve «Correo o contraseña incorrectos».",
+   "criterio": "AC-005-01"
+  }
+ ]
+}

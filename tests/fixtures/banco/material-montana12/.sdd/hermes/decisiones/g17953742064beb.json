@@ -1,0 +1,14 @@
+{
+  "verbo": "observaciones",
+  "texto": "Q1: A. He visto los 8 vídeos: multas pendientes y pagadas, el bloqueo y su desbloqueo, la lista del encargado y que cada socio ve solo las suyas hacen lo que piden sus criterios; y las fechas ya salen día/mes/año. Una observación: en la FASE-3 respondí que «No tienes multas» se enseñaría cuando existiera Mis multas. Ya existe, pero los criterios de devolver a tiempo (REQ-F-005 AC3) y de retraso aún sin devolver (REQ-F-005 AC9) siguen sin enseñarlo: que sus pruebas y sus vídeos abran Mis multas de Lucía y se vea «No tienes multas».",
+  "actor": {
+    "persona": "yo",
+    "canal": "local",
+    "id": "andre"
+  },
+  "prueba": {
+    "host": "DESKTOP-7HT2139",
+    "demo": "no vista"
+  },
+  "at": "2026-11-22T19:05:51Z"
+}

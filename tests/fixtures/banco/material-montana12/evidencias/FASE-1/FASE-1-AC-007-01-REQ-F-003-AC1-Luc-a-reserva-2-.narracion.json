@@ -1,0 +1,26 @@
+{
+ "video": "FASE-1-AC-007-01-REQ-F-003-AC1-Luc-a-reserva-2-.webm",
+ "test": "FASE-1 · Reservar material (REQ-F-003) › AC-007-01 REQ-F-003 AC1 Lucía reserva 2 × Casco del 2026-12-05 al 2026-12-07 y ve «Reserva creada» en Mis reservas",
+ "titulo": "AC-007-01 REQ-F-003 AC1 Lucía reserva 2 × Casco del 2026-12-05 al 2026-12-07 y ve «Reserva creada» en Mis reservas",
+ "narraciones": [
+  {
+   "t": 0.033,
+   "texto": "Requisito REQ-F-003: Reservar material. Criterio 1 de 9.",
+   "voz": "Requisito funcional 3: Reservar material. El socio elige material, cantidad y fechas y lo reserva si quedan unidades libres todos esos días. Si no quedan, se lo dice. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 1: reserva creada. Dado que Casco tiene 6 unidades y ninguna reservada del 2026-12-05 al 2026-12-07, cuando Lucía reserva 2 de Casco del 2026-12-05 al 2026-12-07, entonces ve Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07 en Mis reservas. Ahora, la demostración.",
+   "presentacion": "AC-007-01"
+  },
+  {
+   "t": 0.901,
+   "texto": "Lucía, socia del club, abre Reservar y elige el casco"
+  },
+  {
+   "t": 1.201,
+   "texto": "Pide 2 cascos del 5 al 7 de diciembre y pulsa Reservar"
+  },
+  {
+   "t": 1.518,
+   "texto": "Reservar material. En Mis reservas se ve «Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07».",
+   "criterio": "AC-007-01"
+  }
+ ]
+}

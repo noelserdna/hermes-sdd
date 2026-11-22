@@ -1,0 +1,727 @@
+{
+ "fase": "4",
+ "plan": "plan/fases/FASE-4-MULTAS.md",
+ "workflows": [
+  {
+   "id": "WF-001",
+   "titulo": "Ciclo de un préstamo",
+   "fichero": "spec/workflows/WF-001-ciclo-prestamo.md",
+   "pasos": [
+    {
+     "n": 1,
+     "nombre": "Reservar (UC-007)",
+     "uc": "UC-007"
+    },
+    {
+     "n": 2,
+     "nombre": "Cancelar, opcional (UC-009)",
+     "uc": "UC-009"
+    },
+    {
+     "n": 3,
+     "nombre": "Entregar (UC-010)",
+     "uc": "UC-010"
+    },
+    {
+     "n": 4,
+     "nombre": "Devolver (UC-011)",
+     "uc": "UC-011"
+    },
+    {
+     "n": 5,
+     "nombre": "Multa por retraso (UC-011)",
+     "uc": "UC-011"
+    },
+    {
+     "n": 6,
+     "nombre": "Pagar la multa (UC-013)",
+     "uc": "UC-013"
+    },
+    {
+     "n": 7,
+     "nombre": "Se levanta el bloqueo (UC-013, UC-007)",
+     "uc": "UC-013"
+    }
+   ],
+   "navegacion": [
+    {
+     "n": 1,
+     "celdas": [
+      "Reservar",
+      "socio",
+      "entrada «Reservar» del menú",
+      "elige material, cantidad y fechas y envía"
+     ]
+    },
+    {
+     "n": 2,
+     "celdas": [
+      "Mis reservas",
+      "socio",
+      "entrada «Mis reservas»",
+      "pulsa «Cancelar» en la fila"
+     ]
+    },
+    {
+     "n": 3,
+     "celdas": [
+      "Panel del encargado",
+      "encargado",
+      "página de inicio tras entrar",
+      "pulsa «Entregar» en «Por entregar»"
+     ]
+    },
+    {
+     "n": 4,
+     "celdas": [
+      "Panel del encargado",
+      "encargado",
+      "página de inicio",
+      "marca la devolución del préstamo"
+     ]
+    },
+    {
+     "n": 5,
+     "celdas": [
+      "Multas",
+      "encargado",
+      "entrada «Multas»",
+      "ve la multa creada"
+     ]
+    },
+    {
+     "n": 6,
+     "celdas": [
+      "Multas",
+      "encargado",
+      "entrada «Multas»",
+      "pulsa «Marcar pagada»"
+     ]
+    },
+    {
+     "n": 7,
+     "celdas": [
+      "Mis multas",
+      "socio",
+      "entrada «Mis multas»",
+      "comprueba que no tiene multas pendientes"
+     ]
+    }
+   ]
+  }
+ ],
+ "casos_de_uso": [
+  {
+   "id": "UC-012",
+   "titulo": "Ver mis multas",
+   "fichero": "spec/use-cases/UC-012-mis-multas.md",
+   "flujo": [
+    "Socio: abre \"Mis multas\".",
+    "System: comprueba la sesión y el rol (API-001-08, RN-020).",
+    "System: lee las multas de su cuenta, solo las suyas (INV-SEC-001).",
+    "System: muestra una fila por multa con importe y estado, o \"No tienes multas\"."
+   ],
+   "extensiones": [
+    {
+     "texto": "3a. La cuenta no tiene multas, aunque otro socio sí → mensaje de lista vacía.",
+     "criterios": [
+      "AC-012-02",
+      "AC-012-03"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-012-01",
+    "AC-012-02",
+    "AC-012-03"
+   ]
+  },
+  {
+   "id": "UC-013",
+   "titulo": "Marcar multa pagada",
+   "fichero": "spec/use-cases/UC-013-marcar-multa-pagada.md",
+   "flujo": [
+    "Encargado: pulsa \"Marcar pagada\" en una multa.",
+    "System: comprueba rol y que la multa existe (API-001-08).",
+    "System: comprueba que está Pendiente (SM-002).",
+    "System: la marca Pagada y guarda `paidOn` (WF-001 step 6).",
+    "System: recalcula el bloqueo del socio (WF-001 step 7, INV-MUL-002).",
+    "System: muestra \"Multa pagada\" en Multas."
+   ],
+   "extensiones": [
+    {
+     "texto": "5a. Quedan otras multas Pendientes del socio → el bloqueo sigue y cita la más antigua (RN-016).",
+     "criterios": [
+      "AC-013-03"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-013-01",
+    "AC-013-02",
+    "AC-013-03"
+   ]
+  },
+  {
+   "id": "UC-014",
+   "titulo": "Ver todas las multas",
+   "fichero": "spec/use-cases/UC-014-ver-multas.md",
+   "flujo": [
+    "Encargado: abre \"Multas\".",
+    "System: comprueba la sesión y el rol (API-001-08, RN-020).",
+    "System: lee todas las multas con el nombre de su socio.",
+    "System: muestra una fila por multa con nombre, importe y estado."
+   ],
+   "extensiones": [],
+   "criterios": [
+    "AC-014-01"
+   ]
+  }
+ ],
+ "criterios": [
+  {
+   "id": "AC-012-01",
+   "req": "REQ-F-006",
+   "ac": 1,
+   "uc": "UC-012",
+   "frase": "Multas y bloqueo hasta pagarlas. En Mis multas se ve «Multa de {importe} € — {estado}».",
+   "visible": true,
+   "then": "the user sees \"Multa de 6 € — Pendiente\"",
+   "ve": [
+    "Multa de {importe} € — {estado}"
+   ],
+   "pantalla": "Mis multas",
+   "presentacion": {
+    "requisito": "REQ-F-006",
+    "titulo": "Multas y bloqueo hasta pagarlas",
+    "para_el_cliente": "El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar.",
+    "n": 1,
+    "total": 7,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "multa pendiente",
+      "actual": true
+     },
+     {
+      "n": 2,
+      "titulo": "pago levanta el bloqueo",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "otra multa pendiente",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "sin multas",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "la multa de otro no cuenta",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "lista con estados",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "Pablo Sanz tiene una multa pendiente de 6 €"
+     },
+     {
+      "k": "Cuando",
+      "texto": "Pablo abre \"Mis multas\""
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Multa de 6 € — Pendiente\" en Mis multas"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 6: Multas y bloqueo hasta pagarlas. El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 1: multa pendiente. Dado que Pablo Sanz tiene una multa pendiente de 6 €, cuando Pablo abre Mis multas, entonces ve Multa de 6 € — Pendiente en Mis multas. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-013-01",
+   "req": "REQ-F-006",
+   "ac": 2,
+   "uc": "UC-013",
+   "frase": "Multas y bloqueo hasta pagarlas. En Multas se ve «Multa pagada» y «Reserva creada: {cantidad} × {material} del {inicio} al {fin}».",
+   "visible": true,
+   "then": "the user sees \"Multa pagada\" and Pablo can reserve again",
+   "ve": [
+    "Multa pagada",
+    "Reserva creada: {cantidad} × {material} del {inicio} al {fin}"
+   ],
+   "pantalla": "Multas",
+   "presentacion": {
+    "requisito": "REQ-F-006",
+    "titulo": "Multas y bloqueo hasta pagarlas",
+    "para_el_cliente": "El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar.",
+    "n": 2,
+    "total": 7,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "multa pendiente",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "pago levanta el bloqueo",
+      "actual": true
+     },
+     {
+      "n": 3,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "otra multa pendiente",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "sin multas",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "la multa de otro no cuenta",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "lista con estados",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "Pablo Sanz tiene una multa pendiente de 6 €"
+     },
+     {
+      "k": "Cuando",
+      "texto": "el encargado pulsa \"Marcar pagada\""
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Multa pagada\" en Multas"
+     },
+     {
+      "k": "Y",
+      "texto": "Pablo reserva 1 × Tienda del 2026-12-10 al 2026-12-11 y ve \"Reserva creada: 1 × Tienda del 2026-12-10 al 2026-12-11\" en Mis reservas"
+     },
+     {
+      "k": "Y",
+      "texto": "no ve \"No puedes reservar hasta pagar tu multa de 6 €\" en Reservar"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 6: Multas y bloqueo hasta pagarlas. El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 2: pago levanta el bloqueo. Dado que Pablo Sanz tiene una multa pendiente de 6 €, cuando el encargado pulsa Marcar pagada, entonces ve Multa pagada en Multas y Pablo reserva 1 × Tienda del 2026-12-10 al 2026-12-11 y ve Reserva creada: 1 × Tienda del 2026-12-10 al 2026-12-11 en Mis reservas y no ve No puedes reservar hasta pagar tu multa de 6 € en Reservar. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-013-02",
+   "req": "REQ-F-006",
+   "ac": 3,
+   "uc": "UC-013",
+   "frase": "Multas y bloqueo hasta pagarlas. En Multas (ejemplo con datos: \"Pablo Sanz — Multa de 6 € — Pagada\") se ve «La multa ya estaba pagada», «{nombre} — Multa de {importe} € — Pagada» y «Pablo Sanz — Multa de 6 € — Pagada».",
+   "visible": true,
+   "then": "the user sees \"La multa ya estaba pagada\" and the fine stays \"Pagada\", still one fine of 6 €",
+   "ve": [
+    "La multa ya estaba pagada",
+    "{nombre} — Multa de {importe} € — Pagada",
+    "Pablo Sanz — Multa de 6 € — Pagada"
+   ],
+   "pantalla": "Multas (ejemplo con datos: \"Pablo Sanz — Multa de 6 € — Pagada\")",
+   "presentacion": {
+    "requisito": "REQ-F-006",
+    "titulo": "Multas y bloqueo hasta pagarlas",
+    "para_el_cliente": "El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar.",
+    "n": 3,
+    "total": 7,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "multa pendiente",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "pago levanta el bloqueo",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "replay",
+      "actual": true
+     },
+     {
+      "n": 4,
+      "titulo": "otra multa pendiente",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "sin multas",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "la multa de otro no cuenta",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "lista con estados",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "la multa de 6 € de Pablo Sanz acaba de pagarse"
+     },
+     {
+      "k": "Cuando",
+      "texto": "se envía \"Marcar pagada\" otra vez"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"La multa ya estaba pagada\" en Multas"
+     },
+     {
+      "k": "Y",
+      "texto": "ve \"Pablo Sanz — Multa de 6 € — Pagada\" en Multas"
+     },
+     {
+      "k": "Y",
+      "texto": "ve una sola fila \"Pablo Sanz — Multa de 6 € — Pagada\", no repetida"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 6: Multas y bloqueo hasta pagarlas. El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 3: replay. Dado que la multa de 6 € de Pablo Sanz acaba de pagarse, cuando se envía Marcar pagada otra vez, entonces ve La multa ya estaba pagada en Multas y ve Pablo Sanz — Multa de 6 € — Pagada en Multas y ve una sola fila Pablo Sanz — Multa de 6 € — Pagada, no repetida. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-013-03",
+   "req": "REQ-F-006",
+   "ac": 4,
+   "uc": "UC-013",
+   "frase": "Multas y bloqueo hasta pagarlas. En Multas se ve «Multa pagada» y «No puedes reservar hasta pagar tu multa de {importe} €».",
+   "visible": true,
+   "then": "the user sees \"Multa pagada\" and Pablo still sees \"No puedes reservar hasta pagar tu multa de 2 €\"",
+   "ve": [
+    "Multa pagada",
+    "No puedes reservar hasta pagar tu multa de {importe} €"
+   ],
+   "pantalla": "Multas",
+   "presentacion": {
+    "requisito": "REQ-F-006",
+    "titulo": "Multas y bloqueo hasta pagarlas",
+    "para_el_cliente": "El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar.",
+    "n": 4,
+    "total": 7,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "multa pendiente",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "pago levanta el bloqueo",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "otra multa pendiente",
+      "actual": true
+     },
+     {
+      "n": 5,
+      "titulo": "sin multas",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "la multa de otro no cuenta",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "lista con estados",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "Pablo Sanz tiene 2 multas pendientes de 2 € y 4 €"
+     },
+     {
+      "k": "Cuando",
+      "texto": "el encargado paga la de 4 €"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Multa pagada\" en Multas"
+     },
+     {
+      "k": "Y",
+      "texto": "Pablo ve \"No puedes reservar hasta pagar tu multa de 2 €\" en Reservar"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 6: Multas y bloqueo hasta pagarlas. El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 4: otra multa pendiente. Dado que Pablo Sanz tiene 2 multas pendientes de 2 € y 4 €, cuando el encargado paga la de 4 €, entonces ve Multa pagada en Multas y Pablo ve No puedes reservar hasta pagar tu multa de 2 € en Reservar. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-012-02",
+   "req": "REQ-F-006",
+   "ac": 5,
+   "uc": "UC-012",
+   "frase": "Multas y bloqueo hasta pagarlas. En Mis multas se ve «No tienes multas».",
+   "visible": true,
+   "then": "the user sees \"No tienes multas\"",
+   "ve": [
+    "No tienes multas"
+   ],
+   "pantalla": "Mis multas",
+   "presentacion": {
+    "requisito": "REQ-F-006",
+    "titulo": "Multas y bloqueo hasta pagarlas",
+    "para_el_cliente": "El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar.",
+    "n": 5,
+    "total": 7,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "multa pendiente",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "pago levanta el bloqueo",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "otra multa pendiente",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "sin multas",
+      "actual": true
+     },
+     {
+      "n": 6,
+      "titulo": "la multa de otro no cuenta",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "lista con estados",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "Lucía Gil no tiene multas"
+     },
+     {
+      "k": "Cuando",
+      "texto": "Lucía abre \"Mis multas\""
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"No tienes multas\" en Mis multas"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 6: Multas y bloqueo hasta pagarlas. El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 5: sin multas. Dado que Lucía Gil no tiene multas, cuando Lucía abre Mis multas, entonces ve No tienes multas en Mis multas. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-012-03",
+   "req": "REQ-F-006",
+   "ac": 6,
+   "uc": "UC-012",
+   "frase": "Multas y bloqueo hasta pagarlas. En Mis multas se ve «No tienes multas».",
+   "visible": true,
+   "then": "the user sees \"No tienes multas\"",
+   "ve": [
+    "No tienes multas"
+   ],
+   "pantalla": "Mis multas",
+   "presentacion": {
+    "requisito": "REQ-F-006",
+    "titulo": "Multas y bloqueo hasta pagarlas",
+    "para_el_cliente": "El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar.",
+    "n": 6,
+    "total": 7,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "multa pendiente",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "pago levanta el bloqueo",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "otra multa pendiente",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "sin multas",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "la multa de otro no cuenta",
+      "actual": true
+     },
+     {
+      "n": 7,
+      "titulo": "lista con estados",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "Marta no tiene multas y Pablo tiene una"
+     },
+     {
+      "k": "Cuando",
+      "texto": "Marta abre \"Mis multas\""
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"No tienes multas\" en Mis multas"
+     },
+     {
+      "k": "Y",
+      "texto": "no ve ninguna fila de Pablo"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 6: Multas y bloqueo hasta pagarlas. El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 6: la multa de otro no cuenta. Dado que Marta no tiene multas y Pablo tiene una, cuando Marta abre Mis multas, entonces ve No tienes multas en Mis multas y no ve ninguna fila de Pablo. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-014-01",
+   "req": "REQ-F-006",
+   "ac": 7,
+   "uc": "UC-014",
+   "frase": "Multas y bloqueo hasta pagarlas. En Multas (ejemplo con datos: \"Pablo Sanz — Multa de 6 € — Pendiente\") se ve «{nombre} — Multa de {importe} € — {estado}» y «{nombre} — Multa de {importe} € — {estado}».",
+   "visible": true,
+   "then": "the user sees \"Pablo Sanz — Multa de 6 € — Pendiente\" and \"Lucía Gil — Multa de 2 € — Pagada\"",
+   "ve": [
+    "{nombre} — Multa de {importe} € — {estado}",
+    "{nombre} — Multa de {importe} € — {estado}"
+   ],
+   "pantalla": "Multas (ejemplo con datos: \"Pablo Sanz — Multa de 6 € — Pendiente\")",
+   "presentacion": {
+    "requisito": "REQ-F-006",
+    "titulo": "Multas y bloqueo hasta pagarlas",
+    "para_el_cliente": "El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar.",
+    "n": 7,
+    "total": 7,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "multa pendiente",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "pago levanta el bloqueo",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "replay",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "otra multa pendiente",
+      "actual": false
+     },
+     {
+      "n": 5,
+      "titulo": "sin multas",
+      "actual": false
+     },
+     {
+      "n": 6,
+      "titulo": "la multa de otro no cuenta",
+      "actual": false
+     },
+     {
+      "n": 7,
+      "titulo": "lista con estados",
+      "actual": true
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "Pablo Sanz tiene una multa pendiente de 6 € y Lucía Gil una pagada de 2 €"
+     },
+     {
+      "k": "Cuando",
+      "texto": "el encargado abre \"Multas\""
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Pablo Sanz — Multa de 6 € — Pendiente\""
+     },
+     {
+      "k": "Y",
+      "texto": "ve \"Lucía Gil — Multa de 2 € — Pagada\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 6: Multas y bloqueo hasta pagarlas. El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 7: lista con estados. Dado que Pablo Sanz tiene una multa pendiente de 6 € y Lucía Gil una pagada de 2 €, cuando el encargado abre Multas, entonces ve Pablo Sanz — Multa de 6 € — Pendiente y ve Lucía Gil — Multa de 2 € — Pagada. Ahora, la demostración."
+   }
+  }
+ ]
+}

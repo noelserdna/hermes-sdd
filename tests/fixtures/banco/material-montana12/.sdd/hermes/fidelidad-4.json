@@ -1,0 +1,163 @@
+{
+ "repo": "/home/andre/proyectos-sdd/material-montana12",
+ "fase": "4",
+ "sha": "210af3b",
+ "congelados": [],
+ "capturas": [],
+ "coherencia": [],
+ "vinculos": [
+  {
+   "req": "REQ-F-005",
+   "ac": 3,
+   "prioridad": "Must",
+   "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-01 REQ-F-005 AC3 el préstamo",
+   "fichero": "fase-2.spec.js",
+   "via": "AC-011-01",
+   "faltan_then": [
+    "No tienes multas"
+   ],
+   "faltan_datos": [],
+   "grave": true
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 3,
+   "prioridad": "Must",
+   "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-01 REQ-F-005 AC3 el préstamo",
+   "fichero": "fase-2.spec.js",
+   "via": "REQ-F-005 AC3",
+   "faltan_then": [
+    "No tienes multas"
+   ],
+   "faltan_datos": [],
+   "grave": true
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 9,
+   "prioridad": "Must",
+   "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-08 REQ-F-005 AC9 un préstamo",
+   "fichero": "fase-2.spec.js",
+   "via": "AC-017-08",
+   "faltan_then": [
+    "No tienes multas"
+   ],
+   "faltan_datos": [],
+   "grave": true
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 9,
+   "prioridad": "Must",
+   "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-08 REQ-F-005 AC9 un préstamo",
+   "fichero": "fase-2.spec.js",
+   "via": "REQ-F-005 AC9",
+   "faltan_then": [
+    "No tienes multas"
+   ],
+   "faltan_datos": [],
+   "grave": true
+  }
+ ],
+ "lint_capturas": [],
+ "mutantes_cache": {
+  "de_cache": 0,
+  "ejecutados": 3
+ },
+ "mutantes": [
+  {
+   "req": "REQ-F-006",
+   "ac": 2,
+   "texto": "Multa pagada",
+   "e2e": [
+    "tests/e2e/fase-4-ciclo-prestamo.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 3,
+   "texto": "La multa ya estaba pagada",
+   "e2e": [
+    "tests/e2e/fase-4-ciclo-prestamo.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 3,
+   "texto": "Pablo Sanz — Multa de 6 € — Pagada",
+   "e2e": [
+    "tests/e2e/fase-4-ciclo-prestamo.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 4,
+   "texto": "Multa pagada",
+   "e2e": [
+    "tests/e2e/fase-4-ciclo-prestamo.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 5,
+   "texto": "No tienes multas",
+   "e2e": [
+    "tests/e2e/fase-4-ciclo-prestamo.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js",
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 6,
+   "texto": "No tienes multas",
+   "e2e": [
+    "tests/e2e/fase-4-ciclo-prestamo.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js",
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  }
+ ],
+ "graves": 4
+}

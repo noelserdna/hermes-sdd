@@ -1,0 +1,189 @@
+{
+ "repo": "/home/andre/proyectos-sdd/material-montana12",
+ "fase": "5",
+ "sha": "7a46969",
+ "congelados": [
+  {
+   "commit": "09690d3",
+   "asunto": "test(e2e): acortar a 5 s el plazo de reintento tras reiniciar el servidor en la FASE-0",
+   "fichero": "tests/e2e/fase-0.spec.js",
+   "clase": "test",
+   "congelado_en": "fase-0-accepted",
+   "lineas_cambiadas": 1,
+   "debilitamiento": [],
+   "aserciones_quitadas": [
+    "await expect(async () => { await page.goto(`${BASE}/material`); }).toPass({ timeout: 15000 });"
+   ],
+   "aserciones_puestas": [
+    "await expect(async () => { await page.goto(`${BASE}/material`); }).toPass({ timeout: 5000 });"
+   ],
+   "autorizado": true,
+   "autorizacion": "Q-task-implementer-007: Andres Leon (Cliente), puerta g17953742064beb — solo para endurecerlo",
+   "grave": false
+  },
+  {
+   "commit": "4dfb50f",
+   "asunto": "test(e2e): esperar a cada login y al servidor reiniciado en dos pruebas de la FASE-0",
+   "fichero": "tests/e2e/fase-0.spec.js",
+   "clase": "test",
+   "congelado_en": "fase-0-accepted",
+   "lineas_cambiadas": 3,
+   "debilitamiento": [
+    "plazo muy alargado"
+   ],
+   "aserciones_quitadas": [],
+   "aserciones_puestas": [
+    "await expect(async () => { await page.goto(`${BASE}/material`); }).toPass({ timeout: 15000 });"
+   ],
+   "autorizado": true,
+   "autorizacion": "Q-task-implementer-007: Andres Leon (Cliente), puerta g17953742064beb — solo para endurecerlo",
+   "grave": true
+  },
+  {
+   "commit": "7b19adf",
+   "asunto": "test(e2e): enseñar «No tienes multas» en Mis multas de Lucía en AC-011-01 y AC-017-08",
+   "fichero": "tests/e2e/fase-2.spec.js",
+   "clase": "test",
+   "congelado_en": "fase-2-accepted",
+   "lineas_cambiadas": 4,
+   "debilitamiento": [],
+   "aserciones_quitadas": [],
+   "aserciones_puestas": [
+    "await expect(page.getByRole('heading', { name: 'Entrar', level: 1 })).toBeVisible();",
+    "await expect(page.getByRole('heading', { name: 'Mis multas', level: 1, exact: true })).toBeVisible();",
+    "await expect(page.locator('.lista-multas .vacio')).toHaveText('No tienes multas');"
+   ],
+   "autorizado": true,
+   "autorizacion": "Q-task-implementer-008: Andres Leon (Cliente), puerta g1795376295722c",
+   "grave": false
+  }
+ ],
+ "capturas": [],
+ "coherencia": [],
+ "vinculos": [],
+ "lint_capturas": [],
+ "mutantes_cache": {
+  "de_cache": 0,
+  "ejecutados": 7
+ },
+ "mutantes": [
+  {
+   "req": "REQ-F-009",
+   "ac": 2,
+   "texto": "Sin préstamos ni multas",
+   "e2e": [
+    "tests/e2e/fase-5.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js",
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-009",
+   "ac": 3,
+   "texto": "Ningún socio coincide",
+   "e2e": [
+    "tests/e2e/fase-5.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-009",
+   "ac": 4,
+   "texto": "Historial del socio",
+   "e2e": [
+    "tests/e2e/fase-5.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-009",
+   "ac": 4,
+   "texto": "Entregar",
+   "e2e": [
+    "tests/e2e/fase-5.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js",
+    "src/ui/paginas/panel.js",
+    "src/server/servicios/panel.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-009",
+   "ac": 4,
+   "texto": "Devolver",
+   "e2e": [
+    "tests/e2e/fase-5.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-009",
+   "ac": 4,
+   "texto": "Marcar pagada",
+   "e2e": [
+    "tests/e2e/fase-5.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-009",
+   "ac": 4,
+   "texto": "Cancelar",
+   "e2e": [
+    "tests/e2e/fase-5.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js",
+    "src/ui/componentes.js",
+    "src/ui/paginas/mis-reservas.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  }
+ ],
+ "graves": 1
+}

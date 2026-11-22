@@ -1,0 +1,18 @@
+{
+ "peticiones": [],
+ "por_aplicar": [
+  "Q-task-implementer-001: El test e2e aceptado de FASE-0 AC-007-10 comprueba que `getByRole('button', { name: 'Reservar' })` tiene 0 elementos («Sin formulario ni botón «Reservar» todavía: llega en FASE-1»). FASE-1 (REQ-F-003, SCR-004, OPERATION-MAPPING API-002-01, botón «Reservar») añade justo ese botón a /reservar, así que esa comprobación falla y la suite e2e completa no puede quedar en verde. Los tests unitarios tests/unit/ui/reservar.test.js y entrar.test.js siguen pasando porque las funciones de página de FASE-0 no se han tocado (el formulario nuevo vive en paginaReservarConFormulario y paginaMisReservasConLista).\nRespuesta elegida: A) Quitar solo la comprobación obsoleta «aún no hay botón Reservar» (línea 288) del test AC-007-10 de FASE-0; el resto del test (Casco se ofrece, Cuerda no) queda igual\nPara el cliente: ¿Se quita de una prueba de la entrega 0 la comprobación de que en Reservar todavía no hay botón «Reservar», que ya no vale porque esta entrega lo añade? → A) Sí, se quita solo esa comprobación obsoleta\nTests ya existentes que la persona autoriza editar (solo estos; firmado en acceptance/decisions.jsonl): tests/e2e/fase-0.spec.js"
+ ],
+ "autorizaciones": [
+  {
+   "pregunta": "Q-task-implementer-001",
+   "letra": "A",
+   "ficheros": [
+    "tests/e2e/fase-0.spec.js"
+   ],
+   "endurecer": false,
+   "motivo": "El test e2e aceptado de FASE-0 AC-007-10 comprueba que `getByRole('button', { name: 'Reservar' })` tiene 0 elementos («Sin formulario ni botón «Reservar» todavía: llega en FASE-1»). FASE-1 (REQ-F-003, SCR-004, OPERATION-MAPPING API-002-01, botón «Reservar») añade justo ese botón a /reservar, así que esa comprobación falla y la suite e2e completa no puede quedar en verde. Los tests unitarios tests/unit/ui/reservar.test.js y entrar.test.js siguen pasando porque las funciones de página de FASE-0 no se han tocado (el formulario nuevo vive en paginaReservarC…"
+  }
+ ],
+ "abiertas": []
+}

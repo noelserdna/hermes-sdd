@@ -1,0 +1,122 @@
+{
+  "id": "g1795363352189a",
+  "tipo": "fase",
+  "fase": "1",
+  "tablero": "material-montana12",
+  "tarjeta": "t_a68cd557",
+  "adopcion": false,
+  "sha": "ada3e9b6e5f2af8be5b04e7fb0f87eec804e4ffb",
+  "creada": "2026-11-22T16:02:32Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana12",
+  "titulo": "Aceptar FASE-1",
+  "texto": "🧭 Encargado: 3 avisos (2 graves: Jev no puede aprobar esta puerta solo)\n‼️ Se cambió un test ya aceptado (playwright.config.js, 57a31be) sin que una persona lo autorizara\n‼️ Se cambió un test ya aceptado (playwright.config.js, c0abc18) sin que una persona lo autorizara\n• 2 texto(s) que los criterios dicen que se ven no están tal cual en el código de la app («2 × Linterna del 2026-12-05 al 2026-12-07 — Reservada», «2 × Casco del 2026-12-05 al 2026-12-07 — Cancelada»): o la app los compone (y nadie comprueba la plantilla) o no los enseña\n\n🧪 La FASE-1 de «material-montana12» está lista para revisar.\n\n⛔ Los requisitos pasan sus tests, pero la revisión independiente ha encontrado algo que no prueban.\n\n⚠️ Mis reservas y cancelar: pasa sus pruebas, pero la revisión independiente duda de que lo comprueben (CH-006) (6 de 6 criterios)\n✅ Reservar material: funciona y está comprobado (9 de 9 criterios)\n\n🤔 La revisión independiente tiene dudas sobre lo que pide el propio requisito; esto es tuyo:\n• CH-006 · Mis reservas y cancelar: «Mis reservas»\n  ❓ El criterio pide ver en «Mis reservas» tanto «La reserva ya estaba cancelada» como «No hay unidades libres: solo queda 1 de Casco el 2026-12-05», pero el segundo aviso solo puede salir en «Reservar»; la captura muestra los dos textos en Re…\n\n✏️ Si una duda es del propio criterio (está mal escrito o contradice otro), pulsa ✏️ Corregir el requisito y di cómo tiene que quedar: se lanza un cambio de requisitos y la fase se rehace con el criterio bueno. Si no es un fallo, 🗑 Descártala con su número y por qué.\n\n⛔ Se ha cambiado 1 test que ya existía y no lo autorizó nadie con su firma: no debería aceptarse sin saber por qué.\n• playwright.config.js: SIN autorización firmada\n\n🎬 Demo: vídeo y 15 capturas.\n\n🤖 Jev ha leído el texto en off de 15 vídeos: cada uno cuenta lo que pide su criterio.\n\n🧾 Demostrados: 12 de 15 criterios (prueba, captura, vídeo con voz y revisión).\nLes falta:\n• REQ-F-003 AC3: su THEN promete lo que no se ve ni se declara no visible: «Lucía still has one reservation of 2»\n• REQ-F-004 AC2: su THEN promete lo que no se ve ni se declara no visible: «its units become free»\n• REQ-F-004 AC3: su THEN promete lo que no se ve ni se declara no visible: «the units are not freed twice»\n\n👉 Pulsa ▶ Ver demo; después ❌ Rechazar para que se arregle, o 🗑 Descartar las que no sean un fallo (escribe su número, p. ej. CH-005, y por qué; la puerta vuelve sin ellas).\n\n❓ Antes, 2 preguntas (la recomendada ya está marcada en los botones Q):\n\n1. Cuando Lucía vuelve a pulsar «Cancelar» en una reserva ya cancelada, ¿el aviso «No hay unidades libres» debe verse también en «Mis reservas», o basta con verlo en «Reservar»?\n   🔧 Detalle técnico: REQ-F-004 AC3 pide ver en «Mis reservas» tanto «La reserva ya estaba cancelada» como «No hay unidades libres: solo queda 1 de Casco el 2026-12-05». La captura…\n   A) Sí, cada aviso se ve en la pantalla donde se produce  ⭐ recomendada\n   B) Sí, quiero ver ambos avisos en Mis reservas  (✏️ autoriza editar tests/e2e/fase-1.spec.js, src/ui/paginas/mis-reservas.js)\n\n2. ¿Se quita de una prueba de la entrega 0 la comprobación de que en Reservar todavía no hay botón «Reservar», que ya no vale porque esta entrega lo añade?\n   🔧 Detalle técnico: El test e2e aceptado de FASE-0 AC-007-10 comprueba que `getByRole('button', { name: 'Reservar' })` tiene 0 elementos («Sin formulario ni botón «Reservar» todav…\n   A) Sí, se quita solo esa comprobación obsoleta  ⭐ recomendada  (✏️ autoriza editar tests/e2e/fase-0.spec.js)\n   B) No, se deja la prueba como está\n\n👉 Si firmas sin tocar los botones Q, esto lanzará: ✏️ autoriza editar tests que ya existían: tests/e2e/fase-0.spec.js (Q2) · sin más efecto: Q1.",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "corrijo",
+      "etiqueta": "✏️ Corregir el requisito",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "descarto",
+      "etiqueta": "🗑 Descartar una impugnación",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-1/FASE-1-AC-007-01-REQ-F-003-AC1-Luc-a-reserva-2-.mp4",
+  "preguntas": [
+    {
+      "n": 1,
+      "id": "Q-acceptance-001",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "editar-test",
+          "ficheros": [
+            "tests/e2e/fase-1.spec.js",
+            "src/ui/paginas/mis-reservas.js"
+          ],
+          "declarado": true
+        }
+      },
+      "cliente": "Cuando Lucía vuelve a pulsar «Cancelar» en una reserva ya cancelada, ¿el aviso «No hay unidades libres» debe verse también en «Mis reservas», o basta con verlo en «Reservar»?"
+    },
+    {
+      "n": 2,
+      "id": "Q-task-implementer-001",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "editar-test",
+          "ficheros": [
+            "tests/e2e/fase-0.spec.js"
+          ],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "¿Se quita de una prueba de la entrega 0 la comprobación de que en Reservar todavía no hay botón «Reservar», que ya no vale porque esta entrega lo añade?"
+    }
+  ],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 1,
+  "bloqueo": true,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": true,
+        "codigo": "test-congelado",
+        "texto": "Se cambió un test ya aceptado (playwright.config.js, 57a31be) sin que una persona lo autorizara"
+      },
+      {
+        "grave": true,
+        "codigo": "test-congelado",
+        "texto": "Se cambió un test ya aceptado (playwright.config.js, c0abc18) sin que una persona lo autorizara"
+      },
+      {
+        "grave": false,
+        "codigo": "texto-fuera-del-codigo",
+        "texto": "2 texto(s) que los criterios dicen que se ven no están tal cual en el código de la app («2 × Linterna del 2026-12-05 al 2026-12-07 — Reservada», «2 × Casco del 2026-12-05 al 2026-12-07 — Cancelada»): o la app los compone (y nadie comprueba la plantilla) o no los enseña"
+      }
+    ],
+    "graves": 2
+  },
+  "narracion": {
+    "revisados": 15,
+    "modelo": "jev-1.14.0",
+    "contradicen": [],
+    "incompletos": []
+  }
+}

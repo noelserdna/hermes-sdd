@@ -1,0 +1,61 @@
+{
+  "id": "g17953790396752",
+  "tipo": "fase",
+  "fase": "5",
+  "tablero": "material-montana12",
+  "tarjeta": "t_cbe538ca",
+  "adopcion": false,
+  "sha": "efb931a3e7613f20efb8289a99406036c700a7fb",
+  "creada": "2026-11-22T20:23:59Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana12",
+  "titulo": "Aceptar FASE-5",
+  "texto": "🧭 Encargado: 1 aviso (1 grave: Jev no puede aprobar esta puerta solo)\n‼️ Se cambió un test ya aceptado (tests/e2e/fase-0.spec.js, 4dfb50f) debilitándolo: plazo muy alargado\n\n🧪 La FASE-5 de «material-montana12» está lista para revisar.\n\n✅ Todo en orden: los 3 requisitos de esta fase funcionan y están comprobados.\n\n✅ Historial de un socio para la junta: funciona y está comprobado (4 de 4 criterios)\n✅ Cada rol solo ve y hace lo suyo: funciona y está comprobado (4 de 4 criterios)\n✅ Datos personales y conservación: funciona y está comprobado (2 de 2 criterios)\n\n✏️ Se han cambiado 2 tests que ya existían, con la autorización que firmaste:\n• tests/e2e/fase-0.spec.js: autorizado (Q-task-implementer-007) — plazo muy alargado\n   quita: await expect(async () => { await page.goto(`${BASE}/material`); }).toPass({ timeout: 15000 });\n   pone: await expect(async () => { await page.goto(`${BASE}/material`); }).toPass({ timeout: 5000 }); · await expect(async () => { await page.goto(`${BASE}/material`);…\n• tests/e2e/fase-2.spec.js: autorizado (Q-task-implementer-008)\n   pone: await expect(page.getByRole('heading', { name: 'Entrar', level: 1 })).toBeVisible(); · await expect(page.getByRole('heading', { name: 'Mis multas', level: 1, e…\n\n🎬 Demo: vídeo y 5 capturas.\n\n🤖 Jev ha leído el texto en off de 4 vídeos: cada uno cuenta lo que pide su criterio.\n\n🧾 Demostrados: 4 de 4 criterios (prueba, captura, vídeo con voz y revisión).\n\n👉 Pulsa ▶ Ver demo; después podrás aceptarla, aceptarla con observaciones o rechazarla.",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Aceptar",
+      "paso": 2
+    },
+    {
+      "verbo": "observaciones",
+      "etiqueta": "📝 Con observaciones",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-5/FASE-5-AC-018-01-REQ-F-009-AC1-Luc-a-devolvi-2.mp4",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 1,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": true,
+        "codigo": "test-congelado",
+        "texto": "Se cambió un test ya aceptado (tests/e2e/fase-0.spec.js, 4dfb50f) debilitándolo: plazo muy alargado"
+      }
+    ],
+    "graves": 1
+  },
+  "narracion": {
+    "revisados": 4,
+    "modelo": "jev-1.14.0",
+    "contradicen": [],
+    "incompletos": []
+  }
+}

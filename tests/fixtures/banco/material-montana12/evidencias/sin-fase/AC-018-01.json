@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-018-01",
+ "test": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-01 REQ-F-009 AC1 Lucía devolvió 2 × Casco del 2026-12-05 al 2026-12-07 el 2026-12-09 y pagó su multa de 4 €: la junta busca «lucia» y ve su préstamo y su multa",
+ "titulo": "AC-018-01 REQ-F-009 AC1 Lucía devolvió 2 × Casco del 2026-12-05 al 2026-12-07 el 2026-12-09 y pagó su multa de 4 €: la junta busca «lucia» y ve su préstamo y su multa",
+ "ve": [
+  "2 × Casco del 2026-12-05 al 2026-12-07 — devuelto el 2026-12-09",
+  "Multa de 4 € — Pagada"
+ ],
+ "narrado": "Historial de un socio para la junta. En Historial del socio (ejemplo con datos: \"Multa de 4 € — Pagada\") se ve «2 × Casco del 2026-12-05 al 2026-12-07 — devuelto el 2026-12-09» y «Multa de 4 € — Pagada»: el préstamo de Lucía y su multa pagada.",
+ "url": "http://127.0.0.1:5173/historial",
+ "imagen": "AC-018-01.png",
+ "sha256": "sha256:ebe6cd1332cdcb5ae8dbf744af69f168765b6be1c0421fa8fc051382d1e0462c",
+ "at": "2026-11-22T19:44:14.130Z"
+}

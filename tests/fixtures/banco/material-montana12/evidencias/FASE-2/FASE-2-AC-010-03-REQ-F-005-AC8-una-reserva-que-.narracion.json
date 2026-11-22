@@ -1,0 +1,26 @@
+{
+ "video": "FASE-2-AC-010-03-REQ-F-005-AC8-una-reserva-que-.webm",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-010-03 REQ-F-005 AC8 una reserva que empieza el 2026-12-10 y Pablo pulsa «Entregar» el 2026-12-05: ve «No se puede entregar antes de la fecha de inicio»",
+ "titulo": "AC-010-03 REQ-F-005 AC8 una reserva que empieza el 2026-12-10 y Pablo pulsa «Entregar» el 2026-12-05: ve «No se puede entregar antes de la fecha de inicio»",
+ "narraciones": [
+  {
+   "t": 0.024,
+   "texto": "Requisito REQ-F-005: Entregar y recibir el material. Criterio 8 de 10.",
+   "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 8: antes de inicio. Dado que una reserva del 2026-12-10 y hoy es 2026-12-05, cuando el encargado pulsa Entregar, entonces ve No se puede entregar antes de la fecha de inicio en Panel del encargado y error E_ANTES_DE_INICIO y la reserva sigue Reservada. Ahora, la demostración.",
+   "presentacion": "AC-010-03"
+  },
+  {
+   "t": 0.856,
+   "texto": "Pablo tiene abierto el Panel con la reserva de Lucía, que empieza el 10 de diciembre"
+  },
+  {
+   "t": 1.082,
+   "texto": "Pero hoy es 5 de diciembre, antes del inicio: Pablo pulsa Entregar"
+  },
+  {
+   "t": 1.336,
+   "texto": "Entregar y recibir el material. En Panel del encargado se ve «No se puede entregar antes de la fecha de inicio».",
+   "criterio": "AC-010-03"
+  }
+ ]
+}

@@ -1,0 +1,30 @@
+{
+ "video": "SIN-FASE-AC-016-03-REQ-F-007-AC5-repetir-la-baja-.webm",
+ "test": "FASE-0 · Material (REQ-F-007) › AC-016-03 REQ-F-007 AC5 repetir la baja de la única «Cuerda» da «No hay tantas unidades para dar de baja» y sigue «Cuerda: 0 unidades»",
+ "titulo": "AC-016-03 REQ-F-007 AC5 repetir la baja de la única «Cuerda» da «No hay tantas unidades para dar de baja» y sigue «Cuerda: 0 unidades»",
+ "narraciones": [
+  {
+   "t": 0.021,
+   "texto": "Requisito REQ-F-007: Inventario. Criterio 5 de 6.",
+   "voz": "Requisito funcional 7: Inventario. El encargado añade material nuevo y da de baja las unidades rotas. Si una unidad rota hace falta para una reserva ya hecha, la web se lo avisa en lugar de dejarla sin material. Tiene 6 criterios de aceptación. Este vídeo demuestra el criterio 5: baja repetida. Dado que Cuerda tuvo 1 unidad y el encargado la retiró (stock 0), cuando envía la misma baja otra vez, entonces error E_BAJA_UNIDADES_INSUFICIENTES: No hay tantas unidades para dar de baja y ve Cuerda: 0 unidades. Ahora, la demostración.",
+   "presentacion": "AC-016-03"
+  },
+  {
+   "t": 0.631,
+   "texto": "Pablo entra como encargado y abre Material, donde queda 1 unidad de Cuerda"
+  },
+  {
+   "t": 1.107,
+   "texto": "Pablo da de baja la única Cuerda y confirma; el stock queda a 0"
+  },
+  {
+   "t": 1.411,
+   "texto": "Pablo envía la misma baja otra vez"
+  },
+  {
+   "t": 1.755,
+   "texto": "Inventario. En Material se ve «No hay tantas unidades para dar de baja» y «Cuerda: 0 unidades».",
+   "criterio": "AC-016-03"
+  }
+ ]
+}

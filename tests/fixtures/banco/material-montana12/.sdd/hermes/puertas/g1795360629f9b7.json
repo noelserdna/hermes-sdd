@@ -1,0 +1,55 @@
+{
+  "id": "g1795360629f9b7",
+  "tipo": "fase",
+  "fase": "0",
+  "tablero": "material-montana12",
+  "tarjeta": "t_5cd0766e",
+  "adopcion": false,
+  "sha": "cef2d7a9ff6a8f93efcb4106dd87d0b22f0aa8e5",
+  "creada": "2026-11-22T15:17:09Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana12",
+  "titulo": "Aceptar FASE-0",
+  "texto": "🧪 La FASE-0 de «material-montana12» está lista para revisar.\n\n✅ Todo en orden: los 2 requisitos de esta fase funcionan y están comprobados.\n\n✅ Entrar y salir: funciona y está comprobado (8 de 8 criterios)\n✅ Inventario: funciona y está comprobado (6 de 6 criterios)\n\n🛡 No se ha tocado ningún test que ya existía (ni sus ayudas ni su configuración).\n\n🎬 Demo: vídeo y 15 capturas.\n\n🤖 Jev ha leído el texto en off de 14 vídeos: cada uno cuenta lo que pide su criterio.\n\n🧾 Demostrados: 12 de 13 criterios (prueba, captura, vídeo con voz y revisión).\nLes falta:\n• REQ-F-001 AC7: su THEN promete lo que no se ve ni se declara no visible: «going back does not show private data»\n\n👉 Pulsa ▶ Ver demo; después podrás aceptarla, aceptarla con observaciones o rechazarla.",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Aceptar",
+      "paso": 2
+    },
+    {
+      "verbo": "observaciones",
+      "etiqueta": "📝 Con observaciones",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-0/FASE-0-AC-001-01-REQ-F-001-AC1-Luc-a-entra-y-ve.mp4",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [],
+    "graves": 0
+  },
+  "narracion": {
+    "revisados": 14,
+    "modelo": "jev-1.14.0",
+    "contradicen": [],
+    "incompletos": []
+  }
+}

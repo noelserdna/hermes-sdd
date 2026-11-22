@@ -1,0 +1,13 @@
+{
+ "criterio": "FASE-5-depuracion",
+ "test": "FASE-5 · Depuración del historial antiguo (UC-019) › FASE-5 recorrido de la depuración: con hoy = 2026-11-22 la junta ve a Marta con sus dos préstamos y, tras depurar dos veces, solo el de 2025-01-10",
+ "titulo": "FASE-5 recorrido de la depuración: con hoy = 2026-11-22 la junta ve a Marta con sus dos préstamos y, tras depurar dos veces, solo el de 2025-01-10",
+ "ve": [
+  "1 × Casco del 2025-01-08 al 2025-01-10 — devuelto el 2025-01-10"
+ ],
+ "narrado": null,
+ "url": "http://127.0.0.1:5173/historial",
+ "imagen": "FASE-5-depuracion.png",
+ "sha256": "sha256:5e61e8343f4f1149a098cb8cc1cd9603b5880540b89a073dda4888838f0b173d",
+ "at": "2026-11-22T19:44:22.070Z"
+}

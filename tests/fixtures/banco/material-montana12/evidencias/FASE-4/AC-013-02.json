@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-013-02",
+ "test": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-013-02 REQ-F-006 AC3 la multa de 6 € de Pablo Sanz acaba de pagarse y se pulsa «Marcar pagada» otra vez: ve «La multa ya estaba pagada» y una sola «Pablo Sanz — Multa de 6 € — Pagada»",
+ "titulo": "AC-013-02 REQ-F-006 AC3 la multa de 6 € de Pablo Sanz acaba de pagarse y se pulsa «Marcar pagada» otra vez: ve «La multa ya estaba pagada» y una sola «Pablo Sanz — Multa de 6 € — Pagada»",
+ "ve": [
+  "La multa ya estaba pagada",
+  "Pablo Sanz — Multa de 6 € — Pagada"
+ ],
+ "narrado": "Multas y bloqueo hasta pagarlas. En Multas se ve «La multa ya estaba pagada» y «Pablo Sanz — Multa de 6 € — Pagada»: sigue siendo una sola multa de 6 euros y sigue Pagada.",
+ "url": "http://127.0.0.1:5173/multas",
+ "imagen": "AC-013-02.png",
+ "sha256": "sha256:48424b32613ec73703954f56d0a1c8afe092221211be52f4c7d9da6a1d4ed30d",
+ "at": "2026-11-22T20:35:24.816Z"
+}

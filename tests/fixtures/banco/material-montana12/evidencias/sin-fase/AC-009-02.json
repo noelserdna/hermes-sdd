@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-009-02",
+ "test": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-009-02 REQ-F-004 AC3 Lucía repite «Cancelar» desde una pestaña vieja y ve «La reserva ya estaba cancelada»; las unidades no se liberan dos veces",
+ "titulo": "AC-009-02 REQ-F-004 AC3 Lucía repite «Cancelar» desde una pestaña vieja y ve «La reserva ya estaba cancelada»; las unidades no se liberan dos veces",
+ "ve": [
+  "La reserva ya estaba cancelada",
+  "No hay unidades libres: solo queda 1 de Casco el 2026-12-05"
+ ],
+ "narrado": "Mis reservas y cancelar. Se ve «La reserva ya estaba cancelada» y «No hay unidades libres: solo queda 1 de Casco el 2026-12-05»: las unidades no se liberan dos veces.",
+ "url": "http://127.0.0.1:5173/reservar",
+ "imagen": "AC-009-02.png",
+ "sha256": "sha256:b12fef4fe0e947c087e182731ea7d8e5007d31e0b045baa642e24d2b692525cd",
+ "at": "2026-11-22T19:42:59.829Z"
+}

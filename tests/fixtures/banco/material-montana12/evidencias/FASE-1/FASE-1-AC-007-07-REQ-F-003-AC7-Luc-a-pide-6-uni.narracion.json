@@ -1,0 +1,22 @@
+{
+ "video": "FASE-1-AC-007-07-REQ-F-003-AC7-Luc-a-pide-6-uni.webm",
+ "test": "FASE-1 · Reservar material (REQ-F-003) › AC-007-07 REQ-F-003 AC7 Lucía pide 6 unidades de un tipo y ve «Máximo 5 unidades por reserva»",
+ "titulo": "AC-007-07 REQ-F-003 AC7 Lucía pide 6 unidades de un tipo y ve «Máximo 5 unidades por reserva»",
+ "narraciones": [
+  {
+   "t": 0.022,
+   "texto": "Requisito REQ-F-003: Reservar material. Criterio 7 de 9.",
+   "voz": "Requisito funcional 3: Reservar material. El socio elige material, cantidad y fechas y lo reserva si quedan unidades libres todos esos días. Si no quedan, se lo dice. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 7: demasiadas unidades. cuando Lucía pide 6 unidades de un tipo, entonces error E_MAX_UNIDADES: Máximo 5 unidades por reserva. Ahora, la demostración.",
+   "presentacion": "AC-007-07"
+  },
+  {
+   "t": 0.794,
+   "texto": "Lucía abre Reservar y pide 6 cascos de golpe"
+  },
+  {
+   "t": 1.178,
+   "texto": "Reservar material. En Reservar se ve «Máximo 5 unidades por reserva».",
+   "criterio": "AC-007-07"
+  }
+ ]
+}

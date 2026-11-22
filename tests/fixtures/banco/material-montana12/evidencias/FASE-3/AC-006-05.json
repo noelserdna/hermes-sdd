@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-006-05",
+ "test": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-05 REQ-F-002 AC8 Pablo, socio, tiene una multa pendiente de 4 € y la encargada Nuria lo da de baja: ve «No se puede dar de baja: tiene multas sin pagar»",
+ "titulo": "AC-006-05 REQ-F-002 AC8 Pablo, socio, tiene una multa pendiente de 4 € y la encargada Nuria lo da de baja: ve «No se puede dar de baja: tiene multas sin pagar»",
+ "ve": [
+  "No se puede dar de baja: tiene multas sin pagar"
+ ],
+ "narrado": "Alta, baja y contraseña de los socios. En Socios se ve «No se puede dar de baja: tiene multas sin pagar»: Pablo sigue activo.",
+ "url": "http://127.0.0.1:5173/socios",
+ "imagen": "AC-006-05.png",
+ "sha256": "sha256:ae309d679c5793c3e6341b3d4aa400fa9678ef62c435bb3197d58f99b02b0cb7",
+ "at": "2026-11-22T20:35:12.777Z"
+}

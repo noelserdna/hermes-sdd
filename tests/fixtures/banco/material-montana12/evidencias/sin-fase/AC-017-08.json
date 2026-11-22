@@ -1,0 +1,15 @@
+{
+ "criterio": "AC-017-08",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-08 REQ-F-005 AC9 un préstamo de 2 × Casco acabó el 2026-12-07 sin devolver: Pablo abre el Panel el 2026-12-10 y ve «Retraso: 3 días» y «No hay multas»",
+ "titulo": "AC-017-08 REQ-F-005 AC9 un préstamo de 2 × Casco acabó el 2026-12-07 sin devolver: Pablo abre el Panel el 2026-12-10 y ve «Retraso: 3 días» y «No hay multas»",
+ "ve": [
+  "Retraso: 3 días",
+  "No hay multas",
+  "No tienes multas"
+ ],
+ "narrado": "Entregar y recibir el material. En Panel del encargado se ve «Retraso: 3 días» junto al préstamo y «No hay multas», y Lucía ve «No tienes multas» en Mis multas: la multa no se crea hasta marcar la devolución.",
+ "url": "http://127.0.0.1:5173/mis-multas",
+ "imagen": "AC-017-08.png",
+ "sha256": "sha256:bce10439e5e230b01720959c2ca7c04c191d14cbce9bdac7c2354eb1a28e2bca",
+ "at": "2026-11-22T19:43:21.496Z"
+}

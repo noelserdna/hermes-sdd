@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-04",
+ "test": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-04 REQ-F-001 AC4 tras 5 fallos Lucía entra con la contraseña buena y ve «Cuenta bloqueada. Vuelve a intentarlo en 15 minutos»",
+ "titulo": "AC-001-04 REQ-F-001 AC4 tras 5 fallos Lucía entra con la contraseña buena y ve «Cuenta bloqueada. Vuelve a intentarlo en 15 minutos»",
+ "ve": [
+  "Cuenta bloqueada. Vuelve a intentarlo en 15 minutos"
+ ],
+ "narrado": "Entrar y salir. En Entrar se ve «Cuenta bloqueada. Vuelve a intentarlo en 15 minutos».",
+ "url": "http://127.0.0.1:5173/mis-reservas",
+ "imagen": "AC-001-04.png",
+ "sha256": "sha256:af4d8d296d0c24d93e4cdb42216fd8094d9a9264b4e13680115dd5464f0e39cb",
+ "at": "2026-11-22T20:33:19.577Z"
+}

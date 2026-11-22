@@ -1,0 +1,121 @@
+<testsuites id="" name="" tests="9" failures="0" skipped="0" errors="0" time="22.280523000000002">
+<testsuite name="fase-3-alta-primer-acceso.spec.js" timestamp="2026-11-22T20:34:54.686Z" hostname="chromium" tests="9" failures="0" skipped="0" time="19.872" errors="0">
+<testcase name="FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-01 REQ-F-002 AC1 Pablo registra a «Marta Ruiz» con «marta@club.test» y la contraseña «Provisional1»: ve «Socio creado: Marta Ruiz» y «Marta Ruiz — Activo»" classname="fase-3-alta-primer-acceso.spec.js" time="2.102">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2dd1c-iz»-y-«Marta-Ruiz-—-Activo»-chromium/attachments/AC-003-01-96bc13639414bc31a25e9df6bd35a548eb70c34f.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2dd1c-iz»-y-«Marta-Ruiz-—-Activo»-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2dd1c-iz»-y-«Marta-Ruiz-—-Activo»-chromium/attachments/WF-002-AC-003-01-REQ-F-002-AC1-Pablo-registra-a-366e6980b2c626b7add9d70ccc15c568021ed6e8.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2dd1c-iz»-y-«Marta-Ruiz-—-Activo»-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-02 REQ-F-002 AC2 «Marta Ruiz» ya existe y Pablo registra otra vez «marta@club.test»: ve «Ya existe un socio con ese correo» y una sola «Marta Ruiz — Activo»" classname="fase-3-alta-primer-acceso.spec.js" time="1.833">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--db50c--sola-«Marta-Ruiz-—-Activo»-chromium/attachments/AC-003-02-2976a8b9e9441a95daf309686cbd8bd98cb804f1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--db50c--sola-«Marta-Ruiz-—-Activo»-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--db50c--sola-«Marta-Ruiz-—-Activo»-chromium/attachments/WF-002-AC-003-02-REQ-F-002-AC2-Marta-Ruiz-ya--afc31bf5473798a2dc1fbfc2a9fbaef57b633dc4.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--db50c--sola-«Marta-Ruiz-—-Activo»-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-03 REQ-F-002 AC3 Pablo escribe la contraseña provisional «corta»: ve «La contraseña debe tener al menos 8 caracteres»" classname="fase-3-alta-primer-acceso.spec.js" time="1.72">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d13ec-ener-al-menos-8-caracteres»-chromium/attachments/AC-003-03-bd65426efb185a9e0148e7a68bc18d84fedb8d29.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d13ec-ener-al-menos-8-caracteres»-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d13ec-ener-al-menos-8-caracteres»-chromium/attachments/WF-002-AC-003-03-REQ-F-002-AC3-Pablo-escribe-la-61ab039026244932414289c7b8a579d537ee35d4.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d13ec-ener-al-menos-8-caracteres»-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-004-01 REQ-F-002 AC4 Marta entra con su contraseña provisional: ve «Elige una contraseña nueva» y no sigue hasta elegir una de 8 caracteres o más" classname="fase-3-alta-primer-acceso.spec.js" time="2.125">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--dff3c-r-una-de-8-caracteres-o-más-chromium/attachments/AC-004-01-2a2d530ff1e40a37b33f70c3f05b19642b5d42a1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--dff3c-r-una-de-8-caracteres-o-más-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--dff3c-r-una-de-8-caracteres-o-más-chromium/attachments/WF-002-AC-004-01-REQ-F-002-AC4-Marta-entra-con--50baa086a9eebb48bb84a918de2c1147d4f81533.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--dff3c-r-una-de-8-caracteres-o-más-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-005-01 REQ-F-002 AC5 Marta olvidó su contraseña y Pablo fija «Otra12345» para ella: ve «Contraseña provisional guardada para Marta Ruiz»; Marta entra con «Otra12345» y ya no con la antigua" classname="fase-3-alta-primer-acceso.spec.js" time="3.584">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--5ed99-345»-y-ya-no-con-la-antigua-chromium/attachments/AC-005-01-070097d4a361d590ea530d0bf9bc53bd6b8bad7f.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--5ed99-345»-y-ya-no-con-la-antigua-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--5ed99-345»-y-ya-no-con-la-antigua-chromium/attachments/WF-002-AC-005-01-REQ-F-002-AC5-Marta-olvid-su--828a1bfedc8ad2c253f6536c9b76d9d5a3a8d7f0.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--5ed99-345»-y-ya-no-con-la-antigua-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-01 REQ-F-002 AC6 Marta no tiene préstamos abiertos ni multas pendientes y Pablo la da de baja: ve «Socio dado de baja: Marta Ruiz» y Marta ya no entra" classname="fase-3-alta-primer-acceso.spec.js" time="2.197">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d7e76-a-Ruiz»-y-Marta-ya-no-entra-chromium/attachments/AC-006-01-f7a9497e54a6fdf60655443cc76ea64a87401112.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d7e76-a-Ruiz»-y-Marta-ya-no-entra-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d7e76-a-Ruiz»-y-Marta-ya-no-entra-chromium/attachments/WF-002-AC-006-01-REQ-F-002-AC6-Marta-no-tiene-p-43bf26f9dcc47b669c2db017efa86b8533e4203e.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--d7e76-a-Ruiz»-y-Marta-ya-no-entra-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-04 REQ-F-002 AC7 Lucía tiene 1 préstamo sin devolver y Pablo la da de baja: ve «No se puede dar de baja: tiene material sin devolver» y «Lucía Gil — Activo»; Lucía sigue entrando" classname="fase-3-alta-primer-acceso.spec.js" time="2.131">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2a920-ctivo»-Lucía-sigue-entrando-chromium/attachments/AC-006-04-2ec3932fe694936ca050f28fa778a8fb643153d7.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2a920-ctivo»-Lucía-sigue-entrando-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2a920-ctivo»-Lucía-sigue-entrando-chromium/attachments/WF-002-AC-006-04-REQ-F-002-AC7-Luc-a-tiene-1-pr-084b0cf3e06bcf466c3d37588604132e67eb81c3.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--2a920-ctivo»-Lucía-sigue-entrando-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-05 REQ-F-002 AC8 Pablo, socio, tiene una multa pendiente de 4 € y la encargada Nuria lo da de baja: ve «No se puede dar de baja: tiene multas sin pagar»" classname="fase-3-alta-primer-acceso.spec.js" time="1.73">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--6380f-aja-tiene-multas-sin-pagar»-chromium/attachments/AC-006-05-099711fa4613e5eb7585b2b580324bdffe53a601.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--6380f-aja-tiene-multas-sin-pagar»-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--6380f-aja-tiene-multas-sin-pagar»-chromium/attachments/WF-002-AC-006-05-REQ-F-002-AC8-Pablo-socio-ti-85e5d0aa9f29e5510be415efb2a70e87aab89497.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--6380f-aja-tiene-multas-sin-pagar»-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-03 REQ-F-002 AC9 Marta tiene 2 × Casco del 2026-12-05 al 2026-12-07 y Pablo la da de baja: ve «Socio dado de baja: Marta Ruiz» y Lucía reserva lo mismo: «Reserva creada: 2 × Casco del 2026-12-05 al 2026-12-07»" classname="fase-3-alta-primer-acceso.spec.js" time="2.45">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--3681b-l-2026-12-05-al-2026-12-07»-chromium/attachments/AC-006-03-1936ec791a4fc1a27c22e0970aa22ad24c1f4abd.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--3681b-l-2026-12-05-al-2026-12-07»-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--3681b-l-2026-12-05-al-2026-12-07»-chromium/attachments/WF-002-AC-006-03-REQ-F-002-AC9-Marta-tiene-2--7c7bd2bbb58439eb63486fdeb628a5ee0243d74c.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-alta-primer-acceso--3681b-l-2026-12-05-al-2026-12-07»-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

@@ -1,0 +1,56 @@
+{
+  "id": "g179536039178f5",
+  "tipo": "fase",
+  "fase": "0",
+  "tablero": "material-montana12",
+  "tarjeta": "t_58c72f29",
+  "adopcion": false,
+  "sha": "617c51bfec5c42ccfc75ffe1d080a327bc82212a",
+  "creada": "2026-11-22T15:13:11Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana12",
+  "titulo": "Aceptar FASE-0",
+  "texto": "🧪 La FASE-0 de «material-montana12» está lista para revisar.\n\n⛔ Los requisitos pasan sus tests, pero la revisión independiente ha encontrado algo que no prueban.\n\n⚠️ Entrar y salir: pasa sus pruebas, pero la revisión independiente duda de que lo comprueben (CH-001) (8 de 8 criterios)\n✅ Inventario: funciona y está comprobado (6 de 6 criterios)\n\n🤔 La revisión independiente tiene dudas sobre lo que pide el propio requisito; esto es tuyo:\n• CH-001 · Entrar y salir: «GIVEN a session with 30 minutes without activity WHEN the user opens any page THEN the user sees the form \"Entrar\"»\n  ❓ El texto del criterio sigue diciendo 30 minutos sin actividad, pero el cliente decidió que la sesión se cierra al pasar de 30 minutos (con 30 exactos sigue abierta). El código y la prueba (31 minutos) cumplen la decisión; falta que una per…\n\n✏️ Si una duda es del propio criterio (está mal escrito o contradice otro), pulsa ✏️ Corregir el requisito y di cómo tiene que quedar: se lanza un cambio de requisitos y la fase se rehace con el criterio bueno. Si no es un fallo, 🗑 Descártala con su número y por qué.\n\n🛡 No se ha tocado ningún test que ya existía (ni sus ayudas ni su configuración).\n\n🎬 Demo: vídeo y 15 capturas.\n\n🤖 Jev ha leído el texto en off de 14 vídeos: cada uno cuenta lo que pide su criterio.\n\n🧾 Demostrados: 12 de 13 criterios (prueba, captura, vídeo con voz y revisión).\nLes falta:\n• REQ-F-001 AC7: su THEN promete lo que no se ve ni se declara no visible: «going back does not show private data»\n\n👉 Pulsa ▶ Ver demo; después ❌ Rechazar para que se arregle, o 🗑 Descartar las que no sean un fallo (escribe su número, p. ej. CH-005, y por qué; la puerta vuelve sin ellas).",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "corrijo",
+      "etiqueta": "✏️ Corregir el requisito",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "descarto",
+      "etiqueta": "🗑 Descartar una impugnación",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-0/FASE-0-AC-001-01-REQ-F-001-AC1-Luc-a-entra-y-ve.mp4",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": true,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [],
+    "graves": 0
+  },
+  "narracion": {
+    "revisados": 14,
+    "modelo": "jev-1.14.0",
+    "contradicen": [],
+    "incompletos": []
+  }
+}

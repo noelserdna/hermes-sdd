@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-016-03",
+ "test": "FASE-0 · Material (REQ-F-007) › AC-016-03 REQ-F-007 AC5 repetir la baja de la única «Cuerda» da «No hay tantas unidades para dar de baja» y sigue «Cuerda: 0 unidades»",
+ "titulo": "AC-016-03 REQ-F-007 AC5 repetir la baja de la única «Cuerda» da «No hay tantas unidades para dar de baja» y sigue «Cuerda: 0 unidades»",
+ "ve": [
+  "No hay tantas unidades para dar de baja",
+  "Cuerda: 0 unidades"
+ ],
+ "narrado": "Inventario. En Material se ve «No hay tantas unidades para dar de baja» y «Cuerda: 0 unidades».",
+ "url": "http://127.0.0.1:5173/material",
+ "imagen": "AC-016-03.png",
+ "sha256": "sha256:d5c6e12115d6e34e7821e6c4256adcf39df8bf7111cd54d1d6a7f85ce37e1652",
+ "at": "2026-11-22T20:33:37.188Z"
+}

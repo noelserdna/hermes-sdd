@@ -1,0 +1,1 @@
+- FASE-0 (Andres Leon, 2026-11-22): He visto los vídeos: entrar, salir, bloqueo, sesión caducada, permisos e inventario hacen lo que piden sus criterios. Una observación: la web se ve como HTML sin estilo; aplicad el diseño visual que ya está hecho en ux/ (colores, tipografía, formularios y listas legibles) en las pantallas que ya existen y en las nuevas.

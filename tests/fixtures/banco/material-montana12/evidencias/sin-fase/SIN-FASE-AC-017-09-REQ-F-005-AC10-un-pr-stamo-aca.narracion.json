@@ -1,0 +1,22 @@
+{
+ "video": "SIN-FASE-AC-017-09-REQ-F-005-AC10-un-pr-stamo-aca.webm",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-09 REQ-F-005 AC10 un préstamo acabó el 2026-12-07 sin devolver: Pablo abre el Panel el 2026-12-08 y ve «Retraso: 1 día»",
+ "titulo": "AC-017-09 REQ-F-005 AC10 un préstamo acabó el 2026-12-07 sin devolver: Pablo abre el Panel el 2026-12-08 y ve «Retraso: 1 día»",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-005: Entregar y recibir el material. Criterio 10 de 10.",
+   "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 10: retraso de 1 día. Dado que el préstamo terminó el 2026-12-07 y no se devolvió, cuando abre el panel el 2026-12-08, entonces ve Retraso: 1 día. Ahora, la demostración.",
+   "presentacion": "AC-017-09"
+  },
+  {
+   "t": 0.549,
+   "texto": "Es 8 de diciembre y los cascos de Lucía, que acabaron el 7, siguen sin devolver. Pablo abre el Panel del encargado"
+  },
+  {
+   "t": 1.037,
+   "texto": "Entregar y recibir el material. En Panel del encargado se ve «Retraso: 1 día», en singular.",
+   "criterio": "AC-017-09"
+  }
+ ]
+}

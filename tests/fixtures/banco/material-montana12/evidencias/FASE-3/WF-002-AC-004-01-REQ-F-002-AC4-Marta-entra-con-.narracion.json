@@ -1,0 +1,30 @@
+{
+ "video": "WF-002-AC-004-01-REQ-F-002-AC4-Marta-entra-con-.webm",
+ "test": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-004-01 REQ-F-002 AC4 Marta entra con su contraseña provisional: ve «Elige una contraseña nueva» y no sigue hasta elegir una de 8 caracteres o más",
+ "titulo": "AC-004-01 REQ-F-002 AC4 Marta entra con su contraseña provisional: ve «Elige una contraseña nueva» y no sigue hasta elegir una de 8 caracteres o más",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-002: Alta, baja y contraseña de los socios. Criterio 4 de 9.",
+   "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 4: primer acceso. cuando Marta entra con su contraseña provisional, entonces ve Elige una contraseña nueva en Cambiar contraseña. Ahora, la demostración.",
+   "presentacion": "AC-004-01"
+  },
+  {
+   "t": 0.47,
+   "texto": "Marta, la socia nueva, abre la web y entra con el correo marta@club.test y la contraseña provisional que le dio Pablo"
+  },
+  {
+   "t": 0.933,
+   "texto": "La web no la deja seguir: solo le pide elegir su contraseña. Escribe una demasiado corta y pulsa «Guardar»"
+  },
+  {
+   "t": 1.22,
+   "texto": "Alta, baja y contraseña de los socios. En Cambiar contraseña se ve «Elige una contraseña nueva», «Elige una contraseña nueva» y «La contraseña debe tener al menos 8 caracteres»: Marta no puede seguir hasta elegir una de 8 caracteres o más.",
+   "criterio": "AC-004-01"
+  },
+  {
+   "t": 1.572,
+   "texto": "Ahora Marta elige «MiClave2026» y la web la lleva a Mis reservas"
+  }
+ ]
+}

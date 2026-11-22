@@ -1,0 +1,22 @@
+{
+ "video": "SIN-FASE-AC-017-04-REQ-F-008-AC4-no-hay-pr-stamos.webm",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-04 REQ-F-008 AC4 no hay préstamos y Pablo abre el Panel: ve «No hay material prestado»",
+ "titulo": "AC-017-04 REQ-F-008 AC4 no hay préstamos y Pablo abre el Panel: ve «No hay material prestado»",
+ "narraciones": [
+  {
+   "t": 0.02,
+   "texto": "Requisito REQ-F-008: Qué hay prestado y qué vuelve cada día. Criterio 4 de 7.",
+   "voz": "Requisito funcional 8: Qué hay prestado y qué vuelve cada día. El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 4: sin préstamos. Dado que no hay préstamos, cuando abre el panel, entonces ve No hay material prestado. Ahora, la demostración.",
+   "presentacion": "AC-017-04"
+  },
+  {
+   "t": 0.57,
+   "texto": "Es 5 de diciembre y no hay nada prestado. Pablo abre el Panel del encargado"
+  },
+  {
+   "t": 1.08,
+   "texto": "Qué hay prestado y qué vuelve cada día. En Panel del encargado se ve «No hay material prestado».",
+   "criterio": "AC-017-04"
+  }
+ ]
+}

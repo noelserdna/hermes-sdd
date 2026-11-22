@@ -1,0 +1,20 @@
+{
+ "video": "SIN-FASE-AC-001-08-un-socio-que-abre-material-ve.webm",
+ "test": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-08 un socio que abre /material ve la página «Sin permiso» y ningún dato del encargado",
+ "titulo": "AC-001-08 un socio que abre /material ve la página «Sin permiso» y ningún dato del encargado",
+ "narraciones": [
+  {
+   "t": 0.195,
+   "texto": "Lucía entra como socia"
+  },
+  {
+   "t": 0.591,
+   "texto": "Lucía escribe la dirección de Material, que es del encargado"
+  },
+  {
+   "t": 0.889,
+   "texto": "La web muestra Sin permiso y no enseña nada del material",
+   "criterio": "AC-001-08"
+  }
+ ]
+}

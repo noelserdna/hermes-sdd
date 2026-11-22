@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-007-09",
+ "test": "FASE-1 · Reservar material (REQ-F-003) › AC-007-09 REQ-F-003 AC9 Lucía con una multa pendiente de 2 € intenta reservar y ve «No puedes reservar hasta pagar tu multa de 2 €»",
+ "titulo": "AC-007-09 REQ-F-003 AC9 Lucía con una multa pendiente de 2 € intenta reservar y ve «No puedes reservar hasta pagar tu multa de 2 €»",
+ "ve": [
+  "No puedes reservar hasta pagar tu multa de 2 €"
+ ],
+ "narrado": "Reservar material. En Reservar se ve «No puedes reservar hasta pagar tu multa de 2 €».",
+ "url": "http://127.0.0.1:5173/reservar",
+ "imagen": "AC-007-09.png",
+ "sha256": "sha256:1d46a7400441361f084df557f9512c834fe2bb0a517c80155bf64261f5308d62",
+ "at": "2026-11-22T19:42:49.249Z"
+}

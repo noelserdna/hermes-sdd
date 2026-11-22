@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-015-02",
+ "test": "FASE-0 · Material (REQ-F-007) › AC-015-02 REQ-F-007 AC2 el encargado crea el tipo nuevo «Mosquetón» con 10 unidades y ve «Mosquetón: 10 unidades»",
+ "titulo": "AC-015-02 REQ-F-007 AC2 el encargado crea el tipo nuevo «Mosquetón» con 10 unidades y ve «Mosquetón: 10 unidades»",
+ "ve": [
+  "Mosquetón: 10 unidades"
+ ],
+ "narrado": "Inventario. En Material se ve «Mosquetón: 10 unidades».",
+ "url": "http://127.0.0.1:5173/material",
+ "imagen": "AC-015-02.png",
+ "sha256": "sha256:b974f38f7691bb023f93f98175c34af97d1bc453001da0022c94fbe605a3813b",
+ "at": "2026-11-22T20:33:31.067Z"
+}

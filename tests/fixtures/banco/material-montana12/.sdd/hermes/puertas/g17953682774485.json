@@ -1,0 +1,62 @@
+{
+  "id": "g17953682774485",
+  "tipo": "preguntas",
+  "fase": "3",
+  "tablero": "material-montana12",
+  "tarjeta": "t_e5d70aa1",
+  "adopcion": false,
+  "sha": "ee2e51e51ad2f55f05cbf289d411f87ddf31dc53",
+  "creada": "2026-11-22T17:24:37Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana12",
+  "titulo": "Preguntas de la FASE-3",
+  "texto": "⏸ La FASE-3 de «material-montana12» se ha parado: para seguir necesita que decidas esto.\n\nAl responder, la FASE-3 sigue con tus respuestas. Si alguna pide cambiar los requisitos ya aprobados, no se reabren a mitad de camino: queda anotada para la siguiente entrega.\n\n👉 Elige en los botones Q (la recomendada ya está marcada) y pulsa ✅ Responder.\n\n❓ Antes, una pregunta (la recomendada ya está marcada en los botones Q):\n\n1. Como la web no deja reservar fechas que ya han pasado, el vídeo de «No recogida» no puede enseñar que las unidades quedan libres reservándolas de nuevo: ¿qué prefieres?\n   🔧 Detalle técnico: La observación pide que, tras una «No recogida», otro socio reserve las mismas 2 × Casco en las mismas fechas (2026-12-05..07) y vea «Reserva creada». Pero el…\n   A) Se deja el vídeo como está y se explica que no se puede enseñar reservando  ⭐ recomendada\n   B) Se cambia solo la frase que dice la voz del vídeo  (✏️ autoriza editar tests/e2e/fase-2.spec.js)\n   C) Se pide un cambio de requisitos, que se decide aparte  (📌 se anota para la siguiente entrega)\n\n👉 Si firmas sin tocar los botones Q, esto lanzará: sin más efecto: Q1.",
+  "opciones": [
+    {
+      "verbo": "respondo",
+      "etiqueta": "✅ Responder"
+    }
+  ],
+  "demo": "",
+  "preguntas": [
+    {
+      "n": 1,
+      "id": "Q-task-implementer-004",
+      "opciones": [
+        "A",
+        "B",
+        "C"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "editar-test",
+          "ficheros": [
+            "tests/e2e/fase-2.spec.js"
+          ],
+          "declarado": true
+        },
+        "C": {
+          "efecto": "req-change",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "Como la web no deja reservar fechas que ya han pasado, el vídeo de «No recogida» no puede enseñar que las unidades quedan libres reservándolas de nuevo: ¿qué prefieres?"
+    }
+  ],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [],
+    "graves": 0
+  }
+}

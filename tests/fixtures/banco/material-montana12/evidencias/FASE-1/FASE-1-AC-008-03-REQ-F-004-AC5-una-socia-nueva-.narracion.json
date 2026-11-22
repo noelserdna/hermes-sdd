@@ -1,0 +1,22 @@
+{
+ "video": "FASE-1-AC-008-03-REQ-F-004-AC5-una-socia-nueva-.webm",
+ "test": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-03 REQ-F-004 AC5 una socia nueva sin reservas abre Mis reservas y ve «Aún no tienes reservas»",
+ "titulo": "AC-008-03 REQ-F-004 AC5 una socia nueva sin reservas abre Mis reservas y ve «Aún no tienes reservas»",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-004: Mis reservas y cancelar. Criterio 5 de 6.",
+   "voz": "Requisito funcional 4: Mis reservas y cancelar. El socio ve sus reservas y las puede cancelar hasta el día antes de que empiecen. Tiene 6 criterios de aceptación. Este vídeo demuestra el criterio 5: socio nuevo. Dado que una socia nueva sin reservas, cuando abre Mis reservas, entonces ve Aún no tienes reservas. Ahora, la demostración.",
+   "presentacion": "AC-008-03"
+  },
+  {
+   "t": 0.509,
+   "texto": "Lucía, socia nueva, entra al club y abre Mis reservas"
+  },
+  {
+   "t": 0.984,
+   "texto": "Mis reservas y cancelar. En Mis reservas se ve «Aún no tienes reservas».",
+   "criterio": "AC-008-03"
+  }
+ ]
+}

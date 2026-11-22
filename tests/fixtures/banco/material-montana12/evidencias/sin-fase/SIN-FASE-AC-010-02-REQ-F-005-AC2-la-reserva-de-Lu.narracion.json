@@ -1,0 +1,26 @@
+{
+ "video": "SIN-FASE-AC-010-02-REQ-F-005-AC2-la-reserva-de-Lu.webm",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-010-02 REQ-F-005 AC2 la reserva de Lucía acaba de entregarse y «Entregar» se envía otra vez: Pablo ve «Ya estaba entregada» y un solo préstamo",
+ "titulo": "AC-010-02 REQ-F-005 AC2 la reserva de Lucía acaba de entregarse y «Entregar» se envía otra vez: Pablo ve «Ya estaba entregada» y un solo préstamo",
+ "narraciones": [
+  {
+   "t": 0.019,
+   "texto": "Requisito REQ-F-005: Entregar y recibir el material. Criterio 2 de 10.",
+   "voz": "Requisito funcional 5: Entregar y recibir el material. El encargado marca lo que entrega y lo que le devuelven. Si algo vuelve tarde, la multa de 2 € por cada día de retraso se crea sola. Tiene 10 criterios de aceptación. Este vídeo demuestra el criterio 2: replay. Dado que la reserva acaba de entregarse, cuando se envía Entregar otra vez, entonces ve Ya estaba entregada en Panel del encargado y ve una sola fila Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07, no repetida. Ahora, la demostración.",
+   "presentacion": "AC-010-02"
+  },
+  {
+   "t": 0.906,
+   "texto": "Pablo tiene el Panel abierto en esta pestaña con la reserva de Lucía por entregar"
+  },
+  {
+   "t": 1.168,
+   "texto": "La reserva ya se entregó desde otra pestaña, pero aquí el botón sigue ahí; Pablo pulsa Entregar otra vez"
+  },
+  {
+   "t": 1.42,
+   "texto": "Entregar y recibir el material. En Panel del encargado se ve «Ya estaba entregada» y «Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07»: el préstamo sigue siendo uno solo.",
+   "criterio": "AC-010-02"
+  }
+ ]
+}

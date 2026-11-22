@@ -1,0 +1,22 @@
+{
+ "video": "WF-001-AC-012-03-REQ-F-006-AC6-Marta-sin-multas.webm",
+ "test": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-012-03 REQ-F-006 AC6 Marta sin multas mientras Pablo tiene una abre «Mis multas»: ve «No tienes multas» y nada de Pablo",
+ "titulo": "AC-012-03 REQ-F-006 AC6 Marta sin multas mientras Pablo tiene una abre «Mis multas»: ve «No tienes multas» y nada de Pablo",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-006: Multas y bloqueo hasta pagarlas. Criterio 6 de 7.",
+   "voz": "Requisito funcional 6: Multas y bloqueo hasta pagarlas. El socio ve sus multas y no puede reservar mientras deba alguna. Cuando el encargado la marca como pagada, vuelve a poder reservar. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 6: la multa de otro no cuenta. Dado que Marta no tiene multas y Pablo tiene una, cuando Marta abre Mis multas, entonces ve No tienes multas en Mis multas y no ve ninguna fila de Pablo. Ahora, la demostración.",
+   "presentacion": "AC-012-03"
+  },
+  {
+   "t": 0.803,
+   "texto": "Pablo Sanz debe una multa de 6 euros, pero Marta no debe nada. Marta abre Mis multas"
+  },
+  {
+   "t": 1.092,
+   "texto": "Multas y bloqueo hasta pagarlas. En Mis multas se ve «No tienes multas»: la multa de 6 euros de Pablo no aparece en la lista de Marta.",
+   "criterio": "AC-012-03"
+  }
+ ]
+}

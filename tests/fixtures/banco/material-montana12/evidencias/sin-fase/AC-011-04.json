@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-011-04",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-04 REQ-F-005 AC6 la devolución acaba de marcarse con multa de 6 € y «Devolver» se envía otra vez: Pablo ve «Ya estaba devuelta» y una sola multa de Lucía Gil",
+ "titulo": "AC-011-04 REQ-F-005 AC6 la devolución acaba de marcarse con multa de 6 € y «Devolver» se envía otra vez: Pablo ve «Ya estaba devuelta» y una sola multa de Lucía Gil",
+ "ve": [
+  "Ya estaba devuelta",
+  "Lucía Gil — Multa de 6 € — Pendiente"
+ ],
+ "narrado": "Entregar y recibir el material. En Panel del encargado se ve «Ya estaba devuelta» y «Lucía Gil — Multa de 6 € — Pendiente»: sigue habiendo una sola multa, de 6 euros.",
+ "url": "http://127.0.0.1:5173/panel",
+ "imagen": "AC-011-04.png",
+ "sha256": "sha256:f2200658a845770cd3977a0363648ecf788c0625544f55bae8e54226c1076d84",
+ "at": "2026-11-22T19:43:19.207Z"
+}

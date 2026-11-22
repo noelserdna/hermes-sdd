@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-007-03",
+ "test": "FASE-1 · Reservar material (REQ-F-003) › AC-007-03 REQ-F-003 AC3 Lucía repite el formulario de 2 × Linterna y ve «solo queda 1 de Linterna el 2026-12-05» con una sola reserva",
+ "titulo": "AC-007-03 REQ-F-003 AC3 Lucía repite el formulario de 2 × Linterna y ve «solo queda 1 de Linterna el 2026-12-05» con una sola reserva",
+ "ve": [
+  "No hay unidades libres: solo queda 1 de Linterna el 2026-12-05",
+  "2 × Linterna del 2026-12-05 al 2026-12-07 — Reservada"
+ ],
+ "narrado": "Reservar material. En Reservar se ve «No hay unidades libres: solo queda 1 de Linterna el 2026-12-05» y «2 × Linterna del 2026-12-05 al 2026-12-07 — Reservada»: Lucía sigue con una sola reserva de 2.",
+ "url": "http://127.0.0.1:5173/reservar",
+ "imagen": "AC-007-03.png",
+ "sha256": "sha256:25a926ab64b1aef78a68f13bbf91d28eb3abfb8fc791d0a50f18cf642b94e5b1",
+ "at": "2026-11-22T20:33:53.305Z"
+}

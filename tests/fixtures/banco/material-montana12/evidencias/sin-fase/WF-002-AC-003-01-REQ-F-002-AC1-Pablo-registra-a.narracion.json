@@ -1,0 +1,26 @@
+{
+ "video": "WF-002-AC-003-01-REQ-F-002-AC1-Pablo-registra-a.webm",
+ "test": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-01 REQ-F-002 AC1 Pablo registra a «Marta Ruiz» con «marta@club.test» y la contraseña «Provisional1»: ve «Socio creado: Marta Ruiz» y «Marta Ruiz — Activo»",
+ "titulo": "AC-003-01 REQ-F-002 AC1 Pablo registra a «Marta Ruiz» con «marta@club.test» y la contraseña «Provisional1»: ve «Socio creado: Marta Ruiz» y «Marta Ruiz — Activo»",
+ "narraciones": [
+  {
+   "t": 0.012,
+   "texto": "Requisito REQ-F-002: Alta, baja y contraseña de los socios. Criterio 1 de 9.",
+   "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 1: alta correcta. Dado que el encargado en Socios, cuando registra Marta Ruiz, marta@club.test, contraseña Provisional1, entonces ve Socio creado: Marta Ruiz y Marta Ruiz — Activo en Socios. Ahora, la demostración.",
+   "presentacion": "AC-003-01"
+  },
+  {
+   "t": 0.758,
+   "texto": "Pablo, el encargado, abre Socios para dar de alta a una socia nueva"
+  },
+  {
+   "t": 1.03,
+   "texto": "Escribe el nombre Marta Ruiz, su correo marta@club.test y la contraseña provisional Provisional1, y pulsa «Dar de alta»"
+  },
+  {
+   "t": 1.404,
+   "texto": "Alta, baja y contraseña de los socios. En Socios se ve «Socio creado: Marta Ruiz» y «Marta Ruiz — Activo»: Marta ya está en la lista.",
+   "criterio": "AC-003-01"
+  }
+ ]
+}

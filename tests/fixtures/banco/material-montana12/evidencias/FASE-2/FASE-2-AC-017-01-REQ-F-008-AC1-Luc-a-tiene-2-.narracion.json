@@ -1,0 +1,22 @@
+{
+ "video": "FASE-2-AC-017-01-REQ-F-008-AC1-Luc-a-tiene-2-.webm",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-01 REQ-F-008 AC1 Lucía tiene 2 × Casco prestados hasta el 2026-12-07 y Pablo abre el Panel el 2026-12-05: ve «Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07»",
+ "titulo": "AC-017-01 REQ-F-008 AC1 Lucía tiene 2 × Casco prestados hasta el 2026-12-07 y Pablo abre el Panel el 2026-12-05: ve «Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07»",
+ "narraciones": [
+  {
+   "t": 0.021,
+   "texto": "Requisito REQ-F-008: Qué hay prestado y qué vuelve cada día. Criterio 1 de 7.",
+   "voz": "Requisito funcional 8: Qué hay prestado y qué vuelve cada día. El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 1: préstamo. cuando el encargado abre el panel el 2026-12-05, entonces ve Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07. Ahora, la demostración.",
+   "presentacion": "AC-017-01"
+  },
+  {
+   "t": 0.563,
+   "texto": "Es 5 de diciembre. Pablo, el encargado, entra y abre el Panel del encargado"
+  },
+  {
+   "t": 1.091,
+   "texto": "Qué hay prestado y qué vuelve cada día. En Panel del encargado se ve «Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07».",
+   "criterio": "AC-017-01"
+  }
+ ]
+}

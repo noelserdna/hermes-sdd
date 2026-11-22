@@ -1,0 +1,269 @@
+{
+ "repo": "/home/andre/proyectos-sdd/material-montana12",
+ "fase": "2",
+ "sha": "effbe14",
+ "congelados": [
+  {
+   "commit": "fa15b53",
+   "asunto": "test(e2e): drop the obsolete «no Reservar button yet» check of AC-007-10",
+   "fichero": "tests/e2e/fase-0.spec.js",
+   "clase": "test",
+   "congelado_en": "fase-0-accepted",
+   "lineas_cambiadas": 1,
+   "debilitamiento": [
+    "quita 1 aserción(es)"
+   ],
+   "aserciones_quitadas": [
+    "await expect(page.getByRole('button', { name: 'Reservar' })).toHaveCount(0);"
+   ],
+   "aserciones_puestas": [],
+   "autorizado": false,
+   "autorizacion": "Q-task-implementer-001 caducó al aceptar fase-1-accepted",
+   "grave": true
+  }
+ ],
+ "capturas": [],
+ "coherencia": [],
+ "vinculos": [],
+ "lint_capturas": [],
+ "mutantes_cache": {
+  "de_cache": 0,
+  "ejecutados": 9
+ },
+ "mutantes": [
+  {
+   "req": "REQ-F-005",
+   "ac": 1,
+   "texto": "2 × Casco del 2026-12-05 al 2026-12-07 — Prestada",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 2,
+   "texto": "Ya estaba entregada",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 2,
+   "texto": "Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 3,
+   "texto": "Devuelto a tiempo",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 3,
+   "texto": "No tienes multas",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 6,
+   "texto": "Ya estaba devuelta",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 6,
+   "texto": "Lucía Gil — Multa de 6 € — Pendiente",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 8,
+   "texto": "No se puede entregar antes de la fecha de inicio",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 9,
+   "texto": "No tienes multas",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 2,
+   "texto": "Vuelven hoy",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 2,
+   "texto": "Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 3,
+   "texto": "Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 4,
+   "texto": "No hay material prestado",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 5,
+   "texto": "Entregar",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js",
+    "src/ui/paginas/panel.js",
+    "src/server/servicios/panel.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 6,
+   "texto": "No tienes permiso para ver esta página",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 7,
+   "texto": "No tienes permiso para ver esta página",
+   "e2e": [
+    "tests/e2e/fase-2.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  }
+ ],
+ "graves": 1
+}

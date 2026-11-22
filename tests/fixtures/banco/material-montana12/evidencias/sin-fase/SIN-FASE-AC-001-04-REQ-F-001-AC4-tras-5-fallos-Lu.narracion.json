@@ -1,0 +1,26 @@
+{
+ "video": "SIN-FASE-AC-001-04-REQ-F-001-AC4-tras-5-fallos-Lu.webm",
+ "test": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-04 REQ-F-001 AC4 tras 5 fallos Lucía entra con la contraseña buena y ve «Cuenta bloqueada. Vuelve a intentarlo en 15 minutos»",
+ "titulo": "AC-001-04 REQ-F-001 AC4 tras 5 fallos Lucía entra con la contraseña buena y ve «Cuenta bloqueada. Vuelve a intentarlo en 15 minutos»",
+ "narraciones": [
+  {
+   "t": 0.022,
+   "texto": "Requisito REQ-F-001: Entrar y salir. Criterio 4 de 8.",
+   "voz": "Requisito funcional 1: Entrar y salir. Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras. Tiene 8 criterios de aceptación. Este vídeo demuestra el criterio 4: bloqueo tras fallos. Dado que lucia@club.test falló 5 veces seguidas, cuando 1 minuto después introduce la contraseña correcta, entonces error E_CUENTA_BLOQUEADA y ve Cuenta bloqueada. Vuelve a intentarlo en 15 minutos en Entrar. Ahora, la demostración.",
+   "presentacion": "AC-001-04"
+  },
+  {
+   "t": 0.631,
+   "texto": "Lucía se equivoca de contraseña cinco veces seguidas"
+  },
+  {
+   "t": 1.477,
+   "texto": "Un minuto después escribe la contraseña correcta"
+  },
+  {
+   "t": 1.78,
+   "texto": "Entrar y salir. En Entrar se ve «Cuenta bloqueada. Vuelve a intentarlo en 15 minutos».",
+   "criterio": "AC-001-04"
+  }
+ ]
+}

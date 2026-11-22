@@ -1,0 +1,394 @@
+{
+ "repo": "/home/andre/proyectos-sdd/material-montana12",
+ "fase": "3",
+ "sha": "8d92002",
+ "congelados": [
+  {
+   "commit": "318cb93",
+   "asunto": "test(e2e): quitar comprobación obsoleta del botón Reservar en AC-007-10",
+   "fichero": "tests/e2e/fase-0.spec.js",
+   "clase": "test",
+   "congelado_en": "fase-0-accepted",
+   "lineas_cambiadas": 1,
+   "debilitamiento": [
+    "quita 1 aserción(es)"
+   ],
+   "aserciones_quitadas": [
+    "await expect(page.getByRole('button', { name: 'Reservar' })).toHaveCount(0);"
+   ],
+   "aserciones_puestas": [],
+   "autorizado": true,
+   "autorizacion": "Q-task-implementer-002: Andres Leon (Cliente), puerta g1795366184146b",
+   "grave": false
+  },
+  {
+   "commit": "41e331c",
+   "asunto": "fix(ui): panel del encargado dice «No hay multas»",
+   "fichero": "tests/e2e/fase-2.spec.js",
+   "clase": "test",
+   "congelado_en": "fase-2-accepted",
+   "lineas_cambiadas": 9,
+   "debilitamiento": [],
+   "aserciones_quitadas": [
+    "await expect(page.locator('.multas .vacio')).toHaveText('No tienes multas');   // sin multa",
+    "await expect(page.locator('.multas .vacio')).toHaveText('No tienes multas');",
+    "await expect(page.locator('.multas .vacio')).toHaveText('No tienes multas');"
+   ],
+   "aserciones_puestas": [
+    "await expect(page.locator('.multas .vacio')).toHaveText('No hay multas');   // sin multa",
+    "await expect(page.locator('.multas .vacio')).toHaveText('No hay multas');",
+    "await expect(page.locator('.multas .vacio')).toHaveText('No hay multas');"
+   ],
+   "autorizado": true,
+   "autorizacion": "Q-task-implementer-003: Andres Leon (Cliente), puerta g17953677689130",
+   "grave": false
+  },
+  {
+   "commit": "41e331c",
+   "asunto": "fix(ui): panel del encargado dice «No hay multas»",
+   "fichero": "tests/unit/ui/panel.test.js",
+   "clase": "test",
+   "congelado_en": "fase-2-accepted",
+   "lineas_cambiadas": 2,
+   "debilitamiento": [],
+   "aserciones_quitadas": [
+    "expect(sin.main.querySelector('.multas .vacio').textContent).toBe('No tienes multas');"
+   ],
+   "aserciones_puestas": [
+    "expect(sin.main.querySelector('.multas .vacio').textContent).toBe('No hay multas');"
+   ],
+   "autorizado": true,
+   "autorizacion": "Q-task-implementer-003: Andres Leon (Cliente), puerta g17953677689130",
+   "grave": false
+  }
+ ],
+ "capturas": [],
+ "coherencia": [],
+ "vinculos": [
+  {
+   "req": "REQ-F-005",
+   "ac": 3,
+   "prioridad": "Must",
+   "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-01 REQ-F-005 AC3 el préstamo",
+   "fichero": "fase-2.spec.js",
+   "via": "AC-011-01",
+   "faltan_then": [
+    "No tienes multas"
+   ],
+   "faltan_datos": [],
+   "grave": true
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 3,
+   "prioridad": "Must",
+   "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-01 REQ-F-005 AC3 el préstamo",
+   "fichero": "fase-2.spec.js",
+   "via": "REQ-F-005 AC3",
+   "faltan_then": [
+    "No tienes multas"
+   ],
+   "faltan_datos": [],
+   "grave": true
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 3,
+   "prioridad": "Must",
+   "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-01 REQ-F-005 AC3 el préstamo",
+   "fichero": "fase-2.spec.js",
+   "via": "AC-011-01",
+   "faltan_then": [
+    "No tienes multas"
+   ],
+   "faltan_datos": [],
+   "grave": true
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 3,
+   "prioridad": "Must",
+   "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-01 REQ-F-005 AC3 el préstamo",
+   "fichero": "fase-2.spec.js",
+   "via": "REQ-F-005 AC3",
+   "faltan_then": [
+    "No tienes multas"
+   ],
+   "faltan_datos": [],
+   "grave": true
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 9,
+   "prioridad": "Must",
+   "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-08 REQ-F-005 AC9 un préstamo",
+   "fichero": "fase-2.spec.js",
+   "via": "AC-017-08",
+   "faltan_then": [
+    "No tienes multas"
+   ],
+   "faltan_datos": [],
+   "grave": true
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 9,
+   "prioridad": "Must",
+   "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-08 REQ-F-005 AC9 un préstamo",
+   "fichero": "fase-2.spec.js",
+   "via": "REQ-F-005 AC9",
+   "faltan_then": [
+    "No tienes multas"
+   ],
+   "faltan_datos": [],
+   "grave": true
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 9,
+   "prioridad": "Must",
+   "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-08 REQ-F-005 AC9 un préstamo",
+   "fichero": "fase-2.spec.js",
+   "via": "AC-017-08",
+   "faltan_then": [
+    "No tienes multas"
+   ],
+   "faltan_datos": [],
+   "grave": true
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 9,
+   "prioridad": "Must",
+   "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-08 REQ-F-005 AC9 un préstamo",
+   "fichero": "fase-2.spec.js",
+   "via": "REQ-F-005 AC9",
+   "faltan_then": [
+    "No tienes multas"
+   ],
+   "faltan_datos": [],
+   "grave": true
+  }
+ ],
+ "lint_capturas": [],
+ "mutantes_cache": {
+  "de_cache": 0,
+  "ejecutados": 9
+ },
+ "mutantes": [
+  {
+   "req": "REQ-F-002",
+   "ac": 1,
+   "texto": "Marta Ruiz — Activo",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 2,
+   "texto": "Ya existe un socio con ese correo",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 2,
+   "texto": "Marta Ruiz — Activo",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 3,
+   "texto": "La contraseña debe tener al menos 8 caracteres",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 4,
+   "texto": "Elige una contraseña nueva",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [
+    "tests/integration/socios.test.js",
+    "tests/unit/autorizar-provisional.test.js",
+    "tests/unit/ui/cambiar-contrasena.test.js"
+   ],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 4,
+   "texto": "Elige una contraseña nueva",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [
+    "tests/integration/socios.test.js",
+    "tests/unit/autorizar-provisional.test.js",
+    "tests/unit/ui/cambiar-contrasena.test.js"
+   ],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 4,
+   "texto": "La contraseña debe tener al menos 8 caracteres",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [
+    "tests/integration/socios.test.js",
+    "tests/unit/autorizar-provisional.test.js",
+    "tests/unit/ui/cambiar-contrasena.test.js"
+   ],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 5,
+   "texto": "Elige una contraseña nueva",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [
+    "tests/integration/restablecer-bloqueo.test.js",
+    "tests/integration/socios.test.js"
+   ],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/ui/textos.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 5,
+   "texto": "Correo o contraseña incorrectos",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [
+    "tests/integration/restablecer-bloqueo.test.js",
+    "tests/integration/socios.test.js"
+   ],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 6,
+   "texto": "Correo o contraseña incorrectos",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [
+    "tests/integration/socios.test.js"
+   ],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 7,
+   "texto": "No se puede dar de baja: tiene material sin devolver",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 7,
+   "texto": "Lucía Gil — Activo",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 8,
+   "texto": "No se puede dar de baja: tiene multas sin pagar",
+   "e2e": [
+    "tests/e2e/fase-3-alta-primer-acceso.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo detecta un e2e",
+   "en": [
+    "src/server/mensajes.js"
+   ],
+   "e2e_sueltos": [],
+   "grave": false,
+   "solo_unitario": false
+  }
+ ],
+ "graves": 8
+}

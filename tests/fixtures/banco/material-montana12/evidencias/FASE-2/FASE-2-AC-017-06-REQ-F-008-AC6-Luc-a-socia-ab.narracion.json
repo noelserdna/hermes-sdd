@@ -1,0 +1,22 @@
+{
+ "video": "FASE-2-AC-017-06-REQ-F-008-AC6-Luc-a-socia-ab.webm",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-06 REQ-F-008 AC6 Lucía, socia, abre «/panel»: ve «No tienes permiso para ver esta página»",
+ "titulo": "AC-017-06 REQ-F-008 AC6 Lucía, socia, abre «/panel»: ve «No tienes permiso para ver esta página»",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-008: Qué hay prestado y qué vuelve cada día. Criterio 6 de 7.",
+   "voz": "Requisito funcional 8: Qué hay prestado y qué vuelve cada día. El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 6: socio. cuando un socio abre /panel, entonces ve No tienes permiso para ver esta página en Panel del encargado y error E_PAGINA_PROHIBIDA. Ahora, la demostración.",
+   "presentacion": "AC-017-06"
+  },
+  {
+   "t": 0.549,
+   "texto": "Lucía, socia del club, entra y escribe la dirección del Panel del encargado"
+  },
+  {
+   "t": 1.134,
+   "texto": "Qué hay prestado y qué vuelve cada día. Al abrir /panel se ve la pantalla «Sin permiso» con «No tienes permiso para ver esta página», sin ningún dato del panel.",
+   "criterio": "AC-017-06"
+  }
+ ]
+}

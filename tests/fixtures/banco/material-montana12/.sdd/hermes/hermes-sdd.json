@@ -1,0 +1,9 @@
+{
+  "canales": [
+    "telegram"
+  ],
+  "ejecutor": "caja",
+  "ejecutores": {
+    "ruta": "hermes"
+  }
+}

@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-012-02",
+ "test": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-012-02 REQ-F-006 AC5 Lucía sin multas abre «Mis multas»: ve «No tienes multas»",
+ "titulo": "AC-012-02 REQ-F-006 AC5 Lucía sin multas abre «Mis multas»: ve «No tienes multas»",
+ "ve": [
+  "No tienes multas"
+ ],
+ "narrado": "Multas y bloqueo hasta pagarlas. En Mis multas se ve «No tienes multas».",
+ "url": "http://127.0.0.1:5173/mis-multas",
+ "imagen": "AC-012-02.png",
+ "sha256": "sha256:40449efd66593f2152c760bdfc8e4d2c2c6e1eeffc940a8d91c94f750a048bca",
+ "at": "2026-11-22T20:35:28.810Z"
+}

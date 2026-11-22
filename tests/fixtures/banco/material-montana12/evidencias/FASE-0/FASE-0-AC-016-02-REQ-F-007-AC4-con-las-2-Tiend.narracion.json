@@ -1,0 +1,26 @@
+{
+ "video": "FASE-0-AC-016-02-REQ-F-007-AC4-con-las-2-Tiend.webm",
+ "test": "FASE-0 · Material (REQ-F-007) › AC-016-02 REQ-F-007 AC4 con las 2 «Tienda» reservadas el 2026-12-06, retirar 1 da el error con las unidades necesarias y sigue «Tienda: 2 unidades»",
+ "titulo": "AC-016-02 REQ-F-007 AC4 con las 2 «Tienda» reservadas el 2026-12-06, retirar 1 da el error con las unidades necesarias y sigue «Tienda: 2 unidades»",
+ "narraciones": [
+  {
+   "t": 0.01,
+   "texto": "Requisito REQ-F-007: Inventario. Criterio 4 de 6.",
+   "voz": "Requisito funcional 7: Inventario. El encargado añade material nuevo y da de baja las unidades rotas. Si una unidad rota hace falta para una reserva ya hecha, la web se lo avisa en lugar de dejarla sin material. Tiene 6 criterios de aceptación. Este vídeo demuestra el criterio 4: unidades necesarias. Dado que Tienda tiene 2 unidades, ambas reservadas el 2026-12-06, cuando retira 1 unidad, entonces error E_BAJA_UNIDADES_NECESARIAS: No se puede dar de baja: hay 2 unidades de Tienda necesarias el 2026-12-06 y ve Tienda: 2 unidades. Ahora, la demostración.",
+   "presentacion": "AC-016-02"
+  },
+  {
+   "t": 0.603,
+   "texto": "Pablo entra como encargado y abre Material, donde hay 2 tiendas y las dos están reservadas el 6 de diciembre"
+  },
+  {
+   "t": 1.066,
+   "texto": "Pablo intenta dar de baja 1 tienda y confirma"
+  },
+  {
+   "t": 1.432,
+   "texto": "Inventario. En Material se ve «No se puede dar de baja: hay 2 unidades de Tienda necesarias el 2026-12-06» y «Tienda: 2 unidades».",
+   "criterio": "AC-016-02"
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-07",
+ "test": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-07 REQ-F-001 AC8 un visitante sin sesión abre /mis-reservas y ve el formulario «Entrar»",
+ "titulo": "AC-001-07 REQ-F-001 AC8 un visitante sin sesión abre /mis-reservas y ve el formulario «Entrar»",
+ "ve": [
+  "Entrar"
+ ],
+ "narrado": "Entrar y salir. En Entrar se ve «Entrar».",
+ "url": "http://127.0.0.1:5173/mis-reservas",
+ "imagen": "AC-001-07.png",
+ "sha256": "sha256:12e5d850b5d314b4db29525971a8bdc9d28a3b276586e377543b3d841783d8f6",
+ "at": "2026-11-22T20:33:12.614Z"
+}

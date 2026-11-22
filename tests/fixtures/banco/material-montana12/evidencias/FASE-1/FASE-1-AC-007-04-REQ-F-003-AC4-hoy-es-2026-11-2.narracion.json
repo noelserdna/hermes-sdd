@@ -1,0 +1,22 @@
+{
+ "video": "FASE-1-AC-007-04-REQ-F-003-AC4-hoy-es-2026-11-2.webm",
+ "test": "FASE-1 · Reservar material (REQ-F-003) › AC-007-04 REQ-F-003 AC4 hoy es 2026-11-22 y Lucía elige inicio 2026-11-21: ve «La fecha de inicio no puede ser pasada»",
+ "titulo": "AC-007-04 REQ-F-003 AC4 hoy es 2026-11-22 y Lucía elige inicio 2026-11-21: ve «La fecha de inicio no puede ser pasada»",
+ "narraciones": [
+  {
+   "t": 0.01,
+   "texto": "Requisito REQ-F-003: Reservar material. Criterio 4 de 9.",
+   "voz": "Requisito funcional 3: Reservar material. El socio elige material, cantidad y fechas y lo reserva si quedan unidades libres todos esos días. Si no quedan, se lo dice. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 4: fecha pasada. cuando Lucía elige inicio 2026-11-21, entonces error E_FECHA_PASADA: La fecha de inicio no puede ser pasada. Ahora, la demostración.",
+   "presentacion": "AC-007-04"
+  },
+  {
+   "t": 0.779,
+   "texto": "Es 22 de noviembre. Lucía abre Reservar y pide un casco que empieza el 21, un día pasado"
+  },
+  {
+   "t": 1.225,
+   "texto": "Reservar material. En Reservar se ve «La fecha de inicio no puede ser pasada».",
+   "criterio": "AC-007-04"
+  }
+ ]
+}

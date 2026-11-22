@@ -1,0 +1,110 @@
+<testsuites id="" name="" tests="8" failures="0" skipped="0" errors="0" time="20.277141">
+<testsuite name="fase-4-ciclo-prestamo.spec.js" timestamp="2026-11-22T20:35:17.711Z" hostname="chromium" tests="8" failures="0" skipped="0" time="18.191" errors="0">
+<testcase name="FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-012-01 REQ-F-006 AC1 Pablo con una multa pendiente de 6 € abre «Mis multas»: ve «Multa de 6 € — Pendiente»" classname="fase-4-ciclo-prestamo.spec.js" time="1.722">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-43854--«Multa-de-6-€-—-Pendiente»-chromium/attachments/AC-012-01-6a5aaee1707fbc492f34e022b5606de05fb1198e.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-43854--«Multa-de-6-€-—-Pendiente»-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-43854--«Multa-de-6-€-—-Pendiente»-chromium/attachments/WF-001-AC-012-01-REQ-F-006-AC1-Pablo-con-una-mu-d56e7d4a369cbd7f151bdbbf3061a9515c57cb7c.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-43854--«Multa-de-6-€-—-Pendiente»-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-013-01 REQ-F-006 AC2 Pablo con una multa pendiente de 6 €, el encargado pulsa «Marcar pagada»: ve «Multa pagada» y Pablo reserva 1 × Casco del 2026-12-10 al 2026-12-11" classname="fase-4-ciclo-prestamo.spec.js" time="2.636">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-dd1b6-el-2026-12-10-al-2026-12-11-chromium/attachments/AC-013-01-8ddf26d1ad8686d4b9fbce46942ae6025b879aad.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-dd1b6-el-2026-12-10-al-2026-12-11-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-dd1b6-el-2026-12-10-al-2026-12-11-chromium/attachments/WF-001-AC-013-01-REQ-F-006-AC2-Pablo-con-una-mu-f9521113b62a7203d875702876635061455bea71.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-dd1b6-el-2026-12-10-al-2026-12-11-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-013-02 REQ-F-006 AC3 la multa de 6 € de Pablo Sanz acaba de pagarse y se pulsa «Marcar pagada» otra vez: ve «La multa ya estaba pagada» y una sola «Pablo Sanz — Multa de 6 € — Pagada»" classname="fase-4-ciclo-prestamo.spec.js" time="2.187">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-e2b7a-nz-—-Multa-de-6-€-—-Pagada»-chromium/attachments/AC-013-02-4fd5f170e34ac754499b4702b6ca16b3c19de3c7.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-e2b7a-nz-—-Multa-de-6-€-—-Pagada»-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-e2b7a-nz-—-Multa-de-6-€-—-Pagada»-chromium/attachments/WF-001-AC-013-02-REQ-F-006-AC3-la-multa-de-6--3545de2d47c74601bd955ad9ca6a3590f6da1ea2.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-e2b7a-nz-—-Multa-de-6-€-—-Pagada»-chromium/video-1.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-e2b7a-nz-—-Multa-de-6-€-—-Pagada»-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-013-03 REQ-F-006 AC4 Pablo con 2 multas pendientes de 2 € y 4 € y el encargado paga la de 4 €: ve «Multa pagada» y Pablo sigue viendo «No puedes reservar hasta pagar tu multa de 2 €»" classname="fase-4-ciclo-prestamo.spec.js" time="2.417">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-0a124-asta-pagar-tu-multa-de-2-€»-chromium/attachments/AC-013-03-5d5490750d6976ef96c376bf8cd1913a5fddae0e.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-0a124-asta-pagar-tu-multa-de-2-€»-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-0a124-asta-pagar-tu-multa-de-2-€»-chromium/attachments/WF-001-AC-013-03-REQ-F-006-AC4-Pablo-con-2-mult-76a2d4a80255fbcb6d44f3527c9fa81f868c7d57.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-0a124-asta-pagar-tu-multa-de-2-€»-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-012-02 REQ-F-006 AC5 Lucía sin multas abre «Mis multas»: ve «No tienes multas»" classname="fase-4-ciclo-prestamo.spec.js" time="1.544">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-9b116-ltas»-ve-«No-tienes-multas»-chromium/attachments/AC-012-02-1ad987db9471fb342066a2137081febdd94cdc1c.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-9b116-ltas»-ve-«No-tienes-multas»-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-9b116-ltas»-ve-«No-tienes-multas»-chromium/attachments/WF-001-AC-012-02-REQ-F-006-AC5-Luc-a-sin-multas-154d6019f67bfb5b90ba679671cad93aae5bcd30.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-9b116-ltas»-ve-«No-tienes-multas»-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-012-03 REQ-F-006 AC6 Marta sin multas mientras Pablo tiene una abre «Mis multas»: ve «No tienes multas» y nada de Pablo" classname="fase-4-ciclo-prestamo.spec.js" time="1.593">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-571e3-nes-multas»-y-nada-de-Pablo-chromium/attachments/AC-012-03-f35c81a6666972bc90d0cc1dd24a0bfc10e1b99e.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-571e3-nes-multas»-y-nada-de-Pablo-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-571e3-nes-multas»-y-nada-de-Pablo-chromium/attachments/WF-001-AC-012-03-REQ-F-006-AC6-Marta-sin-multas-75e3b7d0bdfabad0a52732188270af8ee1556fb8.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-571e3-nes-multas»-y-nada-de-Pablo-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-014-01 REQ-F-006 AC7 Pablo Sanz con una multa pendiente de 6 € y Lucía Gil con una pagada de 2 €, el encargado abre «Multas»: ve las dos filas con su estado" classname="fase-4-ciclo-prestamo.spec.js" time="1.64">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-b1fd4-las-dos-filas-con-su-estado-chromium/attachments/AC-014-01-39c22df60b36fc2345cf2c94cd85e3c156813e20.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-b1fd4-las-dos-filas-con-su-estado-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-b1fd4-las-dos-filas-con-su-estado-chromium/attachments/WF-001-AC-014-01-REQ-F-006-AC7-Pablo-Sanz-con-u-2eccdef2fb11b522919cd839ba71028c15a282e5.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-b1fd4-las-dos-filas-con-su-estado-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="WF-001 · Ciclo completo de un préstamo › WF-001 Lucía reserva dos cascos, Pablo los entrega y los recibe con retraso, ella ve su multa y no puede reservar hasta que Pablo la cobra" classname="fase-4-ciclo-prestamo.spec.js" time="4.452">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-WF-0-170fd-ar-hasta-que-Pablo-la-cobra-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-WF-0-170fd-ar-hasta-que-Pablo-la-cobra-chromium/attachments/WF-001-WF-001-Luc-a-reserva-dos-cascos-Pablo-l-5a0560af9ffe49a97f829eac3aa3f0c9450ddf96.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-WF-0-170fd-ar-hasta-que-Pablo-la-cobra-chromium/video-1.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-WF-0-170fd-ar-hasta-que-Pablo-la-cobra-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

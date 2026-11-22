@@ -1,0 +1,26 @@
+{
+ "video": "FASE-0-AC-015-02-REQ-F-007-AC2-el-encargado-cre.webm",
+ "test": "FASE-0 · Material (REQ-F-007) › AC-015-02 REQ-F-007 AC2 el encargado crea el tipo nuevo «Mosquetón» con 10 unidades y ve «Mosquetón: 10 unidades»",
+ "titulo": "AC-015-02 REQ-F-007 AC2 el encargado crea el tipo nuevo «Mosquetón» con 10 unidades y ve «Mosquetón: 10 unidades»",
+ "narraciones": [
+  {
+   "t": 0.012,
+   "texto": "Requisito REQ-F-007: Inventario. Criterio 2 de 6.",
+   "voz": "Requisito funcional 7: Inventario. El encargado añade material nuevo y da de baja las unidades rotas. Si una unidad rota hace falta para una reserva ya hecha, la web se lo avisa en lugar de dejarla sin material. Tiene 6 criterios de aceptación. Este vídeo demuestra el criterio 2: tipo nuevo. cuando añade Mosquetón con 10 unidades, entonces ve Mosquetón: 10 unidades en Material. Ahora, la demostración.",
+   "presentacion": "AC-015-02"
+  },
+  {
+   "t": 0.656,
+   "texto": "Pablo entra como encargado y abre Material"
+  },
+  {
+   "t": 1.1,
+   "texto": "Pablo da de alta un tipo nuevo: Mosquetón, con 10 unidades"
+  },
+  {
+   "t": 1.395,
+   "texto": "Inventario. En Material se ve «Mosquetón: 10 unidades».",
+   "criterio": "AC-015-02"
+  }
+ ]
+}

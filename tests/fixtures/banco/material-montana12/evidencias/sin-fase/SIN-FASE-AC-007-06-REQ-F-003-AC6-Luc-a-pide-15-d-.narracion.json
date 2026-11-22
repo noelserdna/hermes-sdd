@@ -1,0 +1,22 @@
+{
+ "video": "SIN-FASE-AC-007-06-REQ-F-003-AC6-Luc-a-pide-15-d-.webm",
+ "test": "FASE-1 · Reservar material (REQ-F-003) › AC-007-06 REQ-F-003 AC6 Lucía pide 15 días (2026-12-01..2026-12-15) y ve «Máximo 14 días por reserva»",
+ "titulo": "AC-007-06 REQ-F-003 AC6 Lucía pide 15 días (2026-12-01..2026-12-15) y ve «Máximo 14 días por reserva»",
+ "narraciones": [
+  {
+   "t": 0.021,
+   "texto": "Requisito REQ-F-003: Reservar material. Criterio 6 de 9.",
+   "voz": "Requisito funcional 3: Reservar material. El socio elige material, cantidad y fechas y lo reserva si quedan unidades libres todos esos días. Si no quedan, se lo dice. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 6: demasiados días. cuando Lucía pide del 2026-12-01 al 2026-12-15, entonces error E_MAX_DIAS: Máximo 14 días por reserva. Ahora, la demostración.",
+   "presentacion": "AC-007-06"
+  },
+  {
+   "t": 0.852,
+   "texto": "Lucía abre Reservar y pide un casco quince días, del 1 al 15 de diciembre"
+  },
+  {
+   "t": 1.27,
+   "texto": "Reservar material. En Reservar se ve «Máximo 14 días por reserva».",
+   "criterio": "AC-007-06"
+  }
+ ]
+}

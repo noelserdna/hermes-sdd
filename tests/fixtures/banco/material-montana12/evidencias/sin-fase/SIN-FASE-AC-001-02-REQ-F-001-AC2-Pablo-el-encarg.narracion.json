@@ -1,0 +1,22 @@
+{
+ "video": "SIN-FASE-AC-001-02-REQ-F-001-AC2-Pablo-el-encarg.webm",
+ "test": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-02 REQ-F-001 AC2 Pablo, el encargado, entra y ve «Hola, Pablo» en el Panel del encargado",
+ "titulo": "AC-001-02 REQ-F-001 AC2 Pablo, el encargado, entra y ve «Hola, Pablo» en el Panel del encargado",
+ "narraciones": [
+  {
+   "t": 0.02,
+   "texto": "Requisito REQ-F-001: Entrar y salir. Criterio 2 de 8.",
+   "voz": "Requisito funcional 1: Entrar y salir. Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras. Tiene 8 criterios de aceptación. Este vídeo demuestra el criterio 2: encargado entra. Dado que encargado pablo@club.test con contraseña Piolet2026!, cuando introduce ambos en Entrar, entonces ve Hola, Pablo en la página Panel del encargado. Ahora, la demostración.",
+   "presentacion": "AC-001-02"
+  },
+  {
+   "t": 0.641,
+   "texto": "Pablo, el encargado, escribe su correo y su contraseña en Entrar"
+  },
+  {
+   "t": 1.046,
+   "texto": "Entrar y salir. En Panel del encargado se ve «Hola, Pablo».",
+   "criterio": "AC-001-02"
+  }
+ ]
+}

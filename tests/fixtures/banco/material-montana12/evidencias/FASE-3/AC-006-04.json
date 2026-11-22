@@ -1,0 +1,15 @@
+{
+ "criterio": "AC-006-04",
+ "test": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-04 REQ-F-002 AC7 Lucía tiene 1 préstamo sin devolver y Pablo la da de baja: ve «No se puede dar de baja: tiene material sin devolver» y «Lucía Gil — Activo»; Lucía sigue entrando",
+ "titulo": "AC-006-04 REQ-F-002 AC7 Lucía tiene 1 préstamo sin devolver y Pablo la da de baja: ve «No se puede dar de baja: tiene material sin devolver» y «Lucía Gil — Activo»; Lucía sigue entrando",
+ "ve": [
+  "No se puede dar de baja: tiene material sin devolver",
+  "Lucía Gil — Activo",
+  "Hola, Pablo"
+ ],
+ "narrado": "Alta, baja y contraseña de los socios. En Socios se ve «No se puede dar de baja: tiene material sin devolver», «Lucía Gil — Activo» y «Hola, Pablo»: su cuenta sigue activa y Pablo sigue dentro.",
+ "url": "http://127.0.0.1:5173/socios",
+ "imagen": "AC-006-04.png",
+ "sha256": "sha256:551661fbb30775676cf39a4e01f0c26f601f63cf6ec364962fe4cd5f17001ac1",
+ "at": "2026-11-22T20:35:10.661Z"
+}

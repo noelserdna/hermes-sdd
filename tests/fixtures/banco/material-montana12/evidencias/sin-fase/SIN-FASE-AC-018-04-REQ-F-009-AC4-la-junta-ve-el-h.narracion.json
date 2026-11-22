@@ -1,0 +1,26 @@
+{
+ "video": "SIN-FASE-AC-018-04-REQ-F-009-AC4-la-junta-ve-el-h.webm",
+ "test": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-04 REQ-F-009 AC4 la junta ve el historial de Lucía y busca cualquier botón: no hay «Entregar», «Devolver», «Marcar pagada» ni «Cancelar»",
+ "titulo": "AC-018-04 REQ-F-009 AC4 la junta ve el historial de Lucía y busca cualquier botón: no hay «Entregar», «Devolver», «Marcar pagada» ni «Cancelar»",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-009: Historial de un socio para la junta. Criterio 4 de 4.",
+   "voz": "Requisito funcional 9: Historial de un socio para la junta. La junta busca a cualquier socio y ve sus préstamos y multas, sin poder cambiar nada. Tiene 4 criterios de aceptación. Este vídeo demuestra el criterio 4: solo lectura. cuando la junta ve un historial, entonces ve Historial del socio sin ningún botón Entregar, Devolver, Marcar pagada ni Cancelar. Ahora, la demostración.",
+   "presentacion": "AC-018-04"
+  },
+  {
+   "t": 0.571,
+   "texto": "Elena, de la junta, entra y se encuentra en Historial del socio"
+  },
+  {
+   "t": 1.052,
+   "texto": "Busca «lucia» y se muestra su historial"
+  },
+  {
+   "t": 1.386,
+   "texto": "Historial de un socio para la junta. Se ve «Historial del socio», «Entregar», «Devolver», «Marcar pagada» y «Cancelar» solo como palabras de la nota de solo lectura: no hay ningún botón con esos nombres y la junta únicamente puede mirar.",
+   "criterio": "AC-018-04"
+  }
+ ]
+}

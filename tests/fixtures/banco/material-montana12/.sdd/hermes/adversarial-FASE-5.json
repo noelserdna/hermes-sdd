@@ -1,0 +1,581 @@
+{
+  "$schema": "sdd-adversarial-plan-v1",
+  "evaluated_sha": "e66102e26717a71c9722111486568e2a8ada43a1",
+  "dirty": false,
+  "generatedAt": "2026-11-22T20:17:54.288Z",
+  "scope": {
+    "fase": 5
+  },
+  "code_paths": [
+    "src"
+  ],
+  "adversarial_gate": "enforce",
+  "incremental": {
+    "since": "d13e0cc57bcc1863b60989920c4e23dcb166f8ce",
+    "baseline": ".sdd/hermes/adversarial-FASE-5.json",
+    "changed_files": [
+      "tests/integration/depurar.test.js"
+    ],
+    "criteria": 10,
+    "recheck": 2,
+    "carried": 8
+  },
+  "fases": [
+    {
+      "fase": 5,
+      "file": "plan/fases/FASE-5-JUNTA.md",
+      "header": true,
+      "requirements": [
+        {
+          "id": "REQ-F-009",
+          "title": "Historial de un socio para la junta",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN a junta member searches a socio by name or email THE system SHALL show that socio's loans and fines read-only",
+          "reqHash": "sha256:6e5f013fdee529a6c9be80dc90a11f90872880b06e47b26b480fec0d33301670",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN Lucía has a loan of 2 × Casco 2026-12-05..2026-12-07 returned on 2026-12-09 and a fine of 4 € paid WHEN a junta member searches \"lucia\" THEN the user sees \"2 × Casco del 2026-12-05 al 2026-12-07 — devuelto el 2026-12-09\" and \"Multa de 4 € — Pagada\"",
+              "scenarios": [
+                "AC-018-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-01 REQ-F-009 AC1 Lucía devolvió 2 × Casco del 2026-12-05 al 2026-12-07 el 2026-12-09 y pagó su multa de 4 €: la junta busca «lucia» y ve su préstamo y su multa",
+                  "file": "fase-5.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-01 REQ-F-009 AC1 Lucía devolvió 2 × Casco del 2026-12-05 al 2026-12-07 el 2026-12-09 y pagó su multa de 4 €: la junta busca «lucia» y ve su préstamo y su multa",
+                  "file": "fase-5.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-01 REQ-F-009 AC1 Lucía devolvió 2 × Casco del 2026-12-05 al 2026-12-07 el 2026-12-09 y pagó su multa de 4 €: la junta busca «lucia» y ve su préstamo y su multa",
+                  "file": "fase-5.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-01 REQ-F-009 AC1 Lucía devolvió 2 × Casco del 2026-12-05 al 2026-12-07 el 2026-12-09 y pagó su multa de 4 €: la junta busca «lucia» y ve su préstamo y su multa",
+                  "file": "fase-5.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--8f984-y-ve-su-préstamo-y-su-multa-chromium/attachments/AC-018-01-044888f3bca64cbcf0b56d53fedbbc6a100ecba9.png",
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--8f984-y-ve-su-préstamo-y-su-multa-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-5-FASE-5-·-Historial--8f984-y-ve-su-préstamo-y-su-multa-chromium/attachments/AC-018-01-ffcfd37a8bb43775b827d0ae921944638e402a57.png",
+                "evidencias/sin-fase/.playwright/fase-5-FASE-5-·-Historial--8f984-y-ve-su-préstamo-y-su-multa-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-018-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--8f984-y-ve-su-préstamo-y-su-multa-chromium/attachments/AC-018-01-044888f3bca64cbcf0b56d53fedbbc6a100ecba9.png": "sha256:ebe6cd1332cdcb5ae8dbf744af69f168765b6be1c0421fa8fc051382d1e0462c",
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--8f984-y-ve-su-préstamo-y-su-multa-chromium/test-finished-1.png": "sha256:ebe6cd1332cdcb5ae8dbf744af69f168765b6be1c0421fa8fc051382d1e0462c",
+                "evidencias/FASE-5/AC-018-01.png": "sha256:ebe6cd1332cdcb5ae8dbf744af69f168765b6be1c0421fa8fc051382d1e0462c",
+                "evidencias/sin-fase/.playwright/fase-5-FASE-5-·-Historial--8f984-y-ve-su-préstamo-y-su-multa-chromium/attachments/AC-018-01-ffcfd37a8bb43775b827d0ae921944638e402a57.png": "sha256:ebe6cd1332cdcb5ae8dbf744af69f168765b6be1c0421fa8fc051382d1e0462c",
+                "evidencias/sin-fase/.playwright/fase-5-FASE-5-·-Historial--8f984-y-ve-su-préstamo-y-su-multa-chromium/test-finished-1.png": "sha256:ebe6cd1332cdcb5ae8dbf744af69f168765b6be1c0421fa8fc051382d1e0462c"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{cantidad} × {material} del {inicio} al {fin} — devuelto el {fecha}",
+                    "template": true
+                  },
+                  {
+                    "text": "Multa de {importe} € — {estado}",
+                    "template": true
+                  }
+                ],
+                "where": "Historial del socio (ejemplo con datos: \"Multa de 4 € — Pagada\")",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--8f984-y-ve-su-préstamo-y-su-multa-chromium/attachments/AC-018-01-044888f3bca64cbcf0b56d53fedbbc6a100ecba9.png",
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--8f984-y-ve-su-préstamo-y-su-multa-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-018-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--8f984-y-ve-su-préstamo-y-su-multa-chromium/attachments/FASE-5-AC-018-01-REQ-F-009-AC1-Luc-a-devolvi-2-0dad491cff1e23463b09da57b968b218e08ca60f.webm",
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--8f984-y-ve-su-préstamo-y-su-multa-chromium/video.webm",
+                "evidencias/FASE-5/FASE-5-AC-018-01-REQ-F-009-AC1-Luc-a-devolvi-2.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 2,
+              "text": "GIVEN a socio with no loans WHEN the junta opens their history THEN the user sees \"Sin préstamos ni multas\"",
+              "scenarios": [
+                "AC-018-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-02 REQ-F-009 AC2 Marta no tiene préstamos ni multas: la junta busca «marta» y ve «Sin préstamos ni multas»",
+                  "file": "fase-5.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-02 REQ-F-009 AC2 Marta no tiene préstamos ni multas: la junta busca «marta» y ve «Sin préstamos ni multas»",
+                  "file": "fase-5.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-02 REQ-F-009 AC2 Marta no tiene préstamos ni multas: la junta busca «marta» y ve «Sin préstamos ni multas»",
+                  "file": "fase-5.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-02 REQ-F-009 AC2 Marta no tiene préstamos ni multas: la junta busca «marta» y ve «Sin préstamos ni multas»",
+                  "file": "fase-5.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--f4694-e-«Sin-préstamos-ni-multas»-chromium/attachments/AC-018-02-7c9a00a48dca8017be860f97b015597f2779489d.png",
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--f4694-e-«Sin-préstamos-ni-multas»-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-5-FASE-5-·-Historial--f4694-e-«Sin-préstamos-ni-multas»-chromium/attachments/AC-018-02-0b429799f7aa359830eb37ee380c978afb53bce5.png",
+                "evidencias/sin-fase/.playwright/fase-5-FASE-5-·-Historial--f4694-e-«Sin-préstamos-ni-multas»-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-018-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--f4694-e-«Sin-préstamos-ni-multas»-chromium/attachments/AC-018-02-7c9a00a48dca8017be860f97b015597f2779489d.png": "sha256:922640df52498c907d834859146eef9eb1c3bd48e9e0918f8d9da1649bff4ba9",
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--f4694-e-«Sin-préstamos-ni-multas»-chromium/test-finished-1.png": "sha256:922640df52498c907d834859146eef9eb1c3bd48e9e0918f8d9da1649bff4ba9",
+                "evidencias/FASE-5/AC-018-02.png": "sha256:922640df52498c907d834859146eef9eb1c3bd48e9e0918f8d9da1649bff4ba9",
+                "evidencias/sin-fase/.playwright/fase-5-FASE-5-·-Historial--f4694-e-«Sin-préstamos-ni-multas»-chromium/attachments/AC-018-02-0b429799f7aa359830eb37ee380c978afb53bce5.png": "sha256:922640df52498c907d834859146eef9eb1c3bd48e9e0918f8d9da1649bff4ba9",
+                "evidencias/sin-fase/.playwright/fase-5-FASE-5-·-Historial--f4694-e-«Sin-préstamos-ni-multas»-chromium/test-finished-1.png": "sha256:922640df52498c907d834859146eef9eb1c3bd48e9e0918f8d9da1649bff4ba9"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Sin préstamos ni multas",
+                    "template": false
+                  }
+                ],
+                "where": "Historial del socio",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--f4694-e-«Sin-préstamos-ni-multas»-chromium/attachments/AC-018-02-7c9a00a48dca8017be860f97b015597f2779489d.png",
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--f4694-e-«Sin-préstamos-ni-multas»-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-018-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--f4694-e-«Sin-préstamos-ni-multas»-chromium/attachments/FASE-5-AC-018-02-REQ-F-009-AC2-Marta-no-tiene-p-1f1a0bb09f038ce7a270fbfccaff760286563ad5.webm",
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--f4694-e-«Sin-préstamos-ni-multas»-chromium/video.webm",
+                "evidencias/FASE-5/FASE-5-AC-018-02-REQ-F-009-AC2-Marta-no-tiene-p.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 3,
+              "text": "GIVEN the junta WHEN looking for \"zzz\" THEN the user sees \"Ningún socio coincide\"",
+              "scenarios": [
+                "AC-018-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-03 REQ-F-009 AC3 la junta busca «zzz»: ve «Ningún socio coincide»",
+                  "file": "fase-5.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-03 REQ-F-009 AC3 la junta busca «zzz»: ve «Ningún socio coincide»",
+                  "file": "fase-5.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-03 REQ-F-009 AC3 la junta busca «zzz»: ve «Ningún socio coincide»",
+                  "file": "fase-5.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-03 REQ-F-009 AC3 la junta busca «zzz»: ve «Ningún socio coincide»",
+                  "file": "fase-5.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--91691--ve-«Ningún-socio-coincide»-chromium/attachments/AC-018-03-bdaa99946c7eecb4a0b41ec052ffbaaa8a1318a4.png",
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--91691--ve-«Ningún-socio-coincide»-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-5-FASE-5-·-Historial--91691--ve-«Ningún-socio-coincide»-chromium/attachments/AC-018-03-a50619a4ff32e2ce0db03751540de466772319cb.png",
+                "evidencias/sin-fase/.playwright/fase-5-FASE-5-·-Historial--91691--ve-«Ningún-socio-coincide»-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-018-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--91691--ve-«Ningún-socio-coincide»-chromium/attachments/AC-018-03-bdaa99946c7eecb4a0b41ec052ffbaaa8a1318a4.png": "sha256:c2920bc70719e84c1e7487ba7e95ddbd65d3fbbf29286ce8109ccf63ffc0bdc8",
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--91691--ve-«Ningún-socio-coincide»-chromium/test-finished-1.png": "sha256:c2920bc70719e84c1e7487ba7e95ddbd65d3fbbf29286ce8109ccf63ffc0bdc8",
+                "evidencias/FASE-5/AC-018-03.png": "sha256:c2920bc70719e84c1e7487ba7e95ddbd65d3fbbf29286ce8109ccf63ffc0bdc8",
+                "evidencias/sin-fase/.playwright/fase-5-FASE-5-·-Historial--91691--ve-«Ningún-socio-coincide»-chromium/attachments/AC-018-03-a50619a4ff32e2ce0db03751540de466772319cb.png": "sha256:c2920bc70719e84c1e7487ba7e95ddbd65d3fbbf29286ce8109ccf63ffc0bdc8",
+                "evidencias/sin-fase/.playwright/fase-5-FASE-5-·-Historial--91691--ve-«Ningún-socio-coincide»-chromium/test-finished-1.png": "sha256:c2920bc70719e84c1e7487ba7e95ddbd65d3fbbf29286ce8109ccf63ffc0bdc8"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Ningún socio coincide",
+                    "template": false
+                  }
+                ],
+                "where": "Historial del socio",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--91691--ve-«Ningún-socio-coincide»-chromium/attachments/AC-018-03-bdaa99946c7eecb4a0b41ec052ffbaaa8a1318a4.png",
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--91691--ve-«Ningún-socio-coincide»-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-018-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--91691--ve-«Ningún-socio-coincide»-chromium/attachments/FASE-5-AC-018-03-REQ-F-009-AC3-la-junta-busca--cda92d6ba12bc9d79ad5c77af4d40c185d26c3cd.webm",
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--91691--ve-«Ningún-socio-coincide»-chromium/video.webm",
+                "evidencias/FASE-5/FASE-5-AC-018-03-REQ-F-009-AC3-la-junta-busca-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 4,
+              "text": "GIVEN the junta views a history WHEN they look for any button THEN there is no \"Entregar\", \"Devolver\", \"Marcar pagada\" or \"Cancelar\"",
+              "scenarios": [
+                "AC-018-04"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-04 REQ-F-009 AC4 la junta ve el historial de Lucía y busca cualquier botón: no hay «Entregar», «Devolver», «Marcar pagada» ni «Cancelar»",
+                  "file": "fase-5.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-04 REQ-F-009 AC4 la junta ve el historial de Lucía y busca cualquier botón: no hay «Entregar», «Devolver», «Marcar pagada» ni «Cancelar»",
+                  "file": "fase-5.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-04 REQ-F-009 AC4 la junta ve el historial de Lucía y busca cualquier botón: no hay «Entregar», «Devolver», «Marcar pagada» ni «Cancelar»",
+                  "file": "fase-5.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-04 REQ-F-009 AC4 la junta ve el historial de Lucía y busca cualquier botón: no hay «Entregar», «Devolver», «Marcar pagada» ni «Cancelar»",
+                  "file": "fase-5.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--2f5b9-arcar-pagada»-ni-«Cancelar»-chromium/attachments/AC-018-04-392723b8db9ab0e8482b2b2b77c6490ef2e38d08.png",
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--2f5b9-arcar-pagada»-ni-«Cancelar»-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-5-FASE-5-·-Historial--2f5b9-arcar-pagada»-ni-«Cancelar»-chromium/attachments/AC-018-04-3d4b18927bb513539d74497c3b32de2d3798ec30.png",
+                "evidencias/sin-fase/.playwright/fase-5-FASE-5-·-Historial--2f5b9-arcar-pagada»-ni-«Cancelar»-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-018-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--2f5b9-arcar-pagada»-ni-«Cancelar»-chromium/attachments/AC-018-04-392723b8db9ab0e8482b2b2b77c6490ef2e38d08.png": "sha256:46aa6ed90504f106a196b38c18f9faa4da791418518a87f64274366a46d5298c",
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--2f5b9-arcar-pagada»-ni-«Cancelar»-chromium/test-finished-1.png": "sha256:46aa6ed90504f106a196b38c18f9faa4da791418518a87f64274366a46d5298c",
+                "evidencias/FASE-5/AC-018-04.png": "sha256:46aa6ed90504f106a196b38c18f9faa4da791418518a87f64274366a46d5298c",
+                "evidencias/sin-fase/.playwright/fase-5-FASE-5-·-Historial--2f5b9-arcar-pagada»-ni-«Cancelar»-chromium/attachments/AC-018-04-3d4b18927bb513539d74497c3b32de2d3798ec30.png": "sha256:46aa6ed90504f106a196b38c18f9faa4da791418518a87f64274366a46d5298c",
+                "evidencias/sin-fase/.playwright/fase-5-FASE-5-·-Historial--2f5b9-arcar-pagada»-ni-«Cancelar»-chromium/test-finished-1.png": "sha256:46aa6ed90504f106a196b38c18f9faa4da791418518a87f64274366a46d5298c"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Historial del socio",
+                    "template": false
+                  },
+                  {
+                    "text": "Entregar",
+                    "template": false
+                  },
+                  {
+                    "text": "Devolver",
+                    "template": false
+                  },
+                  {
+                    "text": "Marcar pagada",
+                    "template": false
+                  },
+                  {
+                    "text": "Cancelar",
+                    "template": false
+                  }
+                ],
+                "where": null,
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--2f5b9-arcar-pagada»-ni-«Cancelar»-chromium/attachments/AC-018-04-392723b8db9ab0e8482b2b2b77c6490ef2e38d08.png",
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--2f5b9-arcar-pagada»-ni-«Cancelar»-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-018-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--2f5b9-arcar-pagada»-ni-«Cancelar»-chromium/attachments/FASE-5-AC-018-04-REQ-F-009-AC4-la-junta-ve-el-h-1839d635adb97b1667e42d775247dcd3f845f213.webm",
+                "evidencias/FASE-5/.playwright/fase-5-FASE-5-·-Historial--2f5b9-arcar-pagada»-ni-«Cancelar»-chromium/video.webm",
+                "evidencias/FASE-5/FASE-5-AC-018-04-REQ-F-009-AC4-la-junta-ve-el-h.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            }
+          ],
+          "candidate_files": [
+            "src/server/http/rutas.js",
+            "src/server/mensajes.js",
+            "src/server/servicios/historial.js",
+            "src/ui/api.js",
+            "src/ui/estilos.css",
+            "src/ui/main.js",
+            "src/ui/paginas/historial.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        },
+        {
+          "id": "REQ-NF-001",
+          "title": "Cada rol solo ve y hace lo suyo",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "THE system SHALL show a socio only their own reservations, loans, fines and personal data, and SHALL reject any request outside the role (encargado: managing; junta: read-only; socio: own data)",
+          "reqHash": "sha256:9a8ff962ffd3fa0e817e6e0f2c5d6eca9f1a42402823cc520790b190b9531e57",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN Lucía and Pablo are socios WHEN Lucía asks for Pablo's reservations or fines by id THEN the system answers \"Acceso denegado\" and returns no data of Pablo",
+              "scenarios": [],
+              "tests": [
+                {
+                  "name": "SEC-T-001 un socio solo ve lo suyo > REQ-NF-001 AC1 Lucía pide por id una reserva o una multa de Pablo y recibe «Acceso denegado» sin ningún dato de él",
+                  "file": "tests/integration/aislamiento.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "SEC-T-001 un socio solo ve lo suyo > REQ-NF-001 AC1 sus propias listas no llevan nada de Pablo: solo sus reservas y ninguna multa",
+                  "file": "tests/integration/aislamiento.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [],
+              "capture_sha256": {},
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 2,
+              "text": "GIVEN a junta member WHEN he sends \"marcar pagada\" or \"entregar\" THEN the system answers \"Acceso denegado\" and nothing changes",
+              "scenarios": [],
+              "tests": [
+                {
+                  "name": "SEC-T-001 la junta solo lee > REQ-NF-001 AC2 la junta envía «entregar», «devolver» o «marcar pagada» y recibe «Acceso denegado» sin que cambie nada",
+                  "file": "tests/integration/aislamiento.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [],
+              "capture_sha256": {},
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 3,
+              "text": "GIVEN a socio WHEN she opens the list of socios THEN the system answers \"Acceso denegado\"",
+              "scenarios": [],
+              "tests": [
+                {
+                  "name": "SEC-T-003 páginas y matriz de permisos > REQ-NF-001 AC3 una socia que abre la lista de socios recibe el rechazo de página y ningún socio",
+                  "file": "tests/integration/aislamiento.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "SEC-T-003 páginas y matriz de permisos > REQ-NF-001 AC3 SEC-T-003 cada rol puede las operaciones de la matriz y se le deniegan, con E_ACCESO_DENEGADO, las que la matriz da a otros",
+                  "file": "tests/integration/aislamiento.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [],
+              "capture_sha256": {},
+              "recheck": true,
+              "recheck_reasons": [
+                "challenge CH-011 open"
+              ]
+            },
+            {
+              "n": 4,
+              "text": "GIVEN the passwords WHEN the stored data is read THEN no password appears in plain text",
+              "scenarios": [],
+              "tests": [
+                {
+                  "name": "SEC-T-004 el almacén guarda solo lo mínimo y ninguna contraseña legible > REQ-NF-001 AC4 REQ-NF-003 AC1 tras entrar, cambiar y restablecer contraseñas ninguna aparece en claro en lo guardado",
+                  "file": "tests/integration/aislamiento.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [],
+              "capture_sha256": {},
+              "recheck": false,
+              "recheck_reasons": []
+            }
+          ],
+          "candidate_files": [],
+          "challenges_open": [
+            "CH-011"
+          ]
+        },
+        {
+          "id": "REQ-NF-003",
+          "title": "Datos personales y conservación",
+          "priority": "Should",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "THE system SHALL store only name, email, password (hashed) and the loans and fines of each socio, and SHALL delete the loans and fines older than 3 years",
+          "reqHash": "sha256:d14d40f048ffb5d89c562fd701b73c62a9a187977484a7980ec8ac11f02d349c",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN a socio registered WHEN the stored record is read THEN it holds name, email and a password hash only",
+              "scenarios": [],
+              "tests": [
+                {
+                  "name": "SEC-T-004 el almacén guarda solo lo mínimo y ninguna contraseña legible > REQ-NF-003 AC1 un socio registrado queda con nombre, correo y un hash con sal, y ningún otro dato personal",
+                  "file": "tests/integration/aislamiento.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "SEC-T-004 el almacén guarda solo lo mínimo y ninguna contraseña legible > REQ-NF-001 AC4 REQ-NF-003 AC1 tras entrar, cambiar y restablecer contraseñas ninguna aparece en claro en lo guardado",
+                  "file": "tests/integration/aislamiento.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [],
+              "capture_sha256": {},
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 2,
+              "text": "GIVEN a loan that ended 2023-11-01 and today is 2026-11-22 WHEN the cleanup runs THEN that loan is gone and a loan ended 2025-01-10 remains",
+              "scenarios": [
+                "AC-019-01"
+              ],
+              "tests": [
+                {
+                  "name": "API-002-07 purgeOldRecords (UC-019) > AC-019-01 REQ-NF-003 AC2 con hoy 2026-11-22 el préstamo terminado el 2023-11-01 desaparece y el terminado el 2025-01-10 se queda",
+                  "file": "tests/integration/depurar.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "API-002-07 purgeOldRecords (UC-019) > AC-019-01 REQ-NF-003 AC2 con hoy 2026-11-22 el préstamo terminado el 2023-11-01 desaparece y el terminado el 2025-01-10 se queda",
+                  "file": "tests/integration/depurar.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-NF-003 AC2 con préstamos hechos por el recorrido real y el almacén en fichero > AC-019-01 REQ-NF-003 AC2 Marta presta y devuelve dos cascos (fin 2023-11-01 y 2025-01-10); el 2026-11-22 la depuración del plugin borra solo el primero del fichero",
+                  "file": "tests/integration/depurar.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-NF-003 AC2 con préstamos hechos por el recorrido real y el almacén en fichero > AC-019-01 REQ-NF-003 AC2 Marta presta y devuelve dos cascos (fin 2023-11-01 y 2025-01-10); el 2026-11-22 la depuración del plugin borra solo el primero del fichero",
+                  "file": "tests/integration/depurar.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-NF-003 AC2 con préstamos hechos por el recorrido real y el almacén en fichero > AC-019-01 REQ-NF-003 AC2 Marta presta y devuelve dos cascos (fin 2023-11-01 y 2025-01-10); el 2026-11-22 la depuración del plugin borra solo el primero del fichero",
+                  "file": "tests/integration/depurar.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [],
+              "capture_sha256": {},
+              "recheck": true,
+              "recheck_reasons": [
+                "challenge CH-012 stale",
+                "test changed: tests/integration/depurar.test.js",
+                "bound tests changed"
+              ]
+            }
+          ],
+          "candidate_files": [
+            "src/server/app.js",
+            "src/server/dominio/fechas.js",
+            "src/server/http/plugin.js",
+            "src/server/servicios/depurar.js",
+            "src/server/store/almacen-json.js"
+          ],
+          "challenges_open": []
+        }
+      ],
+      "unknown_requirements": [],
+      "tasks": [
+        "TASK-F5-001",
+        "TASK-F5-002",
+        "TASK-F5-003",
+        "TASK-F5-004",
+        "TASK-F5-005",
+        "TASK-F5-006",
+        "TASK-F5-007",
+        "TASK-F5-008"
+      ],
+      "candidate_files": [
+        "src/server/app.js",
+        "src/server/dominio/fechas.js",
+        "src/server/http/plugin.js",
+        "src/server/http/rutas.js",
+        "src/server/mensajes.js",
+        "src/server/servicios/depurar.js",
+        "src/server/servicios/historial.js",
+        "src/server/store/almacen-json.js",
+        "src/ui/api.js",
+        "src/ui/estilos.css",
+        "src/ui/main.js",
+        "src/ui/paginas/historial.js",
+        "src/ui/textos.js"
+      ],
+      "incremental": {
+        "criteria": 10,
+        "recheck": 2
+      }
+    }
+  ],
+  "uncovered": [
+    {
+      "id": "REQ-C-001",
+      "title": "Textos en español",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-002",
+      "title": "Stack del proyecto",
+      "priority": "Must"
+    }
+  ],
+  "fases_without_header": [],
+  "criteria_without_test": [],
+  "coverage_gaps": 2
+}

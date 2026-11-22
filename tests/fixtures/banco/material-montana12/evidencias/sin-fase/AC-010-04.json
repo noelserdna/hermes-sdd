@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-010-04",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-010-04 REQ-F-005 AC7 la reserva acabó el 2026-12-07 sin entregarse y Pablo abre el Panel el 2026-12-08: ve «No recogida» y no se entrega",
+ "titulo": "AC-010-04 REQ-F-005 AC7 la reserva acabó el 2026-12-07 sin entregarse y Pablo abre el Panel el 2026-12-08: ve «No recogida» y no se entrega",
+ "ve": [
+  "No recogida: 2 × Casco — Lucía Gil — hasta el 2026-12-07"
+ ],
+ "narrado": "Entregar y recibir el material. En Panel del encargado se ve «No recogida»: la reserva ya no se puede entregar, sus unidades quedan libres y no hay multa.",
+ "url": "http://127.0.0.1:5173/panel",
+ "imagen": "AC-010-04.png",
+ "sha256": "sha256:379fd44eb28f9d20f8915d07e8ae3fe97e4220927f33962f7a585355637ab97f",
+ "at": "2026-11-22T19:43:11.273Z"
+}

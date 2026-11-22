@@ -1,0 +1,22 @@
+{
+ "video": "SIN-FASE-AC-017-05-REQ-F-008-AC5-Luc-a-tiene-2-.webm",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-05 REQ-F-008 AC5 Lucía tiene 2 × Casco reservados desde el 2026-12-05 y Pablo abre el Panel ese día: ve «Por entregar: 2 × Casco — Lucía Gil — desde el 2026-12-05» y el botón «Entregar»",
+ "titulo": "AC-017-05 REQ-F-008 AC5 Lucía tiene 2 × Casco reservados desde el 2026-12-05 y Pablo abre el Panel ese día: ve «Por entregar: 2 × Casco — Lucía Gil — desde el 2026-12-05» y el botón «Entregar»",
+ "narraciones": [
+  {
+   "t": 0.012,
+   "texto": "Requisito REQ-F-008: Qué hay prestado y qué vuelve cada día. Criterio 5 de 7.",
+   "voz": "Requisito funcional 8: Qué hay prestado y qué vuelve cada día. El encargado ve de un vistazo qué material tiene que entregar, qué está fuera, qué vuelve hoy (o el día que elija) y qué está retrasado. Tiene 7 criterios de aceptación. Este vídeo demuestra el criterio 5: por entregar. Dado que Lucía tiene 2 × Casco reservados desde el 2026-12-05, cuando abre el panel el 2026-12-05, entonces ve Por entregar: 2 × Casco — Lucía Gil — desde el 2026-12-05 y ve el botón Entregar. Ahora, la demostración.",
+   "presentacion": "AC-017-05"
+  },
+  {
+   "t": 0.546,
+   "texto": "Es 5 de diciembre. Pablo abre el Panel del encargado y mira qué hay que entregar hoy"
+  },
+  {
+   "t": 1.034,
+   "texto": "Qué hay prestado y qué vuelve cada día. En Panel del encargado se ve «Por entregar: 2 × Casco — Lucía Gil — desde el 2026-12-05» y el botón «Entregar».",
+   "criterio": "AC-017-05"
+  }
+ ]
+}

@@ -1,0 +1,8 @@
+{
+ "peticiones": [],
+ "por_aplicar": [
+  "Q-acceptance-002: REQ-F-002 AC5 dice que tras el restablecimiento del encargado el socio entra con la nueva contraseña y ya no con la antigua. Pero si el socio falló la contraseña varias veces, su cuenta sigue bloqueada (INV-SOC-004): restablecer la contraseña no quita el bloqueo, así que no podría entrar con la nueva hasta que caduque. ¿El restablecimiento debe quitar el bloqueo?\nRespuesta elegida: A) Restablecer la contraseña quita el bloqueo y el contador de fallos de esa cuenta. Es lo que dice el criterio (entra con la nueva) y lo habitual cuando lo hace el encargado\nPara el cliente: Si el encargado restablece la contraseña de un socio que tenía la cuenta bloqueada por fallos, ¿el socio puede entrar en ese momento con la nueva contraseña, o tiene que esperar a que se levante el bloqueo? → A) Sí, al restablecer la contraseña el socio puede entrar en el acto con la nueva"
+ ],
+ "autorizaciones": [],
+ "abiertas": []
+}

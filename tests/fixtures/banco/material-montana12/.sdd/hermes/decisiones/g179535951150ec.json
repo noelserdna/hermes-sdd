@@ -1,0 +1,16 @@
+{
+  "verbo": "reintento",
+  "texto": "",
+  "actor": {
+    "persona": "jev",
+    "canal": "jev",
+    "id": "regla"
+  },
+  "prueba": {
+    "modelo": "regla",
+    "p": "1.000",
+    "modo": "auto",
+    "regla": "primer fallo de la etapa"
+  },
+  "at": "2026-11-22T14:58:35Z"
+}

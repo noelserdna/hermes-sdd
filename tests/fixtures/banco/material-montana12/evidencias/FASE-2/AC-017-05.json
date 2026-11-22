@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-017-05",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-017-05 REQ-F-008 AC5 Lucía tiene 2 × Casco reservados desde el 2026-12-05 y Pablo abre el Panel ese día: ve «Por entregar: 2 × Casco — Lucía Gil — desde el 2026-12-05» y el botón «Entregar»",
+ "titulo": "AC-017-05 REQ-F-008 AC5 Lucía tiene 2 × Casco reservados desde el 2026-12-05 y Pablo abre el Panel ese día: ve «Por entregar: 2 × Casco — Lucía Gil — desde el 2026-12-05» y el botón «Entregar»",
+ "ve": [
+  "Por entregar: 2 × Casco — Lucía Gil — desde el 2026-12-05",
+  "Entregar"
+ ],
+ "narrado": "Qué hay prestado y qué vuelve cada día. En Panel del encargado se ve «Por entregar: 2 × Casco — Lucía Gil — desde el 2026-12-05» y el botón «Entregar».",
+ "url": "http://127.0.0.1:5173/panel",
+ "imagen": "AC-017-05.png",
+ "sha256": "sha256:d62250f3a3ac2e74e5b7285d5c4ea74dd05c95383c931582b152529b8edf955f",
+ "at": "2026-11-22T20:34:48.582Z"
+}

@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-018-03",
+ "test": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-03 REQ-F-009 AC3 la junta busca «zzz»: ve «Ningún socio coincide»",
+ "titulo": "AC-018-03 REQ-F-009 AC3 la junta busca «zzz»: ve «Ningún socio coincide»",
+ "ve": [
+  "Ningún socio coincide"
+ ],
+ "narrado": "Historial de un socio para la junta. En Historial del socio se ve «Ningún socio coincide»: no se muestra ningún historial.",
+ "url": "http://127.0.0.1:5173/historial",
+ "imagen": "AC-018-03.png",
+ "sha256": "sha256:c2920bc70719e84c1e7487ba7e95ddbd65d3fbbf29286ce8109ccf63ffc0bdc8",
+ "at": "2026-11-22T19:44:17.956Z"
+}

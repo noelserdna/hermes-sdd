@@ -1,0 +1,22 @@
+{
+ "video": "WF-002-AC-003-03-REQ-F-002-AC3-Pablo-escribe-la.webm",
+ "test": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-03 REQ-F-002 AC3 Pablo escribe la contraseña provisional «corta»: ve «La contraseña debe tener al menos 8 caracteres»",
+ "titulo": "AC-003-03 REQ-F-002 AC3 Pablo escribe la contraseña provisional «corta»: ve «La contraseña debe tener al menos 8 caracteres»",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-002: Alta, baja y contraseña de los socios. Criterio 3 de 9.",
+   "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 3: contraseña corta. cuando la contraseña provisional es corta, entonces error E_CONTRASENA_CORTA y ve La contraseña debe tener al menos 8 caracteres en Socios. Ahora, la demostración.",
+   "presentacion": "AC-003-03"
+  },
+  {
+   "t": 0.74,
+   "texto": "Pablo abre Socios e intenta dar de alta a Marta Ruiz con una contraseña provisional demasiado corta"
+  },
+  {
+   "t": 1.104,
+   "texto": "Alta, baja y contraseña de los socios. En Socios se ve «La contraseña debe tener al menos 8 caracteres», y Marta no se añade a la lista.",
+   "criterio": "AC-003-03"
+  }
+ ]
+}

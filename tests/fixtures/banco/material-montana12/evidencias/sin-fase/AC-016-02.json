@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-016-02",
+ "test": "FASE-0 · Material (REQ-F-007) › AC-016-02 REQ-F-007 AC4 con las 2 «Tienda» reservadas el 2026-12-06, retirar 1 da el error con las unidades necesarias y sigue «Tienda: 2 unidades»",
+ "titulo": "AC-016-02 REQ-F-007 AC4 con las 2 «Tienda» reservadas el 2026-12-06, retirar 1 da el error con las unidades necesarias y sigue «Tienda: 2 unidades»",
+ "ve": [
+  "No se puede dar de baja: hay 2 unidades de Tienda necesarias el 2026-12-06",
+  "Tienda: 2 unidades"
+ ],
+ "narrado": "Inventario. En Material se ve «No se puede dar de baja: hay 2 unidades de Tienda necesarias el 2026-12-06» y «Tienda: 2 unidades».",
+ "url": "http://127.0.0.1:5173/material",
+ "imagen": "AC-016-02.png",
+ "sha256": "sha256:7c0a111e29dbfa6926dc7e15a9a27da3fd3a0883ed13b386fdaba64e8c39b2d1",
+ "at": "2026-11-22T19:42:23.189Z"
+}

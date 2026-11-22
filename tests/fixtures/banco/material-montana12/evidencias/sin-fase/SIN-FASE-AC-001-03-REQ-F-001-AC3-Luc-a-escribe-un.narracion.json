@@ -1,0 +1,22 @@
+{
+ "video": "SIN-FASE-AC-001-03-REQ-F-001-AC3-Luc-a-escribe-un.webm",
+ "test": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-03 REQ-F-001 AC3 Lucía escribe una contraseña errónea y ve «Correo o contraseña incorrectos»",
+ "titulo": "AC-001-03 REQ-F-001 AC3 Lucía escribe una contraseña errónea y ve «Correo o contraseña incorrectos»",
+ "narraciones": [
+  {
+   "t": 0.01,
+   "texto": "Requisito REQ-F-001: Entrar y salir. Criterio 3 de 8.",
+   "voz": "Requisito funcional 1: Entrar y salir. Entras con tu correo y tu contraseña y ves tu página según seas socio, encargado o junta. Puedes salir cuando quieras. Tiene 8 criterios de aceptación. Este vídeo demuestra el criterio 3: contraseña errónea. cuando lucia@club.test introduce una contraseña incorrecta, entonces error E_CREDENCIALES y ve Correo o contraseña incorrectos en Entrar. Ahora, la demostración.",
+   "presentacion": "AC-001-03"
+  },
+  {
+   "t": 0.623,
+   "texto": "Lucía escribe su correo y una contraseña que no es la suya"
+  },
+  {
+   "t": 1.013,
+   "texto": "Entrar y salir. En Entrar se ve «Correo o contraseña incorrectos».",
+   "criterio": "AC-001-03"
+  }
+ ]
+}

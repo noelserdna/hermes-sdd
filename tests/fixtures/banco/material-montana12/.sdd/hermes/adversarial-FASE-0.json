@@ -1,0 +1,860 @@
+{
+  "$schema": "sdd-adversarial-plan-v1",
+  "evaluated_sha": "debb444beda6c4a2d80c89b8b9661b9791302f5e",
+  "dirty": false,
+  "generatedAt": "2026-11-22T15:07:31.050Z",
+  "scope": {
+    "fase": 0
+  },
+  "code_paths": [
+    "src"
+  ],
+  "adversarial_gate": "enforce",
+  "fases": [
+    {
+      "fase": 0,
+      "file": "plan/fases/FASE-0-SKELETON.md",
+      "header": true,
+      "requirements": [
+        {
+          "id": "REQ-F-001",
+          "title": "Entrar y salir",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN a user submits a registered email and its password THE system SHALL open a session and show the home of their role",
+          "reqHash": "sha256:6f5ae940db151f108820936ce33173ae787e49e4cc42100b179875be1259da30",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN socio \"lucia@club.test\" with password \"Cumbre2026!\" WHEN she enters both in the login form THEN the user sees \"Hola, Lucía\" in the page \"Mis reservas\"",
+              "scenarios": [
+                "AC-001-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-01 REQ-F-001 AC1 Lucía entra y ve «Hola, Lucía» en Mis reservas",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-01 REQ-F-001 AC1 Lucía entra y ve «Hola, Lucía» en Mis reservas",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-2d177-Hola-Lucía»-en-Mis-reservas-chromium/attachments/AC-001-01-f8854534b8787af653888ea32daf02bc862c1931.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-2d177-Hola-Lucía»-en-Mis-reservas-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-2d177-Hola-Lucía»-en-Mis-reservas-chromium/attachments/AC-001-01-f8854534b8787af653888ea32daf02bc862c1931.png": "sha256:4a9e1797aa8efd8fda78f7b462f554de68138fd26751a28597e522dddc02e635",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-2d177-Hola-Lucía»-en-Mis-reservas-chromium/test-finished-1.png": "sha256:4a9e1797aa8efd8fda78f7b462f554de68138fd26751a28597e522dddc02e635",
+                "evidencias/FASE-0/AC-001-01.png": "sha256:4a9e1797aa8efd8fda78f7b462f554de68138fd26751a28597e522dddc02e635"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Hola, {nombre}",
+                    "template": true
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-2d177-Hola-Lucía»-en-Mis-reservas-chromium/attachments/AC-001-01-f8854534b8787af653888ea32daf02bc862c1931.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-2d177-Hola-Lucía»-en-Mis-reservas-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-2d177-Hola-Lucía»-en-Mis-reservas-chromium/attachments/FASE-0-AC-001-01-REQ-F-001-AC1-Luc-a-entra-y-ve-992e1c0b97a44c5ff6116a775d0d7db4c563d7af.webm",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-2d177-Hola-Lucía»-en-Mis-reservas-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-AC-001-01-REQ-F-001-AC1-Luc-a-entra-y-ve.webm"
+              ]
+            },
+            {
+              "n": 2,
+              "text": "GIVEN encargado \"pablo@club.test\" with password \"Piolet2026!\" WHEN he enters both THEN the user sees \"Hola, Pablo\" in the page \"Panel del encargado\"",
+              "scenarios": [
+                "AC-001-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-02 REQ-F-001 AC2 Pablo, el encargado, entra y ve «Hola, Pablo» en el Panel del encargado",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-02 REQ-F-001 AC2 Pablo, el encargado, entra y ve «Hola, Pablo» en el Panel del encargado",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-8d293-»-en-el-Panel-del-encargado-chromium/attachments/AC-001-02-d10c7bdc28905362b1eaef4f8ce5d14eede11b3f.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-8d293-»-en-el-Panel-del-encargado-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-8d293-»-en-el-Panel-del-encargado-chromium/attachments/AC-001-02-d10c7bdc28905362b1eaef4f8ce5d14eede11b3f.png": "sha256:1403aed9afb73c769e424131c108fdd5c25edf6646278bf5b08d18f482257571",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-8d293-»-en-el-Panel-del-encargado-chromium/test-finished-1.png": "sha256:1403aed9afb73c769e424131c108fdd5c25edf6646278bf5b08d18f482257571",
+                "evidencias/FASE-0/AC-001-02.png": "sha256:1403aed9afb73c769e424131c108fdd5c25edf6646278bf5b08d18f482257571"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Hola, {nombre}",
+                    "template": true
+                  }
+                ],
+                "where": "Panel del encargado",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-8d293-»-en-el-Panel-del-encargado-chromium/attachments/AC-001-02-d10c7bdc28905362b1eaef4f8ce5d14eede11b3f.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-8d293-»-en-el-Panel-del-encargado-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-8d293-»-en-el-Panel-del-encargado-chromium/attachments/FASE-0-AC-001-02-REQ-F-001-AC2-Pablo-el-encarg-18b76257b4fcd624ec77f1106d8f0c2ca98fbd72.webm",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-8d293-»-en-el-Panel-del-encargado-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-AC-001-02-REQ-F-001-AC2-Pablo-el-encarg.webm"
+              ]
+            },
+            {
+              "n": 3,
+              "text": "GIVEN \"lucia@club.test\" WHEN she enters a wrong password THEN the user sees \"Correo o contraseña incorrectos\"",
+              "scenarios": [
+                "AC-001-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-03 REQ-F-001 AC3 Lucía escribe una contraseña errónea y ve «Correo o contraseña incorrectos»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-03 REQ-F-001 AC3 Lucía escribe una contraseña errónea y ve «Correo o contraseña incorrectos»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-f3562-o-o-contraseña-incorrectos»-chromium/attachments/AC-001-03-f57e7d61820a22cc5c3aa9a30adf9bcc07e38115.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-f3562-o-o-contraseña-incorrectos»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-f3562-o-o-contraseña-incorrectos»-chromium/attachments/AC-001-03-f57e7d61820a22cc5c3aa9a30adf9bcc07e38115.png": "sha256:e6827ce24b655a7ca9c09a424f22febae0babe550e5d8b5bdeb3d73626737750",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-f3562-o-o-contraseña-incorrectos»-chromium/test-finished-1.png": "sha256:e6827ce24b655a7ca9c09a424f22febae0babe550e5d8b5bdeb3d73626737750",
+                "evidencias/FASE-0/AC-001-03.png": "sha256:e6827ce24b655a7ca9c09a424f22febae0babe550e5d8b5bdeb3d73626737750"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Correo o contraseña incorrectos",
+                    "template": false
+                  }
+                ],
+                "where": "Entrar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-f3562-o-o-contraseña-incorrectos»-chromium/attachments/AC-001-03-f57e7d61820a22cc5c3aa9a30adf9bcc07e38115.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-f3562-o-o-contraseña-incorrectos»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-f3562-o-o-contraseña-incorrectos»-chromium/attachments/FASE-0-AC-001-03-REQ-F-001-AC3-Luc-a-escribe-un-808deaa86bda3e89fae2195f63cc2646a027b12b.webm",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-f3562-o-o-contraseña-incorrectos»-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-AC-001-03-REQ-F-001-AC3-Luc-a-escribe-un.webm"
+              ]
+            },
+            {
+              "n": 4,
+              "text": "GIVEN \"lucia@club.test\" failed 5 times in a row WHEN she enters the right password 1 minute later THEN the user sees \"Cuenta bloqueada. Vuelve a intentarlo en 15 minutos\"",
+              "scenarios": [
+                "AC-001-04"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-04 REQ-F-001 AC4 tras 5 fallos Lucía entra con la contraseña buena y ve «Cuenta bloqueada. Vuelve a intentarlo en 15 minutos»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-04 REQ-F-001 AC4 tras 5 fallos Lucía entra con la contraseña buena y ve «Cuenta bloqueada. Vuelve a intentarlo en 15 minutos»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-fb1ad-a-intentarlo-en-15-minutos»-chromium/attachments/AC-001-04-bcc464f5e5e65d2e9480d470f6d7dbc525b5071a.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-fb1ad-a-intentarlo-en-15-minutos»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-fb1ad-a-intentarlo-en-15-minutos»-chromium/attachments/AC-001-04-bcc464f5e5e65d2e9480d470f6d7dbc525b5071a.png": "sha256:88a41fcaa13515847abcaf2b09d7b3b44703e3a77256200acb7102bc189d55e0",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-fb1ad-a-intentarlo-en-15-minutos»-chromium/test-finished-1.png": "sha256:88a41fcaa13515847abcaf2b09d7b3b44703e3a77256200acb7102bc189d55e0",
+                "evidencias/FASE-0/AC-001-04.png": "sha256:88a41fcaa13515847abcaf2b09d7b3b44703e3a77256200acb7102bc189d55e0"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Cuenta bloqueada. Vuelve a intentarlo en 15 minutos",
+                    "template": false
+                  }
+                ],
+                "where": "Entrar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-fb1ad-a-intentarlo-en-15-minutos»-chromium/attachments/AC-001-04-bcc464f5e5e65d2e9480d470f6d7dbc525b5071a.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-fb1ad-a-intentarlo-en-15-minutos»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-fb1ad-a-intentarlo-en-15-minutos»-chromium/attachments/FASE-0-AC-001-04-REQ-F-001-AC4-tras-5-fallos-Lu-d4c195cbc3e1c4f028b627a30f51a8d87e843b33.webm",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-fb1ad-a-intentarlo-en-15-minutos»-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-AC-001-04-REQ-F-001-AC4-tras-5-fallos-Lu.webm"
+              ]
+            },
+            {
+              "n": 5,
+              "text": "GIVEN \"lucia@club.test\" was blocked 15 minutes ago WHEN she enters the right password THEN the user sees \"Hola, Lucía\"",
+              "scenarios": [
+                "AC-001-05"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-05 REQ-F-001 AC5 pasados 15 minutos del bloqueo Lucía entra y ve «Hola, Lucía»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-05 REQ-F-001 AC5 pasados 15 minutos del bloqueo Lucía entra y ve «Hola, Lucía»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-901c3-cía-entra-y-ve-«Hola-Lucía»-chromium/attachments/AC-001-05-94f414f78f89e035b43961aac3bc9fb7614fab54.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-901c3-cía-entra-y-ve-«Hola-Lucía»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-05.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-901c3-cía-entra-y-ve-«Hola-Lucía»-chromium/attachments/AC-001-05-94f414f78f89e035b43961aac3bc9fb7614fab54.png": "sha256:689f7e2aebd7dd4b07088baf6d0250153cff8a76dee2ce0980cec3a7ac83d50e",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-901c3-cía-entra-y-ve-«Hola-Lucía»-chromium/test-finished-1.png": "sha256:689f7e2aebd7dd4b07088baf6d0250153cff8a76dee2ce0980cec3a7ac83d50e",
+                "evidencias/FASE-0/AC-001-05.png": "sha256:689f7e2aebd7dd4b07088baf6d0250153cff8a76dee2ce0980cec3a7ac83d50e"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Hola, {nombre}",
+                    "template": true
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-901c3-cía-entra-y-ve-«Hola-Lucía»-chromium/attachments/AC-001-05-94f414f78f89e035b43961aac3bc9fb7614fab54.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-901c3-cía-entra-y-ve-«Hola-Lucía»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-05.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-901c3-cía-entra-y-ve-«Hola-Lucía»-chromium/attachments/FASE-0-AC-001-05-REQ-F-001-AC5-pasados-15-minut-cfcf73cf423515f93bbb5646a6e148827f717ec4.webm",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-901c3-cía-entra-y-ve-«Hola-Lucía»-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-AC-001-05-REQ-F-001-AC5-pasados-15-minut.webm"
+              ]
+            },
+            {
+              "n": 6,
+              "text": "GIVEN a session with 30 minutes without activity WHEN the user opens any page THEN the user sees the form \"Entrar\"",
+              "scenarios": [
+                "AC-001-06"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-06 REQ-F-001 AC6 con la sesión de Lucía caducada por inactividad, cualquier página muestra «Entrar»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-06 REQ-F-001 AC6 con la sesión de Lucía caducada por inactividad, cualquier página muestra «Entrar»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-71019-ier-página-muestra-«Entrar»-chromium/attachments/AC-001-06-83cac8632a7c002ac1a676f82cc83c189bb5cdc5.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-71019-ier-página-muestra-«Entrar»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-06.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-71019-ier-página-muestra-«Entrar»-chromium/attachments/AC-001-06-83cac8632a7c002ac1a676f82cc83c189bb5cdc5.png": "sha256:784d5546346c09d3fd98865634fde9f1d618c11e35e068c61da12078e9687d2d",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-71019-ier-página-muestra-«Entrar»-chromium/test-finished-1.png": "sha256:784d5546346c09d3fd98865634fde9f1d618c11e35e068c61da12078e9687d2d",
+                "evidencias/FASE-0/AC-001-06.png": "sha256:784d5546346c09d3fd98865634fde9f1d618c11e35e068c61da12078e9687d2d"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Entrar",
+                    "template": false
+                  }
+                ],
+                "where": "Entrar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-71019-ier-página-muestra-«Entrar»-chromium/attachments/AC-001-06-83cac8632a7c002ac1a676f82cc83c189bb5cdc5.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-71019-ier-página-muestra-«Entrar»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-06.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-71019-ier-página-muestra-«Entrar»-chromium/attachments/FASE-0-AC-001-06-REQ-F-001-AC6-con-la-sesi-n-de-f5f1378b1f3a9fafc19b7884a6ec2f342923304c.webm",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-71019-ier-página-muestra-«Entrar»-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-AC-001-06-REQ-F-001-AC6-con-la-sesi-n-de.webm"
+              ]
+            },
+            {
+              "n": 7,
+              "text": "GIVEN a logged-in user WHEN they press \"Salir\" THEN the user sees the form \"Entrar\" and going back does not show private data",
+              "scenarios": [
+                "AC-002-01",
+                "AC-002-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-0 · Entrar y salir (REQ-F-001) › AC-002-01 REQ-F-001 AC7 Lucía pulsa «Salir», ve el formulario «Entrar» y al volver atrás no ve datos privados",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-0 · Entrar y salir (REQ-F-001) › AC-002-01 REQ-F-001 AC7 Lucía pulsa «Salir», ve el formulario «Entrar» y al volver atrás no ve datos privados",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-50dd4--atrás-no-ve-datos-privados-chromium/attachments/AC-002-01-728983540eea26f5300eb30f44207333cb8f9608.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-50dd4--atrás-no-ve-datos-privados-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-002-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-50dd4--atrás-no-ve-datos-privados-chromium/attachments/AC-002-01-728983540eea26f5300eb30f44207333cb8f9608.png": "sha256:699a4f0af99dfce3edee62a0838ea2f9418d4337509bc45864a7fdb233dbb9d6",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-50dd4--atrás-no-ve-datos-privados-chromium/test-finished-1.png": "sha256:699a4f0af99dfce3edee62a0838ea2f9418d4337509bc45864a7fdb233dbb9d6",
+                "evidencias/FASE-0/AC-002-01.png": "sha256:699a4f0af99dfce3edee62a0838ea2f9418d4337509bc45864a7fdb233dbb9d6"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Entrar",
+                    "template": false
+                  },
+                  {
+                    "text": "Entrar",
+                    "template": false
+                  }
+                ],
+                "where": "Entrar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-50dd4--atrás-no-ve-datos-privados-chromium/attachments/AC-002-01-728983540eea26f5300eb30f44207333cb8f9608.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-50dd4--atrás-no-ve-datos-privados-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-002-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-50dd4--atrás-no-ve-datos-privados-chromium/attachments/FASE-0-AC-002-01-REQ-F-001-AC7-Luc-a-pulsa-Sal-d010cd9545f7095fd9a84af02ffe29b0259f23c5.webm",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-50dd4--atrás-no-ve-datos-privados-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-AC-002-01-REQ-F-001-AC7-Luc-a-pulsa-Sal.webm"
+              ]
+            },
+            {
+              "n": 8,
+              "text": "GIVEN an unauthenticated visitor WHEN they open \"/mis-reservas\" THEN the user sees the form \"Entrar\"",
+              "scenarios": [
+                "AC-001-07"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-07 REQ-F-001 AC8 un visitante sin sesión abre /mis-reservas y ve el formulario «Entrar»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-07 REQ-F-001 AC8 un visitante sin sesión abre /mis-reservas y ve el formulario «Entrar»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-2bb5e-y-ve-el-formulario-«Entrar»-chromium/attachments/AC-001-07-3b2a742aea99c01802e55cb58bf29baf329f8229.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-2bb5e-y-ve-el-formulario-«Entrar»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-07.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-2bb5e-y-ve-el-formulario-«Entrar»-chromium/attachments/AC-001-07-3b2a742aea99c01802e55cb58bf29baf329f8229.png": "sha256:5d403cd88944980ef9fc9d19f626366ee85bd091c1c3e8f1cdc22acadcd372bd",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-2bb5e-y-ve-el-formulario-«Entrar»-chromium/test-finished-1.png": "sha256:5d403cd88944980ef9fc9d19f626366ee85bd091c1c3e8f1cdc22acadcd372bd",
+                "evidencias/FASE-0/AC-001-07.png": "sha256:5d403cd88944980ef9fc9d19f626366ee85bd091c1c3e8f1cdc22acadcd372bd"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Entrar",
+                    "template": false
+                  }
+                ],
+                "where": "Entrar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-2bb5e-y-ve-el-formulario-«Entrar»-chromium/attachments/AC-001-07-3b2a742aea99c01802e55cb58bf29baf329f8229.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-2bb5e-y-ve-el-formulario-«Entrar»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-07.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-2bb5e-y-ve-el-formulario-«Entrar»-chromium/attachments/FASE-0-AC-001-07-REQ-F-001-AC8-un-visitante-sin-9c6e22f9eda334a22a3d1948160d95599cf607d6.webm",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Entrar-y-s-2bb5e-y-ve-el-formulario-«Entrar»-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-AC-001-07-REQ-F-001-AC8-un-visitante-sin.webm"
+              ]
+            }
+          ],
+          "candidate_files": [
+            "src/server/app.js",
+            "src/server/http/autorizar.js",
+            "src/server/http/plugin.js",
+            "src/server/http/rutas.js",
+            "src/server/servicios/cuentas.js",
+            "src/server/servicios/sesiones.js",
+            "src/ui/api.js",
+            "src/ui/componentes.js",
+            "src/ui/main.js",
+            "src/ui/paginas/entrar.js",
+            "src/ui/paginas/mis-reservas.js",
+            "src/ui/paginas/panel.js",
+            "src/ui/paginas/sin-permiso.js",
+            "src/ui/router.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        },
+        {
+          "id": "REQ-F-007",
+          "title": "Inventario",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN the encargado adds units of an item type THE system SHALL increase its stock, and WHEN he withdraws broken units that no loan or reservation needs THE system SHALL reduce it",
+          "reqHash": "sha256:1cde34cc45a7d041094d7e78981075d83a6bb6c8752b54cc3cb108ac44214969",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN \"Cuerda\" has 4 units WHEN the encargado adds 2 units THEN the user sees \"Cuerda: 6 unidades\" in \"Material\"",
+              "scenarios": [
+                "AC-015-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-0 · Material (REQ-F-007) › AC-015-01 REQ-F-007 AC1 con 4 «Cuerda», el encargado añade 2 y ve «Cuerda: 6 unidades» en Material",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-0 · Material (REQ-F-007) › AC-015-01 REQ-F-007 AC1 con 4 «Cuerda», el encargado añade 2 y ve «Cuerda: 6 unidades» en Material",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-93db5-rda-6-unidades»-en-Material-chromium/attachments/AC-015-01-1181d7284ee05499ae6cbca15a0e6e429430dbcc.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-93db5-rda-6-unidades»-en-Material-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-015-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-93db5-rda-6-unidades»-en-Material-chromium/attachments/AC-015-01-1181d7284ee05499ae6cbca15a0e6e429430dbcc.png": "sha256:3f76f8116d802143e756314e6836099fe0aadd3b6b6dcb7bf9ae5d3b800c8b7f",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-93db5-rda-6-unidades»-en-Material-chromium/test-finished-1.png": "sha256:3f76f8116d802143e756314e6836099fe0aadd3b6b6dcb7bf9ae5d3b800c8b7f",
+                "evidencias/FASE-0/AC-015-01.png": "sha256:3f76f8116d802143e756314e6836099fe0aadd3b6b6dcb7bf9ae5d3b800c8b7f"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{material}: {total} unidades",
+                    "template": true
+                  }
+                ],
+                "where": "Material",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-93db5-rda-6-unidades»-en-Material-chromium/attachments/AC-015-01-1181d7284ee05499ae6cbca15a0e6e429430dbcc.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-93db5-rda-6-unidades»-en-Material-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-015-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-93db5-rda-6-unidades»-en-Material-chromium/attachments/FASE-0-AC-015-01-REQ-F-007-AC1-con-4-Cuerda--77df9b91c8d043fe6116fb10f2dd1db59f0ab4d8.webm",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-93db5-rda-6-unidades»-en-Material-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-AC-015-01-REQ-F-007-AC1-con-4-Cuerda-.webm"
+              ]
+            },
+            {
+              "n": 2,
+              "text": "GIVEN a new type WHEN the encargado adds \"Mosquetón\" with 10 units THEN the user sees \"Mosquetón: 10 unidades\"",
+              "scenarios": [
+                "AC-015-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-0 · Material (REQ-F-007) › AC-015-02 REQ-F-007 AC2 el encargado crea el tipo nuevo «Mosquetón» con 10 unidades y ve «Mosquetón: 10 unidades»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-0 · Material (REQ-F-007) › AC-015-02 REQ-F-007 AC2 el encargado crea el tipo nuevo «Mosquetón» con 10 unidades y ve «Mosquetón: 10 unidades»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-cf9b2--ve-«Mosquetón-10-unidades»-chromium/attachments/AC-015-02-a0c700d3ef3db2909e345dd474d3093bfcbf73b8.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-cf9b2--ve-«Mosquetón-10-unidades»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-015-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-cf9b2--ve-«Mosquetón-10-unidades»-chromium/attachments/AC-015-02-a0c700d3ef3db2909e345dd474d3093bfcbf73b8.png": "sha256:2b904dcad74b87a34c5ceabe268cf9e11b2232889b3ceb02b77104b70a04a350",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-cf9b2--ve-«Mosquetón-10-unidades»-chromium/test-finished-1.png": "sha256:2b904dcad74b87a34c5ceabe268cf9e11b2232889b3ceb02b77104b70a04a350",
+                "evidencias/FASE-0/AC-015-02.png": "sha256:2b904dcad74b87a34c5ceabe268cf9e11b2232889b3ceb02b77104b70a04a350"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{material}: {total} unidades",
+                    "template": true
+                  }
+                ],
+                "where": "Material",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-cf9b2--ve-«Mosquetón-10-unidades»-chromium/attachments/AC-015-02-a0c700d3ef3db2909e345dd474d3093bfcbf73b8.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-cf9b2--ve-«Mosquetón-10-unidades»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-015-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-cf9b2--ve-«Mosquetón-10-unidades»-chromium/attachments/FASE-0-AC-015-02-REQ-F-007-AC2-el-encargado-cre-8fc6152f5f86af0c0c1d414368f9b735bb4640b7.webm",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-cf9b2--ve-«Mosquetón-10-unidades»-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-AC-015-02-REQ-F-007-AC2-el-encargado-cre.webm"
+              ]
+            },
+            {
+              "n": 3,
+              "text": "GIVEN \"Cuerda\" has 6 units and none lent or reserved WHEN the encargado withdraws 1 broken unit THEN the user sees \"Cuerda: 5 unidades\"",
+              "scenarios": [
+                "AC-016-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-0 · Material (REQ-F-007) › AC-016-01 REQ-F-007 AC3 con 6 «Cuerda» libres, el encargado retira 1 rota y ve «Cuerda: 5 unidades»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-0 · Material (REQ-F-007) › AC-016-01 REQ-F-007 AC3 con 6 «Cuerda» libres, el encargado retira 1 rota y ve «Cuerda: 5 unidades»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-02bd4-ta-y-ve-«Cuerda-5-unidades»-chromium/attachments/AC-016-01-65406264013949c50a2f963bfa1aff12e7d8bd31.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-02bd4-ta-y-ve-«Cuerda-5-unidades»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-016-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-02bd4-ta-y-ve-«Cuerda-5-unidades»-chromium/attachments/AC-016-01-65406264013949c50a2f963bfa1aff12e7d8bd31.png": "sha256:fbb86d6f71fb0a0f05b586efbe6ba40b76ba841ab62a5c747bacc8d3896917c1",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-02bd4-ta-y-ve-«Cuerda-5-unidades»-chromium/test-finished-1.png": "sha256:fbb86d6f71fb0a0f05b586efbe6ba40b76ba841ab62a5c747bacc8d3896917c1",
+                "evidencias/FASE-0/AC-016-01.png": "sha256:fbb86d6f71fb0a0f05b586efbe6ba40b76ba841ab62a5c747bacc8d3896917c1"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{material}: {total} unidades",
+                    "template": true
+                  }
+                ],
+                "where": "Material",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-02bd4-ta-y-ve-«Cuerda-5-unidades»-chromium/attachments/AC-016-01-65406264013949c50a2f963bfa1aff12e7d8bd31.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-02bd4-ta-y-ve-«Cuerda-5-unidades»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-016-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-02bd4-ta-y-ve-«Cuerda-5-unidades»-chromium/attachments/FASE-0-AC-016-01-REQ-F-007-AC3-con-6-Cuerda-l-f5b5cb1de1f7a2b5e04c4b19d10f1a0d69e9fba9.webm",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-02bd4-ta-y-ve-«Cuerda-5-unidades»-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-AC-016-01-REQ-F-007-AC3-con-6-Cuerda-l.webm"
+              ]
+            },
+            {
+              "n": 4,
+              "text": "GIVEN \"Tienda\" has 2 units, both reserved on 2026-12-06 WHEN the encargado withdraws 1 THEN the user sees \"No se puede dar de baja: hay 2 unidades de Tienda necesarias el 2026-12-06\" and \"Tienda: 2 unidades\"",
+              "scenarios": [
+                "AC-016-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-0 · Material (REQ-F-007) › AC-016-02 REQ-F-007 AC4 con las 2 «Tienda» reservadas el 2026-12-06, retirar 1 da el error con las unidades necesarias y sigue «Tienda: 2 unidades»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-0 · Material (REQ-F-007) › AC-016-02 REQ-F-007 AC4 con las 2 «Tienda» reservadas el 2026-12-06, retirar 1 da el error con las unidades necesarias y sigue «Tienda: 2 unidades»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-9eb7f-y-sigue-«Tienda-2-unidades»-chromium/attachments/AC-016-02-9da5423d089bc8dff5906c796ba5c2356a9b8c61.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-9eb7f-y-sigue-«Tienda-2-unidades»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-016-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-9eb7f-y-sigue-«Tienda-2-unidades»-chromium/attachments/AC-016-02-9da5423d089bc8dff5906c796ba5c2356a9b8c61.png": "sha256:d064655316952111d9bf3b97ceeae7f23ec9b2590685f0d873233e01b6452628",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-9eb7f-y-sigue-«Tienda-2-unidades»-chromium/test-finished-1.png": "sha256:d064655316952111d9bf3b97ceeae7f23ec9b2590685f0d873233e01b6452628",
+                "evidencias/FASE-0/AC-016-02.png": "sha256:d064655316952111d9bf3b97ceeae7f23ec9b2590685f0d873233e01b6452628"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No se puede dar de baja: hay {n} unidades de {material} necesarias el {día}",
+                    "template": true
+                  },
+                  {
+                    "text": "{material}: {total} unidades",
+                    "template": true
+                  }
+                ],
+                "where": "Material (ejemplo con datos: \"Tienda: 2 unidades\")",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-9eb7f-y-sigue-«Tienda-2-unidades»-chromium/attachments/AC-016-02-9da5423d089bc8dff5906c796ba5c2356a9b8c61.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-9eb7f-y-sigue-«Tienda-2-unidades»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-016-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-9eb7f-y-sigue-«Tienda-2-unidades»-chromium/attachments/FASE-0-AC-016-02-REQ-F-007-AC4-con-las-2-Tiend-49e2c32b873bda88fd99a7038de817319cbdff03.webm",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-9eb7f-y-sigue-«Tienda-2-unidades»-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-AC-016-02-REQ-F-007-AC4-con-las-2-Tiend.webm"
+              ]
+            },
+            {
+              "n": 5,
+              "text": "GIVEN \"Cuerda\" has 1 unit and none lent or reserved, and the encargado just withdrew it (stock 0) WHEN the same withdrawal is submitted again THEN the user sees \"No hay tantas unidades para dar de baja\" and \"Cuerda: 0 unidades\"",
+              "scenarios": [
+                "AC-016-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-0 · Material (REQ-F-007) › AC-016-03 REQ-F-007 AC5 repetir la baja de la única «Cuerda» da «No hay tantas unidades para dar de baja» y sigue «Cuerda: 0 unidades»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-0 · Material (REQ-F-007) › AC-016-03 REQ-F-007 AC5 repetir la baja de la única «Cuerda» da «No hay tantas unidades para dar de baja» y sigue «Cuerda: 0 unidades»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-f04d9-y-sigue-«Cuerda-0-unidades»-chromium/attachments/AC-016-03-e639e7533ff6832889897bc1242f3958a35a2fea.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-f04d9-y-sigue-«Cuerda-0-unidades»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-016-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-f04d9-y-sigue-«Cuerda-0-unidades»-chromium/attachments/AC-016-03-e639e7533ff6832889897bc1242f3958a35a2fea.png": "sha256:fee621d33a518fcd296f366de19a710269daa996025939306358085ae681a085",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-f04d9-y-sigue-«Cuerda-0-unidades»-chromium/test-finished-1.png": "sha256:fee621d33a518fcd296f366de19a710269daa996025939306358085ae681a085",
+                "evidencias/FASE-0/AC-016-03.png": "sha256:fee621d33a518fcd296f366de19a710269daa996025939306358085ae681a085"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No hay tantas unidades para dar de baja",
+                    "template": false
+                  },
+                  {
+                    "text": "{material}: {total} unidades",
+                    "template": true
+                  }
+                ],
+                "where": "Material (ejemplo con datos: \"Cuerda: 0 unidades\")",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-f04d9-y-sigue-«Cuerda-0-unidades»-chromium/attachments/AC-016-03-e639e7533ff6832889897bc1242f3958a35a2fea.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-f04d9-y-sigue-«Cuerda-0-unidades»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-016-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-f04d9-y-sigue-«Cuerda-0-unidades»-chromium/attachments/FASE-0-AC-016-03-REQ-F-007-AC5-repetir-la-baja--291d78480b6709aa1b7fc12f6d9415945487a5ea.webm",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-f04d9-y-sigue-«Cuerda-0-unidades»-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-AC-016-03-REQ-F-007-AC5-repetir-la-baja-.webm"
+              ]
+            },
+            {
+              "n": 6,
+              "text": "GIVEN \"Casco\" with 6 units and \"Cuerda\" with 0 units WHEN a socio opens \"Reservar\" THEN the user sees \"Casco\" among the types and \"Cuerda\" does not offer reservation",
+              "scenarios": [
+                "AC-007-10"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-0 · Material (REQ-F-007) › AC-007-10 REQ-F-007 AC6 con «Casco» a 6 y «Cuerda» a 0, un socio abre Reservar y ve «Casco» entre los tipos sin que se ofrezca «Cuerda»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-0 · Material (REQ-F-007) › AC-007-10 REQ-F-007 AC6 con «Casco» a 6 y «Cuerda» a 0, un socio abre Reservar y ve «Casco» entre los tipos sin que se ofrezca «Cuerda»",
+                  "file": "fase-0.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-5a076-sin-que-se-ofrezca-«Cuerda»-chromium/attachments/AC-007-10-6a01bc3e869fff776ecc25dd97629d87f9316aef.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-5a076-sin-que-se-ofrezca-«Cuerda»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-007-10.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-5a076-sin-que-se-ofrezca-«Cuerda»-chromium/attachments/AC-007-10-6a01bc3e869fff776ecc25dd97629d87f9316aef.png": "sha256:53ebfa8a67c21bf4083fe17b950e61ab2d0426bf26c184f779bb97f6ff7033ae",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-5a076-sin-que-se-ofrezca-«Cuerda»-chromium/test-finished-1.png": "sha256:53ebfa8a67c21bf4083fe17b950e61ab2d0426bf26c184f779bb97f6ff7033ae",
+                "evidencias/FASE-0/AC-007-10.png": "sha256:53ebfa8a67c21bf4083fe17b950e61ab2d0426bf26c184f779bb97f6ff7033ae"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{material}",
+                    "template": true
+                  },
+                  {
+                    "text": "Casco",
+                    "template": false
+                  },
+                  {
+                    "text": "Cuerda",
+                    "template": false
+                  }
+                ],
+                "where": "Reservar (ejemplo con datos: \"Casco\")",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-5a076-sin-que-se-ofrezca-«Cuerda»-chromium/attachments/AC-007-10-6a01bc3e869fff776ecc25dd97629d87f9316aef.png",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-5a076-sin-que-se-ofrezca-«Cuerda»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-007-10.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-5a076-sin-que-se-ofrezca-«Cuerda»-chromium/attachments/FASE-0-AC-007-10-REQ-F-007-AC6-con-Casco-a-6--eec42007f194405f2ef8eeb213735bf72a74d939.webm",
+                "evidencias/FASE-0/.playwright/fase-0-FASE-0-·-Material-R-5a076-sin-que-se-ofrezca-«Cuerda»-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-AC-007-10-REQ-F-007-AC6-con-Casco-a-6-.webm"
+              ]
+            }
+          ],
+          "candidate_files": [
+            "src/server/dominio/disponibilidad.js",
+            "src/server/http/rutas.js",
+            "src/server/servicios/material.js",
+            "src/ui/api.js",
+            "src/ui/main.js",
+            "src/ui/paginas/material.js",
+            "src/ui/paginas/reservar.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        }
+      ],
+      "unknown_requirements": [],
+      "tasks": [
+        "TASK-F0-001",
+        "TASK-F0-002",
+        "TASK-F0-003",
+        "TASK-F0-004",
+        "TASK-F0-005",
+        "TASK-F0-006",
+        "TASK-F0-007",
+        "TASK-F0-008",
+        "TASK-F0-009"
+      ],
+      "candidate_files": [
+        "src/server/app.js",
+        "src/server/dominio/disponibilidad.js",
+        "src/server/dominio/fechas.js",
+        "src/server/http/autorizar.js",
+        "src/server/http/plugin.js",
+        "src/server/http/rutas.js",
+        "src/server/mensajes.js",
+        "src/server/servicios/cuentas.js",
+        "src/server/servicios/material.js",
+        "src/server/servicios/sesiones.js",
+        "src/server/store/almacen-json.js",
+        "src/server/store/almacen-memoria.js",
+        "src/ui/api.js",
+        "src/ui/componentes.js",
+        "src/ui/main.js",
+        "src/ui/paginas/entrar.js",
+        "src/ui/paginas/material.js",
+        "src/ui/paginas/mis-reservas.js",
+        "src/ui/paginas/panel.js",
+        "src/ui/paginas/reservar.js",
+        "src/ui/paginas/sin-permiso.js",
+        "src/ui/router.js",
+        "src/ui/textos.js"
+      ]
+    }
+  ],
+  "uncovered": [
+    {
+      "id": "REQ-C-001",
+      "title": "Textos en español",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-002",
+      "title": "Stack del proyecto",
+      "priority": "Must"
+    }
+  ],
+  "fases_without_header": [],
+  "criteria_without_test": [],
+  "coverage_gaps": 2
+}

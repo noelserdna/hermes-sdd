@@ -1,0 +1,17 @@
+{
+ "criterio": "AC-018-04",
+ "test": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-04 REQ-F-009 AC4 la junta ve el historial de Lucía y busca cualquier botón: no hay «Entregar», «Devolver», «Marcar pagada» ni «Cancelar»",
+ "titulo": "AC-018-04 REQ-F-009 AC4 la junta ve el historial de Lucía y busca cualquier botón: no hay «Entregar», «Devolver», «Marcar pagada» ni «Cancelar»",
+ "ve": [
+  "Historial del socio",
+  "Entregar",
+  "Devolver",
+  "Marcar pagada",
+  "Cancelar"
+ ],
+ "narrado": "Historial de un socio para la junta. Se ve «Historial del socio», «Entregar», «Devolver», «Marcar pagada» y «Cancelar» solo como palabras de la nota de solo lectura: no hay ningún botón con esos nombres y la junta únicamente puede mirar.",
+ "url": "http://127.0.0.1:5173/historial",
+ "imagen": "AC-018-04.png",
+ "sha256": "sha256:46aa6ed90504f106a196b38c18f9faa4da791418518a87f64274366a46d5298c",
+ "at": "2026-11-22T20:35:47.522Z"
+}

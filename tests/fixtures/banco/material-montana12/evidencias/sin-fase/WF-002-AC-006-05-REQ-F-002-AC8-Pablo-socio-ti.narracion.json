@@ -1,0 +1,22 @@
+{
+ "video": "WF-002-AC-006-05-REQ-F-002-AC8-Pablo-socio-ti.webm",
+ "test": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-05 REQ-F-002 AC8 Pablo, socio, tiene una multa pendiente de 4 € y la encargada Nuria lo da de baja: ve «No se puede dar de baja: tiene multas sin pagar»",
+ "titulo": "AC-006-05 REQ-F-002 AC8 Pablo, socio, tiene una multa pendiente de 4 € y la encargada Nuria lo da de baja: ve «No se puede dar de baja: tiene multas sin pagar»",
+ "narraciones": [
+  {
+   "t": 0.012,
+   "texto": "Requisito REQ-F-002: Alta, baja y contraseña de los socios. Criterio 8 de 9.",
+   "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 8: multa pendiente. Dado que Pablo tiene una multa pendiente de 4 €, cuando el encargado lo da de baja, entonces error E_BAJA_MULTAS y ve No se puede dar de baja: tiene multas sin pagar en Socios. Ahora, la demostración.",
+   "presentacion": "AC-006-05"
+  },
+  {
+   "t": 0.834,
+   "texto": "Pablo, un socio, debe una multa de 4 euros. Nuria, la encargada, abre Socios e intenta darlo de baja"
+  },
+  {
+   "t": 1.234,
+   "texto": "Alta, baja y contraseña de los socios. En Socios se ve «No se puede dar de baja: tiene multas sin pagar»: Pablo sigue activo.",
+   "criterio": "AC-006-05"
+  }
+ ]
+}

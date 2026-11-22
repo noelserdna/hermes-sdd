@@ -1,0 +1,30 @@
+{
+ "video": "FASE-1-AC-009-02-REQ-F-004-AC3-Luc-a-repite-Ca.webm",
+ "test": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-009-02 REQ-F-004 AC3 Lucía repite «Cancelar» desde una pestaña vieja y ve «La reserva ya estaba cancelada»; las unidades no se liberan dos veces",
+ "titulo": "AC-009-02 REQ-F-004 AC3 Lucía repite «Cancelar» desde una pestaña vieja y ve «La reserva ya estaba cancelada»; las unidades no se liberan dos veces",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-004: Mis reservas y cancelar. Criterio 3 de 6.",
+   "voz": "Requisito funcional 4: Mis reservas y cancelar. El socio ve sus reservas y las puede cancelar hasta el día antes de que empiecen. Tiene 6 criterios de aceptación. Este vídeo demuestra el criterio 3: cancelar otra vez. Dado que Lucía ya canceló la reserva y Pablo Sanz reservó 5 × Casco esas fechas, cuando se envía Cancelar otra vez, entonces error E_YA_CANCELADA: La reserva ya estaba cancelada en Mis reservas y Pablo Sanz pide 2 × Casco y ve No hay unidades libres: solo queda 1 de Casco el 2026-12-05. Ahora, la demostración.",
+   "presentacion": "AC-009-02"
+  },
+  {
+   "t": 0.523,
+   "texto": "Lucía tiene abierta Mis reservas con su reserva del 5 al 7 de diciembre"
+  },
+  {
+   "t": 1.168,
+   "texto": "La reserva ya está cancelada desde otra pestaña y Pablo ha reservado 5 cascos esos días. Lucía pulsa Cancelar en su pestaña vieja"
+  },
+  {
+   "t": 1.416,
+   "texto": "Lucía pide ahora 2 cascos esos días"
+  },
+  {
+   "t": 1.865,
+   "texto": "Mis reservas y cancelar. Se ve «La reserva ya estaba cancelada» y «No hay unidades libres: solo queda 1 de Casco el 2026-12-05»: las unidades no se liberan dos veces.",
+   "criterio": "AC-009-02"
+  }
+ ]
+}

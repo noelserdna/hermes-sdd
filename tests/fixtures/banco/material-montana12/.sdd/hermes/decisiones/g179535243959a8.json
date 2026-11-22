@@ -1,0 +1,13 @@
+{
+  "verbo": "acepto",
+  "texto": "Ahora sí: lo que se puede ver en el navegador está en «Se ve» y «No visible» queda solo para lo que no sale en pantalla.",
+  "actor": {
+    "persona": "yo",
+    "canal": "local",
+    "id": "andre"
+  },
+  "prueba": {
+    "host": "DESKTOP-7HT2139"
+  },
+  "at": "2026-11-22T13:55:32Z"
+}

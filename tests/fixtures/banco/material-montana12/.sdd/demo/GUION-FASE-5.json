@@ -1,0 +1,291 @@
+{
+ "fase": "5",
+ "plan": "plan/fases/FASE-5-JUNTA.md",
+ "workflows": [],
+ "casos_de_uso": [
+  {
+   "id": "UC-018",
+   "titulo": "Consultar historial de un socio",
+   "fichero": "spec/use-cases/UC-018-historial-socio.md",
+   "flujo": [
+    "Junta: escribe nombre o correo en Historial del socio.",
+    "Sistema: comprueba el rol (API-001-08, INV-SEC-001).",
+    "Sistema: busca por nombre o correo, parcial y sin mayúsculas (API-001-07, RN-019).",
+    "Junta: si hay varios resultados, elige uno de la lista.",
+    "Sistema: muestra préstamos y multas del socio, solo lectura."
+   ],
+   "extensiones": [
+    {
+     "texto": "4a. varios resultados → se muestra la lista para elegir.",
+     "criterios": [
+      "AC-018-05"
+     ]
+    },
+    {
+     "texto": "5a. el socio no tiene préstamos ni multas → se indica.",
+     "criterios": [
+      "AC-018-02"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-018-01",
+    "AC-018-02",
+    "AC-018-03",
+    "AC-018-04"
+   ]
+  },
+  {
+   "id": "UC-019",
+   "titulo": "Depurar historial antiguo",
+   "fichero": "spec/use-cases/UC-019-depurar-historial.md",
+   "flujo": [
+    "Sistema: se activa al arrancar o al pasar un día (RN-021).",
+    "System: calcula el límite `hoy − RETENTION_YEARS` años (RN-022).",
+    "System: borra reservas y préstamos cerrados con `endDate` anterior al límite (INV-RES-011, RN-033).",
+    "System: borra multas Pagadas con creación anterior al límite (RN-021, RN-033).",
+    "System: devuelve los recuentos borrados."
+   ],
+   "extensiones": [
+    {
+     "texto": "3a. `endDate` igual al límite → se conserva (anterior estricto).",
+     "criterios": [
+      "AC-019-02"
+     ]
+    }
+   ],
+   "criterios": []
+  }
+ ],
+ "criterios": [
+  {
+   "id": "AC-018-01",
+   "req": "REQ-F-009",
+   "ac": 1,
+   "uc": "UC-018",
+   "frase": "Historial de un socio para la junta. En Historial del socio (ejemplo con datos: \"Multa de 4 € — Pagada\") se ve «{cantidad} × {material} del {inicio} al {fin} — devuelto el {fecha}» y «Multa de {importe} € — {estado}».",
+   "visible": true,
+   "then": "the user sees \"2 × Casco del 2026-12-05 al 2026-12-07 — devuelto el 2026-12-09\" and \"Multa de 4 € — Pagada\"",
+   "ve": [
+    "{cantidad} × {material} del {inicio} al {fin} — devuelto el {fecha}",
+    "Multa de {importe} € — {estado}"
+   ],
+   "pantalla": "Historial del socio (ejemplo con datos: \"Multa de 4 € — Pagada\")",
+   "presentacion": {
+    "requisito": "REQ-F-009",
+    "titulo": "Historial de un socio para la junta",
+    "para_el_cliente": "La junta busca a cualquier socio y ve sus préstamos y multas, sin poder cambiar nada.",
+    "n": 1,
+    "total": 4,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "historial con multa pagada",
+      "actual": true
+     },
+     {
+      "n": 2,
+      "titulo": "sin préstamos",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "sin coincidencias",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "solo lectura",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "Lucía devolvió 2 × Casco del 2026-12-05 al 2026-12-07 el 2026-12-09 y pagó su multa de 4 €"
+     },
+     {
+      "k": "Cuando",
+      "texto": "la junta busca \"lucia\""
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"2 × Casco del 2026-12-05 al 2026-12-07 — devuelto el 2026-12-09\" y \"Multa de 4 € — Pagada\" en Historial del socio"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 9: Historial de un socio para la junta. La junta busca a cualquier socio y ve sus préstamos y multas, sin poder cambiar nada. Tiene 4 criterios de aceptación. Este vídeo demuestra el criterio 1: historial con multa pagada. Dado que Lucía devolvió 2 × Casco del 2026-12-05 al 2026-12-07 el 2026-12-09 y pagó su multa de 4 €, cuando la junta busca lucia, entonces ve 2 × Casco del 2026-12-05 al 2026-12-07 — devuelto el 2026-12-09 y Multa de 4 € — Pagada en Historial del socio. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-018-02",
+   "req": "REQ-F-009",
+   "ac": 2,
+   "uc": "UC-018",
+   "frase": "Historial de un socio para la junta. En Historial del socio se ve «Sin préstamos ni multas».",
+   "visible": true,
+   "then": "the user sees \"Sin préstamos ni multas\"",
+   "ve": [
+    "Sin préstamos ni multas"
+   ],
+   "pantalla": "Historial del socio",
+   "presentacion": {
+    "requisito": "REQ-F-009",
+    "titulo": "Historial de un socio para la junta",
+    "para_el_cliente": "La junta busca a cualquier socio y ve sus préstamos y multas, sin poder cambiar nada.",
+    "n": 2,
+    "total": 4,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "historial con multa pagada",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "sin préstamos",
+      "actual": true
+     },
+     {
+      "n": 3,
+      "titulo": "sin coincidencias",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "solo lectura",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Dado",
+      "texto": "un socio sin préstamos ni multas"
+     },
+     {
+      "k": "Cuando",
+      "texto": "la junta abre su historial"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Sin préstamos ni multas\" en Historial del socio"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 9: Historial de un socio para la junta. La junta busca a cualquier socio y ve sus préstamos y multas, sin poder cambiar nada. Tiene 4 criterios de aceptación. Este vídeo demuestra el criterio 2: sin préstamos. Dado que un socio sin préstamos ni multas, cuando la junta abre su historial, entonces ve Sin préstamos ni multas en Historial del socio. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-018-03",
+   "req": "REQ-F-009",
+   "ac": 3,
+   "uc": "UC-018",
+   "frase": "Historial de un socio para la junta. En Historial del socio se ve «Ningún socio coincide».",
+   "visible": true,
+   "then": "the user sees \"Ningún socio coincide\"",
+   "ve": [
+    "Ningún socio coincide"
+   ],
+   "pantalla": "Historial del socio",
+   "presentacion": {
+    "requisito": "REQ-F-009",
+    "titulo": "Historial de un socio para la junta",
+    "para_el_cliente": "La junta busca a cualquier socio y ve sus préstamos y multas, sin poder cambiar nada.",
+    "n": 3,
+    "total": 4,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "historial con multa pagada",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "sin préstamos",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "sin coincidencias",
+      "actual": true
+     },
+     {
+      "n": 4,
+      "titulo": "solo lectura",
+      "actual": false
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Cuando",
+      "texto": "la junta busca \"zzz\""
+     },
+     {
+      "k": "Entonces",
+      "texto": "error `E_BUSQUEDA_VACIA` y ve \"Ningún socio coincide\" en Historial del socio"
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 9: Historial de un socio para la junta. La junta busca a cualquier socio y ve sus préstamos y multas, sin poder cambiar nada. Tiene 4 criterios de aceptación. Este vídeo demuestra el criterio 3: sin coincidencias. cuando la junta busca zzz, entonces error E_BUSQUEDA_VACIA y ve Ningún socio coincide en Historial del socio. Ahora, la demostración."
+   }
+  },
+  {
+   "id": "AC-018-04",
+   "req": "REQ-F-009",
+   "ac": 4,
+   "uc": "UC-018",
+   "frase": "Historial de un socio para la junta. Se ve «Historial del socio», «Entregar», «Devolver», «Marcar pagada» y «Cancelar».",
+   "visible": true,
+   "then": "there is no \"Entregar\", \"Devolver\", \"Marcar pagada\" or \"Cancelar\"",
+   "ve": [
+    "Historial del socio",
+    "Entregar",
+    "Devolver",
+    "Marcar pagada",
+    "Cancelar"
+   ],
+   "pantalla": null,
+   "presentacion": {
+    "requisito": "REQ-F-009",
+    "titulo": "Historial de un socio para la junta",
+    "para_el_cliente": "La junta busca a cualquier socio y ve sus préstamos y multas, sin poder cambiar nada.",
+    "n": 4,
+    "total": 4,
+    "criterios": [
+     {
+      "n": 1,
+      "titulo": "historial con multa pagada",
+      "actual": false
+     },
+     {
+      "n": 2,
+      "titulo": "sin préstamos",
+      "actual": false
+     },
+     {
+      "n": 3,
+      "titulo": "sin coincidencias",
+      "actual": false
+     },
+     {
+      "n": 4,
+      "titulo": "solo lectura",
+      "actual": true
+     }
+    ],
+    "pasos": [
+     {
+      "k": "Cuando",
+      "texto": "la junta ve un historial"
+     },
+     {
+      "k": "Entonces",
+      "texto": "ve \"Historial del socio\" sin ningún botón \"Entregar\", \"Devolver\", \"Marcar pagada\" ni \"Cancelar\""
+     }
+    ],
+    "no_visible": null,
+    "voz": "Requisito funcional 9: Historial de un socio para la junta. La junta busca a cualquier socio y ve sus préstamos y multas, sin poder cambiar nada. Tiene 4 criterios de aceptación. Este vídeo demuestra el criterio 4: solo lectura. cuando la junta ve un historial, entonces ve Historial del socio sin ningún botón Entregar, Devolver, Marcar pagada ni Cancelar. Ahora, la demostración."
+   }
+  }
+ ]
+}

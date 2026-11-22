@@ -1,0 +1,260 @@
+{
+ "fase": "0",
+ "criterios": [
+  {
+   "criterio": "REQ-F-001-AC1",
+   "req": "REQ-F-001",
+   "ac": 1,
+   "ids": [
+    "AC-001-01",
+    "REQ-F-001-AC1"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-001-AC2",
+   "req": "REQ-F-001",
+   "ac": 2,
+   "ids": [
+    "AC-001-02",
+    "REQ-F-001-AC2"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-001-AC3",
+   "req": "REQ-F-001",
+   "ac": 3,
+   "ids": [
+    "AC-001-03",
+    "REQ-F-001-AC3"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-001-AC4",
+   "req": "REQ-F-001",
+   "ac": 4,
+   "ids": [
+    "AC-001-04",
+    "REQ-F-001-AC4"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-001-AC5",
+   "req": "REQ-F-001",
+   "ac": 5,
+   "ids": [
+    "AC-001-05",
+    "REQ-F-001-AC5"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-001-AC6",
+   "req": "REQ-F-001",
+   "ac": 6,
+   "ids": [
+    "AC-001-06",
+    "REQ-F-001-AC6"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-001-AC7",
+   "req": "REQ-F-001",
+   "ac": 7,
+   "ids": [
+    "AC-002-01",
+    "AC-002-02",
+    "REQ-F-001-AC7"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": false
+   },
+   "faltan": [
+    "su THEN promete lo que no se ve ni se declara no visible: «going back does not show private data»"
+   ],
+   "estado": "incompleto"
+  },
+  {
+   "criterio": "REQ-F-001-AC8",
+   "req": "REQ-F-001",
+   "ac": 8,
+   "ids": [
+    "AC-001-07",
+    "REQ-F-001-AC8"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-007-AC1",
+   "req": "REQ-F-007",
+   "ac": 1,
+   "ids": [
+    "AC-015-01",
+    "REQ-F-007-AC1"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-007-AC2",
+   "req": "REQ-F-007",
+   "ac": 2,
+   "ids": [
+    "AC-015-02",
+    "REQ-F-007-AC2"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-007-AC3",
+   "req": "REQ-F-007",
+   "ac": 3,
+   "ids": [
+    "AC-016-01",
+    "REQ-F-007-AC3"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-007-AC4",
+   "req": "REQ-F-007",
+   "ac": 4,
+   "ids": [
+    "AC-016-02",
+    "REQ-F-007-AC4"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  },
+  {
+   "criterio": "REQ-F-007-AC5",
+   "req": "REQ-F-007",
+   "ac": 5,
+   "ids": [
+    "AC-016-03",
+    "REQ-F-007-AC5"
+   ],
+   "piezas": {
+    "prueba": true,
+    "captura": true,
+    "vídeo": true,
+    "voz": true,
+    "revisión": true,
+    "visible": true
+   },
+   "faltan": [],
+   "estado": "demostrado"
+  }
+ ],
+ "resumen": {
+  "criterios": 13,
+  "demostrados": 12,
+  "incompletos": 1
+ }
+}

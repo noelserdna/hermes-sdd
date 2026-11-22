@@ -1,0 +1,26 @@
+{
+ "video": "WF-002-AC-006-01-REQ-F-002-AC6-Marta-no-tiene-p.webm",
+ "test": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-006-01 REQ-F-002 AC6 Marta no tiene préstamos abiertos ni multas pendientes y Pablo la da de baja: ve «Socio dado de baja: Marta Ruiz» y Marta ya no entra",
+ "titulo": "AC-006-01 REQ-F-002 AC6 Marta no tiene préstamos abiertos ni multas pendientes y Pablo la da de baja: ve «Socio dado de baja: Marta Ruiz» y Marta ya no entra",
+ "narraciones": [
+  {
+   "t": 0.026,
+   "texto": "Requisito REQ-F-002: Alta, baja y contraseña de los socios. Criterio 6 de 9.",
+   "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 6: baja correcta. Dado que Marta Ruiz sin préstamos abiertos ni multas pendientes, cuando el encargado la da de baja, entonces ve Socio dado de baja: Marta Ruiz en Socios. Ahora, la demostración.",
+   "presentacion": "AC-006-01"
+  },
+  {
+   "t": 0.839,
+   "texto": "Marta no tiene material sin devolver ni multas. Pablo abre Socios y pulsa «Dar de baja» en su fila, y confirma"
+  },
+  {
+   "t": 1.207,
+   "texto": "Pablo sale. Marta intenta entrar con su correo y su contraseña de siempre y no puede"
+  },
+  {
+   "t": 1.636,
+   "texto": "Alta, baja y contraseña de los socios. En Socios se ve «Socio dado de baja: Marta Ruiz» y Marta ya no puede entrar: ve «Correo o contraseña incorrectos».",
+   "criterio": "AC-006-01"
+  }
+ ]
+}

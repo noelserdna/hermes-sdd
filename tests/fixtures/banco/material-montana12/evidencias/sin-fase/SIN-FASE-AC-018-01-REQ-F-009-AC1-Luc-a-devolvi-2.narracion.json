@@ -1,0 +1,26 @@
+{
+ "video": "SIN-FASE-AC-018-01-REQ-F-009-AC1-Luc-a-devolvi-2.webm",
+ "test": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-01 REQ-F-009 AC1 Lucía devolvió 2 × Casco del 2026-12-05 al 2026-12-07 el 2026-12-09 y pagó su multa de 4 €: la junta busca «lucia» y ve su préstamo y su multa",
+ "titulo": "AC-018-01 REQ-F-009 AC1 Lucía devolvió 2 × Casco del 2026-12-05 al 2026-12-07 el 2026-12-09 y pagó su multa de 4 €: la junta busca «lucia» y ve su préstamo y su multa",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-009: Historial de un socio para la junta. Criterio 1 de 4.",
+   "voz": "Requisito funcional 9: Historial de un socio para la junta. La junta busca a cualquier socio y ve sus préstamos y multas, sin poder cambiar nada. Tiene 4 criterios de aceptación. Este vídeo demuestra el criterio 1: historial con multa pagada. Dado que Lucía devolvió 2 × Casco del 2026-12-05 al 2026-12-07 el 2026-12-09 y pagó su multa de 4 €, cuando la junta busca lucia, entonces ve 2 × Casco del 2026-12-05 al 2026-12-07 — devuelto el 2026-12-09 y Multa de 4 € — Pagada en Historial del socio. Ahora, la demostración.",
+   "presentacion": "AC-018-01"
+  },
+  {
+   "t": 0.593,
+   "texto": "Elena, de la junta, entra y se encuentra en Historial del socio"
+  },
+  {
+   "t": 1.079,
+   "texto": "Escribe «lucia» en «Buscar por nombre o correo» y pulsa Buscar"
+  },
+  {
+   "t": 1.366,
+   "texto": "Historial de un socio para la junta. En Historial del socio (ejemplo con datos: \"Multa de 4 € — Pagada\") se ve «2 × Casco del 2026-12-05 al 2026-12-07 — devuelto el 2026-12-09» y «Multa de 4 € — Pagada»: el préstamo de Lucía y su multa pagada.",
+   "criterio": "AC-018-01"
+  }
+ ]
+}

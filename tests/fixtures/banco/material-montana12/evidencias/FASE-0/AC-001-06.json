@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-06",
+ "test": "FASE-0 · Entrar y salir (REQ-F-001) › AC-001-06 REQ-F-001 AC6 con la sesión de Lucía caducada por inactividad, cualquier página muestra «Entrar»",
+ "titulo": "AC-001-06 REQ-F-001 AC6 con la sesión de Lucía caducada por inactividad, cualquier página muestra «Entrar»",
+ "ve": [
+  "Entrar"
+ ],
+ "narrado": "Entrar y salir. En Entrar se ve «Entrar», porque la sesión caducó por inactividad.",
+ "url": "http://127.0.0.1:5173/reservar",
+ "imagen": "AC-001-06.png",
+ "sha256": "sha256:72ce15baa70148900523ffa0fae2136aaa34419a67e3c7f1e23624043b0f9e83",
+ "at": "2026-11-22T20:33:23.855Z"
+}

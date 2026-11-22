@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-011-03",
+ "test": "FASE-2 · Entregar y recibir el material, y el panel del día (REQ-F-005, REQ-F-008) › AC-011-03 REQ-F-005 AC5 el préstamo acaba el 2026-12-07 y se devuelve el 2026-12-08: Pablo ve «Devuelto con 1 día de retraso: multa de 2 €»",
+ "titulo": "AC-011-03 REQ-F-005 AC5 el préstamo acaba el 2026-12-07 y se devuelve el 2026-12-08: Pablo ve «Devuelto con 1 día de retraso: multa de 2 €»",
+ "ve": [
+  "Devuelto con 1 día de retraso: multa de 2 €"
+ ],
+ "narrado": "Entregar y recibir el material. En Panel del encargado se ve «Devuelto con 1 día de retraso: multa de 2 €», en singular.",
+ "url": "http://127.0.0.1:5173/panel",
+ "imagen": "AC-011-03.png",
+ "sha256": "sha256:f508f436557196fe004ce03d4163569512ca844dc949b7399e50e594c75e934e",
+ "at": "2026-11-22T19:43:17.282Z"
+}

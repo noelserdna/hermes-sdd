@@ -1,0 +1,22 @@
+{
+ "video": "WF-002-AC-003-02-REQ-F-002-AC2-Marta-Ruiz-ya-.webm",
+ "test": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-02 REQ-F-002 AC2 «Marta Ruiz» ya existe y Pablo registra otra vez «marta@club.test»: ve «Ya existe un socio con ese correo» y una sola «Marta Ruiz — Activo»",
+ "titulo": "AC-003-02 REQ-F-002 AC2 «Marta Ruiz» ya existe y Pablo registra otra vez «marta@club.test»: ve «Ya existe un socio con ese correo» y una sola «Marta Ruiz — Activo»",
+ "narraciones": [
+  {
+   "t": 0.013,
+   "texto": "Requisito REQ-F-002: Alta, baja y contraseña de los socios. Criterio 2 de 9.",
+   "voz": "Requisito funcional 2: Alta, baja y contraseña de los socios. El encargado da de alta a los socios (con una contraseña provisional que el socio cambia al entrar), puede darles una contraseña nueva si la olvidan y los da de baja. No se puede dar de baja a quien tiene material sin devolver o multas sin pagar. Tiene 9 criterios de aceptación. Este vídeo demuestra el criterio 2: correo repetido y replay. Dado que Marta Ruiz existe, cuando el encargado registra marta@club.test otra vez, entonces error E_SOCIO_DUPLICADO y ve Ya existe un socio con ese correo en Socios y ve una sola fila Marta Ruiz — Activo. Ahora, la demostración.",
+   "presentacion": "AC-003-02"
+  },
+  {
+   "t": 0.836,
+   "texto": "Marta Ruiz ya es socia. Pablo abre Socios y vuelve a darla de alta con el mismo correo"
+  },
+  {
+   "t": 1.245,
+   "texto": "Alta, baja y contraseña de los socios. En Socios se ve «Ya existe un socio con ese correo» y «Marta Ruiz — Activo»: la lista sigue con una sola Marta Ruiz.",
+   "criterio": "AC-003-02"
+  }
+ ]
+}

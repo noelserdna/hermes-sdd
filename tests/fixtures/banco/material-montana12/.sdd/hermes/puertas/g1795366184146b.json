@@ -1,0 +1,96 @@
+{
+  "id": "g1795366184146b",
+  "tipo": "fase",
+  "fase": "2",
+  "tablero": "material-montana12",
+  "tarjeta": "t_ece2cd4c",
+  "adopcion": false,
+  "sha": "effbe14eaffab5b2cc618043a6bd9ebea08762fa",
+  "creada": "2026-11-22T16:49:44Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana12",
+  "titulo": "Aceptar FASE-2",
+  "texto": "🧭 Encargado: 3 avisos (1 grave: Jev no puede aprobar esta puerta solo)\n‼️ Se cambió un test ya aceptado (tests/e2e/fase-0.spec.js, fa15b53) sin que una persona lo autorizara: quita 1 aserción(es)\n• La FASE-2 añadió 808 líneas de tests para 236 de código (3.4×): revisa si los tests prueban lo que piden los criterios\n• 5 texto(s) que los criterios dicen que se ven no están tal cual en el código de la app («2 × Casco del 2026-12-05 al 2026-12-07 — Prestada», «Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07», «Lucía Gil — Multa de 6 € — Pendiente»): o la app los compone (y nadie comprueba la plantilla) o no los enseña\n\n🧪 La FASE-2 de «material-montana12» está lista para revisar.\n\n✅ Todo en orden: los 3 requisitos de esta fase funcionan y están comprobados.\n\n✅ Entregar y recibir el material: funciona y está comprobado (10 de 10 criterios)\n✅ Qué hay prestado y qué vuelve cada día: funciona y está comprobado (7 de 7 criterios)\n✅ Datos compartidos entre dispositivos: funciona y está comprobado (2 de 2 criterios)\n\n⛔ Se ha cambiado 1 test que ya existía y no lo autorizó nadie con su firma: no debería aceptarse sin saber por qué.\n• tests/e2e/fase-0.spec.js: SIN autorización firmada — quita 1 aserción(es)\n   quita: await expect(page.getByRole('button', { name: 'Reservar' })).toHaveCount(0);\n\n🎬 Demo: vídeo y 17 capturas.\n\n🤖 Jev ha leído el texto en off de 17 vídeos: cada uno cuenta lo que pide su criterio.\n\n🧾 Demostrados: 13 de 17 criterios (prueba, captura, vídeo con voz y revisión).\nLes falta:\n• REQ-F-005 AC2: su THEN promete lo que no se ve ni se declara no visible: «the loan is still one»\n• REQ-F-005 AC6: su THEN promete lo que no se ve ni se declara no visible: «the fine is still 1 of 6 €»\n• REQ-F-005 AC7: su THEN promete lo que no se ve ni se declara no visible: «its units are free»\n• REQ-F-005 AC9: su THEN promete lo que no se ve ni se declara no visible: «the fine is not created until the return is marked»\n\n👉 Pulsa ▶ Ver demo; después podrás aceptarla, aceptarla con observaciones o rechazarla.\n\n❓ Antes, una pregunta (la recomendada ya está marcada en los botones Q):\n\n1. La prueba de la entrega 0 todavía exige que en Reservar no haya botón «Reservar», pero desde la entrega 1 sí lo hay, así que falla. ¿Autoriza quitar de nuevo solo esa comprobación?\n   🔧 Detalle técnico: El test aceptado AC-007-10 de FASE-0 sigue comprobando que en Reservar hay 0 botones «Reservar» («todavía no: llega en FASE-1»). Desde FASE-1 ese botón existe…\n   A) Sí, se quita solo esa comprobación obsoleta  ⭐ recomendada  (✏️ autoriza editar tests/e2e/fase-0.spec.js)\n   B) No, se deja la prueba como está\n\n👉 Si firmas sin tocar los botones Q, esto lanzará: ✏️ autoriza editar tests que ya existían: tests/e2e/fase-0.spec.js (Q1).",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Aceptar",
+      "paso": 2
+    },
+    {
+      "verbo": "observaciones",
+      "etiqueta": "📝 Con observaciones",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-2/FASE-2-AC-010-01-REQ-F-005-AC1-hoy-es-2026-12-0.mp4",
+  "preguntas": [
+    {
+      "n": 1,
+      "id": "Q-task-implementer-002",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "editar-test",
+          "ficheros": [
+            "tests/e2e/fase-0.spec.js"
+          ],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "La prueba de la entrega 0 todavía exige que en Reservar no haya botón «Reservar», pero desde la entrega 1 sí lo hay, así que falla. ¿Autoriza quitar de nuevo solo esa comprobación?"
+    }
+  ],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 1,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": false,
+        "codigo": "tests-de-mas",
+        "texto": "La FASE-2 añadió 808 líneas de tests para 236 de código (3.4×): revisa si los tests prueban lo que piden los criterios"
+      },
+      {
+        "grave": true,
+        "codigo": "test-congelado",
+        "texto": "Se cambió un test ya aceptado (tests/e2e/fase-0.spec.js, fa15b53) sin que una persona lo autorizara: quita 1 aserción(es)"
+      },
+      {
+        "grave": false,
+        "codigo": "texto-fuera-del-codigo",
+        "texto": "5 texto(s) que los criterios dicen que se ven no están tal cual en el código de la app («2 × Casco del 2026-12-05 al 2026-12-07 — Prestada», «Prestado: 2 × Casco — Lucía Gil — vuelve el 2026-12-07», «Lucía Gil — Multa de 6 € — Pendiente»): o la app los compone (y nadie comprueba la plantilla) o no los enseña"
+      }
+    ],
+    "graves": 1
+  },
+  "narracion": {
+    "revisados": 17,
+    "modelo": "jev-1.14.0",
+    "contradicen": [],
+    "incompletos": []
+  }
+}

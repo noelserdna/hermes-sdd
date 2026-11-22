@@ -1,0 +1,22 @@
+{
+ "video": "SIN-FASE-AC-008-01-REQ-F-004-AC1-Luc-a-abre-Mis-r.webm",
+ "test": "FASE-1 · Mis reservas y cancelar (REQ-F-004) › AC-008-01 REQ-F-004 AC1 Lucía abre Mis reservas y ve «2 × Casco del 2026-12-05 al 2026-12-07 — Reservada» sin las reservas de otros",
+ "titulo": "AC-008-01 REQ-F-004 AC1 Lucía abre Mis reservas y ve «2 × Casco del 2026-12-05 al 2026-12-07 — Reservada» sin las reservas de otros",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "Requisito REQ-F-004: Mis reservas y cancelar. Criterio 1 de 6.",
+   "voz": "Requisito funcional 4: Mis reservas y cancelar. El socio ve sus reservas y las puede cancelar hasta el día antes de que empiecen. Tiene 6 criterios de aceptación. Este vídeo demuestra el criterio 1: solo las mías. Dado que Lucía tiene 2 × Casco 2026-12-05..2026-12-07 y Pablo Sanz tiene 1 × Tienda del 2026-12-06 al 2026-12-08 — Reservada, cuando Lucía abre Mis reservas, entonces ve una sola fila 2 × Casco del 2026-12-05 al 2026-12-07 — Reservada y no ve 1 × Tienda del 2026-12-06 al 2026-12-08 — Reservada y pedir una reserva ajena da E_ACCESO_DENEGADO sin datos. Ahora, la demostración.",
+   "presentacion": "AC-008-01"
+  },
+  {
+   "t": 0.513,
+   "texto": "Lucía tiene una reserva y Pablo, otro socio, tiene una de tienda. Lucía entra y abre Mis reservas"
+  },
+  {
+   "t": 1.055,
+   "texto": "Mis reservas y cancelar. En Mis reservas se ve «2 × Casco del 2026-12-05 al 2026-12-07 — Reservada» y ninguna reserva de otros socios.",
+   "criterio": "AC-008-01"
+  }
+ ]
+}

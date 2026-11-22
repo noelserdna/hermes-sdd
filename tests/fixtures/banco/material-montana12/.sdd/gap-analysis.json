@@ -1,0 +1,193 @@
+{
+  "$schema": "sdd-gap-analysis-v1",
+  "generatedAt": "2026-11-22T21:00:00Z",
+  "projectFramework": "unknown",
+  "endpoints": {
+    "specified": [],
+    "implemented": [],
+    "missing": [],
+    "orphan": [
+      {
+        "method": "GET",
+        "path": "/api/socios",
+        "codeFile": "src/server/http/rutas.js",
+        "handler": "listMembers",
+        "line": 59
+      },
+      {
+        "method": "GET",
+        "path": "/api/sesion",
+        "codeFile": "src/server/http/rutas.js",
+        "handler": "authorize (guardia del router)",
+        "line": 99
+      }
+    ],
+    "mismatch": []
+  },
+  "bddCoverage": {
+    "totalScenarios": 110,
+    "withTestFiles": 109,
+    "withoutTestFiles": 1,
+    "missing": [
+      "AC-002-02"
+    ]
+  },
+  "statistics": {
+    "totalSpecEndpoints": 21,
+    "implemented": 21,
+    "missing": 0,
+    "orphanRoutes": 2,
+    "mismatches": 0,
+    "endpointCoveragePercent": 100,
+    "bddCoveragePercent": 99.1
+  },
+  "semantic": {
+    "generatedAt": "2026-11-22T21:00:00Z",
+    "judge": "llm",
+    "model": "claude-sonnet-5-5",
+    "thresholds": {
+      "covered": 0.85,
+      "missing": 0.15,
+      "relatedMax": 0.3,
+      "splitBand": [
+        0.3,
+        0.6
+      ],
+      "maxFilesPerReq": 5
+    },
+    "requirements": [
+      {
+        "id": "REQ-F-001",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/server/servicios/cuentas.js:32-72; sesiones.js (30 min)",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-F-002",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/server/servicios/cuentas.js:86-160",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-F-003",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/server/servicios/prestamos.js:14-41",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-F-004",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/server/servicios/prestamos.js:42-82",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-F-005",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/server/servicios/prestamos.js:83-130",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-F-006",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/server/servicios/multas.js:6-40; dominio/multas.js",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-F-007",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/server/servicios/material.js:10-45",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-F-008",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/server/servicios/panel.js:13",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-F-009",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/server/servicios/historial.js:31",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-NF-001",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/server/http/autorizar.js; rutas.js",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-NF-002",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/server/store/almacen-json.js",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-NF-003",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/server/servicios/depurar.js:21-60",
+        "reason": "fallback",
+        "chunksChecked": 1
+      }
+    ],
+    "summary": {
+      "targets": 12,
+      "covered": 12,
+      "partial": 0,
+      "likelyMissing": 0,
+      "noCandidates": 0,
+      "reviewedByLlm": 12
+    },
+    "notCheckable": [
+      "REQ-C-001",
+      "REQ-C-002"
+    ]
+  }
+}

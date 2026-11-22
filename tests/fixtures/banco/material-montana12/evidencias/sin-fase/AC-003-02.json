@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-003-02",
+ "test": "FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002) › AC-003-02 REQ-F-002 AC2 «Marta Ruiz» ya existe y Pablo registra otra vez «marta@club.test»: ve «Ya existe un socio con ese correo» y una sola «Marta Ruiz — Activo»",
+ "titulo": "AC-003-02 REQ-F-002 AC2 «Marta Ruiz» ya existe y Pablo registra otra vez «marta@club.test»: ve «Ya existe un socio con ese correo» y una sola «Marta Ruiz — Activo»",
+ "ve": [
+  "Ya existe un socio con ese correo",
+  "Marta Ruiz — Activo"
+ ],
+ "narrado": "Alta, baja y contraseña de los socios. En Socios se ve «Ya existe un socio con ese correo» y «Marta Ruiz — Activo»: la lista sigue con una sola Marta Ruiz.",
+ "url": "http://127.0.0.1:5173/socios",
+ "imagen": "AC-003-02.png",
+ "sha256": "sha256:01cb4300aab5810e629cd270d4e192bd290a604bda4c161d7cc05b5070c5df5b",
+ "at": "2026-11-22T19:43:38.164Z"
+}

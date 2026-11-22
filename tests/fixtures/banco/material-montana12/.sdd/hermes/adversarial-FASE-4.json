@@ -1,0 +1,483 @@
+{
+  "$schema": "sdd-adversarial-plan-v1",
+  "evaluated_sha": "210af3b3aadece08586026119d9b4a73f11ef5ae",
+  "dirty": false,
+  "generatedAt": "2026-11-22T19:01:22.335Z",
+  "scope": {
+    "fase": 4
+  },
+  "code_paths": [
+    "src"
+  ],
+  "adversarial_gate": "enforce",
+  "incremental": {
+    "since": "09f209a085fac1245224e39cb62707a36510cf54",
+    "baseline": ".sdd/hermes/adversarial-FASE-4.json",
+    "changed_files": [],
+    "criteria": 7,
+    "recheck": 0,
+    "carried": 7
+  },
+  "fases": [
+    {
+      "fase": 4,
+      "file": "plan/fases/FASE-4-MULTAS.md",
+      "header": true,
+      "requirements": [
+        {
+          "id": "REQ-F-006",
+          "title": "Multas y bloqueo hasta pagarlas",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN the encargado marks a fine as paid THE system SHALL lift the reservation block of that socio if no other fine is pending, and WHILE a socio has a pending fine THE system SHALL show it to them",
+          "reqHash": "sha256:1473a65acab27b19e2d395f6a7687c21f104760105212d2f3a50c76ada26051d",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN Pablo has a pending fine of 6 € WHEN he opens \"Mis multas\" THEN the user sees \"Multa de 6 € — Pendiente\"",
+              "scenarios": [
+                "AC-012-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-012-01 REQ-F-006 AC1 Pablo con una multa pendiente de 6 € abre «Mis multas»: ve «Multa de 6 € — Pendiente»",
+                  "file": "fase-4-ciclo-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-012-01 REQ-F-006 AC1 Pablo con una multa pendiente de 6 € abre «Mis multas»: ve «Multa de 6 € — Pendiente»",
+                  "file": "fase-4-ciclo-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-43854--«Multa-de-6-€-—-Pendiente»-chromium/attachments/AC-012-01-6a5aaee1707fbc492f34e022b5606de05fb1198e.png",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-43854--«Multa-de-6-€-—-Pendiente»-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-012-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-43854--«Multa-de-6-€-—-Pendiente»-chromium/attachments/AC-012-01-6a5aaee1707fbc492f34e022b5606de05fb1198e.png": "sha256:8868025b096974715965b6485e4f8ecf055ce6e6a9c131b565d7e831de753259",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-43854--«Multa-de-6-€-—-Pendiente»-chromium/test-finished-1.png": "sha256:8868025b096974715965b6485e4f8ecf055ce6e6a9c131b565d7e831de753259",
+                "evidencias/FASE-4/AC-012-01.png": "sha256:8868025b096974715965b6485e4f8ecf055ce6e6a9c131b565d7e831de753259"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Multa de {importe} € — {estado}",
+                    "template": true
+                  }
+                ],
+                "where": "Mis multas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-43854--«Multa-de-6-€-—-Pendiente»-chromium/attachments/AC-012-01-6a5aaee1707fbc492f34e022b5606de05fb1198e.png",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-43854--«Multa-de-6-€-—-Pendiente»-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-012-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-43854--«Multa-de-6-€-—-Pendiente»-chromium/attachments/WF-001-AC-012-01-REQ-F-006-AC1-Pablo-con-una-mu-d56e7d4a369cbd7f151bdbbf3061a9515c57cb7c.webm",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-43854--«Multa-de-6-€-—-Pendiente»-chromium/video.webm",
+                "evidencias/FASE-4/WF-001-AC-012-01-REQ-F-006-AC1-Pablo-con-una-mu.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 2,
+              "text": "GIVEN Pablo has a pending fine of 6 € WHEN the encargado presses \"Marcar pagada\" THEN the user sees \"Multa pagada\" and Pablo can reserve again",
+              "scenarios": [
+                "AC-013-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-013-01 REQ-F-006 AC2 Pablo con una multa pendiente de 6 €, el encargado pulsa «Marcar pagada»: ve «Multa pagada» y Pablo reserva 1 × Casco del 2026-12-10 al 2026-12-11",
+                  "file": "fase-4-ciclo-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-013-01 REQ-F-006 AC2 Pablo con una multa pendiente de 6 €, el encargado pulsa «Marcar pagada»: ve «Multa pagada» y Pablo reserva 1 × Casco del 2026-12-10 al 2026-12-11",
+                  "file": "fase-4-ciclo-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-dd1b6-el-2026-12-10-al-2026-12-11-chromium/attachments/AC-013-01-8ddf26d1ad8686d4b9fbce46942ae6025b879aad.png",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-dd1b6-el-2026-12-10-al-2026-12-11-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-013-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-dd1b6-el-2026-12-10-al-2026-12-11-chromium/attachments/AC-013-01-8ddf26d1ad8686d4b9fbce46942ae6025b879aad.png": "sha256:03097df5f5228e7b67092574d13b4254d154b6cba89913be12787b4d2c538e4d",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-dd1b6-el-2026-12-10-al-2026-12-11-chromium/test-finished-1.png": "sha256:03097df5f5228e7b67092574d13b4254d154b6cba89913be12787b4d2c538e4d",
+                "evidencias/FASE-4/AC-013-01.png": "sha256:03097df5f5228e7b67092574d13b4254d154b6cba89913be12787b4d2c538e4d"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Multa pagada",
+                    "template": false
+                  },
+                  {
+                    "text": "Reserva creada: {cantidad} × {material} del {inicio} al {fin}",
+                    "template": true
+                  }
+                ],
+                "where": "Multas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-dd1b6-el-2026-12-10-al-2026-12-11-chromium/attachments/AC-013-01-8ddf26d1ad8686d4b9fbce46942ae6025b879aad.png",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-dd1b6-el-2026-12-10-al-2026-12-11-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-013-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-dd1b6-el-2026-12-10-al-2026-12-11-chromium/attachments/WF-001-AC-013-01-REQ-F-006-AC2-Pablo-con-una-mu-f9521113b62a7203d875702876635061455bea71.webm",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-dd1b6-el-2026-12-10-al-2026-12-11-chromium/video.webm",
+                "evidencias/FASE-4/WF-001-AC-013-01-REQ-F-006-AC2-Pablo-con-una-mu.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 3,
+              "text": "GIVEN the fine was just paid WHEN \"Marcar pagada\" is submitted again THEN the user sees \"La multa ya estaba pagada\" and the fine stays \"Pagada\", still one fine of 6 €",
+              "scenarios": [
+                "AC-013-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-013-02 REQ-F-006 AC3 la multa de 6 € de Pablo Sanz acaba de pagarse y se pulsa «Marcar pagada» otra vez: ve «La multa ya estaba pagada» y una sola «Pablo Sanz — Multa de 6 € — Pagada»",
+                  "file": "fase-4-ciclo-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-013-02 REQ-F-006 AC3 la multa de 6 € de Pablo Sanz acaba de pagarse y se pulsa «Marcar pagada» otra vez: ve «La multa ya estaba pagada» y una sola «Pablo Sanz — Multa de 6 € — Pagada»",
+                  "file": "fase-4-ciclo-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-e2b7a-nz-—-Multa-de-6-€-—-Pagada»-chromium/attachments/AC-013-02-4fd5f170e34ac754499b4702b6ca16b3c19de3c7.png",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-e2b7a-nz-—-Multa-de-6-€-—-Pagada»-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-013-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-e2b7a-nz-—-Multa-de-6-€-—-Pagada»-chromium/attachments/AC-013-02-4fd5f170e34ac754499b4702b6ca16b3c19de3c7.png": "sha256:48424b32613ec73703954f56d0a1c8afe092221211be52f4c7d9da6a1d4ed30d",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-e2b7a-nz-—-Multa-de-6-€-—-Pagada»-chromium/test-finished-1.png": "sha256:48424b32613ec73703954f56d0a1c8afe092221211be52f4c7d9da6a1d4ed30d",
+                "evidencias/FASE-4/AC-013-02.png": "sha256:48424b32613ec73703954f56d0a1c8afe092221211be52f4c7d9da6a1d4ed30d"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "La multa ya estaba pagada",
+                    "template": false
+                  },
+                  {
+                    "text": "{nombre} — Multa de {importe} € — Pagada",
+                    "template": true
+                  },
+                  {
+                    "text": "Pablo Sanz — Multa de 6 € — Pagada",
+                    "template": false
+                  }
+                ],
+                "where": "Multas (ejemplo con datos: \"Pablo Sanz — Multa de 6 € — Pagada\")",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-e2b7a-nz-—-Multa-de-6-€-—-Pagada»-chromium/attachments/AC-013-02-4fd5f170e34ac754499b4702b6ca16b3c19de3c7.png",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-e2b7a-nz-—-Multa-de-6-€-—-Pagada»-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-013-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-e2b7a-nz-—-Multa-de-6-€-—-Pagada»-chromium/attachments/WF-001-AC-013-02-REQ-F-006-AC3-la-multa-de-6--3545de2d47c74601bd955ad9ca6a3590f6da1ea2.webm",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-e2b7a-nz-—-Multa-de-6-€-—-Pagada»-chromium/video-1.webm",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-e2b7a-nz-—-Multa-de-6-€-—-Pagada»-chromium/video.webm",
+                "evidencias/FASE-4/WF-001-AC-013-02-REQ-F-006-AC3-la-multa-de-6-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 4,
+              "text": "GIVEN Pablo has 2 pending fines of 2 € and 4 € WHEN the encargado pays the one of 4 € THEN the user sees \"Multa pagada\" and Pablo still sees \"No puedes reservar hasta pagar tu multa de 2 €\"",
+              "scenarios": [
+                "AC-013-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-013-03 REQ-F-006 AC4 Pablo con 2 multas pendientes de 2 € y 4 € y el encargado paga la de 4 €: ve «Multa pagada» y Pablo sigue viendo «No puedes reservar hasta pagar tu multa de 2 €»",
+                  "file": "fase-4-ciclo-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-013-03 REQ-F-006 AC4 Pablo con 2 multas pendientes de 2 € y 4 € y el encargado paga la de 4 €: ve «Multa pagada» y Pablo sigue viendo «No puedes reservar hasta pagar tu multa de 2 €»",
+                  "file": "fase-4-ciclo-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-0a124-asta-pagar-tu-multa-de-2-€»-chromium/attachments/AC-013-03-5d5490750d6976ef96c376bf8cd1913a5fddae0e.png",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-0a124-asta-pagar-tu-multa-de-2-€»-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-013-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-0a124-asta-pagar-tu-multa-de-2-€»-chromium/attachments/AC-013-03-5d5490750d6976ef96c376bf8cd1913a5fddae0e.png": "sha256:cba258ac7d8412dc5770cbb2204b55e2a00cd8bf2e3402589779a8ba2b2e819b",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-0a124-asta-pagar-tu-multa-de-2-€»-chromium/test-finished-1.png": "sha256:cba258ac7d8412dc5770cbb2204b55e2a00cd8bf2e3402589779a8ba2b2e819b",
+                "evidencias/FASE-4/AC-013-03.png": "sha256:cba258ac7d8412dc5770cbb2204b55e2a00cd8bf2e3402589779a8ba2b2e819b"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Multa pagada",
+                    "template": false
+                  },
+                  {
+                    "text": "No puedes reservar hasta pagar tu multa de {importe} €",
+                    "template": true
+                  }
+                ],
+                "where": "Multas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-0a124-asta-pagar-tu-multa-de-2-€»-chromium/attachments/AC-013-03-5d5490750d6976ef96c376bf8cd1913a5fddae0e.png",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-0a124-asta-pagar-tu-multa-de-2-€»-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-013-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-0a124-asta-pagar-tu-multa-de-2-€»-chromium/attachments/WF-001-AC-013-03-REQ-F-006-AC4-Pablo-con-2-mult-76a2d4a80255fbcb6d44f3527c9fa81f868c7d57.webm",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-0a124-asta-pagar-tu-multa-de-2-€»-chromium/video.webm",
+                "evidencias/FASE-4/WF-001-AC-013-03-REQ-F-006-AC4-Pablo-con-2-mult.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 5,
+              "text": "GIVEN Lucía has no fines WHEN she opens \"Mis multas\" THEN the user sees \"No tienes multas\"",
+              "scenarios": [
+                "AC-012-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-012-02 REQ-F-006 AC5 Lucía sin multas abre «Mis multas»: ve «No tienes multas»",
+                  "file": "fase-4-ciclo-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-012-02 REQ-F-006 AC5 Lucía sin multas abre «Mis multas»: ve «No tienes multas»",
+                  "file": "fase-4-ciclo-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-9b116-ltas»-ve-«No-tienes-multas»-chromium/attachments/AC-012-02-1ad987db9471fb342066a2137081febdd94cdc1c.png",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-9b116-ltas»-ve-«No-tienes-multas»-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-012-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-9b116-ltas»-ve-«No-tienes-multas»-chromium/attachments/AC-012-02-1ad987db9471fb342066a2137081febdd94cdc1c.png": "sha256:40449efd66593f2152c760bdfc8e4d2c2c6e1eeffc940a8d91c94f750a048bca",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-9b116-ltas»-ve-«No-tienes-multas»-chromium/test-finished-1.png": "sha256:40449efd66593f2152c760bdfc8e4d2c2c6e1eeffc940a8d91c94f750a048bca",
+                "evidencias/FASE-4/AC-012-02.png": "sha256:40449efd66593f2152c760bdfc8e4d2c2c6e1eeffc940a8d91c94f750a048bca"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No tienes multas",
+                    "template": false
+                  }
+                ],
+                "where": "Mis multas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-9b116-ltas»-ve-«No-tienes-multas»-chromium/attachments/AC-012-02-1ad987db9471fb342066a2137081febdd94cdc1c.png",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-9b116-ltas»-ve-«No-tienes-multas»-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-012-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-9b116-ltas»-ve-«No-tienes-multas»-chromium/attachments/WF-001-AC-012-02-REQ-F-006-AC5-Luc-a-sin-multas-154d6019f67bfb5b90ba679671cad93aae5bcd30.webm",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-9b116-ltas»-ve-«No-tienes-multas»-chromium/video.webm",
+                "evidencias/FASE-4/WF-001-AC-012-02-REQ-F-006-AC5-Luc-a-sin-multas.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 6,
+              "text": "GIVEN Marta has no fines while Pablo has one WHEN she opens \"Mis multas\" THEN the user sees \"No tienes multas\"",
+              "scenarios": [
+                "AC-012-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-012-03 REQ-F-006 AC6 Marta sin multas mientras Pablo tiene una abre «Mis multas»: ve «No tienes multas» y nada de Pablo",
+                  "file": "fase-4-ciclo-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-012-03 REQ-F-006 AC6 Marta sin multas mientras Pablo tiene una abre «Mis multas»: ve «No tienes multas» y nada de Pablo",
+                  "file": "fase-4-ciclo-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-571e3-nes-multas»-y-nada-de-Pablo-chromium/attachments/AC-012-03-f35c81a6666972bc90d0cc1dd24a0bfc10e1b99e.png",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-571e3-nes-multas»-y-nada-de-Pablo-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-012-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-571e3-nes-multas»-y-nada-de-Pablo-chromium/attachments/AC-012-03-f35c81a6666972bc90d0cc1dd24a0bfc10e1b99e.png": "sha256:4734fd1af9e448dc995fac239b86e658434f409887060d8f98cd24dfbe01f098",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-571e3-nes-multas»-y-nada-de-Pablo-chromium/test-finished-1.png": "sha256:4734fd1af9e448dc995fac239b86e658434f409887060d8f98cd24dfbe01f098",
+                "evidencias/FASE-4/AC-012-03.png": "sha256:4734fd1af9e448dc995fac239b86e658434f409887060d8f98cd24dfbe01f098"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No tienes multas",
+                    "template": false
+                  }
+                ],
+                "where": "Mis multas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-571e3-nes-multas»-y-nada-de-Pablo-chromium/attachments/AC-012-03-f35c81a6666972bc90d0cc1dd24a0bfc10e1b99e.png",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-571e3-nes-multas»-y-nada-de-Pablo-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-012-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-571e3-nes-multas»-y-nada-de-Pablo-chromium/attachments/WF-001-AC-012-03-REQ-F-006-AC6-Marta-sin-multas-75e3b7d0bdfabad0a52732188270af8ee1556fb8.webm",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-571e3-nes-multas»-y-nada-de-Pablo-chromium/video.webm",
+                "evidencias/FASE-4/WF-001-AC-012-03-REQ-F-006-AC6-Marta-sin-multas.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 7,
+              "text": "GIVEN Pablo has a pending fine of 6 € and Lucía has a paid fine of 2 € WHEN the encargado opens the list \"Multas\" THEN the user sees \"Pablo Sanz — Multa de 6 € — Pendiente\" and \"Lucía Gil — Multa de 2 € — Pagada\"",
+              "scenarios": [
+                "AC-014-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-014-01 REQ-F-006 AC7 Pablo Sanz con una multa pendiente de 6 € y Lucía Gil con una pagada de 2 €, el encargado abre «Multas»: ve las dos filas con su estado",
+                  "file": "fase-4-ciclo-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-014-01 REQ-F-006 AC7 Pablo Sanz con una multa pendiente de 6 € y Lucía Gil con una pagada de 2 €, el encargado abre «Multas»: ve las dos filas con su estado",
+                  "file": "fase-4-ciclo-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-b1fd4-las-dos-filas-con-su-estado-chromium/attachments/AC-014-01-39c22df60b36fc2345cf2c94cd85e3c156813e20.png",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-b1fd4-las-dos-filas-con-su-estado-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-014-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-b1fd4-las-dos-filas-con-su-estado-chromium/attachments/AC-014-01-39c22df60b36fc2345cf2c94cd85e3c156813e20.png": "sha256:ba233c5e9b332efa36d4d960e940da7e0632d1d400b9ec50ce368f533cc5917e",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-b1fd4-las-dos-filas-con-su-estado-chromium/test-finished-1.png": "sha256:ba233c5e9b332efa36d4d960e940da7e0632d1d400b9ec50ce368f533cc5917e",
+                "evidencias/FASE-4/AC-014-01.png": "sha256:ba233c5e9b332efa36d4d960e940da7e0632d1d400b9ec50ce368f533cc5917e"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{nombre} — Multa de {importe} € — {estado}",
+                    "template": true
+                  },
+                  {
+                    "text": "{nombre} — Multa de {importe} € — {estado}",
+                    "template": true
+                  }
+                ],
+                "where": "Multas (ejemplo con datos: \"Pablo Sanz — Multa de 6 € — Pendiente\")",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-b1fd4-las-dos-filas-con-su-estado-chromium/attachments/AC-014-01-39c22df60b36fc2345cf2c94cd85e3c156813e20.png",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-b1fd4-las-dos-filas-con-su-estado-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-014-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-b1fd4-las-dos-filas-con-su-estado-chromium/attachments/WF-001-AC-014-01-REQ-F-006-AC7-Pablo-Sanz-con-u-2eccdef2fb11b522919cd839ba71028c15a282e5.webm",
+                "evidencias/FASE-4/.playwright/fase-4-ciclo-prestamo-FASE-b1fd4-las-dos-filas-con-su-estado-chromium/video.webm",
+                "evidencias/FASE-4/WF-001-AC-014-01-REQ-F-006-AC7-Pablo-Sanz-con-u.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            }
+          ],
+          "candidate_files": [
+            "src/server/http/rutas.js",
+            "src/server/mensajes.js",
+            "src/server/servicios/multas.js",
+            "src/ui/api.js",
+            "src/ui/componentes.js",
+            "src/ui/main.js",
+            "src/ui/paginas/mis-multas.js",
+            "src/ui/paginas/multas.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        }
+      ],
+      "unknown_requirements": [],
+      "tasks": [
+        "TASK-F4-001",
+        "TASK-F4-002",
+        "TASK-F4-003",
+        "TASK-F4-004",
+        "TASK-F4-005"
+      ],
+      "candidate_files": [
+        "src/server/http/rutas.js",
+        "src/server/mensajes.js",
+        "src/server/servicios/multas.js",
+        "src/ui/api.js",
+        "src/ui/componentes.js",
+        "src/ui/main.js",
+        "src/ui/paginas/mis-multas.js",
+        "src/ui/paginas/multas.js",
+        "src/ui/textos.js"
+      ],
+      "incremental": {
+        "criteria": 7,
+        "recheck": 0
+      }
+    }
+  ],
+  "uncovered": [
+    {
+      "id": "REQ-C-001",
+      "title": "Textos en español",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-002",
+      "title": "Stack del proyecto",
+      "priority": "Must"
+    }
+  ],
+  "fases_without_header": [],
+  "criteria_without_test": [],
+  "coverage_gaps": 2
+}

@@ -1,0 +1,57 @@
+{
+  "id": "g17953677689130",
+  "tipo": "preguntas",
+  "fase": "3",
+  "tablero": "material-montana12",
+  "tarjeta": "t_4941e7f8",
+  "adopcion": false,
+  "sha": "50cda051633a43cc75411c646f423982ea8a494f",
+  "creada": "2026-11-22T17:16:08Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana12",
+  "titulo": "Preguntas de la FASE-3",
+  "texto": "⏸ La FASE-3 de «material-montana12» se ha parado: para seguir necesita que decidas esto.\n\nAl responder, la FASE-3 sigue con tus respuestas. Si alguna pide cambiar los requisitos ya aprobados, no se reabren a mitad de camino: queda anotada para la siguiente entrega.\n\n👉 Elige en los botones Q (la recomendada ya está marcada) y pulsa ✅ Responder.\n\n❓ Antes, una pregunta (la recomendada ya está marcada en los botones Q):\n\n1. Para que el Panel del encargado diga «No hay multas» y para que el vídeo de «No recogida» enseñe que las unidades quedan libres, hay que retocar dos pruebas de la entrega 2 ya aceptada. ¿Autoriza retocarlas solo para eso, sin quitar nada de lo que comprueban?\n   🔧 Detalle técnico: ¿Se autoriza editar tests/unit/ui/panel.test.js y tests/e2e/fase-2.spec.js solo para (a) cambiar «No tienes multas» por «No hay multas» en las comprobaciones d…\n   A) Sí, se retocan solo esas dos pruebas para lo que pidió  ⭐ recomendada  (✏️ autoriza editar tests/unit/ui/panel.test.js, tests/e2e/fase-2.spec.js)\n   B) No, se dejan como están\n\n👉 Si firmas sin tocar los botones Q, esto lanzará: ✏️ autoriza editar tests que ya existían: tests/unit/ui/panel.test.js (Q1), tests/e2e/fase-2.spec.js (Q1).",
+  "opciones": [
+    {
+      "verbo": "respondo",
+      "etiqueta": "✅ Responder"
+    }
+  ],
+  "demo": "",
+  "preguntas": [
+    {
+      "n": 1,
+      "id": "Q-task-implementer-003",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "editar-test",
+          "ficheros": [
+            "tests/unit/ui/panel.test.js",
+            "tests/e2e/fase-2.spec.js"
+          ],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "Para que el Panel del encargado diga «No hay multas» y para que el vídeo de «No recogida» enseñe que las unidades quedan libres, hay que retocar dos pruebas de la entrega 2 ya aceptada. ¿Autoriza retocarlas solo para eso, sin quitar nada de lo que comprueban?"
+    }
+  ],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [],
+    "graves": 0
+  }
+}

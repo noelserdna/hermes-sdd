@@ -1,0 +1,47 @@
+{
+  "id": "g17953583182114",
+  "tipo": "plan",
+  "fase": "",
+  "tablero": "material-montana12",
+  "tarjeta": "t_e1f29825",
+  "adopcion": false,
+  "sha": "ae23310d4b862a30d1a971f794595e4513852fe5",
+  "creada": "2026-11-22T14:38:38Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana12",
+  "titulo": "Plan por fases",
+  "texto": "🧭 Encargado: 2 avisos\n• 6 FASEs para 9 requisitos funcionales: más fases son más puertas y más espera\n• 41 tareas para 9 requisitos funcionales: parece más trabajo del necesario\n\n🗺 Plan de «material-montana12»: 6 fases, en este orden:\n\n• FASE-0: Entrar y cargar el material (9 tareas)\n• FASE-1: Reservar material y gestionar mis reservas (7 tareas)\n• FASE-2: Entregar y recibir el material, y el panel del día (7 tareas)\n• FASE-3: Alta, baja y contraseña de los socios (7 tareas)\n• FASE-4: Multas y bloqueo hasta pagarlas (5 tareas)\n• FASE-5: Historial para la junta y datos personales protegidos (6 tareas)\n\n📐 Antes del plan se hizo: especificaciones, auditoría de especificaciones, plan de pruebas, revisión de seguridad, diseño técnico, diseño visual y de uso. El plan parte de esos documentos.\n\nCada fase se programa, se prueba y te llega con una demo para que la aceptes antes de pasar a la siguiente.\n\n👉 Si el orden te parece bien, pulsa ✅ Conforme. Nada se programa hasta entonces.",
+  "opciones": [
+    {
+      "verbo": "conforme",
+      "etiqueta": "✅ Conforme"
+    },
+    {
+      "verbo": "cambios",
+      "etiqueta": "✏️ Cambiar",
+      "texto": true
+    }
+  ],
+  "demo": "",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": false,
+        "codigo": "fases-de-mas",
+        "texto": "6 FASEs para 9 requisitos funcionales: más fases son más puertas y más espera"
+      },
+      {
+        "grave": false,
+        "codigo": "tareas-de-mas",
+        "texto": "41 tareas para 9 requisitos funcionales: parece más trabajo del necesario"
+      }
+    ],
+    "graves": 0
+  }
+}

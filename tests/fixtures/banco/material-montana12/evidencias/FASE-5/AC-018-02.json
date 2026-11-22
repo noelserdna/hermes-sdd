@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-018-02",
+ "test": "FASE-5 · Historial del socio para la junta (REQ-F-009) › AC-018-02 REQ-F-009 AC2 Marta no tiene préstamos ni multas: la junta busca «marta» y ve «Sin préstamos ni multas»",
+ "titulo": "AC-018-02 REQ-F-009 AC2 Marta no tiene préstamos ni multas: la junta busca «marta» y ve «Sin préstamos ni multas»",
+ "ve": [
+  "Sin préstamos ni multas"
+ ],
+ "narrado": "Historial de un socio para la junta. En Historial del socio se ve «Sin préstamos ni multas»: Marta no tiene nada.",
+ "url": "http://127.0.0.1:5173/historial",
+ "imagen": "AC-018-02.png",
+ "sha256": "sha256:922640df52498c907d834859146eef9eb1c3bd48e9e0918f8d9da1649bff4ba9",
+ "at": "2026-11-22T20:35:43.567Z"
+}

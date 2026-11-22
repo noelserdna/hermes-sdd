@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-013-01",
+ "test": "FASE-4 · Multas y bloqueo hasta pagarlas (REQ-F-006) › AC-013-01 REQ-F-006 AC2 Pablo con una multa pendiente de 6 €, el encargado pulsa «Marcar pagada»: ve «Multa pagada» y Pablo reserva 1 × Casco del 2026-12-10 al 2026-12-11",
+ "titulo": "AC-013-01 REQ-F-006 AC2 Pablo con una multa pendiente de 6 €, el encargado pulsa «Marcar pagada»: ve «Multa pagada» y Pablo reserva 1 × Casco del 2026-12-10 al 2026-12-11",
+ "ve": [
+  "Multa pagada",
+  "Reserva creada: 1 × Casco del 2026-12-10 al 2026-12-11"
+ ],
+ "narrado": "Multas y bloqueo hasta pagarlas. En Multas se ve «Multa pagada» y Pablo, ya sin multa pendiente, ve «Reserva creada: 1 × Casco del 2026-12-10 al 2026-12-11».",
+ "url": "http://127.0.0.1:5173/mis-reservas",
+ "imagen": "AC-013-01.png",
+ "sha256": "sha256:03097df5f5228e7b67092574d13b4254d154b6cba89913be12787b4d2c538e4d",
+ "at": "2026-11-22T20:35:22.522Z"
+}

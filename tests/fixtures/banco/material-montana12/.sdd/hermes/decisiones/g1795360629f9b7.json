@@ -1,0 +1,14 @@
+{
+  "verbo": "observaciones",
+  "texto": "He visto los vídeos: entrar, salir, bloqueo, sesión caducada, permisos e inventario hacen lo que piden sus criterios. Una observación: la web se ve como HTML sin estilo; aplicad el diseño visual que ya está hecho en ux/ (colores, tipografía, formularios y listas legibles) en las pantallas que ya existen y en las nuevas.",
+  "actor": {
+    "persona": "yo",
+    "canal": "local",
+    "id": "andre"
+  },
+  "prueba": {
+    "host": "DESKTOP-7HT2139",
+    "demo": "no vista"
+  },
+  "at": "2026-11-22T15:18:55Z"
+}
