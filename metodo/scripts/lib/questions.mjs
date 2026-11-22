@@ -277,6 +277,11 @@ export function addQuestion(root, role, input) {
   if (typeof input.tema !== "string" || !input.tema) throw new QError("tema is required: a slug of what is decided (zona-horaria, borrado-socios), so the same topic is never asked twice");
   const ops = Array.isArray(input.opciones) ? input.opciones.filter((o) => typeOf(o) === "object") : [];
   const rec = ops.filter((o) => o.recomendada === true);   // exactly one: the schema says it (maxContains)
+  // Una opción que deja trabajo para otra FASE lo declara (efecto despues + fase), para que esa FASE lo reciba
+  // (material-montana12 G-17: «se enseña cuando exista la pantalla, en la entrega 4» con efecto ninguno se perdió)
+  const promete = /cuando (?:exista|esté|haya|se cree)|más adelante|en (?:una|la) (?:FASE|entrega) (?:posterior|siguiente)|\blater\b|once .{0,40}exists/i;
+  for (const o of ops) if (o.efecto === "ninguno" && promete.test(`${o.texto || ""} ${o.cliente || ""}`))
+    throw new QError(`option ${o.letra} leaves work for a later FASE («${String(o.texto).slice(0, 60)}…») with efecto ninguno: use efecto despues and its fase (the FASE that does it), so that FASE gets it`);
   // Con los requisitos ya aprobados (un tag requirements-v*), ninguna etapa recomienda reabrirlos: ni con «riesgo»
   // (material-montana5: «riesgo: sin moverlo, la verificación de la FASE-0 no cierra ese criterio» bastó para una
   // vuelta de 20 min). Se escribe el valor por defecto como supuesto y, si la persona quiere el cambio, lo elige a mano

@@ -298,4 +298,22 @@ for x in ["await expect(fila).toBeVisible({ timeout: 60000 });", "test.setTimeou
     assert "plazo muy alargado" in F.debilitamiento([], [x], set()), x
 PY
 
+
+# G-17: Q-task-implementer-005 (FASE-3) se respondió «A) se enseña cuando exista la pantalla, en la entrega 4» con
+# efecto «ninguno»; la FASE-4 creó Mis multas y nadie volvió a REQ-F-005 AC3/AC9. Una opción que promete trabajo en
+# otra FASE no puede ser «ninguno» (efecto «despues» con su FASE), y la FASE prometida recibe lo que se respondió
+python3 - "$AQUI/plugin/hermes-sdd" "$m12" <<'PY' && ok "montana12 G-17: la respuesta que deja trabajo para la FASE-4 llega a la FASE-4" || mal "montana12 G-17: respuesta aplazada perdida"
+import sys, json; sys.path.insert(0, sys.argv[1]); import hsdd_textos as T
+from pathlib import Path
+R = Path(sys.argv[2])
+q = next(x for x in json.loads((R / ".sdd/questions-task-implementer.json").read_text())["preguntas"] if x["id"] == "Q-task-implementer-005")
+assert any("otra FASE" in e for e in T.errores_pregunta(q)), T.errores_pregunta(q)
+p = T.pendientes_fase(R, "4")
+assert any("Q-task-implementer-005" in x and "REQ-F-005 AC3" in x for x in p), p
+assert not any("Q-task-implementer-005" in x for x in T.pendientes_fase(R, "3")), "no es de la FASE-3"
+# con el efecto nuevo, declarado: la opción vale y su FASE la recibe
+q["opciones"][0].update(efecto="despues", fase="4")
+assert not any("otra FASE" in e for e in T.errores_pregunta(q)), T.errores_pregunta(q)
+PY
+
 exit $fallo

@@ -51,12 +51,14 @@
         "letra": { "type": "string", "pattern": "^[A-Z]$" },
         "texto": { "type": "string", "minLength": 1 },
         "recomendada": { "type": "boolean" },
-        "efecto": { "enum": ["ninguno", "accion", "req-change", "editar-test", "endurecer-test"] },
+        "efecto": { "enum": ["ninguno", "accion", "req-change", "editar-test", "endurecer-test", "despues"] },
+        "fase": { "type": "string", "pattern": "^[0-9]+$" },
         "ficheros": { "type": "array", "items": { "type": "string", "minLength": 1 } },
         "cliente": { "type": "string" }
       },
       "if": { "type": "object", "required": ["efecto"], "properties": { "efecto": { "enum": ["editar-test", "endurecer-test"] } } },
-      "then": { "required": ["ficheros"], "properties": { "ficheros": { "minItems": 1 } } }
+      "then": { "required": ["ficheros"], "properties": { "ficheros": { "minItems": 1 } } },
+      "else": { "if": { "type": "object", "required": ["efecto"], "properties": { "efecto": { "const": "despues" } } }, "then": { "required": ["fase"] } }
     },
     "respuesta": {
       "type": "object",

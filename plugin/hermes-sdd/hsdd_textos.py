@@ -1537,7 +1537,12 @@ EFECTOS = {"ninguno": "ninguno", "none": "ninguno", "nada": "ninguno", "accion":
            "action": "accion", "req-change": "req-change", "editar-test": "editar-test", "edit-test": "editar-test",
            # Endurecer un test que ya existía (que compruebe lo que pide su criterio, o que la captura enseñe lo que
            # dice): lo puede autorizar Jev; si la edición luego lo afloja, la fidelidad lo marca grave y decide una persona
-           "endurecer-test": "endurecer-test", "tighten-test": "endurecer-test"}
+           "endurecer-test": "endurecer-test", "tighten-test": "endurecer-test",
+           # Trabajo que se hará en otra FASE (con «fase»): esa FASE lo recibe al implementarse (material-montana12 G-17)
+           "despues": "despues", "después": "despues", "later": "despues"}
+# una opción que promete trabajo para más adelante («cuando exista la pantalla, en la FASE-4»)
+_PROMETE = re.compile(r"cuando (?:exista|esté|haya|se cree)|más adelante|en (?:una|la) (?:FASE|entrega) (?:posterior|siguiente)"
+                      r"|\blater\b|once .{0,40}exists", re.I)
 PERMISO_TEST = ("editar-test", "endurecer-test")
 _EFECTO = re.compile(r"^\s+(?:efecto|effect)\s*:\s*(\S+)\s*(.*?)\s*$", re.I)
 _CLIENTE_Q = re.compile(r"^(?:Para el cliente|For the customer)\s*:\s*(.*\S)\s*$", re.M | re.I)
@@ -1563,7 +1568,8 @@ def efectos(bloque) -> dict:
             crudo = str(o.get("efecto") or "").strip().lower()
             out[str(o["letra"])] = {"efecto": EFECTOS.get(crudo, "?") if crudo else None, "crudo": crudo,
                                     "ficheros": [str(f) for f in o.get("ficheros") or [] if str(f).strip()],
-                                    "cliente": str(o.get("cliente") or "").strip()}
+                                    "cliente": str(o.get("cliente") or "").strip(), "fase": str(o.get("fase") or "").strip(),
+                                    "texto": str(o.get("texto") or "")}
         return out
     out, actual = {}, None
     for l in bloque.splitlines():
@@ -1622,10 +1628,38 @@ def errores_pregunta(bloque) -> list[str]:
         if not d["efecto"]:
             errs.append(f"la opción {l} no dice su efecto")
         elif d["efecto"] == "?":
-            errs.append(f"la opción {l} tiene un efecto desconocido («{d['crudo']}»: vale ninguno, accion, req-change, editar-test o endurecer-test)")
+            errs.append(f"la opción {l} tiene un efecto desconocido («{d['crudo']}»: vale ninguno, accion, req-change, editar-test, endurecer-test o despues)")
         elif d["efecto"] in PERMISO_TEST and not d["ficheros"]:
             errs.append(f"la opción {l} autoriza editar tests sin decir cuáles")
+        elif d["efecto"] == "despues" and not d.get("fase"):
+            errs.append(f"la opción {l} deja trabajo para después sin decir en qué FASE («fase»)")
+        elif d["efecto"] == "ninguno" and _PROMETE.search(f"{d.get('texto', '')} {d.get('cliente', '')}"):
+            errs.append(f"la opción {l} promete trabajo en otra FASE con efecto «ninguno»: usa efecto «despues» con su «fase»")
     return errs
+
+
+def pendientes_fase(repo: Path, fase: str) -> list[str]:
+    """Lo que respuestas anteriores dejaron para la FASE <fase>: la opción elegida con efecto «despues» y esa fase, o
+    (preguntas de antes de ese efecto) con efecto «ninguno» que promete trabajo y nombra «FASE-<fase>». Una línea por
+    respuesta, con la pregunta, lo elegido y lo que dice para el cliente (material-montana12 G-17: «se enseña cuando
+    exista la pantalla, en la entrega 4» se perdió y la FASE-4 no volvió a REQ-F-005 AC3/AC9)."""
+    out = []
+    for f in sorted((Path(repo) / ".sdd").glob("questions-*.json")):
+        try:
+            qs = json.loads(f.read_text(encoding="utf-8")).get("preguntas") or []
+        except (OSError, ValueError, AttributeError):
+            continue
+        for q in qs:
+            letra = str((q.get("respuesta") or {}).get("letra") or "")
+            o = next((x for x in q.get("opciones") or [] if str(x.get("letra")) == letra), None) if q.get("estado") == "ANSWERED" else None
+            if not o:
+                continue
+            ef = EFECTOS.get(str(o.get("efecto") or "").strip().lower())
+            txt = f"{o.get('texto') or ''} {o.get('cliente') or ''}"
+            if (ef == "despues" and str(o.get("fase") or "") == str(fase)) or \
+               (ef == "ninguno" and _PROMETE.search(txt) and re.search(rf"\b(?:FASE|entrega)[- ]{re.escape(str(fase))}\b", txt, re.I)):
+                out.append(f"{q.get('id')}: {q.get('pregunta') or ''} → {letra}) {o.get('texto') or ''}")
+    return out
 
 
 # Una opción que pide cambiar los requisitos: la marca explícita del método «(req-change)» o, en preguntas escritas
@@ -2140,6 +2174,9 @@ if __name__ == "__main__":
         print(json.dumps(jev_requisitos(Path(sys.argv[2])), ensure_ascii=False)); sys.exit(0)
     if sys.argv[1:2] == ["aclaraciones"]:     # aclaraciones <repo> <fase> <texto> <por>  (firmar.sh, al rechazar una FASE)
         print(len(registrar_aclaraciones(Path(sys.argv[2]), sys.argv[3], sys.argv[4], sys.argv[5]))); sys.exit(0)
+    if sys.argv[1:2] == ["pendientes-fase"]:   # pendientes-fase <repo> <fase>  (etapa.sh, implementar)
+        print("\n".join(pendientes_fase(Path(sys.argv[2]), sys.argv[3])))
+        sys.exit(0)
     if sys.argv[1:2] == ["bloque-aclaraciones"]:   # bloque-aclaraciones <repo> <fase>  (etapa.sh, la ronda adversarial)
         print(bloque_aclaraciones(Path(sys.argv[2]), sys.argv[3])); sys.exit(0)
     if sys.argv[1:2] == ["jev-narracion"]:    # jev-narracion <repo> <fase>  (puerta.sh, puerta de FASE con vídeo)
