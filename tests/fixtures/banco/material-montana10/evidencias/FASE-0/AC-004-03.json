@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-004-03",
+ "test": "REQ-F-004 AC3 · AC-004-03 el 2026-12-04 Lucía cancela su reserva y ve «Piolet · 2026-12-05 a 2026-12-07 · Cancelada»",
+ "titulo": "REQ-F-004 AC3 · AC-004-03 el 2026-12-04 Lucía cancela su reserva y ve «Piolet · 2026-12-05 a 2026-12-07 · Cancelada»",
+ "ve": [
+  "Piolet · 2026-12-05 a 2026-12-07 · Cancelada"
+ ],
+ "narrado": "Ver y cancelar mis reservas. En Mis reservas se ve «Piolet · 2026-12-05 a 2026-12-07 · Cancelada», y la unidad queda libre otra vez: Pablo puede reservar ese piolet el día 6.",
+ "url": "http://127.0.0.1:5173/#/mis-reservas",
+ "imagen": "AC-004-03.png",
+ "sha256": "sha256:5859e2e3757b10c1397208bfca1673b17411d31977dca2c36c044c6dbde7fcff",
+ "at": "2026-11-21T12:34:25.155Z"
+}

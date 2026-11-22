@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-003-04",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-003-04 el encargado crea un socio con la contraseña corta1 y ve el aviso de 8 caracteres",
+ "titulo": "WF-002 AC-003-04 el encargado crea un socio con la contraseña corta1 y ve el aviso de 8 caracteres",
+ "ve": [
+  "La contraseña debe tener al menos 8 caracteres"
+ ],
+ "narrado": "Gestionar las cuentas de socios. En Socios se ve «La contraseña debe tener al menos 8 caracteres». Y no se crea ningún socio.",
+ "url": "http://127.0.0.1:39985/#/socios",
+ "imagen": "AC-003-04.png",
+ "sha256": "sha256:4e73c89af8aab79bd170910fe3101c2b3c256661c0bbb048ff6bd8c319525e24",
+ "at": "2026-11-22T01:01:01.166Z"
+}

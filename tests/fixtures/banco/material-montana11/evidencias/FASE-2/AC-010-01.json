@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-010-01",
+ "test": "FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-02 AC-010-01 REQ-F-006 AC1 el Casco de Pablo con fin 2026-12-07 se devuelve el 2026-12-10 y marta ve Devuelto con la multa 6,00 € Pendiente",
+ "titulo": "FASE-2 AC-009-02 AC-010-01 REQ-F-006 AC1 el Casco de Pablo con fin 2026-12-07 se devuelve el 2026-12-10 y marta ve Devuelto con la multa 6,00 € Pendiente",
+ "ve": [
+  "6,00 €",
+  "Pendiente"
+ ],
+ "narrado": "Aplicar multa por retraso. En Préstamos se ve la multa «6,00 €» de Pablo Ruiz con el estado «Pendiente».",
+ "url": "http://127.0.0.1:36693/#/prestamos",
+ "imagen": "AC-010-01.png",
+ "sha256": "sha256:fb42cbc248a4e281baf3a2d62c9bf614311a50bdf95b7a3fd63c4ccf6fdce2e2",
+ "at": "2026-11-22T01:02:18.473Z"
+}

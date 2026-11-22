@@ -1,0 +1,58 @@
+{
+ "necesidades": 11,
+ "dudosas": [],
+ "supuestos": [
+  {
+   "texto": "Los roles son socio, encargado y junta; el encargado da de alta, restablece contraseña y da de baja a los socios porque el encargo no dice quién lo hace.",
+   "puntos": 2.68
+  },
+  {
+   "texto": "Se registran nombre, correo, reservas, entregas, devoluciones y multas de cada socio; se conservan 2 años desde su última actividad y el historial de un socio dado de baja se mantiene para la junta durante ese plazo.",
+   "puntos": 2.38
+  },
+  {
+   "texto": "Una reserva dura como máximo 14 días seguidos para que una persona no acapare el material.",
+   "puntos": 1.97
+  },
+  {
+   "texto": "La multa se calcula al marcar la devolución: 2 € × días naturales entre la fecha de fin y la de devolución. Las multas no caducan.",
+   "puntos": 1.78
+  },
+  {
+   "texto": "Una reserva no recogida el día de inicio pasa a «No recogida» al día siguiente y libera la unidad, para que el material no quede bloqueado.",
+   "puntos": 1.67
+  },
+  {
+   "texto": "Dar de baja una unidad prestada o a un socio con material sin devolver se rechaza; si solo tienen reservas futuras, esas reservas se cancelan.",
+   "puntos": 1.51
+  },
+  {
+   "texto": "La sesión caduca a los 30 minutos sin actividad y se puede salir con «Salir».",
+   "puntos": 1.46
+  },
+  {
+   "texto": "El pago de la multa lo anota el encargado a mano; la web no cobra.",
+   "puntos": 1.09
+  },
+  {
+   "texto": "Contraseña mínima de 8 caracteres; tras 5 fallos seguidos la cuenta se bloquea 15 minutos (lo habitual en webs de socios).",
+   "puntos": 1.06
+  },
+  {
+   "texto": "El encargado ve y puede operar sobre todos los socios; la junta ve todo lo de los socios pero no puede cambiar nada; el socio solo ve lo suyo.",
+   "puntos": 1.05
+  },
+  {
+   "texto": "Las fechas son días completos: la reserva ocupa la unidad desde el día de inicio hasta el día de fin, ambos incluidos; no se reserva en fechas pasadas.",
+   "puntos": 0.95
+  },
+  {
+   "texto": "«Hasta el día antes» significa que se cancela hasta el día anterior al de inicio; el mismo día de inicio ya no.",
+   "puntos": 0.7
+  },
+  {
+   "texto": "El catálogo de tipos es el pedido: piolets, crampones, cascos, cuerdas y tiendas; cada unidad se identifica con un número («Casco 2»).",
+   "puntos": 0.68
+  }
+ ]
+}

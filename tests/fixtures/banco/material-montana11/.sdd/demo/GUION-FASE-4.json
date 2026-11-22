@@ -1,0 +1,289 @@
+{
+ "fase": "4",
+ "plan": "plan/fases/FASE-4-BAJAS.md",
+ "workflows": [],
+ "casos_de_uso": [
+  {
+   "id": "UC-003",
+   "titulo": "Crear socio y listar socios",
+   "fichero": "spec/use-cases/UC-003-crear-y-listar-socios.md",
+   "flujo": [
+    "Encargado: abre Socios.",
+    "System: lista nombre, correo y estado de cada socio (API-001-05, INV-SEC-001).",
+    "Encargado: envía nombre, correo y contraseña.",
+    "System: valida que los tres datos vienen informados.",
+    "System: valida la contraseña mínima (INV-ACC-002) y la unicidad del correo (INV-ACC-001).",
+    "System: guarda la cuenta de forma atómica (INV-SEC-003) y muestra la lista actualizada."
+   ],
+   "extensiones": [
+    {
+     "texto": "2a. Un socio dado de baja → aparece marcado \"Baja\".",
+     "criterios": [
+      "AC-003-02"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-003-01",
+    "AC-003-04",
+    "AC-003-05",
+    "AC-003-06"
+   ]
+  },
+  {
+   "id": "UC-004",
+   "titulo": "Restablecer contraseña y dar de baja socio",
+   "fichero": "spec/use-cases/UC-004-restablecer-contrasena-y-baja.md",
+   "flujo": [
+    "Encargado: elige un socio en Socios y envía una contraseña nueva.",
+    "System: valida el socio y la contraseña mínima (INV-ACC-002).",
+    "System: guarda el hash y muestra el aviso M_CONTRASENA_RESTABLECIDA.",
+    "Encargado: da de baja a un socio.",
+    "System: comprueba que no tiene reservas Entregado (INV-LOA-004).",
+    "System: pone la cuenta en Baja y cancela sus reservas Reservada de forma atómica (INV-SEC-003).",
+    "System: muestra la lista actualizada."
+   ],
+   "extensiones": [],
+   "criterios": [
+    "AC-004-01",
+    "AC-004-02",
+    "AC-004-05"
+   ]
+  },
+  {
+   "id": "UC-013",
+   "titulo": "Añadir material",
+   "fichero": "spec/use-cases/UC-013-anadir-material.md",
+   "flujo": [
+    "Encargado: abre Inventario (API-004-01).",
+    "System: muestra cada tipo con \"{tipo}: {n} unidades\" y sus unidades, también las \"De baja\".",
+    "Encargado: elige un tipo e indica la cantidad (API-004-02).",
+    "System: valida tipo (INV-STK-001) y cantidad (INV-STK-002).",
+    "System: crea las unidades con los números siguientes del tipo, de forma atómica (INV-SEC-003).",
+    "System: muestra Inventario con el recuento nuevo."
+   ],
+   "extensiones": [
+    {
+     "texto": "2a. Un tipo sin unidades → se muestra con 0 unidades.",
+     "criterios": [
+      "AC-013-02"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-013-01",
+    "AC-013-03",
+    "AC-013-06"
+   ]
+  },
+  {
+   "id": "UC-014",
+   "titulo": "Dar de baja unidad",
+   "fichero": "spec/use-cases/UC-014-dar-de-baja-unidad.md",
+   "flujo": [
+    "Encargado: elige una unidad en Inventario y la da de baja (API-004-03).",
+    "System: comprueba que la unidad existe y que no tiene reserva Entregado (INV-STK-003).",
+    "System: pasa la unidad a De baja y cancela sus reservas Reservada, de forma atómica (INV-STK-005, INV-SEC-003).",
+    "System: muestra Inventario con \"{tipo}: {n} unidades\" y la unidad como \"De baja\"."
+   ],
+   "extensiones": [
+    {
+     "texto": "3a. La unidad tenía reservas Reservada futuras → se muestra `M_RESERVAS_CANCELADAS_BAJA`.",
+     "criterios": [
+      "AC-014-02"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-014-01",
+    "AC-014-03",
+    "AC-014-02",
+    "AC-014-07"
+   ]
+  }
+ ],
+ "criterios": [
+  {
+   "id": "AC-003-01",
+   "req": "REQ-F-002",
+   "ac": 1,
+   "uc": "UC-003",
+   "frase": "Gestionar las cuentas de socios. En Socios se ve «Pablo Ruiz».",
+   "visible": true,
+   "then": "the user sees \"Pablo Ruiz\" in the list of socios",
+   "ve": [
+    "Pablo Ruiz"
+   ],
+   "pantalla": "Socios"
+  },
+  {
+   "id": "AC-003-04",
+   "req": "REQ-F-002",
+   "ac": 2,
+   "uc": "UC-003",
+   "frase": "Gestionar las cuentas de socios. En Socios se ve «La contraseña debe tener al menos 8 caracteres».",
+   "visible": true,
+   "then": "the user sees \"La contraseña debe tener al menos 8 caracteres\" and no member is created",
+   "ve": [
+    "La contraseña debe tener al menos 8 caracteres"
+   ],
+   "pantalla": "Socios"
+  },
+  {
+   "id": "AC-003-05",
+   "req": "REQ-F-002",
+   "ac": 3,
+   "uc": "UC-003",
+   "frase": "Gestionar las cuentas de socios. En Socios se ve «Ya existe un socio con ese correo».",
+   "visible": true,
+   "then": "the user sees \"Ya existe un socio con ese correo\" and the list keeps a single \"pablo@club.test\"",
+   "ve": [
+    "Ya existe un socio con ese correo"
+   ],
+   "pantalla": "Socios"
+  },
+  {
+   "id": "AC-004-01",
+   "req": "REQ-F-002",
+   "ac": 4,
+   "uc": "UC-004",
+   "frase": "Gestionar las cuentas de socios. En Socios se ve «Contraseña restablecida».",
+   "visible": true,
+   "then": "she can sign in with it and no longer with the old one",
+   "ve": [
+    "Contraseña restablecida"
+   ],
+   "pantalla": "Socios"
+  },
+  {
+   "id": "AC-004-02",
+   "req": "REQ-F-002",
+   "ac": 5,
+   "uc": "UC-004",
+   "frase": "Gestionar las cuentas de socios. En Socios se ve «Baja».",
+   "visible": true,
+   "then": "the user sees \"Pablo Ruiz\" marked \"Baja\" and the reservation is cancelled, freeing the unit",
+   "ve": [
+    "Baja"
+   ],
+   "pantalla": "Socios"
+  },
+  {
+   "id": "AC-004-05",
+   "req": "REQ-F-002",
+   "ac": 6,
+   "uc": "UC-004",
+   "frase": "Gestionar las cuentas de socios. En Socios se ve «No se puede dar de baja: tiene material sin devolver».",
+   "visible": true,
+   "then": "the user sees \"No se puede dar de baja: tiene material sin devolver\" and he stays active",
+   "ve": [
+    "No se puede dar de baja: tiene material sin devolver"
+   ],
+   "pantalla": "Socios"
+  },
+  {
+   "id": "AC-003-06",
+   "req": "REQ-F-002",
+   "ac": 7,
+   "uc": "UC-003",
+   "frase": "Gestionar las cuentas de socios. En Socios se ve «Acceso no permitido».",
+   "visible": true,
+   "then": "the user sees \"Acceso no permitido\"",
+   "ve": [
+    "Acceso no permitido"
+   ],
+   "pantalla": "Socios"
+  },
+  {
+   "id": "AC-013-01",
+   "req": "REQ-F-008",
+   "ac": 1,
+   "uc": "UC-013",
+   "frase": "Gestionar el inventario. En Inventario se ve «{tipo}: {n} unidades».",
+   "visible": true,
+   "then": "the user sees \"Crampones: 2 unidades\" in the inventory",
+   "ve": [
+    "{tipo}: {n} unidades"
+   ],
+   "pantalla": "Inventario"
+  },
+  {
+   "id": "AC-014-01",
+   "req": "REQ-F-008",
+   "ac": 2,
+   "uc": "UC-014",
+   "frase": "Gestionar el inventario. En Inventario se ve «{tipo}: {n} unidades».",
+   "visible": true,
+   "then": "the user sees \"Casco: 3 unidades\" and \"Casco 3\" as \"De baja\"",
+   "ve": [
+    "{tipo}: {n} unidades"
+   ],
+   "pantalla": "Inventario"
+  },
+  {
+   "id": "AC-014-03",
+   "req": "REQ-F-008",
+   "ac": 3,
+   "uc": "UC-014",
+   "frase": "Gestionar el inventario. En Inventario se ve «No se puede dar de baja: está prestada».",
+   "visible": true,
+   "then": "the user sees \"No se puede dar de baja: está prestada\" and the unit stays",
+   "ve": [
+    "No se puede dar de baja: está prestada"
+   ],
+   "pantalla": "Inventario"
+  },
+  {
+   "id": "AC-014-02",
+   "req": "REQ-F-008",
+   "ac": 4,
+   "uc": "UC-014",
+   "frase": "Gestionar el inventario. En Inventario se ve «{n} reserva cancelada por la baja».",
+   "visible": true,
+   "then": "that reservation is cancelled and the user sees \"1 reserva cancelada por la baja\"",
+   "ve": [
+    "{n} reserva cancelada por la baja"
+   ],
+   "pantalla": "Inventario"
+  },
+  {
+   "id": "AC-014-07",
+   "req": "REQ-F-008",
+   "ac": 5,
+   "uc": "UC-014",
+   "frase": "Gestionar el inventario. En Inventario se ve «{tipo}: {n} unidades».",
+   "visible": true,
+   "then": "the count stays the same",
+   "ve": [
+    "{tipo}: {n} unidades"
+   ],
+   "pantalla": "Inventario"
+  },
+  {
+   "id": "AC-013-03",
+   "req": "REQ-F-008",
+   "ac": 6,
+   "uc": "UC-013",
+   "frase": "Gestionar el inventario. En Inventario se ve «La cantidad debe ser al menos 1».",
+   "visible": true,
+   "then": "the user sees \"La cantidad debe ser al menos 1\"",
+   "ve": [
+    "La cantidad debe ser al menos 1"
+   ],
+   "pantalla": "Inventario"
+  },
+  {
+   "id": "AC-013-06",
+   "req": "REQ-F-008",
+   "ac": 7,
+   "uc": "UC-013",
+   "frase": "Gestionar el inventario. En Inventario se ve «Acceso no permitido».",
+   "visible": true,
+   "then": "the user sees \"Acceso no permitido\"",
+   "ve": [
+    "Acceso no permitido"
+   ],
+   "pantalla": "Inventario"
+  }
+ ]
+}

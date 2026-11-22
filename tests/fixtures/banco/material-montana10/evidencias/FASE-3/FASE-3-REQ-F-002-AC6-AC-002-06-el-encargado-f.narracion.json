@@ -1,0 +1,16 @@
+{
+ "video": "FASE-3-REQ-F-002-AC6-AC-002-06-el-encargado-f.webm",
+ "test": "REQ-F-002 AC6 · AC-002-06 el encargado fija «Nieve2026» a «marta@club.es», que olvidó su contraseña, y ve «Contraseña restablecida»; Marta entra con ella y la antigua ya no vale",
+ "titulo": "REQ-F-002 AC6 · AC-002-06 el encargado fija «Nieve2026» a «marta@club.es», que olvidó su contraseña, y ve «Contraseña restablecida»; Marta entra con ella y la antigua ya no vale",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "El encargado entra, abre Socios, da de alta a Marta con «Hielo20266» y, como Marta la olvidó, le restablece la contraseña a «Nieve2026»"
+  },
+  {
+   "t": 1.533,
+   "texto": "Dar de alta, dar de baja y restablecer contraseña de socios. Marta tenía la cuenta bloqueada por equivocarse varias veces; en Socios se ve «Contraseña restablecida», Marta entra en ese momento con «Nieve2026» y la antigua ya no le vale.",
+   "criterio": "AC-002-06"
+  }
+ ]
+}

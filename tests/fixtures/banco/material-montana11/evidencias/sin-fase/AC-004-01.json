@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-004-01",
+ "test": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-004-01 REQ-F-002 AC4 marta fija \"Hielo2026x\" a Lucía Gil: Socios muestra Contraseña restablecida, Lucía entra con ella y no con Cumbre2026",
+ "titulo": "FASE-4 AC-004-01 REQ-F-002 AC4 marta fija \"Hielo2026x\" a Lucía Gil: Socios muestra Contraseña restablecida, Lucía entra con ella y no con Cumbre2026",
+ "ve": [
+  "Contraseña restablecida"
+ ],
+ "narrado": "Gestionar las cuentas de socios. En Socios se ve «Contraseña restablecida»: Lucía entra con «Hielo2026x» y con su contraseña antigua «Cumbre2026» ya no puede entrar.",
+ "url": "http://127.0.0.1:39737/#/socios",
+ "imagen": "AC-004-01.png",
+ "sha256": "sha256:3e3b7ff005d79f03952cae9324837a41d90ef18cfeaa709268cdc40b47d0624b",
+ "at": "2026-11-22T06:16:11.888Z"
+}

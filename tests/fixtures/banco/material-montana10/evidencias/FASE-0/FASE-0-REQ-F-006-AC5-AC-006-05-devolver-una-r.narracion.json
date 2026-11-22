@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-REQ-F-006-AC5-AC-006-05-devolver-una-r.webm",
+ "test": "REQ-F-006 AC5 · AC-006-05 devolver una reserva que no está prestada muestra «Esa reserva no está prestada» y no crea multa",
+ "titulo": "REQ-F-006 AC5 · AC-006-05 devolver una reserva que no está prestada muestra «Esa reserva no está prestada» y no crea multa",
+ "narraciones": [
+  {
+   "t": 0.007,
+   "texto": "El encargado abre Entregas y devoluciones, donde el piolet de Lucía figura prestado; entretanto la reserva vuelve a estar solo Reservada, sin entregar"
+  },
+  {
+   "t": 0.6,
+   "texto": "Marcar la devolución y poner la multa. En Entregas y devoluciones se ve «Esa reserva no está prestada», y no se crea ninguna multa.",
+   "criterio": "AC-006-05"
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+{
+ "video": "FASE-1-FASE-1-AC-005-01-lucia-reserva-Piolet-de.webm",
+ "test": "FASE-1 Reservar material (socio) › FASE-1 AC-005-01 lucia reserva Piolet del 2026-12-05 al 2026-12-07 con 3 libres y ve la reserva creada y 2 libres",
+ "titulo": "FASE-1 AC-005-01 lucia reserva Piolet del 2026-12-05 al 2026-12-07 con 3 libres y ve la reserva creada y 2 libres",
+ "narraciones": [
+  {
+   "t": 1.012,
+   "texto": "Lucía entra, elige Piolet y escribe el 5 y el 7 de diciembre"
+  },
+  {
+   "t": 1.601,
+   "texto": "Reservar material para unas fechas. En Reservar se ve «Reserva creada: Piolet, 2026-12-05 a 2026-12-07», y Piolet muestra 2 libres para esas fechas.",
+   "criterio": "AC-005-01"
+  }
+ ]
+}

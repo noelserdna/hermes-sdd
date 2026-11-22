@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-013-06",
+ "test": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-013-06 REQ-F-008 AC7 lucia, socia, abre la dirección de Inventario y ve Acceso no permitido",
+ "titulo": "FASE-4 AC-013-06 REQ-F-008 AC7 lucia, socia, abre la dirección de Inventario y ve Acceso no permitido",
+ "ve": [
+  "Acceso no permitido"
+ ],
+ "narrado": "Gestionar el inventario. En Inventario se ve «Acceso no permitido».",
+ "url": "http://127.0.0.1:35731/#/inventario",
+ "imagen": "AC-013-06.png",
+ "sha256": "sha256:22344c1d409c6b5d75d0fee21673e0fcd32afb417cad2a60aefa0aca4027d7a7",
+ "at": "2026-11-22T06:16:44.497Z"
+}

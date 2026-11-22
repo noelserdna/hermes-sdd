@@ -1,0 +1,121 @@
+<testsuites id="" name="" tests="9" failures="0" skipped="0" errors="0" time="45.850205">
+<testsuite name="fase-3-ciclo-multas.spec.js" timestamp="2026-11-22T01:02:20.769Z" hostname="chromium" tests="9" failures="0" skipped="0" time="44.034" errors="0">
+<testcase name="WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-010-01 REQ-F-006 AC1 el Casco de Pablo con fin 2026-12-07 devuelto el 2026-12-10 deja en Multas la multa 6,00 € de Pablo Ruiz Pendiente" classname="fase-3-ciclo-multas.spec.js" time="4.641">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-ae286-0-€-de-Pablo-Ruiz-Pendiente-chromium/attachments/AC-010-01-e842e81e36b5403b25ce32e59bbd3021a50936d3.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-ae286-0-€-de-Pablo-Ruiz-Pendiente-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-ae286-0-€-de-Pablo-Ruiz-Pendiente-chromium/attachments/WF-001-WF-001-AC-010-01-REQ-F-006-AC1-el-Casco--d915669c157a235d1e95f4879605642f968d82c8.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-ae286-0-€-de-Pablo-Ruiz-Pendiente-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-010-02 REQ-F-006 AC2 el Casco de Pablo con fin 2026-12-07 devuelto el 2026-12-07 deja Multas en Sin multas" classname="fase-3-ciclo-multas.spec.js" time="4.691">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-a8b62-7-deja-Multas-en-Sin-multas-chromium/attachments/AC-010-02-17fca0cf34f95b4494fbad102a7f7e5972abd891.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-a8b62-7-deja-Multas-en-Sin-multas-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-a8b62-7-deja-Multas-en-Sin-multas-chromium/attachments/WF-001-WF-001-AC-010-02-REQ-F-006-AC2-el-Casco--13de3aa92904bbeb1e7338689249e90e42969196.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-a8b62-7-deja-Multas-en-Sin-multas-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-010-03 REQ-F-006 AC3 el Casco de Pablo con fin 2026-12-07 devuelto el 2026-12-08 deja en Multas la multa 2,00 €" classname="fase-3-ciclo-multas.spec.js" time="4.38">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-f7dee-a-en-Multas-la-multa-2-00-€-chromium/attachments/AC-010-03-a8b05095f2f87db1ecb834e07a5065dfaf292099.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-f7dee-a-en-Multas-la-multa-2-00-€-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-f7dee-a-en-Multas-la-multa-2-00-€-chromium/attachments/WF-001-WF-001-AC-010-03-REQ-F-006-AC3-el-Casco--92d045c25311df9cb8eb9f4b853ec839a3f76599.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-f7dee-a-en-Multas-la-multa-2-00-€-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-011-01 REQ-F-006 AC6 pablo con una multa Pendiente de 6,00 € abre Mis multas y ve 6,00 € y Pendiente" classname="fase-3-ciclo-multas.spec.js" time="4.557">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-324a9-tas-y-ve-6-00-€-y-Pendiente-chromium/attachments/AC-011-01-7990cb40996b8436abc728dfaae66f9c09eb8991.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-324a9-tas-y-ve-6-00-€-y-Pendiente-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-324a9-tas-y-ve-6-00-€-y-Pendiente-chromium/attachments/WF-001-WF-001-AC-011-01-REQ-F-006-AC6-pablo-con-aa6dfff2dd70f667f6ad16f2cfb797f129b50435.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-324a9-tas-y-ve-6-00-€-y-Pendiente-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-010-04 REQ-F-006 AC4 pablo con multa Pendiente de 6,00 € y una reserva del 2026-12-20 pide Casco del 2026-12-15 al 2026-12-16 y ve Tienes una multa pendiente" classname="fase-3-ciclo-multas.spec.js" time="4.852">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-f8750--Tienes-una-multa-pendiente-chromium/attachments/AC-010-04-0a47b3fe84c39cbea80ee7f9fa836b6372dea186.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-f8750--Tienes-una-multa-pendiente-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-f8750--Tienes-una-multa-pendiente-chromium/attachments/WF-001-WF-001-AC-010-04-REQ-F-006-AC4-pablo-con-f657103aeaf52ed51bd6707bcf41b1218c717acb.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-f8750--Tienes-una-multa-pendiente-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-012-01 REQ-F-007 AC1 marta marca Pagada la multa de 6,00 € de Pablo Ruiz y pablo puede reservar Casco" classname="fase-3-ciclo-multas.spec.js" time="5.394">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-ea673--pablo-puede-reservar-Casco-chromium/attachments/AC-012-01-882fa9ee547aa96b9a060cb0b9b9ef099cb778c3.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-ea673--pablo-puede-reservar-Casco-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-ea673--pablo-puede-reservar-Casco-chromium/attachments/WF-001-WF-001-AC-012-01-REQ-F-007-AC1-marta-mar-d99e7db611c065567800735c490435acd73281ed.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-ea673--pablo-puede-reservar-Casco-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-012-02 REQ-F-006 AC5 pablo con 2 multas Pendiente de 6,00 €, solo una pagada, pide Casco del 2026-12-15 al 2026-12-16 y sigue bloqueado" classname="fase-3-ciclo-multas.spec.js" time="5.674">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-c8450-026-12-16-y-sigue-bloqueado-chromium/attachments/AC-012-02-5da62f55ebc4a1f176bbf07c89e0729d836dc30a.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-c8450-026-12-16-y-sigue-bloqueado-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-c8450-026-12-16-y-sigue-bloqueado-chromium/attachments/WF-001-WF-001-AC-012-02-REQ-F-006-AC5-pablo-con-fe60b10e200fd62b617c8ff66b34e90ee191bf97.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-c8450-026-12-16-y-sigue-bloqueado-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-012-03 REQ-F-007 AC2 la multa de 6,00 € pagada el 2026-12-11 se vuelve a marcar el 2026-12-12 y sigue Pagada con la fecha 2026-12-11" classname="fase-3-ciclo-multas.spec.js" time="5.497">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-4ef02-ada-con-la-fecha-2026-12-11-chromium/attachments/AC-012-03-d4c06be9d82d0c22fdb55a437d19c31ce6a9fd4d.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-4ef02-ada-con-la-fecha-2026-12-11-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-4ef02-ada-con-la-fecha-2026-12-11-chromium/attachments/WF-001-WF-001-AC-012-03-REQ-F-007-AC2-la-multa--dab21c6deaae774ac52a590dab672f38b8303418.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-4ef02-ada-con-la-fecha-2026-12-11-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-012-04 REQ-F-007 AC3 pablo, socio, abre la dirección de Multas y ve Acceso no permitido" classname="fase-3-ciclo-multas.spec.js" time="4.348">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-9ea07-as-y-ve-Acceso-no-permitido-chromium/attachments/AC-012-04-55f3fd855a251a35f794c4a09b8b230f485c5d68.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-9ea07-as-y-ve-Acceso-no-permitido-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-9ea07-as-y-ve-Acceso-no-permitido-chromium/attachments/WF-001-WF-001-AC-012-04-REQ-F-007-AC3-pablo-so-b4fd9786fd1894c30dcca7a3e399be3b32538ca5.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-3/.playwright/fase-3-ciclo-multas-WF-001-9ea07-as-y-ve-Acceso-no-permitido-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

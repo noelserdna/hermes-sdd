@@ -1,0 +1,177 @@
+{
+ "fase": "5",
+ "plan": "plan/fases/FASE-5-CONSULTAS.md",
+ "workflows": [],
+ "casos_de_uso": [
+  {
+   "id": "UC-015",
+   "titulo": "Ver lo prestado y lo que vuelve cada día",
+   "fichero": "spec/use-cases/UC-015-ver-lo-prestado.md",
+   "flujo": [
+    "Encargado: abre Prestado (API-003-09).",
+    "System: lista cada préstamo como \"{material} — {socio} — hasta {fecha}\".",
+    "System: marca \"Retrasado {n} día\" en los préstamos con `fin` anterior a Hoy (RN-002, RN-009).",
+    "Encargado: elige un día.",
+    "System: muestra bajo \"Vuelven hoy\" el material cuyo `fin` es el día elegido, y no el resto."
+   ],
+   "extensiones": [
+    {
+     "texto": "2a. Ningún préstamo → se muestra \"No hay material prestado\".",
+     "criterios": [
+      "AC-015-04"
+     ]
+    },
+    {
+     "texto": "3a. Préstamo con retraso → se muestra \"Retrasado {n} día\" junto al material.",
+     "criterios": [
+      "AC-015-03"
+     ]
+    },
+    {
+     "texto": "5a. Día elegido sin devoluciones → \"Vuelven hoy\" queda vacío.",
+     "criterios": [
+      "AC-015-02"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-015-01",
+    "AC-015-02",
+    "AC-015-03",
+    "AC-015-04"
+   ]
+  },
+  {
+   "id": "UC-016",
+   "titulo": "Consultar historial de un socio",
+   "fichero": "spec/use-cases/UC-016-consultar-historial-socio.md",
+   "flujo": [
+    "Junta: elige un socio (API-003-10).",
+    "System: comprueba que el socio existe; un socio en Baja conserva su historial (RN-007).",
+    "System: devuelve solo los préstamos y multas de ese socio (INV-SEC-001).",
+    "System: muestra \"Historial del socio\" con cada préstamo y su estado (\"Devuelto\") y cada multa como \"Multa {importe} € {estado}\".",
+    "System: no ofrece ningún botón que cambie datos (INV-SEC-002)."
+   ],
+   "extensiones": [
+    {
+     "texto": "4a. El socio no tiene préstamos ni multas → se muestra \"Sin préstamos ni multas\".",
+     "criterios": [
+      "AC-016-03"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-016-01",
+    "AC-016-02",
+    "AC-016-03",
+    "AC-016-04"
+   ]
+  }
+ ],
+ "criterios": [
+  {
+   "id": "AC-015-01",
+   "req": "REQ-F-009",
+   "ac": 1,
+   "uc": "UC-015",
+   "frase": "Ver lo prestado y lo que vuelve cada día. En Prestado se ve «{material} — {socio} — hasta {fecha}».",
+   "visible": true,
+   "then": "the user sees \"Piolet 1 — Lucía Gil — hasta 2026-12-07\" and \"Casco 2 — Pablo Ruiz — hasta 2026-12-08\"",
+   "ve": [
+    "{material} — {socio} — hasta {fecha}"
+   ],
+   "pantalla": "Prestado"
+  },
+  {
+   "id": "AC-015-02",
+   "req": "REQ-F-009",
+   "ac": 2,
+   "uc": "UC-015",
+   "frase": "Ver lo prestado y lo que vuelve cada día. En Prestado se ve «Vuelven hoy».",
+   "visible": true,
+   "then": "the user sees \"Piolet 1\" under \"Vuelven hoy\" and does not see \"Casco 2\"",
+   "ve": [
+    "Vuelven hoy"
+   ],
+   "pantalla": "Prestado"
+  },
+  {
+   "id": "AC-015-03",
+   "req": "REQ-F-009",
+   "ac": 3,
+   "uc": "UC-015",
+   "frase": "Ver lo prestado y lo que vuelve cada día. En Prestado se ve «Retrasado {n} día».",
+   "visible": true,
+   "then": "the user sees \"Casco 2\" marked \"Retrasado 1 día\"",
+   "ve": [
+    "Retrasado {n} día"
+   ],
+   "pantalla": "Prestado"
+  },
+  {
+   "id": "AC-015-04",
+   "req": "REQ-F-009",
+   "ac": 4,
+   "uc": "UC-015",
+   "frase": "Ver lo prestado y lo que vuelve cada día. En Prestado se ve «No hay material prestado».",
+   "visible": true,
+   "then": "the user sees \"No hay material prestado\"",
+   "ve": [
+    "No hay material prestado"
+   ],
+   "pantalla": "Prestado"
+  },
+  {
+   "id": "AC-016-01",
+   "req": "REQ-F-010",
+   "ac": 1,
+   "uc": "UC-016",
+   "frase": "La junta consulta el historial de un socio. En Historial del socio se ve «Multa {importe} € {estado}».",
+   "visible": true,
+   "then": "the user sees \"Multa 6,00 € Pendiente\" and not the loans of \"Lucía Gil\"",
+   "ve": [
+    "Multa {importe} € {estado}"
+   ],
+   "pantalla": "Historial del socio"
+  },
+  {
+   "id": "AC-016-02",
+   "req": "REQ-F-010",
+   "ac": 2,
+   "uc": "UC-016",
+   "frase": "La junta consulta el historial de un socio. En Historial del socio se ve «Devuelto».",
+   "visible": true,
+   "then": "the user sees \"Piolet 1\" with \"Devuelto\"",
+   "ve": [
+    "Devuelto"
+   ],
+   "pantalla": "Historial del socio"
+  },
+  {
+   "id": "AC-016-03",
+   "req": "REQ-F-010",
+   "ac": 3,
+   "uc": "UC-016",
+   "frase": "La junta consulta el historial de un socio. En Historial del socio se ve «Sin préstamos ni multas».",
+   "visible": true,
+   "then": "the user sees \"Sin préstamos ni multas\"",
+   "ve": [
+    "Sin préstamos ni multas"
+   ],
+   "pantalla": "Historial del socio"
+  },
+  {
+   "id": "AC-016-04",
+   "req": "REQ-F-010",
+   "ac": 4,
+   "uc": "UC-016",
+   "frase": "La junta consulta el historial de un socio. En Inventario se ve «Acceso no permitido».",
+   "visible": true,
+   "then": "the user sees \"Acceso no permitido\" and the junta screens have no button to change data",
+   "ve": [
+    "Acceso no permitido"
+   ],
+   "pantalla": "Inventario"
+  }
+ ]
+}

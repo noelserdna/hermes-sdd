@@ -1,0 +1,16 @@
+{
+ "video": "FASE-1-REQ-F-004-AC1-AC-004-01-Luc-a-abre-Mis.webm",
+ "test": "REQ-F-004 AC1 · AC-004-01 Lucía abre Mis reservas y ve «Piolet · 2026-12-05 a 2026-12-07 · Reservada»",
+ "titulo": "REQ-F-004 AC1 · AC-004-01 Lucía abre Mis reservas y ve «Piolet · 2026-12-05 a 2026-12-07 · Reservada»",
+ "narraciones": [
+  {
+   "t": 0.014,
+   "texto": "Lucía entra con su correo y su contraseña y abre Mis reservas"
+  },
+  {
+   "t": 0.649,
+   "texto": "Ver y cancelar mis reservas. En Mis reservas se ve «Piolet · 2026-12-05 a 2026-12-07 · Reservada».",
+   "criterio": "AC-004-01"
+  }
+ ]
+}

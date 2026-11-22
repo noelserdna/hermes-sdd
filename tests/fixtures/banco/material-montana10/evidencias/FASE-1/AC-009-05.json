@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-009-05",
+ "test": "REQ-F-009 AC5 · AC-009-05 la junta abre Entregas y devoluciones y ve «Prestado: Casco 1 · Pablo · hasta 2026-12-09» sin botones",
+ "titulo": "REQ-F-009 AC5 · AC-009-05 la junta abre Entregas y devoluciones y ve «Prestado: Casco 1 · Pablo · hasta 2026-12-09» sin botones",
+ "ve": [
+  "Prestado: Casco 1 · Pablo · hasta 2026-12-09"
+ ],
+ "narrado": "Ver lo prestado y lo que vuelve cada día. En Entregas y devoluciones se ve «Prestado: Casco 1 · Pablo · hasta 2026-12-09», y la lista no tiene botones de entregar ni de devolver.",
+ "url": "http://127.0.0.1:5173/#/entregas",
+ "imagen": "AC-009-05.png",
+ "sha256": "sha256:4bbcb19eea172d12b4ef54b1b8923edef372afd786edc8466b672fa22d066c45",
+ "at": "2026-11-21T13:46:31.282Z"
+}

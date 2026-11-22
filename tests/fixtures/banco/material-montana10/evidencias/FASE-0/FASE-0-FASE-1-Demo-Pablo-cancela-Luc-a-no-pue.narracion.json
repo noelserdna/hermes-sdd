@@ -1,0 +1,35 @@
+{
+ "video": "FASE-0-FASE-1-Demo-Pablo-cancela-Luc-a-no-pue.webm",
+ "test": "FASE-1 Demo: Pablo cancela, Lucía no puede, el encargado entrega y la junta lo ve sin botones",
+ "titulo": "FASE-1 Demo: Pablo cancela, Lucía no puede, el encargado entrega y la junta lo ve sin botones",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "Paso 1: hoy es 3 de diciembre; Pablo abre Mis reservas y ve solo la suya"
+  },
+  {
+   "t": 0.728,
+   "texto": "Paso 2: Pablo cancela su reserva del 10 de diciembre y pasa a Cancelada"
+  },
+  {
+   "t": 1.071,
+   "texto": "Paso 3: Lucía intenta cancelar la suya, que empezó hoy, y la web la rechaza"
+  },
+  {
+   "t": 1.766,
+   "texto": "Paso 4: el encargado abre Entregas y devoluciones y ve a Lucía por entregar hoy"
+  },
+  {
+   "t": 2.438,
+   "texto": "Paso 5: el encargado entrega a Lucía y la reserva pasa a Prestada con una unidad"
+  },
+  {
+   "t": 2.703,
+   "texto": "Paso 6: el encargado repite la entrega desde la otra pestaña, y no se asigna otra unidad"
+  },
+  {
+   "t": 3.137,
+   "texto": "Paso 7: la junta abre Entregas y devoluciones y lo ve todo sin botones"
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-005-05",
+ "test": "FASE-1 Reservar material (socio) › FASE-1 AC-005-05 lucia pide Casco del 2026-11-20 al 2026-11-22 con hoy 2026-11-21 y ve No se puede reservar en fechas pasadas",
+ "titulo": "FASE-1 AC-005-05 lucia pide Casco del 2026-11-20 al 2026-11-22 con hoy 2026-11-21 y ve No se puede reservar en fechas pasadas",
+ "ve": [
+  "No se puede reservar en fechas pasadas"
+ ],
+ "narrado": "Reservar material para unas fechas. En Reservar se ve «No se puede reservar en fechas pasadas».",
+ "url": "http://127.0.0.1:42733/#/inicio",
+ "imagen": "AC-005-05.png",
+ "sha256": "sha256:81f06f701c5e2e0296b478bb35c571ef160740ecc01fe399c0847c364af6b750",
+ "at": "2026-11-22T01:01:24.875Z"
+}

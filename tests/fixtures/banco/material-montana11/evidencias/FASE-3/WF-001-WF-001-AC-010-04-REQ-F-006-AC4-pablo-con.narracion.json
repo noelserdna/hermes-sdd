@@ -1,0 +1,16 @@
+{
+ "video": "WF-001-WF-001-AC-010-04-REQ-F-006-AC4-pablo-con.webm",
+ "test": "WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-010-04 REQ-F-006 AC4 pablo con multa Pendiente de 6,00 € y una reserva del 2026-12-20 pide Casco del 2026-12-15 al 2026-12-16 y ve Tienes una multa pendiente",
+ "titulo": "WF-001 AC-010-04 REQ-F-006 AC4 pablo con multa Pendiente de 6,00 € y una reserva del 2026-12-20 pide Casco del 2026-12-15 al 2026-12-16 y ve Tienes una multa pendiente",
+ "narraciones": [
+  {
+   "t": 3.45,
+   "texto": "Pablo tiene una multa pendiente de 6 euros y una reserva de Casco del 20 de diciembre. Entra y pide otro Casco del 15 al 16"
+  },
+  {
+   "t": 4.267,
+   "texto": "Multa por devolución tardía y bloqueo. En Reservar se ve «Tienes una multa pendiente: no puedes reservar hasta pagarla», se rechaza la reserva y su reserva del 20 de diciembre sigue ahí.",
+   "criterio": "AC-010-04"
+  }
+ ]
+}

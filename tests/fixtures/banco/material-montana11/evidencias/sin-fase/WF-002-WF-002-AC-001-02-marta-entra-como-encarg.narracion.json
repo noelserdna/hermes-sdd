@@ -1,0 +1,16 @@
+{
+ "video": "WF-002-WF-002-AC-001-02-marta-entra-como-encarg.webm",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-001-02 marta entra como encargada y ve Panel del encargado",
+ "titulo": "WF-002 AC-001-02 marta entra como encargada y ve Panel del encargado",
+ "narraciones": [
+  {
+   "t": 0.833,
+   "texto": "Marta, la encargada, abre la web y entra con sus credenciales"
+  },
+  {
+   "t": 1.265,
+   "texto": "Entrar con correo y contraseña. En Inicio del encargado se ve «Panel del encargado».",
+   "criterio": "AC-001-02"
+  }
+ ]
+}

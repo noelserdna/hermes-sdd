@@ -1,0 +1,16 @@
+{
+ "video": "WF-002-WF-002-AC-003-04-el-encargado-crea-un-so.webm",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-003-04 el encargado crea un socio con la contraseña corta1 y ve el aviso de 8 caracteres",
+ "titulo": "WF-002 AC-003-04 el encargado crea un socio con la contraseña corta1 y ve el aviso de 8 caracteres",
+ "narraciones": [
+  {
+   "t": 0.734,
+   "texto": "Marta entra, abre Socios y rellena el alta con una contraseña de seis caracteres"
+  },
+  {
+   "t": 1.569,
+   "texto": "Gestionar las cuentas de socios. En Socios se ve «La contraseña debe tener al menos 8 caracteres». Y no se crea ningún socio.",
+   "criterio": "AC-003-04"
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-REQ-F-003-AC5-AC-003-05-hoy-es-2026-12.webm",
+ "test": "REQ-F-003 AC5 · AC-003-05 hoy es 2026-12-01: reservar «Casco» desde 2026-11-30 se rechaza por pasado",
+ "titulo": "REQ-F-003 AC5 · AC-003-05 hoy es 2026-12-01: reservar «Casco» desde 2026-11-30 se rechaza por pasado",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "Lucía entra y reserva un casco desde el 30 de noviembre, cuando hoy es el 1 de diciembre"
+  },
+  {
+   "t": 0.607,
+   "texto": "Reservar material para unas fechas. En Reservar se ve «Las fechas no pueden estar en el pasado» y no se crea ninguna reserva.",
+   "criterio": "AC-003-05"
+  }
+ ]
+}

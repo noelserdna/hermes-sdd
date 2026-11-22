@@ -1,0 +1,20 @@
+{
+ "video": "FASE-0-REQ-F-008-AC4-AC-008-04-Casco-1-est-.webm",
+ "test": "REQ-F-008 AC4 · AC-008-04 «Casco 1» está prestada a Pablo: no se da de baja y sigue activa",
+ "titulo": "REQ-F-008 AC4 · AC-008-04 «Casco 1» está prestada a Pablo: no se da de baja y sigue activa",
+ "narraciones": [
+  {
+   "t": 0.007,
+   "texto": "El encargado entra y abre Inventario; «Casco 1» está prestada a Pablo"
+  },
+  {
+   "t": 0.47,
+   "texto": "El encargado marca «Casco 1» como rota y confirma"
+  },
+  {
+   "t": 0.764,
+   "texto": "Gestionar el inventario. En Inventario se ve «No se puede dar de baja: está prestada», y sigue activa.",
+   "criterio": "AC-008-04"
+  }
+ ]
+}

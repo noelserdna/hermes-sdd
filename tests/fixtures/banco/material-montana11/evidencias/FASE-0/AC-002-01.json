@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-002-01",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-002-01 lucia pulsa Salir y ve Entrar; al volver a una pantalla de socio vuelve a ver Entrar",
+ "titulo": "WF-002 AC-002-01 lucia pulsa Salir y ve Entrar; al volver a una pantalla de socio vuelve a ver Entrar",
+ "ve": [
+  "Entrar"
+ ],
+ "narrado": "Entrar con correo y contraseña. En Entrar se ve «Entrar». Y al volver a una pantalla de socio se vuelve a ver el formulario Entrar.",
+ "url": "http://127.0.0.1:35381/#/entrar",
+ "imagen": "AC-002-01.png",
+ "sha256": "sha256:d887acd8559678360f1b1dcb689ac0a14af79773ee8538a69894fb321dc14ea0",
+ "at": "2026-11-22T01:00:53.771Z"
+}

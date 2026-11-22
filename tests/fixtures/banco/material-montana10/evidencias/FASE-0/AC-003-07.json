@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-003-07",
+ "test": "REQ-F-003 AC7 · AC-003-07 reservar «Cuerda» del 2026-12-10 al 2026-12-25 (16 días) se rechaza",
+ "titulo": "REQ-F-003 AC7 · AC-003-07 reservar «Cuerda» del 2026-12-10 al 2026-12-25 (16 días) se rechaza",
+ "ve": [
+  "Máximo 14 días por reserva"
+ ],
+ "narrado": "Reservar material para unas fechas. En Reservar se ve «Máximo 14 días por reserva» y no se crea ninguna reserva.",
+ "url": "http://127.0.0.1:5173/#/reservar",
+ "imagen": "AC-003-07.png",
+ "sha256": "sha256:33f82cdc304a868f8a9a17586a57c9e88e2371449a3b17b136ff116dce709c77",
+ "at": "2026-11-21T13:46:00.900Z"
+}

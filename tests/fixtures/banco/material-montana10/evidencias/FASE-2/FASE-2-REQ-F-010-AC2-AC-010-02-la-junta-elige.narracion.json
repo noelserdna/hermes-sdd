@@ -1,0 +1,16 @@
+{
+ "video": "FASE-2-REQ-F-010-AC2-AC-010-02-la-junta-elige.webm",
+ "test": "REQ-F-010 AC2 · AC-010-02 la junta elige a Pablo, sin préstamos, y ve «Sin préstamos ni multas»",
+ "titulo": "REQ-F-010 AC2 · AC-010-02 la junta elige a Pablo, sin préstamos, y ve «Sin préstamos ni multas»",
+ "narraciones": [
+  {
+   "t": 0.009,
+   "texto": "La junta entra, abre Historial y elige a Pablo, que no tiene préstamos ni multas, mientras Lucía sí tiene los suyos"
+  },
+  {
+   "t": 0.544,
+   "texto": "Consultar el historial de un socio. En Historial se ve «Sin préstamos ni multas».",
+   "criterio": "AC-010-02"
+  }
+ ]
+}

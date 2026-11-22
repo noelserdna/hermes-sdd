@@ -1,0 +1,4 @@
+Restablecer la contraseña tiene que levantar el bloqueo: quien la olvidó casi siempre se ha equivocado varias veces y tiene la cuenta bloqueada. Si el encargado le pone «Nieve2026» y la web dice «Contraseña restablecida», Marta tiene que poder entrar con ella en ese momento, sin esperar los 15 minutos (lo que señala CH-004).
+
+Hallazgos de la revisión independiente (el test o la captura no prueban el criterio):
+- CH-004 REQ-F-002 AC6 [BYPASS-PATH]: «THEN Marta enters with it and the old one no longer works» — src/domain/socios.js:66, src/domain/acceso.js:73, tests/unit/domain/socios.test.js:148

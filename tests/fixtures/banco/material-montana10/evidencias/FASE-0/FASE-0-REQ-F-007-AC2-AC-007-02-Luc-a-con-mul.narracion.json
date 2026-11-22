@@ -1,0 +1,20 @@
+{
+ "video": "FASE-0-REQ-F-007-AC2-AC-007-02-Luc-a-con-mul.webm",
+ "test": "REQ-F-007 AC2 · AC-007-02 Lucía, con multas de 2 € y 4 €, tras pagar la de 2 € sigue viendo «Multa pendiente: 4 €» y no puede reservar",
+ "titulo": "REQ-F-007 AC2 · AC-007-02 Lucía, con multas de 2 € y 4 €, tras pagar la de 2 € sigue viendo «Multa pendiente: 4 €» y no puede reservar",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "El encargado entra, abre Multas y marca como pagada la multa de 2 euros de Lucía, que tiene otra de 4 euros"
+  },
+  {
+   "t": 0.694,
+   "texto": "Lucía entra e intenta reservar un piolet para el 12 de diciembre, y la web se lo rechaza"
+  },
+  {
+   "t": 1.431,
+   "texto": "Marcar la multa como pagada. En Mis reservas se ve «Multa pendiente: 4 €», y Lucía no puede reservar.",
+   "criterio": "AC-007-02"
+  }
+ ]
+}

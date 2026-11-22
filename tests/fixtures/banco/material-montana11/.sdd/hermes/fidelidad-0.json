@@ -1,0 +1,143 @@
+{
+ "repo": "/home/andre/proyectos-sdd/material-montana11",
+ "fase": "0",
+ "sha": "ddb746f",
+ "congelados": [],
+ "capturas": [],
+ "coherencia": [],
+ "vinculos": [],
+ "lint_capturas": [],
+ "mutantes_cache": {
+  "de_cache": 0,
+  "ejecutados": 0
+ },
+ "mutantes": [
+  {
+   "req": "REQ-F-001",
+   "ac": 1,
+   "texto": "Material disponible",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 2,
+   "texto": "Panel del encargado",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 3,
+   "texto": "Correo o contraseña incorrectos",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 4,
+   "texto": "Cuenta bloqueada durante 15 minutos",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 5,
+   "texto": "Material disponible",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 6,
+   "texto": "Sesión caducada, vuelve a entrar",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 7,
+   "texto": "Entrar",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 8,
+   "texto": "Entrar",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 9,
+   "texto": "Correo o contraseña incorrectos",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ]
+  }
+ ],
+ "graves": 0
+}

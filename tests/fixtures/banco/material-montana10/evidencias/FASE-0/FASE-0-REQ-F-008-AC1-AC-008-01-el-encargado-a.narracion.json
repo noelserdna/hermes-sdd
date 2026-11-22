@@ -1,0 +1,20 @@
+{
+ "video": "FASE-0-REQ-F-008-AC1-AC-008-01-el-encargado-a.webm",
+ "test": "REQ-F-008 AC1 · AC-008-01 el encargado añade 2 «Piolet» a 3 y ve «Piolet · 5 unidades»",
+ "titulo": "REQ-F-008 AC1 · AC-008-01 el encargado añade 2 «Piolet» a 3 y ve «Piolet · 5 unidades»",
+ "narraciones": [
+  {
+   "t": 0.006,
+   "texto": "El encargado entra y abre Inventario, donde hay 3 piolets"
+  },
+  {
+   "t": 0.455,
+   "texto": "Indica Piolet, cantidad 2, y pulsa Añadir"
+  },
+  {
+   "t": 0.745,
+   "texto": "Gestionar el inventario. En Inventario se ve «Piolet · 5 unidades».",
+   "criterio": "AC-008-01"
+  }
+ ]
+}

@@ -1,0 +1,4 @@
+CH-002 es cierto: tras salir y volver atrás, la prueba tiene que esperar a que la app termine de comprobar la sesión y entonces ver el formulario Entrar; tal como está pasaría aunque volver atrás enseñara Mis reservas.
+
+Hallazgos de la revisión independiente (el test o la captura no prueban el criterio):
+- CH-002 REQ-F-001 AC7 [WEAKENED-ASSERT]: «going back to a member screen shows the login form again» — tests/e2e/fase-0-wf-002.spec.js:135, tests/e2e/fase-0-wf-002.spec.js:138, tests/e2e/fase-0-wf-002.spec.js:146, src/ui/main.js:35

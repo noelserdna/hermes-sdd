@@ -1,0 +1,16 @@
+{
+ "video": "WF-002-REQ-F-001-AC9-AC-001-09-WF-002-un-dobl.webm",
+ "test": "REQ-F-001 AC9 · AC-001-09 WF-002 un doble clic en Entrar deja una sola sesión",
+ "titulo": "REQ-F-001 AC9 · AC-001-09 WF-002 un doble clic en Entrar deja una sola sesión",
+ "narraciones": [
+  {
+   "t": 0.007,
+   "texto": "Lucía rellena Entrar y hace doble clic en el botón"
+  },
+  {
+   "t": 0.46,
+   "texto": "Entrar, salir y proteger la sesión. En Mis reservas se ve «Hola, Lucía» y hay una sola sesión.",
+   "criterio": "AC-001-09"
+  }
+ ]
+}

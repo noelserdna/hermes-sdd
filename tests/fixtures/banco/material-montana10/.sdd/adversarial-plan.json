@@ -1,0 +1,452 @@
+{
+  "$schema": "sdd-adversarial-plan-v1",
+  "evaluated_sha": "674ca639e0a7679f26a58fec681666aee9bb6e6a",
+  "dirty": false,
+  "generatedAt": "2026-11-21T13:04:13.514Z",
+  "scope": {
+    "fase": 3
+  },
+  "code_paths": [
+    "src"
+  ],
+  "adversarial_gate": "enforce",
+  "fases": [
+    {
+      "fase": 3,
+      "file": "plan/fases/FASE-3-SOCIOS.md",
+      "header": true,
+      "requirements": [
+        {
+          "id": "REQ-F-002",
+          "title": "Dar de alta, dar de baja y restablecer contraseña de socios",
+          "priority": "Should",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN the encargado submits the name, correo and an initial contraseña of a new socio THE system SHALL create the account, and WHEN the encargado asks to deactivate or reset an account THE system SHALL apply it",
+          "reqHash": "sha256:1232486fab59a94b1def022b377cd3a73d62737de30dd4b4f1e564303114b799",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN the encargado in Socios WHEN he creates \"Marta Ruiz\", \"marta@club.es\", contraseña \"Glaciar2026\" THEN the user sees \"Marta Ruiz\" in the list of Socios and Marta can enter",
+              "scenarios": [
+                "AC-002-01"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-002 AC1 · AC-002-01 el encargado da de alta a «Marta Ruiz» («marta@club.es», «Glaciar2026») y la ve en Socios, y Marta puede entrar",
+                  "file": "fase-3-socios.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-002 AC1 · AC-002-01 el encargado da de alta a «Marta Ruiz» («marta@club.es», «Glaciar2026») y la ve en Socios, y Marta puede entrar",
+                  "file": "fase-3-socios.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/AC-002-01.png",
+                "evidencias/FASE-3/AC-002-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/AC-002-01.png": "sha256:ebfd614df5eeaa323ad504e6b16543add16919914a8c944dd7a65b9aa53e97e3",
+                "evidencias/FASE-3/AC-002-01.png": "sha256:ebfd614df5eeaa323ad504e6b16543add16919914a8c944dd7a65b9aa53e97e3"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Marta Ruiz",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-3/AC-002-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-3/FASE-3-REQ-F-002-AC1-AC-002-01-el-encargado-d.webm"
+              ]
+            },
+            {
+              "n": 2,
+              "text": "GIVEN \"marta@club.es\" already exists WHEN the encargado creates another with that correo THEN the user sees \"Ya existe un socio con ese correo\" and the list keeps one \"Marta Ruiz\"",
+              "scenarios": [
+                "AC-002-02"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-002 AC2 · AC-002-02 con «marta@club.es» ya dada de alta, otra alta con ese correo muestra «Ya existe un socio con ese correo» y la lista sigue con una sola «Marta Ruiz»",
+                  "file": "fase-3-socios.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-002 AC2 · AC-002-02 con «marta@club.es» ya dada de alta, otra alta con ese correo muestra «Ya existe un socio con ese correo» y la lista sigue con una sola «Marta Ruiz»",
+                  "file": "fase-3-socios.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/AC-002-02.png",
+                "evidencias/FASE-3/AC-002-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/AC-002-02.png": "sha256:df719a3a5a9d40f00e63662162924789473c36959d292781e6a02f66d033ec43",
+                "evidencias/FASE-3/AC-002-02.png": "sha256:df719a3a5a9d40f00e63662162924789473c36959d292781e6a02f66d033ec43"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Ya existe un socio con ese correo",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-3/AC-002-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-3/FASE-3-REQ-F-002-AC2-AC-002-02-con-marta-clu.webm"
+              ]
+            },
+            {
+              "n": 3,
+              "text": "GIVEN the encargado in Socios WHEN he creates a socio with contraseña \"corta\" (5 characters) THEN the user sees \"La contraseña debe tener al menos 8 caracteres\" and no account is created",
+              "scenarios": [
+                "AC-002-03"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-002 AC3 · AC-002-03 el encargado da de alta a un socio con la contraseña «corta» (5 caracteres) y ve «La contraseña debe tener al menos 8 caracteres»",
+                  "file": "fase-3-socios.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-002 AC3 · AC-002-03 el encargado da de alta a un socio con la contraseña «corta» (5 caracteres) y ve «La contraseña debe tener al menos 8 caracteres»",
+                  "file": "fase-3-socios.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/AC-002-03.png",
+                "evidencias/FASE-3/AC-002-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/AC-002-03.png": "sha256:82e0da1a67e710e99e6dcd54c7cd5b59e00b544974426511d93972b7ebc9e731",
+                "evidencias/FASE-3/AC-002-03.png": "sha256:82e0da1a67e710e99e6dcd54c7cd5b59e00b544974426511d93972b7ebc9e731"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "La contraseña debe tener al menos 8 caracteres",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-3/AC-002-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-3/FASE-3-REQ-F-002-AC3-AC-002-03-el-encargado-d.webm"
+              ]
+            },
+            {
+              "n": 4,
+              "text": "GIVEN \"pablo@club.es\" has no reserva en curso ni multa pendiente WHEN the encargado deactivates him THEN the user sees \"Pablo\" with \"Baja\" in Socios and Pablo cannot enter",
+              "scenarios": [
+                "AC-002-04"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-002 AC4 · AC-002-04 el encargado da de baja a «Pablo» (sin reserva en curso ni multa pendiente) y lo ve con «Baja» en Socios; Pablo ya no puede entrar",
+                  "file": "fase-3-socios.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-002 AC4 · AC-002-04 el encargado da de baja a «Pablo» (sin reserva en curso ni multa pendiente) y lo ve con «Baja» en Socios; Pablo ya no puede entrar",
+                  "file": "fase-3-socios.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/AC-002-04.png",
+                "evidencias/FASE-3/AC-002-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/AC-002-04.png": "sha256:4dabc851f7949ed60f4e93d821cafc444ef10a5bc8bb5796bfd40d2fc15b36ff",
+                "evidencias/FASE-3/AC-002-04.png": "sha256:4dabc851f7949ed60f4e93d821cafc444ef10a5bc8bb5796bfd40d2fc15b36ff"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{nombre}",
+                    "template": true
+                  },
+                  {
+                    "text": "Baja",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-3/AC-002-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-3/FASE-3-REQ-F-002-AC4-AC-002-04-el-encargado-d.webm"
+              ]
+            },
+            {
+              "n": 5,
+              "text": "GIVEN \"lucia@club.es\" has the material \"Casco 2\" lent out WHEN the encargado deactivates her THEN the user sees \"No se puede dar de baja: tiene material prestado o multas pendientes\" and her account stays active",
+              "scenarios": [
+                "AC-002-05"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-002 AC5 · AC-002-05 el encargado intenta dar de baja a «Lucía», que tiene «Casco 2» prestado, y ve «No se puede dar de baja: tiene material prestado o multas pendientes»",
+                  "file": "fase-3-socios.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-002 AC5 · AC-002-05 el encargado intenta dar de baja a «Lucía», que tiene «Casco 2» prestado, y ve «No se puede dar de baja: tiene material prestado o multas pendientes»",
+                  "file": "fase-3-socios.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/AC-002-05.png",
+                "evidencias/FASE-3/AC-002-05.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/AC-002-05.png": "sha256:b5ac64a555f7468bd3c5debf1f7710fc98a50d436f3c203513db1ae4a1900432",
+                "evidencias/FASE-3/AC-002-05.png": "sha256:b5ac64a555f7468bd3c5debf1f7710fc98a50d436f3c203513db1ae4a1900432"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No se puede dar de baja: tiene material prestado o multas pendientes",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-3/AC-002-05.png"
+              ],
+              "videos": [
+                "evidencias/FASE-3/FASE-3-REQ-F-002-AC5-AC-002-05-el-encargado-i.webm"
+              ]
+            },
+            {
+              "n": 6,
+              "text": "GIVEN \"marta@club.es\" forgot her contraseña WHEN the encargado sets \"Nieve2026\" THEN Marta enters with it and the old one no longer works",
+              "scenarios": [
+                "AC-002-06"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-002 AC6 · AC-002-06 el encargado fija «Nieve2026» a «marta@club.es», que olvidó su contraseña, y ve «Contraseña restablecida»; Marta entra con ella y la antigua ya no vale",
+                  "file": "fase-3-socios.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-002 AC6 · AC-002-06 el encargado fija «Nieve2026» a «marta@club.es», que olvidó su contraseña, y ve «Contraseña restablecida»; Marta entra con ella y la antigua ya no vale",
+                  "file": "fase-3-socios.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/AC-002-06.png",
+                "evidencias/FASE-3/AC-002-06.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/AC-002-06.png": "sha256:5c7ab6031221e983aab07910c7020a30bc00617e0c4541966719e9972e7ad976",
+                "evidencias/FASE-3/AC-002-06.png": "sha256:5c7ab6031221e983aab07910c7020a30bc00617e0c4541966719e9972e7ad976"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Contraseña restablecida",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-3/AC-002-06.png"
+              ],
+              "videos": [
+                "evidencias/FASE-3/FASE-3-REQ-F-002-AC6-AC-002-06-el-encargado-f.webm"
+              ]
+            },
+            {
+              "n": 7,
+              "text": "GIVEN the socio \"lucia@club.es\" WHEN she opens Socios by address THEN the user sees \"No tienes permiso para ver esta pantalla\"",
+              "scenarios": [
+                "AC-002-07"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-002 AC7 · AC-002-07 Lucía abre Socios por su dirección y ve «No tienes permiso para ver esta pantalla»",
+                  "file": "fase-3-socios.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-002 AC7 · AC-002-07 Lucía abre Socios por su dirección y ve «No tienes permiso para ver esta pantalla»",
+                  "file": "fase-3-socios.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/AC-002-07.png",
+                "evidencias/FASE-3/AC-002-07.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/AC-002-07.png": "sha256:7adc7eac917f9e4d14b1a1656e215c29c4542540b6669f698f16e374f0b32d97",
+                "evidencias/FASE-3/AC-002-07.png": "sha256:7adc7eac917f9e4d14b1a1656e215c29c4542540b6669f698f16e374f0b32d97"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No tienes permiso para ver esta pantalla",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-3/AC-002-07.png"
+              ],
+              "videos": [
+                "evidencias/FASE-3/FASE-3-REQ-F-002-AC7-AC-002-07-Luc-a-abre-Soc.webm"
+              ]
+            }
+          ],
+          "candidate_files": [
+            "src/domain/socios.js",
+            "src/server/http.js",
+            "src/ui/api.js",
+            "src/ui/pantallas/socios.js",
+            "src/ui/router.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        },
+        {
+          "id": "REQ-NF-001",
+          "title": "Contraseñas y datos personales",
+          "priority": "Should",
+          "verification": "test",
+          "verdict": "MISSING",
+          "statement": "THE system SHALL store contraseñas only as a salted hash, never show them, and keep each socio's name, correo, loans and multas only for the roles of REQ-F, deleting loans and multas 2 years after their closing date",
+          "reqHash": "sha256:85d0fb2811c6b609f748d2e80778d17b4b9802365f066a8afc3190825f8221a6",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN Marta created with contraseña \"Glaciar2026\" WHEN the stored data is read THEN it does not contain \"Glaciar2026\"",
+              "scenarios": [],
+              "tests": [
+                {
+                  "name": "crearSocio (API-001-03, UC-002) > REQ-NF-001 AC1 con Marta creada con «Glaciar2026», el almacén guardado y las respuestas no contienen «Glaciar2026»",
+                  "file": "tests/unit/domain/socios.test.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [],
+              "capture_sha256": {}
+            },
+            {
+              "n": 2,
+              "text": "GIVEN a loan returned on 2024-11-01 and today is 2026-11-21 WHEN the cleanup runs THEN that loan is gone and a loan returned on 2025-01-10 stays",
+              "scenarios": [],
+              "tests": [
+                {
+                  "name": "API-003-08 purgarRegistrosAntiguos (REQ-NF-001, INV-LOA-006) > REQ-NF-001 AC2 con hoy 2026-11-21, el préstamo devuelto el 2024-11-01 desaparece y el devuelto el 2025-01-10 se queda",
+                  "file": "tests/unit/domain/purga.test.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [],
+              "capture_sha256": {}
+            }
+          ],
+          "candidate_files": [
+            "src/domain/socios.js",
+            "src/domain/tareas.js",
+            "src/server/http.js",
+            "src/server/tareas-diarias.js"
+          ],
+          "challenges_open": []
+        }
+      ],
+      "unknown_requirements": [],
+      "tasks": [
+        "TASK-F3-001",
+        "TASK-F3-002",
+        "TASK-F3-003",
+        "TASK-F3-004",
+        "TASK-F3-005",
+        "TASK-F3-006",
+        "TASK-F3-007",
+        "TASK-F3-008"
+      ],
+      "candidate_files": [
+        "src/domain/prestamos.js",
+        "src/domain/socios.js",
+        "src/domain/tareas.js",
+        "src/server/http.js",
+        "src/server/tareas-diarias.js",
+        "src/ui/api.js",
+        "src/ui/pantallas/historial.js",
+        "src/ui/pantallas/socios.js",
+        "src/ui/router.js",
+        "src/ui/textos.js"
+      ]
+    }
+  ],
+  "uncovered": [
+    {
+      "id": "REQ-C-001",
+      "title": "Textos en español",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-002",
+      "title": "Stack",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-003",
+      "title": "Datos compartidos",
+      "priority": "Must"
+    }
+  ],
+  "fases_without_header": [],
+  "criteria_without_test": [],
+  "coverage_gaps": 3
+}

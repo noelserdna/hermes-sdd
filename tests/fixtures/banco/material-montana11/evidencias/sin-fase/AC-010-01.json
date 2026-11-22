@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-010-01",
+ "test": "WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-010-01 REQ-F-006 AC1 el Casco de Pablo con fin 2026-12-07 devuelto el 2026-12-10 deja en Multas la multa 6,00 € de Pablo Ruiz Pendiente",
+ "titulo": "WF-001 AC-010-01 REQ-F-006 AC1 el Casco de Pablo con fin 2026-12-07 devuelto el 2026-12-10 deja en Multas la multa 6,00 € de Pablo Ruiz Pendiente",
+ "ve": [
+  "6,00 €"
+ ],
+ "narrado": "Multa por devolución tardía y bloqueo. En Multas se ve «6,00 €», la multa de Pablo Ruiz con el estado «Pendiente».",
+ "url": "http://127.0.0.1:33845/#/multas",
+ "imagen": "AC-010-01.png",
+ "sha256": "sha256:7df1ced2a257f1f5e4c45ff81ecaf74cdbef31ad7aac83b51c20210e0585d6cd",
+ "at": "2026-11-22T06:15:32.238Z"
+}

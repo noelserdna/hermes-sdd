@@ -1,0 +1,10 @@
+{
+  "findings": [],
+  "summary": {
+    "test_files": 18,
+    "capture_calls": 13,
+    "errors": 0,
+    "warnings": 0,
+    "fase": 0
+  }
+}

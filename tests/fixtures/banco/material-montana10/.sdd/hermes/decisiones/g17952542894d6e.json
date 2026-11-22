@@ -1,0 +1,15 @@
+{
+  "verbo": "ruta-adaptativa",
+  "texto": "",
+  "actor": {
+    "persona": "jev",
+    "canal": "jev",
+    "id": "jev-1.14.0"
+  },
+  "prueba": {
+    "modelo": "jev-1.14.0",
+    "p": "0.900",
+    "modo": "auto"
+  },
+  "at": "2026-11-21T09:44:55Z"
+}

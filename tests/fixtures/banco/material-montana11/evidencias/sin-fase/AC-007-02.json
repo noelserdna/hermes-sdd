@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-007-02",
+ "test": "FASE-1 Cancelar reserva (hoy 2026-12-05) › FASE-1 AC-007-02 hoy 2026-12-05 lucia intenta cancelar su Piolet que empieza hoy y ve Solo se puede cancelar hasta el día antes",
+ "titulo": "FASE-1 AC-007-02 hoy 2026-12-05 lucia intenta cancelar su Piolet que empieza hoy y ve Solo se puede cancelar hasta el día antes",
+ "ve": [
+  "Solo se puede cancelar hasta el día antes"
+ ],
+ "narrado": "Ver y cancelar mis reservas. En Mis reservas se ve «Solo se puede cancelar hasta el día antes», y la reserva se queda como estaba, Reservada.",
+ "url": "http://127.0.0.1:45637/#/reservas",
+ "imagen": "AC-007-02.png",
+ "sha256": "sha256:1e7deb7d49d3ed93e9bb72106549c23c5233c7865da2e1969f4e63adef4bfd9c",
+ "at": "2026-11-22T06:15:01.219Z"
+}

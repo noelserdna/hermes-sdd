@@ -1,0 +1,14 @@
+{
+  "verbo": "eximo",
+  "texto": "Q1: A, Q2: A. El recuento «{tipo}: {n} unidades» sí se comprueba en pantalla (captura y e2e de REQ-F-008 AC1); el MISSING es un falso aviso del arnés: el lint de citas busca el literal «unidad(es)» que genera su propia concordancia del plural. Se arregla en el arnés, no en el proyecto.",
+  "actor": {
+    "persona": "yo",
+    "canal": "local",
+    "id": "andre"
+  },
+  "prueba": {
+    "host": "DESKTOP-7HT2139",
+    "demo": "no vista"
+  },
+  "at": "2026-11-21T23:39:04Z"
+}

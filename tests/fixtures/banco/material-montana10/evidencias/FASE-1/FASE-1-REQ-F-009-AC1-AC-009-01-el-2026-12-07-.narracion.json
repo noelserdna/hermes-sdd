@@ -1,0 +1,16 @@
+{
+ "video": "FASE-1-REQ-F-009-AC1-AC-009-01-el-2026-12-07-.webm",
+ "test": "REQ-F-009 AC1 · AC-009-01 el 2026-12-07 el encargado ve «Vuelve hoy: Piolet 2 · Lucía» y «Prestado: Casco 1 · Pablo · hasta 2026-12-09»",
+ "titulo": "REQ-F-009 AC1 · AC-009-01 el 2026-12-07 el encargado ve «Vuelve hoy: Piolet 2 · Lucía» y «Prestado: Casco 1 · Pablo · hasta 2026-12-09»",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "El encargado entra y abre Entregas y devoluciones el 7 de diciembre; Piolet 2 está prestado a Lucía hasta hoy y Casco 1 a Pablo hasta el 9"
+  },
+  {
+   "t": 0.578,
+   "texto": "Ver lo prestado y lo que vuelve cada día. En Entregas y devoluciones se ve «Vuelve hoy: Piolet 2 · Lucía» y «Prestado: Casco 1 · Pablo · hasta 2026-12-09».",
+   "criterio": "AC-009-01"
+  }
+ ]
+}

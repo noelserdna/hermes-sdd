@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-003-01",
+ "test": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-003-01 REQ-F-002 AC1 marta crea a Pablo Ruiz en Socios y lo ve en la lista",
+ "titulo": "FASE-4 AC-003-01 REQ-F-002 AC1 marta crea a Pablo Ruiz en Socios y lo ve en la lista",
+ "ve": [
+  "Pablo Ruiz"
+ ],
+ "narrado": "Gestionar las cuentas de socios. En Socios se ve «Pablo Ruiz» en la lista de socios.",
+ "url": "http://127.0.0.1:43149/#/socios",
+ "imagen": "AC-003-01.png",
+ "sha256": "sha256:41dfeffb2af0be3ffd384e97fe1a0bf4c38520ee6615aa86047af0bb619fae55",
+ "at": "2026-11-22T01:03:32.469Z"
+}

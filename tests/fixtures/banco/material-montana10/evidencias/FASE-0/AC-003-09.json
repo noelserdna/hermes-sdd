@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-003-09",
+ "test": "REQ-F-003 AC9 · AC-003-09 Pablo con una multa pendiente de 2 € no puede reservar «Casco»",
+ "titulo": "REQ-F-003 AC9 · AC-003-09 Pablo con una multa pendiente de 2 € no puede reservar «Casco»",
+ "ve": [
+  "Tienes una multa pendiente de 2 €. Págala al encargado para poder reservar"
+ ],
+ "narrado": "Reservar material para unas fechas. En Reservar se ve «Tienes una multa pendiente de 2 €. Págala al encargado para poder reservar».",
+ "url": "http://127.0.0.1:5173/#/reservar",
+ "imagen": "AC-003-09.png",
+ "sha256": "sha256:b841da6671ce129e2c1a5c962b7bfd46ee52b1d3821e2188087c33f32d51e3e3",
+ "at": "2026-11-21T13:46:03.056Z"
+}

@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "rol": "spec-auditor",
+  "preguntas": [
+    {
+      "id": "Q-spec-auditor-001",
+      "skill": "sdd-spec-auditor",
+      "contexto": "SIL-002 · spec/use-cases/UC-002-gestionar-socios.md:40",
+      "tema": "baja-socio-sesion-abierta",
+      "estado": "ANSWERED",
+      "pregunta": "UC-002 no define qué pasa con una sesión abierta de una cuenta dada de baja, ni si se puede restablecer la contraseña de una cuenta en Baja; INV-ACC-006 solo impide iniciar sesión.",
+      "para_cliente": "Si el encargado da de baja a un socio que tiene la sesión abierta, ¿debe dejar de poder usar la web en ese mismo momento?",
+      "opciones": [
+        {
+          "letra": "A",
+          "texto": "La baja cierra las sesiones abiertas de la cuenta y no se restablece una cuenta en Baja",
+          "recomendada": true,
+          "efecto": "ninguno",
+          "cliente": "Sí, deja de poder usar la web al instante",
+          "ficheros": []
+        },
+        {
+          "letra": "B",
+          "texto": "La sesión abierta sigue valiendo hasta que caduque",
+          "efecto": "ninguno",
+          "cliente": "No, puede seguir hasta que se le cierre la sesión",
+          "ficheros": []
+        }
+      ],
+      "bloquea": "SIL-002",
+      "respuesta": {
+        "letra": "A",
+        "como": "opción recomendada, aceptada por",
+        "quien": "Jev (regla) (Agente automático (modo auto))",
+        "fecha": "2026-11-21"
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+ "video": "FASE-2-REQ-F-007-AC4-AC-007-04-Luc-a-abre-Mul.webm",
+ "test": "REQ-F-007 AC4 · AC-007-04 Lucía abre Multas por su dirección y ve «No tienes permiso para ver esta pantalla»",
+ "titulo": "REQ-F-007 AC4 · AC-007-04 Lucía abre Multas por su dirección y ve «No tienes permiso para ver esta pantalla»",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "Lucía entra con su correo y su contraseña y escribe la dirección de Multas en el navegador"
+  },
+  {
+   "t": 0.49,
+   "texto": "Marcar la multa como pagada. En Multas se ve «No tienes permiso para ver esta pantalla», y ninguna multa de Pablo.",
+   "criterio": "AC-007-04"
+  }
+ ]
+}

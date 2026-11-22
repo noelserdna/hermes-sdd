@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-05",
+ "test": "REQ-F-001 AC5 · AC-001-05 WF-002 cumplido el bloqueo de 15 minutos, Lucía entra",
+ "titulo": "REQ-F-001 AC5 · AC-001-05 WF-002 cumplido el bloqueo de 15 minutos, Lucía entra",
+ "ve": [
+  "Hola, Lucía"
+ ],
+ "narrado": "Entrar, salir y proteger la sesión. En Mis reservas se ve «Hola, Lucía», cumplido el bloqueo de 15 minutos.",
+ "url": "http://127.0.0.1:5173/#/mis-reservas",
+ "imagen": "AC-001-05.png",
+ "sha256": "sha256:597dbd63aac32a774068d9015abf63dcbe6c8692528956354f532e53c6951c68",
+ "at": "2026-11-21T13:45:41.588Z"
+}

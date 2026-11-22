@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-003-06",
+ "test": "REQ-F-003 AC6 · AC-003-06 reservar «Cuerda» del 2026-12-10 al 2026-12-09 se rechaza por fechas invertidas",
+ "titulo": "REQ-F-003 AC6 · AC-003-06 reservar «Cuerda» del 2026-12-10 al 2026-12-09 se rechaza por fechas invertidas",
+ "ve": [
+  "La fecha final no puede ser anterior a la inicial"
+ ],
+ "narrado": "Reservar material para unas fechas. En Reservar se ve «La fecha final no puede ser anterior a la inicial».",
+ "url": "http://127.0.0.1:5173/#/reservar",
+ "imagen": "AC-003-06.png",
+ "sha256": "sha256:740096ec026f7b57a8d6f67f3d0a9e0a460a41ca1f0a3e42dd55d51c0479b808",
+ "at": "2026-11-21T13:45:59.748Z"
+}

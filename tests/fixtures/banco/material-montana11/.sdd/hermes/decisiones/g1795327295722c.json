@@ -1,0 +1,15 @@
+{
+  "verbo": "cambio",
+  "texto": "",
+  "actor": {
+    "persona": "jev",
+    "canal": "jev",
+    "id": "jev-1.14.0"
+  },
+  "prueba": {
+    "modelo": "jev-1.14.0",
+    "p": "0.850",
+    "modo": "auto"
+  },
+  "at": "2026-11-22T06:01:39Z"
+}

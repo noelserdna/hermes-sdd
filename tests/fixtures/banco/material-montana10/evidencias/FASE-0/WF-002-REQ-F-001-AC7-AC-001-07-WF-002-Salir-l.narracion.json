@@ -1,0 +1,20 @@
+{
+ "video": "WF-002-REQ-F-001-AC7-AC-001-07-WF-002-Salir-l.webm",
+ "test": "REQ-F-001 AC7 · AC-001-07 WF-002 Salir lleva a Entrar y volver atrás pide entrar",
+ "titulo": "REQ-F-001 AC7 · AC-001-07 WF-002 Salir lleva a Entrar y volver atrás pide entrar",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "Lucía está dentro de la app y pulsa Salir"
+  },
+  {
+   "t": 0.55,
+   "texto": "Vuelve atrás hacia Mis reservas"
+  },
+  {
+   "t": 0.776,
+   "texto": "Entrar, salir y proteger la sesión. En Entrar se ve «Entrar», y al volver atrás a Mis reservas se vuelve a pedir entrar.",
+   "criterio": "AC-001-07"
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-008-03",
+ "test": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-03 REQ-F-005 AC3 con hoy 2026-12-04 marta intenta entregar el Piolet de Lucía y ve No se puede entregar antes de la fecha de inicio",
+ "titulo": "FASE-2 AC-008-03 REQ-F-005 AC3 con hoy 2026-12-04 marta intenta entregar el Piolet de Lucía y ve No se puede entregar antes de la fecha de inicio",
+ "ve": [
+  "No se puede entregar antes de la fecha de inicio"
+ ],
+ "narrado": "Entregar y marcar la devolución. En Préstamos se ve «No se puede entregar antes de la fecha de inicio», y el Piolet de Lucía sigue Reservada.",
+ "url": "http://127.0.0.1:46801/#/prestamos",
+ "imagen": "AC-008-03.png",
+ "sha256": "sha256:9f47308ee3c0c7ec7a538f5fa5572cd20273604c96e461aef5d3b55e39f5526a",
+ "at": "2026-11-22T06:15:04.342Z"
+}

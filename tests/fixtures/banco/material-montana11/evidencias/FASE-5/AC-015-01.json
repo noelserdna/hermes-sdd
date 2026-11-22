@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-015-01",
+ "test": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-01 REQ-F-009 AC1 con el Piolet 1 de Lucía Gil hasta 2026-12-07 y el Casco 2 de Pablo Ruiz hasta 2026-12-08 Prestado los lista",
+ "titulo": "FASE-5 AC-015-01 REQ-F-009 AC1 con el Piolet 1 de Lucía Gil hasta 2026-12-07 y el Casco 2 de Pablo Ruiz hasta 2026-12-08 Prestado los lista",
+ "ve": [
+  "Piolet 1 — Lucía Gil — hasta 2026-12-07",
+  "Casco 2 — Pablo Ruiz — hasta 2026-12-08"
+ ],
+ "narrado": "Ver lo prestado y lo que vuelve cada día. En Prestado se ve «Piolet 1 — Lucía Gil — hasta 2026-12-07» y «Casco 2 — Pablo Ruiz — hasta 2026-12-08».",
+ "url": "http://127.0.0.1:35555/#/prestado",
+ "imagen": "AC-015-01.png",
+ "sha256": "sha256:742e5bb0f8ada95148d4b0985b407453fa4343d388a0b78d375ec3e99a8cb3dc",
+ "at": "2026-11-22T01:03:52.871Z"
+}

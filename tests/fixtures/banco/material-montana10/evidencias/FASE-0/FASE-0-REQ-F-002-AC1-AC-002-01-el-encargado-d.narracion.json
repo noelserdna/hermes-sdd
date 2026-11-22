@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-REQ-F-002-AC1-AC-002-01-el-encargado-d.webm",
+ "test": "REQ-F-002 AC1 · AC-002-01 el encargado da de alta a «Marta Ruiz» («marta@club.es», «Glaciar2026») y la ve en Socios, y Marta puede entrar",
+ "titulo": "REQ-F-002 AC1 · AC-002-01 el encargado da de alta a «Marta Ruiz» («marta@club.es», «Glaciar2026») y la ve en Socios, y Marta puede entrar",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "El encargado entra, abre Socios y envía el nombre, el correo y la contraseña inicial de un socio nuevo"
+  },
+  {
+   "t": 0.646,
+   "texto": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «Marta Ruiz», y Marta puede entrar con su contraseña.",
+   "criterio": "AC-002-01"
+  }
+ ]
+}

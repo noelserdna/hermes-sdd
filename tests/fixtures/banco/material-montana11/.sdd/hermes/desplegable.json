@@ -1,0 +1,1 @@
+{"ok": true, "fallos": [], "hecho": ["en una copia limpia del commit", "README con cómo arrancarla", "instala sus dependencias (npm ci)", "se construye (npm run build)", "arranca con npm start y responde (HTTP 200)", "escucha fuera de localhost"], "url": "http://127.0.0.1:33331/"}

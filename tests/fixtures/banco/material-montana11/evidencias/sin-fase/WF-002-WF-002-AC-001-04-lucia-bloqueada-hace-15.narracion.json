@@ -1,0 +1,16 @@
+{
+ "video": "WF-002-WF-002-AC-001-04-lucia-bloqueada-hace-15.webm",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-001-04 lucia bloqueada hace 15 minutos entra con la contraseña correcta y ve Material disponible",
+ "titulo": "WF-002 AC-001-04 lucia bloqueada hace 15 minutos entra con la contraseña correcta y ve Material disponible",
+ "narraciones": [
+  {
+   "t": 1.079,
+   "texto": "Lucía se bloqueó hace quince minutos y vuelve a intentarlo con su contraseña correcta"
+  },
+  {
+   "t": 2.216,
+   "texto": "Entrar con correo y contraseña. En Inicio del socio se ve «Material disponible», una vez cumplido el bloqueo de quince minutos.",
+   "criterio": "AC-001-04"
+  }
+ ]
+}

@@ -1,0 +1,11 @@
+{
+ "revisados": 16,
+ "modelo": "jev-1.14.0",
+ "contradicen": [],
+ "incompletos": [
+  {
+   "criterio": "REQ-F-003-AC9",
+   "puntos": 1.24
+  }
+ ]
+}

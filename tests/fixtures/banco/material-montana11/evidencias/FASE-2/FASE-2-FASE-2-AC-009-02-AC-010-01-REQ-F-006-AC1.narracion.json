@@ -1,0 +1,25 @@
+{
+ "video": "FASE-2-FASE-2-AC-009-02-AC-010-01-REQ-F-006-AC1.webm",
+ "test": "FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-02 AC-010-01 REQ-F-006 AC1 el Casco de Pablo con fin 2026-12-07 se devuelve el 2026-12-10 y marta ve Devuelto con la multa 6,00 € Pendiente",
+ "titulo": "FASE-2 AC-009-02 AC-010-01 REQ-F-006 AC1 el Casco de Pablo con fin 2026-12-07 se devuelve el 2026-12-10 y marta ve Devuelto con la multa 6,00 € Pendiente",
+ "narraciones": [
+  {
+   "t": 2.796,
+   "texto": "Es el 10 de diciembre. Marta entra, abre Préstamos y ve el Casco de Pablo, que debía volver el 7"
+  },
+  {
+   "t": 3.498,
+   "texto": "Marta pulsa Registrar devolución sobre el Casco de Pablo"
+  },
+  {
+   "t": 3.74,
+   "texto": "Devolución tardía. En Préstamos se ve «Devuelto» y la multa «6,00 €» Pendiente, creada en la misma operación: 2 euros por cada uno de los 3 días de retraso.",
+   "criterio": "AC-009-02"
+  },
+  {
+   "t": 4.09,
+   "texto": "Aplicar multa por retraso. En Préstamos se ve la multa «6,00 €» de Pablo Ruiz con el estado «Pendiente».",
+   "criterio": "AC-010-01"
+  }
+ ]
+}

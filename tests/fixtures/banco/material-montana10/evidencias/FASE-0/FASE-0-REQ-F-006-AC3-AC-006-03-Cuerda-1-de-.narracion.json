@@ -1,0 +1,11 @@
+{
+ "video": "FASE-0-REQ-F-006-AC3-AC-006-03-Cuerda-1-de-.webm",
+ "test": "REQ-F-006 AC3 · AC-006-03 «Cuerda 1» de Lucía vuelve con 1 día de retraso: «Multa de 2 € a Lucía (1 día de retraso)» y ella ve «Multa pendiente: 2 €»",
+ "titulo": "REQ-F-006 AC3 · AC-006-03 «Cuerda 1» de Lucía vuelve con 1 día de retraso: «Multa de 2 € a Lucía (1 día de retraso)» y ella ve «Multa pendiente: 2 €»",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "El encargado entra, abre Entregas y devoluciones y marca devuelta la Cuerda 1 de Lucía, que debía volver el 7 y llega el 8 de diciembre"
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+{
+ "video": "WF-001-WF-001-AC-012-01-REQ-F-007-AC1-marta-mar.webm",
+ "test": "WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-012-01 REQ-F-007 AC1 marta marca Pagada la multa de 6,00 € de Pablo Ruiz y pablo puede reservar Casco",
+ "titulo": "WF-001 AC-012-01 REQ-F-007 AC1 marta marca Pagada la multa de 6,00 € de Pablo Ruiz y pablo puede reservar Casco",
+ "narraciones": [
+  {
+   "t": 3.091,
+   "texto": "Pablo ya pagó su multa en el club. Marta, la encargada, entra y abre Multas, donde ve la de Pablo Ruiz"
+  },
+  {
+   "t": 3.658,
+   "texto": "Marta pulsa Marcar pagada y confirma"
+  },
+  {
+   "t": 3.996,
+   "texto": "Marcar la multa como pagada. En Multas se ve «Pagada» para Pablo Ruiz, y después Pablo ya puede reservar Casco.",
+   "criterio": "AC-012-01"
+  }
+ ]
+}

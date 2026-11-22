@@ -1,0 +1,20 @@
+{
+ "video": "FASE-2-REQ-F-006-AC3-AC-006-03-Cuerda-1-de-.webm",
+ "test": "REQ-F-006 AC3 · AC-006-03 «Cuerda 1» de Lucía vuelve con 1 día de retraso: «Multa de 2 € a Lucía (1 día de retraso)» y ella ve «Multa pendiente: 2 €»",
+ "titulo": "REQ-F-006 AC3 · AC-006-03 «Cuerda 1» de Lucía vuelve con 1 día de retraso: «Multa de 2 € a Lucía (1 día de retraso)» y ella ve «Multa pendiente: 2 €»",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "El encargado entra, abre Entregas y devoluciones y marca devuelta la Cuerda 1 de Lucía, que debía volver el 7 y llega el 8 de diciembre"
+  },
+  {
+   "t": 0.631,
+   "texto": "Después Lucía entra en otra sesión y abre Mis reservas"
+  },
+  {
+   "t": 1.142,
+   "texto": "Marcar la devolución y poner la multa. En Entregas y devoluciones se ve «Multa de 2 € a Lucía (1 día de retraso)», y Lucía ve «Multa pendiente: 2 €» en Mis reservas.",
+   "criterio": "AC-006-03"
+  }
+ ]
+}

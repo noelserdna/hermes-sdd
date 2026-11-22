@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-REQ-F-003-AC1-AC-003-01-Luc-a-reserva-.webm",
+ "test": "REQ-F-003 AC1 · AC-003-01 Lucía reserva «Piolet» del 2026-12-05 al 2026-12-07 y ve «Reserva creada…»",
+ "titulo": "REQ-F-003 AC1 · AC-003-01 Lucía reserva «Piolet» del 2026-12-05 al 2026-12-07 y ve «Reserva creada…»",
+ "narraciones": [
+  {
+   "t": 0.007,
+   "texto": "Lucía entra, abre Reservar, elige Piolet del 5 al 7 de diciembre y envía"
+  },
+  {
+   "t": 0.63,
+   "texto": "Reservar material para unas fechas. En Mis reservas se ve «Reserva creada: Piolet del 2026-12-05 al 2026-12-07».",
+   "criterio": "AC-003-01"
+  }
+ ]
+}

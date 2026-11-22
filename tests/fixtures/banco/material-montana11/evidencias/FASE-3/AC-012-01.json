@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-012-01",
+ "test": "WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-012-01 REQ-F-007 AC1 marta marca Pagada la multa de 6,00 € de Pablo Ruiz y pablo puede reservar Casco",
+ "titulo": "WF-001 AC-012-01 REQ-F-007 AC1 marta marca Pagada la multa de 6,00 € de Pablo Ruiz y pablo puede reservar Casco",
+ "ve": [
+  "Pagada"
+ ],
+ "narrado": "Marcar la multa como pagada. En Multas se ve «Pagada» para Pablo Ruiz, y después Pablo ya puede reservar Casco.",
+ "url": "http://127.0.0.1:41919/#/multas",
+ "imagen": "AC-012-01.png",
+ "sha256": "sha256:8cf1fa93690191a358ba584729249c4c9ef13c7c2cc44dcca24eb3b46c8ee5c2",
+ "at": "2026-11-22T01:02:49.253Z"
+}

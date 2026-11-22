@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-009-01",
+ "test": "REQ-F-009 AC1 · AC-009-01 el 2026-12-07 el encargado ve «Vuelve hoy: Piolet 2 · Lucía» y «Prestado: Casco 1 · Pablo · hasta 2026-12-09»",
+ "titulo": "REQ-F-009 AC1 · AC-009-01 el 2026-12-07 el encargado ve «Vuelve hoy: Piolet 2 · Lucía» y «Prestado: Casco 1 · Pablo · hasta 2026-12-09»",
+ "ve": [
+  "Vuelve hoy: Piolet 2 · Lucía",
+  "Prestado: Casco 1 · Pablo · hasta 2026-12-09"
+ ],
+ "narrado": "Ver lo prestado y lo que vuelve cada día. En Entregas y devoluciones se ve «Vuelve hoy: Piolet 2 · Lucía» y «Prestado: Casco 1 · Pablo · hasta 2026-12-09».",
+ "url": "http://127.0.0.1:5173/#/entregas",
+ "imagen": "AC-009-01.png",
+ "sha256": "sha256:73adebb22981d1b8ba6856ec1dd727debd4ea578aef72c31d58f50177ea29b79",
+ "at": "2026-11-21T12:34:36.663Z"
+}

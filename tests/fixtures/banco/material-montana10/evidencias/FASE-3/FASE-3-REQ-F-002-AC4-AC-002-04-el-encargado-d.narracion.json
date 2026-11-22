@@ -1,0 +1,16 @@
+{
+ "video": "FASE-3-REQ-F-002-AC4-AC-002-04-el-encargado-d.webm",
+ "test": "REQ-F-002 AC4 · AC-002-04 el encargado da de baja a «Pablo» (sin reserva en curso ni multa pendiente) y lo ve con «Baja» en Socios; Pablo ya no puede entrar",
+ "titulo": "REQ-F-002 AC4 · AC-002-04 el encargado da de baja a «Pablo» (sin reserva en curso ni multa pendiente) y lo ve con «Baja» en Socios; Pablo ya no puede entrar",
+ "narraciones": [
+  {
+   "t": 0.01,
+   "texto": "El encargado entra, abre Socios y da de baja a Pablo, que no tiene ninguna reserva en curso ni multa pendiente, confirmando la baja en su fila"
+  },
+  {
+   "t": 0.622,
+   "texto": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «Pablo» y «Baja», y Pablo ya no puede entrar.",
+   "criterio": "AC-002-04"
+  }
+ ]
+}

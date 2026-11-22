@@ -1,0 +1,20 @@
+{
+ "video": "FASE-4-FASE-4-AC-004-02-REQ-F-002-AC5-marta-da-.webm",
+ "test": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-004-02 REQ-F-002 AC5 marta da de baja a Pablo Ruiz, que devolvió su Casco y tiene 1 reserva futura de Casco 2, y Socios lo muestra Baja",
+ "titulo": "FASE-4 AC-004-02 REQ-F-002 AC5 marta da de baja a Pablo Ruiz, que devolvió su Casco y tiene 1 reserva futura de Casco 2, y Socios lo muestra Baja",
+ "narraciones": [
+  {
+   "t": 3.262,
+   "texto": "Es el 6 de diciembre. Pablo Ruiz ya devolvió su Casco y tiene una reserva de Casco 2 para el 20 de diciembre. Marta entra y abre Socios"
+  },
+  {
+   "t": 3.847,
+   "texto": "Marta pulsa Dar de baja en Pablo Ruiz y confirma"
+  },
+  {
+   "t": 4.306,
+   "texto": "Gestionar las cuentas de socios. En Socios se ve «Baja» en la fila de Pablo Ruiz, su reserva de Casco 2 queda cancelada y la unidad libre.",
+   "criterio": "AC-004-02"
+  }
+ ]
+}

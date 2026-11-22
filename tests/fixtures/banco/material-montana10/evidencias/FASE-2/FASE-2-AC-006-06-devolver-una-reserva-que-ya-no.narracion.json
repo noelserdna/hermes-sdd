@@ -1,0 +1,16 @@
+{
+ "video": "FASE-2-AC-006-06-devolver-una-reserva-que-ya-no.webm",
+ "test": "AC-006-06 devolver una reserva que ya no existe muestra «No existe esa reserva» y no cambia nada",
+ "titulo": "AC-006-06 devolver una reserva que ya no existe muestra «No existe esa reserva» y no cambia nada",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "El encargado abre Entregas y devoluciones con el piolet de Lucía por devolver; entretanto la reserva desaparece del almacén"
+  },
+  {
+   "t": 0.577,
+   "texto": "Marcar la devolución y poner la multa. En Entregas y devoluciones se ve «No existe esa reserva», y no cambia nada.",
+   "criterio": "AC-006-06"
+  }
+ ]
+}

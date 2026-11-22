@@ -1,0 +1,98 @@
+{
+  "id": "g1795255318316e",
+  "tipo": "preguntas",
+  "fase": "",
+  "tablero": "material-montana10",
+  "tarjeta": "t_7e501f50",
+  "adopcion": false,
+  "sha": "1310d3a7476f19e1aa3f7414011e2a6d68c06c71",
+  "creada": "2026-11-21T10:01:58Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana10",
+  "titulo": "Dudas antes del plan",
+  "texto": "🧩 Antes de hacer el plan de «material-montana10» hay que decidir esto (todas las dudas del diseño, juntas).\n\nAl responder, se hace el plan con tus respuestas. Si alguna pide cambiar los requisitos ya aprobados, no se reabren a mitad de camino: queda anotada para la siguiente entrega.\n\n👉 Elige en los botones Q (la recomendada ya está marcada) y pulsa ✅ Responder.\n\n❓ Antes, 3 preguntas (la recomendada ya está marcada en los botones Q):\n\n1. Cuando un socio se da de baja, ¿se borran sus datos personales (nombre y correo) o se guardan para siempre?\n   🔧 Detalle técnico: La retención de 2 años solo cubre préstamos y multas; nada dice cuánto se conservan nombre, correo y hash de una cuenta en Baja (RGPD art. 5.1.e y 17).\n   A) Se borran cuando ya no hacen falta para préstamos y multas  ⭐ recomendada\n   B) Se guardan siempre, aunque el socio se haya ido\n\n2. ¿Cómo se crean las cuentas del encargado y de la junta, y quién puede cambiarles la contraseña?\n   🔧 Detalle técnico: Solo existe crearSocio (rol socio); nada dice cómo nacen las cuentas de encargado y junta ni quién las gestiona.\n   A) Las deja preparadas quien instala la web; el encargado solo gestiona socios  ⭐ recomendada\n   B) El encargado puede crear y cambiar cualquier cuenta\n\n3. Si el encargado da de baja a un socio que tiene la sesión abierta, ¿debe dejar de poder usar la web en ese mismo momento?\n   🔧 Detalle técnico: UC-002 no define qué pasa con una sesión abierta de una cuenta dada de baja, ni si se puede restablecer la contraseña de una cuenta en Baja; INV-ACC-006 solo i…\n   A) Sí, deja de poder usar la web al instante  ⭐ recomendada\n   B) No, puede seguir hasta que se le cierre la sesión\n\n👉 Si firmas sin tocar los botones Q, esto lanzará: sin más efecto: Q1, Q2, Q3.",
+  "opciones": [
+    {
+      "verbo": "respondo",
+      "etiqueta": "✅ Responder"
+    }
+  ],
+  "demo": "",
+  "preguntas": [
+    {
+      "n": 1,
+      "id": "Q-security-auditor-001",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "Cuando un socio se da de baja, ¿se borran sus datos personales (nombre y correo) o se guardan para siempre?"
+    },
+    {
+      "n": 2,
+      "id": "Q-security-auditor-002",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "¿Cómo se crean las cuentas del encargado y de la junta, y quién puede cambiarles la contraseña?"
+    },
+    {
+      "n": 3,
+      "id": "Q-spec-auditor-001",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "Si el encargado da de baja a un socio que tiene la sesión abierta, ¿debe dejar de poder usar la web en ese mismo momento?"
+    }
+  ],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [],
+    "graves": 0
+  }
+}

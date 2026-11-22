@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-AC-007-05-marcar-pagada-una-multa-que-ya.webm",
+ "test": "AC-007-05 marcar pagada una multa que ya no existe muestra «No se encontró esa multa» y no cambia ninguna",
+ "titulo": "AC-007-05 marcar pagada una multa que ya no existe muestra «No se encontró esa multa» y no cambia ninguna",
+ "narraciones": [
+  {
+   "t": 0.007,
+   "texto": "El encargado abre Multas con las multas de Pablo y de Lucía; entretanto la de Pablo desaparece del almacén"
+  },
+  {
+   "t": 0.606,
+   "texto": "Marcar la multa como pagada. En Multas se ve «No se encontró esa multa», y ninguna multa cambia.",
+   "criterio": "AC-007-05"
+  }
+ ]
+}

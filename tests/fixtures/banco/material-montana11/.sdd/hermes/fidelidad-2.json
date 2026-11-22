@@ -1,0 +1,111 @@
+{
+ "repo": "/home/andre/proyectos-sdd/material-montana11",
+ "fase": "2",
+ "sha": "4be7bf3",
+ "congelados": [],
+ "capturas": [],
+ "coherencia": [],
+ "vinculos": [],
+ "lint_capturas": [
+  {
+   "codigo": "C-03",
+   "fichero": "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-bc83f-echa-2026-12-07-y-sin-multa-chromium/attachments/AC-009-03-229b8ec04bb1fafabaab2e535f65b412fc59e575.png",
+   "linea": 0,
+   "req": "REQ-F-005",
+   "ac": 5,
+   "mensaje": "not counted for REQ-F-005 AC5: attached by the test \"FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-0…\", which does not pass (the criterion is already shown by its own capture)",
+   "grave": false
+  }
+ ],
+ "mutantes_cache": {
+  "de_cache": 0,
+  "ejecutados": 0
+ },
+ "mutantes": [
+  {
+   "req": "REQ-F-005",
+   "ac": 1,
+   "texto": "Entregado",
+   "e2e": [
+    "tests/e2e/fase-2-prestamo.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-2-prestamo.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 2,
+   "texto": "Devuelto",
+   "e2e": [
+    "tests/e2e/fase-2-prestamo.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-2-prestamo.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 3,
+   "texto": "No se puede entregar antes de la fecha de inicio",
+   "e2e": [
+    "tests/e2e/fase-2-prestamo.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-2-prestamo.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 4,
+   "texto": "No recogida",
+   "e2e": [
+    "tests/e2e/fase-2-prestamo.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-2-prestamo.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 5,
+   "texto": "Devuelto",
+   "e2e": [
+    "tests/e2e/fase-2-prestamo.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-2-prestamo.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 6,
+   "texto": "Acceso no permitido",
+   "e2e": [
+    "tests/e2e/fase-2-prestamo.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-2-prestamo.spec.js"
+   ]
+  }
+ ],
+ "graves": 0
+}

@@ -1,0 +1,495 @@
+{
+ "fase": "0",
+ "plan": "plan/fases/FASE-0-SKELETON.md",
+ "workflows": [
+  {
+   "id": "WF-002",
+   "titulo": "Sesión de una cuenta",
+   "fichero": "spec/workflows/WF-002-sesion-de-una-cuenta.md",
+   "pasos": [
+    {
+     "n": 1,
+     "nombre": "entrar",
+     "uc": null
+    },
+    {
+     "n": 2,
+     "nombre": "bloqueo tras fallos",
+     "uc": null
+    },
+    {
+     "n": 3,
+     "nombre": "caducidad por inactividad",
+     "uc": null
+    },
+    {
+     "n": 4,
+     "nombre": "salir",
+     "uc": null
+    }
+   ],
+   "navegacion": [
+    {
+     "n": 1,
+     "celdas": [
+      "Entrar",
+      "cualquier cuenta",
+      "dirección de la web",
+      "envía correo y contraseña"
+     ]
+    },
+    {
+     "n": 4,
+     "celdas": [
+      "Mis reservas (o la pantalla inicial del rol)",
+      "cualquier cuenta",
+      "botón Salir",
+      "pulsa Salir y vuelve a Entrar"
+     ]
+    }
+   ]
+  }
+ ],
+ "casos_de_uso": [
+  {
+   "id": "UC-001",
+   "titulo": "Entrar y salir",
+   "fichero": "spec/use-cases/UC-001-entrar-y-salir.md",
+   "flujo": [
+    "Cuenta: abre Entrar y envía correo y contraseña (WF-002 step 1).",
+    "System: normaliza el correo (RN-014) y busca una cuenta Activa (INV-ACC-006).",
+    "System: comprueba que no está bloqueada (INV-ACC-004, WF-002 step 2).",
+    "System: verifica la contraseña; el acierto reinicia el contador (RN-005).",
+    "System: crea la sesión, una sola por envío repetido (INV-ACC-101).",
+    "System: muestra la pantalla inicial de su rol con \"Hola, {nombre}\" (RN-015).",
+    "System: cada operación renueva la actividad; pasado `SESSION_IDLE_HOURS` la sesión caduca (RN-006, WF-002 step 3).",
+    "Cuenta: pulsa \"Salir\" (WF-002 step 4).",
+    "System: cierra la sesión y muestra Entrar (INV-ACC-102). (AC-001-07)"
+   ],
+   "extensiones": [
+    {
+     "texto": "4a. Fallo número `LOGIN_MAX_FAILURES` → la cuenta se bloquea `LOGIN_LOCK_MINUTES` (RN-005).",
+     "criterios": [
+      "AC-001-11"
+     ]
+    },
+    {
+     "texto": "6a. Encargado o Junta → su pantalla inicial según RN-015.",
+     "criterios": [
+      "AC-001-12"
+     ]
+    },
+    {
+     "texto": "3a. Bloqueo ya cumplido → se entra con normalidad.",
+     "criterios": [
+      "AC-001-05"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-001-01",
+    "AC-001-02",
+    "AC-001-03",
+    "AC-001-04",
+    "AC-001-05",
+    "AC-001-06",
+    "AC-001-07",
+    "AC-001-08",
+    "AC-001-09"
+   ]
+  },
+  {
+   "id": "UC-003",
+   "titulo": "Reservar material",
+   "fichero": "spec/use-cases/UC-003-reservar-material.md",
+   "flujo": [
+    "Socio: abre Reservar, elige tipo, desde y hasta, y envía.",
+    "System: comprueba rol y tipo (INV-ACC-008, INV-STK-004).",
+    "System: valida fechas en el orden de RN-017: pasado, orden, duración (INV-RES-002, INV-RES-003, INV-RES-001).",
+    "System: comprueba que no tiene multa Pendiente (INV-RES-005, RN-007).",
+    "System: si ya tiene una Reservada idéntica, la devuelve sin crear otra (RN-004, INV-RES-008).",
+    "System: en una sola operación indivisible por tipo, comprueba unidades libres cada día y crea la reserva (RN-002, RN-018, INV-RES-004).",
+    "System: muestra Mis reservas con la confirmación."
+   ],
+   "extensiones": [
+    {
+     "texto": "6a. Las unidades ocupadas no coinciden en los mismos días del rango → se crea la reserva.",
+     "criterios": [
+      "AC-003-04"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-003-01",
+    "AC-003-02",
+    "AC-003-03",
+    "AC-003-04",
+    "AC-003-05",
+    "AC-003-06",
+    "AC-003-07",
+    "AC-003-08",
+    "AC-003-09",
+    "AC-003-10"
+   ]
+  },
+  {
+   "id": "UC-008",
+   "titulo": "Gestionar inventario",
+   "fichero": "spec/use-cases/UC-008-gestionar-inventario.md",
+   "flujo": [
+    "Encargado: abre Inventario.",
+    "System: comprueba rol y lista por tipo \"{material} · {n} unidades\" (solo Activas) y cada unidad (INV-ACC-008).",
+    "Encargado: indica tipo y cantidad y añade.",
+    "System: valida tipo y cantidad, crea las unidades y muestra \"Añadidas {n} unidades de {material}\" (INV-STK-003, INV-STK-004).",
+    "Encargado: marca una unidad como rota.",
+    "System: si ya está DeBaja, no cambia nada (INV-STK-001).",
+    "System: comprueba que no está Prestada (INV-STK-002) y la pasa a DeBaja; muestra \"{unidad} · De baja\" (RN-011)."
+   ],
+   "extensiones": [
+    {
+     "texto": "4a. Repetir el añadido suma otras unidades; no es idempotente por diseño.",
+     "criterios": [
+      "AC-008-02"
+     ]
+    },
+    {
+     "texto": "7a. La unidad tiene reservas futuras → se da de baja igualmente (RN-011).",
+     "criterios": [
+      "AC-008-03"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-008-01",
+    "AC-008-02",
+    "AC-008-03",
+    "AC-008-04",
+    "AC-008-05",
+    "AC-008-06"
+   ]
+  }
+ ],
+ "criterios": [
+  {
+   "id": "AC-001-01",
+   "req": "REQ-F-001",
+   "ac": 1,
+   "uc": "UC-001",
+   "frase": "Entrar, salir y proteger la sesión. En Mis reservas se ve «Hola, {nombre}».",
+   "visible": true,
+   "then": "the user sees \"Hola, Lucía\" in Mis reservas",
+   "ve": [
+    "Hola, {nombre}"
+   ],
+   "pantalla": "Mis reservas"
+  },
+  {
+   "id": "AC-001-02",
+   "req": "REQ-F-001",
+   "ac": 2,
+   "uc": "UC-001",
+   "frase": "Entrar, salir y proteger la sesión. En Mis reservas se ve «Hola, {nombre}».",
+   "visible": true,
+   "then": "the user sees \"Hola, Pablo\" in Mis reservas",
+   "ve": [
+    "Hola, {nombre}"
+   ],
+   "pantalla": "Mis reservas"
+  },
+  {
+   "id": "AC-001-03",
+   "req": "REQ-F-001",
+   "ac": 3,
+   "uc": "UC-001",
+   "frase": "Entrar, salir y proteger la sesión. En Entrar se ve «Correo o contraseña incorrectos».",
+   "visible": true,
+   "then": "the user sees \"Correo o contraseña incorrectos\" and stays in Entrar",
+   "ve": [
+    "Correo o contraseña incorrectos"
+   ],
+   "pantalla": "Entrar"
+  },
+  {
+   "id": "AC-001-04",
+   "req": "REQ-F-001",
+   "ac": 4,
+   "uc": "UC-001",
+   "frase": "Entrar, salir y proteger la sesión. En Entrar se ve «Cuenta bloqueada. Inténtalo de nuevo en 15 minutos».",
+   "visible": true,
+   "then": "the user sees \"Cuenta bloqueada. Inténtalo de nuevo en 15 minutos\" and no session starts",
+   "ve": [
+    "Cuenta bloqueada. Inténtalo de nuevo en 15 minutos"
+   ],
+   "pantalla": "Entrar"
+  },
+  {
+   "id": "AC-001-05",
+   "req": "REQ-F-001",
+   "ac": 5,
+   "uc": "UC-001",
+   "frase": "Entrar, salir y proteger la sesión. En Mis reservas se ve «Hola, {nombre}».",
+   "visible": true,
+   "then": "the user sees \"Hola, Lucía\" in Mis reservas",
+   "ve": [
+    "Hola, {nombre}"
+   ],
+   "pantalla": "Mis reservas"
+  },
+  {
+   "id": "AC-001-06",
+   "req": "REQ-F-001",
+   "ac": 6,
+   "uc": "UC-001",
+   "frase": "Entrar, salir y proteger la sesión. En Entrar se ve «Tu sesión ha caducado».",
+   "visible": true,
+   "then": "the user sees the Entrar form with \"Tu sesión ha caducado\"",
+   "ve": [
+    "Tu sesión ha caducado"
+   ],
+   "pantalla": "Entrar"
+  },
+  {
+   "id": "AC-001-07",
+   "req": "REQ-F-001",
+   "ac": 7,
+   "uc": "UC-001",
+   "frase": "Entrar, salir y proteger la sesión. En Entrar se ve «Entrar».",
+   "visible": true,
+   "then": "the user sees the Entrar form and going back to Mis reservas asks to enter again",
+   "ve": [
+    "Entrar"
+   ],
+   "pantalla": "Entrar"
+  },
+  {
+   "id": "AC-001-08",
+   "req": "REQ-F-001",
+   "ac": 8,
+   "uc": "UC-001",
+   "frase": "Entrar, salir y proteger la sesión. En Entrar se ve «Entrar».",
+   "visible": true,
+   "then": "the user sees the Entrar form",
+   "ve": [
+    "Entrar"
+   ],
+   "pantalla": "Entrar"
+  },
+  {
+   "id": "AC-001-09",
+   "req": "REQ-F-001",
+   "ac": 9,
+   "uc": "UC-001",
+   "frase": "Entrar, salir y proteger la sesión. En Mis reservas se ve «Hola, {nombre}».",
+   "visible": true,
+   "then": "there is one single session and the user sees \"Hola, Lucía\"",
+   "ve": [
+    "Hola, {nombre}"
+   ],
+   "pantalla": "Mis reservas"
+  },
+  {
+   "id": "AC-003-01",
+   "req": "REQ-F-003",
+   "ac": 1,
+   "uc": "UC-003",
+   "frase": "Reservar material para unas fechas. En Mis reservas se ve «Reserva creada: {material} del {desde} al {hasta}».",
+   "visible": true,
+   "then": "the user sees \"Reserva creada: Piolet del 2026-12-05 al 2026-12-07\" in Mis reservas",
+   "ve": [
+    "Reserva creada: {material} del {desde} al {hasta}"
+   ],
+   "pantalla": "Mis reservas"
+  },
+  {
+   "id": "AC-003-02",
+   "req": "REQ-F-003",
+   "ac": 2,
+   "uc": "UC-003",
+   "frase": "Reservar material para unas fechas. se ve en la lista; el criterio comprueba que sigue habiendo una sola fila",
+   "visible": false,
+   "then": "Mis reservas still has one reserva of \"Piolet\" for those dates",
+   "ve": [],
+   "pantalla": null
+  },
+  {
+   "id": "AC-003-03",
+   "req": "REQ-F-003",
+   "ac": 3,
+   "uc": "UC-003",
+   "frase": "Reservar material para unas fechas. En Reservar se ve «No quedan unidades libres de {material} esas fechas».",
+   "visible": true,
+   "then": "the user sees \"No quedan unidades libres de Tienda esas fechas\" and no reserva is created",
+   "ve": [
+    "No quedan unidades libres de {material} esas fechas"
+   ],
+   "pantalla": "Reservar"
+  },
+  {
+   "id": "AC-003-04",
+   "req": "REQ-F-003",
+   "ac": 4,
+   "uc": "UC-003",
+   "frase": "Reservar material para unas fechas. En Mis reservas se ve «Reserva creada: {material} del {desde} al {hasta}».",
+   "visible": true,
+   "then": "the reserva is created (the units are free those days)",
+   "ve": [
+    "Reserva creada: {material} del {desde} al {hasta}"
+   ],
+   "pantalla": "Mis reservas"
+  },
+  {
+   "id": "AC-003-05",
+   "req": "REQ-F-003",
+   "ac": 5,
+   "uc": "UC-003",
+   "frase": "Reservar material para unas fechas. En Reservar se ve «Las fechas no pueden estar en el pasado».",
+   "visible": true,
+   "then": "the user sees \"Las fechas no pueden estar en el pasado\" and no reserva is created",
+   "ve": [
+    "Las fechas no pueden estar en el pasado"
+   ],
+   "pantalla": "Reservar"
+  },
+  {
+   "id": "AC-003-06",
+   "req": "REQ-F-003",
+   "ac": 6,
+   "uc": "UC-003",
+   "frase": "Reservar material para unas fechas. En Reservar se ve «La fecha final no puede ser anterior a la inicial».",
+   "visible": true,
+   "then": "the user sees \"La fecha final no puede ser anterior a la inicial\"",
+   "ve": [
+    "La fecha final no puede ser anterior a la inicial"
+   ],
+   "pantalla": "Reservar"
+  },
+  {
+   "id": "AC-003-07",
+   "req": "REQ-F-003",
+   "ac": 7,
+   "uc": "UC-003",
+   "frase": "Reservar material para unas fechas. En Reservar se ve «Máximo 14 días por reserva».",
+   "visible": true,
+   "then": "the user sees \"Máximo 14 días por reserva\" and no reserva is created",
+   "ve": [
+    "Máximo 14 días por reserva"
+   ],
+   "pantalla": "Reservar"
+  },
+  {
+   "id": "AC-003-08",
+   "req": "REQ-F-003",
+   "ac": 8,
+   "uc": "UC-003",
+   "frase": "Reservar material para unas fechas. En Reservar se ve «Tienes una multa pendiente de {importe} €. Págala al encargado para poder reservar».",
+   "visible": true,
+   "then": "the user sees \"Tienes una multa pendiente de 4 €. Págala al encargado para poder reservar\" and no reserva is created",
+   "ve": [
+    "Tienes una multa pendiente de {importe} €. Págala al encargado para poder reservar"
+   ],
+   "pantalla": "Reservar"
+  },
+  {
+   "id": "AC-003-09",
+   "req": "REQ-F-003",
+   "ac": 9,
+   "uc": "UC-003",
+   "frase": "Reservar material para unas fechas. En Reservar se ve «Tienes una multa pendiente de {importe} €. Págala al encargado para poder reservar».",
+   "visible": true,
+   "then": "the user sees \"Tienes una multa pendiente de 2 €. Págala al encargado para poder reservar\"",
+   "ve": [
+    "Tienes una multa pendiente de {importe} €. Págala al encargado para poder reservar"
+   ],
+   "pantalla": "Reservar"
+  },
+  {
+   "id": "AC-003-10",
+   "req": "REQ-F-003",
+   "ac": 10,
+   "uc": "UC-003",
+   "frase": "Reservar material para unas fechas. En Reservar se ve «No quedan unidades libres de {material} esas fechas».",
+   "visible": true,
+   "then": "only one reserva is created and the other user sees \"No quedan unidades libres de Crampones esas fechas\"",
+   "ve": [
+    "No quedan unidades libres de {material} esas fechas"
+   ],
+   "pantalla": "Reservar"
+  },
+  {
+   "id": "AC-008-01",
+   "req": "REQ-F-008",
+   "ac": 1,
+   "uc": "UC-008",
+   "frase": "Gestionar el inventario. En Inventario se ve «{material} · {n} unidades».",
+   "visible": true,
+   "then": "the user sees \"Piolet · 5 unidades\" in Inventario",
+   "ve": [
+    "{material} · {n} unidades"
+   ],
+   "pantalla": "Inventario"
+  },
+  {
+   "id": "AC-008-02",
+   "req": "REQ-F-008",
+   "ac": 2,
+   "uc": "UC-008",
+   "frase": "Gestionar el inventario. En Inventario se ve «Añadidas {n} unidades de {material}».",
+   "visible": true,
+   "then": "the encargado sees 7 units, because each submission adds units (the form shows \"Añadidas 2 unidades de Piolet\" each time)",
+   "ve": [
+    "Añadidas {n} unidades de {material}"
+   ],
+   "pantalla": "Inventario"
+  },
+  {
+   "id": "AC-008-03",
+   "req": "REQ-F-008",
+   "ac": 3,
+   "uc": "UC-008",
+   "frase": "Gestionar el inventario. En Inventario se ve «{unidad} · De baja».",
+   "visible": true,
+   "then": "the user sees \"Casco 3 · De baja\" and \"Casco · 2 unidades\" in Inventario, and it cannot be reserved",
+   "ve": [
+    "{unidad} · De baja"
+   ],
+   "pantalla": "Inventario"
+  },
+  {
+   "id": "AC-008-04",
+   "req": "REQ-F-008",
+   "ac": 4,
+   "uc": "UC-008",
+   "frase": "Gestionar el inventario. En Inventario se ve «No se puede dar de baja: está prestada».",
+   "visible": true,
+   "then": "the user sees \"No se puede dar de baja: está prestada\" and it stays active",
+   "ve": [
+    "No se puede dar de baja: está prestada"
+   ],
+   "pantalla": "Inventario"
+  },
+  {
+   "id": "AC-008-05",
+   "req": "REQ-F-008",
+   "ac": 5,
+   "uc": "UC-008",
+   "frase": "Gestionar el inventario. el inventario no cambia",
+   "visible": false,
+   "then": "it stays \"De baja\" once",
+   "ve": [],
+   "pantalla": null
+  },
+  {
+   "id": "AC-008-06",
+   "req": "REQ-F-008",
+   "ac": 6,
+   "uc": "UC-008",
+   "frase": "Gestionar el inventario. En Inventario se ve «No tienes permiso para ver esta pantalla».",
+   "visible": true,
+   "then": "the user sees \"No tienes permiso para ver esta pantalla\"",
+   "ve": [
+    "No tienes permiso para ver esta pantalla"
+   ],
+   "pantalla": "Inventario"
+  }
+ ]
+}

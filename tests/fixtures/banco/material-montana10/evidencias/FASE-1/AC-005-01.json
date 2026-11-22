@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-005-01",
+ "test": "REQ-F-005 AC1 · AC-005-01 el 2026-12-05 el encargado entrega a Lucía con «Piolet 2» y ve «Piolet 2 · Lucía · Prestada»",
+ "titulo": "REQ-F-005 AC1 · AC-005-01 el 2026-12-05 el encargado entrega a Lucía con «Piolet 2» y ve «Piolet 2 · Lucía · Prestada»",
+ "ve": [
+  "Piolet 2 · Lucía · Prestada"
+ ],
+ "narrado": "Entregar lo reservado. En Entregas y devoluciones se ve «Piolet 2 · Lucía · Prestada».",
+ "url": "http://127.0.0.1:5173/#/entregas",
+ "imagen": "AC-005-01.png",
+ "sha256": "sha256:ebe25d1113abbf2143ad4513804c044ea13b99a05dd4d9b6eec3282aa5f6cbb0",
+ "at": "2026-11-21T13:46:21.465Z"
+}

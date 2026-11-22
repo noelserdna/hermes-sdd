@@ -1,0 +1,73 @@
+{
+  "$description": "Tokens de material-montana10 (DTCG). Primitivos + un grupo theme-light. Sin modo oscuro: no lo pide ningún requisito.",
+  "color": {
+    "$type": "color",
+    "piedra-50":  { "$value": "#F6F5F2" },
+    "piedra-200": { "$value": "#D9D6CE" },
+    "piedra-600": { "$value": "#5B5A55" },
+    "piedra-900": { "$value": "#1F1F1D" },
+    "pino-700":   { "$value": "#1F5C3F" },
+    "pino-800":   { "$value": "#174832" },
+    "roca-700":   { "$value": "#9B2C2C" },
+    "ambar-100":  { "$value": "#FFF1CC" },
+    "ambar-900":  { "$value": "#5C3B00" },
+    "azul-700":   { "$value": "#1D4E89" },
+    "verde-100":  { "$value": "#DFF3E7" },
+    "verde-900":  { "$value": "#14452C" },
+    "rojo-100":   { "$value": "#FBE3E3" },
+    "blanco":     { "$value": "#FFFFFF" }
+  },
+  "spacing": {
+    "$type": "dimension",
+    "1": { "$value": "4px" }, "2": { "$value": "8px" }, "3": { "$value": "12px" },
+    "4": { "$value": "16px" }, "6": { "$value": "24px" }, "8": { "$value": "32px" }
+  },
+  "radius": {
+    "$type": "dimension",
+    "sm": { "$value": "4px" }, "md": { "$value": "8px" }
+  },
+  "font": {
+    "family": { "$type": "fontFamily", "base": { "$value": ["system-ui", "Segoe UI", "Roboto", "sans-serif"] } },
+    "size": {
+      "$type": "dimension",
+      "sm": { "$value": "0.875rem" }, "md": { "$value": "1rem" },
+      "lg": { "$value": "1.25rem" }, "xl": { "$value": "1.75rem" }
+    },
+    "weight": { "$type": "fontWeight", "normal": { "$value": 400 }, "bold": { "$value": 700 } }
+  },
+  "size": {
+    "$type": "dimension",
+    "target-min": { "$value": "44px", "$description": "Objetivo táctil/clic mínimo (WCAG 2.5.8 exige 24px)" },
+    "focus-ring": { "$value": "3px" },
+    "content-max": { "$value": "72rem" }
+  },
+  "breakpoint": {
+    "$type": "dimension",
+    "md": { "$value": "640px" }, "lg": { "$value": "1024px" }
+  },
+  "duration": {
+    "$type": "duration",
+    "fast": { "$value": "120ms" }, "base": { "$value": "200ms" }
+  },
+  "theme-light": {
+    "$type": "color",
+    "bg":            { "$value": "{color.piedra-50}" },
+    "surface":       { "$value": "{color.blanco}" },
+    "border":        { "$value": "{color.piedra-600}", "$description": "Borde de campos: 3:1 sobre surface (1.4.11)" },
+    "divider":       { "$value": "{color.piedra-200}" },
+    "text":          { "$value": "{color.piedra-900}" },
+    "text-muted":    { "$value": "{color.piedra-600}" },
+    "primary":       { "$value": "{color.pino-700}" },
+    "primary-hover": { "$value": "{color.pino-800}" },
+    "on-primary":    { "$value": "{color.blanco}" },
+    "danger":        { "$value": "{color.roca-700}" },
+    "on-danger":     { "$value": "{color.blanco}" },
+    "focus":         { "$value": "{color.azul-700}" },
+    "status-ok-bg":      { "$value": "{color.verde-100}" },
+    "status-ok-text":    { "$value": "{color.verde-900}" },
+    "status-warn-bg":    { "$value": "{color.ambar-100}" },
+    "status-warn-text":  { "$value": "{color.ambar-900}" },
+    "status-error-bg":   { "$value": "{color.rojo-100}" },
+    "status-error-text": { "$value": "{color.roca-700}" }
+  }
+}

@@ -1,0 +1,94 @@
+{
+ "repo": "/home/andre/proyectos-sdd/material-montana10",
+ "fase": "1",
+ "sha": "27f1f77",
+ "congelados": [],
+ "capturas": [],
+ "coherencia": [
+  {
+   "tipo": "referencia",
+   "donde": "plan/PLAN.md",
+   "detalle": "cita lo que ya no existe: AC-002-13",
+   "grave": false
+  }
+ ],
+ "vinculos": [],
+ "lint_capturas": [],
+ "mutantes_cache": {
+  "de_cache": 0,
+  "ejecutados": 0
+ },
+ "mutantes": [
+  {
+   "req": "REQ-F-004",
+   "ac": 2,
+   "texto": "No tienes reservas",
+   "e2e": [
+    "tests/e2e/fase-1-entrega.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-entrega.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 5,
+   "texto": "Solo se puede cancelar hasta el día antes",
+   "e2e": [
+    "tests/e2e/fase-1-entrega.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-entrega.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 7,
+   "texto": "No tienes permiso para cancelar esta reserva",
+   "e2e": [
+    "tests/e2e/fase-1-entrega.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-entrega.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 3,
+   "texto": "Aún no es la fecha de entrega",
+   "e2e": [
+    "tests/e2e/fase-1-entrega.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-entrega.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-009",
+   "ac": 4,
+   "texto": "No hay material prestado",
+   "e2e": [
+    "tests/e2e/fase-1-entrega.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-entrega.spec.js"
+   ]
+  }
+ ],
+ "graves": 0
+}

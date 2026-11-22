@@ -1,0 +1,28 @@
+{
+ "peticiones": [],
+ "por_aplicar": [
+  "Q-task-implementer-002: Con 1 día de retraso el aviso de la multa dice «Multa de 2 € a Lucía (1 días de retraso)». Corregirlo a «(1 día de retraso)» obliga a editar tests/e2e/fase-2-devolucion.spec.js (AC-006-03: título, expect, narración y captura), ya aceptado en FASE-2; los tests unitarios solo fijan el plural de 3 días. Sin un test-edit firmado no se toca y el cambio de textos.js rompería ese e2e.\nRespuesta elegida: A) Autorizar editar la prueba e2e de FASE-2 y corregir el texto a «1 día»\nPara el cliente: Con un día de retraso la multa dice «1 días de retraso»; para dejarlo en «1 día» hay que cambiar una prueba que ya aceptaste en la entrega 2, ¿autorizas ese cambio? → A) Sí, se cambia la prueba y el aviso dice «1 día»\nTests ya existentes que la persona autoriza editar (solo estos; firmado en acceptance/decisions.jsonl): tests/e2e/fase-2-devolucion.spec.js",
+  "Q-task-implementer-003: En Historial una reserva aún sin entregar sale como «Sin unidad»; para mostrar el material («Piolet») la API debe devolver `material` en cada préstamo, y tests/unit/domain/prestamos-historial.test.js fija con toEqual las 4 claves exactas de cada fila, así que añadir una quinta lo rompe sin un test-edit firmado.\nRespuesta elegida: A) Autorizar editar tests/unit/domain/prestamos-historial.test.js, devolver `material` en el historial y mostrarlo cuando no hay unidad\nPara el cliente: En Historial una reserva sin entregar sale como «Sin unidad»; para que diga el material (p. ej. «Piolet») hay que cambiar una prueba ya aceptada en la entrega 2, ¿autorizas ese cambio? → A) Sí, se cambia la prueba y Historial muestra el material\nTests ya existentes que la persona autoriza editar (solo estos; firmado en acceptance/decisions.jsonl): tests/unit/domain/prestamos-historial.test.js"
+ ],
+ "autorizaciones": [
+  {
+   "pregunta": "Q-task-implementer-002",
+   "letra": "A",
+   "ficheros": [
+    "tests/e2e/fase-2-devolucion.spec.js"
+   ],
+   "endurecer": false,
+   "motivo": "Con 1 día de retraso el aviso de la multa dice «Multa de 2 € a Lucía (1 días de retraso)». Corregirlo a «(1 día de retraso)» obliga a editar tests/e2e/fase-2-devolucion.spec.js (AC-006-03: título, expect, narración y captura), ya aceptado en FASE-2; los tests unitarios solo fijan el plural de 3 días. Sin un test-edit firmado no se toca y el cambio de textos.js rompería ese e2e. → A) Autorizar editar la prueba e2e de FASE-2 y corregir el texto a «1 día»"
+  },
+  {
+   "pregunta": "Q-task-implementer-003",
+   "letra": "A",
+   "ficheros": [
+    "tests/unit/domain/prestamos-historial.test.js"
+   ],
+   "endurecer": false,
+   "motivo": "En Historial una reserva aún sin entregar sale como «Sin unidad»; para mostrar el material («Piolet») la API debe devolver `material` en cada préstamo, y tests/unit/domain/prestamos-historial.test.js fija con toEqual las 4 claves exactas de cada fila, así que añadir una quinta lo rompe sin un test-edit firmado. → A) Autorizar editar tests/unit/domain/prestamos-historial.test.js, devolver `material` en el historial y mostrarlo cuando no hay unidad"
+  }
+ ],
+ "abiertas": []
+}

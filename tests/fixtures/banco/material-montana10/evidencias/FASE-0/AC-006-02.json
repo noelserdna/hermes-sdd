@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-006-02",
+ "test": "REQ-F-006 AC2 · AC-006-02 «Casco 1» de Pablo vuelve el 2026-12-10, con hasta el 2026-12-07, y se ve «Multa de 6 € a Pablo (3 días de retraso)»",
+ "titulo": "REQ-F-006 AC2 · AC-006-02 «Casco 1» de Pablo vuelve el 2026-12-10, con hasta el 2026-12-07, y se ve «Multa de 6 € a Pablo (3 días de retraso)»",
+ "ve": [
+  "Multa de 6 € a Pablo (3 días de retraso)"
+ ],
+ "narrado": "Marcar la devolución y poner la multa. En Entregas y devoluciones se ve «Multa de 6 € a Pablo (3 días de retraso)».",
+ "url": "http://127.0.0.1:5173/#/entregas",
+ "imagen": "AC-006-02.png",
+ "sha256": "sha256:7c4a53697a4a8832000282599a75d6fdec1bead9a891c5e9e14df5cab3788bb4",
+ "at": "2026-11-21T12:39:58.681Z"
+}

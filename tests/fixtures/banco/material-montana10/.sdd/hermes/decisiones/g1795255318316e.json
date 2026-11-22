@@ -1,0 +1,16 @@
+{
+  "verbo": "respondo",
+  "texto": "",
+  "actor": {
+    "persona": "jev",
+    "canal": "jev",
+    "id": "regla"
+  },
+  "prueba": {
+    "modelo": "regla",
+    "p": "1.000",
+    "modo": "auto",
+    "regla": "las respuestas recomendadas: la persona delegó en ellas"
+  },
+  "at": "2026-11-21T10:02:17Z"
+}

@@ -1,0 +1,16 @@
+{
+ "video": "WF-002-REQ-F-001-AC8-AC-001-08-WF-002-sin-hab.webm",
+ "test": "REQ-F-001 AC8 · AC-001-08 WF-002 sin haber entrado, abrir Mis reservas lleva a Entrar",
+ "titulo": "REQ-F-001 AC8 · AC-001-08 WF-002 sin haber entrado, abrir Mis reservas lleva a Entrar",
+ "narraciones": [
+  {
+   "t": 0.009,
+   "texto": "Nadie ha entrado: se abre directamente la dirección de Mis reservas"
+  },
+  {
+   "t": 0.281,
+   "texto": "Entrar, salir y proteger la sesión. En Entrar se ve «Entrar».",
+   "criterio": "AC-001-08"
+  }
+ ]
+}

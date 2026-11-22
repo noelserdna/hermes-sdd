@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-006-04",
+ "test": "REQ-F-006 AC4 · AC-006-04 repetir la devolución de «Casco 1» de Pablo desde una pantalla vieja deja una sola multa de 6 €",
+ "titulo": "REQ-F-006 AC4 · AC-006-04 repetir la devolución de «Casco 1» de Pablo desde una pantalla vieja deja una sola multa de 6 €",
+ "ve": [
+  "Multa de 6 € · Pablo · Pendiente"
+ ],
+ "narrado": "Marcar la devolución y poner la multa. La lista de multas sigue con una sola, la de 6 € de Pablo.",
+ "url": "http://127.0.0.1:5173/#/multas",
+ "imagen": "AC-006-04.png",
+ "sha256": "sha256:34c1b806f69eb8417bf6730c8efaa854dd64ebd2a29755ee4f83ffbda604b024",
+ "at": "2026-11-21T12:40:07.238Z"
+}

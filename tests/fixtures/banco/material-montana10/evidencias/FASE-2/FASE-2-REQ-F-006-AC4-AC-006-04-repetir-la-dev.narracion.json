@@ -1,0 +1,20 @@
+{
+ "video": "FASE-2-REQ-F-006-AC4-AC-006-04-repetir-la-dev.webm",
+ "test": "REQ-F-006 AC4 · AC-006-04 repetir la devolución de «Casco 1» de Pablo desde una pantalla vieja deja una sola multa de 6 €",
+ "titulo": "REQ-F-006 AC4 · AC-006-04 repetir la devolución de «Casco 1» de Pablo desde una pantalla vieja deja una sola multa de 6 €",
+ "narraciones": [
+  {
+   "t": 0.009,
+   "texto": "El encargado abre Entregas y devoluciones en dos pestañas y marca devuelto el Casco 1 de Pablo, con 3 días de retraso, en la primera"
+  },
+  {
+   "t": 0.747,
+   "texto": "En la segunda pestaña, que aún enseña el Casco 1 por devolver, el encargado marca la devolución otra vez y abre Multas"
+  },
+  {
+   "t": 1.091,
+   "texto": "Marcar la devolución y poner la multa. La lista de multas sigue con una sola, la de 6 € de Pablo.",
+   "criterio": "AC-006-04"
+  }
+ ]
+}

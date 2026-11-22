@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-009-03",
+ "test": "REQ-F-009 AC3 · AC-009-03 Lucía tiene una reserva de Piolet que empieza hoy y el encargado ve «Entregar hoy: Piolet · Lucía»",
+ "titulo": "REQ-F-009 AC3 · AC-009-03 Lucía tiene una reserva de Piolet que empieza hoy y el encargado ve «Entregar hoy: Piolet · Lucía»",
+ "ve": [
+  "Entregar hoy: Piolet · Lucía"
+ ],
+ "narrado": "Ver lo prestado y lo que vuelve cada día. En Entregas y devoluciones se ve «Entregar hoy: Piolet · Lucía».",
+ "url": "http://127.0.0.1:5173/#/entregas",
+ "imagen": "AC-009-03.png",
+ "sha256": "sha256:3c3d387258de9438af2f9e0e805a9ea7c3df90844e26ac5628d5607bf7b5fef1",
+ "at": "2026-11-21T12:34:38.785Z"
+}

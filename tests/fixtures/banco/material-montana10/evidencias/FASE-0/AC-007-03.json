@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-007-03",
+ "test": "REQ-F-007 AC3 · AC-007-03 marcar pagada otra vez la multa de 6 € de Pablo deja una sola «Pagada» con la misma fecha de pago",
+ "titulo": "REQ-F-007 AC3 · AC-007-03 marcar pagada otra vez la multa de 6 € de Pablo deja una sola «Pagada» con la misma fecha de pago",
+ "ve": [
+  "Multa de 6 € · Pablo · Pagada"
+ ],
+ "narrado": "Marcar la multa como pagada. La lista de multas no cambia: sigue una sola, «Multa de 6 € · Pablo · Pagada», con la misma fecha de pago, el 1 de diciembre.",
+ "url": "http://127.0.0.1:5173/#/multas",
+ "imagen": "AC-007-03.png",
+ "sha256": "sha256:300ebe49199b550373aecc3303b068d3d944fcf2c3df48e036533e10dcbf42e3",
+ "at": "2026-11-21T12:40:14.858Z"
+}

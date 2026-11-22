@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-016-04",
+ "test": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-04 REQ-F-010 AC4 la junta abre Entregar, Inventario y Reservar y ve Acceso no permitido, sin botones que cambien datos",
+ "titulo": "FASE-5 AC-016-04 REQ-F-010 AC4 la junta abre Entregar, Inventario y Reservar y ve Acceso no permitido, sin botones que cambien datos",
+ "ve": [
+  "Acceso no permitido"
+ ],
+ "narrado": "La junta consulta el historial de un socio. En Inventario se ve «Acceso no permitido», igual que en Entregar y en Reservar, y las pantallas de la junta no tienen ningún botón que cambie datos.",
+ "url": "http://127.0.0.1:39963/#/inventario",
+ "imagen": "AC-016-04.png",
+ "sha256": "sha256:2dcaf7b3b62741738546812993c37acc6c9d269b986b0eba5cd7ba9367d41354",
+ "at": "2026-11-22T06:17:19.780Z"
+}

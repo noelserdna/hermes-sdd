@@ -1,0 +1,16 @@
+{
+ "video": "WF-002-WF-002-AC-002-03-un-visitante-an-nimo-ab.webm",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-002-03 un visitante anónimo abre la dirección de Mis reservas y ve Entrar",
+ "titulo": "WF-002 AC-002-03 un visitante anónimo abre la dirección de Mis reservas y ve Entrar",
+ "narraciones": [
+  {
+   "t": 0.771,
+   "texto": "Un visitante sin sesión abre la dirección de Mis reservas"
+  },
+  {
+   "t": 1.212,
+   "texto": "Entrar con correo y contraseña. En Entrar se ve «Entrar».",
+   "criterio": "AC-002-03"
+  }
+ ]
+}

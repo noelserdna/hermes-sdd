@@ -1,0 +1,16 @@
+{
+ "video": "FASE-5-FASE-5-AC-015-04-REQ-F-009-AC4-sin-pr-st.webm",
+ "test": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-04 REQ-F-009 AC4 sin préstamos abiertos Prestado muestra No hay material prestado",
+ "titulo": "FASE-5 AC-015-04 REQ-F-009 AC4 sin préstamos abiertos Prestado muestra No hay material prestado",
+ "narraciones": [
+  {
+   "t": 1.194,
+   "texto": "Nadie tiene material fuera. Marta entra y abre Prestado"
+  },
+  {
+   "t": 1.777,
+   "texto": "Ver lo prestado y lo que vuelve cada día. En Prestado se ve «No hay material prestado», y la lista queda sin ninguna fila.",
+   "criterio": "AC-015-04"
+  }
+ ]
+}

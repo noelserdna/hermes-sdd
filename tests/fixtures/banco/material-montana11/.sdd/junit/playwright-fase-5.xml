@@ -1,0 +1,125 @@
+<testsuites id="" name="" tests="10" failures="0" skipped="0" errors="0" time="43.549568">
+<testsuite name="fase-5-consultas.spec.js" timestamp="2026-11-22T01:03:47.399Z" hostname="chromium" tests="10" failures="0" skipped="0" time="41.523" errors="0">
+<testcase name="FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-01 REQ-F-009 AC1 con el Piolet 1 de Lucía Gil hasta 2026-12-07 y el Casco 2 de Pablo Ruiz hasta 2026-12-08 Prestado los lista" classname="fase-5-consultas.spec.js" time="5.005">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-7ef4e-26-12-08-Prestado-los-lista-chromium/attachments/AC-015-01-1723bb5b1eb577a71490bc74daaea030328bcb03.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-7ef4e-26-12-08-Prestado-los-lista-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-7ef4e-26-12-08-Prestado-los-lista-chromium/attachments/FASE-5-FASE-5-AC-015-01-REQ-F-009-AC1-con-el-Pi-e627aa07bcf5c70c0d6b74adec5925715985e397.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-7ef4e-26-12-08-Prestado-los-lista-chromium/video-1.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-7ef4e-26-12-08-Prestado-los-lista-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-02 REQ-F-009 AC2 el día 2026-12-07 el Piolet 1 aparece bajo Vuelven hoy y el Casco 2 no aparece bajo Vuelven hoy sino bajo Prestado ahora" classname="fase-5-consultas.spec.js" time="4.363">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-91be5-oy-sino-bajo-Prestado-ahora-chromium/attachments/AC-015-02-5807c236135ad8504699e75223ddfb3b2babd7da.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-91be5-oy-sino-bajo-Prestado-ahora-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-91be5-oy-sino-bajo-Prestado-ahora-chromium/attachments/FASE-5-FASE-5-AC-015-02-REQ-F-009-AC2-el-d-a-20-7c9150c74a3cc5114665313ba87a6f48cdc88889.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-91be5-oy-sino-bajo-Prestado-ahora-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-03 REQ-F-009 AC3 con hoy 2026-12-09 el Casco 2 de Pablo Ruiz con fin 2026-12-08 sin devolver muestra Retrasado 1 día" classname="fase-5-consultas.spec.js" time="5.282">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-a067e-ver-muestra-Retrasado-1-día-chromium/attachments/AC-015-03-cf3f855dee420f2d6a58259f6e55508840372ad7.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-a067e-ver-muestra-Retrasado-1-día-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-a067e-ver-muestra-Retrasado-1-día-chromium/attachments/FASE-5-FASE-5-AC-015-03-REQ-F-009-AC3-con-hoy-2-a69597469c5b8a40cf82bd09b41a1f03e3a9b20a.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-a067e-ver-muestra-Retrasado-1-día-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-01 REQ-F-010 AC1 la junta elige a Pablo Ruiz y ve Multa 6,00 € Pendiente y nada de Lucía Gil" classname="fase-5-consultas.spec.js" time="6.791">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-56b2e-ndiente-y-nada-de-Lucía-Gil-chromium/attachments/AC-016-01-47f6ea64edbc529a3060dfad6e537ca0bd20aea5.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-56b2e-ndiente-y-nada-de-Lucía-Gil-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-56b2e-ndiente-y-nada-de-Lucía-Gil-chromium/attachments/FASE-5-FASE-5-AC-016-01-REQ-F-010-AC1-la-junta--8c4a4a245e9bfc08b5b994cf31b1cbbdb73ff4b9.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-56b2e-ndiente-y-nada-de-Lucía-Gil-chromium/video-1.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-56b2e-ndiente-y-nada-de-Lucía-Gil-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-04 REQ-F-009 AC4 sin préstamos abiertos Prestado muestra No hay material prestado" classname="fase-5-consultas.spec.js" time="2.276">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3f659-ra-No-hay-material-prestado-chromium/attachments/AC-015-04-5b0f024fdcd4ff665cad9e6f5f7f54dccd121cf1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3f659-ra-No-hay-material-prestado-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3f659-ra-No-hay-material-prestado-chromium/attachments/FASE-5-FASE-5-AC-015-04-REQ-F-009-AC4-sin-pr-st-e97eb0eae2ae679d13fd07fbac6ac59d556f9765.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3f659-ra-No-hay-material-prestado-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-02 REQ-F-010 AC2 la junta elige a Lucía Gil y ve el Piolet 1 con Devuelto" classname="fase-5-consultas.spec.js" time="5.92">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3a9e4-ve-el-Piolet-1-con-Devuelto-chromium/attachments/AC-016-02-fc9a94f035806fa6c0deb6e74b631a4e50f1dfcd.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3a9e4-ve-el-Piolet-1-con-Devuelto-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3a9e4-ve-el-Piolet-1-con-Devuelto-chromium/attachments/FASE-5-FASE-5-AC-016-02-REQ-F-010-AC2-la-junta--cbc75fd0bdb2b05140f3c011c83d8c6040a3813e.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3a9e4-ve-el-Piolet-1-con-Devuelto-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-03 REQ-F-010 AC3 la junta elige a Ana Mir, sin préstamos ni multas, y ve Sin préstamos ni multas" classname="fase-5-consultas.spec.js" time="2.478">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-b24f5--ve-Sin-préstamos-ni-multas-chromium/attachments/AC-016-03-5922bcc7e60fe72523636a245c67b4ce3e1718bc.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-b24f5--ve-Sin-préstamos-ni-multas-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-b24f5--ve-Sin-préstamos-ni-multas-chromium/attachments/FASE-5-FASE-5-AC-016-03-REQ-F-010-AC3-la-junta--5fb25c01323f309898d228ca49bdc972367bdf1b.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-b24f5--ve-Sin-préstamos-ni-multas-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-04 REQ-F-010 AC4 la junta abre Entregar, Inventario y Reservar y ve Acceso no permitido, sin botones que cambien datos" classname="fase-5-consultas.spec.js" time="2.647">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-eb09a-n-botones-que-cambien-datos-chromium/attachments/AC-016-04-4f698b7861d3cfa29d67449de02f914b95cd8880.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-eb09a-n-botones-que-cambien-datos-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-eb09a-n-botones-que-cambien-datos-chromium/attachments/FASE-5-FASE-5-AC-016-04-REQ-F-010-AC4-la-junta--e38b1df397751acc0ad6b2f4491f3e75ae43b852.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-eb09a-n-botones-que-cambien-datos-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 REQ-NF-001 AC1 SEC-T-001 Lucía pide por dirección las multas y el historial de Pablo y recibe rechazo sin datos de Pablo" classname="fase-5-consultas.spec.js" time="5.504">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-2175c--rechazo-sin-datos-de-Pablo-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-2175c--rechazo-sin-datos-de-Pablo-chromium/attachments/FASE-5-FASE-5-REQ-NF-001-AC1-SEC-T-001-Luc-a-pi-bbe673e1713be44c1e3f76bc8236a5a10ab0bf85.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-2175c--rechazo-sin-datos-de-Pablo-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 REQ-NF-001 AC3 SEC-T-003 tras crear a Pablo con la contraseña Nieve2026 el almacén no contiene Nieve2026 y sí un hash" classname="fase-5-consultas.spec.js" time="1.257">
+</testcase>
+</testsuite>
+</testsuites>

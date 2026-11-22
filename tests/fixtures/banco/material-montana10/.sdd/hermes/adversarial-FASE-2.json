@@ -1,0 +1,789 @@
+{
+  "$schema": "sdd-adversarial-plan-v1",
+  "evaluated_sha": "13f457c311d76cbb927d493ce94483af0ed45bde",
+  "dirty": false,
+  "generatedAt": "2026-11-21T12:12:18.812Z",
+  "scope": {
+    "fase": 2
+  },
+  "code_paths": [
+    "src"
+  ],
+  "adversarial_gate": "enforce",
+  "fases": [
+    {
+      "fase": 2,
+      "file": "plan/fases/FASE-2-DEVOLUCION.md",
+      "header": true,
+      "requirements": [
+        {
+          "id": "REQ-F-006",
+          "title": "Marcar la devolución y poner la multa",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN the encargado marks a loan as returned after its fecha hasta THE system SHALL create a multa of 2 euros per day late",
+          "reqHash": "sha256:20e29c5ec76a75a3198f797bc26b322d1e4525d56828708b966a11b9fa1e8eeb",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN \"Piolet 2\" lent to Lucía until 2026-12-07 WHEN the encargado marks it returned on 2026-12-07 THEN the user sees \"Piolet 2 · Lucía · Devuelta\" and no multa exists",
+              "scenarios": [
+                "AC-006-01"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-006 AC1 · AC-006-01 el encargado marca devuelto «Piolet 2» de Lucía el día hasta y ve «Piolet 2 · Lucía · Devuelta» sin multa",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-006 AC1 · AC-006-01 el encargado marca devuelto «Piolet 2» de Lucía el día hasta y ve «Piolet 2 · Lucía · Devuelta» sin multa",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-53075-Lucía-·-Devuelta»-sin-multa-chromium/attachments/AC-006-01-c993b5b0d0f6d4ff0a5217f61159e796128fc357.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-53075-Lucía-·-Devuelta»-sin-multa-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-006-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-53075-Lucía-·-Devuelta»-sin-multa-chromium/attachments/AC-006-01-c993b5b0d0f6d4ff0a5217f61159e796128fc357.png": "sha256:e0fc3e479ad393d324488de0073860042894e03a5e0a331b05e709bbbd055301",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-53075-Lucía-·-Devuelta»-sin-multa-chromium/test-finished-1.png": "sha256:e0fc3e479ad393d324488de0073860042894e03a5e0a331b05e709bbbd055301",
+                "evidencias/FASE-2/AC-006-01.png": "sha256:e0fc3e479ad393d324488de0073860042894e03a5e0a331b05e709bbbd055301"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{unidad} · {socio} · Devuelta",
+                    "template": true
+                  }
+                ],
+                "where": "Entregas y devoluciones",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-53075-Lucía-·-Devuelta»-sin-multa-chromium/attachments/AC-006-01-c993b5b0d0f6d4ff0a5217f61159e796128fc357.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-53075-Lucía-·-Devuelta»-sin-multa-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-006-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-53075-Lucía-·-Devuelta»-sin-multa-chromium/attachments/FASE-2-REQ-F-006-AC1-AC-006-01-el-encargado-m-3f9f164c215ab3cec3648109ee27115af9222273.webm",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-53075-Lucía-·-Devuelta»-sin-multa-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-REQ-F-006-AC1-AC-006-01-el-encargado-m.webm"
+              ]
+            },
+            {
+              "n": 2,
+              "text": "GIVEN \"Casco 1\" lent to Pablo until 2026-12-07 WHEN it is returned on 2026-12-10 THEN the user sees \"Multa de 6 € a Pablo (3 días de retraso)\"",
+              "scenarios": [
+                "AC-006-02"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-006 AC2 · AC-006-02 «Casco 1» de Pablo vuelve el 2026-12-10, con hasta el 2026-12-07, y se ve «Multa de 6 € a Pablo (3 días de retraso)»",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-006 AC2 · AC-006-02 «Casco 1» de Pablo vuelve el 2026-12-10, con hasta el 2026-12-07, y se ve «Multa de 6 € a Pablo (3 días de retraso)»",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-5d038-a-Pablo-3-días-de-retraso-»-chromium/attachments/AC-006-02-dba851e12fe4a212986b393af2ac5c2b4516e6d2.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-5d038-a-Pablo-3-días-de-retraso-»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-006-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-5d038-a-Pablo-3-días-de-retraso-»-chromium/attachments/AC-006-02-dba851e12fe4a212986b393af2ac5c2b4516e6d2.png": "sha256:5252df7a145fe4f6e95781ff7a2971413102fd539307b0156963b67f485fe0e7",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-5d038-a-Pablo-3-días-de-retraso-»-chromium/test-finished-1.png": "sha256:5252df7a145fe4f6e95781ff7a2971413102fd539307b0156963b67f485fe0e7",
+                "evidencias/FASE-2/AC-006-02.png": "sha256:5252df7a145fe4f6e95781ff7a2971413102fd539307b0156963b67f485fe0e7"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Multa de {importe} € a {socio} ({n} días de retraso)",
+                    "template": true
+                  }
+                ],
+                "where": "Entregas y devoluciones",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-5d038-a-Pablo-3-días-de-retraso-»-chromium/attachments/AC-006-02-dba851e12fe4a212986b393af2ac5c2b4516e6d2.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-5d038-a-Pablo-3-días-de-retraso-»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-006-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-5d038-a-Pablo-3-días-de-retraso-»-chromium/attachments/FASE-2-REQ-F-006-AC2-AC-006-02-Casco-1-de-P-05cd95270b523289111b46253b3e894664d864e1.webm",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-5d038-a-Pablo-3-días-de-retraso-»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-REQ-F-006-AC2-AC-006-02-Casco-1-de-P.webm"
+              ]
+            },
+            {
+              "n": 3,
+              "text": "GIVEN \"Cuerda 1\" lent to Lucía until 2026-12-07 WHEN it is returned on 2026-12-08 THEN the user sees \"Multa de 2 € a Lucía (1 días de retraso)\" and Lucía sees \"Multa pendiente: 2 €\" in Mis reservas",
+              "scenarios": [
+                "AC-006-03"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-006 AC3 · AC-006-03 «Cuerda 1» de Lucía vuelve con 1 día de retraso: «Multa de 2 € a Lucía (1 días de retraso)» y ella ve «Multa pendiente: 2 €»",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-006 AC3 · AC-006-03 «Cuerda 1» de Lucía vuelve con 1 día de retraso: «Multa de 2 € a Lucía (1 días de retraso)» y ella ve «Multa pendiente: 2 €»",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-984d8-la-ve-«Multa-pendiente-2-€»-chromium/attachments/AC-006-03-42b1a7bd311bedbd3170c77714c5046d83cd7bb6.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-984d8-la-ve-«Multa-pendiente-2-€»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-984d8-la-ve-«Multa-pendiente-2-€»-chromium/test-finished-2.png",
+                "evidencias/FASE-2/AC-006-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-984d8-la-ve-«Multa-pendiente-2-€»-chromium/attachments/AC-006-03-42b1a7bd311bedbd3170c77714c5046d83cd7bb6.png": "sha256:8533fb6075fbc836caaa33ccd2a3f866d4cabf6bd904a354eb3f9f0bac10e13c",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-984d8-la-ve-«Multa-pendiente-2-€»-chromium/test-finished-1.png": "sha256:8533fb6075fbc836caaa33ccd2a3f866d4cabf6bd904a354eb3f9f0bac10e13c",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-984d8-la-ve-«Multa-pendiente-2-€»-chromium/test-finished-2.png": "sha256:843b5c2ae71710af71421a399def9357b9b56f98397070d2b2ba341591b29769",
+                "evidencias/FASE-2/AC-006-03.png": "sha256:8533fb6075fbc836caaa33ccd2a3f866d4cabf6bd904a354eb3f9f0bac10e13c"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Multa de {importe} € a {socio} ({n} días de retraso)",
+                    "template": true
+                  }
+                ],
+                "where": "Entregas y devoluciones",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-984d8-la-ve-«Multa-pendiente-2-€»-chromium/attachments/AC-006-03-42b1a7bd311bedbd3170c77714c5046d83cd7bb6.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-984d8-la-ve-«Multa-pendiente-2-€»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-984d8-la-ve-«Multa-pendiente-2-€»-chromium/test-finished-2.png",
+                "evidencias/FASE-2/AC-006-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-984d8-la-ve-«Multa-pendiente-2-€»-chromium/attachments/FASE-2-REQ-F-006-AC3-AC-006-03-Cuerda-1-de--65adf8b6e1aa0b9c34bd152c9bcfd50e5868ada7.webm",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-984d8-la-ve-«Multa-pendiente-2-€»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-REQ-F-006-AC3-AC-006-03-Cuerda-1-de-.webm"
+              ]
+            },
+            {
+              "n": 4,
+              "text": "GIVEN \"Casco 1\" is already \"Devuelta\" WHEN the return is marked again THEN there is still one multa of 6 € for Pablo",
+              "scenarios": [
+                "AC-006-04"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-006 AC4 · AC-006-04 repetir la devolución de «Casco 1» de Pablo desde una pantalla vieja deja una sola multa de 6 €",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-006 AC4 · AC-006-04 repetir la devolución de «Casco 1» de Pablo desde una pantalla vieja deja una sola multa de 6 €",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-f6a5f--deja-una-sola-multa-de-6-€-chromium/attachments/AC-006-04-10732c5b791bfacd5a9314d7c3cf1a5da0270e31.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-f6a5f--deja-una-sola-multa-de-6-€-chromium/test-finished-1.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-f6a5f--deja-una-sola-multa-de-6-€-chromium/test-finished-2.png",
+                "evidencias/FASE-2/AC-006-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-f6a5f--deja-una-sola-multa-de-6-€-chromium/attachments/AC-006-04-10732c5b791bfacd5a9314d7c3cf1a5da0270e31.png": "sha256:609b691f0085dfe11e5f706f223541e204ddc94bd401bf35a434e7e39a86b7d7",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-f6a5f--deja-una-sola-multa-de-6-€-chromium/test-finished-1.png": "sha256:1404a92d26ee7f8eb52482f13f1c73a50a0d7466fa01c4315f93982f3bc12d47",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-f6a5f--deja-una-sola-multa-de-6-€-chromium/test-finished-2.png": "sha256:609b691f0085dfe11e5f706f223541e204ddc94bd401bf35a434e7e39a86b7d7",
+                "evidencias/FASE-2/AC-006-04.png": "sha256:609b691f0085dfe11e5f706f223541e204ddc94bd401bf35a434e7e39a86b7d7"
+              },
+              "sees": {
+                "texts": [],
+                "where": null,
+                "none": "la lista de multas sigue con una sola de 6 €"
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-f6a5f--deja-una-sola-multa-de-6-€-chromium/attachments/AC-006-04-10732c5b791bfacd5a9314d7c3cf1a5da0270e31.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-f6a5f--deja-una-sola-multa-de-6-€-chromium/test-finished-1.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-f6a5f--deja-una-sola-multa-de-6-€-chromium/test-finished-2.png",
+                "evidencias/FASE-2/AC-006-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-f6a5f--deja-una-sola-multa-de-6-€-chromium/attachments/FASE-2-REQ-F-006-AC4-AC-006-04-repetir-la-dev-a6809958924414b58ef5e9aaea82b18c36a3388a.webm",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-f6a5f--deja-una-sola-multa-de-6-€-chromium/video-1.webm",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-f6a5f--deja-una-sola-multa-de-6-€-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-REQ-F-006-AC4-AC-006-04-repetir-la-dev.webm"
+              ]
+            },
+            {
+              "n": 5,
+              "text": "GIVEN a loan not delivered (reserva \"Reservada\") WHEN the encargado marks it returned THEN the user sees \"Esa reserva no está prestada\"",
+              "scenarios": [
+                "AC-006-05"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-006 AC5 · AC-006-05 devolver una reserva que no está prestada muestra «Esa reserva no está prestada» y no crea multa",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-006 AC5 · AC-006-05 devolver una reserva que no está prestada muestra «Esa reserva no está prestada» y no crea multa",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-43bfe-á-prestada»-y-no-crea-multa-chromium/attachments/AC-006-05-33d8daf5d097124aba77c0ecaaf02f90837ef5c9.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-43bfe-á-prestada»-y-no-crea-multa-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-006-05.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-43bfe-á-prestada»-y-no-crea-multa-chromium/attachments/AC-006-05-33d8daf5d097124aba77c0ecaaf02f90837ef5c9.png": "sha256:77a33048e52ca464d8b3575df3baaa69a06a6298b2798489696b86f8b7b05a60",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-43bfe-á-prestada»-y-no-crea-multa-chromium/test-finished-1.png": "sha256:77a33048e52ca464d8b3575df3baaa69a06a6298b2798489696b86f8b7b05a60",
+                "evidencias/FASE-2/AC-006-05.png": "sha256:77a33048e52ca464d8b3575df3baaa69a06a6298b2798489696b86f8b7b05a60"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Esa reserva no está prestada",
+                    "template": false
+                  }
+                ],
+                "where": "Entregas y devoluciones",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-43bfe-á-prestada»-y-no-crea-multa-chromium/attachments/AC-006-05-33d8daf5d097124aba77c0ecaaf02f90837ef5c9.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-43bfe-á-prestada»-y-no-crea-multa-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-006-05.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-43bfe-á-prestada»-y-no-crea-multa-chromium/attachments/FASE-2-REQ-F-006-AC5-AC-006-05-devolver-una-r-582781cb12875ad009c410cf02dd677ab1a69b92.webm",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-43bfe-á-prestada»-y-no-crea-multa-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-REQ-F-006-AC5-AC-006-05-devolver-una-r.webm"
+              ]
+            }
+          ],
+          "candidate_files": [
+            "src/domain/prestamos.js",
+            "src/server/http.js",
+            "src/ui/api.js",
+            "src/ui/estilos.css",
+            "src/ui/pantallas/entregas.js",
+            "src/ui/pantallas/multas.js",
+            "src/ui/router.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        },
+        {
+          "id": "REQ-F-007",
+          "title": "Marcar la multa como pagada",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN the encargado marks a multa as paid THE system SHALL change its estado to \"Pagada\" and allow its socio to reserve again if no other multa is pending",
+          "reqHash": "sha256:3fc9d5420e5fa17ec06d6f9064e0443eff9b61fc656c1ee5f43066601aa117e5",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN Pablo has a multa of 6 € pendiente WHEN the encargado marks it paid THEN the user sees \"Multa de 6 € · Pablo · Pagada\" in Multas and Pablo can reserve",
+              "scenarios": [
+                "AC-007-01"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-007 AC1 · AC-007-01 el encargado marca pagada la multa de 6 € de Pablo y ve «Multa de 6 € · Pablo · Pagada»; Pablo ya puede reservar",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-007 AC1 · AC-007-01 el encargado marca pagada la multa de 6 € de Pablo y ve «Multa de 6 € · Pablo · Pagada»; Pablo ya puede reservar",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-ce405-da»-Pablo-ya-puede-reservar-chromium/attachments/AC-007-01-71a73dcbb379fcd83890d26d920054e4fe8fdb3a.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-ce405-da»-Pablo-ya-puede-reservar-chromium/test-finished-1.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-ce405-da»-Pablo-ya-puede-reservar-chromium/test-finished-2.png",
+                "evidencias/FASE-2/AC-007-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-ce405-da»-Pablo-ya-puede-reservar-chromium/attachments/AC-007-01-71a73dcbb379fcd83890d26d920054e4fe8fdb3a.png": "sha256:1c73835ed39ec10ea3d86e9eee5de2d7b42c1da87d6a771ffebf960f3d600abd",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-ce405-da»-Pablo-ya-puede-reservar-chromium/test-finished-1.png": "sha256:1c73835ed39ec10ea3d86e9eee5de2d7b42c1da87d6a771ffebf960f3d600abd",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-ce405-da»-Pablo-ya-puede-reservar-chromium/test-finished-2.png": "sha256:8c24db46017d2fa383b7edda93b524092e9a56e266f51026c0a42c3cb02f182b",
+                "evidencias/FASE-2/AC-007-01.png": "sha256:1c73835ed39ec10ea3d86e9eee5de2d7b42c1da87d6a771ffebf960f3d600abd"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Multa de {importe} € · {socio} · Pagada",
+                    "template": true
+                  }
+                ],
+                "where": "Multas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-ce405-da»-Pablo-ya-puede-reservar-chromium/attachments/AC-007-01-71a73dcbb379fcd83890d26d920054e4fe8fdb3a.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-ce405-da»-Pablo-ya-puede-reservar-chromium/test-finished-1.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-ce405-da»-Pablo-ya-puede-reservar-chromium/test-finished-2.png",
+                "evidencias/FASE-2/AC-007-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-ce405-da»-Pablo-ya-puede-reservar-chromium/attachments/FASE-2-REQ-F-007-AC1-AC-007-01-el-encargado-m-be4a287bfc4bf43d940f314dc7151a379d64148f.webm",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-ce405-da»-Pablo-ya-puede-reservar-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-REQ-F-007-AC1-AC-007-01-el-encargado-m.webm"
+              ]
+            },
+            {
+              "n": 2,
+              "text": "GIVEN Lucía has two multas pendientes (2 € and 4 €) WHEN the encargado marks the 2 € one paid THEN Lucía still sees \"Multa pendiente: 4 €\" and cannot reserve",
+              "scenarios": [
+                "AC-007-02"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-007 AC2 · AC-007-02 Lucía, con multas de 2 € y 4 €, tras pagar la de 2 € sigue viendo «Multa pendiente: 4 €» y no puede reservar",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-007 AC2 · AC-007-02 Lucía, con multas de 2 € y 4 €, tras pagar la de 2 € sigue viendo «Multa pendiente: 4 €» y no puede reservar",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-393b4-te-4-€»-y-no-puede-reservar-chromium/attachments/AC-007-02-b38009e6ff0cd3e36e9cff1eecc03501529794e8.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-393b4-te-4-€»-y-no-puede-reservar-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-007-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-393b4-te-4-€»-y-no-puede-reservar-chromium/attachments/AC-007-02-b38009e6ff0cd3e36e9cff1eecc03501529794e8.png": "sha256:4f88f4ca5590a9eab2f72cb451548d36f3b345489b91413614bed121dbab25f9",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-393b4-te-4-€»-y-no-puede-reservar-chromium/test-finished-1.png": "sha256:4f88f4ca5590a9eab2f72cb451548d36f3b345489b91413614bed121dbab25f9",
+                "evidencias/FASE-2/AC-007-02.png": "sha256:4f88f4ca5590a9eab2f72cb451548d36f3b345489b91413614bed121dbab25f9"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Multa pendiente: {importe} €",
+                    "template": true
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-393b4-te-4-€»-y-no-puede-reservar-chromium/attachments/AC-007-02-b38009e6ff0cd3e36e9cff1eecc03501529794e8.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-393b4-te-4-€»-y-no-puede-reservar-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-007-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-393b4-te-4-€»-y-no-puede-reservar-chromium/attachments/FASE-2-REQ-F-007-AC2-AC-007-02-Luc-a-con-mul-7b05a80fb213ddd62d991f94541e44def32f9133.webm",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-393b4-te-4-€»-y-no-puede-reservar-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-REQ-F-007-AC2-AC-007-02-Luc-a-con-mul.webm"
+              ]
+            },
+            {
+              "n": 3,
+              "text": "GIVEN the multa is already paid WHEN marked paid again THEN it stays \"Pagada\" once, with the same paid date",
+              "scenarios": [
+                "AC-007-03"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-007 AC3 · AC-007-03 marcar pagada otra vez la multa de 6 € de Pablo deja una sola «Pagada» con la misma fecha de pago",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-007 AC3 · AC-007-03 marcar pagada otra vez la multa de 6 € de Pablo deja una sola «Pagada» con la misma fecha de pago",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-a1b8b--con-la-misma-fecha-de-pago-chromium/attachments/AC-007-03-e67547d8a63bc3bec8fb0f978ef15d3fff2a1c87.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-a1b8b--con-la-misma-fecha-de-pago-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-007-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-a1b8b--con-la-misma-fecha-de-pago-chromium/attachments/AC-007-03-e67547d8a63bc3bec8fb0f978ef15d3fff2a1c87.png": "sha256:83898b3642f76cae942bcd02f619dc882331ec4384599e149c2a07a2adc45f4a",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-a1b8b--con-la-misma-fecha-de-pago-chromium/test-finished-1.png": "sha256:83898b3642f76cae942bcd02f619dc882331ec4384599e149c2a07a2adc45f4a",
+                "evidencias/FASE-2/AC-007-03.png": "sha256:83898b3642f76cae942bcd02f619dc882331ec4384599e149c2a07a2adc45f4a"
+              },
+              "sees": {
+                "texts": [],
+                "where": null,
+                "none": "la lista de multas no cambia"
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-a1b8b--con-la-misma-fecha-de-pago-chromium/attachments/AC-007-03-e67547d8a63bc3bec8fb0f978ef15d3fff2a1c87.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-a1b8b--con-la-misma-fecha-de-pago-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-007-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-a1b8b--con-la-misma-fecha-de-pago-chromium/attachments/FASE-2-REQ-F-007-AC3-AC-007-03-marcar-pagada--0af97c07f91f06c9d417f102c9b65ff4f6fe1e59.webm",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-a1b8b--con-la-misma-fecha-de-pago-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-REQ-F-007-AC3-AC-007-03-marcar-pagada-.webm"
+              ]
+            },
+            {
+              "n": 4,
+              "text": "GIVEN the socio \"lucia@club.es\" WHEN she opens Multas by address THEN the user sees \"No tienes permiso para ver esta pantalla\"",
+              "scenarios": [
+                "AC-007-04"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-007 AC4 · AC-007-04 Lucía abre Multas por su dirección y ve «No tienes permiso para ver esta pantalla»",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-007 AC4 · AC-007-04 Lucía abre Multas por su dirección y ve «No tienes permiso para ver esta pantalla»",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-6affc-iso-para-ver-esta-pantalla»-chromium/attachments/AC-007-04-ed16a8318f853c8e733da17923704ef2399a0f05.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-6affc-iso-para-ver-esta-pantalla»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-007-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-6affc-iso-para-ver-esta-pantalla»-chromium/attachments/AC-007-04-ed16a8318f853c8e733da17923704ef2399a0f05.png": "sha256:2f93e36676b6d3a15c925fa3e4c0589d7eaa1c92dbb8b0d8f4f11d6beae644b9",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-6affc-iso-para-ver-esta-pantalla»-chromium/test-finished-1.png": "sha256:2f93e36676b6d3a15c925fa3e4c0589d7eaa1c92dbb8b0d8f4f11d6beae644b9",
+                "evidencias/FASE-2/AC-007-04.png": "sha256:2f93e36676b6d3a15c925fa3e4c0589d7eaa1c92dbb8b0d8f4f11d6beae644b9"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No tienes permiso para ver esta pantalla",
+                    "template": false
+                  }
+                ],
+                "where": "Multas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-6affc-iso-para-ver-esta-pantalla»-chromium/attachments/AC-007-04-ed16a8318f853c8e733da17923704ef2399a0f05.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-6affc-iso-para-ver-esta-pantalla»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-007-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-6affc-iso-para-ver-esta-pantalla»-chromium/attachments/FASE-2-REQ-F-007-AC4-AC-007-04-Luc-a-abre-Mul-b42265f1300c19ec368a7b693b3fc955de144ce3.webm",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-00-6affc-iso-para-ver-esta-pantalla»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-REQ-F-007-AC4-AC-007-04-Luc-a-abre-Mul.webm"
+              ]
+            }
+          ],
+          "candidate_files": [
+            "src/domain/prestamos.js",
+            "src/server/http.js",
+            "src/ui/api.js",
+            "src/ui/estilos.css",
+            "src/ui/pantallas/entregas.js",
+            "src/ui/pantallas/multas.js",
+            "src/ui/router.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        },
+        {
+          "id": "REQ-F-010",
+          "title": "Consultar el historial de un socio (junta)",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN the junta or the encargado opens Historial and chooses a socio THE system SHALL show that socio's loans and multas, read only",
+          "reqHash": "sha256:fcd73afa8f6ea1ef0fe2945b98354b8456863d3a24c870e7bfbc564c32c576d2",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN Lucía borrowed \"Piolet 2\" 2026-12-05..2026-12-07 and has a paid multa of 2 € WHEN \"ana@club.es\" (junta) chooses Lucía in Historial THEN the user sees \"Piolet 2 · 2026-12-05 a 2026-12-07 · Devuelta\" and \"Multa de 2 € · Pagada\"",
+              "scenarios": [
+                "AC-010-01"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-010 AC1 · AC-010-01 la junta elige a Lucía en Historial y ve «Piolet 2 · 2026-12-05 a 2026-12-07 · Devuelta» y «Multa de 2 € · Pagada»",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-010 AC1 · AC-010-01 la junta elige a Lucía en Historial y ve «Piolet 2 · 2026-12-05 a 2026-12-07 · Devuelta» y «Multa de 2 € · Pagada»",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-6c585-»-y-«Multa-de-2-€-·-Pagada»-chromium/attachments/AC-010-01-2ace181fa5b3542b5bb6c73a3f24ca358873175f.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-6c585-»-y-«Multa-de-2-€-·-Pagada»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-010-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-6c585-»-y-«Multa-de-2-€-·-Pagada»-chromium/attachments/AC-010-01-2ace181fa5b3542b5bb6c73a3f24ca358873175f.png": "sha256:00a1cbe688655bc5fb5e7a5f1cb09499c71d805a69bda6601bad4170bb0343f1",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-6c585-»-y-«Multa-de-2-€-·-Pagada»-chromium/test-finished-1.png": "sha256:00a1cbe688655bc5fb5e7a5f1cb09499c71d805a69bda6601bad4170bb0343f1",
+                "evidencias/FASE-2/AC-010-01.png": "sha256:00a1cbe688655bc5fb5e7a5f1cb09499c71d805a69bda6601bad4170bb0343f1"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{unidad} · {desde} a {hasta} · {estado}",
+                    "template": true
+                  },
+                  {
+                    "text": "Multa de {importe} € · {estado}",
+                    "template": true
+                  }
+                ],
+                "where": "Historial",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-6c585-»-y-«Multa-de-2-€-·-Pagada»-chromium/attachments/AC-010-01-2ace181fa5b3542b5bb6c73a3f24ca358873175f.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-6c585-»-y-«Multa-de-2-€-·-Pagada»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-010-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-6c585-»-y-«Multa-de-2-€-·-Pagada»-chromium/attachments/FASE-2-REQ-F-010-AC1-AC-010-01-la-junta-elige-ce62ffb9ff818cfada86dc2ec965eaa30087a122.webm",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-6c585-»-y-«Multa-de-2-€-·-Pagada»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-REQ-F-010-AC1-AC-010-01-la-junta-elige.webm"
+              ]
+            },
+            {
+              "n": 2,
+              "text": "GIVEN Pablo has no loans WHEN the junta chooses Pablo THEN the user sees \"Sin préstamos ni multas\"",
+              "scenarios": [
+                "AC-010-02"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-010 AC2 · AC-010-02 la junta elige a Pablo, sin préstamos, y ve «Sin préstamos ni multas»",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-010 AC2 · AC-010-02 la junta elige a Pablo, sin préstamos, y ve «Sin préstamos ni multas»",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-2483c-e-«Sin-préstamos-ni-multas»-chromium/attachments/AC-010-02-2e2b2cfb7278272455e7b2868240db47d36f4ffa.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-2483c-e-«Sin-préstamos-ni-multas»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-010-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-2483c-e-«Sin-préstamos-ni-multas»-chromium/attachments/AC-010-02-2e2b2cfb7278272455e7b2868240db47d36f4ffa.png": "sha256:d6fa4801da39760772dab28b6efe06c8c3d7b61b95281abeabcc2495dc00165a",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-2483c-e-«Sin-préstamos-ni-multas»-chromium/test-finished-1.png": "sha256:d6fa4801da39760772dab28b6efe06c8c3d7b61b95281abeabcc2495dc00165a",
+                "evidencias/FASE-2/AC-010-02.png": "sha256:d6fa4801da39760772dab28b6efe06c8c3d7b61b95281abeabcc2495dc00165a"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Sin préstamos ni multas",
+                    "template": false
+                  }
+                ],
+                "where": "Historial",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-2483c-e-«Sin-préstamos-ni-multas»-chromium/attachments/AC-010-02-2e2b2cfb7278272455e7b2868240db47d36f4ffa.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-2483c-e-«Sin-préstamos-ni-multas»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-010-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-2483c-e-«Sin-préstamos-ni-multas»-chromium/attachments/FASE-2-REQ-F-010-AC2-AC-010-02-la-junta-elige-5a83e1973279a772b18f314e209aaa109fbd7ad1.webm",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-2483c-e-«Sin-préstamos-ni-multas»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-REQ-F-010-AC2-AC-010-02-la-junta-elige.webm"
+              ]
+            },
+            {
+              "n": 3,
+              "text": "GIVEN the junta WHEN she looks at Historial THEN there is no button to edit, cancel or mark anything",
+              "scenarios": [
+                "AC-010-03"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-010 AC3 · AC-010-03 con Lucía elegida en Historial la junta no ve botón para editar, cancelar ni marcar nada",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-010 AC3 · AC-010-03 con Lucía elegida en Historial la junta no ve botón para editar, cancelar ni marcar nada",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-2eb20-tar-cancelar-ni-marcar-nada-chromium/attachments/AC-010-03-37e5e24f93eafbc9b3c3b140392e6b96d4656d0a.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-2eb20-tar-cancelar-ni-marcar-nada-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-010-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-2eb20-tar-cancelar-ni-marcar-nada-chromium/attachments/AC-010-03-37e5e24f93eafbc9b3c3b140392e6b96d4656d0a.png": "sha256:3b1a0fa6182352661a64e7b7bd4fcd34814398f474adaec7a4073879f1a0fbee",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-2eb20-tar-cancelar-ni-marcar-nada-chromium/test-finished-1.png": "sha256:3b1a0fa6182352661a64e7b7bd4fcd34814398f474adaec7a4073879f1a0fbee",
+                "evidencias/FASE-2/AC-010-03.png": "sha256:3b1a0fa6182352661a64e7b7bd4fcd34814398f474adaec7a4073879f1a0fbee"
+              },
+              "sees": {
+                "texts": [],
+                "where": null,
+                "none": "ausencia de botones; lo comprueba el test sobre la pantalla"
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-2eb20-tar-cancelar-ni-marcar-nada-chromium/attachments/AC-010-03-37e5e24f93eafbc9b3c3b140392e6b96d4656d0a.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-2eb20-tar-cancelar-ni-marcar-nada-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-010-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-2eb20-tar-cancelar-ni-marcar-nada-chromium/attachments/FASE-2-REQ-F-010-AC3-AC-010-03-con-Luc-a-eleg-089014a6a7441b66449ac241139f8b5a268a28f0.webm",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-2eb20-tar-cancelar-ni-marcar-nada-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-REQ-F-010-AC3-AC-010-03-con-Luc-a-eleg.webm"
+              ]
+            },
+            {
+              "n": 4,
+              "text": "GIVEN the socio \"lucia@club.es\" WHEN she opens Historial by address THEN the user sees \"No tienes permiso para ver esta pantalla\"",
+              "scenarios": [
+                "AC-010-04"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-010 AC4 · AC-010-04 Lucía abre Historial por su dirección y ve «No tienes permiso para ver esta pantalla»",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-010 AC4 · AC-010-04 Lucía abre Historial por su dirección y ve «No tienes permiso para ver esta pantalla»",
+                  "file": "fase-2-devolucion.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-164ad-iso-para-ver-esta-pantalla»-chromium/attachments/AC-010-04-eaedec4661e6c893935317ed1597372f89cd0235.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-164ad-iso-para-ver-esta-pantalla»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-010-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-164ad-iso-para-ver-esta-pantalla»-chromium/attachments/AC-010-04-eaedec4661e6c893935317ed1597372f89cd0235.png": "sha256:86118788a00be9db40f845253368864f67b393dbefaecf50a9d81206c169a107",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-164ad-iso-para-ver-esta-pantalla»-chromium/test-finished-1.png": "sha256:86118788a00be9db40f845253368864f67b393dbefaecf50a9d81206c169a107",
+                "evidencias/FASE-2/AC-010-04.png": "sha256:86118788a00be9db40f845253368864f67b393dbefaecf50a9d81206c169a107"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No tienes permiso para ver esta pantalla",
+                    "template": false
+                  }
+                ],
+                "where": "Historial",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-164ad-iso-para-ver-esta-pantalla»-chromium/attachments/AC-010-04-eaedec4661e6c893935317ed1597372f89cd0235.png",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-164ad-iso-para-ver-esta-pantalla»-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-010-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-164ad-iso-para-ver-esta-pantalla»-chromium/attachments/FASE-2-REQ-F-010-AC4-AC-010-04-Luc-a-abre-His-f25c809988979cd9abd26bbbe21dcf18fe6869aa.webm",
+                "evidencias/FASE-2/.playwright/fase-2-devolucion-REQ-F-01-164ad-iso-para-ver-esta-pantalla»-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-REQ-F-010-AC4-AC-010-04-Luc-a-abre-His.webm"
+              ]
+            }
+          ],
+          "candidate_files": [
+            "src/domain/prestamos.js",
+            "src/domain/socios.js",
+            "src/server/http.js",
+            "src/ui/pantallas/historial.js",
+            "src/ui/router.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        }
+      ],
+      "unknown_requirements": [],
+      "tasks": [
+        "TASK-F2-001",
+        "TASK-F2-002",
+        "TASK-F2-003",
+        "TASK-F2-004",
+        "TASK-F2-005",
+        "TASK-F2-006"
+      ],
+      "candidate_files": [
+        "src/domain/prestamos.js",
+        "src/domain/socios.js",
+        "src/server/http.js",
+        "src/ui/api.js",
+        "src/ui/estilos.css",
+        "src/ui/pantallas/entregas.js",
+        "src/ui/pantallas/historial.js",
+        "src/ui/pantallas/multas.js",
+        "src/ui/router.js",
+        "src/ui/textos.js"
+      ]
+    }
+  ],
+  "uncovered": [
+    {
+      "id": "REQ-C-001",
+      "title": "Textos en español",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-002",
+      "title": "Stack",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-003",
+      "title": "Datos compartidos",
+      "priority": "Must"
+    }
+  ],
+  "fases_without_header": [],
+  "criteria_without_test": [],
+  "coverage_gaps": 3
+}

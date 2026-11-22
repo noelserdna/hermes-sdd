@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-04",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-001-04 lucia bloqueada hace 15 minutos entra con la contraseña correcta y ve Material disponible",
+ "titulo": "WF-002 AC-001-04 lucia bloqueada hace 15 minutos entra con la contraseña correcta y ve Material disponible",
+ "ve": [
+  "Material disponible"
+ ],
+ "narrado": "Entrar con correo y contraseña. En Inicio del socio se ve «Material disponible», una vez cumplido el bloqueo de quince minutos.",
+ "url": "http://127.0.0.1:40531/#/inicio",
+ "imagen": "AC-001-04.png",
+ "sha256": "sha256:5aef3fcfa4315bcc5b97369fd0318e4914229b3fe5f359543542019eb8272c7f",
+ "at": "2026-11-22T01:00:48.034Z"
+}

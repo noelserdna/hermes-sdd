@@ -1,0 +1,22 @@
+{
+  "name": "app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5173",
+    "build": "vite build",
+    "start": "vite preview --host ${HOST:-0.0.0.0} --port ${PORT:-4173} --strictPort",
+    "test": "vitest run --maxWorkers=2",
+    "test:e2e": "playwright test",
+    "lint": "eslint .",
+    "seed": "node scripts/seed.js"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.49.0",
+    "eslint": "^10.15.0",
+    "jsdom": "^31.0.1",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
+  }
+}

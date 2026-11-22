@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-REQ-F-006-AC2-AC-006-02-Casco-1-de-P.webm",
+ "test": "REQ-F-006 AC2 · AC-006-02 «Casco 1» de Pablo vuelve el 2026-12-10, con hasta el 2026-12-07, y se ve «Multa de 6 € a Pablo (3 días de retraso)»",
+ "titulo": "REQ-F-006 AC2 · AC-006-02 «Casco 1» de Pablo vuelve el 2026-12-10, con hasta el 2026-12-07, y se ve «Multa de 6 € a Pablo (3 días de retraso)»",
+ "narraciones": [
+  {
+   "t": 0.022,
+   "texto": "El encargado entra, abre Entregas y devoluciones y marca devuelto el Casco 1 de Pablo, que debía volver el 7 y llega el 10 de diciembre"
+  },
+  {
+   "t": 0.606,
+   "texto": "Marcar la devolución y poner la multa. En Entregas y devoluciones se ve «Multa de 6 € a Pablo (3 días de retraso)».",
+   "criterio": "AC-006-02"
+  }
+ ]
+}

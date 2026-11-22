@@ -1,0 +1,20 @@
+{
+ "video": "FASE-2-FASE-2-AC-008-01-REQ-F-005-AC1-con-hoy-2.webm",
+ "test": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-01 REQ-F-005 AC1 con hoy 2026-12-05 marta entrega el Piolet de Lucía y ve Entregado",
+ "titulo": "FASE-2 AC-008-01 REQ-F-005 AC1 con hoy 2026-12-05 marta entrega el Piolet de Lucía y ve Entregado",
+ "narraciones": [
+  {
+   "t": 2.224,
+   "texto": "Es el 5 de diciembre. Marta entra y abre Préstamos, donde ve el Piolet de Lucía reservado para hoy"
+  },
+  {
+   "t": 2.909,
+   "texto": "Marta pulsa Entregar sobre el Piolet de Lucía"
+  },
+  {
+   "t": 3.138,
+   "texto": "Entregar y marcar la devolución. En Préstamos se ve «Entregado»: la reserva Piolet de Lucía queda con el estado Entregado.",
+   "criterio": "AC-008-01"
+  }
+ ]
+}

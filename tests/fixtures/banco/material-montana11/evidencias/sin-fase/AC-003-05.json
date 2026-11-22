@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-003-05",
+ "test": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-003-05 REQ-F-002 AC3 marta crea otro socio con el correo pablo@club.test y ve que ya existe",
+ "titulo": "FASE-4 AC-003-05 REQ-F-002 AC3 marta crea otro socio con el correo pablo@club.test y ve que ya existe",
+ "ve": [
+  "Ya existe un socio con ese correo"
+ ],
+ "narrado": "Gestionar las cuentas de socios. En Socios se ve «Ya existe un socio con ese correo». Y la lista sigue con un solo pablo@club.test.",
+ "url": "http://127.0.0.1:44767/#/socios",
+ "imagen": "AC-003-05.png",
+ "sha256": "sha256:6142c195650c9837ae2ad172c1859fbe6d2a9c3a72ad350f50c189e073b2e234",
+ "at": "2026-11-22T06:16:36.187Z"
+}

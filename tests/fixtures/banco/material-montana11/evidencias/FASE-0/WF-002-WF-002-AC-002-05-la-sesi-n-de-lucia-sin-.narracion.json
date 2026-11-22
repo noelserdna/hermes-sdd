@@ -1,0 +1,20 @@
+{
+ "video": "WF-002-WF-002-AC-002-05-la-sesi-n-de-lucia-sin-.webm",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-002-05 la sesión de lucia sin actividad durante 30 minutos caduca y ve Sesión caducada, vuelve a entrar",
+ "titulo": "WF-002 AC-002-05 la sesión de lucia sin actividad durante 30 minutos caduca y ve Sesión caducada, vuelve a entrar",
+ "narraciones": [
+  {
+   "t": 0.9,
+   "texto": "Lucía entra y deja la web abierta sin tocar nada"
+  },
+  {
+   "t": 2.212,
+   "texto": "Pasan treinta minutos sin actividad y Lucía abre otra pantalla"
+  },
+  {
+   "t": 2.565,
+   "texto": "Entrar con correo y contraseña. En Entrar se ve «Sesión caducada, vuelve a entrar».",
+   "criterio": "AC-002-05"
+  }
+ ]
+}

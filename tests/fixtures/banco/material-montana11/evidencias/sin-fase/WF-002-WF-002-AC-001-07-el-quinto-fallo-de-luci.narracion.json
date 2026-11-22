@@ -1,0 +1,20 @@
+{
+ "video": "WF-002-WF-002-AC-001-07-el-quinto-fallo-de-luci.webm",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-001-07 el quinto fallo de lucia bloquea la cuenta y 10 minutos después la clave buena también se rechaza",
+ "titulo": "WF-002 AC-001-07 el quinto fallo de lucia bloquea la cuenta y 10 minutos después la clave buena también se rechaza",
+ "narraciones": [
+  {
+   "t": 1.121,
+   "texto": "Lucía ya ha fallado cuatro veces seguidas y falla una quinta con la contraseña equivocada"
+  },
+  {
+   "t": 1.644,
+   "texto": "Pasan diez minutos y Lucía escribe por fin su contraseña correcta"
+  },
+  {
+   "t": 2.765,
+   "texto": "Entrar con correo y contraseña. En Entrar se ve «Cuenta bloqueada durante 15 minutos». Y el sexto intento, con la contraseña correcta diez minutos después, también se rechaza.",
+   "criterio": "AC-001-07"
+  }
+ ]
+}

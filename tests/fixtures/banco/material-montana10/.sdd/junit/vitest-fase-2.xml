@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="212" failures="0" errors="0" time="14.905">
+    <testsuite name="tests/unit/stack.test.js" timestamp="2026-11-21T13:42:39.111Z" hostname="83cff3ddddcb" tests="3" failures="0" errors="0" skipped="0" time="0.003785287">
+        <testcase classname="tests/unit/stack.test.js" name="stack &gt; REQ-C-002 el proyecto es JavaScript ESM con Vite y Vitest" time="0.001652338">
+        </testcase>
+        <testcase classname="tests/unit/stack.test.js" name="stack &gt; package.json define los scripts dev, build, start, test, lint y cuentas" time="0.000549812">
+        </testcase>
+        <testcase classname="tests/unit/stack.test.js" name="stack &gt; start sirve lo construido y lee PORT y HOST sin fijar 127.0.0.1" time="0.000389309">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/domain/acceso.test.js" timestamp="2026-11-21T13:42:39.113Z" hostname="83cff3ddddcb" tests="14" failures="0" errors="0" skipped="0" time="4.329681843">
+        <testcase classname="tests/unit/domain/acceso.test.js" name="contraseñas (INV-ACC-003, SEC-001) &gt; SEC-001 se guardan solo como hash scrypt con sal por cuenta, nunca en claro" time="0.445461687">
+        </testcase>
+        <testcase classname="tests/unit/domain/acceso.test.js" name="iniciarSesion &gt; INV-ACC-008 entra con correo normalizado (RN-014) y devuelve nombre y rol, sin hash" time="0.274950488">
+        </testcase>
+        <testcase classname="tests/unit/domain/acceso.test.js" name="iniciarSesion &gt; AC-001-12 el encargado y la junta entran con su rol" time="0.287318071">
+        </testcase>
+        <testcase classname="tests/unit/domain/acceso.test.js" name="iniciarSesion &gt; INV-ACC-006 AC-001-10 correo desconocido o cuenta en Baja: el mismo error y el contador no cambia" time="0.345533502">
+        </testcase>
+        <testcase classname="tests/unit/domain/acceso.test.js" name="iniciarSesion &gt; INV-ACC-004 un fallo suma un seguido; un acierto reinicia el contador" time="0.335710377">
+        </testcase>
+        <testcase classname="tests/unit/domain/acceso.test.js" name="iniciarSesion &gt; INV-ACC-004 AC-001-11 el 5.º fallo seguido bloquea la cuenta 15 minutos" time="0.39397011">
+        </testcase>
+        <testcase classname="tests/unit/domain/acceso.test.js" name="iniciarSesion &gt; INV-ACC-004 bloqueada, la contraseña correcta da E_CUENTA_BLOQUEADA y no hay sesión" time="0.422413666">
+        </testcase>
+        <testcase classname="tests/unit/domain/acceso.test.js" name="iniciarSesion &gt; INV-ACC-004 pasado el bloqueo se entra con normalidad y el contador vuelve a 0" time="0.422904177">
+        </testcase>
+        <testcase classname="tests/unit/domain/acceso.test.js" name="iniciarSesion &gt; INV-ACC-101 un envío correcto repetido o simultáneo deja una sola sesión que vale con el identificador de cualquiera de las dos respuestas" time="0.224832245">
+        </testcase>
+        <testcase classname="tests/unit/domain/acceso.test.js" name="iniciarSesion &gt; SEC-001 la sesión se guarda con el hash del identificador, no con el valor de la cookie" time="0.233460041">
+        </testcase>
+        <testcase classname="tests/unit/domain/acceso.test.js" name="validarSesion y cerrarSesion &gt; INV-ACC-005 con SESSION_IDLE_HOURS sin actividad da E_SESION_CADUCADA; antes, renueva la actividad" time="0.227462805">
+        </testcase>
+        <testcase classname="tests/unit/domain/acceso.test.js" name="validarSesion y cerrarSesion &gt; INV-ACC-102 una sesión cerrada con Salir no vuelve a valer" time="0.230999186">
+        </testcase>
+        <testcase classname="tests/unit/domain/acceso.test.js" name="validarSesion y cerrarSesion &gt; AC-001-13 salir sin sesión, o sin ninguna cookie, da E_NO_AUTENTICADO" time="0.201516511">
+        </testcase>
+        <testcase classname="tests/unit/domain/acceso.test.js" name="validarSesion y cerrarSesion &gt; D-PA-004 una cuenta que pasa a Baja deja de poder usar la web al instante" time="0.281163833">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/domain/inventario.test.js" timestamp="2026-11-21T13:42:39.122Z" hostname="83cff3ddddcb" tests="9" failures="0" errors="0" skipped="0" time="0.011169755">
+        <testcase classname="tests/unit/domain/inventario.test.js" name="anadirUnidades (API-004-01) &gt; INV-STK-003 añadir n unidades suma n Activas numeradas por tipo; cada envío suma otras" time="0.00389499">
+        </testcase>
+        <testcase classname="tests/unit/domain/inventario.test.js" name="anadirUnidades (API-004-01) &gt; INV-ACC-008 un socio recibe E_SIN_PERMISO y no cambia nada (permiso comprobado en el caso de uso)" time="0.001089725">
+        </testcase>
+        <testcase classname="tests/unit/domain/inventario.test.js" name="anadirUnidades (API-004-01) &gt; AC-008-07 tipo inválido: E_TIPO_INVALIDO y sin cambios" time="0.00043621">
+        </testcase>
+        <testcase classname="tests/unit/domain/inventario.test.js" name="anadirUnidades (API-004-01) &gt; AC-008-08 cantidad inválida (0, negativa, decimal, texto o ausente): E_CANTIDAD_INVALIDA y sin cambios" time="0.001026724">
+        </testcase>
+        <testcase classname="tests/unit/domain/inventario.test.js" name="darDeBajaUnidad (API-004-02) &gt; INV-STK-001 una unidad libre pasa a DeBaja y deja de contar; no se reserva" time="0.000724216">
+        </testcase>
+        <testcase classname="tests/unit/domain/inventario.test.js" name="darDeBajaUnidad (API-004-02) &gt; INV-STK-002 una unidad Prestada no se da de baja y sigue Activa" time="0.000795218">
+        </testcase>
+        <testcase classname="tests/unit/domain/inventario.test.js" name="darDeBajaUnidad (API-004-02) &gt; INV-STK-001 repetir la baja no cambia nada" time="0.000481211">
+        </testcase>
+        <testcase classname="tests/unit/domain/inventario.test.js" name="darDeBajaUnidad (API-004-02) &gt; AC-008-09 una unidad que no existe: E_UNIDAD_NO_ENCONTRADA y sin cambios" time="0.000392409">
+        </testcase>
+        <testcase classname="tests/unit/domain/inventario.test.js" name="listarInventario (API-004-03) &gt; lista por tipo solo los que tienen unidades, en el orden de los tipos, sin cambiar nada" time="0.000604613">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/domain/permisos.test.js" timestamp="2026-11-21T13:42:39.125Z" hostname="83cff3ddddcb" tests="3" failures="0" errors="0" skipped="0" time="0.003715985">
+        <testcase classname="tests/unit/domain/permisos.test.js" name="permisos &gt; PERMISSIONS-MATRIX Socio no puede anadirUnidades; Encargado sí; Junta solo lectura" time="0.001608437">
+        </testcase>
+        <testcase classname="tests/unit/domain/permisos.test.js" name="permisos &gt; PERMISSIONS-MATRIX el socio reserva y el encargado no reserva ni cancela reservas" time="0.000478211">
+        </testcase>
+        <testcase classname="tests/unit/domain/permisos.test.js" name="permisos &gt; PERMISSIONS-MATRIX todos los roles entran y salen; un rol o una operación desconocidos no pueden nada" time="0.000361508">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/domain/prestamos-cierre.test.js" timestamp="2026-11-21T13:42:39.126Z" hostname="83cff3ddddcb" tests="8" failures="0" errors="0" skipped="0" time="0.01136436">
+        <testcase classname="tests/unit/domain/prestamos-cierre.test.js" name="devolverPrestamo (API-003-02, INV-LOA-003, INV-LOA-004, RN-009) &gt; INV-LOA-004 devuelta el día hasta (2026-12-07) pasa a Devuelta con devueltaEl y sin multa" time="0.00348658">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-cierre.test.js" name="devolverPrestamo (API-003-02, INV-LOA-003, INV-LOA-004, RN-009) &gt; INV-LOA-004 con 3 días de retraso (hasta 2026-12-07, devuelta 2026-12-10) crea una multa Pendiente de 6 € (FINE_PER_DAY_EUR × 3)" time="0.000945922">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-cierre.test.js" name="devolverPrestamo (API-003-02, INV-LOA-003, INV-LOA-004, RN-009) &gt; INV-LOA-004 con 1 día de retraso (hasta 2026-12-07, devuelta 2026-12-08) la multa es de 2 € y el socio la ve en sus reservas" time="0.000820219">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-cierre.test.js" name="devolverPrestamo (API-003-02, INV-LOA-003, INV-LOA-004, RN-009) &gt; INV-LOA-003 repetir la devolución de una Devuelta no cambia nada ni duplica la multa de 6 €" time="0.001268429">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-cierre.test.js" name="devolverPrestamo (API-003-02, INV-LOA-003, INV-LOA-004, RN-009) &gt; INV-LOA-003 una reserva Reservada, Cancelada o No recogida da E_RESERVA_NO_PRESTADA «Esa reserva no está prestada» y no crea multa" time="0.000998423">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-cierre.test.js" name="devolverPrestamo (API-003-02, INV-LOA-003, INV-LOA-004, RN-009) &gt; AC-006-06 una reserva que no existe da E_RESERVA_NO_ENCONTRADA y no cambia nada" time="0.000500912">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-cierre.test.js" name="devolverPrestamo (API-003-02, INV-LOA-003, INV-LOA-004, RN-009) &gt; INV-ACC-008 un socio no puede devolver: E_SIN_PERMISO y nada cambia" time="0.000500812">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-cierre.test.js" name="devolverPrestamo (API-003-02, INV-LOA-003, INV-LOA-004, RN-009) &gt; INV-LOA-004 devolución y multa son una sola transacción: si el almacén falla al escribir no queda devolución sin multa" time="0.001550136">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/domain/prestamos-historial.test.js" timestamp="2026-11-21T13:42:39.128Z" hostname="83cff3ddddcb" tests="5" failures="0" errors="0" skipped="0" time="0.006790555">
+        <testcase classname="tests/unit/domain/prestamos-historial.test.js" name="consultarHistorial (API-003-06, INV-LOA-402, RN-012) &gt; INV-LOA-402 la junta ve los préstamos de Lucía (los más recientes primero, la vencida como «No recogida») y su multa de 2 € Pagada, sin hash ni correo" time="0.003021169">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-historial.test.js" name="consultarHistorial (API-003-06, INV-LOA-402, RN-012) &gt; AC-010-05 el encargado ve el mismo historial de Lucía y no cambia nada (solo lectura)" time="0.000774218">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-historial.test.js" name="consultarHistorial (API-003-06, INV-LOA-402, RN-012) &gt; INV-LOA-402 un socio sin préstamos ni multas (Pablo) devuelve listas vacías" time="0.000463911">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-historial.test.js" name="consultarHistorial (API-003-06, INV-LOA-402, RN-012) &gt; INV-ACC-008 un socio no puede consultar ningún historial, ni el suyo: E_SIN_PERMISO" time="0.000470811">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-historial.test.js" name="consultarHistorial (API-003-06, INV-LOA-402, RN-012) &gt; AC-010-06 un socio que no existe (ni una cuenta que no es socio) da E_SOCIO_NO_ENCONTRADO «El socio elegido no existe»" time="0.000778618">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/domain/prestamos-listado.test.js" timestamp="2026-11-21T13:42:39.131Z" hostname="83cff3ddddcb" tests="8" failures="0" errors="0" skipped="0" time="0.009398615">
+        <testcase classname="tests/unit/domain/prestamos-listado.test.js" name="consultarEntregasYDevoluciones (API-003-05, RN-009, RN-022, INV-LOA-401) &gt; RN-022 hoy 2026-12-07: vuelve hoy lo Prestado hasta hoy y prestado lo que vence hoy o después" time="0.003357277">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-listado.test.js" name="consultarEntregasYDevoluciones (API-003-05, RN-009, RN-022, INV-LOA-401) &gt; RN-009 lo Prestado con hasta anterior a hoy va con retraso en días naturales (2026-12-05 → hoy 2026-12-07 = 2 días) y no como prestado" time="0.000842019">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-listado.test.js" name="consultarEntregasYDevoluciones (API-003-05, RN-009, RN-022, INV-LOA-401) &gt; RN-022 «Entregar hoy»: Reservada con desde igual o anterior a hoy y hasta igual o posterior; con las unidades libres del tipo para elegir" time="0.001062524">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-listado.test.js" name="consultarEntregasYDevoluciones (API-003-05, RN-009, RN-022, INV-LOA-401) &gt; AC-009-07 una Reservada con hasta 2026-12-06 no figura en «Entregar hoy» ni como prestada el 2026-12-07 y sigue sin cambios en el almacén" time="0.000812619">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-listado.test.js" name="consultarEntregasYDevoluciones (API-003-05, RN-009, RN-022, INV-LOA-401) &gt; RN-008 las No recogidas recientes se listan aparte con «material · socio» (la persistida y la derivada); las de hace más de una semana no" time="0.000453311">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-listado.test.js" name="consultarEntregasYDevoluciones (API-003-05, RN-009, RN-022, INV-LOA-401) &gt; INV-LOA-401 nada prestado: todas las listas vacías" time="0.000357108">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-listado.test.js" name="consultarEntregasYDevoluciones (API-003-05, RN-009, RN-022, INV-LOA-401) &gt; INV-LOA-401 la junta consulta lo mismo en solo lectura, sin las unidades para elegir" time="0.000610514">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-listado.test.js" name="consultarEntregasYDevoluciones (API-003-05, RN-009, RN-022, INV-LOA-401) &gt; AC-009-06 un socio recibe E_SIN_PERMISO («No tienes permiso para ver esta pantalla»)" time="0.000488211">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/domain/prestamos-pago.test.js" timestamp="2026-11-21T13:42:39.134Z" hostname="83cff3ddddcb" tests="7" failures="0" errors="0" skipped="0" time="0.014304428">
+        <testcase classname="tests/unit/domain/prestamos-pago.test.js" name="pagarMulta (API-003-03, INV-LOA-005, INV-RES-005) &gt; INV-RES-005 pagar la multa de 6 € de Pablo la deja Pagada con la fecha de hoy (2026-12-10) y le permite reservar" time="0.00526692">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-pago.test.js" name="pagarMulta (API-003-03, INV-LOA-005, INV-RES-005) &gt; INV-RES-005 con otra multa Pendiente (2 € y 4 €) pagar la de 2 € deja a Lucía bloqueada y su multa de 4 € a la vista" time="0.002448656">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-pago.test.js" name="pagarMulta (API-003-03, INV-LOA-005, INV-RES-005) &gt; INV-LOA-005 pagar otra vez una multa Pagada no cambia nada: conserva su fecha de pago" time="0.001104825">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-pago.test.js" name="pagarMulta (API-003-03, INV-LOA-005, INV-RES-005) &gt; INV-ACC-008 un socio y la junta no pueden pagar: E_SIN_PERMISO y la multa sigue Pendiente" time="0.001226428">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-pago.test.js" name="pagarMulta (API-003-03, INV-LOA-005, INV-RES-005) &gt; AC-007-05 una multa que no existe da E_MULTA_NO_ENCONTRADA y no cambia ninguna" time="0.000689916">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-pago.test.js" name="listarMultas (API-003-04) y la multa en Mis reservas &gt; lista todas las multas con el nombre del socio, sin cambiar nada; solo el encargado" time="0.00131773">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos-pago.test.js" name="listarMultas (API-003-04) y la multa en Mis reservas &gt; INV-ACC-009 listarMisReservas de Lucía devuelve su multa Pendiente de 6 € en `multas` y no la de Pablo" time="0.00043911">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/domain/prestamos.test.js" timestamp="2026-11-21T13:42:39.138Z" hostname="83cff3ddddcb" tests="9" failures="0" errors="0" skipped="0" time="0.011575265">
+        <testcase classname="tests/unit/domain/prestamos.test.js" name="entregarReserva (API-003-01, INV-LOA-001, INV-LOA-002, INV-LOA-301, RN-020) &gt; INV-LOA-002 el encargado entrega con la unidad «Piolet 2» (Lucía, hoy 2026-12-05): la reserva pasa a Prestada con esa unidad" time="0.00348538">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos.test.js" name="entregarReserva (API-003-01, INV-LOA-001, INV-LOA-002, INV-LOA-301, RN-020) &gt; INV-LOA-002 sin unidad indicada se asigna la primera Activa libre del tipo (salta la de baja y la prestada)" time="0.000721617">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos.test.js" name="entregarReserva (API-003-01, INV-LOA-001, INV-LOA-002, INV-LOA-301, RN-020) &gt; INV-LOA-301 repetir la entrega devuelve la misma Prestada y no asigna otra unidad (ni con otra unidad pedida)" time="0.000671316">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos.test.js" name="entregarReserva (API-003-01, INV-LOA-001, INV-LOA-002, INV-LOA-301, RN-020) &gt; INV-LOA-001 antes de desde (hoy 2026-12-04, desde 2026-12-05) da E_ENTREGA_ANTICIPADA y sigue Reservada" time="0.000687916">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos.test.js" name="entregarReserva (API-003-01, INV-LOA-001, INV-LOA-002, INV-LOA-301, RN-020) &gt; AC-005-05 una reserva que no existe da E_RESERVA_NO_ENCONTRADA y no cambia nada" time="0.000719217">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos.test.js" name="entregarReserva (API-003-01, INV-LOA-001, INV-LOA-002, INV-LOA-301, RN-020) &gt; AC-005-06 una Cancelada, Devuelta o No recogida (también la derivada) da E_RESERVA_NO_ENTREGABLE y sigue como estaba" time="0.000963922">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos.test.js" name="entregarReserva (API-003-01, INV-LOA-001, INV-LOA-002, INV-LOA-301, RN-020) &gt; AC-005-07 una unidad ocupada, de baja, de otro tipo o inexistente da E_UNIDAD_NO_DISPONIBLE y la reserva sigue Reservada" time="0.000904121">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos.test.js" name="entregarReserva (API-003-01, INV-LOA-001, INV-LOA-002, INV-LOA-301, RN-020) &gt; INV-LOA-002 dos entregas a la vez con la misma unidad: solo una se asigna, la otra da E_UNIDAD_NO_DISPONIBLE" time="0.00130153">
+        </testcase>
+        <testcase classname="tests/unit/domain/prestamos.test.js" name="entregarReserva (API-003-01, INV-LOA-001, INV-LOA-002, INV-LOA-301, RN-020) &gt; INV-ACC-008 solo el encargado entrega: un socio o la junta reciben E_SIN_PERMISO" time="0.000725817">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/domain/purga.test.js" timestamp="2026-11-21T13:42:39.141Z" hostname="83cff3ddddcb" tests="5" failures="0" errors="0" skipped="0" time="0.007701576">
+        <testcase classname="tests/unit/domain/purga.test.js" name="API-003-08 purgarRegistrosAntiguos (REQ-NF-001, INV-LOA-006) &gt; REQ-NF-001 AC2 con hoy 2026-11-21, el préstamo devuelto el 2024-11-01 desaparece y el devuelto el 2025-01-10 se queda" time="0.003452779">
+        </testcase>
+        <testcase classname="tests/unit/domain/purga.test.js" name="API-003-08 purgarRegistrosAntiguos (REQ-NF-001, INV-LOA-006) &gt; INV-LOA-006 una multa Pendiente nunca se borra; una Pagada se borra a los 2 años de su pago; el cierre de un préstamo Cancelado o No recogido es su `hasta`" time="0.000682616">
+        </testcase>
+        <testcase classname="tests/unit/domain/purga.test.js" name="API-003-08 purgarRegistrosAntiguos (REQ-NF-001, INV-LOA-006) &gt; D-PA-005 una cuenta en Baja sin reservas ni multas conservadas se borra con nombre, correo y hash; con registros conservados, o Activa, se queda" time="0.001205428">
+        </testcase>
+        <testcase classname="tests/unit/domain/purga.test.js" name="API-003-08 purgarRegistrosAntiguos (REQ-NF-001, INV-LOA-006) &gt; es idempotente: repetirla no cambia nada y devuelve 0 en todo" time="0.000470911">
+        </testcase>
+        <testcase classname="tests/unit/domain/purga.test.js" name="API-003-08 purgarRegistrosAntiguos (REQ-NF-001, INV-LOA-006) &gt; la tarea diaria la lanza después de resolverNoRecogidas: una Reservada vencida hace más de 2 años pasa a No recogida y se borra" time="0.000570813">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/domain/reloj.test.js" timestamp="2026-11-21T13:42:39.143Z" hostname="83cff3ddddcb" tests="2" failures="0" errors="0" skipped="0" time="0.003754686">
+        <testcase classname="tests/unit/domain/reloj.test.js" name="reloj &gt; ADR-001 reloj.hoy() devuelve la fecha natural Europe/Madrid" time="0.001908044">
+        </testcase>
+        <testcase classname="tests/unit/domain/reloj.test.js" name="reloj &gt; ADR-001 con CLOCK_FIXED el instante no avanza y se puede fijar con hora" time="0.000511512">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/domain/reservas-ciclo.test.js" timestamp="2026-11-21T13:42:39.144Z" hostname="83cff3ddddcb" tests="13" failures="0" errors="0" skipped="0" time="0.013789715">
+        <testcase classname="tests/unit/domain/reservas-ciclo.test.js" name="derivación «No recogida» (RN-008, INV-RES-007, API-003-07 al leer) &gt; INV-RES-007 una Reservada con hoy posterior a hasta se lee como «No recogida» sin tocar el original" time="0.001932044">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas-ciclo.test.js" name="derivación «No recogida» (RN-008, INV-RES-007, API-003-07 al leer) &gt; INV-RES-007 el día hasta todavía es Reservada; Prestada, Cancelada y Devuelta no cambian aunque hasta haya pasado" time="0.001081425">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas-ciclo.test.js" name="derivación «No recogida» (RN-008, INV-RES-007, API-003-07 al leer) &gt; INV-RES-007 listarMisReservas muestra «No recogida» y no marca la reserva como cancelable" time="0.001277429">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas-ciclo.test.js" name="cancelarReserva (API-002-03, INV-RES-006, RN-019) &gt; INV-RES-006 una Reservada se cancela hasta el día antes de desde (Lucía, 2026-12-05, hoy 2026-12-04) y devuelve la Cancelada" time="0.000927721">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas-ciclo.test.js" name="cancelarReserva (API-002-03, INV-RES-006, RN-019) &gt; INV-RES-006 cancelar libera sus unidades: con una sola tienda, otro socio puede reservarla esos días" time="0.00173324">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas-ciclo.test.js" name="cancelarReserva (API-002-03, INV-RES-006, RN-019) &gt; INV-RES-008 cancelar una reserva ya Cancelada la devuelve igual, una sola vez y sin otro cambio" time="0.001268729">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas-ciclo.test.js" name="cancelarReserva (API-002-03, INV-RES-006, RN-019) &gt; INV-RES-006 el mismo día de desde (hoy 2026-12-05) o después se rechaza con E_CANCELACION_TARDIA y sigue Reservada" time="0.000569913">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas-ciclo.test.js" name="cancelarReserva (API-002-03, INV-RES-006, RN-019) &gt; INV-RES-006 solo se cancela una Reservada: una Prestada o una No recogida derivada dan E_CANCELACION_TARDIA" time="0.000576213">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas-ciclo.test.js" name="cancelarReserva (API-002-03, INV-RES-006, RN-019) &gt; RN-019 con una multa Pendiente de 4 € el socio sigue pudiendo cancelar" time="0.000471911">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas-ciclo.test.js" name="cancelarReserva (API-002-03, INV-RES-006, RN-019) &gt; INV-ACC-009 una reserva de Lucía cancelada por Pablo da E_SIN_PERMISO_CANCELAR y sigue Reservada; la propiedad se comprueba antes que el estado" time="0.000522812">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas-ciclo.test.js" name="cancelarReserva (API-002-03, INV-RES-006, RN-019) &gt; AC-004-08 una reserva que no existe da E_RESERVA_NO_ENCONTRADA y no cambia nada" time="0.000673915">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas-ciclo.test.js" name="cancelarReserva (API-002-03, INV-RES-006, RN-019) &gt; INV-ACC-008 el encargado no puede cancelar (E_SIN_PERMISO)" time="0.000283606">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas-ciclo.test.js" name="listarMisReservas completa (API-002-02, INV-ACC-009) &gt; INV-ACC-009 devuelve solo las reservas y multas propias; cancelable solo en las Reservadas" time="0.000767218">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/domain/reservas.test.js" timestamp="2026-11-21T13:42:39.150Z" hostname="83cff3ddddcb" tests="19" failures="0" errors="0" skipped="0" time="0.018497323">
+        <testcase classname="tests/unit/domain/reservas.test.js" name="reservarMaterial: crear (INV-RES-004, INV-RES-008) &gt; INV-RES-004 con unidades libres todos los días se crea la reserva Reservada del socio" time="0.004510203">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas.test.js" name="reservarMaterial: crear (INV-RES-004, INV-RES-008) &gt; INV-RES-008 repetir la misma reserva devuelve la existente y no duplica" time="0.000737116">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas.test.js" name="reservarMaterial: crear (INV-RES-004, INV-RES-008) &gt; INV-RES-004 un día sin unidades libres rechaza con E_SIN_UNIDADES_LIBRES y no crea nada" time="0.000963122">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas.test.js" name="reservarMaterial: crear (INV-RES-004, INV-RES-008) &gt; INV-RES-004 las unidades ocupadas que no coinciden en los mismos días no impiden reservar" time="0.000677416">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas.test.js" name="reservarMaterial: crear (INV-RES-004, INV-RES-008) &gt; INV-RES-004 RN-018 dos reservas a la vez por la última unidad: gana una sola" time="0.000777818">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas.test.js" name="reservarMaterial: crear (INV-RES-004, INV-RES-008) &gt; INV-STK-001 las unidades DeBaja no cuentan como libres" time="0.000571113">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas.test.js" name="reservarMaterial: crear (INV-RES-004, INV-RES-008) &gt; INV-RES-007 una Reservada con hoy posterior a hasta es No recogida y no ocupa unidades; una Prestada sí" time="0.000536413">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas.test.js" name="reservarMaterial: validaciones en el orden de RN-017 &gt; INV-RES-002 desde anterior a hoy: E_FECHA_PASADA; hoy mismo vale" time="0.000516812">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas.test.js" name="reservarMaterial: validaciones en el orden de RN-017 &gt; INV-RES-003 hasta anterior a desde: E_FECHAS_INVERTIDAS" time="0.000515412">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas.test.js" name="reservarMaterial: validaciones en el orden de RN-017 &gt; INV-RES-001 más de 14 días: E_RESERVA_MUY_LARGA; exactamente 14 vale" time="0.000564213">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas.test.js" name="reservarMaterial: validaciones en el orden de RN-017 &gt; RN-017 el orden: pasado antes que invertidas, invertidas antes que duración, y las fechas antes que la multa" time="0.000648114">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas.test.js" name="reservarMaterial: validaciones en el orden de RN-017 &gt; INV-RES-002 una fecha que no es AAAA-MM-DD no se acepta como reserva y no cambia nada" time="0.000952522">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas.test.js" name="reservarMaterial: validaciones en el orden de RN-017 &gt; INV-RES-005 con una multa Pendiente de 4 € no se reserva" time="0.000549213">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas.test.js" name="reservarMaterial: validaciones en el orden de RN-017 &gt; INV-RES-005 la multa de 2 € de Pablo da su importe; con la multa Pagada vuelve a poder reservar" time="0.000671916">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas.test.js" name="reservarMaterial: validaciones en el orden de RN-017 &gt; INV-RES-005 una multa Pendiente de otro socio no impide reservar" time="0.00044681">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas.test.js" name="reservarMaterial: validaciones en el orden de RN-017 &gt; AC-003-11 un rol sin permiso (encargado o junta) recibe E_SIN_PERMISO" time="0.000647815">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas.test.js" name="reservarMaterial: validaciones en el orden de RN-017 &gt; AC-003-12 un tipo inválido recibe E_TIPO_INVALIDO, antes que las fechas" time="0.000504912">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas.test.js" name="listarMisReservas (API-002-02 mínima) &gt; INV-ACC-009 listarMisReservas devuelve solo las reservas del socio, con { reservas, multas: [] }" time="0.001112226">
+        </testcase>
+        <testcase classname="tests/unit/domain/reservas.test.js" name="listarMisReservas (API-002-02 mínima) &gt; INV-ACC-008 solo el socio la usa: el encargado recibe E_SIN_PERMISO" time="0.000340208">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/domain/socios-selector.test.js" timestamp="2026-11-21T13:42:39.159Z" hostname="83cff3ddddcb" tests="1" failures="0" errors="0" skipped="0" time="0.006183441">
+        <testcase classname="tests/unit/domain/socios-selector.test.js" name="listarSocios como selector de Historial (API-001-06, RN-023) &gt; RN-023 el encargado y la junta reciben solo los socios con id, nombre y estado, sin correo ni hash; un socio no puede" time="0.004674106">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/domain/socios.test.js" timestamp="2026-11-21T13:42:39.159Z" hostname="83cff3ddddcb" tests="19" failures="0" errors="0" skipped="0" time="3.613901859">
+        <testcase classname="tests/unit/domain/socios.test.js" name="crearSocio (API-001-03, UC-002) &gt; el encargado crea a «Marta Ruiz» con «Glaciar2026»: cuenta Activa con rol socio, aparece en la lista con su correo y Marta puede entrar" time="0.227639806">
+        </testcase>
+        <testcase classname="tests/unit/domain/socios.test.js" name="crearSocio (API-001-03, UC-002) &gt; con «marta@club.es» ya existente, otra alta con ese correo da E_CORREO_DUPLICADO y la lista mantiene un solo «Marta Ruiz»" time="0.12070946">
+        </testcase>
+        <testcase classname="tests/unit/domain/socios.test.js" name="crearSocio (API-001-03, UC-002) &gt; con la contraseña «corta» (5 caracteres) da E_CONTRASENA_CORTA y no se crea cuenta" time="0.07568473">
+        </testcase>
+        <testcase classname="tests/unit/domain/socios.test.js" name="crearSocio (API-001-03, UC-002) &gt; AC-002-12 un nombre vacío o el correo «marta» dan E_DATOS_SOCIO_INVALIDOS y no se crea cuenta" time="0.080321737">
+        </testcase>
+        <testcase classname="tests/unit/domain/socios.test.js" name="crearSocio (API-001-03, UC-002) &gt; un socio y la junta reciben E_SIN_PERMISO y no se crea nada; ninguna operación crea cuentas de encargado o junta (D-PA-003)" time="0.129255555">
+        </testcase>
+        <testcase classname="tests/unit/domain/socios.test.js" name="crearSocio (API-001-03, UC-002) &gt; AC-002-09 dos altas a la vez con «marta@club.es»: una crea la cuenta y la otra da E_CORREO_DUPLICADO" time="0.156726685">
+        </testcase>
+        <testcase classname="tests/unit/domain/socios.test.js" name="crearSocio (API-001-03, UC-002) &gt; REQ-NF-001 AC1 con Marta creada con «Glaciar2026», el almacén guardado y las respuestas no contienen «Glaciar2026»" time="0.129789168">
+        </testcase>
+        <testcase classname="tests/unit/domain/socios.test.js" name="listarSocios (API-001-06) &gt; el detalle con correo es solo del encargado: la junta y el socio reciben E_SIN_PERMISO; sin detalle sigue el selector sin correo" time="0.113155788">
+        </testcase>
+        <testcase classname="tests/unit/domain/socios.test.js" name="darDeBajaSocio (API-001-04, INV-ACC-006, INV-ACC-007) &gt; «pablo@club.es» sin reserva en curso ni multa pendiente pasa a «Baja» y no puede entrar" time="0.214142598">
+        </testcase>
+        <testcase classname="tests/unit/domain/socios.test.js" name="darDeBajaSocio (API-001-04, INV-ACC-006, INV-ACC-007) &gt; «lucia@club.es» con «Casco 2» prestado, o con una multa Pendiente, da E_BAJA_SOCIO_BLOQUEADA y su cuenta sigue Activa" time="0.153651614">
+        </testcase>
+        <testcase classname="tests/unit/domain/socios.test.js" name="darDeBajaSocio (API-001-04, INV-ACC-006, INV-ACC-007) &gt; AC-002-10 repetir la baja de «pablo@club.es» lo deja en «Baja» sin cambiar nada" time="0.179648108">
+        </testcase>
+        <testcase classname="tests/unit/domain/socios.test.js" name="darDeBajaSocio (API-001-04, INV-ACC-006, INV-ACC-007) &gt; solo el encargado da de baja, y nunca a una cuenta de encargado o junta (D-PA-003)" time="0.169419775">
+        </testcase>
+        <testcase classname="tests/unit/domain/socios.test.js" name="restablecerContrasena (API-001-05, INV-ACC-103) &gt; el encargado fija «Nieve2026» a «marta@club.es»: Marta entra con ella y la antigua «Glaciar2026» ya no vale" time="0.311445423">
+        </testcase>
+        <testcase classname="tests/unit/domain/socios.test.js" name="restablecerContrasena (API-001-05, INV-ACC-103) &gt; AC-002-08 fijar «corta» a «marta@club.es» da E_CONTRASENA_CORTA y la contraseña vigente no cambia" time="0.158028014">
+        </testcase>
+        <testcase classname="tests/unit/domain/socios.test.js" name="restablecerContrasena (API-001-05, INV-ACC-103) &gt; AC-002-11 repetir «Nieve2026» a «marta@club.es» no cambia nada y Marta sigue entrando con ella" time="0.261410979">
+        </testcase>
+        <testcase classname="tests/unit/domain/socios.test.js" name="restablecerContrasena (API-001-05, INV-ACC-103) &gt; REQ-F-002 restablecer la contraseña de «pablo@club.es» dado de baja (decisión Q-spec-auditor-001, aún sin id AC) da E_SOCIO_NO_ENCONTRADO, no cambia el hash y Pablo sigue sin entrar" time="0.206134916">
+        </testcase>
+        <testcase classname="tests/unit/domain/socios.test.js" name="restablecerContrasena (API-001-05, INV-ACC-103) &gt; REQ-F-002 (CH-004, el criterio AC6 se prueba en e2e) con «marta@club.es» bloqueada por errores, fijarle «Nieve2026» levanta el bloqueo: entra ya con ella y la antigua no vale" time="0.498554308">
+        </testcase>
+        <testcase classname="tests/unit/domain/socios.test.js" name="restablecerContrasena (API-001-05, INV-ACC-103) &gt; REQ-F-002 (CH-006, el criterio AC6 se prueba en e2e) si alguien entra con la antigua «Glaciar2026» justo mientras el encargado fija «Nieve2026» a «marta@club.es», no se abre sesión con la antigua y Marta entra con la nueva (CH-006)" time="0.3146703">
+        </testcase>
+        <testcase classname="tests/unit/domain/socios.test.js" name="restablecerContrasena (API-001-05, INV-ACC-103) &gt; solo el encargado restablece, y solo cuentas socio: un encargado o una junta como destino da E_SOCIO_NO_ENCONTRADO (INV-ACC-103, D-PA-003)" time="0.111350948">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/domain/tareas.test.js" timestamp="2026-11-21T13:42:39.168Z" hostname="83cff3ddddcb" tests="2" failures="0" errors="0" skipped="0" time="0.004425601">
+        <testcase classname="tests/unit/domain/tareas.test.js" name="D-T-010 resolverNoRecogidas (API-003-07) &gt; D-T-010 persiste «No recogida» solo en las Reservadas con hasta anterior a hoy, devuelve contadores y no crea multas" time="0.002727163">
+        </testcase>
+        <testcase classname="tests/unit/domain/tareas.test.js" name="D-T-010 resolverNoRecogidas (API-003-07) &gt; D-PA-008 es idempotente: repetirla no cambia nada y devuelve 0" time="0.000697616">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/restricciones/datos-compartidos.test.js" timestamp="2026-11-21T13:42:39.170Z" hostname="83cff3ddddcb" tests="1" failures="0" errors="0" skipped="0" time="0.004708007">
+        <testcase classname="tests/unit/restricciones/datos-compartidos.test.js" name="restricción de datos compartidos &gt; REQ-C-003 AC1 reservas, inventario, multas y cuentas se guardan en el almacén del servidor, no en el navegador" time="0.003443479">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/restricciones/idioma.test.js" timestamp="2026-11-21T13:42:39.170Z" hostname="83cff3ddddcb" tests="1" failures="0" errors="0" skipped="0" time="0.015222148">
+        <testcase classname="tests/unit/restricciones/idioma.test.js" name="restricción de idioma &gt; REQ-C-001 AC1 los textos de la interfaz están en español: sin Error, Loading, Submit, Cancel, Login, Logout, Save ni Delete" time="0.014057521">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/restricciones/stack.test.js" timestamp="2026-11-21T13:42:39.171Z" hostname="83cff3ddddcb" tests="1" failures="0" errors="0" skipped="0" time="0.00308017">
+        <testcase classname="tests/unit/restricciones/stack.test.js" name="restricción de stack &gt; REQ-C-002 AC1 la aplicación es JavaScript (módulos ES) con Vite y Vitest" time="0.00175044">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/server/cuentas.test.js" timestamp="2026-11-21T13:42:39.172Z" hostname="83cff3ddddcb" tests="5" failures="0" errors="0" skipped="0" time="1.220828834">
+        <testcase classname="tests/unit/server/cuentas.test.js" name="D-PA-003 npm run cuentas &gt; D-PA-003 npm run cuentas crea encargado y junta y ambos entran después con su rol (AC-001-12)" time="0.314036785">
+        </testcase>
+        <testcase classname="tests/unit/server/cuentas.test.js" name="D-PA-003 npm run cuentas &gt; D-PA-003 acepta la contraseña por argumento y es idempotente: repetir no duplica las cuentas" time="0.319096301">
+        </testcase>
+        <testcase classname="tests/unit/server/cuentas.test.js" name="D-PA-003 npm run cuentas &gt; D-PA-003 quien instala puede cambiar la contraseña repitiendo el comando" time="0.365528864">
+        </testcase>
+        <testcase classname="tests/unit/server/cuentas.test.js" name="D-PA-003 npm run cuentas &gt; D-PA-003 rechaza contraseñas cortas, correos mal escritos y argumentos incompletos sin escribir nada" time="0.219854531">
+        </testcase>
+        <testcase classname="tests/unit/server/cuentas.test.js" name="D-PA-003 npm run cuentas &gt; D-PA-003 ninguna ruta de la API crea ni cambia cuentas de encargado o junta" time="0.000960022">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/server/http.test.js" timestamp="2026-11-21T13:42:39.175Z" hostname="83cff3ddddcb" tests="7" failures="0" errors="0" skipped="0" time="0.111707556">
+        <testcase classname="tests/unit/server/http.test.js" name="servidor HTTP &gt; GET /api/salud devuelve 200 { ok: true }" time="0.035477612">
+        </testcase>
+        <testcase classname="tests/unit/server/http.test.js" name="servidor HTTP &gt; lo que no es /api/ pasa al siguiente middleware (la SPA) y una ruta de API desconocida es 404" time="0.014115323">
+        </testcase>
+        <testcase classname="tests/unit/server/http.test.js" name="servidor HTTP &gt; una petición POST con Origin de otro sitio se rechaza" time="0.017731606">
+        </testcase>
+        <testcase classname="tests/unit/server/http.test.js" name="servidor HTTP &gt; un error de dominio sale como { error, mensaje } con el HTTP de su familia; E_ALMACEN_NO_DISPONIBLE sale como 503" time="0.025421681">
+        </testcase>
+        <testcase classname="tests/unit/server/http.test.js" name="servidor HTTP &gt; una línea JSON por petición en el log, sin cuerpo ni credenciales" time="0.006865857">
+        </testcase>
+        <testcase classname="tests/unit/server/http.test.js" name="servidor HTTP &gt; un cuerpo que no es JSON se rechaza con 400" time="0.004023192">
+        </testcase>
+        <testcase classname="tests/unit/server/http.test.js" name="servidor HTTP &gt; el mismo plugin se registra en server y en preview" time="0.006427347">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/server/sesiones-baja.test.js" timestamp="2026-11-21T13:42:39.178Z" hostname="83cff3ddddcb" tests="2" failures="0" errors="0" skipped="0" time="0.522358852">
+        <testcase classname="tests/unit/server/sesiones-baja.test.js" name="baja de un socio con la sesión abierta (INV-ACC-006, D-PA-004, decisión Q-spec-auditor-001) &gt; REQ-F-002 tras dar de baja a Pablo, su cookie da E_NO_AUTENTICADO en la siguiente petición y sus sesiones se borraron en la misma transacción" time="0.278109263">
+        </testcase>
+        <testcase classname="tests/unit/server/sesiones-baja.test.js" name="baja de un socio con la sesión abierta (INV-ACC-006, D-PA-004, decisión Q-spec-auditor-001) &gt; API-001-03 y API-001-06 por HTTP: el alta da 201 con el socio sin hash y la lista con detalle lleva el correo; un socio recibe 403" time="0.24301586">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/server/sesiones.test.js" timestamp="2026-11-21T13:42:39.180Z" hostname="83cff3ddddcb" tests="6" failures="0" errors="0" skipped="0" time="0.872880673">
+        <testcase classname="tests/unit/server/sesiones.test.js" name="sesiones por HTTP &gt; SEC-002 la cookie es HttpOnly y SameSite=Strict y ninguna salida lleva la contraseña ni el hash" time="0.238458956">
+        </testcase>
+        <testcase classname="tests/unit/server/sesiones.test.js" name="sesiones por HTTP &gt; E_CUENTA_BLOQUEADA sale como 423 con su mensaje" time="0.329235434">
+        </testcase>
+        <testcase classname="tests/unit/server/sesiones.test.js" name="sesiones por HTTP &gt; INV-ACC-008 AC-001-13 sin sesión, una operación protegida da E_NO_AUTENTICADO (401) y salir también" time="0.05071386">
+        </testcase>
+        <testcase classname="tests/unit/server/sesiones.test.js" name="sesiones por HTTP &gt; INV-ACC-102 Salir invalida la sesión en el servidor, no solo borra la cookie" time="0.086852687">
+        </testcase>
+        <testcase classname="tests/unit/server/sesiones.test.js" name="sesiones por HTTP &gt; INV-ACC-005 con 8 horas sin actividad la operación da E_SESION_CADUCADA (401)" time="0.081939975">
+        </testcase>
+        <testcase classname="tests/unit/server/sesiones.test.js" name="sesiones por HTTP &gt; D-PA-004 la cuenta dada de baja deja de poder usar la web en la siguiente petición" time="0.084277728">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/server/store.test.js" timestamp="2026-11-21T13:42:39.183Z" hostname="83cff3ddddcb" tests="9" failures="0" errors="0" skipped="0" time="0.047378284">
+        <testcase classname="tests/unit/server/store.test.js" name="almacén &gt; load() crea data/store.json con schemaVersion 1 y sus colecciones, en la ruta de STORE_FILE" time="0.006211942">
+        </testcase>
+        <testcase classname="tests/unit/server/store.test.js" name="almacén &gt; por defecto la ruta es STORE_FILE y, sin ella, data/store.json" time="0.000616814">
+        </testcase>
+        <testcase classname="tests/unit/server/store.test.js" name="almacén &gt; ADR-002 dos transaction concurrentes se ejecutan una tras otra (la segunda ve el resultado de la primera)" time="0.021398089">
+        </testcase>
+        <testcase classname="tests/unit/server/store.test.js" name="almacén &gt; una transaction que lanza no deja cambios" time="0.001655838">
+        </testcase>
+        <testcase classname="tests/unit/server/store.test.js" name="almacén &gt; escritura en fichero temporal + rename; un fallo inyectado devuelve E_ALMACEN_NO_DISPONIBLE y deja el fichero anterior intacto" time="0.007819578">
+        </testcase>
+        <testcase classname="tests/unit/server/store.test.js" name="almacén &gt; un fichero ilegible se informa como E_ALMACEN_NO_DISPONIBLE sin tocarlo" time="0.002010546">
+        </testcase>
+        <testcase classname="tests/unit/server/store.test.js" name="almacén &gt; vuelve a leer el fichero en cada operación (un cambio externo se ve)" time="0.004047792">
+        </testcase>
+        <testcase classname="tests/unit/server/store.test.js" name="config y errores &gt; config.js exporta cada valor del registro de valores" time="0.000521112">
+        </testcase>
+        <testcase classname="tests/unit/server/store.test.js" name="config y errores &gt; VO-010 el catálogo trae el mensaje literal de cada error" time="0.001236729">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/server/tareas-diarias.test.js" timestamp="2026-11-21T13:42:39.187Z" hostname="83cff3ddddcb" tests="3" failures="0" errors="0" skipped="0" time="0.059713567">
+        <testcase classname="tests/unit/server/tareas-diarias.test.js" name="POST /api/tareas-diarias (API-003-07) &gt; API-003-07 sin la cabecera x-cron-secret correcta responde 401 y no cambia nada" time="0.039995615">
+        </testcase>
+        <testcase classname="tests/unit/server/tareas-diarias.test.js" name="POST /api/tareas-diarias (API-003-07) &gt; API-003-07 sin CRON_SECRET configurado ninguna petición vale" time="0.010945651">
+        </testcase>
+        <testcase classname="tests/unit/server/tareas-diarias.test.js" name="POST /api/tareas-diarias (API-003-07) &gt; API-003-07 con el secreto correcto persiste las No recogidas del día del reloj de pruebas y devuelve contadores" time="0.00743627">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/ui/entrar.test.js" timestamp="2026-11-21T13:42:39.189Z" hostname="83cff3ddddcb" tests="5" failures="0" errors="0" skipped="0" time="0.745719061">
+        <testcase classname="tests/unit/ui/entrar.test.js" name="guarda de rutas y pantalla Entrar (SCR-001) &gt; abrir #/mis-reservas sin sesión lleva a #/entrar, también al volver atrás tras Salir" time="0.21938232">
+        </testcase>
+        <testcase classname="tests/unit/ui/entrar.test.js" name="guarda de rutas y pantalla Entrar (SCR-001) &gt; el formulario muestra el mensaje de la API y se queda en Entrar" time="0.108696488">
+        </testcase>
+        <testcase classname="tests/unit/ui/entrar.test.js" name="guarda de rutas y pantalla Entrar (SCR-001) &gt; al entrar bien lleva a #/mis-reservas (socio), #/inventario (encargado) o #/inicio (junta)" time="0.309068671">
+        </testcase>
+        <testcase classname="tests/unit/ui/entrar.test.js" name="guarda de rutas y pantalla Entrar (SCR-001) &gt; INV-ACC-101 un doble envío del formulario hace una sola petición (el botón queda inactivo mientras espera)" time="0.053620326">
+        </testcase>
+        <testcase classname="tests/unit/ui/entrar.test.js" name="guarda de rutas y pantalla Entrar (SCR-001) &gt; una pantalla a la que el rol no llega muestra el aviso de permiso y un enlace a su inicio" time="0.053649927">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/ui/entregas-devolver.test.js" timestamp="2026-11-21T13:42:39.192Z" hostname="83cff3ddddcb" tests="4" failures="0" errors="0" skipped="0" time="0.449439981">
+        <testcase classname="tests/unit/ui/entregas-devolver.test.js" name="acción Devolver en Entregas y devoluciones (SCR-004, UC-006) &gt; el encargado tiene un botón Devolver en cada préstamo (vuelve hoy, con retraso, prestado) y la junta ninguno" time="0.125036761">
+        </testcase>
+        <testcase classname="tests/unit/ui/entregas-devolver.test.js" name="acción Devolver en Entregas y devoluciones (SCR-004, UC-006) &gt; Devolver llama a la API con la reserva, avisa «{unidad} · {socio} · Devuelta» y, con retraso, «Multa de {importe} € a {socio} ({n} días de retraso)», y vuelve a pedir la lista" time="0.108133174">
+        </testcase>
+        <testcase classname="tests/unit/ui/entregas-devolver.test.js" name="acción Devolver en Entregas y devoluciones (SCR-004, UC-006) &gt; sin multa solo avisa «{unidad} · {socio} · Devuelta»" time="0.10621403">
+        </testcase>
+        <testcase classname="tests/unit/ui/entregas-devolver.test.js" name="acción Devolver en Entregas y devoluciones (SCR-004, UC-006) &gt; un rechazo de la API se muestra con su mensaje en la fila y el préstamo sigue en la lista" time="0.108781988">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/ui/entregas.test.js" timestamp="2026-11-21T13:42:39.194Z" hostname="83cff3ddddcb" tests="5" failures="0" errors="0" skipped="0" time="0.344427181">
+        <testcase classname="tests/unit/ui/entregas.test.js" name="pantalla Entregas y devoluciones (SCR-004, UC-005, UC-009) &gt; REQ-F-009 la ruta #/entregas existe para el encargado y la junta, no para el socio" time="0.004529003">
+        </testcase>
+        <testcase classname="tests/unit/ui/entregas.test.js" name="pantalla Entregas y devoluciones (SCR-004, UC-005, UC-009) &gt; muestra las secciones en su orden con las líneas «Entregar hoy: …», «Vuelve hoy: …», «Con retraso: … · n días», «Prestado: … · hasta …» y las No recogidas" time="0.071075726">
+        </testcase>
+        <testcase classname="tests/unit/ui/entregas.test.js" name="pantalla Entregas y devoluciones (SCR-004, UC-005, UC-009) &gt; el encargado elige la unidad entre las libres, pulsa Entregar y ve «{unidad} · {socio} · Prestada»; la lista se vuelve a pedir" time="0.107677564">
+        </testcase>
+        <testcase classname="tests/unit/ui/entregas.test.js" name="pantalla Entregas y devoluciones (SCR-004, UC-005, UC-009) &gt; un rechazo de la API se muestra con su mensaje en la fila y la reserva sigue por entregar" time="0.106292932">
+        </testcase>
+        <testcase classname="tests/unit/ui/entregas.test.js" name="pantalla Entregas y devoluciones (SCR-004, UC-005, UC-009) &gt; un fallo al cargar la lista se muestra como alerta con el mensaje de la API" time="0.053050013">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/ui/historial-material.test.js" timestamp="2026-11-21T13:42:39.196Z" hostname="83cff3ddddcb" tests="1" failures="0" errors="0" skipped="0" time="0.137631848">
+        <testcase classname="tests/unit/ui/historial-material.test.js" name="REQ-F-010 una reserva Reservada de Piolet sin unidad sale como «Piolet · 2026-12-20 a 2026-12-21 · Reservada»" time="0.135762106">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/ui/historial.test.js" timestamp="2026-11-21T13:42:39.197Z" hostname="83cff3ddddcb" tests="6" failures="0" errors="0" skipped="0" time="0.564824822">
+        <testcase classname="tests/unit/ui/historial.test.js" name="pantalla Historial (SCR-008, UC-010) &gt; la ruta #/historial existe para la junta y el encargado, no para el socio" time="0.008991306">
+        </testcase>
+        <testcase classname="tests/unit/ui/historial.test.js" name="pantalla Historial (SCR-008, UC-010) &gt; el selector «Socio» se llena con los socios; al elegir uno pide su historial por id y lista «{unidad} · {desde} a {hasta} · {estado}» y «Multa de {importe} € · {estado}»" time="0.132143324">
+        </testcase>
+        <testcase classname="tests/unit/ui/historial.test.js" name="pantalla Historial (SCR-008, UC-010) &gt; es de solo lectura: tras elegir un socio no hay más botón que «Ver historial», ni enlaces ni campos para editar" time="0.106553738">
+        </testcase>
+        <testcase classname="tests/unit/ui/historial.test.js" name="pantalla Historial (SCR-008, UC-010) &gt; un socio sin préstamos ni multas muestra «Sin préstamos ni multas» y ninguna lista" time="0.104131982">
+        </testcase>
+        <testcase classname="tests/unit/ui/historial.test.js" name="pantalla Historial (SCR-008, UC-010) &gt; un rechazo de la API (socio inexistente) sale como alerta con su mensaje, sin historial, y se puede elegir otro" time="0.156233874">
+        </testcase>
+        <testcase classname="tests/unit/ui/historial.test.js" name="pantalla Historial (SCR-008, UC-010) &gt; un fallo al cargar la lista de socios sale como alerta con el mensaje de la API" time="0.054740252">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/ui/inventario.test.js" timestamp="2026-11-21T13:42:39.199Z" hostname="83cff3ddddcb" tests="3" failures="0" errors="0" skipped="0" time="0.250722236">
+        <testcase classname="tests/unit/ui/inventario.test.js" name="pantalla Inventario (SCR-007) &gt; añadir 2 piolets: el recuento sale en el elemento de «Piolet» y el aviso dice la cantidad añadida" time="0.078073786">
+        </testcase>
+        <testcase classname="tests/unit/ui/inventario.test.js" name="pantalla Inventario (SCR-007) &gt; el botón de baja se ofrece en una unidad Activa, prestada o no, y no en una De baja; una baja pide confirmación antes de llamar a la API" time="0.061678211">
+        </testcase>
+        <testcase classname="tests/unit/ui/inventario.test.js" name="pantalla Inventario (SCR-007) &gt; los errores de la API se muestran con su mensaje" time="0.109866814">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/ui/mis-reservas-cancelar.test.js" timestamp="2026-11-21T13:42:39.200Z" hostname="83cff3ddddcb" tests="4" failures="0" errors="0" skipped="0" time="0.34798096">
+        <testcase classname="tests/unit/ui/mis-reservas-cancelar.test.js" name="pantalla Mis reservas con Cancelar y multas (SCR-002, UC-004) &gt; cada fila dice «{material} · {desde} a {hasta} · {estado}» y solo las Reservadas ofrecen Cancelar" time="0.074281699">
+        </testcase>
+        <testcase classname="tests/unit/ui/mis-reservas-cancelar.test.js" name="pantalla Mis reservas con Cancelar y multas (SCR-002, UC-004) &gt; pulsar Cancelar llama a la API con la reserva y la fila pasa a «Cancelada» sin botón" time="0.109902314">
+        </testcase>
+        <testcase classname="tests/unit/ui/mis-reservas-cancelar.test.js" name="pantalla Mis reservas con Cancelar y multas (SCR-002, UC-004) &gt; un rechazo de la API se muestra con su mensaje y la reserva sigue Reservada con su botón" time="0.107848967">
+        </testcase>
+        <testcase classname="tests/unit/ui/mis-reservas-cancelar.test.js" name="pantalla Mis reservas con Cancelar y multas (SCR-002, UC-004) &gt; las multas Pendientes salen como «Multa pendiente: {importe} €» y las pagadas no" time="0.054275441">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/ui/mis-reservas.test.js" timestamp="2026-11-21T13:42:39.202Z" hostname="83cff3ddddcb" tests="3" failures="0" errors="0" skipped="0" time="0.137430243">
+        <testcase classname="tests/unit/ui/mis-reservas.test.js" name="pantalla Mis reservas (SCR-002 mínima) &gt; muestra «Hola, {nombre}» en el elemento de saludo con el nombre de la sesión" time="0.019169839">
+        </testcase>
+        <testcase classname="tests/unit/ui/mis-reservas.test.js" name="pantalla Mis reservas (SCR-002 mínima) &gt; lista las reservas propias en filas, con el aviso de reserva creada y sin Cancelar ni multas" time="0.062745835">
+        </testcase>
+        <testcase classname="tests/unit/ui/mis-reservas.test.js" name="pantalla Mis reservas (SCR-002 mínima) &gt; sin reservas dice «No tienes reservas»" time="0.05420384">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/ui/multas.test.js" timestamp="2026-11-21T13:42:39.203Z" hostname="83cff3ddddcb" tests="4" failures="0" errors="0" skipped="0" time="0.344352377">
+        <testcase classname="tests/unit/ui/multas.test.js" name="pantalla Multas (SCR-005, UC-007) &gt; la ruta #/multas existe solo para el encargado" time="0.003382577">
+        </testcase>
+        <testcase classname="tests/unit/ui/multas.test.js" name="pantalla Multas (SCR-005, UC-007) &gt; lista cada multa como «Multa de {importe} € · {socio} · {estado}»; la Pagada con su fecha y sin botón, la Pendiente con «Marcar como pagada»" time="0.069332086">
+        </testcase>
+        <testcase classname="tests/unit/ui/multas.test.js" name="pantalla Multas (SCR-005, UC-007) &gt; Marcar como pagada llama a la API con la multa, avisa «Multa de {importe} € · {socio} · Pagada», vuelve a pedir la lista y el botón desaparece" time="0.110884336">
+        </testcase>
+        <testcase classname="tests/unit/ui/multas.test.js" name="pantalla Multas (SCR-005, UC-007) &gt; sin multas muestra «No hay multas»; un rechazo de la API sale como alerta con su mensaje" time="0.15954645">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/ui/reservar.test.js" timestamp="2026-11-21T13:42:39.204Z" hostname="83cff3ddddcb" tests="4" failures="0" errors="0" skipped="0" time="0.206204817">
+        <testcase classname="tests/unit/ui/reservar.test.js" name="pantalla Reservar (SCR-003) &gt; al reservar con éxito deja el aviso «Reserva creada: …» y lleva a #/mis-reservas" time="0.079504819">
+        </testcase>
+        <testcase classname="tests/unit/ui/reservar.test.js" name="pantalla Reservar (SCR-003) &gt; un rechazo de la API se muestra con su mensaje y no navega" time="0.060564385">
+        </testcase>
+        <testcase classname="tests/unit/ui/reservar.test.js" name="pantalla Reservar (SCR-003) &gt; el envío doble no manda dos reservas mientras la primera espera" time="0.060814091">
+        </testcase>
+        <testcase classname="tests/unit/ui/reservar.test.js" name="pantalla Reservar (SCR-003) &gt; ofrece los cinco tipos de material y las fechas como campos de fecha" time="0.004170395">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/ui/shell.test.js" timestamp="2026-11-21T13:42:39.206Z" hostname="83cff3ddddcb" tests="3" failures="0" errors="0" skipped="0" time="0.02097278">
+        <testcase classname="tests/unit/ui/shell.test.js" name="shell de la SPA &gt; REQ-C-001 los textos de la interfaz no contienen cadenas inglesas de la lista de control" time="0.015227949">
+        </testcase>
+        <testcase classname="tests/unit/ui/shell.test.js" name="shell de la SPA &gt; REQ-C-003 ningún dato de negocio en localStorage ni sessionStorage" time="0.002988468">
+        </testcase>
+        <testcase classname="tests/unit/ui/shell.test.js" name="shell de la SPA &gt; el router resuelve #/entrar, #/mis-reservas, #/reservar e #/inventario a su pantalla" time="0.001489034">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/ui/socios.test.js" timestamp="2026-11-21T13:42:39.207Z" hostname="83cff3ddddcb" tests="8" failures="0" errors="0" skipped="0" time="0.745004046">
+        <testcase classname="tests/unit/ui/socios.test.js" name="pantalla Socios (SCR-006, UC-002) &gt; la ruta #/socios existe solo para el encargado" time="0.003752286">
+        </testcase>
+        <testcase classname="tests/unit/ui/socios.test.js" name="pantalla Socios (SCR-006, UC-002) &gt; lista nombre, correo y estado de cada socio; la acción «Restablecer contraseña» y «Dar de baja» solo en las cuentas Activas" time="0.081837273">
+        </testcase>
+        <testcase classname="tests/unit/ui/socios.test.js" name="pantalla Socios (SCR-006, UC-002) &gt; tras dar de alta a «Marta Ruiz», «marta@club.es» y «Glaciar2026», la tabla Socios muestra su fila" time="0.110919238">
+        </testcase>
+        <testcase classname="tests/unit/ui/socios.test.js" name="pantalla Socios (SCR-006, UC-002) &gt; un rechazo del alta (correo duplicado) sale como alerta con su mensaje y la lista no cambia" time="0.107457559">
+        </testcase>
+        <testcase classname="tests/unit/ui/socios.test.js" name="pantalla Socios (SCR-006, UC-002) &gt; la baja de «Lucía», con una multa Pendiente, pide confirmación, muestra «No se puede dar de baja: tiene material prestado o multas pendientes» y la fila no cambia" time="0.111550553">
+        </testcase>
+        <testcase classname="tests/unit/ui/socios.test.js" name="pantalla Socios (SCR-006, UC-002) &gt; «Mantener» cancela la confirmación de baja sin llamar a la API; la baja confirmada deja a «Pablo» en «Baja» sin botones" time="0.110830136">
+        </testcase>
+        <testcase classname="tests/unit/ui/socios.test.js" name="pantalla Socios (SCR-006, UC-002) &gt; «Restablecer contraseña» despliega el campo de la fila; «Guardar» con «Nieve2026» avisa «Contraseña restablecida»" time="0.110524629">
+        </testcase>
+        <testcase classname="tests/unit/ui/socios.test.js" name="pantalla Socios (SCR-006, UC-002) &gt; un rechazo de la contraseña corta al restablecer sale como alerta y el campo sigue abierto" time="0.106567138">
+        </testcase>
+    </testsuite>
+</testsuites>

@@ -1,0 +1,120 @@
+{
+  "id": "g17952952124344",
+  "tipo": "preguntas",
+  "fase": "",
+  "tablero": "material-montana11",
+  "tarjeta": "t_431e12cb",
+  "adopcion": false,
+  "sha": "56080ba666b20c47fd4f218c440bad0adbada09f",
+  "creada": "2026-11-21T21:06:52Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana11",
+  "titulo": "Dudas antes del plan",
+  "texto": "🧩 Antes de hacer el plan de «material-montana11» hay que decidir esto (todas las dudas del diseño, juntas).\n\nAl responder, se hace el plan con tus respuestas. Si alguna pide cambiar los requisitos ya aprobados, no se reabren a mitad de camino: queda anotada para la siguiente entrega.\n\n👉 Elige en los botones Q (la recomendada ya está marcada) y pulsa ✅ Responder.\n\n❓ Antes, 4 preguntas (la recomendada ya está marcada en los botones Q):\n\n1. Cuando el encargado restablece la contraseña de un socio, ¿debe el socio cambiarla al entrar, o puede seguir con la que le dio el encargado?\n   🔧 Detalle técnico: API-001-06 restablecerContrasena: el encargado fija la contraseña nueva y por tanto la conoce; no hay obligación de cambiarla ni vía para que el socio la cambi…\n   A) Se queda igual; el encargado conoce la contraseña hasta que se vuelva a restablecer  ⭐ recomendada\n   B) El socio podrá poner su propia contraseña; es una función nueva  (📌 se anota para la siguiente entrega)\n\n2. ¿Las operaciones automáticas de multas y no recogidas las dispara solo el sistema, o también el encargado a mano?\n   🔧 Detalle técnico: API-003-03 y API-003-05 tienen actor 'sistema' pero la matriz de permisos las da al encargado y no hay fila 'sistema'.\n   A) Solo el sistema: añadir fila 'sistema' y quitarlas del encargado  ⭐ recomendada\n   B) También el encargado: cambiar el actor en los contratos y añadir E_ACCESO_NO_PERMITIDO\n\n3. ¿La junta puede cerrar su propia sesión y mantenerla activa aunque sea de solo lectura?\n   🔧 Detalle técnico: SPEC-SEC-005 dice que ninguna escritura admite la junta, pero comprobarSesion y cerrarSesion escriben y admiten a cualquier rol.\n   A) Sí: las operaciones de sesión quedan exentas de INV-SEC-002 y SPEC-SEC-005  ⭐ recomendada\n   B) No: restringir el rol de esas operaciones\n\n4. ¿Cómo se crea la primera cuenta del encargado al poner la web en marcha?\n   🔧 Detalle técnico: No hay operación para crear la primera cuenta de encargado (crearSocio exige encargado). El diseño propone un comando de semilla `npm run seed` con variables d…\n   A) Lo prepara quien instala la web, una sola vez  ⭐ recomendada\n   B) Una pantalla nueva; el primero que llegue podría crearla  (📌 se anota para la siguiente entrega)\n\n👉 Si firmas sin tocar los botones Q, esto lanzará: sin más efecto: Q1, Q2, Q3, Q4.",
+  "opciones": [
+    {
+      "verbo": "respondo",
+      "etiqueta": "✅ Responder"
+    }
+  ],
+  "demo": "",
+  "preguntas": [
+    {
+      "n": 1,
+      "id": "Q-security-auditor-001",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "req-change",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "Cuando el encargado restablece la contraseña de un socio, ¿debe el socio cambiarla al entrar, o puede seguir con la que le dio el encargado?"
+    },
+    {
+      "n": 2,
+      "id": "Q-spec-auditor-001",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "¿Las operaciones automáticas de multas y no recogidas las dispara solo el sistema, o también el encargado a mano?"
+    },
+    {
+      "n": 3,
+      "id": "Q-spec-auditor-002",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "¿La junta puede cerrar su propia sesión y mantenerla activa aunque sea de solo lectura?"
+    },
+    {
+      "n": 4,
+      "id": "Q-tech-designer-001",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "req-change",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "¿Cómo se crea la primera cuenta del encargado al poner la web en marcha?"
+    }
+  ],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [],
+    "graves": 0
+  }
+}

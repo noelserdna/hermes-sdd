@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-09",
+ "test": "REQ-F-001 AC9 · AC-001-09 WF-002 el mismo formulario correcto llega dos veces y queda una sola sesión",
+ "titulo": "REQ-F-001 AC9 · AC-001-09 WF-002 el mismo formulario correcto llega dos veces y queda una sola sesión",
+ "ve": [
+  "Hola, Lucía"
+ ],
+ "narrado": "Entrar, salir y proteger la sesión. En Mis reservas se ve «Hola, Lucía» y hay una sola sesión.",
+ "url": "http://127.0.0.1:5173/#/mis-reservas",
+ "imagen": "AC-001-09.png",
+ "sha256": "sha256:6d3027d33e70a96602d4d9c14129f977c2efe999cc0a5f322040b94d7e779fc0",
+ "at": "2026-11-21T13:45:46.128Z"
+}

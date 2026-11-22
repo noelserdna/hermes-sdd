@@ -1,0 +1,55 @@
+{
+  "id": "g1795327295722c",
+  "tipo": "mantenimiento",
+  "fase": "",
+  "tablero": "material-montana11",
+  "tarjeta": "t_1abcf26e",
+  "adopcion": false,
+  "sha": "a7da15407b0aa909a605daa4fcf88b94dd3090ab",
+  "creada": "2026-11-22T06:01:35Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana11",
+  "titulo": "Mantenimiento",
+  "texto": "🔧 La revisión periódica de «material-montana11» ha encontrado:\n\n• Los tests fallan en a7da154\n   ⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯ ⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯ RangeError: options.minThreads and options.maxThreads must not conflict Errors 1 error\n• 3 dependencia(s) con vulnerabilidades altas o críticas\n   tinypool (critical), vite (high), vitest (critical)\n• 4 dependencia(s) con una versión mayor nueva\n   eslint 9.39.5→10.15.0 jsdom 25.0.1→31.0.1 vite 6.4.6→8.3.8 vitest 2.1.9→5.1.1\n\n👉 🛠 Lanzar cambio para arreglarlo (pasará por tus puertas como cualquier cambio) · 🔕 Ignorar, explicando por qué (no se volverá a preguntar mientras no cambie).",
+  "opciones": [
+    {
+      "verbo": "cambio",
+      "etiqueta": "🛠 Lanzar cambio"
+    },
+    {
+      "verbo": "ignoro",
+      "etiqueta": "🔕 Ignorar",
+      "texto": true
+    }
+  ],
+  "demo": "",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": [
+    {
+      "clave": "tests:8bb6badb1b",
+      "titulo": "Los tests fallan en a7da154",
+      "detalle": "⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯\n⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯\nRangeError: options.minThreads and options.maxThreads must not conflict\n     Errors  1 error",
+      "propuesta": "Los tests del proyecto fallan en el commit a7da154. Encuentra la causa y arréglala sin debilitar ningún test existente."
+    },
+    {
+      "clave": "seguridad:d0de80d215",
+      "titulo": "3 dependencia(s) con vulnerabilidades altas o críticas",
+      "detalle": "tinypool (critical), vite (high), vitest (critical)",
+      "propuesta": "Actualiza estas dependencias vulnerables sin cambiar el comportamiento: tinypool (critical), vite (high), vitest (critical)."
+    },
+    {
+      "clave": "versiones:5389958bd5",
+      "titulo": "4 dependencia(s) con una versión mayor nueva",
+      "detalle": "eslint 9.39.5→10.15.0\njsdom 25.0.1→31.0.1\nvite 6.4.6→8.3.8\nvitest 2.1.9→5.1.1",
+      "propuesta": "Valora subir de versión mayor: eslint 9.39.5→10.15.0;jsdom 25.0.1→31.0.1;vite 6.4.6→8.3.8;vitest 2.1.9→5.1.1;. Hazlo solo si los tests siguen en verde sin tocarlos."
+    }
+  ],
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [],
+    "graves": 0
+  }
+}

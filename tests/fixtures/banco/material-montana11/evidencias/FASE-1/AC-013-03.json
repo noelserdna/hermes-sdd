@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-013-03",
+ "test": "FASE-1 Inventario (encargado) › FASE-1 AC-013-03 marta añade 0 unidades de Casco y ve La cantidad debe ser al menos 1",
+ "titulo": "FASE-1 AC-013-03 marta añade 0 unidades de Casco y ve La cantidad debe ser al menos 1",
+ "ve": [
+  "La cantidad debe ser al menos 1"
+ ],
+ "narrado": "Gestionar el inventario. En Inventario se ve «La cantidad debe ser al menos 1», y el recuento de Casco sigue en 0 unidades.",
+ "url": "http://127.0.0.1:34187/#/inventario",
+ "imagen": "AC-013-03.png",
+ "sha256": "sha256:cc12607f029b6b063a1198568c5e40e6484a937957a76cd9fe783ce9d40b7387",
+ "at": "2026-11-22T01:01:12.993Z"
+}

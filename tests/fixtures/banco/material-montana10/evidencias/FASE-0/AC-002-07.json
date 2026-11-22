@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-002-07",
+ "test": "REQ-F-002 AC7 · AC-002-07 Lucía abre Socios por su dirección y ve «No tienes permiso para ver esta pantalla»",
+ "titulo": "REQ-F-002 AC7 · AC-002-07 Lucía abre Socios por su dirección y ve «No tienes permiso para ver esta pantalla»",
+ "ve": [
+  "No tienes permiso para ver esta pantalla"
+ ],
+ "narrado": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «No tienes permiso para ver esta pantalla».",
+ "url": "http://127.0.0.1:5173/#/socios",
+ "imagen": "AC-002-07.png",
+ "sha256": "sha256:7adc7eac917f9e4d14b1a1656e215c29c4542540b6669f698f16e374f0b32d97",
+ "at": "2026-11-21T12:35:20.657Z"
+}

@@ -1,0 +1,35 @@
+{
+ "video": "WF-002-WF-002-Demo-FASE-0-del-acceso-al-invent.webm",
+ "test": "WF-002 Demo FASE-0: del acceso al inventario, a las reservas y a Salir",
+ "titulo": "WF-002 Demo FASE-0: del acceso al inventario, a las reservas y a Salir",
+ "narraciones": [
+  {
+   "t": 0.045,
+   "texto": "Paso 1: se abre la web sin haber entrado y lleva a Entrar"
+  },
+  {
+   "t": 0.34,
+   "texto": "Paso 2: el encargado se equivoca de contraseña cinco veces; la quinta bloquea la cuenta"
+  },
+  {
+   "t": 1.141,
+   "texto": "Paso 3: pasado el bloqueo, el encargado entra bien y añade 2 piolets; Inventario muestra 2"
+  },
+  {
+   "t": 1.642,
+   "texto": "Paso 4: Lucía entra, ve «Hola, Lucía» en Mis reservas y reserva 1 piolet del 3 al 5 de diciembre"
+  },
+  {
+   "t": 2.162,
+   "texto": "Paso 5: Pablo, desde otro navegador, reserva el piolet que queda el día 4"
+  },
+  {
+   "t": 2.762,
+   "texto": "Paso 6: se recarga la página de Lucía y su reserva sigue; el encargado, desde otro navegador, ve las unidades"
+  },
+  {
+   "t": 3.264,
+   "texto": "Paso 7: Lucía pulsa Salir y vuelve atrás: la web pide entrar de nuevo"
+  }
+ ]
+}

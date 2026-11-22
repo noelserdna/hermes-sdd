@@ -1,0 +1,20 @@
+{
+ "video": "FASE-5-FASE-5-AC-016-04-REQ-F-010-AC4-la-junta-.webm",
+ "test": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-04 REQ-F-010 AC4 la junta abre Entregar, Inventario y Reservar y ve Acceso no permitido, sin botones que cambien datos",
+ "titulo": "FASE-5 AC-016-04 REQ-F-010 AC4 la junta abre Entregar, Inventario y Reservar y ve Acceso no permitido, sin botones que cambien datos",
+ "narraciones": [
+  {
+   "t": 1.249,
+   "texto": "La junta entra y abre Historial, su única pantalla de trabajo"
+  },
+  {
+   "t": 1.898,
+   "texto": "Después intenta abrir por su dirección Entregar, Reservar e Inventario"
+  },
+  {
+   "t": 2.138,
+   "texto": "La junta consulta el historial de un socio. En Inventario se ve «Acceso no permitido», igual que en Entregar y en Reservar, y las pantallas de la junta no tienen ningún botón que cambie datos.",
+   "criterio": "AC-016-04"
+  }
+ ]
+}

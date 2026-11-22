@@ -1,0 +1,16 @@
+{
+ "video": "WF-002-WF-002-AC-001-01-lucia-entra-con-su-corr.webm",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-001-01 lucia entra con su correo y su contraseña y ve Material disponible",
+ "titulo": "WF-002 AC-001-01 lucia entra con su correo y su contraseña y ve Material disponible",
+ "narraciones": [
+  {
+   "t": 0.954,
+   "texto": "Lucía abre la web, escribe su correo y su contraseña y pulsa Entrar"
+  },
+  {
+   "t": 1.432,
+   "texto": "Entrar con correo y contraseña. En Inicio del socio se ve «Material disponible».",
+   "criterio": "AC-001-01"
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-07",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-001-07 el quinto fallo de lucia bloquea la cuenta y 10 minutos después la clave buena también se rechaza",
+ "titulo": "WF-002 AC-001-07 el quinto fallo de lucia bloquea la cuenta y 10 minutos después la clave buena también se rechaza",
+ "ve": [
+  "Cuenta bloqueada durante 15 minutos"
+ ],
+ "narrado": "Entrar con correo y contraseña. En Entrar se ve «Cuenta bloqueada durante 15 minutos». Y el sexto intento, con la contraseña correcta diez minutos después, también se rechaza.",
+ "url": "http://127.0.0.1:33865/#/entrar",
+ "imagen": "AC-001-07.png",
+ "sha256": "sha256:ac5bb1204d44cbba470ed66d3a929e7efd18406a00540752beae5e995bc93024",
+ "at": "2026-11-22T06:14:04.911Z"
+}

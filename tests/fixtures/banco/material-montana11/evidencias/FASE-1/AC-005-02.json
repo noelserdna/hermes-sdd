@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-005-02",
+ "test": "FASE-1 Reservar material (socio) › FASE-1 AC-005-02 pablo reserva Tienda del 2026-12-09 al 2026-12-10 tras una reserva hasta el 2026-12-08 y se crea",
+ "titulo": "FASE-1 AC-005-02 pablo reserva Tienda del 2026-12-09 al 2026-12-10 tras una reserva hasta el 2026-12-08 y se crea",
+ "ve": [
+  "Reserva creada: Tienda, 2026-12-09 a 2026-12-10"
+ ],
+ "narrado": "Reservar material para unas fechas. En Reservar se ve «Reserva creada: Tienda, 2026-12-09 a 2026-12-10»: los días no se solapan y la reserva se crea.",
+ "url": "http://127.0.0.1:43363/#/inicio",
+ "imagen": "AC-005-02.png",
+ "sha256": "sha256:15962084d83732077e2948802790f58910a9afb46304f82f6517ed974ae6d988",
+ "at": "2026-11-22T01:01:17.807Z"
+}

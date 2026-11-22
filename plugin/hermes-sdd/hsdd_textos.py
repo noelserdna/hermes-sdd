@@ -529,7 +529,9 @@ def narraciones_fase(repo: Path, fase: str) -> list[dict]:
             n = json.loads(f.read_text(encoding="utf-8"))
         except (OSError, ValueError):
             continue
-        frases = [str(x.get("texto") or "").strip() for x in sorted(n.get("narraciones") or [], key=lambda x: float(x.get("t") or 0))]
+        # sin la presentación que abre el vídeo: enuncia el criterio entero y Jev daría por dicha cualquier demostración
+        frases = [str(x.get("texto") or "").strip() for x in sorted(n.get("narraciones") or [], key=lambda x: float(x.get("t") or 0))
+                  if not x.get("presentacion")]
         for c in dict.fromkeys(x.get("criterio") for x in n.get("narraciones") or [] if x.get("criterio")):
             m = re.match(r"^(REQ-[A-Z]+-[0-9A-Za-z]+)-AC(\d+)$", str(c))
             if m:

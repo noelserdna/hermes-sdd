@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-005-08",
+ "test": "FASE-1 Reservar material (socio) › FASE-1 AC-005-08 pablo con una multa pendiente de 4 € pide Casco del 2026-12-05 al 2026-12-06 y ve Tienes una multa pendiente",
+ "titulo": "FASE-1 AC-005-08 pablo con una multa pendiente de 4 € pide Casco del 2026-12-05 al 2026-12-06 y ve Tienes una multa pendiente",
+ "ve": [
+  "Tienes una multa pendiente: no puedes reservar hasta pagarla"
+ ],
+ "narrado": "Reservar material para unas fechas. En Reservar se ve «Tienes una multa pendiente: no puedes reservar hasta pagarla», y no se crea ninguna reserva.",
+ "url": "http://127.0.0.1:44867/#/inicio",
+ "imagen": "AC-005-08.png",
+ "sha256": "sha256:a1a49fa8bea74fea1285af6fa5971d089f781327a3c9bb2957cf6ccbb26528f2",
+ "at": "2026-11-22T01:01:31.747Z"
+}

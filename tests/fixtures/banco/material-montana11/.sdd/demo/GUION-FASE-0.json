@@ -1,0 +1,291 @@
+{
+ "fase": "0",
+ "plan": "plan/fases/FASE-0-SKELETON.md",
+ "workflows": [
+  {
+   "id": "WF-002",
+   "titulo": "Sesión de acceso",
+   "fichero": "spec/workflows/WF-002-sesion-de-acceso.md",
+   "pasos": [
+    {
+     "n": 1,
+     "nombre": "Entrar (UC-001)",
+     "uc": "UC-001"
+    },
+    {
+     "n": 2,
+     "nombre": "Operar con sesión (UC-002)",
+     "uc": "UC-002"
+    },
+    {
+     "n": 3,
+     "nombre": "Caducidad (UC-002)",
+     "uc": "UC-002"
+    },
+    {
+     "n": 4,
+     "nombre": "Salir (UC-002)",
+     "uc": "UC-002"
+    },
+    {
+     "n": 5,
+     "nombre": "Gestionar cuentas (UC-003, UC-004)",
+     "uc": "UC-003"
+    }
+   ],
+   "navegacion": [
+    {
+     "n": 1,
+     "celdas": [
+      "Entrar",
+      "cualquiera",
+      "dirección de la web",
+      "envía correo y contraseña"
+     ]
+    },
+    {
+     "n": 2,
+     "celdas": [
+      "Inicio del socio / Inicio del encargado / Historial del socio",
+      "por rol",
+      "tras entrar",
+      "usa el menú (RN-012)"
+     ]
+    },
+    {
+     "n": 4,
+     "celdas": [
+      "Entrar",
+      "cualquiera",
+      "botón \"Salir\"",
+      "vuelve al formulario"
+     ]
+    },
+    {
+     "n": 5,
+     "celdas": [
+      "Socios",
+      "encargado",
+      "menú del Panel del encargado",
+      "crea, restablece o da de baja"
+     ]
+    }
+   ]
+  }
+ ],
+ "casos_de_uso": [
+  {
+   "id": "UC-001",
+   "titulo": "Entrar con correo y contraseña",
+   "fichero": "spec/use-cases/UC-001-entrar-con-correo.md",
+   "flujo": [
+    "Socio: envía correo y contraseña.",
+    "System: comprueba que ambos datos vienen informados.",
+    "System: rechaza si la cuenta está bloqueada, incluso con contraseña correcta (INV-ACC-004).",
+    "System: verifica contraseña y estado Activa (INV-ACC-006); si falla, suma un fallo y, al llegar a `LOGIN_MAX_FAILURES`, bloquea `LOCK_MINUTES` (INV-ACC-004, SM-004).",
+    "System: pone los fallos a 0 y abre la sesión (INV-SEC-003).",
+    "System: muestra el inicio del rol: \"Inicio del socio\"."
+   ],
+   "extensiones": [
+    {
+     "texto": "6a. Rol encargado → \"Inicio del encargado\".",
+     "criterios": [
+      "AC-001-02"
+     ]
+    },
+    {
+     "texto": "6b. Rol junta → inicio de la junta.",
+     "criterios": [
+      "AC-001-03"
+     ]
+    },
+    {
+     "texto": "3a. Bloqueo ya cumplido `LOCK_MINUTES` → sigue en 4 con fallos a 0.",
+     "criterios": [
+      "AC-001-04"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-001-01",
+    "AC-001-02",
+    "AC-001-06",
+    "AC-001-07",
+    "AC-001-04",
+    "AC-001-08"
+   ]
+  },
+  {
+   "id": "UC-002",
+   "titulo": "Mantener y cerrar la sesión",
+   "fichero": "spec/use-cases/UC-002-mantener-y-cerrar-sesion.md",
+   "flujo": [
+    "Socio: abre cualquier pantalla.",
+    "System: comprueba la sesión (API-001-03) frente a `SESSION_IDLE_MINUTES` sin actividad (INV-ACC-005).",
+    "System: renueva la última actividad y muestra la pantalla (INV-SEC-003).",
+    "Socio: pulsa \"Salir\".",
+    "System: cierra la sesión (API-001-02) y muestra el formulario Entrar."
+   ],
+   "extensiones": [
+    {
+     "texto": "5a. Volver a una pantalla de socio tras \"Salir\" → Entrar (E1).",
+     "criterios": [
+      "AC-002-02"
+     ]
+    },
+    {
+     "texto": "3a. Actividad dentro del plazo → la caducidad se cuenta desde la última actividad.",
+     "criterios": [
+      "AC-002-04"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-002-05",
+    "AC-002-01",
+    "AC-002-03"
+   ]
+  },
+  {
+   "id": "UC-003",
+   "titulo": "Crear socio y listar socios",
+   "fichero": "spec/use-cases/UC-003-crear-y-listar-socios.md",
+   "flujo": [
+    "Encargado: abre Socios.",
+    "System: lista nombre, correo y estado de cada socio (API-001-05, INV-SEC-001).",
+    "Encargado: envía nombre, correo y contraseña.",
+    "System: valida que los tres datos vienen informados.",
+    "System: valida la contraseña mínima (INV-ACC-002) y la unicidad del correo (INV-ACC-001).",
+    "System: guarda la cuenta de forma atómica (INV-SEC-003) y muestra la lista actualizada."
+   ],
+   "extensiones": [
+    {
+     "texto": "2a. Un socio dado de baja → aparece marcado \"Baja\".",
+     "criterios": [
+      "AC-003-02"
+     ]
+    }
+   ],
+   "criterios": []
+  }
+ ],
+ "criterios": [
+  {
+   "id": "AC-001-01",
+   "req": "REQ-F-001",
+   "ac": 1,
+   "uc": "UC-001",
+   "frase": "Entrar con correo y contraseña. En Inicio del socio se ve «Material disponible».",
+   "visible": true,
+   "then": "the user sees the heading \"Material disponible\"",
+   "ve": [
+    "Material disponible"
+   ],
+   "pantalla": "Inicio del socio"
+  },
+  {
+   "id": "AC-001-02",
+   "req": "REQ-F-001",
+   "ac": 2,
+   "uc": "UC-001",
+   "frase": "Entrar con correo y contraseña. En Inicio del encargado se ve «Panel del encargado».",
+   "visible": true,
+   "then": "the user sees the heading \"Panel del encargado\"",
+   "ve": [
+    "Panel del encargado"
+   ],
+   "pantalla": "Inicio del encargado"
+  },
+  {
+   "id": "AC-001-06",
+   "req": "REQ-F-001",
+   "ac": 3,
+   "uc": "UC-001",
+   "frase": "Entrar con correo y contraseña. En Entrar se ve «Correo o contraseña incorrectos».",
+   "visible": true,
+   "then": "the user sees \"Correo o contraseña incorrectos\"",
+   "ve": [
+    "Correo o contraseña incorrectos"
+   ],
+   "pantalla": "Entrar"
+  },
+  {
+   "id": "AC-001-07",
+   "req": "REQ-F-001",
+   "ac": 4,
+   "uc": "UC-001",
+   "frase": "Entrar con correo y contraseña. En Entrar se ve «Cuenta bloqueada durante 15 minutos».",
+   "visible": true,
+   "then": "the user sees \"Cuenta bloqueada durante 15 minutos\" and a 6th attempt with the correct password 10 minutes later is also rejected",
+   "ve": [
+    "Cuenta bloqueada durante 15 minutos"
+   ],
+   "pantalla": "Entrar"
+  },
+  {
+   "id": "AC-001-04",
+   "req": "REQ-F-001",
+   "ac": 5,
+   "uc": "UC-001",
+   "frase": "Entrar con correo y contraseña. En Inicio del socio se ve «Material disponible».",
+   "visible": true,
+   "then": "the user sees the heading \"Material disponible\"",
+   "ve": [
+    "Material disponible"
+   ],
+   "pantalla": "Inicio del socio"
+  },
+  {
+   "id": "AC-002-05",
+   "req": "REQ-F-001",
+   "ac": 6,
+   "uc": "UC-002",
+   "frase": "Entrar con correo y contraseña. En Entrar se ve «Sesión caducada, vuelve a entrar».",
+   "visible": true,
+   "then": "the user sees the login form with \"Sesión caducada, vuelve a entrar\"",
+   "ve": [
+    "Sesión caducada, vuelve a entrar"
+   ],
+   "pantalla": "Entrar"
+  },
+  {
+   "id": "AC-002-01",
+   "req": "REQ-F-001",
+   "ac": 7,
+   "uc": "UC-002",
+   "frase": "Entrar con correo y contraseña. En Entrar se ve «Entrar».",
+   "visible": true,
+   "then": "the user sees the login form and going back to a member screen shows the login form again",
+   "ve": [
+    "Entrar"
+   ],
+   "pantalla": "Entrar"
+  },
+  {
+   "id": "AC-002-03",
+   "req": "REQ-F-001",
+   "ac": 8,
+   "uc": "UC-002",
+   "frase": "Entrar con correo y contraseña. En Entrar se ve «Entrar».",
+   "visible": true,
+   "then": "the user sees the login form",
+   "ve": [
+    "Entrar"
+   ],
+   "pantalla": "Entrar"
+  },
+  {
+   "id": "AC-001-08",
+   "req": "REQ-F-001",
+   "ac": 9,
+   "uc": "UC-001",
+   "frase": "Entrar con correo y contraseña. En Entrar se ve «Correo o contraseña incorrectos».",
+   "visible": true,
+   "then": "the user sees \"Correo o contraseña incorrectos\"",
+   "ve": [
+    "Correo o contraseña incorrectos"
+   ],
+   "pantalla": "Entrar"
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-006-06",
+ "test": "AC-006-06 devolver una reserva que ya no existe muestra «No existe esa reserva» y no cambia nada",
+ "titulo": "AC-006-06 devolver una reserva que ya no existe muestra «No existe esa reserva» y no cambia nada",
+ "ve": [
+  "No existe esa reserva"
+ ],
+ "narrado": "Marcar la devolución y poner la multa. En Entregas y devoluciones se ve «No existe esa reserva», y no cambia nada.",
+ "url": "http://127.0.0.1:5173/#/entregas",
+ "imagen": "AC-006-06.png",
+ "sha256": "sha256:8b1778761b9fc5b1038122be993474a7465db452acea279d4f0683dbf94a5e30",
+ "at": "2026-11-21T12:40:09.737Z"
+}

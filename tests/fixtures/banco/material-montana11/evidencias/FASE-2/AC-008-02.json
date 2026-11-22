@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-008-02",
+ "test": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-02 REQ-F-005 AC4 con hoy 2026-12-06 el Piolet de Lucía sin entregar sale No recogida y su unidad queda libre",
+ "titulo": "FASE-2 AC-008-02 REQ-F-005 AC4 con hoy 2026-12-06 el Piolet de Lucía sin entregar sale No recogida y su unidad queda libre",
+ "ve": [
+  "No recogida"
+ ],
+ "narrado": "Entregar y marcar la devolución. En Préstamos se ve «No recogida»: el Piolet de Lucía ya no se puede entregar y su unidad queda libre para nuevas reservas.",
+ "url": "http://127.0.0.1:43671/#/prestamos",
+ "imagen": "AC-008-02.png",
+ "sha256": "sha256:cb9274762b8932edfaf42591698ecdff4bc13deeb385251666de77834b6a63ec",
+ "at": "2026-11-22T01:02:01.136Z"
+}

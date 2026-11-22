@@ -1,0 +1,58 @@
+{
+ "repo": "/home/andre/proyectos-sdd/material-montana10",
+ "fase": "3",
+ "sha": "0f6cf45",
+ "congelados": [
+  {
+   "commit": "19f8ba3",
+   "asunto": "fix(prestamos): el historial muestra el material de una reserva sin unidad",
+   "fichero": "tests/unit/domain/prestamos-historial.test.js",
+   "clase": "test",
+   "congelado_en": "fase-2-accepted",
+   "lineas_cambiadas": 3,
+   "debilitamiento": [],
+   "aserciones_quitadas": [],
+   "aserciones_puestas": [],
+   "autorizado": true,
+   "autorizacion": "Q-task-implementer-003: Andres Leon (Cliente), puerta g17952647286c33",
+   "grave": false
+  },
+  {
+   "commit": "6d0ebe2",
+   "asunto": "fix(ui): la multa con un dia de retraso dice «1 dia»",
+   "fichero": "tests/e2e/fase-2-devolucion.spec.js",
+   "clase": "test",
+   "congelado_en": "fase-2-accepted",
+   "lineas_cambiadas": 5,
+   "debilitamiento": [],
+   "aserciones_quitadas": [
+    "await expect(contenido(page).getByText('Multa de 2 € a Lucía (1 días de retraso)')).toBeVisible();",
+    "await expect(contenido(page).getByText('Multa de 2 € a Lucía (1 días de retraso)')).toBeVisible();"
+   ],
+   "aserciones_puestas": [
+    "await expect(contenido(page).getByText('Multa de 2 € a Lucía (1 día de retraso)')).toBeVisible();",
+    "await expect(contenido(page).getByText('Multa de 2 € a Lucía (1 día de retraso)')).toBeVisible();"
+   ],
+   "autorizado": true,
+   "autorizacion": "Q-task-implementer-002: Andres Leon (Cliente), puerta g17952647286c33",
+   "grave": false
+  }
+ ],
+ "capturas": [],
+ "coherencia": [
+  {
+   "tipo": "referencia",
+   "donde": "plan/PLAN.md",
+   "detalle": "cita lo que ya no existe: AC-002-13",
+   "grave": false
+  }
+ ],
+ "vinculos": [],
+ "lint_capturas": [],
+ "mutantes_cache": {
+  "de_cache": 0,
+  "ejecutados": 0
+ },
+ "mutantes": [],
+ "graves": 0
+}

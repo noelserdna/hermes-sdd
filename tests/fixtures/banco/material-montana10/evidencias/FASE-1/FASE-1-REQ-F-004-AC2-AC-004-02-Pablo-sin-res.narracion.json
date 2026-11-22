@@ -1,0 +1,16 @@
+{
+ "video": "FASE-1-REQ-F-004-AC2-AC-004-02-Pablo-sin-res.webm",
+ "test": "REQ-F-004 AC2 · AC-004-02 Pablo, sin reservas, abre Mis reservas y ve «No tienes reservas» y ninguna de Lucía",
+ "titulo": "REQ-F-004 AC2 · AC-004-02 Pablo, sin reservas, abre Mis reservas y ve «No tienes reservas» y ninguna de Lucía",
+ "narraciones": [
+  {
+   "t": 0.009,
+   "texto": "Pablo, que no tiene reservas, entra y abre Mis reservas; Lucía sí tiene una de Piolet"
+  },
+  {
+   "t": 0.484,
+   "texto": "Ver y cancelar mis reservas. En Mis reservas se ve «No tienes reservas», y ninguna reserva de Lucía.",
+   "criterio": "AC-004-02"
+  }
+ ]
+}

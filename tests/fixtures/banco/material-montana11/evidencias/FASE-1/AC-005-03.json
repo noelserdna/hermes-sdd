@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-005-03",
+ "test": "FASE-1 Reservar material (socio) › FASE-1 AC-005-03 lucia sin multas reserva Casco del 2026-12-05 al 2026-12-06 y se crea",
+ "titulo": "FASE-1 AC-005-03 lucia sin multas reserva Casco del 2026-12-05 al 2026-12-06 y se crea",
+ "ve": [
+  "Reserva creada: Casco, 2026-12-05 a 2026-12-06"
+ ],
+ "narrado": "Reservar material para unas fechas. En Reservar se ve «Reserva creada: Casco, 2026-12-05 a 2026-12-06»: una socia sin multas no queda bloqueada y la reserva se crea.",
+ "url": "http://127.0.0.1:43957/#/inicio",
+ "imagen": "AC-005-03.png",
+ "sha256": "sha256:d65743339fb98d4ebc9a098ce86408326c6a5f494960ac810446897c045ed1bc",
+ "at": "2026-11-22T01:01:20.114Z"
+}

@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-002-05",
+ "test": "REQ-F-002 AC5 · AC-002-05 el encargado intenta dar de baja a «Lucía», que tiene «Casco 2» prestado, y ve «No se puede dar de baja: tiene material prestado o multas pendientes»",
+ "titulo": "REQ-F-002 AC5 · AC-002-05 el encargado intenta dar de baja a «Lucía», que tiene «Casco 2» prestado, y ve «No se puede dar de baja: tiene material prestado o multas pendientes»",
+ "ve": [
+  "No se puede dar de baja: tiene material prestado o multas pendientes"
+ ],
+ "narrado": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «No se puede dar de baja: tiene material prestado o multas pendientes», y su cuenta sigue activa.",
+ "url": "http://127.0.0.1:5173/#/socios",
+ "imagen": "AC-002-05.png",
+ "sha256": "sha256:b5ac64a555f7468bd3c5debf1f7710fc98a50d436f3c203513db1ae4a1900432",
+ "at": "2026-11-21T12:35:17.545Z"
+}

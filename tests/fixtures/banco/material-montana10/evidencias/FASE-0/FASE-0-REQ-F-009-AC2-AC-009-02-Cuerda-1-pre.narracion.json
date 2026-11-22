@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-REQ-F-009-AC2-AC-009-02-Cuerda-1-pre.webm",
+ "test": "REQ-F-009 AC2 · AC-009-02 «Cuerda 1» prestada a Marta hasta el 2026-12-05 se ve «Con retraso: Cuerda 1 · Marta · 2 días» el 2026-12-07",
+ "titulo": "REQ-F-009 AC2 · AC-009-02 «Cuerda 1» prestada a Marta hasta el 2026-12-05 se ve «Con retraso: Cuerda 1 · Marta · 2 días» el 2026-12-07",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "El encargado entra y abre Entregas y devoluciones el 7 de diciembre; la Cuerda 1 de Marta debía volver el 5"
+  },
+  {
+   "t": 0.557,
+   "texto": "Ver lo prestado y lo que vuelve cada día. En Entregas y devoluciones se ve «Con retraso: Cuerda 1 · Marta · 2 días».",
+   "criterio": "AC-009-02"
+  }
+ ]
+}

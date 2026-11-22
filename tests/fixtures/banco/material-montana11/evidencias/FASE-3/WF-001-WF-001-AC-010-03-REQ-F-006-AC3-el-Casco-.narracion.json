@@ -1,0 +1,16 @@
+{
+ "video": "WF-001-WF-001-AC-010-03-REQ-F-006-AC3-el-Casco-.webm",
+ "test": "WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-010-03 REQ-F-006 AC3 el Casco de Pablo con fin 2026-12-07 devuelto el 2026-12-08 deja en Multas la multa 2,00 €",
+ "titulo": "WF-001 AC-010-03 REQ-F-006 AC3 el Casco de Pablo con fin 2026-12-07 devuelto el 2026-12-08 deja en Multas la multa 2,00 €",
+ "narraciones": [
+  {
+   "t": 3.218,
+   "texto": "Es el 8 de diciembre. Pablo devolvió su Casco con un solo día de retraso. Marta entra y abre Multas"
+  },
+  {
+   "t": 3.843,
+   "texto": "Multa por devolución tardía y bloqueo. En Multas se ve «2,00 €»: un solo día de retraso, 2 euros.",
+   "criterio": "AC-010-03"
+  }
+ ]
+}

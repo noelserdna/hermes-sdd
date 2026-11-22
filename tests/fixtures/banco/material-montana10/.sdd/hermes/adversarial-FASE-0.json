@@ -1,0 +1,1509 @@
+{
+  "$schema": "sdd-adversarial-plan-v1",
+  "evaluated_sha": "e4bdd46f74550c329cfb260797b0df2717d06171",
+  "dirty": false,
+  "generatedAt": "2026-11-21T10:51:17.985Z",
+  "scope": {
+    "fase": 0
+  },
+  "code_paths": [
+    "src"
+  ],
+  "adversarial_gate": "enforce",
+  "incremental": {
+    "since": "8853a199dcf6156c2da413451d6aa01395bbabed",
+    "baseline": ".sdd/hermes/adversarial-FASE-0.json",
+    "changed_files": [
+      "src/domain/acceso.js",
+      "src/ui/pantallas/inventario.js",
+      "tests/e2e/fase-0-skeleton.spec.js",
+      "tests/unit/domain/acceso.test.js",
+      "tests/unit/ui/inventario.test.js"
+    ],
+    "criteria": 25,
+    "recheck": 16,
+    "carried": 9
+  },
+  "fases": [
+    {
+      "fase": 0,
+      "file": "plan/fases/FASE-0-SKELETON.md",
+      "header": true,
+      "requirements": [
+        {
+          "id": "REQ-F-001",
+          "title": "Entrar, salir y proteger la sesión",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN a user submits a correo and a contraseña that match an active account THE system SHALL start a session for that user and show the screen of their role",
+          "reqHash": "sha256:2f62a4088a6f8cf79452d253f23aaf5137833d980cf1933df2a52cc35001fbcd",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN the socio \"lucia@club.es\" with contraseña \"Cumbre2026\" WHEN she submits those data in Entrar THEN the user sees \"Hola, Lucía\" in Mis reservas",
+              "scenarios": [
+                "AC-001-01"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-001 AC1 · AC-001-01 WF-002 Lucía entra y ve «Hola, Lucía» en Mis reservas",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-001 AC1 · AC-001-01 WF-002 Lucía entra y ve «Hola, Lucía» en Mis reservas",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--50c0d-Hola-Lucía»-en-Mis-reservas-chromium/attachments/AC-001-01-f8854534b8787af653888ea32daf02bc862c1931.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--50c0d-Hola-Lucía»-en-Mis-reservas-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--50c0d-Hola-Lucía»-en-Mis-reservas-chromium/attachments/AC-001-01-f8854534b8787af653888ea32daf02bc862c1931.png": "sha256:1fbaa9f9de2efa7463c19168a5f674770909f6d5081bc220e957baacb69f3348",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--50c0d-Hola-Lucía»-en-Mis-reservas-chromium/test-finished-1.png": "sha256:1fbaa9f9de2efa7463c19168a5f674770909f6d5081bc220e957baacb69f3348",
+                "evidencias/FASE-0/AC-001-01.png": "sha256:1fbaa9f9de2efa7463c19168a5f674770909f6d5081bc220e957baacb69f3348"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Hola, {nombre}",
+                    "template": true
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--50c0d-Hola-Lucía»-en-Mis-reservas-chromium/attachments/AC-001-01-f8854534b8787af653888ea32daf02bc862c1931.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--50c0d-Hola-Lucía»-en-Mis-reservas-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--50c0d-Hola-Lucía»-en-Mis-reservas-chromium/attachments/WF-002-REQ-F-001-AC1-AC-001-01-WF-002-Luc-a-e-c67ad411e7bc292ce3afb9b13b2e74ae80809f30.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--50c0d-Hola-Lucía»-en-Mis-reservas-chromium/video.webm",
+                "evidencias/FASE-0/WF-002-REQ-F-001-AC1-AC-001-01-WF-002-Luc-a-e.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/domain/acceso.js"
+              ]
+            },
+            {
+              "n": 2,
+              "text": "GIVEN the socio \"pablo@club.es\" with contraseña \"Arista2026\" WHEN he submits those data in Entrar THEN the user sees \"Hola, Pablo\" in Mis reservas",
+              "scenarios": [
+                "AC-001-02"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-001 AC2 · AC-001-02 WF-002 Pablo entra y ve «Hola, Pablo» en Mis reservas",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-001 AC2 · AC-001-02 WF-002 Pablo entra y ve «Hola, Pablo» en Mis reservas",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--bd1b2-Hola-Pablo»-en-Mis-reservas-chromium/attachments/AC-001-02-d10c7bdc28905362b1eaef4f8ce5d14eede11b3f.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--bd1b2-Hola-Pablo»-en-Mis-reservas-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--bd1b2-Hola-Pablo»-en-Mis-reservas-chromium/attachments/AC-001-02-d10c7bdc28905362b1eaef4f8ce5d14eede11b3f.png": "sha256:74d2ee807ae7d2c3a36e0b1466c891c3b93fba92a777f412c714ed41b31c1945",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--bd1b2-Hola-Pablo»-en-Mis-reservas-chromium/test-finished-1.png": "sha256:74d2ee807ae7d2c3a36e0b1466c891c3b93fba92a777f412c714ed41b31c1945",
+                "evidencias/FASE-0/AC-001-02.png": "sha256:74d2ee807ae7d2c3a36e0b1466c891c3b93fba92a777f412c714ed41b31c1945"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Hola, {nombre}",
+                    "template": true
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--bd1b2-Hola-Pablo»-en-Mis-reservas-chromium/attachments/AC-001-02-d10c7bdc28905362b1eaef4f8ce5d14eede11b3f.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--bd1b2-Hola-Pablo»-en-Mis-reservas-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--bd1b2-Hola-Pablo»-en-Mis-reservas-chromium/attachments/WF-002-REQ-F-001-AC2-AC-001-02-WF-002-Pablo-e-ef2316b8bdc04570dbf623562a2acc683d8b6c24.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--bd1b2-Hola-Pablo»-en-Mis-reservas-chromium/video.webm",
+                "evidencias/FASE-0/WF-002-REQ-F-001-AC2-AC-001-02-WF-002-Pablo-e.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/domain/acceso.js"
+              ]
+            },
+            {
+              "n": 3,
+              "text": "GIVEN \"lucia@club.es\" WHEN she submits the contraseña \"mala\" THEN the user sees \"Correo o contraseña incorrectos\" and stays in Entrar",
+              "scenarios": [
+                "AC-001-03"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-001 AC3 · AC-001-03 WF-002 con la contraseña «mala» sigue en Entrar con el error",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-001 AC3 · AC-001-03 WF-002 con la contraseña «mala» sigue en Entrar con el error",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--8b0d0-igue-en-Entrar-con-el-error-chromium/attachments/AC-001-03-f57e7d61820a22cc5c3aa9a30adf9bcc07e38115.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--8b0d0-igue-en-Entrar-con-el-error-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--8b0d0-igue-en-Entrar-con-el-error-chromium/attachments/AC-001-03-f57e7d61820a22cc5c3aa9a30adf9bcc07e38115.png": "sha256:f46a781e5b531dc02b4cc449c25d87ef14a31c1d073f52946e0c2c1a3eeb4fe5",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--8b0d0-igue-en-Entrar-con-el-error-chromium/test-finished-1.png": "sha256:74082c8e28352c29a47fb3e5a2ca9c3f1874cf6109e2281166ba6cbf6733043a",
+                "evidencias/FASE-0/AC-001-03.png": "sha256:f46a781e5b531dc02b4cc449c25d87ef14a31c1d073f52946e0c2c1a3eeb4fe5"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Correo o contraseña incorrectos",
+                    "template": false
+                  }
+                ],
+                "where": "Entrar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--8b0d0-igue-en-Entrar-con-el-error-chromium/attachments/AC-001-03-f57e7d61820a22cc5c3aa9a30adf9bcc07e38115.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--8b0d0-igue-en-Entrar-con-el-error-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--8b0d0-igue-en-Entrar-con-el-error-chromium/attachments/WF-002-REQ-F-001-AC3-AC-001-03-WF-002-con-la--223b924fe3f5b1f2574446f0cbc3d0fb41ccb6f8.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--8b0d0-igue-en-Entrar-con-el-error-chromium/video.webm",
+                "evidencias/FASE-0/WF-002-REQ-F-001-AC3-AC-001-03-WF-002-con-la-.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/domain/acceso.js"
+              ]
+            },
+            {
+              "n": 4,
+              "text": "GIVEN \"lucia@club.es\" failed 5 times in a row WHEN she submits the right contraseña within 15 minutes THEN the user sees \"Cuenta bloqueada. Inténtalo de nuevo en 15 minutos\" and no session starts",
+              "scenarios": [
+                "AC-001-04"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-001 AC4 · AC-001-04 WF-002 tras 5 fallos seguidos la cuenta queda bloqueada",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-001 AC4 · AC-001-04 WF-002 tras 5 fallos seguidos la cuenta queda bloqueada",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--00f76-s-la-cuenta-queda-bloqueada-chromium/attachments/AC-001-04-bcc464f5e5e65d2e9480d470f6d7dbc525b5071a.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--00f76-s-la-cuenta-queda-bloqueada-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--00f76-s-la-cuenta-queda-bloqueada-chromium/attachments/AC-001-04-bcc464f5e5e65d2e9480d470f6d7dbc525b5071a.png": "sha256:cfac42eb95c0f7daeb51bf084154c5176ae49f786375f0daac891c528c7e9a88",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--00f76-s-la-cuenta-queda-bloqueada-chromium/test-finished-1.png": "sha256:949060301b4b1a42f887316e0f9ecdc0f7fd1b930fdf56916a8f3bc5facb5906",
+                "evidencias/FASE-0/AC-001-04.png": "sha256:cfac42eb95c0f7daeb51bf084154c5176ae49f786375f0daac891c528c7e9a88"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Cuenta bloqueada. Inténtalo de nuevo en 15 minutos",
+                    "template": false
+                  }
+                ],
+                "where": "Entrar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--00f76-s-la-cuenta-queda-bloqueada-chromium/attachments/AC-001-04-bcc464f5e5e65d2e9480d470f6d7dbc525b5071a.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--00f76-s-la-cuenta-queda-bloqueada-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--00f76-s-la-cuenta-queda-bloqueada-chromium/attachments/WF-002-REQ-F-001-AC4-AC-001-04-WF-002-tras-5--f8045a723aeb122ac4e21cf56d8155c2a4b74a0b.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--00f76-s-la-cuenta-queda-bloqueada-chromium/video.webm",
+                "evidencias/FASE-0/WF-002-REQ-F-001-AC4-AC-001-04-WF-002-tras-5-.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/domain/acceso.js"
+              ]
+            },
+            {
+              "n": 5,
+              "text": "GIVEN \"lucia@club.es\" was blocked 15 minutes ago WHEN she submits the right contraseña THEN the user sees \"Hola, Lucía\" in Mis reservas",
+              "scenarios": [
+                "AC-001-05"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-001 AC5 · AC-001-05 WF-002 cumplido el bloqueo de 15 minutos, Lucía entra",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-001 AC5 · AC-001-05 WF-002 cumplido el bloqueo de 15 minutos, Lucía entra",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--37ceb-o-de-15-minutos-Lucía-entra-chromium/attachments/AC-001-05-94f414f78f89e035b43961aac3bc9fb7614fab54.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--37ceb-o-de-15-minutos-Lucía-entra-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-05.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--37ceb-o-de-15-minutos-Lucía-entra-chromium/attachments/AC-001-05-94f414f78f89e035b43961aac3bc9fb7614fab54.png": "sha256:597dbd63aac32a774068d9015abf63dcbe6c8692528956354f532e53c6951c68",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--37ceb-o-de-15-minutos-Lucía-entra-chromium/test-finished-1.png": "sha256:597dbd63aac32a774068d9015abf63dcbe6c8692528956354f532e53c6951c68",
+                "evidencias/FASE-0/AC-001-05.png": "sha256:597dbd63aac32a774068d9015abf63dcbe6c8692528956354f532e53c6951c68"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Hola, {nombre}",
+                    "template": true
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--37ceb-o-de-15-minutos-Lucía-entra-chromium/attachments/AC-001-05-94f414f78f89e035b43961aac3bc9fb7614fab54.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--37ceb-o-de-15-minutos-Lucía-entra-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-05.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--37ceb-o-de-15-minutos-Lucía-entra-chromium/attachments/WF-002-REQ-F-001-AC5-AC-001-05-WF-002-cumplid-64478f936ddaed59a5cda5caa8289e73f79e2ce0.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--37ceb-o-de-15-minutos-Lucía-entra-chromium/video.webm",
+                "evidencias/FASE-0/WF-002-REQ-F-001-AC5-AC-001-05-WF-002-cumplid.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/domain/acceso.js"
+              ]
+            },
+            {
+              "n": 6,
+              "text": "GIVEN a session of \"lucia@club.es\" with 8 hours without activity WHEN she opens any screen THEN the user sees the Entrar form with \"Tu sesión ha caducado\"",
+              "scenarios": [
+                "AC-001-06"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-001 AC6 · AC-001-06 WF-002 con 8 horas sin actividad la sesión caduca",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-001 AC6 · AC-001-06 WF-002 con 8 horas sin actividad la sesión caduca",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--47c48--actividad-la-sesión-caduca-chromium/attachments/AC-001-06-83cac8632a7c002ac1a676f82cc83c189bb5cdc5.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--47c48--actividad-la-sesión-caduca-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-06.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--47c48--actividad-la-sesión-caduca-chromium/attachments/AC-001-06-83cac8632a7c002ac1a676f82cc83c189bb5cdc5.png": "sha256:49173354776853fff9029d28c33e53479b62ff441d29678ed7a577eb0d2a1193",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--47c48--actividad-la-sesión-caduca-chromium/test-finished-1.png": "sha256:49173354776853fff9029d28c33e53479b62ff441d29678ed7a577eb0d2a1193",
+                "evidencias/FASE-0/AC-001-06.png": "sha256:49173354776853fff9029d28c33e53479b62ff441d29678ed7a577eb0d2a1193"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Tu sesión ha caducado",
+                    "template": false
+                  }
+                ],
+                "where": "Entrar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--47c48--actividad-la-sesión-caduca-chromium/attachments/AC-001-06-83cac8632a7c002ac1a676f82cc83c189bb5cdc5.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--47c48--actividad-la-sesión-caduca-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-06.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--47c48--actividad-la-sesión-caduca-chromium/attachments/WF-002-REQ-F-001-AC6-AC-001-06-WF-002-con-8-h-a02464b542b8e2729880b243217b358e94df3d78.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--47c48--actividad-la-sesión-caduca-chromium/video.webm",
+                "evidencias/FASE-0/WF-002-REQ-F-001-AC6-AC-001-06-WF-002-con-8-h.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/domain/acceso.js"
+              ]
+            },
+            {
+              "n": 7,
+              "text": "GIVEN \"lucia@club.es\" is inside the app WHEN she presses \"Salir\" THEN the user sees the Entrar form and going back to Mis reservas asks to enter again",
+              "scenarios": [
+                "AC-001-07"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-001 AC7 · AC-001-07 WF-002 Salir lleva a Entrar y volver atrás pide entrar",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-001 AC7 · AC-001-07 WF-002 Salir lleva a Entrar y volver atrás pide entrar",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--38425--y-volver-atrás-pide-entrar-chromium/attachments/AC-001-07-3b2a742aea99c01802e55cb58bf29baf329f8229.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--38425--y-volver-atrás-pide-entrar-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-07.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--38425--y-volver-atrás-pide-entrar-chromium/attachments/AC-001-07-3b2a742aea99c01802e55cb58bf29baf329f8229.png": "sha256:59c2301c218b6886c34ee1d7c65dcd88b6b7a99879f6d03ec89f0288ffcf4f2b",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--38425--y-volver-atrás-pide-entrar-chromium/test-finished-1.png": "sha256:59c2301c218b6886c34ee1d7c65dcd88b6b7a99879f6d03ec89f0288ffcf4f2b",
+                "evidencias/FASE-0/AC-001-07.png": "sha256:59c2301c218b6886c34ee1d7c65dcd88b6b7a99879f6d03ec89f0288ffcf4f2b"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Entrar",
+                    "template": false
+                  }
+                ],
+                "where": "Entrar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--38425--y-volver-atrás-pide-entrar-chromium/attachments/AC-001-07-3b2a742aea99c01802e55cb58bf29baf329f8229.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--38425--y-volver-atrás-pide-entrar-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-07.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--38425--y-volver-atrás-pide-entrar-chromium/attachments/WF-002-REQ-F-001-AC7-AC-001-07-WF-002-Salir-l-50fecb4526300020901a4b8541c20bd274539765.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--38425--y-volver-atrás-pide-entrar-chromium/video.webm",
+                "evidencias/FASE-0/WF-002-REQ-F-001-AC7-AC-001-07-WF-002-Salir-l.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/domain/acceso.js"
+              ]
+            },
+            {
+              "n": 8,
+              "text": "GIVEN nobody has entered WHEN the address of Mis reservas is opened THEN the user sees the Entrar form",
+              "scenarios": [
+                "AC-001-08"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-001 AC8 · AC-001-08 WF-002 sin haber entrado, abrir Mis reservas lleva a Entrar",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-001 AC8 · AC-001-08 WF-002 sin haber entrado, abrir Mis reservas lleva a Entrar",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--01016-Mis-reservas-lleva-a-Entrar-chromium/attachments/AC-001-08-d7608ab5aa7b487730c42664f99a6b7fc7fa175b.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--01016-Mis-reservas-lleva-a-Entrar-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-08.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--01016-Mis-reservas-lleva-a-Entrar-chromium/attachments/AC-001-08-d7608ab5aa7b487730c42664f99a6b7fc7fa175b.png": "sha256:63ae65fefec11c6e9745e84d1ee997875f88ccf36ce13116706e77f7071ea8ba",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--01016-Mis-reservas-lleva-a-Entrar-chromium/test-finished-1.png": "sha256:63ae65fefec11c6e9745e84d1ee997875f88ccf36ce13116706e77f7071ea8ba",
+                "evidencias/FASE-0/AC-001-08.png": "sha256:63ae65fefec11c6e9745e84d1ee997875f88ccf36ce13116706e77f7071ea8ba"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Entrar",
+                    "template": false
+                  }
+                ],
+                "where": "Entrar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--01016-Mis-reservas-lleva-a-Entrar-chromium/attachments/AC-001-08-d7608ab5aa7b487730c42664f99a6b7fc7fa175b.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--01016-Mis-reservas-lleva-a-Entrar-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-08.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--01016-Mis-reservas-lleva-a-Entrar-chromium/attachments/WF-002-REQ-F-001-AC8-AC-001-08-WF-002-sin-hab-6fa5888012bf65c76482c0cacac873d0597ae55e.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--01016-Mis-reservas-lleva-a-Entrar-chromium/video.webm",
+                "evidencias/FASE-0/WF-002-REQ-F-001-AC8-AC-001-08-WF-002-sin-hab.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/domain/acceso.js"
+              ]
+            },
+            {
+              "n": 9,
+              "text": "GIVEN \"lucia@club.es\" sends the same correct form twice (double click) WHEN both arrive THEN there is one single session and the user sees \"Hola, Lucía\"",
+              "scenarios": [
+                "AC-001-09"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-001 AC9 · AC-001-09 WF-002 el mismo formulario correcto llega dos veces y queda una sola sesión",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-001 AC9 · AC-001-09 WF-002 el mismo formulario correcto llega dos veces y queda una sola sesión",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--8a2e3-ces-y-queda-una-sola-sesión-chromium/attachments/AC-001-09-e99f3a289b641ca6eeec69203a7f4528df09aea9.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--8a2e3-ces-y-queda-una-sola-sesión-chromium/test-finished-1.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--ab434-Entrar-deja-una-sola-sesión-chromium/attachments/AC-001-09-e99f3a289b641ca6eeec69203a7f4528df09aea9.png",
+                "evidencias/FASE-0/AC-001-09.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--8a2e3-ces-y-queda-una-sola-sesión-chromium/attachments/AC-001-09-e99f3a289b641ca6eeec69203a7f4528df09aea9.png": "sha256:6d3027d33e70a96602d4d9c14129f977c2efe999cc0a5f322040b94d7e779fc0",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--8a2e3-ces-y-queda-una-sola-sesión-chromium/test-finished-1.png": "sha256:6d3027d33e70a96602d4d9c14129f977c2efe999cc0a5f322040b94d7e779fc0",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--ab434-Entrar-deja-una-sola-sesión-chromium/attachments/AC-001-09-e99f3a289b641ca6eeec69203a7f4528df09aea9.png": "sha256:c02cfaf41cdaca9698028624269ccde10b56dbb7a79a64977bf1a3ba1848804e",
+                "evidencias/FASE-0/AC-001-09.png": "sha256:6d3027d33e70a96602d4d9c14129f977c2efe999cc0a5f322040b94d7e779fc0"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Hola, {nombre}",
+                    "template": true
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--8a2e3-ces-y-queda-una-sola-sesión-chromium/attachments/AC-001-09-e99f3a289b641ca6eeec69203a7f4528df09aea9.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--8a2e3-ces-y-queda-una-sola-sesión-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-09.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--8a2e3-ces-y-queda-una-sola-sesión-chromium/attachments/WF-002-REQ-F-001-AC9-AC-001-09-WF-002-el-mism-02618e574139a9e168fc252f767c39f56310e63c.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--8a2e3-ces-y-queda-una-sola-sesión-chromium/video.webm",
+                "evidencias/FASE-0/WF-002-REQ-F-001-AC9-AC-001-09-WF-002-el-mism.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "challenge CH-002 stale",
+                "test changed: tests/e2e/fase-0-skeleton.spec.js",
+                "bound tests changed",
+                "code changed: src/domain/acceso.js",
+                "capture changed: evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--8a2e3-ces-y-queda-una-sola-sesión-chromium/attachments/AC-001-09-e99f3a289b641ca6eeec69203a7f4528df09aea9.png, evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--8a2e3-ces-y-queda-una-sola-sesión-chromium/test-finished-1.png, evidencias/FASE-0/AC-001-09.png, evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-001--ab434-Entrar-deja-una-sola-sesión-chromium/test-finished-1.png"
+              ]
+            }
+          ],
+          "candidate_files": [
+            "src/domain/acceso.js",
+            "src/server/http.js",
+            "src/server/preparar-cuentas.js",
+            "src/server/sesiones.js",
+            "src/ui/pantallas/entrar.js",
+            "src/ui/pantallas/inicio.js",
+            "src/ui/pantallas/mis-reservas.js",
+            "src/ui/pantallas/reservar.js",
+            "src/ui/router.js"
+          ],
+          "challenges_open": []
+        },
+        {
+          "id": "REQ-F-003",
+          "title": "Reservar material para unas fechas",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN a socio without multas pendientes chooses a tipo de material and dates desde–hasta THE system SHALL create the reserva if at least one unit of that tipo is free every day of the range",
+          "reqHash": "sha256:e720ec63bba01c2f8e356fc9733e2ebf0c9bebb1d1f2376307274d3dcd0b8423",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN there are 3 \"Piolet\" units and none reserved on 2026-12-05..2026-12-07 WHEN \"lucia@club.es\" reserves \"Piolet\" for those dates THEN the user sees \"Reserva creada: Piolet del 2026-12-05 al 2026-12-07\" in Mis reservas",
+              "scenarios": [
+                "AC-003-01"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-003 AC1 · AC-003-01 Lucía reserva «Piolet» del 2026-12-05 al 2026-12-07 y ve «Reserva creada…»",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-003 AC1 · AC-003-01 Lucía reserva «Piolet» del 2026-12-05 al 2026-12-07 y ve «Reserva creada…»",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--4ae46-2-07-y-ve-«Reserva-creada…»-chromium/attachments/AC-003-01-317ffceaf57a9801d2e7aa6ffd6c42bd941e20a0.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--4ae46-2-07-y-ve-«Reserva-creada…»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--4ae46-2-07-y-ve-«Reserva-creada…»-chromium/attachments/AC-003-01-317ffceaf57a9801d2e7aa6ffd6c42bd941e20a0.png": "sha256:771af98f8c8934c60626b0610ea95e058925bbc2566a76f2ea397a098a18b923",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--4ae46-2-07-y-ve-«Reserva-creada…»-chromium/test-finished-1.png": "sha256:771af98f8c8934c60626b0610ea95e058925bbc2566a76f2ea397a098a18b923",
+                "evidencias/FASE-0/AC-003-01.png": "sha256:771af98f8c8934c60626b0610ea95e058925bbc2566a76f2ea397a098a18b923"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Reserva creada: {material} del {desde} al {hasta}",
+                    "template": true
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--4ae46-2-07-y-ve-«Reserva-creada…»-chromium/attachments/AC-003-01-317ffceaf57a9801d2e7aa6ffd6c42bd941e20a0.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--4ae46-2-07-y-ve-«Reserva-creada…»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--4ae46-2-07-y-ve-«Reserva-creada…»-chromium/attachments/FASE-0-REQ-F-003-AC1-AC-003-01-Luc-a-reserva--eafdbaaebed65ff49674a294c24697592a4621e5.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--4ae46-2-07-y-ve-«Reserva-creada…»-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-REQ-F-003-AC1-AC-003-01-Luc-a-reserva-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 2,
+              "text": "GIVEN the same reserva exists WHEN the same form is submitted again THEN Mis reservas still has one reserva of \"Piolet\" for those dates",
+              "scenarios": [
+                "AC-003-02"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-003 AC2 · AC-003-02 enviar de nuevo la misma reserva de «Piolet» no la duplica",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-003 AC2 · AC-003-02 enviar de nuevo la misma reserva de «Piolet» no la duplica",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--4e81d-a-de-«Piolet»-no-la-duplica-chromium/test-finished-1.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--4e81d-a-de-«Piolet»-no-la-duplica-chromium/test-finished-1.png": "sha256:d5ff0fedb6671a9adda8f0a8bac47946ff3e0861294a69b19c3dddc9284e056d"
+              },
+              "sees": {
+                "texts": [],
+                "where": null,
+                "none": "se ve en la lista; el criterio comprueba que sigue habiendo una sola fila"
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--4e81d-a-de-«Piolet»-no-la-duplica-chromium/test-finished-1.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--4e81d-a-de-«Piolet»-no-la-duplica-chromium/attachments/FASE-0-REQ-F-003-AC2-AC-003-02-enviar-de-nuev-dfa6e73daa82bcc2ee779ffb0447406f3d0a98ec.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--4e81d-a-de-«Piolet»-no-la-duplica-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-REQ-F-003-AC2-AC-003-02-enviar-de-nuev.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 3,
+              "text": "GIVEN 2 \"Tienda\" units both reserved on 2026-12-05..2026-12-07 WHEN \"pablo@club.es\" reserves \"Tienda\" for 2026-12-06 THEN the user sees \"No quedan unidades libres de Tienda esas fechas\" and no reserva is created",
+              "scenarios": [
+                "AC-003-03"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-003 AC3 · AC-003-03 sin unidades de «Tienda» el 2026-12-06 Pablo ve el rechazo y no se crea la reserva",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-003 AC3 · AC-003-03 sin unidades de «Tienda» el 2026-12-06 Pablo ve el rechazo y no se crea la reserva",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--3d8c2-azo-y-no-se-crea-la-reserva-chromium/attachments/AC-003-03-173b8b4be6df4d90e96b7f96ad613ec5f3fbb465.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--3d8c2-azo-y-no-se-crea-la-reserva-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--3d8c2-azo-y-no-se-crea-la-reserva-chromium/attachments/AC-003-03-173b8b4be6df4d90e96b7f96ad613ec5f3fbb465.png": "sha256:d4d54ff6be27c8bbb73c00ee376745dbcf699027b2db9c8a54a2d142061f697e",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--3d8c2-azo-y-no-se-crea-la-reserva-chromium/test-finished-1.png": "sha256:121d7d99e2e22ab0ffc0c72afad0bdd3eb23949a45531a0418a8d4b93a81ca9f",
+                "evidencias/FASE-0/AC-003-03.png": "sha256:d4d54ff6be27c8bbb73c00ee376745dbcf699027b2db9c8a54a2d142061f697e"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No quedan unidades libres de {material} esas fechas",
+                    "template": true
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--3d8c2-azo-y-no-se-crea-la-reserva-chromium/attachments/AC-003-03-173b8b4be6df4d90e96b7f96ad613ec5f3fbb465.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--3d8c2-azo-y-no-se-crea-la-reserva-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--3d8c2-azo-y-no-se-crea-la-reserva-chromium/attachments/FASE-0-REQ-F-003-AC3-AC-003-03-sin-unidades-d-ec2b5f001a96596dfbbb65c7c7c2e70bf387068d.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--3d8c2-azo-y-no-se-crea-la-reserva-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-REQ-F-003-AC3-AC-003-03-sin-unidades-d.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 4,
+              "text": "GIVEN 2 \"Tienda\" units, one reserved on 2026-12-05..2026-12-06 WHEN \"pablo@club.es\" reserves \"Tienda\" for 2026-12-07..2026-12-08 THEN the reserva is created (the units are free those days)",
+              "scenarios": [
+                "AC-003-04"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-003 AC4 · AC-003-04 Pablo reserva «Tienda» del 2026-12-07 al 2026-12-08, días con unidades libres",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-003 AC4 · AC-003-04 Pablo reserva «Tienda» del 2026-12-07 al 2026-12-08, días con unidades libres",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--34939-08-días-con-unidades-libres-chromium/attachments/AC-003-04-2513cf2327e6b63d8e28b0f9fb0bd6049eb8fd44.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--34939-08-días-con-unidades-libres-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--34939-08-días-con-unidades-libres-chromium/attachments/AC-003-04-2513cf2327e6b63d8e28b0f9fb0bd6049eb8fd44.png": "sha256:c744ce1e65c92fca15bc6545ece4bf793a5c60363c0eecfdcb8adf864e5a0e98",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--34939-08-días-con-unidades-libres-chromium/test-finished-1.png": "sha256:c744ce1e65c92fca15bc6545ece4bf793a5c60363c0eecfdcb8adf864e5a0e98",
+                "evidencias/FASE-0/AC-003-04.png": "sha256:c744ce1e65c92fca15bc6545ece4bf793a5c60363c0eecfdcb8adf864e5a0e98"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Reserva creada: {material} del {desde} al {hasta}",
+                    "template": true
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--34939-08-días-con-unidades-libres-chromium/attachments/AC-003-04-2513cf2327e6b63d8e28b0f9fb0bd6049eb8fd44.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--34939-08-días-con-unidades-libres-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--34939-08-días-con-unidades-libres-chromium/attachments/FASE-0-REQ-F-003-AC4-AC-003-04-Pablo-reserva--5d8bf49b03516a371cc7cafd9acb90f75ac82353.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--34939-08-días-con-unidades-libres-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-REQ-F-003-AC4-AC-003-04-Pablo-reserva-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 5,
+              "text": "GIVEN today is 2026-12-01 WHEN a socio reserves \"Casco\" from 2026-11-30 THEN the user sees \"Las fechas no pueden estar en el pasado\" and no reserva is created",
+              "scenarios": [
+                "AC-003-05"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-003 AC5 · AC-003-05 hoy es 2026-12-01: reservar «Casco» desde 2026-11-30 se rechaza por pasado",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-003 AC5 · AC-003-05 hoy es 2026-12-01: reservar «Casco» desde 2026-11-30 se rechaza por pasado",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--327a7-11-30-se-rechaza-por-pasado-chromium/attachments/AC-003-05-68efcc50c1652146a2628006011bae04c5f303eb.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--327a7-11-30-se-rechaza-por-pasado-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-05.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--327a7-11-30-se-rechaza-por-pasado-chromium/attachments/AC-003-05-68efcc50c1652146a2628006011bae04c5f303eb.png": "sha256:f4ec5ad126f490a4f36af4589b58fdaa4f8b59c6ed5da9172d9080def8234503",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--327a7-11-30-se-rechaza-por-pasado-chromium/test-finished-1.png": "sha256:350bbac67b09181f3f99e37e1c75828bf6ae2bf8315a9d7098304d4974b69e15",
+                "evidencias/FASE-0/AC-003-05.png": "sha256:f4ec5ad126f490a4f36af4589b58fdaa4f8b59c6ed5da9172d9080def8234503"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Las fechas no pueden estar en el pasado",
+                    "template": false
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--327a7-11-30-se-rechaza-por-pasado-chromium/attachments/AC-003-05-68efcc50c1652146a2628006011bae04c5f303eb.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--327a7-11-30-se-rechaza-por-pasado-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-05.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--327a7-11-30-se-rechaza-por-pasado-chromium/attachments/FASE-0-REQ-F-003-AC5-AC-003-05-hoy-es-2026-12-a0db48579eafcb5d1ee0e7193a82665fc8292b0c.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--327a7-11-30-se-rechaza-por-pasado-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-REQ-F-003-AC5-AC-003-05-hoy-es-2026-12.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 6,
+              "text": "GIVEN a socio WHEN he reserves \"Cuerda\" from 2026-12-10 to 2026-12-09 THEN the user sees \"La fecha final no puede ser anterior a la inicial\"",
+              "scenarios": [
+                "AC-003-06"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-003 AC6 · AC-003-06 reservar «Cuerda» del 2026-12-10 al 2026-12-09 se rechaza por fechas invertidas",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-003 AC6 · AC-003-06 reservar «Cuerda» del 2026-12-10 al 2026-12-09 se rechaza por fechas invertidas",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--f79cb-chaza-por-fechas-invertidas-chromium/attachments/AC-003-06-e6e9f3618babaac6b756342d745ecbaa51270a4d.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--f79cb-chaza-por-fechas-invertidas-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-06.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--f79cb-chaza-por-fechas-invertidas-chromium/attachments/AC-003-06-e6e9f3618babaac6b756342d745ecbaa51270a4d.png": "sha256:740096ec026f7b57a8d6f67f3d0a9e0a460a41ca1f0a3e42dd55d51c0479b808",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--f79cb-chaza-por-fechas-invertidas-chromium/test-finished-1.png": "sha256:b4ccb2abf20508d973f2e922e434e3002b440784652379c6e09ff8279aac3b23",
+                "evidencias/FASE-0/AC-003-06.png": "sha256:740096ec026f7b57a8d6f67f3d0a9e0a460a41ca1f0a3e42dd55d51c0479b808"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "La fecha final no puede ser anterior a la inicial",
+                    "template": false
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--f79cb-chaza-por-fechas-invertidas-chromium/attachments/AC-003-06-e6e9f3618babaac6b756342d745ecbaa51270a4d.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--f79cb-chaza-por-fechas-invertidas-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-06.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--f79cb-chaza-por-fechas-invertidas-chromium/attachments/FASE-0-REQ-F-003-AC6-AC-003-06-reservar-Cuer-564ce171b2c2ce7ca129345a8c0ce42494a74e58.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--f79cb-chaza-por-fechas-invertidas-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-REQ-F-003-AC6-AC-003-06-reservar-Cuer.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 7,
+              "text": "GIVEN a socio WHEN he reserves \"Cuerda\" from 2026-12-10 to 2026-12-25 (16 days) THEN the user sees \"Máximo 14 días por reserva\" and no reserva is created",
+              "scenarios": [
+                "AC-003-07"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-003 AC7 · AC-003-07 reservar «Cuerda» del 2026-12-10 al 2026-12-25 (16 días) se rechaza",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-003 AC7 · AC-003-07 reservar «Cuerda» del 2026-12-10 al 2026-12-25 (16 días) se rechaza",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--0844c-26-12-25-16-días-se-rechaza-chromium/attachments/AC-003-07-8a1b31fc05eb1a7eebf009ec4753a78b039e2b0a.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--0844c-26-12-25-16-días-se-rechaza-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-07.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--0844c-26-12-25-16-días-se-rechaza-chromium/attachments/AC-003-07-8a1b31fc05eb1a7eebf009ec4753a78b039e2b0a.png": "sha256:33f82cdc304a868f8a9a17586a57c9e88e2371449a3b17b136ff116dce709c77",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--0844c-26-12-25-16-días-se-rechaza-chromium/test-finished-1.png": "sha256:1878fe8f4474ccdf470b0ad01c97cf14ef9f54decc0e9180073c01722ee13cba",
+                "evidencias/FASE-0/AC-003-07.png": "sha256:33f82cdc304a868f8a9a17586a57c9e88e2371449a3b17b136ff116dce709c77"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Máximo 14 días por reserva",
+                    "template": false
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--0844c-26-12-25-16-días-se-rechaza-chromium/attachments/AC-003-07-8a1b31fc05eb1a7eebf009ec4753a78b039e2b0a.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--0844c-26-12-25-16-días-se-rechaza-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-07.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--0844c-26-12-25-16-días-se-rechaza-chromium/attachments/FASE-0-REQ-F-003-AC7-AC-003-07-reservar-Cuer-43d8be4b25ab43cce457466514d9c45309e5e347.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--0844c-26-12-25-16-días-se-rechaza-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-REQ-F-003-AC7-AC-003-07-reservar-Cuer.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 8,
+              "text": "GIVEN \"lucia@club.es\" has a multa pendiente of 4 € WHEN she reserves \"Casco\" THEN the user sees \"Tienes una multa pendiente de 4 €. Págala al encargado para poder reservar\" and no reserva is created",
+              "scenarios": [
+                "AC-003-08"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-003 AC8 · AC-003-08 Lucía con una multa pendiente de 4 € no puede reservar «Casco»",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-003 AC8 · AC-003-08 Lucía con una multa pendiente de 4 € no puede reservar «Casco»",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--d7b32-€-no-puede-reservar-«Casco»-chromium/attachments/AC-003-08-dd966d4592ddd5b9c366a6514e3f40a95bfdca1c.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--d7b32-€-no-puede-reservar-«Casco»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-08.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--d7b32-€-no-puede-reservar-«Casco»-chromium/attachments/AC-003-08-dd966d4592ddd5b9c366a6514e3f40a95bfdca1c.png": "sha256:18ee1cfb33ff9d6f2c06c6447c9c835c8ec1ce89433ba0c9e8f3181942bbc95f",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--d7b32-€-no-puede-reservar-«Casco»-chromium/test-finished-1.png": "sha256:966b606f7d15b46a807063d8a20733dbdf9e7e2d985a2f4e61f0bb69696b6cce",
+                "evidencias/FASE-0/AC-003-08.png": "sha256:18ee1cfb33ff9d6f2c06c6447c9c835c8ec1ce89433ba0c9e8f3181942bbc95f"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Tienes una multa pendiente de {importe} €. Págala al encargado para poder reservar",
+                    "template": true
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--d7b32-€-no-puede-reservar-«Casco»-chromium/attachments/AC-003-08-dd966d4592ddd5b9c366a6514e3f40a95bfdca1c.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--d7b32-€-no-puede-reservar-«Casco»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-08.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--d7b32-€-no-puede-reservar-«Casco»-chromium/attachments/FASE-0-REQ-F-003-AC8-AC-003-08-Luc-a-con-una--d05085aa86b58f8a6ac67703122bf340bd41c4c5.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--d7b32-€-no-puede-reservar-«Casco»-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-REQ-F-003-AC8-AC-003-08-Luc-a-con-una-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 9,
+              "text": "GIVEN \"pablo@club.es\" has a multa pendiente of 2 € WHEN he reserves \"Casco\" THEN the user sees \"Tienes una multa pendiente de 2 €. Págala al encargado para poder reservar\"",
+              "scenarios": [
+                "AC-003-09"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-003 AC9 · AC-003-09 Pablo con una multa pendiente de 2 € no puede reservar «Casco»",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-003 AC9 · AC-003-09 Pablo con una multa pendiente de 2 € no puede reservar «Casco»",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--9ba3d-€-no-puede-reservar-«Casco»-chromium/attachments/AC-003-09-4e2ee28e1191faa8cc0d42e8a02eac388af38cd4.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--9ba3d-€-no-puede-reservar-«Casco»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-09.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--9ba3d-€-no-puede-reservar-«Casco»-chromium/attachments/AC-003-09-4e2ee28e1191faa8cc0d42e8a02eac388af38cd4.png": "sha256:b841da6671ce129e2c1a5c962b7bfd46ee52b1d3821e2188087c33f32d51e3e3",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--9ba3d-€-no-puede-reservar-«Casco»-chromium/test-finished-1.png": "sha256:5315354bb30345ed7ba51d57f647ed3342937b52b1593ed3922f7e99a91080cc",
+                "evidencias/FASE-0/AC-003-09.png": "sha256:b841da6671ce129e2c1a5c962b7bfd46ee52b1d3821e2188087c33f32d51e3e3"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Tienes una multa pendiente de {importe} €. Págala al encargado para poder reservar",
+                    "template": true
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--9ba3d-€-no-puede-reservar-«Casco»-chromium/attachments/AC-003-09-4e2ee28e1191faa8cc0d42e8a02eac388af38cd4.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--9ba3d-€-no-puede-reservar-«Casco»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-09.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--9ba3d-€-no-puede-reservar-«Casco»-chromium/attachments/FASE-0-REQ-F-003-AC9-AC-003-09-Pablo-con-una--feaabdd375614d25116a2c6a1f85339bd9ae3539.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--9ba3d-€-no-puede-reservar-«Casco»-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-REQ-F-003-AC9-AC-003-09-Pablo-con-una-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 10,
+              "text": "GIVEN the last free \"Crampones\" unit and two socios submit at once for the same dates WHEN both arrive THEN only one reserva is created and the other user sees \"No quedan unidades libres de Crampones esas fechas\"",
+              "scenarios": [
+                "AC-003-10"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-003 AC10 · AC-003-10 dos socios envían a la vez por el último «Crampones»: solo se crea una reserva",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-003 AC10 · AC-003-10 dos socios envían a la vez por el último «Crampones»: solo se crea una reserva",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--b867a-s»-solo-se-crea-una-reserva-chromium/attachments/AC-003-10-d98aad8be125d7880edd543536e65a8a413e7821.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--b867a-s»-solo-se-crea-una-reserva-chromium/test-finished-1.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--b867a-s»-solo-se-crea-una-reserva-chromium/test-finished-2.png",
+                "evidencias/FASE-0/AC-003-10.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--b867a-s»-solo-se-crea-una-reserva-chromium/attachments/AC-003-10-d98aad8be125d7880edd543536e65a8a413e7821.png": "sha256:2c3dacc3613e7ddabfc5263cbe67ff68a0e91359bd9c5fa10217cd74476914d8",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--b867a-s»-solo-se-crea-una-reserva-chromium/test-finished-1.png": "sha256:821994bc286da623d9792f2b0619fc4facd5566d87c167b863d5c1df7e5a83c9",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--b867a-s»-solo-se-crea-una-reserva-chromium/test-finished-2.png": "sha256:81e639f2b348d0a92b006a155ce6e12b2c48ddcb81a33c5ce4cb2fc58437a954",
+                "evidencias/FASE-0/AC-003-10.png": "sha256:2c3dacc3613e7ddabfc5263cbe67ff68a0e91359bd9c5fa10217cd74476914d8"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No quedan unidades libres de {material} esas fechas",
+                    "template": true
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--b867a-s»-solo-se-crea-una-reserva-chromium/attachments/AC-003-10-d98aad8be125d7880edd543536e65a8a413e7821.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--b867a-s»-solo-se-crea-una-reserva-chromium/test-finished-1.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--b867a-s»-solo-se-crea-una-reserva-chromium/test-finished-2.png",
+                "evidencias/FASE-0/AC-003-10.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--b867a-s»-solo-se-crea-una-reserva-chromium/attachments/FASE-0-REQ-F-003-AC10-AC-003-10-dos-socios-en-229815739597a05056a6693d0d77b8d8ccd2f099.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--b867a-s»-solo-se-crea-una-reserva-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-REQ-F-003-AC10-AC-003-10-dos-socios-en.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "capture changed: evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--b867a-s»-solo-se-crea-una-reserva-chromium/attachments/AC-003-10-d98aad8be125d7880edd543536e65a8a413e7821.png, evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-003--b867a-s»-solo-se-crea-una-reserva-chromium/test-finished-2.png, evidencias/FASE-0/AC-003-10.png"
+              ]
+            }
+          ],
+          "candidate_files": [
+            "src/domain/reservas.js",
+            "src/server/http.js",
+            "src/ui/pantallas/inicio.js",
+            "src/ui/pantallas/mis-reservas.js",
+            "src/ui/pantallas/reservar.js",
+            "src/ui/router.js"
+          ],
+          "challenges_open": []
+        },
+        {
+          "id": "REQ-F-008",
+          "title": "Gestionar el inventario",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN the encargado adds units of a tipo de material or marks a unit as broken THE system SHALL update the inventory and the units available to reserve",
+          "reqHash": "sha256:f35ee961a9ab761040c40aef176679ca61dc67389d1a5c32a0b6430f2e839cf1",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN there are 3 \"Piolet\" units WHEN the encargado adds 2 units of \"Piolet\" THEN the user sees \"Piolet · 5 unidades\" in Inventario",
+              "scenarios": [
+                "AC-008-01"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-008 AC1 · AC-008-01 el encargado añade 2 «Piolet» a 3 y ve «Piolet · 5 unidades»",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-008 AC1 · AC-008-01 el encargado añade 2 «Piolet» a 3 y ve «Piolet · 5 unidades»",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--43009--y-ve-«Piolet-·-5-unidades»-chromium/attachments/AC-008-01-1c49fc26c5d0fa377f8cddbce2eb282dab7e1137.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--43009--y-ve-«Piolet-·-5-unidades»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-008-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--43009--y-ve-«Piolet-·-5-unidades»-chromium/attachments/AC-008-01-1c49fc26c5d0fa377f8cddbce2eb282dab7e1137.png": "sha256:8219470b5348f23262da9285408a4aa773f24e0c540e8e999f8942cb86b80a15",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--43009--y-ve-«Piolet-·-5-unidades»-chromium/test-finished-1.png": "sha256:8219470b5348f23262da9285408a4aa773f24e0c540e8e999f8942cb86b80a15",
+                "evidencias/FASE-0/AC-008-01.png": "sha256:8219470b5348f23262da9285408a4aa773f24e0c540e8e999f8942cb86b80a15"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{material} · {n} unidades",
+                    "template": true
+                  }
+                ],
+                "where": "Inventario",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--43009--y-ve-«Piolet-·-5-unidades»-chromium/attachments/AC-008-01-1c49fc26c5d0fa377f8cddbce2eb282dab7e1137.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--43009--y-ve-«Piolet-·-5-unidades»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-008-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--43009--y-ve-«Piolet-·-5-unidades»-chromium/attachments/FASE-0-REQ-F-008-AC1-AC-008-01-el-encargado-a-d831d692a81e2d9d52e8d8721debcd2ccf89e8a2.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--43009--y-ve-«Piolet-·-5-unidades»-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-REQ-F-008-AC1-AC-008-01-el-encargado-a.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/ui/pantallas/inventario.js"
+              ]
+            },
+            {
+              "n": 2,
+              "text": "GIVEN the same add form is submitted again THEN the encargado sees 7 units, because each submission adds units (the form shows \"Añadidas 2 unidades de Piolet\" each time)",
+              "scenarios": [
+                "AC-008-02"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-008 AC2 · AC-008-02 enviar otra vez el mismo añadido suma: 7 unidades y «Añadidas 2 unidades de Piolet»",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-008 AC2 · AC-008-02 enviar otra vez el mismo añadido suma: 7 unidades y «Añadidas 2 unidades de Piolet»",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--197df-didas-2-unidades-de-Piolet»-chromium/attachments/AC-008-02-d4f9a1769af0eb5466c5eaf75d7e626e76fd1160.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--197df-didas-2-unidades-de-Piolet»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-008-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--197df-didas-2-unidades-de-Piolet»-chromium/attachments/AC-008-02-d4f9a1769af0eb5466c5eaf75d7e626e76fd1160.png": "sha256:d9d9da349e8b627477cbaf51f7c23e69b1784224ca1005222f3106f9d8866a77",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--197df-didas-2-unidades-de-Piolet»-chromium/test-finished-1.png": "sha256:d9d9da349e8b627477cbaf51f7c23e69b1784224ca1005222f3106f9d8866a77",
+                "evidencias/FASE-0/AC-008-02.png": "sha256:d9d9da349e8b627477cbaf51f7c23e69b1784224ca1005222f3106f9d8866a77"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Añadidas {n} unidades de {material}",
+                    "template": true
+                  }
+                ],
+                "where": "Inventario",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--197df-didas-2-unidades-de-Piolet»-chromium/attachments/AC-008-02-d4f9a1769af0eb5466c5eaf75d7e626e76fd1160.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--197df-didas-2-unidades-de-Piolet»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-008-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--197df-didas-2-unidades-de-Piolet»-chromium/attachments/FASE-0-REQ-F-008-AC2-AC-008-02-enviar-otra-ve-05b095d118bd36d9b772b60414070cb8a376259a.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--197df-didas-2-unidades-de-Piolet»-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-REQ-F-008-AC2-AC-008-02-enviar-otra-ve.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/ui/pantallas/inventario.js"
+              ]
+            },
+            {
+              "n": 3,
+              "text": "GIVEN \"Casco 3\" is free WHEN the encargado marks it as broken THEN the user sees \"Casco 3 · De baja\" and \"Casco · 2 unidades\" in Inventario, and it cannot be reserved",
+              "scenarios": [
+                "AC-008-03"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-008 AC3 · AC-008-03 el encargado marca «Casco 3» como rota: «Casco 3 · De baja» y «Casco · 2 unidades»",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-008 AC3 · AC-008-03 el encargado marca «Casco 3» como rota: «Casco 3 · De baja» y «Casco · 2 unidades»",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--d48b2-aja»-y-«Casco-·-2-unidades»-chromium/attachments/AC-008-03-ee9ba171067a23784fed97493fa7dc55c787049b.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--d48b2-aja»-y-«Casco-·-2-unidades»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-008-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--d48b2-aja»-y-«Casco-·-2-unidades»-chromium/attachments/AC-008-03-ee9ba171067a23784fed97493fa7dc55c787049b.png": "sha256:efa9c3d456e085a85925d03773e8ae95593bf58b50305794237b4ea7fdca46d2",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--d48b2-aja»-y-«Casco-·-2-unidades»-chromium/test-finished-1.png": "sha256:efa9c3d456e085a85925d03773e8ae95593bf58b50305794237b4ea7fdca46d2",
+                "evidencias/FASE-0/AC-008-03.png": "sha256:efa9c3d456e085a85925d03773e8ae95593bf58b50305794237b4ea7fdca46d2"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{unidad} · De baja",
+                    "template": true
+                  }
+                ],
+                "where": "Inventario",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--d48b2-aja»-y-«Casco-·-2-unidades»-chromium/attachments/AC-008-03-ee9ba171067a23784fed97493fa7dc55c787049b.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--d48b2-aja»-y-«Casco-·-2-unidades»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-008-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--d48b2-aja»-y-«Casco-·-2-unidades»-chromium/attachments/FASE-0-REQ-F-008-AC3-AC-008-03-el-encargado-m-033f2ac5d42a3924dd41539e4d8bae8c1a521c56.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--d48b2-aja»-y-«Casco-·-2-unidades»-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-REQ-F-008-AC3-AC-008-03-el-encargado-m.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/ui/pantallas/inventario.js"
+              ]
+            },
+            {
+              "n": 4,
+              "text": "GIVEN \"Casco 1\" is lent to Pablo WHEN the encargado marks it as broken THEN the user sees \"No se puede dar de baja: está prestada\" and it stays active",
+              "scenarios": [
+                "AC-008-04"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-008 AC4 · AC-008-04 «Casco 1» está prestada a Pablo: no se da de baja y sigue activa",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-008 AC4 · AC-008-04 «Casco 1» está prestada a Pablo: no se da de baja y sigue activa",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--71cf3-e-da-de-baja-y-sigue-activa-chromium/attachments/AC-008-04-930b09a536e88eb3d781deb1576872c7f102c4fb.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--71cf3-e-da-de-baja-y-sigue-activa-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-008-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--71cf3-e-da-de-baja-y-sigue-activa-chromium/attachments/AC-008-04-930b09a536e88eb3d781deb1576872c7f102c4fb.png": "sha256:7204ff2c18350b87fde7adf59d2e4f9f47f135358c80b66173baca6a6acf7b6d",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--71cf3-e-da-de-baja-y-sigue-activa-chromium/test-finished-1.png": "sha256:7c344e4becfca5104565f7e3dba5fef47874acfdd021a50e58b103f682ea1557",
+                "evidencias/FASE-0/AC-008-04.png": "sha256:7204ff2c18350b87fde7adf59d2e4f9f47f135358c80b66173baca6a6acf7b6d"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No se puede dar de baja: está prestada",
+                    "template": false
+                  }
+                ],
+                "where": "Inventario",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--71cf3-e-da-de-baja-y-sigue-activa-chromium/attachments/AC-008-04-930b09a536e88eb3d781deb1576872c7f102c4fb.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--71cf3-e-da-de-baja-y-sigue-activa-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-008-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--71cf3-e-da-de-baja-y-sigue-activa-chromium/attachments/FASE-0-REQ-F-008-AC4-AC-008-04-Casco-1-est--f45168301274a26d97a7113a1b094b0400439364.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--71cf3-e-da-de-baja-y-sigue-activa-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-REQ-F-008-AC4-AC-008-04-Casco-1-est-.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "challenge CH-001 stale",
+                "test changed: tests/e2e/fase-0-skeleton.spec.js",
+                "code changed: src/ui/pantallas/inventario.js",
+                "capture changed: evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--71cf3-e-da-de-baja-y-sigue-activa-chromium/attachments/AC-008-04-930b09a536e88eb3d781deb1576872c7f102c4fb.png, evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--71cf3-e-da-de-baja-y-sigue-activa-chromium/test-finished-1.png, evidencias/FASE-0/AC-008-04.png"
+              ]
+            },
+            {
+              "n": 5,
+              "text": "GIVEN a unit already \"De baja\" WHEN marked broken again THEN it stays \"De baja\" once",
+              "scenarios": [
+                "AC-008-05"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-008 AC5 · AC-008-05 una unidad ya «De baja» marcada otra vez sigue «De baja» una sola vez",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-008 AC5 · AC-008-05 una unidad ya «De baja» marcada otra vez sigue «De baja» una sola vez",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--34b8d-igue-«De-baja»-una-sola-vez-chromium/test-finished-1.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--34b8d-igue-«De-baja»-una-sola-vez-chromium/test-finished-1.png": "sha256:06b8fafcaed9c9486c7bb46d13582a85863d47e9d769a6d87c628a0fde8ad76b"
+              },
+              "sees": {
+                "texts": [],
+                "where": null,
+                "none": "el inventario no cambia"
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--34b8d-igue-«De-baja»-una-sola-vez-chromium/test-finished-1.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--34b8d-igue-«De-baja»-una-sola-vez-chromium/attachments/FASE-0-REQ-F-008-AC5-AC-008-05-una-unidad-ya--35e2e92a226efbde5728b18223fa33cddcc096bd.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--34b8d-igue-«De-baja»-una-sola-vez-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-REQ-F-008-AC5-AC-008-05-una-unidad-ya-.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/ui/pantallas/inventario.js"
+              ]
+            },
+            {
+              "n": 6,
+              "text": "GIVEN the socio \"pablo@club.es\" WHEN he opens Inventario by address THEN the user sees \"No tienes permiso para ver esta pantalla\"",
+              "scenarios": [
+                "AC-008-06"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-008 AC6 · AC-008-06 Pablo abre Inventario por su dirección: «No tienes permiso para ver esta pantalla»",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-008 AC6 · AC-008-06 Pablo abre Inventario por su dirección: «No tienes permiso para ver esta pantalla»",
+                  "file": "fase-0-skeleton.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--af69a-iso-para-ver-esta-pantalla»-chromium/attachments/AC-008-06-cbfcf2b1767c0c4702292392332749ab1fd4b57c.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--af69a-iso-para-ver-esta-pantalla»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-008-06.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--af69a-iso-para-ver-esta-pantalla»-chromium/attachments/AC-008-06-cbfcf2b1767c0c4702292392332749ab1fd4b57c.png": "sha256:661180ef08b73aea053ee40dfe9cdb080b9b71938d4fc55e261a7a27d021bd8d",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--af69a-iso-para-ver-esta-pantalla»-chromium/test-finished-1.png": "sha256:661180ef08b73aea053ee40dfe9cdb080b9b71938d4fc55e261a7a27d021bd8d",
+                "evidencias/FASE-0/AC-008-06.png": "sha256:661180ef08b73aea053ee40dfe9cdb080b9b71938d4fc55e261a7a27d021bd8d"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No tienes permiso para ver esta pantalla",
+                    "template": false
+                  }
+                ],
+                "where": "Inventario",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--af69a-iso-para-ver-esta-pantalla»-chromium/attachments/AC-008-06-cbfcf2b1767c0c4702292392332749ab1fd4b57c.png",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--af69a-iso-para-ver-esta-pantalla»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-008-06.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--af69a-iso-para-ver-esta-pantalla»-chromium/attachments/FASE-0-REQ-F-008-AC6-AC-008-06-Pablo-abre-Inv-a4d74bfc9517f721dfef36a049c1278706ea7cdb.webm",
+                "evidencias/FASE-0/.playwright/fase-0-skeleton-REQ-F-008--af69a-iso-para-ver-esta-pantalla»-chromium/video.webm",
+                "evidencias/FASE-0/FASE-0-REQ-F-008-AC6-AC-008-06-Pablo-abre-Inv.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "code changed: src/ui/pantallas/inventario.js"
+              ]
+            }
+          ],
+          "candidate_files": [
+            "src/domain/inventario.js",
+            "src/server/http.js",
+            "src/ui/pantallas/inventario.js",
+            "src/ui/router.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        }
+      ],
+      "unknown_requirements": [],
+      "tasks": [
+        "TASK-F0-001",
+        "TASK-F0-002",
+        "TASK-F0-003",
+        "TASK-F0-004",
+        "TASK-F0-005",
+        "TASK-F0-006",
+        "TASK-F0-007",
+        "TASK-F0-008",
+        "TASK-F0-009",
+        "TASK-F0-010",
+        "TASK-F0-011",
+        "TASK-F0-012"
+      ],
+      "candidate_files": [
+        "src/domain/acceso.js",
+        "src/domain/config.js",
+        "src/domain/errores.js",
+        "src/domain/inventario.js",
+        "src/domain/permisos.js",
+        "src/domain/reloj.js",
+        "src/domain/reservas.js",
+        "src/server/http.js",
+        "src/server/preparar-cuentas.js",
+        "src/server/sesiones.js",
+        "src/server/store.js",
+        "src/server/vite-plugin.js",
+        "src/ui/api.js",
+        "src/ui/dom.js",
+        "src/ui/estilos.css",
+        "src/ui/main.js",
+        "src/ui/pantallas/entrar.js",
+        "src/ui/pantallas/inicio.js",
+        "src/ui/pantallas/inventario.js",
+        "src/ui/pantallas/mis-reservas.js",
+        "src/ui/pantallas/reservar.js",
+        "src/ui/router.js",
+        "src/ui/textos.js"
+      ],
+      "incremental": {
+        "criteria": 25,
+        "recheck": 16
+      }
+    }
+  ],
+  "uncovered": [
+    {
+      "id": "REQ-C-001",
+      "title": "Textos en español",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-002",
+      "title": "Stack",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-003",
+      "title": "Datos compartidos",
+      "priority": "Must"
+    }
+  ],
+  "fases_without_header": [],
+  "criteria_without_test": [],
+  "coverage_gaps": 3
+}

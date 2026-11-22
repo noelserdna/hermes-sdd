@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-005-02",
+ "test": "REQ-F-005 AC2 · AC-005-02 entregar otra vez la reserva ya Prestada deja una sola «Piolet 2 · Lucía · Prestada»",
+ "titulo": "REQ-F-005 AC2 · AC-005-02 entregar otra vez la reserva ya Prestada deja una sola «Piolet 2 · Lucía · Prestada»",
+ "ve": [
+  "Piolet 2 · Lucía · Prestada"
+ ],
+ "narrado": "Entregar lo reservado. La lista sigue con una sola fila prestada, «Piolet 2 · Lucía · Prestada», y no se asigna una segunda unidad.",
+ "url": "http://127.0.0.1:5173/#/entregas",
+ "imagen": "AC-005-02.png",
+ "sha256": "sha256:9bc74da2d9a03219b8c900d261e9d3961d590038b855392e1c1f133e8535d581",
+ "at": "2026-11-21T12:34:32.561Z"
+}

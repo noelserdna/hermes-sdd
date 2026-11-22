@@ -1,0 +1,111 @@
+{
+ "repo": "/home/andre/proyectos-sdd/material-montana11",
+ "fase": "3",
+ "sha": "65d04e6",
+ "congelados": [],
+ "capturas": [],
+ "coherencia": [],
+ "vinculos": [],
+ "lint_capturas": [
+  {
+   "codigo": "C-03",
+   "fichero": "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-11c56-n-la-multa-6-00-€-Pendiente-chromium/attachments/AC-010-01-2ace181fa5b3542b5bb6c73a3f24ca358873175f.png",
+   "linea": 0,
+   "req": "REQ-F-006",
+   "ac": 1,
+   "mensaje": "not counted for REQ-F-006 AC1: taken by the test \"FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-0…\", which does not pass (the criterion is already shown by its own capture)",
+   "grave": false
+  }
+ ],
+ "mutantes_cache": {
+  "de_cache": 0,
+  "ejecutados": 0
+ },
+ "mutantes": [
+  {
+   "req": "REQ-F-006",
+   "ac": 2,
+   "texto": "Sin multas",
+   "e2e": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 4,
+   "texto": "Tienes una multa pendiente: no puedes reservar hasta pagarla",
+   "e2e": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 5,
+   "texto": "Tienes una multa pendiente: no puedes reservar hasta pagarla",
+   "e2e": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-007",
+   "ac": 1,
+   "texto": "Pagada",
+   "e2e": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-007",
+   "ac": 2,
+   "texto": "Pagada",
+   "e2e": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-007",
+   "ac": 3,
+   "texto": "Acceso no permitido",
+   "e2e": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js"
+   ]
+  }
+ ],
+ "graves": 0
+}

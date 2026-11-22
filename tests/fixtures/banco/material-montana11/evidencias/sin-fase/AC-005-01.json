@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-005-01",
+ "test": "FASE-1 Reservar material (socio) › FASE-1 AC-005-01 lucia reserva Piolet del 2026-12-05 al 2026-12-07 con 3 libres y ve la reserva creada y 2 libres",
+ "titulo": "FASE-1 AC-005-01 lucia reserva Piolet del 2026-12-05 al 2026-12-07 con 3 libres y ve la reserva creada y 2 libres",
+ "ve": [
+  "Reserva creada: Piolet, 2026-12-05 a 2026-12-07",
+  "2 libres"
+ ],
+ "narrado": "Reservar material para unas fechas. En Reservar se ve «Reserva creada: Piolet, 2026-12-05 a 2026-12-07», y Piolet muestra 2 libres para esas fechas.",
+ "url": "http://127.0.0.1:38883/#/inicio",
+ "imagen": "AC-005-01.png",
+ "sha256": "sha256:4f5885627b3107870dea88af31a723f4ed4ca07311e986add505772a21e7c667",
+ "at": "2026-11-22T06:14:31.360Z"
+}

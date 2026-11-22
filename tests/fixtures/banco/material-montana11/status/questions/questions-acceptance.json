@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "rol": "acceptance",
+  "preguntas": [
+    {
+      "id": "Q-acceptance-001",
+      "skill": "sdd-acceptance",
+      "contexto": "CH-008 (SPEC-QUESTION, adversarial round at 7d4c792) · src/ui/pantallas/prestado.js:51",
+      "tema": "casco-2-dia-7-prestado-ahora",
+      "estado": "ANSWERED",
+      "pregunta": "REQ-F-009 AC2 dice que, con el día 2026-12-07 elegido, el usuario no ve el Casco 2; hoy aparece bajo «Prestado ahora» y no bajo «Vuelven hoy». Decidir si «no ver» significa toda la pantalla o solo la lista «Vuelven hoy».",
+      "para_cliente": "Cuando el encargado elige el día 7 de diciembre, ¿el Casco 2 debe desaparecer de toda la pantalla, o basta con que no aparezca en «Vuelven hoy» mientras sigue en «Prestado ahora»?",
+      "opciones": [
+        {
+          "letra": "A",
+          "texto": "Hide Casco 2 from the whole screen on 2026-12-07 (the criterion as written)",
+          "recomendada": true,
+          "efecto": "accion",
+          "ficheros": [
+            "src/ui/pantallas/prestado.js"
+          ],
+          "cliente": "Sí: ese día el Casco 2 no sale en la pantalla, ni en «Prestado ahora» ni en «Vuelven hoy»"
+        },
+        {
+          "letra": "B",
+          "texto": "Amend the criterion so it only says the item is not under 'Vuelven hoy' (the screen stays as it is)",
+          "recomendada": false,
+          "efecto": "req-change",
+          "cliente": "No: el Casco 2 sigue saliendo en «Prestado ahora»; el requisito se cambia para decir solo eso",
+          "ficheros": []
+        }
+      ],
+      "bloquea": "CH-008; gate de la fase 5 (adversarial_gate: enforce)",
+      "respuesta": {
+        "letra": "B",
+        "como": "elegida por",
+        "quien": "Andres Leon (Cliente)",
+        "fecha": "2026-11-22"
+      }
+    }
+  ]
+}

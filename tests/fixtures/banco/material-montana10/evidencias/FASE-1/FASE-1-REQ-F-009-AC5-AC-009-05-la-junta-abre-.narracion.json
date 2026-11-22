@@ -1,0 +1,16 @@
+{
+ "video": "FASE-1-REQ-F-009-AC5-AC-009-05-la-junta-abre-.webm",
+ "test": "REQ-F-009 AC5 · AC-009-05 la junta abre Entregas y devoluciones y ve «Prestado: Casco 1 · Pablo · hasta 2026-12-09» sin botones",
+ "titulo": "REQ-F-009 AC5 · AC-009-05 la junta abre Entregas y devoluciones y ve «Prestado: Casco 1 · Pablo · hasta 2026-12-09» sin botones",
+ "narraciones": [
+  {
+   "t": 0.007,
+   "texto": "La junta entra y abre Entregas y devoluciones; Casco 1 está prestado a Pablo hasta el 9 y Lucía tiene algo por entregar hoy"
+  },
+  {
+   "t": 0.572,
+   "texto": "Ver lo prestado y lo que vuelve cada día. En Entregas y devoluciones se ve «Prestado: Casco 1 · Pablo · hasta 2026-12-09», y la lista no tiene botones de entregar ni de devolver.",
+   "criterio": "AC-009-05"
+  }
+ ]
+}

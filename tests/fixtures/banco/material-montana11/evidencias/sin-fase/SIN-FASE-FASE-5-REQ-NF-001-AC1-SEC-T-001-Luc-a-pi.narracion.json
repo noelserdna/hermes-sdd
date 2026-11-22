@@ -1,0 +1,11 @@
+{
+ "video": "SIN-FASE-FASE-5-REQ-NF-001-AC1-SEC-T-001-Luc-a-pi.webm",
+ "test": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 REQ-NF-001 AC1 SEC-T-001 Lucía pide por dirección las multas y el historial de Pablo y recibe rechazo sin datos de Pablo",
+ "titulo": "FASE-5 REQ-NF-001 AC1 SEC-T-001 Lucía pide por dirección las multas y el historial de Pablo y recibe rechazo sin datos de Pablo",
+ "narraciones": [
+  {
+   "t": 4.339,
+   "texto": "Lucía entra con su cuenta e intenta, escribiendo la dirección, ver las multas y el historial de Pablo"
+  }
+ ]
+}

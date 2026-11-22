@@ -1,0 +1,60 @@
+{
+  "id": "g179526337505a7",
+  "tipo": "fase",
+  "fase": "2",
+  "tablero": "material-montana10",
+  "tarjeta": "t_ec0274be",
+  "adopcion": false,
+  "sha": "53dff52e440ccad1db17c4a5c228fdf4c157cfcf",
+  "creada": "2026-11-21T12:16:15Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana10",
+  "titulo": "Aceptar FASE-2",
+  "texto": "🧭 Encargado: 1 aviso\n• La FASE-2 añadió 912 líneas de tests para 203 de código (4.5×): revisa si los tests prueban lo que piden los criterios\n\n🧪 La FASE-2 de «material-montana10» está lista para revisar.\n\n✅ Todo en orden: los 3 requisitos de esta fase funcionan y están comprobados.\n\n✅ Marcar la devolución y poner la multa: funciona y está comprobado (5 de 5 criterios)\n✅ Marcar la multa como pagada: funciona y está comprobado (4 de 4 criterios)\n✅ Consultar el historial de un socio (junta): funciona y está comprobado (4 de 4 criterios)\n\n🛡 No se ha tocado ningún test que ya existía (ni sus ayudas ni su configuración).\n\n🎬 Demo: vídeo y 17 capturas.\n\n👉 Pulsa ▶ Ver demo; después podrás aceptarla, aceptarla con observaciones o rechazarla.",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Aceptar",
+      "paso": 2
+    },
+    {
+      "verbo": "observaciones",
+      "etiqueta": "📝 Con observaciones",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-2/FASE-2-AC-006-06-devolver-una-reserva-que-ya-no.mp4",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": false,
+        "codigo": "tests-de-mas",
+        "texto": "La FASE-2 añadió 912 líneas de tests para 203 de código (4.5×): revisa si los tests prueban lo que piden los criterios"
+      }
+    ],
+    "graves": 0
+  },
+  "narracion": {
+    "revisados": 0,
+    "contradicen": [],
+    "incompletos": []
+  }
+}

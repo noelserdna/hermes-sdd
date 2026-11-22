@@ -1,0 +1,14 @@
+{
+  "verbo": "rechazo",
+  "texto": "Restablecer la contraseña tiene que levantar el bloqueo: quien la olvidó casi siempre se ha equivocado varias veces y tiene la cuenta bloqueada. Si el encargado le pone «Nieve2026» y la web dice «Contraseña restablecida», Marta tiene que poder entrar con ella en ese momento, sin esperar los 15 minutos (lo que señala CH-004).",
+  "actor": {
+    "persona": "yo",
+    "canal": "local",
+    "id": "andre"
+  },
+  "prueba": {
+    "host": "DESKTOP-7HT2139",
+    "demo": "no vista"
+  },
+  "at": "2026-11-21T13:19:23Z"
+}

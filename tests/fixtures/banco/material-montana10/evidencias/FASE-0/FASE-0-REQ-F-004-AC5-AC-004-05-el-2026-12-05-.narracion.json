@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-REQ-F-004-AC5-AC-004-05-el-2026-12-05-.webm",
+ "test": "REQ-F-004 AC5 · AC-004-05 el 2026-12-05 Lucía no puede cancelar la que empieza ese día: «Solo se puede cancelar hasta el día antes»",
+ "titulo": "REQ-F-004 AC5 · AC-004-05 el 2026-12-05 Lucía no puede cancelar la que empieza ese día: «Solo se puede cancelar hasta el día antes»",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "Lucía entra, abre Mis reservas y pulsa Cancelar; hoy es 5 de diciembre y la reserva empieza hoy"
+  },
+  {
+   "t": 0.517,
+   "texto": "Ver y cancelar mis reservas. En Mis reservas se ve «Solo se puede cancelar hasta el día antes», y la reserva sigue Reservada.",
+   "criterio": "AC-004-05"
+  }
+ ]
+}

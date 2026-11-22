@@ -1,0 +1,1035 @@
+{
+  "$schema": "sdd-adversarial-plan-v1",
+  "evaluated_sha": "35cc71953b417865bf710fc87d50b00115461d75",
+  "dirty": false,
+  "generatedAt": "2026-11-22T00:43:04.010Z",
+  "scope": {
+    "fase": 5
+  },
+  "code_paths": [
+    "src"
+  ],
+  "adversarial_gate": "enforce",
+  "incremental": {
+    "since": "c2cd2f9559e52a4e0028bea69d9d8ce65eac4281",
+    "baseline": ".sdd/hermes/adversarial-FASE-5.json",
+    "changed_files": [],
+    "criteria": 12,
+    "recheck": 1,
+    "carried": 11
+  },
+  "fases": [
+    {
+      "fase": 5,
+      "file": "plan/fases/FASE-5-CONSULTAS.md",
+      "header": true,
+      "requirements": [
+        {
+          "id": "REQ-F-009",
+          "title": "Ver lo prestado y lo que vuelve cada día",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN the encargado opens the loans panel THE system SHALL list the material currently lent and the returns expected on each day",
+          "reqHash": "sha256:d0f971c260845216441306881db1afe95b7c6be2ca77985d30bea8c53f7e15be",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN \"Piolet 1\" lent to \"Lucía Gil\" until 2026-12-07 and \"Casco 2\" lent to \"Pablo Ruiz\" until 2026-12-08 WHEN the encargado opens \"Prestado\" THEN the user sees \"Piolet 1 — Lucía Gil — hasta 2026-12-07\" and \"Casco 2 — Pablo Ruiz — hasta 2026-12-08\"",
+              "scenarios": [
+                "AC-015-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-01 REQ-F-009 AC1 con el Piolet 1 de Lucía Gil hasta 2026-12-07 y el Casco 2 de Pablo Ruiz hasta 2026-12-08 Prestado los lista",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-01 REQ-F-009 AC1 con el Piolet 1 de Lucía Gil hasta 2026-12-07 y el Casco 2 de Pablo Ruiz hasta 2026-12-08 Prestado los lista",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-01 REQ-F-009 AC1 con el Piolet 1 de Lucía Gil hasta 2026-12-07 y el Casco 2 de Pablo Ruiz hasta 2026-12-08 Prestado los lista",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-01 REQ-F-009 AC1 con el Piolet 1 de Lucía Gil hasta 2026-12-07 y el Casco 2 de Pablo Ruiz hasta 2026-12-08 Prestado los lista",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "API-003-09 consultarPrestado (UC-015) > AC-015-01 REQ-F-009 AC1 lista de lo prestado: Piolet 1, Lucía Gil y fin 2026-12-07",
+                  "file": "tests/unit/prestamos-prestado.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "API-003-09 consultarPrestado (UC-015) > AC-015-01 REQ-F-009 AC1 lista de lo prestado: Piolet 1, Lucía Gil y fin 2026-12-07",
+                  "file": "tests/unit/prestamos-prestado.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Prestado (UC-015, SCR-010) > AC-015-01 REQ-F-009 AC1 se pinta \"Piolet 1 — Lucía Gil — hasta 2026-12-07\" y \"Casco 2 — Pablo Ruiz — hasta 2026-12-08\"",
+                  "file": "tests/unit/ui-prestado.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Prestado (UC-015, SCR-010) > AC-015-01 REQ-F-009 AC1 se pinta \"Piolet 1 — Lucía Gil — hasta 2026-12-07\" y \"Casco 2 — Pablo Ruiz — hasta 2026-12-08\"",
+                  "file": "tests/unit/ui-prestado.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-7ef4e-26-12-08-Prestado-los-lista-chromium/attachments/AC-015-01-1723bb5b1eb577a71490bc74daaea030328bcb03.png",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-7ef4e-26-12-08-Prestado-los-lista-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-7ef4e-26-12-08-Prestado-los-lista-chromium/attachments/AC-015-01-db2bacd09c705455cc430f3db4cbd7dcf6f9358d.png",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-7ef4e-26-12-08-Prestado-los-lista-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-015-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-7ef4e-26-12-08-Prestado-los-lista-chromium/attachments/AC-015-01-1723bb5b1eb577a71490bc74daaea030328bcb03.png": "sha256:742e5bb0f8ada95148d4b0985b407453fa4343d388a0b78d375ec3e99a8cb3dc",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-7ef4e-26-12-08-Prestado-los-lista-chromium/test-finished-1.png": "sha256:742e5bb0f8ada95148d4b0985b407453fa4343d388a0b78d375ec3e99a8cb3dc",
+                "evidencias/FASE-5/AC-015-01.png": "sha256:742e5bb0f8ada95148d4b0985b407453fa4343d388a0b78d375ec3e99a8cb3dc",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-7ef4e-26-12-08-Prestado-los-lista-chromium/attachments/AC-015-01-db2bacd09c705455cc430f3db4cbd7dcf6f9358d.png": "sha256:742e5bb0f8ada95148d4b0985b407453fa4343d388a0b78d375ec3e99a8cb3dc",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-7ef4e-26-12-08-Prestado-los-lista-chromium/test-finished-1.png": "sha256:742e5bb0f8ada95148d4b0985b407453fa4343d388a0b78d375ec3e99a8cb3dc"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{material} — {socio} — hasta {fecha}",
+                    "template": true
+                  }
+                ],
+                "where": "Prestado",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-7ef4e-26-12-08-Prestado-los-lista-chromium/attachments/AC-015-01-1723bb5b1eb577a71490bc74daaea030328bcb03.png",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-7ef4e-26-12-08-Prestado-los-lista-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-015-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-7ef4e-26-12-08-Prestado-los-lista-chromium/attachments/FASE-5-FASE-5-AC-015-01-REQ-F-009-AC1-con-el-Pi-e627aa07bcf5c70c0d6b74adec5925715985e397.webm",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-7ef4e-26-12-08-Prestado-los-lista-chromium/video-1.webm",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-7ef4e-26-12-08-Prestado-los-lista-chromium/video.webm",
+                "evidencias/FASE-5/FASE-5-FASE-5-AC-015-01-REQ-F-009-AC1-con-el-Pi.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 2,
+              "text": "GIVEN the same loans WHEN the encargado picks the day 2026-12-07 THEN the user sees \"Piolet 1\" under \"Vuelven hoy\" and does not see \"Casco 2\"",
+              "scenarios": [
+                "AC-015-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-02 REQ-F-009 AC2 el día 2026-12-07 el Piolet 1 aparece bajo Vuelven hoy y el Casco 2 no aparece bajo Vuelven hoy sino bajo Prestado ahora",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-02 REQ-F-009 AC2 el día 2026-12-07 el Piolet 1 aparece bajo Vuelven hoy y el Casco 2 no aparece bajo Vuelven hoy sino bajo Prestado ahora",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-02 REQ-F-009 AC2 el día 2026-12-07 el Piolet 1 aparece bajo Vuelven hoy y el Casco 2 no",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-02 REQ-F-009 AC2 el día 2026-12-07 el Piolet 1 aparece bajo Vuelven hoy y el Casco 2 no",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "API-003-09 consultarPrestado (UC-015) > AC-015-02 REQ-F-009 AC2 con dia 2026-12-07 el Piolet 1 vuelve ese día y el Casco 2 no",
+                  "file": "tests/unit/prestamos-prestado.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "API-003-09 consultarPrestado (UC-015) > AC-015-02 REQ-F-009 AC2 con dia 2026-12-07 el Piolet 1 vuelve ese día y el Casco 2 no",
+                  "file": "tests/unit/prestamos-prestado.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Prestado (UC-015, SCR-010) > AC-015-02 REQ-F-009 AC2 al elegir el día 2026-12-07 el Piolet 1 aparece bajo \"Vuelven hoy\" y el Casco 2 no aparece bajo \"Vuelven hoy\" (sigue prestado, bajo \"Prestado ahora\")",
+                  "file": "tests/unit/ui-prestado.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Prestado (UC-015, SCR-010) > AC-015-02 REQ-F-009 AC2 al elegir el día 2026-12-07 el Piolet 1 aparece bajo \"Vuelven hoy\" y el Casco 2 no aparece bajo \"Vuelven hoy\" (sigue prestado, bajo \"Prestado ahora\")",
+                  "file": "tests/unit/ui-prestado.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-91be5-oy-sino-bajo-Prestado-ahora-chromium/attachments/AC-015-02-5807c236135ad8504699e75223ddfb3b2babd7da.png",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-91be5-oy-sino-bajo-Prestado-ahora-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-cffd6-Vuelven-hoy-y-el-Casco-2-no-chromium/attachments/AC-015-02-55f341f08541263c2bde314d9fa9e49a1e0d1f3a.png",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-cffd6-Vuelven-hoy-y-el-Casco-2-no-chromium/test-finished-1.png",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-cffd6-Vuelven-hoy-y-el-Casco-2-no-chromium/attachments/AC-015-02-5807c236135ad8504699e75223ddfb3b2babd7da.png",
+                "evidencias/FASE-5/AC-015-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-91be5-oy-sino-bajo-Prestado-ahora-chromium/attachments/AC-015-02-5807c236135ad8504699e75223ddfb3b2babd7da.png": "sha256:ff11cbb8cd30e64c2248fee21cc323e72ae9ae910d90e9ed999b4157d39c8868",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-91be5-oy-sino-bajo-Prestado-ahora-chromium/test-finished-1.png": "sha256:ff11cbb8cd30e64c2248fee21cc323e72ae9ae910d90e9ed999b4157d39c8868",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-cffd6-Vuelven-hoy-y-el-Casco-2-no-chromium/attachments/AC-015-02-5807c236135ad8504699e75223ddfb3b2babd7da.png": "sha256:aa0af8d3d4d7394cd3bfa72549eb84b65820f130ce63c4d5f04ad6493ff47789",
+                "evidencias/FASE-5/AC-015-02.png": "sha256:ff11cbb8cd30e64c2248fee21cc323e72ae9ae910d90e9ed999b4157d39c8868",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-cffd6-Vuelven-hoy-y-el-Casco-2-no-chromium/attachments/AC-015-02-55f341f08541263c2bde314d9fa9e49a1e0d1f3a.png": "sha256:aa0af8d3d4d7394cd3bfa72549eb84b65820f130ce63c4d5f04ad6493ff47789",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-cffd6-Vuelven-hoy-y-el-Casco-2-no-chromium/test-finished-1.png": "sha256:aa0af8d3d4d7394cd3bfa72549eb84b65820f130ce63c4d5f04ad6493ff47789"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Vuelven hoy",
+                    "template": false
+                  }
+                ],
+                "where": "Prestado",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-91be5-oy-sino-bajo-Prestado-ahora-chromium/attachments/AC-015-02-5807c236135ad8504699e75223ddfb3b2babd7da.png",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-91be5-oy-sino-bajo-Prestado-ahora-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-015-02.png"
+              ],
+              "unbound_captures": [
+                {
+                  "ref": "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-cffd6-Vuelven-hoy-y-el-Casco-2-no-chromium/attachments/AC-015-02-5807c236135ad8504699e75223ddfb3b2babd7da.png",
+                  "test": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-02 REQ-F-009 AC2 el día 2026-12-07 el Piolet 1 aparece bajo Vuelven hoy y el Casco 2 no",
+                  "reason": "attached by the test \"FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-…\", which does not pass"
+                }
+              ],
+              "videos": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-91be5-oy-sino-bajo-Prestado-ahora-chromium/attachments/FASE-5-FASE-5-AC-015-02-REQ-F-009-AC2-el-d-a-20-7c9150c74a3cc5114665313ba87a6f48cdc88889.webm",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-91be5-oy-sino-bajo-Prestado-ahora-chromium/video.webm",
+                "evidencias/FASE-5/FASE-5-FASE-5-AC-015-02-REQ-F-009-AC2-el-d-a-20.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "challenge CH-008 open"
+              ]
+            },
+            {
+              "n": 3,
+              "text": "GIVEN \"Casco 2\" ended 2026-12-08 and today is 2026-12-09 and not returned WHEN the encargado opens \"Prestado\" THEN the user sees \"Casco 2\" marked \"Retrasado 1 día\"",
+              "scenarios": [
+                "AC-015-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-03 REQ-F-009 AC3 con hoy 2026-12-09 el Casco 2 de Pablo Ruiz con fin 2026-12-08 sin devolver muestra Retrasado 1 día",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-03 REQ-F-009 AC3 con hoy 2026-12-09 el Casco 2 de Pablo Ruiz con fin 2026-12-08 sin devolver muestra Retrasado 1 día",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-03 REQ-F-009 AC3 con hoy 2026-12-09 el Casco 2 de Pablo Ruiz con fin 2026-12-08 sin devolver muestra Retrasado 1 día",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-03 REQ-F-009 AC3 con hoy 2026-12-09 el Casco 2 de Pablo Ruiz con fin 2026-12-08 sin devolver muestra Retrasado 1 día",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "API-003-09 consultarPrestado (UC-015) > AC-015-03 REQ-F-009 AC3 con hoy 2026-12-09 y el Casco 2 con fin 2026-12-08 sin devolver el retraso es 1 día",
+                  "file": "tests/unit/prestamos-prestado.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "API-003-09 consultarPrestado (UC-015) > AC-015-03 REQ-F-009 AC3 con hoy 2026-12-09 y el Casco 2 con fin 2026-12-08 sin devolver el retraso es 1 día",
+                  "file": "tests/unit/prestamos-prestado.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Prestado (UC-015, SCR-010) > AC-015-03 REQ-F-009 AC3 el Casco 2 con 1 día de retraso muestra \"Retrasado 1 día\" y con 2, \"Retrasado 2 días\"",
+                  "file": "tests/unit/ui-prestado.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Prestado (UC-015, SCR-010) > AC-015-03 REQ-F-009 AC3 el Casco 2 con 1 día de retraso muestra \"Retrasado 1 día\" y con 2, \"Retrasado 2 días\"",
+                  "file": "tests/unit/ui-prestado.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-a067e-ver-muestra-Retrasado-1-día-chromium/attachments/AC-015-03-cf3f855dee420f2d6a58259f6e55508840372ad7.png",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-a067e-ver-muestra-Retrasado-1-día-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-a067e-ver-muestra-Retrasado-1-día-chromium/attachments/AC-015-03-8410d1a93143537b42dda9a3fef1c8ce9906e481.png",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-a067e-ver-muestra-Retrasado-1-día-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-015-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-a067e-ver-muestra-Retrasado-1-día-chromium/attachments/AC-015-03-cf3f855dee420f2d6a58259f6e55508840372ad7.png": "sha256:d0f418ae6b86572f9a7780ac663da36d8702adffc0cb68c4d2c7e0929f15ad81",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-a067e-ver-muestra-Retrasado-1-día-chromium/test-finished-1.png": "sha256:d0f418ae6b86572f9a7780ac663da36d8702adffc0cb68c4d2c7e0929f15ad81",
+                "evidencias/FASE-5/AC-015-03.png": "sha256:d0f418ae6b86572f9a7780ac663da36d8702adffc0cb68c4d2c7e0929f15ad81",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-a067e-ver-muestra-Retrasado-1-día-chromium/attachments/AC-015-03-8410d1a93143537b42dda9a3fef1c8ce9906e481.png": "sha256:d0f418ae6b86572f9a7780ac663da36d8702adffc0cb68c4d2c7e0929f15ad81",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-a067e-ver-muestra-Retrasado-1-día-chromium/test-finished-1.png": "sha256:d0f418ae6b86572f9a7780ac663da36d8702adffc0cb68c4d2c7e0929f15ad81"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Retrasado {n} día",
+                    "template": true
+                  }
+                ],
+                "where": "Prestado",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-a067e-ver-muestra-Retrasado-1-día-chromium/attachments/AC-015-03-cf3f855dee420f2d6a58259f6e55508840372ad7.png",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-a067e-ver-muestra-Retrasado-1-día-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-015-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-a067e-ver-muestra-Retrasado-1-día-chromium/attachments/FASE-5-FASE-5-AC-015-03-REQ-F-009-AC3-con-hoy-2-a69597469c5b8a40cf82bd09b41a1f03e3a9b20a.webm",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-a067e-ver-muestra-Retrasado-1-día-chromium/video.webm",
+                "evidencias/FASE-5/FASE-5-FASE-5-AC-015-03-REQ-F-009-AC3-con-hoy-2.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 4,
+              "text": "GIVEN nothing is lent WHEN the encargado opens \"Prestado\" THEN the user sees \"No hay material prestado\"",
+              "scenarios": [
+                "AC-015-04"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-04 REQ-F-009 AC4 sin préstamos abiertos Prestado muestra No hay material prestado",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-04 REQ-F-009 AC4 sin préstamos abiertos Prestado muestra No hay material prestado",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-04 REQ-F-009 AC4 sin préstamos abiertos Prestado muestra No hay material prestado",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-04 REQ-F-009 AC4 sin préstamos abiertos Prestado muestra No hay material prestado",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "API-003-09 consultarPrestado (UC-015) > AC-015-04 REQ-F-009 AC4 sin préstamos abiertos devuelve lista vacía (lo devuelto, cancelado o reservado no cuenta)",
+                  "file": "tests/unit/prestamos-prestado.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "API-003-09 consultarPrestado (UC-015) > AC-015-04 REQ-F-009 AC4 sin préstamos abiertos devuelve lista vacía (lo devuelto, cancelado o reservado no cuenta)",
+                  "file": "tests/unit/prestamos-prestado.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Prestado (UC-015, SCR-010) > AC-015-04 REQ-F-009 AC4 sin préstamos muestra \"No hay material prestado\"",
+                  "file": "tests/unit/ui-prestado.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Prestado (UC-015, SCR-010) > AC-015-04 REQ-F-009 AC4 sin préstamos muestra \"No hay material prestado\"",
+                  "file": "tests/unit/ui-prestado.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3f659-ra-No-hay-material-prestado-chromium/attachments/AC-015-04-5b0f024fdcd4ff665cad9e6f5f7f54dccd121cf1.png",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3f659-ra-No-hay-material-prestado-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-3f659-ra-No-hay-material-prestado-chromium/attachments/AC-015-04-04df858a46648cddc8c633f7ea6a45b0160d6051.png",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-3f659-ra-No-hay-material-prestado-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-015-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3f659-ra-No-hay-material-prestado-chromium/attachments/AC-015-04-5b0f024fdcd4ff665cad9e6f5f7f54dccd121cf1.png": "sha256:dd130661846bd84022f85e8c760469f4c3524e09e982bbf34b287f8fefcdbde3",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3f659-ra-No-hay-material-prestado-chromium/test-finished-1.png": "sha256:dd130661846bd84022f85e8c760469f4c3524e09e982bbf34b287f8fefcdbde3",
+                "evidencias/FASE-5/AC-015-04.png": "sha256:dd130661846bd84022f85e8c760469f4c3524e09e982bbf34b287f8fefcdbde3",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-3f659-ra-No-hay-material-prestado-chromium/attachments/AC-015-04-04df858a46648cddc8c633f7ea6a45b0160d6051.png": "sha256:dd130661846bd84022f85e8c760469f4c3524e09e982bbf34b287f8fefcdbde3",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-3f659-ra-No-hay-material-prestado-chromium/test-finished-1.png": "sha256:dd130661846bd84022f85e8c760469f4c3524e09e982bbf34b287f8fefcdbde3"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No hay material prestado",
+                    "template": false
+                  }
+                ],
+                "where": "Prestado",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3f659-ra-No-hay-material-prestado-chromium/attachments/AC-015-04-5b0f024fdcd4ff665cad9e6f5f7f54dccd121cf1.png",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3f659-ra-No-hay-material-prestado-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-015-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3f659-ra-No-hay-material-prestado-chromium/attachments/FASE-5-FASE-5-AC-015-04-REQ-F-009-AC4-sin-pr-st-e97eb0eae2ae679d13fd07fbac6ac59d556f9765.webm",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3f659-ra-No-hay-material-prestado-chromium/video.webm",
+                "evidencias/FASE-5/FASE-5-FASE-5-AC-015-04-REQ-F-009-AC4-sin-pr-st.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            }
+          ],
+          "candidate_files": [
+            "src/domain/permisos.js",
+            "src/domain/prestamos.js",
+            "src/server/plugin.js",
+            "src/ui/api.js",
+            "src/ui/main.js",
+            "src/ui/pantallas/inicio.js",
+            "src/ui/pantallas/prestado.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": [
+            "CH-008"
+          ]
+        },
+        {
+          "id": "REQ-F-010",
+          "title": "La junta consulta el historial de un socio",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN a junta member selects a socio THE system SHALL show that socio's loan and fine history in read-only form",
+          "reqHash": "sha256:498da287df01fd7513771ac8f55b84bc7df249567c0a6c35c3db0c2cade801cc",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN \"Lucía Gil\" returned \"Piolet 1\" on 2026-12-07 and \"Pablo Ruiz\" has a 6,00 € fine WHEN the junta opens the history of \"Pablo Ruiz\" THEN the user sees \"Multa 6,00 € Pendiente\" and not the loans of \"Lucía Gil\"",
+              "scenarios": [
+                "AC-016-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-01 REQ-F-010 AC1 la junta elige a Pablo Ruiz y ve Multa 6,00 € Pendiente y nada de Lucía Gil",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-01 REQ-F-010 AC1 la junta elige a Pablo Ruiz y ve Multa 6,00 € Pendiente y nada de Lucía Gil",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-01 REQ-F-010 AC1 la junta elige a Pablo Ruiz y ve Multa 6,00 € Pendiente y nada de Lucía Gil",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-01 REQ-F-010 AC1 la junta elige a Pablo Ruiz y ve Multa 6,00 € Pendiente y nada de Lucía Gil",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "API-003-10 consultarHistorialSocio (UC-016) > AC-016-01 REQ-F-010 AC1 el historial de Pablo Ruiz incluye la multa de 6,00 € (importeEur 6) Pendiente y nada de Lucía Gil",
+                  "file": "tests/unit/prestamos-historial.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "API-003-10 consultarHistorialSocio (UC-016) > AC-016-01 REQ-F-010 AC1 el historial de Pablo Ruiz incluye la multa de 6,00 € (importeEur 6) Pendiente y nada de Lucía Gil",
+                  "file": "tests/unit/prestamos-historial.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Historial (UC-016, SCR-011) > AC-016-01 REQ-F-010 AC1 al elegir a \"Pablo Ruiz\" se pinta \"Multa 6,00 € Pendiente\" y nada de Lucía Gil",
+                  "file": "tests/unit/ui-historial.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Historial (UC-016, SCR-011) > AC-016-01 REQ-F-010 AC1 al elegir a \"Pablo Ruiz\" se pinta \"Multa 6,00 € Pendiente\" y nada de Lucía Gil",
+                  "file": "tests/unit/ui-historial.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-56b2e-ndiente-y-nada-de-Lucía-Gil-chromium/attachments/AC-016-01-47f6ea64edbc529a3060dfad6e537ca0bd20aea5.png",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-56b2e-ndiente-y-nada-de-Lucía-Gil-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-56b2e-ndiente-y-nada-de-Lucía-Gil-chromium/attachments/AC-016-01-8df37b96e821739bbe3baa5ad947be203f0c9a9c.png",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-56b2e-ndiente-y-nada-de-Lucía-Gil-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-016-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-56b2e-ndiente-y-nada-de-Lucía-Gil-chromium/attachments/AC-016-01-47f6ea64edbc529a3060dfad6e537ca0bd20aea5.png": "sha256:a1778bb17738c2be9431ac59ddc9735dc2d2be97c20974becf1f7f56afd12939",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-56b2e-ndiente-y-nada-de-Lucía-Gil-chromium/test-finished-1.png": "sha256:a1778bb17738c2be9431ac59ddc9735dc2d2be97c20974becf1f7f56afd12939",
+                "evidencias/FASE-5/AC-016-01.png": "sha256:a1778bb17738c2be9431ac59ddc9735dc2d2be97c20974becf1f7f56afd12939",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-56b2e-ndiente-y-nada-de-Lucía-Gil-chromium/attachments/AC-016-01-8df37b96e821739bbe3baa5ad947be203f0c9a9c.png": "sha256:a1778bb17738c2be9431ac59ddc9735dc2d2be97c20974becf1f7f56afd12939",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-56b2e-ndiente-y-nada-de-Lucía-Gil-chromium/test-finished-1.png": "sha256:a1778bb17738c2be9431ac59ddc9735dc2d2be97c20974becf1f7f56afd12939"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Multa {importe} € {estado}",
+                    "template": true
+                  }
+                ],
+                "where": "Historial del socio",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-56b2e-ndiente-y-nada-de-Lucía-Gil-chromium/attachments/AC-016-01-47f6ea64edbc529a3060dfad6e537ca0bd20aea5.png",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-56b2e-ndiente-y-nada-de-Lucía-Gil-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-016-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-56b2e-ndiente-y-nada-de-Lucía-Gil-chromium/attachments/FASE-5-FASE-5-AC-016-01-REQ-F-010-AC1-la-junta--8c4a4a245e9bfc08b5b994cf31b1cbbdb73ff4b9.webm",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-56b2e-ndiente-y-nada-de-Lucía-Gil-chromium/video-1.webm",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-56b2e-ndiente-y-nada-de-Lucía-Gil-chromium/video.webm",
+                "evidencias/FASE-5/FASE-5-FASE-5-AC-016-01-REQ-F-010-AC1-la-junta-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 2,
+              "text": "GIVEN the junta opens the history of \"Lucía Gil\" THEN the user sees \"Piolet 1\" with \"Devuelto\"",
+              "scenarios": [
+                "AC-016-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-02 REQ-F-010 AC2 la junta elige a Lucía Gil y ve el Piolet 1 con Devuelto",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-02 REQ-F-010 AC2 la junta elige a Lucía Gil y ve el Piolet 1 con Devuelto",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-02 REQ-F-010 AC2 la junta elige a Lucía Gil y ve el Piolet 1 con Devuelto",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-02 REQ-F-010 AC2 la junta elige a Lucía Gil y ve el Piolet 1 con Devuelto",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "API-003-10 consultarHistorialSocio (UC-016) > AC-016-02 REQ-F-010 AC2 el historial de Lucía Gil incluye el Piolet 1 con estado Devuelto",
+                  "file": "tests/unit/prestamos-historial.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "API-003-10 consultarHistorialSocio (UC-016) > AC-016-02 REQ-F-010 AC2 el historial de Lucía Gil incluye el Piolet 1 con estado Devuelto",
+                  "file": "tests/unit/prestamos-historial.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Historial (UC-016, SCR-011) > AC-016-02 REQ-F-010 AC2 se pinta \"Piolet 1\" con \"Devuelto\"",
+                  "file": "tests/unit/ui-historial.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Historial (UC-016, SCR-011) > AC-016-02 REQ-F-010 AC2 se pinta \"Piolet 1\" con \"Devuelto\"",
+                  "file": "tests/unit/ui-historial.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3a9e4-ve-el-Piolet-1-con-Devuelto-chromium/attachments/AC-016-02-fc9a94f035806fa6c0deb6e74b631a4e50f1dfcd.png",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3a9e4-ve-el-Piolet-1-con-Devuelto-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-3a9e4-ve-el-Piolet-1-con-Devuelto-chromium/attachments/AC-016-02-6c2bcdf6a311f62c1fa9d1e646a2b76de9785eae.png",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-3a9e4-ve-el-Piolet-1-con-Devuelto-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-016-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3a9e4-ve-el-Piolet-1-con-Devuelto-chromium/attachments/AC-016-02-fc9a94f035806fa6c0deb6e74b631a4e50f1dfcd.png": "sha256:efe68a602993d07aa59f8cb059db51aee1851b897f69649ef71b914c296fbd56",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3a9e4-ve-el-Piolet-1-con-Devuelto-chromium/test-finished-1.png": "sha256:efe68a602993d07aa59f8cb059db51aee1851b897f69649ef71b914c296fbd56",
+                "evidencias/FASE-5/AC-016-02.png": "sha256:efe68a602993d07aa59f8cb059db51aee1851b897f69649ef71b914c296fbd56",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-3a9e4-ve-el-Piolet-1-con-Devuelto-chromium/attachments/AC-016-02-6c2bcdf6a311f62c1fa9d1e646a2b76de9785eae.png": "sha256:efe68a602993d07aa59f8cb059db51aee1851b897f69649ef71b914c296fbd56",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-3a9e4-ve-el-Piolet-1-con-Devuelto-chromium/test-finished-1.png": "sha256:efe68a602993d07aa59f8cb059db51aee1851b897f69649ef71b914c296fbd56"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Devuelto",
+                    "template": false
+                  }
+                ],
+                "where": "Historial del socio",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3a9e4-ve-el-Piolet-1-con-Devuelto-chromium/attachments/AC-016-02-fc9a94f035806fa6c0deb6e74b631a4e50f1dfcd.png",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3a9e4-ve-el-Piolet-1-con-Devuelto-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-016-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3a9e4-ve-el-Piolet-1-con-Devuelto-chromium/attachments/FASE-5-FASE-5-AC-016-02-REQ-F-010-AC2-la-junta--cbc75fd0bdb2b05140f3c011c83d8c6040a3813e.webm",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-3a9e4-ve-el-Piolet-1-con-Devuelto-chromium/video.webm",
+                "evidencias/FASE-5/FASE-5-FASE-5-AC-016-02-REQ-F-010-AC2-la-junta-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 3,
+              "text": "GIVEN a socio without history WHEN the junta opens it THEN the user sees \"Sin préstamos ni multas\"",
+              "scenarios": [
+                "AC-016-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-03 REQ-F-010 AC3 la junta elige a Ana Mir, sin préstamos ni multas, y ve Sin préstamos ni multas",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-03 REQ-F-010 AC3 la junta elige a Ana Mir, sin préstamos ni multas, y ve Sin préstamos ni multas",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-03 REQ-F-010 AC3 la junta elige a Ana Mir, sin préstamos ni multas, y ve Sin préstamos ni multas",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-03 REQ-F-010 AC3 la junta elige a Ana Mir, sin préstamos ni multas, y ve Sin préstamos ni multas",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "API-003-10 consultarHistorialSocio (UC-016) > AC-016-03 REQ-F-010 AC3 un socio sin movimientos devuelve listas vacías",
+                  "file": "tests/unit/prestamos-historial.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "API-003-10 consultarHistorialSocio (UC-016) > AC-016-03 REQ-F-010 AC3 un socio sin movimientos devuelve listas vacías",
+                  "file": "tests/unit/prestamos-historial.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Historial (UC-016, SCR-011) > AC-016-03 REQ-F-010 AC3 un socio sin movimientos muestra \"Sin préstamos ni multas\"",
+                  "file": "tests/unit/ui-historial.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Historial (UC-016, SCR-011) > AC-016-03 REQ-F-010 AC3 un socio sin movimientos muestra \"Sin préstamos ni multas\"",
+                  "file": "tests/unit/ui-historial.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-b24f5--ve-Sin-préstamos-ni-multas-chromium/attachments/AC-016-03-5922bcc7e60fe72523636a245c67b4ce3e1718bc.png",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-b24f5--ve-Sin-préstamos-ni-multas-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-b24f5--ve-Sin-préstamos-ni-multas-chromium/attachments/AC-016-03-471058171ba309e533bb0f86eeb2abdd53261eef.png",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-b24f5--ve-Sin-préstamos-ni-multas-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-016-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-b24f5--ve-Sin-préstamos-ni-multas-chromium/attachments/AC-016-03-5922bcc7e60fe72523636a245c67b4ce3e1718bc.png": "sha256:12d6aee15e7b71f5ecb9007a922a9896afb1b2a7a36a62041f9317ddb65194ca",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-b24f5--ve-Sin-préstamos-ni-multas-chromium/test-finished-1.png": "sha256:12d6aee15e7b71f5ecb9007a922a9896afb1b2a7a36a62041f9317ddb65194ca",
+                "evidencias/FASE-5/AC-016-03.png": "sha256:12d6aee15e7b71f5ecb9007a922a9896afb1b2a7a36a62041f9317ddb65194ca",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-b24f5--ve-Sin-préstamos-ni-multas-chromium/attachments/AC-016-03-471058171ba309e533bb0f86eeb2abdd53261eef.png": "sha256:12d6aee15e7b71f5ecb9007a922a9896afb1b2a7a36a62041f9317ddb65194ca",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-b24f5--ve-Sin-préstamos-ni-multas-chromium/test-finished-1.png": "sha256:12d6aee15e7b71f5ecb9007a922a9896afb1b2a7a36a62041f9317ddb65194ca"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Sin préstamos ni multas",
+                    "template": false
+                  }
+                ],
+                "where": "Historial del socio",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-b24f5--ve-Sin-préstamos-ni-multas-chromium/attachments/AC-016-03-5922bcc7e60fe72523636a245c67b4ce3e1718bc.png",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-b24f5--ve-Sin-préstamos-ni-multas-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-016-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-b24f5--ve-Sin-préstamos-ni-multas-chromium/attachments/FASE-5-FASE-5-AC-016-03-REQ-F-010-AC3-la-junta--5fb25c01323f309898d228ca49bdc972367bdf1b.webm",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-b24f5--ve-Sin-préstamos-ni-multas-chromium/video.webm",
+                "evidencias/FASE-5/FASE-5-FASE-5-AC-016-03-REQ-F-010-AC3-la-junta-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 4,
+              "text": "GIVEN a junta session WHEN the junta opens the address of \"Entregar\", \"Inventario\" or \"Reservar\" THEN the user sees \"Acceso no permitido\" and the junta screens have no button to change data",
+              "scenarios": [
+                "AC-016-04"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-04 REQ-F-010 AC4 la junta abre Entregar, Inventario y Reservar y ve Acceso no permitido, sin botones que cambien datos",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-04 REQ-F-010 AC4 la junta abre Entregar, Inventario y Reservar y ve Acceso no permitido, sin botones que cambien datos",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-04 REQ-F-010 AC4 la junta abre Entregar, Inventario y Reservar y ve Acceso no permitido, sin botones que cambien datos",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-04 REQ-F-010 AC4 la junta abre Entregar, Inventario y Reservar y ve Acceso no permitido, sin botones que cambien datos",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "pantalla Historial (UC-016, SCR-011) > AC-016-04 REQ-F-010 AC4 con rol junta Entregar, Inventario y Reservar muestran \"Acceso no permitido\" y Historial no ofrece botones que cambien datos",
+                  "file": "tests/unit/ui-historial.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Historial (UC-016, SCR-011) > AC-016-04 REQ-F-010 AC4 con rol junta Entregar, Inventario y Reservar muestran \"Acceso no permitido\" y Historial no ofrece botones que cambien datos",
+                  "file": "tests/unit/ui-historial.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-eb09a-n-botones-que-cambien-datos-chromium/attachments/AC-016-04-4f698b7861d3cfa29d67449de02f914b95cd8880.png",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-eb09a-n-botones-que-cambien-datos-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-eb09a-n-botones-que-cambien-datos-chromium/attachments/AC-016-04-2deb81259491926d35f570b334044e1ad039f3a3.png",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-eb09a-n-botones-que-cambien-datos-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-016-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-eb09a-n-botones-que-cambien-datos-chromium/attachments/AC-016-04-4f698b7861d3cfa29d67449de02f914b95cd8880.png": "sha256:2dcaf7b3b62741738546812993c37acc6c9d269b986b0eba5cd7ba9367d41354",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-eb09a-n-botones-que-cambien-datos-chromium/test-finished-1.png": "sha256:2dcaf7b3b62741738546812993c37acc6c9d269b986b0eba5cd7ba9367d41354",
+                "evidencias/FASE-5/AC-016-04.png": "sha256:2dcaf7b3b62741738546812993c37acc6c9d269b986b0eba5cd7ba9367d41354",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-eb09a-n-botones-que-cambien-datos-chromium/attachments/AC-016-04-2deb81259491926d35f570b334044e1ad039f3a3.png": "sha256:2dcaf7b3b62741738546812993c37acc6c9d269b986b0eba5cd7ba9367d41354",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-eb09a-n-botones-que-cambien-datos-chromium/test-finished-1.png": "sha256:2dcaf7b3b62741738546812993c37acc6c9d269b986b0eba5cd7ba9367d41354"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Acceso no permitido",
+                    "template": false
+                  }
+                ],
+                "where": "Inventario",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-eb09a-n-botones-que-cambien-datos-chromium/attachments/AC-016-04-4f698b7861d3cfa29d67449de02f914b95cd8880.png",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-eb09a-n-botones-que-cambien-datos-chromium/test-finished-1.png",
+                "evidencias/FASE-5/AC-016-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-eb09a-n-botones-que-cambien-datos-chromium/attachments/FASE-5-FASE-5-AC-016-04-REQ-F-010-AC4-la-junta--e38b1df397751acc0ad6b2f4491f3e75ae43b852.webm",
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-eb09a-n-botones-que-cambien-datos-chromium/video.webm",
+                "evidencias/FASE-5/FASE-5-FASE-5-AC-016-04-REQ-F-010-AC4-la-junta-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            }
+          ],
+          "candidate_files": [
+            "src/domain/permisos.js",
+            "src/domain/prestamos.js",
+            "src/server/plugin.js",
+            "src/ui/api.js",
+            "src/ui/main.js",
+            "src/ui/pantallas/historial.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        },
+        {
+          "id": "REQ-NF-001",
+          "title": "Datos personales solo para su dueño, el encargado y la junta",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "THE system SHALL return the data of a socio (name, email, reservations, loans, fines) only to that socio, the encargado and the junta, and SHALL store passwords hashed",
+          "reqHash": "sha256:a5c3d89f02f1f27aaa02db2c9e61e5b000b445b4b30ef778b2c4cd14c4b5b826",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN session of \"lucia\" WHEN she requests the reservations, fines or profile of \"pablo\" by address THEN the response is refused (no data of \"pablo\")",
+              "scenarios": [],
+              "tests": [
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 REQ-NF-001 AC1 SEC-T-001 Lucía pide por dirección las multas y el historial de Pablo y recibe rechazo sin datos de Pablo",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 REQ-NF-001 AC1 SEC-T-001 Lucía pide por dirección las multas y el historial de Pablo y recibe rechazo sin datos de Pablo",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-NF-001 seguridad por rol sobre la API > REQ-NF-001 AC1 SEC-T-001 la sesión de \"lucia\" que pide las multas o el historial de \"pablo\" recibe rechazo y ningún dato de Pablo",
+                  "file": "tests/api/seguridad.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-2175c--rechazo-sin-datos-de-Pablo-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-2175c--rechazo-sin-datos-de-Pablo-chromium/test-finished-1.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-2175c--rechazo-sin-datos-de-Pablo-chromium/test-finished-1.png": "sha256:9b06a71d1584c9ae6c55899d01672f5c35525323baad7ae82a17f9fbefcfd4fd",
+                "evidencias/sin-fase/.playwright/fase-5-consultas-FASE-5-Lo-2175c--rechazo-sin-datos-de-Pablo-chromium/test-finished-1.png": "sha256:9b06a71d1584c9ae6c55899d01672f5c35525323baad7ae82a17f9fbefcfd4fd"
+              },
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 2,
+              "text": "GIVEN no session WHEN any data address is requested THEN the response is refused",
+              "scenarios": [],
+              "tests": [
+                {
+                  "name": "permisos > SEC-T-002 REQ-NF-001 AC2 sin sesión toda operación salvo iniciarSesion devuelve E_NO_AUTENTICADO",
+                  "file": "tests/unit/permisos.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-NF-001 seguridad por rol sobre la API > REQ-NF-001 AC2 SEC-T-002 sin sesión cada operación de la API se rechaza con 401 E_NO_AUTENTICADO",
+                  "file": "tests/api/seguridad.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-NF-001 AC2 direcciones del fichero de datos con el servidor de Vite real > REQ-NF-001 AC2 SEC-T-002 sin sesión la dirección del fichero de datos, por cualquier ruta, se rechaza con 401 E_NO_AUTENTICADO y no devuelve datos",
+                  "file": "tests/api/seguridad.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-NF-001 AC2 direcciones del fichero de datos con el servidor de Vite real > REQ-NF-001 AC2 SEC-T-002 sin sesión la dirección del fichero de datos, por cualquier ruta, se rechaza con 401 E_NO_AUTENTICADO y no devuelve datos",
+                  "file": "tests/api/seguridad.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-NF-001 AC2 direcciones del fichero de datos con el servidor de Vite real > REQ-NF-001 AC2 SEC-T-002 sin sesión ninguna forma de pedir el fichero de datos (?import, /@id/, //, dirección absoluta) se rechaza con 401 y sin su contenido",
+                  "file": "tests/api/seguridad.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-NF-001 AC2 direcciones del fichero de datos con el servidor de Vite real > REQ-NF-001 AC2 SEC-T-002 sin sesión ninguna forma de pedir el fichero de datos (?import, /@id/, //, dirección absoluta) se rechaza con 401 y sin su contenido",
+                  "file": "tests/api/seguridad.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-NF-001 AC2 direcciones del fichero de datos con el servidor de Vite real > REQ-NF-001 AC2 SEC-T-002 con sesión el fichero de datos tampoco se sirve: 403 E_ACCESO_NO_PERMITIDO",
+                  "file": "tests/api/seguridad.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-NF-001 AC2 direcciones del fichero de datos con el servidor de Vite real > REQ-NF-001 AC2 SEC-T-002 con sesión el fichero de datos tampoco se sirve: 403 E_ACCESO_NO_PERMITIDO",
+                  "file": "tests/api/seguridad.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [],
+              "capture_sha256": {},
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 3,
+              "text": "GIVEN the stored data after creating \"pablo\" with password \"Nieve2026\" THEN the text \"Nieve2026\" appears nowhere and the stored value is a hash",
+              "scenarios": [],
+              "tests": [
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 REQ-NF-001 AC3 SEC-T-003 tras crear a Pablo con la contraseña Nieve2026 el almacén no contiene Nieve2026 y sí un hash",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 REQ-NF-001 AC3 SEC-T-003 tras crear a Pablo con la contraseña Nieve2026 el almacén no contiene Nieve2026 y sí un hash",
+                  "file": "fase-5-consultas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "UC-003 crearSocio y listarSocios > REQ-NF-001 AC3 tras crear a pablo con la contraseña \"Nieve2026\" el texto no aparece en el almacén y lo guardado es un hash",
+                  "file": "tests/unit/socios.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-NF-001 seguridad por rol sobre la API > REQ-NF-001 AC3 SEC-T-003 tras crear a \"pablo\" con la contraseña \"Nieve2026\" el almacén no contiene \"Nieve2026\" y sí un hash",
+                  "file": "tests/api/seguridad.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [],
+              "capture_sha256": {},
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 4,
+              "text": "GIVEN a socio session WHEN the socio opens the list of all socios THEN the user sees \"Acceso no permitido\"",
+              "scenarios": [],
+              "tests": [
+                {
+                  "name": "REQ-NF-001 seguridad por rol sobre la API > REQ-NF-001 AC4 un socio recibe E_ACCESO_NO_PERMITIDO (\"Acceso no permitido\") en listarSocios",
+                  "file": "tests/api/seguridad.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [],
+              "capture_sha256": {},
+              "recheck": false,
+              "recheck_reasons": []
+            }
+          ],
+          "candidate_files": [
+            "src/domain/constantes.js",
+            "src/domain/permisos.js",
+            "src/server/plugin.js",
+            "src/server/purga.js"
+          ],
+          "challenges_open": []
+        }
+      ],
+      "unknown_requirements": [],
+      "tasks": [
+        "TASK-F5-001",
+        "TASK-F5-002",
+        "TASK-F5-003",
+        "TASK-F5-004",
+        "TASK-F5-005",
+        "TASK-F5-006",
+        "TASK-F5-007",
+        "TASK-F5-008",
+        "TASK-F5-009",
+        "TASK-F5-010",
+        "TASK-F5-011"
+      ],
+      "candidate_files": [
+        "src/domain/constantes.js",
+        "src/domain/permisos.js",
+        "src/domain/prestamos.js",
+        "src/server/plugin.js",
+        "src/server/purga.js",
+        "src/ui/api.js",
+        "src/ui/main.js",
+        "src/ui/pantallas/historial.js",
+        "src/ui/pantallas/inicio.js",
+        "src/ui/pantallas/prestado.js",
+        "src/ui/textos.js"
+      ],
+      "incremental": {
+        "criteria": 12,
+        "recheck": 1
+      }
+    }
+  ],
+  "uncovered": [
+    {
+      "id": "REQ-C-001",
+      "title": "Stack",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-002",
+      "title": "Textos en español",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-003",
+      "title": "Datos compartidos entre dispositivos",
+      "priority": "Must"
+    }
+  ],
+  "fases_without_header": [],
+  "criteria_without_test": [],
+  "coverage_gaps": 3
+}

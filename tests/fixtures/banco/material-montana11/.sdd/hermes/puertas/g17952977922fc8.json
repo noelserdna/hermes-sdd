@@ -1,0 +1,55 @@
+{
+  "id": "g17952977922fc8",
+  "tipo": "fase",
+  "fase": "0",
+  "tablero": "material-montana11",
+  "tarjeta": "t_8b732eb6",
+  "adopcion": false,
+  "sha": "ddb746f2b9e0054d3d2bfed5fcd835b805b090e5",
+  "creada": "2026-11-21T21:49:52Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana11",
+  "titulo": "Aceptar FASE-0",
+  "texto": "🧪 La FASE-0 de «material-montana11» está lista para revisar.\n\n✅ Todo en orden: el requisito de esta fase funciona y está comprobado.\n\n❌ Rechazaste la versión anterior:\n«CH-002 es cierto: tras salir y volver atrás, la prueba tiene que esperar a que la app termine de comprobar la sesión y entonces ver el formulario Entrar; tal como está pasaría aunque volver atrás enseñara Mis reservas.»\nLo hecho desde entonces:\n• test(acceso): AC-002-01 espera a la comprobación de sesión tras volver atrás antes de ver Entrar\n\n✅ Entrar con correo y contraseña: funciona y está comprobado (9 de 9 criterios)\n\n🛡 No se ha tocado ningún test que ya existía (ni sus ayudas ni su configuración).\n\n🎬 Demo: vídeo y 13 capturas.\n\n🤖 Jev ha leído el texto en off de 13 vídeos: cada uno cuenta lo que pide su criterio.\n\n👉 Pulsa ▶ Ver demo; después podrás aceptarla, aceptarla con observaciones o rechazarla.",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Aceptar",
+      "paso": 2
+    },
+    {
+      "verbo": "observaciones",
+      "etiqueta": "📝 Con observaciones",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-0/WF-002-WF-002-AC-001-01-lucia-entra-con-su-corr.mp4",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [],
+    "graves": 0
+  },
+  "narracion": {
+    "revisados": 13,
+    "modelo": "jev-1.14.0",
+    "contradicen": [],
+    "incompletos": []
+  }
+}

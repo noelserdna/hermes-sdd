@@ -1,0 +1,20 @@
+{
+ "video": "FASE-1-FASE-1-AC-013-01-marta-a-ade-2-Crampones.webm",
+ "test": "FASE-1 Inventario (encargado) › FASE-1 AC-013-01 marta añade 2 Crampones en Inventario y ve Crampones: 2 unidades",
+ "titulo": "FASE-1 AC-013-01 marta añade 2 Crampones en Inventario y ve Crampones: 2 unidades",
+ "narraciones": [
+  {
+   "t": 1.122,
+   "texto": "Marta, la encargada, entra y abre Inventario"
+  },
+  {
+   "t": 1.964,
+   "texto": "Elige Crampones, escribe la cantidad 2 y pulsa Añadir"
+  },
+  {
+   "t": 2.286,
+   "texto": "Gestionar el inventario. En Inventario se ve «Crampones: 2 unidades», con las unidades Crampones 1 y Crampones 2.",
+   "criterio": "AC-013-01"
+  }
+ ]
+}

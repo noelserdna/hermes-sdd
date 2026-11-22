@@ -230,6 +230,20 @@ def _fidelidad(repo: Path, n: str | None) -> list:
         av.append(_aviso("capturas-avisos", f"{len(leves)} aviso(s) de las capturas, p. ej. {_captura_txt(leves[0])}"))
     if r.get("mutantes_error"):
         av.append(_aviso("mutantes-sin-hacer", f"No se pudieron probar los mutantes (si cambia un texto, ¿algún test lo nota?): {r['mutantes_error']}"))
+    # Un control que no corrió se dice: «sin hallazgos» no es «sin comprobar» (material-montana11: 47 de 49 mutantes
+    # quedaron sin ejecutar y un grave de vínculos no llegó a ninguna puerta)
+    vg = {}
+    for x in r.get("vinculos", []):
+        if x.get("grave"):
+            vg.setdefault(f"{x['req']} AC{x['ac']}", []).extend(t for t in x.get("faltan_then", []) if t not in vg.get(f"{x['req']} AC{x['ac']}", []))
+    for crit, textos in list(vg.items())[:10]:
+        av.append(_aviso("test-sin-el-texto", f"{crit}: ningún test de este criterio comprueba {', '.join('«' + t + '»' for t in textos)}", True))
+    muts = r.get("mutantes", [])
+    sin_ej = [x for x in muts if "sin comprobar" in (x.get("resultado") or "")]
+    if sin_ej:
+        av.append(_aviso("mutantes-sin-ejecutar", f"{len(sin_ej)} de {len(muts)} textos sin la prueba del mutante (si cambia el texto en la app, "
+                         f"¿algún test lo nota?): los tests pasaron en la etapa pero no se pudieron repetir en la copia de este ordenador",
+                         len(sin_ej) * 2 > len(muts)))
     fuera = [x for x in r.get("mutantes", []) if x.get("resultado") == "no está en el código"]
     if fuera:
         textos = list(dict.fromkeys(f"«{x['texto']}»" for x in fuera))

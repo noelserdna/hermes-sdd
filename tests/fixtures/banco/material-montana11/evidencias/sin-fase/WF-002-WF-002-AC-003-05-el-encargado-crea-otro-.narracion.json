@@ -1,0 +1,16 @@
+{
+ "video": "WF-002-WF-002-AC-003-05-el-encargado-crea-otro-.webm",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-003-05 el encargado crea otro socio con el correo pablo@club.test y ve que ya existe",
+ "titulo": "WF-002 AC-003-05 el encargado crea otro socio con el correo pablo@club.test y ve que ya existe",
+ "narraciones": [
+  {
+   "t": 0.878,
+   "texto": "Marta abre Socios, donde ya está Pablo, y da de alta a otro socio con el mismo correo"
+  },
+  {
+   "t": 1.521,
+   "texto": "Gestionar las cuentas de socios. En Socios se ve «Ya existe un socio con ese correo». Y la lista sigue con un solo pablo@club.test.",
+   "criterio": "AC-003-05"
+  }
+ ]
+}

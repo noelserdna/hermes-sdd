@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-007-01",
+ "test": "FASE-1 Cancelar reserva (hoy 2026-12-04) › FASE-1 AC-007-01 hoy 2026-12-04 lucia cancela su Piolet que empieza el 2026-12-05 y ve Reserva cancelada y Cancelada",
+ "titulo": "FASE-1 AC-007-01 hoy 2026-12-04 lucia cancela su Piolet que empieza el 2026-12-05 y ve Reserva cancelada y Cancelada",
+ "ve": [
+  "Reserva cancelada",
+  "Cancelada"
+ ],
+ "narrado": "Ver y cancelar mis reservas. En Mis reservas se ve «Reserva cancelada», y la reserva del Piolet pasa a estado Cancelada.",
+ "url": "http://127.0.0.1:34289/#/reservas",
+ "imagen": "AC-007-01.png",
+ "sha256": "sha256:4cde751dba1911dbc5214d1379c5fb8b38812b9b324738659401328dbcf78a50",
+ "at": "2026-11-22T06:14:55.905Z"
+}

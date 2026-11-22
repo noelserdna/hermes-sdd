@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-004-01",
+ "test": "REQ-F-004 AC1 · AC-004-01 Lucía abre Mis reservas y ve «Piolet · 2026-12-05 a 2026-12-07 · Reservada»",
+ "titulo": "REQ-F-004 AC1 · AC-004-01 Lucía abre Mis reservas y ve «Piolet · 2026-12-05 a 2026-12-07 · Reservada»",
+ "ve": [
+  "Piolet · 2026-12-05 a 2026-12-07 · Reservada"
+ ],
+ "narrado": "Ver y cancelar mis reservas. En Mis reservas se ve «Piolet · 2026-12-05 a 2026-12-07 · Reservada».",
+ "url": "http://127.0.0.1:5173/#/mis-reservas",
+ "imagen": "AC-004-01.png",
+ "sha256": "sha256:4a771ead5cc9f9cc615a42cf49d9dd4c1c3a6873f6ea21973f24e7d357b76ce0",
+ "at": "2026-11-21T12:34:23.052Z"
+}

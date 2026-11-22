@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-02",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-001-02 marta entra como encargada y ve Panel del encargado",
+ "titulo": "WF-002 AC-001-02 marta entra como encargada y ve Panel del encargado",
+ "ve": [
+  "Panel del encargado"
+ ],
+ "narrado": "Entrar con correo y contraseña. En Inicio del encargado se ve «Panel del encargado».",
+ "url": "http://127.0.0.1:37931/#/inicio",
+ "imagen": "AC-001-02.png",
+ "sha256": "sha256:8053e966b81bc272d1183f4e151d194d007687c1970ef40a134d8a792fb20ff0",
+ "at": "2026-11-22T01:00:39.594Z"
+}

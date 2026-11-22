@@ -1,0 +1,4 @@
+Q1: B. Retocad la comprobación de tests/unit/multas.test.js para que cite el texto «Sin multas» del criterio REQ-F-006 AC2; lo demás de la FASE-3 está bien.
+Q1 (Q-task-implementer-002): lint --quotes da Q-03 en tests/unit/multas.test.js:41: el test de REQ-F-006 AC2 (FASE-2, dominio) no contiene el literal "Sin multas", que es texto de pantalla y no de dominio. Ese texto ya lo comprueban tests/unit/ui-mis-multas.test.js y la captura AC-010-02 de FASE-3 (fase-3-ciclo-multas.spec.js). Editar un test aceptado exige un registro test-edit del notario. → elegida B: Autorizar la edición de tests/unit/multas.test.js para que su test de REQ-F-006 AC2 lleve el literal
+Criterios de la FASE que no pasan la aceptación (corrígelos todos):
+- REQ-F-006 AC2: weakened — el test no lleva la letra literal: Sin multas

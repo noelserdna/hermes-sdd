@@ -1,0 +1,16 @@
+{
+ "video": "FASE-1-FASE-1-AC-005-14-lucia-env-a-dos-veces-P.webm",
+ "test": "FASE-1 Reservar material (socio) › FASE-1 AC-005-14 lucia envía dos veces Piolet del 2026-12-05 al 2026-12-07 y Mis reservas muestra un solo Piolet",
+ "titulo": "FASE-1 AC-005-14 lucia envía dos veces Piolet del 2026-12-05 al 2026-12-07 y Mis reservas muestra un solo Piolet",
+ "narraciones": [
+  {
+   "t": 1.017,
+   "texto": "Lucía entra, reserva un Piolet del 5 al 7 de diciembre y, sin tocar nada, vuelve a pulsar Reservar"
+  },
+  {
+   "t": 1.823,
+   "texto": "Reservar material para unas fechas. En Mis reservas se ve «Piolet», una sola vez para el 2026-12-05 al 2026-12-07, sin repetirse.",
+   "criterio": "AC-005-14"
+  }
+ ]
+}

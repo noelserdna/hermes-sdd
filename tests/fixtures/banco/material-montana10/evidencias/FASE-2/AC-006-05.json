@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-006-05",
+ "test": "REQ-F-006 AC5 · AC-006-05 devolver una reserva que no está prestada muestra «Esa reserva no está prestada» y no crea multa",
+ "titulo": "REQ-F-006 AC5 · AC-006-05 devolver una reserva que no está prestada muestra «Esa reserva no está prestada» y no crea multa",
+ "ve": [
+  "Esa reserva no está prestada"
+ ],
+ "narrado": "Marcar la devolución y poner la multa. En Entregas y devoluciones se ve «Esa reserva no está prestada», y no se crea ninguna multa.",
+ "url": "http://127.0.0.1:5173/#/entregas",
+ "imagen": "AC-006-05.png",
+ "sha256": "sha256:049f27914f3c82f7161d77ac5e21bbf48f9e12567b60e7b4cfc7f9b33f7d8cf1",
+ "at": "2026-11-21T13:46:45.388Z"
+}

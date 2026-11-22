@@ -1,0 +1,20 @@
+{
+ "video": "FASE-0-REQ-F-005-AC3-AC-005-03-el-2026-12-04-.webm",
+ "test": "REQ-F-005 AC3 · AC-005-03 el 2026-12-04 entregar la reserva que empieza el 2026-12-05 muestra «Aún no es la fecha de entrega»",
+ "titulo": "REQ-F-005 AC3 · AC-005-03 el 2026-12-04 entregar la reserva que empieza el 2026-12-05 muestra «Aún no es la fecha de entrega»",
+ "narraciones": [
+  {
+   "t": 0.007,
+   "texto": "El encargado tiene abierta Entregas y devoluciones con la reserva de Lucía, que empieza el 5 de diciembre"
+  },
+  {
+   "t": 0.539,
+   "texto": "Es 4 de diciembre y el encargado pulsa Entregar"
+  },
+  {
+   "t": 0.78,
+   "texto": "Entregar lo reservado. En Entregas y devoluciones se ve «Aún no es la fecha de entrega», y la reserva sigue Reservada.",
+   "criterio": "AC-005-03"
+  }
+ ]
+}

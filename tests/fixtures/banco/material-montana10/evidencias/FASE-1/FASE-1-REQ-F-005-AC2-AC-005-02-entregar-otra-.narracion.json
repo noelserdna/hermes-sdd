@@ -1,0 +1,20 @@
+{
+ "video": "FASE-1-REQ-F-005-AC2-AC-005-02-entregar-otra-.webm",
+ "test": "REQ-F-005 AC2 · AC-005-02 entregar otra vez la reserva ya Prestada deja una sola «Piolet 2 · Lucía · Prestada»",
+ "titulo": "REQ-F-005 AC2 · AC-005-02 entregar otra vez la reserva ya Prestada deja una sola «Piolet 2 · Lucía · Prestada»",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "El encargado abre Entregas y devoluciones en dos pestañas; hoy es 5 de diciembre"
+  },
+  {
+   "t": 0.731,
+   "texto": "En la segunda pestaña, que aún enseña la reserva por entregar, el encargado elige «Piolet 3» y pulsa Entregar otra vez"
+  },
+  {
+   "t": 0.983,
+   "texto": "Entregar lo reservado. La lista sigue con una sola fila prestada, «Piolet 2 · Lucía · Prestada», y no se asigna una segunda unidad.",
+   "criterio": "AC-005-02"
+  }
+ ]
+}

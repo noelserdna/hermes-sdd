@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "rol": "spec-auditor",
+  "preguntas": [
+    {
+      "id": "Q-spec-auditor-001",
+      "skill": "sdd-spec-auditor",
+      "contexto": "CON-001 spec/contracts/PERMISSIONS-MATRIX.md:7",
+      "tema": "actor-operaciones-internas",
+      "estado": "ANSWERED",
+      "pregunta": "API-003-03 y API-003-05 tienen actor 'sistema' pero la matriz de permisos las da al encargado y no hay fila 'sistema'.",
+      "para_cliente": "¿Las operaciones automáticas de multas y no recogidas las dispara solo el sistema, o también el encargado a mano?",
+      "opciones": [
+        {
+          "letra": "A",
+          "texto": "Solo el sistema: añadir fila 'sistema' y quitarlas del encargado",
+          "recomendada": true,
+          "efecto": "ninguno",
+          "ficheros": []
+        },
+        {
+          "letra": "B",
+          "texto": "También el encargado: cambiar el actor en los contratos y añadir E_ACCESO_NO_PERMITIDO",
+          "efecto": "ninguno",
+          "ficheros": []
+        }
+      ],
+      "bloquea": "CON-001",
+      "respuesta": {
+        "letra": "A",
+        "como": "opción recomendada, aceptada por",
+        "quien": "Jev (regla) (Agente automático (modo auto))",
+        "fecha": "2026-11-21"
+      }
+    },
+    {
+      "id": "Q-spec-auditor-002",
+      "skill": "sdd-spec-auditor",
+      "contexto": "CON-002 spec/nfr/SECURITY.md:9",
+      "tema": "sesion-y-rol-junta",
+      "estado": "ANSWERED",
+      "pregunta": "SPEC-SEC-005 dice que ninguna escritura admite la junta, pero comprobarSesion y cerrarSesion escriben y admiten a cualquier rol.",
+      "para_cliente": "¿La junta puede cerrar su propia sesión y mantenerla activa aunque sea de solo lectura?",
+      "opciones": [
+        {
+          "letra": "A",
+          "texto": "Sí: las operaciones de sesión quedan exentas de INV-SEC-002 y SPEC-SEC-005",
+          "recomendada": true,
+          "efecto": "ninguno",
+          "ficheros": []
+        },
+        {
+          "letra": "B",
+          "texto": "No: restringir el rol de esas operaciones",
+          "efecto": "ninguno",
+          "ficheros": []
+        }
+      ],
+      "bloquea": "CON-002",
+      "respuesta": {
+        "letra": "A",
+        "como": "opción recomendada, aceptada por",
+        "quien": "Jev (regla) (Agente automático (modo auto))",
+        "fecha": "2026-11-21"
+      }
+    }
+  ]
+}

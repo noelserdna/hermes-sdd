@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "rol": "tech-designer",
+  "preguntas": [
+    {
+      "id": "Q-tech-designer-001",
+      "skill": "sdd-tech-designer",
+      "contexto": "design/TECHNICAL-DESIGN.md §9",
+      "tema": "primer-encargado",
+      "estado": "ANSWERED",
+      "pregunta": "No hay operación para crear la primera cuenta de encargado (crearSocio exige encargado). El diseño propone un comando de semilla `npm run seed` con variables de entorno.",
+      "para_cliente": "¿Cómo se crea la primera cuenta del encargado al poner la web en marcha?",
+      "opciones": [
+        {
+          "letra": "A",
+          "texto": "Comando de arranque que crea el encargado con correo y contraseña que da quien instala",
+          "recomendada": true,
+          "efecto": "ninguno",
+          "ficheros": [],
+          "cliente": "Lo prepara quien instala la web, una sola vez"
+        },
+        {
+          "letra": "B",
+          "texto": "Pantalla de primer uso cuando no hay cuentas (nueva operación)",
+          "efecto": "req-change",
+          "ficheros": [],
+          "cliente": "Una pantalla nueva; el primero que llegue podría crearla"
+        }
+      ],
+      "bloquea": "ninguno",
+      "respuesta": {
+        "letra": "A",
+        "como": "opción recomendada, aceptada por",
+        "quien": "Jev (regla) (Agente automático (modo auto))",
+        "fecha": "2026-11-21"
+      }
+    }
+  ]
+}

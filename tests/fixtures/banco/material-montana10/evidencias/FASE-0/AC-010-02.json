@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-010-02",
+ "test": "REQ-F-010 AC2 · AC-010-02 la junta elige a Pablo, sin préstamos, y ve «Sin préstamos ni multas»",
+ "titulo": "REQ-F-010 AC2 · AC-010-02 la junta elige a Pablo, sin préstamos, y ve «Sin préstamos ni multas»",
+ "ve": [
+  "Sin préstamos ni multas"
+ ],
+ "narrado": "Consultar el historial de un socio. En Historial se ve «Sin préstamos ni multas».",
+ "url": "http://127.0.0.1:5173/#/historial",
+ "imagen": "AC-010-02.png",
+ "sha256": "sha256:338725e01a8b52fe3ba488dd016190cc08966c214dd7edff50caac8a231a973b",
+ "at": "2026-11-21T12:40:19.089Z"
+}

@@ -1,0 +1,16 @@
+{
+ "video": "FASE-3-REQ-F-002-AC5-AC-002-05-el-encargado-i.webm",
+ "test": "REQ-F-002 AC5 · AC-002-05 el encargado intenta dar de baja a «Lucía», que tiene «Casco 2» prestado, y ve «No se puede dar de baja: tiene material prestado o multas pendientes»",
+ "titulo": "REQ-F-002 AC5 · AC-002-05 el encargado intenta dar de baja a «Lucía», que tiene «Casco 2» prestado, y ve «No se puede dar de baja: tiene material prestado o multas pendientes»",
+ "narraciones": [
+  {
+   "t": 0.009,
+   "texto": "El encargado entra, abre Socios y pide la baja de Lucía, que tiene el Casco 2 prestado, y la confirma"
+  },
+  {
+   "t": 0.638,
+   "texto": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «No se puede dar de baja: tiene material prestado o multas pendientes», y su cuenta sigue activa.",
+   "criterio": "AC-002-05"
+  }
+ ]
+}

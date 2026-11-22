@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-004-02",
+ "test": "REQ-F-004 AC2 · AC-004-02 Pablo, sin reservas, abre Mis reservas y ve «No tienes reservas» y ninguna de Lucía",
+ "titulo": "REQ-F-004 AC2 · AC-004-02 Pablo, sin reservas, abre Mis reservas y ve «No tienes reservas» y ninguna de Lucía",
+ "ve": [
+  "No tienes reservas"
+ ],
+ "narrado": "Ver y cancelar mis reservas. En Mis reservas se ve «No tienes reservas», y ninguna reserva de Lucía.",
+ "url": "http://127.0.0.1:5173/#/mis-reservas",
+ "imagen": "AC-004-02.png",
+ "sha256": "sha256:58ed67833c28ee86f15ea5676c2953bc0d50e34c9086899795f0a627338d184d",
+ "at": "2026-11-21T13:46:14.580Z"
+}

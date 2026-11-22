@@ -1,0 +1,35 @@
+{
+ "video": "FASE-3-E2E-ADM-01-FASE-3-Demo-el-encargado-da-.webm",
+ "test": "E2E-ADM-01 FASE-3 Demo: el encargado da de alta a Marta, bloquea una baja con multa, da de baja a Pablo con su sesión abierta, restablece la contraseña y la limpieza diaria borra lo caducado",
+ "titulo": "E2E-ADM-01 FASE-3 Demo: el encargado da de alta a Marta, bloquea una baja con multa, da de baja a Pablo con su sesión abierta, restablece la contraseña y la limpieza diaria borra lo caducado",
+ "narraciones": [
+  {
+   "t": 0.298,
+   "texto": "Paso 1: el 21 de noviembre el encargado entra, abre Socios y da de alta a Marta Ruiz"
+  },
+  {
+   "t": 1.001,
+   "texto": "Paso 2: repite el alta con el mismo correo y la web avisa de que ya existe"
+  },
+  {
+   "t": 1.303,
+   "texto": "Paso 3: intenta dar de baja a Lucía, que tiene una multa pendiente, y la web lo bloquea"
+  },
+  {
+   "t": 1.639,
+   "texto": "Paso 4: da de baja a Pablo mientras tiene la sesión abierta; en su siguiente acción Pablo se queda sin sesión y ve Entrar"
+  },
+  {
+   "t": 2.073,
+   "texto": "Paso 5: restablece la contraseña de Marta a «Nieve2026» y Marta entra con la nueva"
+  },
+  {
+   "t": 2.763,
+   "texto": "Paso 6: con las dos devoluciones de Lucía a la vista en Historial, se ejecuta la limpieza diaria: la de 2024 desaparece y la de 2025 queda"
+  },
+  {
+   "t": 3.787,
+   "texto": "Paso 7: mira el fichero de datos: solo hay hashes con sal, ninguna contraseña en claro, y la cuenta de Pablo, dada de baja sin registros, ya no está"
+  }
+ ]
+}

@@ -41,6 +41,12 @@ else
   ok "Node $(node -v)"
 fi
 
+# Las bibliotecas de Chromium también fuera de la caja: la comprobación de fidelidad repite los e2e en una copia del repo
+# en este Ubuntu (los mutantes). Sin ellas el navegador no arranca (libnspr4.so) y los 49 textos de material-montana11
+# quedaron «sin comprobar» sin que ninguna puerta lo dijera
+if root env "PATH=$PATH" npx -y playwright install-deps chromium >/dev/null 2>&1; then ok "bibliotecas de Chromium (Playwright fuera de la caja)"
+else aviso "no se pudieron instalar las bibliotecas de Chromium: los mutantes de fidelidad quedarán sin ejecutar"; fi
+
 paso "3/8 Docker (la caja local)"
 # La caja: cada etapa trabaja en un contenedor que se borra al acabar (executors/caja.sh); en macOS es Apple container
 if command -v docker >/dev/null; then ok "Docker ya instalado"

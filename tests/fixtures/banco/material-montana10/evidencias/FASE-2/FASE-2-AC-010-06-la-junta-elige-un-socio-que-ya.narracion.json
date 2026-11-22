@@ -1,0 +1,16 @@
+{
+ "video": "FASE-2-AC-010-06-la-junta-elige-un-socio-que-ya.webm",
+ "test": "AC-010-06 la junta elige un socio que ya no existe y ve «El socio elegido no existe» sin historial",
+ "titulo": "AC-010-06 la junta elige un socio que ya no existe y ve «El socio elegido no existe» sin historial",
+ "narraciones": [
+  {
+   "t": 0.009,
+   "texto": "La junta abre Historial y elige a Lucía; entretanto su cuenta desaparece del almacén"
+  },
+  {
+   "t": 0.558,
+   "texto": "Consultar el historial de un socio. En Historial se ve «El socio elegido no existe», y no se muestra ningún historial.",
+   "criterio": "AC-010-06"
+  }
+ ]
+}

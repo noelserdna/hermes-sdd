@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-06",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-001-06 lucia envía una contraseña errónea y ve Correo o contraseña incorrectos",
+ "titulo": "WF-002 AC-001-06 lucia envía una contraseña errónea y ve Correo o contraseña incorrectos",
+ "ve": [
+  "Correo o contraseña incorrectos"
+ ],
+ "narrado": "Entrar con correo y contraseña. En Entrar se ve «Correo o contraseña incorrectos».",
+ "url": "http://127.0.0.1:40761/#/entrar",
+ "imagen": "AC-001-06.png",
+ "sha256": "sha256:ee3d36b188a17a8df2adbac840f1635e3ef13df3f9c39f6b34c8b342556d538a",
+ "at": "2026-11-22T06:14:01.609Z"
+}

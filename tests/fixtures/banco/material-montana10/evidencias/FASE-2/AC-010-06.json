@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-010-06",
+ "test": "AC-010-06 la junta elige un socio que ya no existe y ve «El socio elegido no existe» sin historial",
+ "titulo": "AC-010-06 la junta elige un socio que ya no existe y ve «El socio elegido no existe» sin historial",
+ "ve": [
+  "El socio elegido no existe"
+ ],
+ "narrado": "Consultar el historial de un socio. En Historial se ve «El socio elegido no existe», y no se muestra ningún historial.",
+ "url": "http://127.0.0.1:5173/#/historial",
+ "imagen": "AC-010-06.png",
+ "sha256": "sha256:e513e48cc5bfd167b85415601c0af0d0e1e1df6c57db90a8bf3f7f1d4b23ded1",
+ "at": "2026-11-21T13:46:59.749Z"
+}

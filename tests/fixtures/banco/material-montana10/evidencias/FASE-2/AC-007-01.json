@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-007-01",
+ "test": "REQ-F-007 AC1 · AC-007-01 el encargado marca pagada la multa de 6 € de Pablo y ve «Multa de 6 € · Pablo · Pagada»; Pablo ya puede reservar",
+ "titulo": "REQ-F-007 AC1 · AC-007-01 el encargado marca pagada la multa de 6 € de Pablo y ve «Multa de 6 € · Pablo · Pagada»; Pablo ya puede reservar",
+ "ve": [
+  "Multa de 6 € · Pablo · Pagada"
+ ],
+ "narrado": "Marcar la multa como pagada. En Multas se ve «Multa de 6 € · Pablo · Pagada», con su fecha, y Pablo puede reservar de nuevo.",
+ "url": "http://127.0.0.1:5173/#/multas",
+ "imagen": "AC-007-01.png",
+ "sha256": "sha256:b59382d9f7fb5e4801d1aee86fab97d2ae26822ba904f2eee2e85ba5ff1efa61",
+ "at": "2026-11-21T13:46:48.199Z"
+}

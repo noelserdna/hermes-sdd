@@ -1,0 +1,20 @@
+{
+ "video": "WF-002-REQ-F-001-AC6-AC-001-06-WF-002-con-8-h.webm",
+ "test": "REQ-F-001 AC6 · AC-001-06 WF-002 con 8 horas sin actividad la sesión caduca",
+ "titulo": "REQ-F-001 AC6 · AC-001-06 WF-002 con 8 horas sin actividad la sesión caduca",
+ "narraciones": [
+  {
+   "t": 0.007,
+   "texto": "Lucía entra y deja la web abierta sin usarla"
+  },
+  {
+   "t": 0.513,
+   "texto": "Pasadas 8 horas sin actividad, Lucía abre cualquier pantalla"
+  },
+  {
+   "t": 0.777,
+   "texto": "Entrar, salir y proteger la sesión. En Entrar se ve «Tu sesión ha caducado».",
+   "criterio": "AC-001-06"
+  }
+ ]
+}

@@ -82,5 +82,13 @@ const r = filmTimeline([{ t: 1, d: 3 }, { t: 2, d: 0.5 }, { t: 6, d: 2 }], 7);
 console.log(JSON.stringify({ f: r.pieces.map((p) => p.freeze), o: r.offsets, rd: readingSeconds("x".repeat(40)) }));')
 [ "$tl" = '{"f":[0,2.4,0,1.4],"o":[1,4.4,8.4],"rd":2.6}' ] \
   && pass "narrate: congela lo que falta para cada frase y retrasa las siguientes lo mismo" || bad "filmTimeline: $tl"
+# la cartela que presenta el criterio se congela en su propio fotograma (hold), no en el último antes de la frase
+# siguiente: para entonces el test ya abrió la app (material-montana11: el vídeo de prueba congelaba una página en blanco)
+tl=$(node --input-type=module -e '
+import { filmTimeline } from "'"$(dirname "$SDD")"'/lib/demo.mjs";
+const r = filmTimeline([{ t: 0, d: 10, hold: 0.3 }, { t: 1.3, d: 1 }], 5);
+console.log(JSON.stringify({ p: r.pieces.map((p) => [p.from, p.to, p.freeze]), o: r.offsets }));')
+[ "$tl" = '{"p":[[0,0.3,10.1],[0.3,1.3,0],[1.3,null,0]],"o":[0,11.4]}' ] \
+  && pass "narrate: la presentación del criterio se congela en su fotograma y la demostración sigue después" || bad "filmTimeline hold: $tl"
 [ $fail = 0 ] && echo "metodo/tests/demo: all passed"
 exit $fail

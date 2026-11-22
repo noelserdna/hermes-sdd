@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-006-01",
+ "test": "FASE-1 Mis reservas (socio) › FASE-1 AC-006-01 lucia con Piolet y pablo con Casco: lucia abre Mis reservas y ve Piolet sin Casco",
+ "titulo": "FASE-1 AC-006-01 lucia con Piolet y pablo con Casco: lucia abre Mis reservas y ve Piolet sin Casco",
+ "ve": [
+  "Piolet"
+ ],
+ "narrado": "Ver y cancelar mis reservas. En Mis reservas se ve «Piolet», y el Casco de Pablo no aparece.",
+ "url": "http://127.0.0.1:42817/#/reservas",
+ "imagen": "AC-006-01.png",
+ "sha256": "sha256:b991dc937de45ad65ce8b42d11c9d995500cecc5c994a2b633f3ad0377613f0a",
+ "at": "2026-11-22T01:01:36.711Z"
+}

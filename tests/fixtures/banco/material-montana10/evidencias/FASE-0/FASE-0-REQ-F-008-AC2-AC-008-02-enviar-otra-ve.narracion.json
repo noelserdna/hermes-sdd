@@ -1,0 +1,20 @@
+{
+ "video": "FASE-0-REQ-F-008-AC2-AC-008-02-enviar-otra-ve.webm",
+ "test": "REQ-F-008 AC2 · AC-008-02 enviar otra vez el mismo añadido suma: 7 unidades y «Añadidas 2 unidades de Piolet»",
+ "titulo": "REQ-F-008 AC2 · AC-008-02 enviar otra vez el mismo añadido suma: 7 unidades y «Añadidas 2 unidades de Piolet»",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "El encargado entra y añade 2 unidades de Piolet sobre las 3 que hay"
+  },
+  {
+   "t": 0.564,
+   "texto": "Envía el mismo formulario otra vez"
+  },
+  {
+   "t": 0.837,
+   "texto": "Gestionar el inventario. En Inventario se ve «Añadidas 2 unidades de Piolet», y el encargado ve 7 unidades, porque cada envío añade unidades.",
+   "criterio": "AC-008-02"
+  }
+ ]
+}

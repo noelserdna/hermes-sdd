@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-012-03",
+ "test": "WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-012-03 REQ-F-007 AC2 la multa de 6,00 € pagada el 2026-12-11 se vuelve a marcar el 2026-12-12 y sigue Pagada con la fecha 2026-12-11",
+ "titulo": "WF-001 AC-012-03 REQ-F-007 AC2 la multa de 6,00 € pagada el 2026-12-11 se vuelve a marcar el 2026-12-12 y sigue Pagada con la fecha 2026-12-11",
+ "ve": [
+  "Pagada"
+ ],
+ "narrado": "Marcar la multa como pagada. En Multas se ve «Pagada»: sigue Pagada con la primera fecha de pago, 2026-12-11.",
+ "url": "http://127.0.0.1:45347/#/multas",
+ "imagen": "AC-012-03.png",
+ "sha256": "sha256:31ef334a4c894aabbf7a893e4c37544bbb34fea4b87dee02cee6a001ea8d4f27",
+ "at": "2026-11-22T01:03:00.985Z"
+}

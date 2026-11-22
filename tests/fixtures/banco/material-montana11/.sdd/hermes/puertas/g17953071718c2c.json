@@ -1,0 +1,81 @@
+{
+  "id": "g17953071718c2c",
+  "tipo": "fase",
+  "fase": "5",
+  "tablero": "material-montana11",
+  "tarjeta": "t_3ebbde19",
+  "adopcion": false,
+  "sha": "2694d2b8495e10d13fcc666e6dfc2cb3f4e58d97",
+  "creada": "2026-11-22T00:26:11Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana11",
+  "titulo": "Aceptar FASE-5",
+  "texto": "🧭 Encargado: 1 aviso\n• 1 texto(s) que los criterios dicen que se ven no están tal cual en el código de la app («Nieve2026»): o la app los compone (y nadie comprueba la plantilla) o no los enseña\n\n🧪 La FASE-5 de «material-montana11» está lista para revisar.\n\n⛔ Los requisitos pasan sus tests, pero la revisión independiente ha encontrado algo que no prueban.\n\n⚠️ Ver lo prestado y lo que vuelve cada día: pasa sus pruebas, pero la revisión independiente duda de que lo comprueben (CH-007) (4 de 4 criterios)\n⚠️ Datos personales solo para su dueño, el encargado y la junta: pasa sus pruebas, pero la revisión independiente duda de que lo comprueben (CH-006) (4 de 4 criterios)\n✅ La junta consulta el historial de un socio: funciona y está comprobado (4 de 4 criterios)\n\n🔧 Siguen abiertas tras los arreglos automáticos (técnicas: hay otro camino que se salta la regla: CH-006; el test comprueba menos de lo que pide el criterio: CH-007). ❌ Rechazar lo vuelve a intentar.\n\n🛡 No se ha tocado ningún test que ya existía (ni sus ayudas ni su configuración).\n\n🎬 Demo: vídeo y 8 capturas.\n\n🤖 Jev ha leído el texto en off de 8 vídeos: cada uno cuenta lo que pide su criterio.\n\n👉 Pulsa ▶ Ver demo; después ❌ Rechazar para que se arregle, o 🗑 Descartar las que no sean un fallo (escribe su número, p. ej. CH-005, y por qué; la puerta vuelve sin ellas).\n\n❓ Antes, una pregunta (la recomendada ya está marcada en los botones Q):\n\n1. Para elegir un socio la junta necesita ver la lista de socios, pero una comprobación interna antigua se lo prohíbe, así que hoy la ve por una vía de solo lectura aparte: ¿se deja así o se retoca esa comprobación?\n   🔧 Detalle técnico: El test aceptado tests/unit/permisos.test.js («INV-ACC-007 … la junta también») fija que la junta no puede llamar a listarSocios, y el Supuesto 1 de FASE-5 dic…\n   A) Se deja así; la junta ve la lista de socios por una vía de solo lectura propia  ⭐ recomendada\n   B) Se retoca la comprobación interna y la junta usa la misma lista de socios que el encargado  (✏️ autoriza editar tests/unit/permisos.test.js)\n\n👉 Si firmas sin tocar los botones Q, esto lanzará: sin más efecto: Q1.",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "descarto",
+      "etiqueta": "🗑 Descartar una impugnación",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-5/FASE-5-FASE-5-AC-015-01-REQ-F-009-AC1-con-el-Pi.mp4",
+  "preguntas": [
+    {
+      "n": 1,
+      "id": "Q-task-implementer-005",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "editar-test",
+          "ficheros": [
+            "tests/unit/permisos.test.js"
+          ],
+          "declarado": true
+        }
+      },
+      "cliente": "Para elegir un socio la junta necesita ver la lista de socios, pero una comprobación interna antigua se lo prohíbe, así que hoy la ve por una vía de solo lectura aparte: ¿se deja así o se retoca esa comprobación?"
+    }
+  ],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": true,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": false,
+        "codigo": "texto-fuera-del-codigo",
+        "texto": "1 texto(s) que los criterios dicen que se ven no están tal cual en el código de la app («Nieve2026»): o la app los compone (y nadie comprueba la plantilla) o no los enseña"
+      }
+    ],
+    "graves": 0
+  },
+  "narracion": {
+    "revisados": 8,
+    "modelo": "jev-1.14.0",
+    "contradicen": [],
+    "incompletos": []
+  }
+}

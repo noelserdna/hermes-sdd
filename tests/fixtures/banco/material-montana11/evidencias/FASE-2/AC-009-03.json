@@ -1,0 +1,15 @@
+{
+ "criterio": "AC-009-03",
+ "test": "FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-03 REQ-F-005 AC5 repetir la devolución del Casco el 2026-12-11 deja Devuelto con la fecha 2026-12-10 y una sola multa de 6,00 € Pendiente",
+ "titulo": "FASE-2 AC-009-03 REQ-F-005 AC5 repetir la devolución del Casco el 2026-12-11 deja Devuelto con la fecha 2026-12-10 y una sola multa de 6,00 € Pendiente",
+ "ve": [
+  "Devuelto",
+  "6,00 €",
+  "Pendiente"
+ ],
+ "narrado": "Entregar y marcar la devolución. En Préstamos se ve «Devuelto», con la primera fecha de devolución 2026-12-10 y una sola multa «6,00 €» Pendiente: no hay segunda multa.",
+ "url": "http://127.0.0.1:32957/#/prestamos",
+ "imagen": "AC-009-03.png",
+ "sha256": "sha256:ac4cdc953f5cef403280bfeb9e218a2ca7241822b78bb795a4d62ef0b06f1b6d",
+ "at": "2026-11-22T01:02:13.857Z"
+}

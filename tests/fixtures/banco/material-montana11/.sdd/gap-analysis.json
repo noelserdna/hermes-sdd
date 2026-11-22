@@ -1,0 +1,508 @@
+{
+  "$schema": "sdd-gap-analysis-v1",
+  "generatedAt": "2026-11-22T00:48:20.515Z",
+  "projectFramework": "unknown",
+  "endpoints": {
+    "specified": [
+      {
+        "id": "API-001-01",
+        "method": "POST",
+        "path": "/api/iniciarSesion",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-001-02",
+        "method": "POST",
+        "path": "/api/cerrarSesion",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-001-03",
+        "method": "GET",
+        "path": "/api/comprobarSesion",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-001-04",
+        "method": "POST",
+        "path": "/api/crearSocio",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-001-05",
+        "method": "GET",
+        "path": "/api/listarSocios",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-001-06",
+        "method": "POST",
+        "path": "/api/restablecerContrasena",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-001-07",
+        "method": "POST",
+        "path": "/api/darDeBajaSocio",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-002-01",
+        "method": "GET",
+        "path": "/api/consultarDisponibilidad",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-002-02",
+        "method": "POST",
+        "path": "/api/reservarMaterial",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-002-03",
+        "method": "GET",
+        "path": "/api/listarMisReservas",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-002-04",
+        "method": "POST",
+        "path": "/api/cancelarReserva",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-003-01",
+        "method": "POST",
+        "path": "/api/entregarReserva",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-003-02",
+        "method": "POST",
+        "path": "/api/registrarDevolucion",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-003-03",
+        "method": "-",
+        "path": "(función de dominio)",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-003-04",
+        "method": "GET",
+        "path": "/api/listarPrestamosYReservas",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-003-05",
+        "method": "-",
+        "path": "(función de dominio)",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-003-06",
+        "method": "GET",
+        "path": "/api/listarMisMultas",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-003-07",
+        "method": "GET",
+        "path": "/api/listarMultas",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-003-08",
+        "method": "POST",
+        "path": "/api/marcarMultaPagada",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-003-09",
+        "method": "GET",
+        "path": "/api/consultarPrestado",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-003-10",
+        "method": "GET",
+        "path": "/api/consultarHistorialSocio",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-004-01",
+        "method": "GET",
+        "path": "/api/listarInventario",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-004-02",
+        "method": "POST",
+        "path": "/api/anadirMaterial",
+        "specFile": "spec/contracts"
+      },
+      {
+        "id": "API-004-03",
+        "method": "POST",
+        "path": "/api/darDeBajaUnidad",
+        "specFile": "spec/contracts"
+      }
+    ],
+    "implemented": [
+      {
+        "id": "API-001-01",
+        "method": "POST",
+        "path": "/api/iniciarSesion",
+        "codeFile": "src/server/plugin.js",
+        "handler": "iniciarSesion"
+      },
+      {
+        "id": "API-001-02",
+        "method": "POST",
+        "path": "/api/cerrarSesion",
+        "codeFile": "src/server/plugin.js",
+        "handler": "cerrarSesion"
+      },
+      {
+        "id": "API-001-03",
+        "method": "GET",
+        "path": "/api/comprobarSesion",
+        "codeFile": "src/server/plugin.js",
+        "handler": "comprobarSesion"
+      },
+      {
+        "id": "API-001-04",
+        "method": "POST",
+        "path": "/api/crearSocio",
+        "codeFile": "src/server/plugin.js",
+        "handler": "crearSocio"
+      },
+      {
+        "id": "API-001-05",
+        "method": "GET",
+        "path": "/api/listarSocios",
+        "codeFile": "src/server/plugin.js",
+        "handler": "listarSocios"
+      },
+      {
+        "id": "API-001-06",
+        "method": "POST",
+        "path": "/api/restablecerContrasena",
+        "codeFile": "src/server/plugin.js",
+        "handler": "restablecerContrasena"
+      },
+      {
+        "id": "API-001-07",
+        "method": "POST",
+        "path": "/api/darDeBajaSocio",
+        "codeFile": "src/server/plugin.js",
+        "handler": "darDeBajaSocio"
+      },
+      {
+        "id": "API-002-01",
+        "method": "GET",
+        "path": "/api/consultarDisponibilidad",
+        "codeFile": "src/server/plugin.js",
+        "handler": "consultarDisponibilidad"
+      },
+      {
+        "id": "API-002-02",
+        "method": "POST",
+        "path": "/api/reservarMaterial",
+        "codeFile": "src/server/plugin.js",
+        "handler": "reservarMaterial"
+      },
+      {
+        "id": "API-002-03",
+        "method": "GET",
+        "path": "/api/listarMisReservas",
+        "codeFile": "src/server/plugin.js",
+        "handler": "listarMisReservas"
+      },
+      {
+        "id": "API-002-04",
+        "method": "POST",
+        "path": "/api/cancelarReserva",
+        "codeFile": "src/server/plugin.js",
+        "handler": "cancelarReserva"
+      },
+      {
+        "id": "API-003-01",
+        "method": "POST",
+        "path": "/api/entregarReserva",
+        "codeFile": "src/server/plugin.js",
+        "handler": "entregarReserva"
+      },
+      {
+        "id": "API-003-02",
+        "method": "POST",
+        "path": "/api/registrarDevolucion",
+        "codeFile": "src/server/plugin.js",
+        "handler": "registrarDevolucion"
+      },
+      {
+        "id": "API-003-03",
+        "method": "-",
+        "path": "(función de dominio)",
+        "codeFile": "src/domain/prestamos.js",
+        "handler": "marcarNoRecogidas"
+      },
+      {
+        "id": "API-003-04",
+        "method": "GET",
+        "path": "/api/listarPrestamosYReservas",
+        "codeFile": "src/server/plugin.js",
+        "handler": "listarPrestamosYReservas"
+      },
+      {
+        "id": "API-003-05",
+        "method": "-",
+        "path": "(función de dominio)",
+        "codeFile": "src/domain/prestamos.js",
+        "handler": "aplicarMultaPorRetraso"
+      },
+      {
+        "id": "API-003-06",
+        "method": "GET",
+        "path": "/api/listarMisMultas",
+        "codeFile": "src/server/plugin.js",
+        "handler": "listarMisMultas"
+      },
+      {
+        "id": "API-003-07",
+        "method": "GET",
+        "path": "/api/listarMultas",
+        "codeFile": "src/server/plugin.js",
+        "handler": "listarMultas"
+      },
+      {
+        "id": "API-003-08",
+        "method": "POST",
+        "path": "/api/marcarMultaPagada",
+        "codeFile": "src/server/plugin.js",
+        "handler": "marcarMultaPagada"
+      },
+      {
+        "id": "API-003-09",
+        "method": "GET",
+        "path": "/api/consultarPrestado",
+        "codeFile": "src/server/plugin.js",
+        "handler": "consultarPrestado"
+      },
+      {
+        "id": "API-003-10",
+        "method": "GET",
+        "path": "/api/consultarHistorialSocio",
+        "codeFile": "src/server/plugin.js",
+        "handler": "consultarHistorialSocio"
+      },
+      {
+        "id": "API-004-01",
+        "method": "GET",
+        "path": "/api/listarInventario",
+        "codeFile": "src/server/plugin.js",
+        "handler": "listarInventario"
+      },
+      {
+        "id": "API-004-02",
+        "method": "POST",
+        "path": "/api/anadirMaterial",
+        "codeFile": "src/server/plugin.js",
+        "handler": "anadirMaterial"
+      },
+      {
+        "id": "API-004-03",
+        "method": "POST",
+        "path": "/api/darDeBajaUnidad",
+        "codeFile": "src/server/plugin.js",
+        "handler": "darDeBajaUnidad"
+      }
+    ],
+    "missing": [],
+    "orphan": [
+      {
+        "method": "GET",
+        "path": "/api/listarSociosHistorial",
+        "codeFile": "src/server/plugin.js",
+        "handler": "listarSociosHistorial",
+        "line": 41
+      }
+    ],
+    "mismatch": []
+  },
+  "bddCoverage": {
+    "totalScenarios": 116,
+    "withTestFiles": 116,
+    "withoutTestFiles": 0,
+    "missing": []
+  },
+  "statistics": {
+    "totalSpecEndpoints": 24,
+    "implemented": 24,
+    "missing": 0,
+    "orphanRoutes": 1,
+    "mismatches": 0,
+    "endpointCoveragePercent": 100,
+    "bddCoveragePercent": 100
+  },
+  "semantic": {
+    "generatedAt": "2026-11-22T00:48:20.515Z",
+    "judge": "llm",
+    "model": "fallback (TYPESAFE_API_KEY no definida)",
+    "thresholds": {
+      "covered": 0.85,
+      "missing": 0.15,
+      "relatedMax": 0.3,
+      "splitBand": [
+        0.3,
+        0.6
+      ],
+      "maxFilesPerReq": 5
+    },
+    "requirements": [
+      {
+        "id": "REQ-F-001",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/domain/cuentas.js (iniciarSesion), src/server/sesiones.js",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-F-002",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/domain/cuentas.js",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-F-003",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/domain/reservas.js",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-F-004",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/domain/reservas.js",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-F-005",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/domain/prestamos.js",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-F-006",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/domain/multas.js, src/domain/prestamos.js",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-F-007",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/domain/multas.js",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-F-008",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/domain/inventario.js",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-F-009",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/domain/prestamos.js (consultarPrestado)",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-F-010",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/domain/prestamos.js (consultarHistorialSocio)",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-C-002",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/domain/errores.js, src/ui/textos.js",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-C-003",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/server/store.js",
+        "reason": "fallback",
+        "chunksChecked": 1
+      },
+      {
+        "id": "REQ-NF-001",
+        "status": "covered",
+        "decidedBy": "llm",
+        "origin": "llm-verified",
+        "confidence": 0.9,
+        "evidence": "src/domain/permisos.js, src/server/plugin.js",
+        "reason": "fallback",
+        "chunksChecked": 1
+      }
+    ],
+    "notCheckable": [
+      "REQ-C-001"
+    ],
+    "summary": {
+      "targets": 14,
+      "covered": 13,
+      "partial": 0,
+      "likelyMissing": 0,
+      "noCandidates": 0,
+      "notCheckable": 1,
+      "reviewedByLlm": 13
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "factors": {
+    "external_customer": 0.7,
+    "sensitive_data": 0.85,
+    "multi_actor": 0.95,
+    "integrations": 0.05,
+    "ui_flows": 0.85,
+    "long_lived": 0.6,
+    "complex_state": 0.75
+  }
+}

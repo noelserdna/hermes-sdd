@@ -1,0 +1,19 @@
+:root { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; color: #1f2933; background: #f5f7fa; }
+body { margin: 0; }
+header { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; background: #12355b; }
+header nav { display: flex; gap: 16px; }
+header a { color: #fff; text-decoration: none; padding: 4px 8px; border-radius: 4px; }
+header a[aria-current='page'] { background: rgba(255, 255, 255, .2); }
+main { max-width: 720px; margin: 24px auto; padding: 0 24px; }
+h1 { font-size: 1.6rem; }
+form { display: grid; gap: 12px; max-width: 420px; }
+label { display: grid; gap: 4px; font-weight: 600; }
+input, select, button { font: inherit; padding: 8px 10px; border: 1px solid #9aa5b1; border-radius: 4px; }
+button, input[type='button'] { background: #12355b; color: #fff; border-color: #12355b; cursor: pointer; }
+button[aria-busy='true'] { opacity: .6; cursor: wait; }
+[role='alert'] { padding: 10px 12px; border-radius: 4px; background: #fde8e8; color: #7a1212; margin: 12px 0; }
+[role='status'] { padding: 10px 12px; border-radius: 4px; background: #e3f4e8; color: #124d2a; margin: 12px 0; }
+table { border-collapse: collapse; width: 100%; background: #fff; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #d9e2ec; }
+ul { padding-left: 20px; }
+.solo-lectores { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

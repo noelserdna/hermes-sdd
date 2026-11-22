@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-009-02",
+ "test": "REQ-F-009 AC2 · AC-009-02 «Cuerda 1» prestada a Marta hasta el 2026-12-05 se ve «Con retraso: Cuerda 1 · Marta · 2 días» el 2026-12-07",
+ "titulo": "REQ-F-009 AC2 · AC-009-02 «Cuerda 1» prestada a Marta hasta el 2026-12-05 se ve «Con retraso: Cuerda 1 · Marta · 2 días» el 2026-12-07",
+ "ve": [
+  "Con retraso: Cuerda 1 · Marta · 2 días"
+ ],
+ "narrado": "Ver lo prestado y lo que vuelve cada día. En Entregas y devoluciones se ve «Con retraso: Cuerda 1 · Marta · 2 días».",
+ "url": "http://127.0.0.1:5173/#/entregas",
+ "imagen": "AC-009-02.png",
+ "sha256": "sha256:d9be1245df0c083796acc1d78441cce87dc8daa46796e0af57489f6994782312",
+ "at": "2026-11-21T12:34:37.709Z"
+}

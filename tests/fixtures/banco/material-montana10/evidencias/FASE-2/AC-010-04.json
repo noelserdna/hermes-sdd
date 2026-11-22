@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-010-04",
+ "test": "REQ-F-010 AC4 · AC-010-04 Lucía abre Historial por su dirección y ve «No tienes permiso para ver esta pantalla»",
+ "titulo": "REQ-F-010 AC4 · AC-010-04 Lucía abre Historial por su dirección y ve «No tienes permiso para ver esta pantalla»",
+ "ve": [
+  "No tienes permiso para ver esta pantalla"
+ ],
+ "narrado": "Consultar el historial de un socio. En Historial se ve «No tienes permiso para ver esta pantalla».",
+ "url": "http://127.0.0.1:5173/#/historial",
+ "imagen": "AC-010-04.png",
+ "sha256": "sha256:86118788a00be9db40f845253368864f67b393dbefaecf50a9d81206c169a107",
+ "at": "2026-11-21T13:46:57.632Z"
+}

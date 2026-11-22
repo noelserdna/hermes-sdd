@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-003-10",
+ "test": "REQ-F-003 AC10 · AC-003-10 dos socios envían a la vez por el último «Crampones»: solo se crea una reserva",
+ "titulo": "REQ-F-003 AC10 · AC-003-10 dos socios envían a la vez por el último «Crampones»: solo se crea una reserva",
+ "ve": [
+  "No quedan unidades libres de Crampones esas fechas"
+ ],
+ "narrado": "Reservar material para unas fechas. En Reservar se ve «No quedan unidades libres de Crampones esas fechas» y solo se crea una reserva.",
+ "url": "http://127.0.0.1:5173/#/reservar",
+ "imagen": "AC-003-10.png",
+ "sha256": "sha256:2c3dacc3613e7ddabfc5263cbe67ff68a0e91359bd9c5fa10217cd74476914d8",
+ "at": "2026-11-21T13:46:04.834Z"
+}

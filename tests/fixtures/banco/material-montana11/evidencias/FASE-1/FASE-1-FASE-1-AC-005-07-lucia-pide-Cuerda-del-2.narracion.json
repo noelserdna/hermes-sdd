@@ -1,0 +1,16 @@
+{
+ "video": "FASE-1-FASE-1-AC-005-07-lucia-pide-Cuerda-del-2.webm",
+ "test": "FASE-1 Reservar material (socio) › FASE-1 AC-005-07 lucia pide Cuerda del 2026-12-01 al 2026-12-15 (15 días) y ve La reserva no puede superar 14 días",
+ "titulo": "FASE-1 AC-005-07 lucia pide Cuerda del 2026-12-01 al 2026-12-15 (15 días) y ve La reserva no puede superar 14 días",
+ "narraciones": [
+  {
+   "t": 1.116,
+   "texto": "Lucía entra y pide una Cuerda del 1 al 15 de diciembre, quince días"
+  },
+  {
+   "t": 1.717,
+   "texto": "Reservar material para unas fechas. En Reservar se ve «La reserva no puede superar 14 días».",
+   "criterio": "AC-005-07"
+  }
+ ]
+}

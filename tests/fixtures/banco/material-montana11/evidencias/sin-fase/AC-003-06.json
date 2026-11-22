@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-003-06",
+ "test": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-003-06 REQ-F-002 AC7 lucia, socia, abre la dirección de Socios y ve Acceso no permitido",
+ "titulo": "FASE-4 AC-003-06 REQ-F-002 AC7 lucia, socia, abre la dirección de Socios y ve Acceso no permitido",
+ "ve": [
+  "Acceso no permitido"
+ ],
+ "narrado": "Gestionar las cuentas de socios. En Socios se ve «Acceso no permitido».",
+ "url": "http://127.0.0.1:37427/#/socios",
+ "imagen": "AC-003-06.png",
+ "sha256": "sha256:02bb49aae2423357bacdda7766b801edd586f350a51f4312456c49e3f632049c",
+ "at": "2026-11-22T06:16:38.249Z"
+}

@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-006-01",
+ "test": "REQ-F-006 AC1 · AC-006-01 el encargado marca devuelto «Piolet 2» de Lucía el día hasta y ve «Piolet 2 · Lucía · Devuelta» sin multa",
+ "titulo": "REQ-F-006 AC1 · AC-006-01 el encargado marca devuelto «Piolet 2» de Lucía el día hasta y ve «Piolet 2 · Lucía · Devuelta» sin multa",
+ "ve": [
+  "Piolet 2 · Lucía · Devuelta"
+ ],
+ "narrado": "Marcar la devolución y poner la multa. En Entregas y devoluciones se ve «Piolet 2 · Lucía · Devuelta», y no se crea ninguna multa.",
+ "url": "http://127.0.0.1:5173/#/entregas",
+ "imagen": "AC-006-01.png",
+ "sha256": "sha256:5a7741dbcb0fc21fb259d9afbfdf1cb6ce305d91ee49c187254deb6c3ec3f66a",
+ "at": "2026-11-21T12:39:57.508Z"
+}

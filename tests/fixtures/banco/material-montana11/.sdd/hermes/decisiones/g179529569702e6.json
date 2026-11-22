@@ -1,0 +1,16 @@
+{
+  "verbo": "conforme",
+  "texto": "",
+  "actor": {
+    "persona": "jev",
+    "canal": "jev",
+    "id": "regla"
+  },
+  "prueba": {
+    "modelo": "regla",
+    "p": "1.000",
+    "modo": "auto",
+    "regla": "plan sin avisos graves de la revisión"
+  },
+  "at": "2026-11-21T21:15:01Z"
+}

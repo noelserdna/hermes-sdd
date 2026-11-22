@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-003-01",
+ "test": "REQ-F-003 AC1 · AC-003-01 Lucía reserva «Piolet» del 2026-12-05 al 2026-12-07 y ve «Reserva creada…»",
+ "titulo": "REQ-F-003 AC1 · AC-003-01 Lucía reserva «Piolet» del 2026-12-05 al 2026-12-07 y ve «Reserva creada…»",
+ "ve": [
+  "Reserva creada: Piolet del 2026-12-05 al 2026-12-07"
+ ],
+ "narrado": "Reservar material para unas fechas. En Mis reservas se ve «Reserva creada: Piolet del 2026-12-05 al 2026-12-07».",
+ "url": "http://127.0.0.1:5173/#/mis-reservas",
+ "imagen": "AC-003-01.png",
+ "sha256": "sha256:c37dacc57adac1c0be72517f1e816a12fd36b19e00d4c7c87e19cf18b46d7918",
+ "at": "2026-11-21T13:45:54.120Z"
+}

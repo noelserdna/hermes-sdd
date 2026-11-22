@@ -1,0 +1,1192 @@
+{
+  "$schema": "sdd-adversarial-plan-v1",
+  "evaluated_sha": "a986aedd925a9df5071ca5a2deaa36e26380acdf",
+  "dirty": false,
+  "generatedAt": "2026-11-21T23:35:47.382Z",
+  "scope": {
+    "fase": 4
+  },
+  "code_paths": [
+    "src"
+  ],
+  "adversarial_gate": "enforce",
+  "incremental": {
+    "since": "a0abb54c9eefb7cbe33d26f20865498f5465b3d8",
+    "baseline": ".sdd/hermes/adversarial-FASE-4.json",
+    "changed_files": [],
+    "criteria": 14,
+    "recheck": 0,
+    "carried": 14
+  },
+  "fases": [
+    {
+      "fase": 4,
+      "file": "plan/fases/FASE-4-BAJAS.md",
+      "header": true,
+      "requirements": [
+        {
+          "id": "REQ-F-002",
+          "title": "Gestionar las cuentas de socios",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN the encargado creates, resets or deactivates a member account THE system SHALL apply the change and show the updated member list",
+          "reqHash": "sha256:9819344f1d0576747304782573ca7072afc2ac7b30e50bcf018bba167a1574fe",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN the encargado WHEN he creates the member \"Pablo Ruiz\", \"pablo@club.test\", password \"Nieve2026\" THEN the user sees \"Pablo Ruiz\" in the list of socios",
+              "scenarios": [
+                "AC-003-01"
+              ],
+              "tests": [
+                {
+                  "name": "WF-002 Sesión de acceso › WF-002 AC-003-01 el encargado crea a Pablo Ruiz y lo ve en Socios, también tras recargar y reiniciar el servidor",
+                  "file": "fase-0-wf-002.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-003-01 REQ-F-002 AC1 marta crea a Pablo Ruiz en Socios y lo ve en la lista",
+                  "file": "fase-4-cuentas-inventario.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-003-01 REQ-F-002 AC1 marta crea a Pablo Ruiz en Socios y lo ve en la lista",
+                  "file": "fase-4-cuentas-inventario.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "WF-002 Sesión de acceso › WF-002 AC-003-01 el encargado crea a Pablo Ruiz y lo ve en Socios, también tras recargar y reiniciar el servidor",
+                  "file": "fase-0-wf-002.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-aa94a-gar-y-reiniciar-el-servidor-chromium/attachments/AC-003-01-317ffceaf57a9801d2e7aa6ffd6c42bd941e20a0.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-aa94a-gar-y-reiniciar-el-servidor-chromium/test-finished-1.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--4e673--Socios-y-lo-ve-en-la-lista-chromium/attachments/AC-003-01-ac0e0059d228eefe0bfb83ca42808f041eac0781.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--4e673--Socios-y-lo-ve-en-la-lista-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-0-wf-002-WF-002-Sesió-aa94a-gar-y-reiniciar-el-servidor-chromium/attachments/AC-003-01-152ed0bb3098e4aa2efbc669b18341981b9b3b5d.png",
+                "evidencias/sin-fase/.playwright/fase-0-wf-002-WF-002-Sesió-aa94a-gar-y-reiniciar-el-servidor-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-01.png",
+                "evidencias/FASE-4/AC-003-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-aa94a-gar-y-reiniciar-el-servidor-chromium/attachments/AC-003-01-317ffceaf57a9801d2e7aa6ffd6c42bd941e20a0.png": "sha256:1f82ce5d3e73ce45492d4185ddbbe5acefd0e496ff50952bcf49c4a328bdf9f5",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-aa94a-gar-y-reiniciar-el-servidor-chromium/test-finished-1.png": "sha256:ea9494d2fbb81c68f25c1fe610305b5a84209ce6ab55ccc931a310c081b140fb",
+                "evidencias/FASE-0/AC-003-01.png": "sha256:1f82ce5d3e73ce45492d4185ddbbe5acefd0e496ff50952bcf49c4a328bdf9f5",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--4e673--Socios-y-lo-ve-en-la-lista-chromium/attachments/AC-003-01-ac0e0059d228eefe0bfb83ca42808f041eac0781.png": "sha256:45f0778abebd6656c58363711a28e7992f36fd977ca86b0447a9d4b78a9a327b",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--4e673--Socios-y-lo-ve-en-la-lista-chromium/test-finished-1.png": "sha256:45f0778abebd6656c58363711a28e7992f36fd977ca86b0447a9d4b78a9a327b",
+                "evidencias/FASE-4/AC-003-01.png": "sha256:45f0778abebd6656c58363711a28e7992f36fd977ca86b0447a9d4b78a9a327b",
+                "evidencias/sin-fase/.playwright/fase-0-wf-002-WF-002-Sesió-aa94a-gar-y-reiniciar-el-servidor-chromium/attachments/AC-003-01-152ed0bb3098e4aa2efbc669b18341981b9b3b5d.png": "sha256:7b1f488c364ebd3eab5a95f3b28395eb69754a0c9062f8a1d94bfdfc78bee041",
+                "evidencias/sin-fase/.playwright/fase-0-wf-002-WF-002-Sesió-aa94a-gar-y-reiniciar-el-servidor-chromium/test-finished-1.png": "sha256:ea96339852b408f978554e5924a8ba979272a20b81a2badc6fdaa58d2a0c33c3"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Pablo Ruiz",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--4e673--Socios-y-lo-ve-en-la-lista-chromium/attachments/AC-003-01-ac0e0059d228eefe0bfb83ca42808f041eac0781.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--4e673--Socios-y-lo-ve-en-la-lista-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-003-01.png"
+              ],
+              "unbound_captures": [
+                {
+                  "ref": "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-aa94a-gar-y-reiniciar-el-servidor-chromium/attachments/AC-003-01-317ffceaf57a9801d2e7aa6ffd6c42bd941e20a0.png",
+                  "test": "WF-002 Sesión de acceso › WF-002 AC-003-01 el encargado crea a Pablo Ruiz y lo ve en Socios, también tras recargar y reiniciar el servidor",
+                  "reason": "taken by the test \"WF-002 Sesión de acceso › WF-002 AC-003-01 el encargado crea a Pablo Ruiz y lo …\", which does not pass"
+                },
+                {
+                  "ref": "evidencias/FASE-0/AC-003-01.png",
+                  "test": "WF-002 Sesión de acceso › WF-002 AC-003-01 el encargado crea a Pablo Ruiz y lo ve en Socios, también tras recargar y reiniciar el servidor",
+                  "reason": "taken by the test \"WF-002 Sesión de acceso › WF-002 AC-003-01 el encargado crea a Pablo Ruiz y lo …\", which does not pass"
+                }
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--4e673--Socios-y-lo-ve-en-la-lista-chromium/attachments/FASE-4-FASE-4-AC-003-01-REQ-F-002-AC1-marta-cre-1db3a4f66854bbe709708cf99838e0efcee40ed2.webm",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--4e673--Socios-y-lo-ve-en-la-lista-chromium/video.webm",
+                "evidencias/FASE-4/FASE-4-FASE-4-AC-003-01-REQ-F-002-AC1-marta-cre.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 2,
+              "text": "GIVEN the encargado WHEN he creates a member with password \"corta1\" (6 characters) THEN the user sees \"La contraseña debe tener al menos 8 caracteres\" and no member is created",
+              "scenarios": [
+                "AC-003-04"
+              ],
+              "tests": [
+                {
+                  "name": "WF-002 Sesión de acceso › WF-002 AC-003-04 el encargado crea un socio con la contraseña corta1 y ve el aviso de 8 caracteres",
+                  "file": "fase-0-wf-002.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-003-04 REQ-F-002 AC2 marta crea un socio con la contraseña corta1 y ve el aviso de 8 caracteres",
+                  "file": "fase-4-cuentas-inventario.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-003-04 REQ-F-002 AC2 marta crea un socio con la contraseña corta1 y ve el aviso de 8 caracteres",
+                  "file": "fase-4-cuentas-inventario.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "WF-002 Sesión de acceso › WF-002 AC-003-04 el encargado crea un socio con la contraseña corta1 y ve el aviso de 8 caracteres",
+                  "file": "fase-0-wf-002.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-90f7a-ve-el-aviso-de-8-caracteres-chromium/attachments/AC-003-04-2513cf2327e6b63d8e28b0f9fb0bd6049eb8fd44.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-90f7a-ve-el-aviso-de-8-caracteres-chromium/test-finished-1.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--25ccd-ve-el-aviso-de-8-caracteres-chromium/attachments/AC-003-04-4e8ac52adc13fc4df003b42648116b2fb2520769.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--25ccd-ve-el-aviso-de-8-caracteres-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-0-wf-002-WF-002-Sesió-90f7a-ve-el-aviso-de-8-caracteres-chromium/attachments/AC-003-04-f3ebe96c3191197a84d0737c44842053a1484130.png",
+                "evidencias/sin-fase/.playwright/fase-0-wf-002-WF-002-Sesió-90f7a-ve-el-aviso-de-8-caracteres-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-04.png",
+                "evidencias/FASE-4/AC-003-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-90f7a-ve-el-aviso-de-8-caracteres-chromium/attachments/AC-003-04-2513cf2327e6b63d8e28b0f9fb0bd6049eb8fd44.png": "sha256:f7a5b3b225097af77a7d8272187bc1741b58b34a013ac4ab2b721dfb5d4d5053",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-90f7a-ve-el-aviso-de-8-caracteres-chromium/test-finished-1.png": "sha256:f7a5b3b225097af77a7d8272187bc1741b58b34a013ac4ab2b721dfb5d4d5053",
+                "evidencias/FASE-0/AC-003-04.png": "sha256:f7a5b3b225097af77a7d8272187bc1741b58b34a013ac4ab2b721dfb5d4d5053",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--25ccd-ve-el-aviso-de-8-caracteres-chromium/attachments/AC-003-04-4e8ac52adc13fc4df003b42648116b2fb2520769.png": "sha256:f7a5b3b225097af77a7d8272187bc1741b58b34a013ac4ab2b721dfb5d4d5053",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--25ccd-ve-el-aviso-de-8-caracteres-chromium/test-finished-1.png": "sha256:f7a5b3b225097af77a7d8272187bc1741b58b34a013ac4ab2b721dfb5d4d5053",
+                "evidencias/FASE-4/AC-003-04.png": "sha256:f7a5b3b225097af77a7d8272187bc1741b58b34a013ac4ab2b721dfb5d4d5053",
+                "evidencias/sin-fase/.playwright/fase-0-wf-002-WF-002-Sesió-90f7a-ve-el-aviso-de-8-caracteres-chromium/attachments/AC-003-04-f3ebe96c3191197a84d0737c44842053a1484130.png": "sha256:f7a5b3b225097af77a7d8272187bc1741b58b34a013ac4ab2b721dfb5d4d5053",
+                "evidencias/sin-fase/.playwright/fase-0-wf-002-WF-002-Sesió-90f7a-ve-el-aviso-de-8-caracteres-chromium/test-finished-1.png": "sha256:f7a5b3b225097af77a7d8272187bc1741b58b34a013ac4ab2b721dfb5d4d5053"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "La contraseña debe tener al menos 8 caracteres",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--25ccd-ve-el-aviso-de-8-caracteres-chromium/attachments/AC-003-04-4e8ac52adc13fc4df003b42648116b2fb2520769.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--25ccd-ve-el-aviso-de-8-caracteres-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-003-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--25ccd-ve-el-aviso-de-8-caracteres-chromium/attachments/FASE-4-FASE-4-AC-003-04-REQ-F-002-AC2-marta-cre-39088df709fd42f0291e5a8fa576b761a1a0f35c.webm",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--25ccd-ve-el-aviso-de-8-caracteres-chromium/video.webm",
+                "evidencias/FASE-4/FASE-4-FASE-4-AC-003-04-REQ-F-002-AC2-marta-cre.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 3,
+              "text": "GIVEN \"pablo@club.test\" already exists WHEN the encargado creates another member with the same email THEN the user sees \"Ya existe un socio con ese correo\" and the list keeps a single \"pablo@club.test\"",
+              "scenarios": [
+                "AC-003-05"
+              ],
+              "tests": [
+                {
+                  "name": "WF-002 Sesión de acceso › WF-002 AC-003-05 el encargado crea otro socio con el correo pablo@club.test y ve que ya existe",
+                  "file": "fase-0-wf-002.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-003-05 REQ-F-002 AC3 marta crea otro socio con el correo pablo@club.test y ve que ya existe",
+                  "file": "fase-4-cuentas-inventario.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-003-05 REQ-F-002 AC3 marta crea otro socio con el correo pablo@club.test y ve que ya existe",
+                  "file": "fase-4-cuentas-inventario.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "WF-002 Sesión de acceso › WF-002 AC-003-05 el encargado crea otro socio con el correo pablo@club.test y ve que ya existe",
+                  "file": "fase-0-wf-002.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-85362-lub-test-y-ve-que-ya-existe-chromium/attachments/AC-003-05-68efcc50c1652146a2628006011bae04c5f303eb.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-85362-lub-test-y-ve-que-ya-existe-chromium/test-finished-1.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--9349c-lub-test-y-ve-que-ya-existe-chromium/attachments/AC-003-05-967a49ea7bcee7049d64fbb6a364d1096e6e0dda.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--9349c-lub-test-y-ve-que-ya-existe-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-0-wf-002-WF-002-Sesió-85362-lub-test-y-ve-que-ya-existe-chromium/attachments/AC-003-05-3d76dd201c42a0dec0a88e3d11e92607cc75041f.png",
+                "evidencias/sin-fase/.playwright/fase-0-wf-002-WF-002-Sesió-85362-lub-test-y-ve-que-ya-existe-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-05.png",
+                "evidencias/FASE-4/AC-003-05.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-85362-lub-test-y-ve-que-ya-existe-chromium/attachments/AC-003-05-68efcc50c1652146a2628006011bae04c5f303eb.png": "sha256:c776d97cfea01ea9a3a6dcd0fa7f9524429fa73bc17ee5634cff3221a63da60d",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-85362-lub-test-y-ve-que-ya-existe-chromium/test-finished-1.png": "sha256:c776d97cfea01ea9a3a6dcd0fa7f9524429fa73bc17ee5634cff3221a63da60d",
+                "evidencias/FASE-0/AC-003-05.png": "sha256:c776d97cfea01ea9a3a6dcd0fa7f9524429fa73bc17ee5634cff3221a63da60d",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--9349c-lub-test-y-ve-que-ya-existe-chromium/attachments/AC-003-05-967a49ea7bcee7049d64fbb6a364d1096e6e0dda.png": "sha256:c776d97cfea01ea9a3a6dcd0fa7f9524429fa73bc17ee5634cff3221a63da60d",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--9349c-lub-test-y-ve-que-ya-existe-chromium/test-finished-1.png": "sha256:c776d97cfea01ea9a3a6dcd0fa7f9524429fa73bc17ee5634cff3221a63da60d",
+                "evidencias/FASE-4/AC-003-05.png": "sha256:c776d97cfea01ea9a3a6dcd0fa7f9524429fa73bc17ee5634cff3221a63da60d",
+                "evidencias/sin-fase/.playwright/fase-0-wf-002-WF-002-Sesió-85362-lub-test-y-ve-que-ya-existe-chromium/attachments/AC-003-05-3d76dd201c42a0dec0a88e3d11e92607cc75041f.png": "sha256:2151371e916656e537c64f0a08e5dc218ca59a5cc93a1f2828c85472a8047237",
+                "evidencias/sin-fase/.playwright/fase-0-wf-002-WF-002-Sesió-85362-lub-test-y-ve-que-ya-existe-chromium/test-finished-1.png": "sha256:2151371e916656e537c64f0a08e5dc218ca59a5cc93a1f2828c85472a8047237"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Ya existe un socio con ese correo",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--9349c-lub-test-y-ve-que-ya-existe-chromium/attachments/AC-003-05-967a49ea7bcee7049d64fbb6a364d1096e6e0dda.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--9349c-lub-test-y-ve-que-ya-existe-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-003-05.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--9349c-lub-test-y-ve-que-ya-existe-chromium/attachments/FASE-4-FASE-4-AC-003-05-REQ-F-002-AC3-marta-cre-826f034bd3781a82ce9053e72b2353170330b629.webm",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--9349c-lub-test-y-ve-que-ya-existe-chromium/video.webm",
+                "evidencias/FASE-4/FASE-4-FASE-4-AC-003-05-REQ-F-002-AC3-marta-cre.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 4,
+              "text": "GIVEN the member \"Lucía Gil\" forgot her password WHEN the encargado sets the new password \"Hielo2026x\" THEN she can sign in with it and no longer with the old one",
+              "scenarios": [
+                "AC-004-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-004-01 REQ-F-002 AC4 marta fija \"Hielo2026x\" a Lucía Gil: Socios muestra Contraseña restablecida, Lucía entra con ella y no con Cumbre2026",
+                  "file": "fase-4-bajas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-004-01 REQ-F-002 AC4 marta fija \"Hielo2026x\" a Lucía Gil: Socios muestra Contraseña restablecida, Lucía entra con ella y no con Cumbre2026",
+                  "file": "fase-4-bajas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "UC-004 restablecerContrasena (API-001-06) > AC-004-01 REQ-F-002 AC4 el encargado fija \"Hielo2026x\" a \"Lucía Gil\": entra con ella, con \"Cumbre2026\" da error y la operación responde éxito",
+                  "file": "tests/unit/cuentas-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "UC-004 restablecerContrasena (API-001-06) > AC-004-01 REQ-F-002 AC4 el encargado fija \"Hielo2026x\" a \"Lucía Gil\": entra con ella, con \"Cumbre2026\" da error y la operación responde éxito",
+                  "file": "tests/unit/cuentas-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Socios: Restablecer contraseña y Dar de baja (UC-004, SCR-006) > AC-004-01 REQ-F-002 AC4 \"Restablecer contraseña\" pide la nueva clave y, al confirmar con \"Hielo2026x\", muestra \"Contraseña restablecida\" sin pintar la clave",
+                  "file": "tests/unit/ui-socios-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Socios: Restablecer contraseña y Dar de baja (UC-004, SCR-006) > AC-004-01 REQ-F-002 AC4 \"Restablecer contraseña\" pide la nueva clave y, al confirmar con \"Hielo2026x\", muestra \"Contraseña restablecida\" sin pintar la clave",
+                  "file": "tests/unit/ui-socios-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-f8f8e-on-ella-y-no-con-Cumbre2026-chromium/attachments/AC-004-01-880ed708729d58f688dc082cf93a620bbc74ac69.png",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-f8f8e-on-ella-y-no-con-Cumbre2026-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-004-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-f8f8e-on-ella-y-no-con-Cumbre2026-chromium/attachments/AC-004-01-880ed708729d58f688dc082cf93a620bbc74ac69.png": "sha256:b4581999b09549952fe65caa787d968c84f1c52719a34411b10ae80674207042",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-f8f8e-on-ella-y-no-con-Cumbre2026-chromium/test-finished-1.png": "sha256:b4581999b09549952fe65caa787d968c84f1c52719a34411b10ae80674207042",
+                "evidencias/FASE-4/AC-004-01.png": "sha256:b4581999b09549952fe65caa787d968c84f1c52719a34411b10ae80674207042"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Contraseña restablecida",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-f8f8e-on-ella-y-no-con-Cumbre2026-chromium/attachments/AC-004-01-880ed708729d58f688dc082cf93a620bbc74ac69.png",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-f8f8e-on-ella-y-no-con-Cumbre2026-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-004-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-f8f8e-on-ella-y-no-con-Cumbre2026-chromium/attachments/FASE-4-FASE-4-AC-004-01-REQ-F-002-AC4-marta-fij-3f93dcd8c8a8097f911449933192d9d771ca0686.webm",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-f8f8e-on-ella-y-no-con-Cumbre2026-chromium/video.webm",
+                "evidencias/FASE-4/FASE-4-FASE-4-AC-004-01-REQ-F-002-AC4-marta-fij.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 5,
+              "text": "GIVEN \"Pablo Ruiz\" has 1 future reservation of \"Casco 2\" WHEN the encargado deactivates him THEN the user sees \"Pablo Ruiz\" marked \"Baja\" and the reservation is cancelled, freeing the unit",
+              "scenarios": [
+                "AC-004-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-004-02 REQ-F-002 AC5 marta da de baja a Pablo Ruiz, que devolvió su Casco y tiene 1 reserva futura de Casco 2, y Socios lo muestra Baja",
+                  "file": "fase-4-bajas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-004-02 REQ-F-002 AC5 marta da de baja a Pablo Ruiz, que devolvió su Casco y tiene 1 reserva futura de Casco 2, y Socios lo muestra Baja",
+                  "file": "fase-4-bajas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "UC-004 darDeBajaSocio (API-001-07) > AC-004-02 REQ-F-002 AC5 \"Pablo Ruiz\" con 1 reserva futura de \"Casco 2\" queda \"Baja\", la reserva Cancelada y \"Casco 2\" libre",
+                  "file": "tests/unit/cuentas-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "UC-004 darDeBajaSocio (API-001-07) > AC-004-02 REQ-F-002 AC5 \"Pablo Ruiz\" con 1 reserva futura de \"Casco 2\" queda \"Baja\", la reserva Cancelada y \"Casco 2\" libre",
+                  "file": "tests/unit/cuentas-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Socios: Restablecer contraseña y Dar de baja (UC-004, SCR-006) > AC-004-02 REQ-F-002 AC5 \"Dar de baja\" pide confirmación en línea y, al confirmar, la fila de \"Pablo Ruiz\" muestra \"Baja\" y deja de ofrecer las acciones",
+                  "file": "tests/unit/ui-socios-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Socios: Restablecer contraseña y Dar de baja (UC-004, SCR-006) > AC-004-02 REQ-F-002 AC5 \"Dar de baja\" pide confirmación en línea y, al confirmar, la fila de \"Pablo Ruiz\" muestra \"Baja\" y deja de ofrecer las acciones",
+                  "file": "tests/unit/ui-socios-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-b49f4--2-y-Socios-lo-muestra-Baja-chromium/attachments/AC-004-02-a3d169dd62ef131b132885fc9d929ac96fc63a8c.png",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-b49f4--2-y-Socios-lo-muestra-Baja-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-004-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-b49f4--2-y-Socios-lo-muestra-Baja-chromium/attachments/AC-004-02-a3d169dd62ef131b132885fc9d929ac96fc63a8c.png": "sha256:81b4b474a9554d20e191fd473868734c8925c75043b12c20fc91d11babe55fd9",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-b49f4--2-y-Socios-lo-muestra-Baja-chromium/test-finished-1.png": "sha256:81b4b474a9554d20e191fd473868734c8925c75043b12c20fc91d11babe55fd9",
+                "evidencias/FASE-4/AC-004-02.png": "sha256:81b4b474a9554d20e191fd473868734c8925c75043b12c20fc91d11babe55fd9"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Baja",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-b49f4--2-y-Socios-lo-muestra-Baja-chromium/attachments/AC-004-02-a3d169dd62ef131b132885fc9d929ac96fc63a8c.png",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-b49f4--2-y-Socios-lo-muestra-Baja-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-004-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-b49f4--2-y-Socios-lo-muestra-Baja-chromium/attachments/FASE-4-FASE-4-AC-004-02-REQ-F-002-AC5-marta-da--8ace90dda460f14a4eedde70667cdeccb85f01c2.webm",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-b49f4--2-y-Socios-lo-muestra-Baja-chromium/video.webm",
+                "evidencias/FASE-4/FASE-4-FASE-4-AC-004-02-REQ-F-002-AC5-marta-da-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 6,
+              "text": "GIVEN \"Pablo Ruiz\" has a lent unit not yet returned WHEN the encargado tries to deactivate him THEN the user sees \"No se puede dar de baja: tiene material sin devolver\" and he stays active",
+              "scenarios": [
+                "AC-004-05"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-004-05 REQ-F-002 AC6 marta intenta dar de baja a Pablo Ruiz con un Casco sin devolver y ve No se puede dar de baja: tiene material sin devolver",
+                  "file": "fase-4-bajas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-004-05 REQ-F-002 AC6 marta intenta dar de baja a Pablo Ruiz con un Casco sin devolver y ve No se puede dar de baja: tiene material sin devolver",
+                  "file": "fase-4-bajas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "UC-004 darDeBajaSocio (API-001-07) > AC-004-05 REQ-F-002 AC6 \"Pablo Ruiz\" con un Casco Entregado sin devolver da E_SOCIO_CON_MATERIAL, sigue Activa y sus reservas intactas",
+                  "file": "tests/unit/cuentas-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "UC-004 darDeBajaSocio (API-001-07) > AC-004-05 REQ-F-002 AC6 \"Pablo Ruiz\" con un Casco Entregado sin devolver da E_SOCIO_CON_MATERIAL, sigue Activa y sus reservas intactas",
+                  "file": "tests/unit/cuentas-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Socios: Restablecer contraseña y Dar de baja (UC-004, SCR-006) > AC-004-05 REQ-F-002 AC6 con E_SOCIO_CON_MATERIAL se muestra \"No se puede dar de baja: tiene material sin devolver\" y la fila de \"Pablo Ruiz\" sigue Activa",
+                  "file": "tests/unit/ui-socios-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Socios: Restablecer contraseña y Dar de baja (UC-004, SCR-006) > AC-004-05 REQ-F-002 AC6 con E_SOCIO_CON_MATERIAL se muestra \"No se puede dar de baja: tiene material sin devolver\" y la fila de \"Pablo Ruiz\" sigue Activa",
+                  "file": "tests/unit/ui-socios-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-d7fd4-tiene-material-sin-devolver-chromium/attachments/AC-004-05-e96aa6f3683bd525794a9f1b06810cdf808c2d23.png",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-d7fd4-tiene-material-sin-devolver-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-004-05.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-d7fd4-tiene-material-sin-devolver-chromium/attachments/AC-004-05-e96aa6f3683bd525794a9f1b06810cdf808c2d23.png": "sha256:24b815cd413a5653b17f2f1990d4ba93735e23cd2d3d00b0da2dfcd09cb5cd39",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-d7fd4-tiene-material-sin-devolver-chromium/test-finished-1.png": "sha256:24b815cd413a5653b17f2f1990d4ba93735e23cd2d3d00b0da2dfcd09cb5cd39",
+                "evidencias/FASE-4/AC-004-05.png": "sha256:24b815cd413a5653b17f2f1990d4ba93735e23cd2d3d00b0da2dfcd09cb5cd39"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No se puede dar de baja: tiene material sin devolver",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-d7fd4-tiene-material-sin-devolver-chromium/attachments/AC-004-05-e96aa6f3683bd525794a9f1b06810cdf808c2d23.png",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-d7fd4-tiene-material-sin-devolver-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-004-05.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-d7fd4-tiene-material-sin-devolver-chromium/attachments/FASE-4-FASE-4-AC-004-05-REQ-F-002-AC6-marta-int-dc520c0b5a0decf678da58a28008b34fd9232bba.webm",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-d7fd4-tiene-material-sin-devolver-chromium/video.webm",
+                "evidencias/FASE-4/FASE-4-FASE-4-AC-004-05-REQ-F-002-AC6-marta-int.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 7,
+              "text": "GIVEN a socio session WHEN the socio opens the address of \"Socios\" THEN the user sees \"Acceso no permitido\"",
+              "scenarios": [
+                "AC-003-06"
+              ],
+              "tests": [
+                {
+                  "name": "WF-002 Sesión de acceso › WF-002 AC-003-06 un socio abre la dirección de Socios y ve Acceso no permitido",
+                  "file": "fase-0-wf-002.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-003-06 REQ-F-002 AC7 lucia, socia, abre la dirección de Socios y ve Acceso no permitido",
+                  "file": "fase-4-cuentas-inventario.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-003-06 REQ-F-002 AC7 lucia, socia, abre la dirección de Socios y ve Acceso no permitido",
+                  "file": "fase-4-cuentas-inventario.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "WF-002 Sesión de acceso › WF-002 AC-003-06 un socio abre la dirección de Socios y ve Acceso no permitido",
+                  "file": "fase-0-wf-002.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-9ef23-os-y-ve-Acceso-no-permitido-chromium/attachments/AC-003-06-e6e9f3618babaac6b756342d745ecbaa51270a4d.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-9ef23-os-y-ve-Acceso-no-permitido-chromium/test-finished-1.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--6191e-os-y-ve-Acceso-no-permitido-chromium/attachments/AC-003-06-eb543e33c47d5f6e998caf52782bbd3589cf0cec.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--6191e-os-y-ve-Acceso-no-permitido-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-0-wf-002-WF-002-Sesió-9ef23-os-y-ve-Acceso-no-permitido-chromium/attachments/AC-003-06-12d64a3893351ffcf5e3616b66b6fefd4a2012f4.png",
+                "evidencias/sin-fase/.playwright/fase-0-wf-002-WF-002-Sesió-9ef23-os-y-ve-Acceso-no-permitido-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-003-06.png",
+                "evidencias/FASE-4/AC-003-06.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-9ef23-os-y-ve-Acceso-no-permitido-chromium/attachments/AC-003-06-e6e9f3618babaac6b756342d745ecbaa51270a4d.png": "sha256:02bb49aae2423357bacdda7766b801edd586f350a51f4312456c49e3f632049c",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-9ef23-os-y-ve-Acceso-no-permitido-chromium/test-finished-1.png": "sha256:02bb49aae2423357bacdda7766b801edd586f350a51f4312456c49e3f632049c",
+                "evidencias/FASE-0/AC-003-06.png": "sha256:02bb49aae2423357bacdda7766b801edd586f350a51f4312456c49e3f632049c",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--6191e-os-y-ve-Acceso-no-permitido-chromium/attachments/AC-003-06-eb543e33c47d5f6e998caf52782bbd3589cf0cec.png": "sha256:02bb49aae2423357bacdda7766b801edd586f350a51f4312456c49e3f632049c",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--6191e-os-y-ve-Acceso-no-permitido-chromium/test-finished-1.png": "sha256:02bb49aae2423357bacdda7766b801edd586f350a51f4312456c49e3f632049c",
+                "evidencias/FASE-4/AC-003-06.png": "sha256:02bb49aae2423357bacdda7766b801edd586f350a51f4312456c49e3f632049c",
+                "evidencias/sin-fase/.playwright/fase-0-wf-002-WF-002-Sesió-9ef23-os-y-ve-Acceso-no-permitido-chromium/attachments/AC-003-06-12d64a3893351ffcf5e3616b66b6fefd4a2012f4.png": "sha256:02bb49aae2423357bacdda7766b801edd586f350a51f4312456c49e3f632049c",
+                "evidencias/sin-fase/.playwright/fase-0-wf-002-WF-002-Sesió-9ef23-os-y-ve-Acceso-no-permitido-chromium/test-finished-1.png": "sha256:02bb49aae2423357bacdda7766b801edd586f350a51f4312456c49e3f632049c"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Acceso no permitido",
+                    "template": false
+                  }
+                ],
+                "where": "Socios",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--6191e-os-y-ve-Acceso-no-permitido-chromium/attachments/AC-003-06-eb543e33c47d5f6e998caf52782bbd3589cf0cec.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--6191e-os-y-ve-Acceso-no-permitido-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-003-06.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--6191e-os-y-ve-Acceso-no-permitido-chromium/attachments/FASE-4-FASE-4-AC-003-06-REQ-F-002-AC7-lucia-so-8159eaa89f6bfd55a9b4f4c39ed6e195adfc8fb4.webm",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--6191e-os-y-ve-Acceso-no-permitido-chromium/video.webm",
+                "evidencias/FASE-4/FASE-4-FASE-4-AC-003-06-REQ-F-002-AC7-lucia-so.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            }
+          ],
+          "candidate_files": [
+            "src/domain/cuentas.js",
+            "src/domain/permisos.js",
+            "src/server/plugin.js",
+            "src/ui/api.js",
+            "src/ui/pantallas/socios.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        },
+        {
+          "id": "REQ-F-008",
+          "title": "Gestionar el inventario",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "MISSING",
+          "statement": "WHEN the encargado adds material or removes a broken unit THE system SHALL update the inventory and the units available for new reservations",
+          "reqHash": "sha256:2721ba34866462b6b086c46b850eeea4211453b4916aec4e4f3beb0fb4361a13",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN the types are piolets, crampones, cascos, cuerdas and tiendas WHEN the encargado adds 2 units of \"Crampones\" THEN the user sees \"Crampones: 2 unidades\" in the inventory",
+              "scenarios": [
+                "AC-013-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 Inventario (encargado) › FASE-1 AC-013-01 marta añade 2 Crampones en Inventario y ve Crampones: 2 unidades",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-013-01 REQ-F-008 AC1 marta añade 2 Crampones en Inventario y ve Crampones: 2 unidades",
+                  "file": "fase-4-cuentas-inventario.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-013-01 REQ-F-008 AC1 marta añade 2 Crampones en Inventario y ve Crampones: 2 unidades",
+                  "file": "fase-4-cuentas-inventario.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 Inventario (encargado) › FASE-1 AC-013-01 marta añade 2 Crampones en Inventario y ve Crampones: 2 unidades",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "UC-013 anadirMaterial / listarInventario > AC-013-01 añadir 2 Crampones: el inventario cuenta 2 y las unidades son Crampones 1 y Crampones 2",
+                  "file": "tests/unit/inventario.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Inventario (UC-013) > AC-013-01 añadir 2 Crampones envía tipo y cantidad y muestra \"Crampones: 2 unidades\" con sus unidades",
+                  "file": "tests/unit/ui-inventario.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Inv-017da-o-y-ve-Crampones-2-unidades-chromium/attachments/AC-013-01-96a0541662a138773c7fac6934c662f4cd4628b7.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Inv-017da-o-y-ve-Crampones-2-unidades-chromium/test-finished-1.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--033e7-o-y-ve-Crampones-2-unidades-chromium/attachments/AC-013-01-8ddf26d1ad8686d4b9fbce46942ae6025b879aad.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--033e7-o-y-ve-Crampones-2-unidades-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Inv-017da-o-y-ve-Crampones-2-unidades-chromium/attachments/AC-013-01-08b60c3d8363fb085d12c6c255986065579dc60a.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Inv-017da-o-y-ve-Crampones-2-unidades-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-013-01.png",
+                "evidencias/FASE-4/AC-013-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Inv-017da-o-y-ve-Crampones-2-unidades-chromium/attachments/AC-013-01-96a0541662a138773c7fac6934c662f4cd4628b7.png": "sha256:6d505c0d8ce6cd12d1bc48f2fd80d52a08b7948bc244446f03b7e8290f1ee2b5",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Inv-017da-o-y-ve-Crampones-2-unidades-chromium/test-finished-1.png": "sha256:6d505c0d8ce6cd12d1bc48f2fd80d52a08b7948bc244446f03b7e8290f1ee2b5",
+                "evidencias/FASE-1/AC-013-01.png": "sha256:6d505c0d8ce6cd12d1bc48f2fd80d52a08b7948bc244446f03b7e8290f1ee2b5",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--033e7-o-y-ve-Crampones-2-unidades-chromium/attachments/AC-013-01-8ddf26d1ad8686d4b9fbce46942ae6025b879aad.png": "sha256:6d505c0d8ce6cd12d1bc48f2fd80d52a08b7948bc244446f03b7e8290f1ee2b5",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--033e7-o-y-ve-Crampones-2-unidades-chromium/test-finished-1.png": "sha256:6d505c0d8ce6cd12d1bc48f2fd80d52a08b7948bc244446f03b7e8290f1ee2b5",
+                "evidencias/FASE-4/AC-013-01.png": "sha256:6d505c0d8ce6cd12d1bc48f2fd80d52a08b7948bc244446f03b7e8290f1ee2b5",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Inv-017da-o-y-ve-Crampones-2-unidades-chromium/attachments/AC-013-01-08b60c3d8363fb085d12c6c255986065579dc60a.png": "sha256:470c654c1be4ae3d5ab4b723bedccc711e7ae83ce8c463a165e3c70d93cdaf67",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Inv-017da-o-y-ve-Crampones-2-unidades-chromium/test-finished-1.png": "sha256:470c654c1be4ae3d5ab4b723bedccc711e7ae83ce8c463a165e3c70d93cdaf67"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{tipo}: {n} unidades",
+                    "template": true
+                  }
+                ],
+                "where": "Inventario",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--033e7-o-y-ve-Crampones-2-unidades-chromium/attachments/AC-013-01-8ddf26d1ad8686d4b9fbce46942ae6025b879aad.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--033e7-o-y-ve-Crampones-2-unidades-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-013-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--033e7-o-y-ve-Crampones-2-unidades-chromium/attachments/FASE-4-FASE-4-AC-013-01-REQ-F-008-AC1-marta-a-a-96d7b40f3e978d6befbe873b10d77d264c985fe9.webm",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--033e7-o-y-ve-Crampones-2-unidades-chromium/video.webm",
+                "evidencias/FASE-4/FASE-4-FASE-4-AC-013-01-REQ-F-008-AC1-marta-a-a.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 2,
+              "text": "GIVEN \"Casco\" has 4 units and \"Casco 3\" is broken WHEN the encargado removes \"Casco 3\" THEN the user sees \"Casco: 3 unidades\" and \"Casco 3\" as \"De baja\"",
+              "scenarios": [
+                "AC-014-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-014-01 REQ-F-008 AC2 marta da de baja Casco 3 de 4 y Inventario muestra Casco: 3 unidades y Casco 3 De baja",
+                  "file": "fase-4-bajas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-014-01 REQ-F-008 AC2 marta da de baja Casco 3 de 4 y Inventario muestra Casco: 3 unidades y Casco 3 De baja",
+                  "file": "fase-4-bajas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "UC-014 darDeBajaUnidad (API-004-03) > AC-014-01 REQ-F-008 AC2 \"Casco\" con 4 unidades: tras dar de baja \"Casco 3\" el inventario devuelve 3 unidades de \"Casco\" y \"Casco 3\" en \"De baja\"",
+                  "file": "tests/unit/inventario-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "UC-014 darDeBajaUnidad (API-004-03) > AC-014-01 REQ-F-008 AC2 \"Casco\" con 4 unidades: tras dar de baja \"Casco 3\" el inventario devuelve 3 unidades de \"Casco\" y \"Casco 3\" en \"De baja\"",
+                  "file": "tests/unit/inventario-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Inventario: Dar de baja por unidad (UC-014, SCR-009) > AC-014-01 REQ-F-008 AC2 \"Dar de baja\" de \"Casco 3\" pide confirmación en línea y, al confirmar, se ve \"Casco: 3 unidades\" y \"Casco 3\" con \"De baja\"",
+                  "file": "tests/unit/ui-inventario-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Inventario: Dar de baja por unidad (UC-014, SCR-009) > AC-014-01 REQ-F-008 AC2 \"Dar de baja\" de \"Casco 3\" pide confirmación en línea y, al confirmar, se ve \"Casco: 3 unidades\" y \"Casco 3\" con \"De baja\"",
+                  "file": "tests/unit/ui-inventario-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-0ffea--unidades-y-Casco-3-De-baja-chromium/attachments/AC-014-01-39c22df60b36fc2345cf2c94cd85e3c156813e20.png",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-0ffea--unidades-y-Casco-3-De-baja-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-014-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-0ffea--unidades-y-Casco-3-De-baja-chromium/attachments/AC-014-01-39c22df60b36fc2345cf2c94cd85e3c156813e20.png": "sha256:9f3e519ae5f1292291d6fa43245f2d5a7688df20b9606c2813856d7b64ca5c40",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-0ffea--unidades-y-Casco-3-De-baja-chromium/test-finished-1.png": "sha256:9f3e519ae5f1292291d6fa43245f2d5a7688df20b9606c2813856d7b64ca5c40",
+                "evidencias/FASE-4/AC-014-01.png": "sha256:9f3e519ae5f1292291d6fa43245f2d5a7688df20b9606c2813856d7b64ca5c40"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{tipo}: {n} unidades",
+                    "template": true
+                  }
+                ],
+                "where": "Inventario",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-0ffea--unidades-y-Casco-3-De-baja-chromium/attachments/AC-014-01-39c22df60b36fc2345cf2c94cd85e3c156813e20.png",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-0ffea--unidades-y-Casco-3-De-baja-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-014-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-0ffea--unidades-y-Casco-3-De-baja-chromium/attachments/FASE-4-FASE-4-AC-014-01-REQ-F-008-AC2-marta-da--b3210b659952ebaba79ffd355086e2c12edd4321.webm",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-0ffea--unidades-y-Casco-3-De-baja-chromium/video.webm",
+                "evidencias/FASE-4/FASE-4-FASE-4-AC-014-01-REQ-F-008-AC2-marta-da-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 3,
+              "text": "GIVEN \"Casco 2\" is lent now WHEN the encargado tries to remove it THEN the user sees \"No se puede dar de baja: está prestada\" and the unit stays",
+              "scenarios": [
+                "AC-014-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-014-03 REQ-F-008 AC3 marta intenta dar de baja Casco 2, prestada ahora, y ve No se puede dar de baja: está prestada",
+                  "file": "fase-4-bajas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-014-03 REQ-F-008 AC3 marta intenta dar de baja Casco 2, prestada ahora, y ve No se puede dar de baja: está prestada",
+                  "file": "fase-4-bajas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "UC-014 darDeBajaUnidad (API-004-03) > AC-014-03 REQ-F-008 AC3 \"Casco 2\" con un Entregado da E_UNIDAD_PRESTADA y sigue en Alta, con sus reservas intactas",
+                  "file": "tests/unit/inventario-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "UC-014 darDeBajaUnidad (API-004-03) > AC-014-03 REQ-F-008 AC3 \"Casco 2\" con un Entregado da E_UNIDAD_PRESTADA y sigue en Alta, con sus reservas intactas",
+                  "file": "tests/unit/inventario-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Inventario: Dar de baja por unidad (UC-014, SCR-009) > AC-014-03 REQ-F-008 AC3 con E_UNIDAD_PRESTADA se muestra \"No se puede dar de baja: está prestada\", \"Casco 2\" sigue en Alta y el foco vuelve al botón",
+                  "file": "tests/unit/ui-inventario-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Inventario: Dar de baja por unidad (UC-014, SCR-009) > AC-014-03 REQ-F-008 AC3 con E_UNIDAD_PRESTADA se muestra \"No se puede dar de baja: está prestada\", \"Casco 2\" sigue en Alta y el foco vuelve al botón",
+                  "file": "tests/unit/ui-inventario-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-70b0c-e-dar-de-baja-está-prestada-chromium/attachments/AC-014-03-9e50dbddca9814255d8921d57408694202eb6fde.png",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-70b0c-e-dar-de-baja-está-prestada-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-014-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-70b0c-e-dar-de-baja-está-prestada-chromium/attachments/AC-014-03-9e50dbddca9814255d8921d57408694202eb6fde.png": "sha256:138925a40df0e3d103a3fac77c8b6a8bc9cc732897c9d8f65962cce526cbf456",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-70b0c-e-dar-de-baja-está-prestada-chromium/test-finished-1.png": "sha256:138925a40df0e3d103a3fac77c8b6a8bc9cc732897c9d8f65962cce526cbf456",
+                "evidencias/FASE-4/AC-014-03.png": "sha256:138925a40df0e3d103a3fac77c8b6a8bc9cc732897c9d8f65962cce526cbf456"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No se puede dar de baja: está prestada",
+                    "template": false
+                  }
+                ],
+                "where": "Inventario",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-70b0c-e-dar-de-baja-está-prestada-chromium/attachments/AC-014-03-9e50dbddca9814255d8921d57408694202eb6fde.png",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-70b0c-e-dar-de-baja-está-prestada-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-014-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-70b0c-e-dar-de-baja-está-prestada-chromium/attachments/FASE-4-FASE-4-AC-014-03-REQ-F-008-AC3-marta-int-5e38ca81506f187c75d5f90e14d704039f831226.webm",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-70b0c-e-dar-de-baja-está-prestada-chromium/video.webm",
+                "evidencias/FASE-4/FASE-4-FASE-4-AC-014-03-REQ-F-008-AC3-marta-int.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 4,
+              "text": "GIVEN \"Tienda\" has 1 unit with a future reservation from 2026-12-20 WHEN the encargado removes it THEN that reservation is cancelled and the user sees \"1 reserva cancelada por la baja\"",
+              "scenarios": [
+                "AC-014-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-014-02 REQ-F-008 AC4 marta da de baja la única Tienda con una reserva desde 2026-12-20 y ve 1 reserva cancelada por la baja",
+                  "file": "fase-4-bajas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-014-02 REQ-F-008 AC4 marta da de baja la única Tienda con una reserva desde 2026-12-20 y ve 1 reserva cancelada por la baja",
+                  "file": "fase-4-bajas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "UC-014 darDeBajaUnidad (API-004-03) > AC-014-02 REQ-F-008 AC4 \"Tienda\" con 1 unidad y una reserva futura desde 2026-12-20: la reserva queda Cancelada y la respuesta trae \"1 reserva cancelada por la baja\"",
+                  "file": "tests/unit/inventario-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "UC-014 darDeBajaUnidad (API-004-03) > AC-014-02 REQ-F-008 AC4 \"Tienda\" con 1 unidad y una reserva futura desde 2026-12-20: la reserva queda Cancelada y la respuesta trae \"1 reserva cancelada por la baja\"",
+                  "file": "tests/unit/inventario-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Inventario: Dar de baja por unidad (UC-014, SCR-009) > AC-014-02 REQ-F-008 AC4 con 1 reserva cancelada se muestra \"1 reserva cancelada por la baja\" y \"Tienda: 0 unidades\"",
+                  "file": "tests/unit/ui-inventario-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Inventario: Dar de baja por unidad (UC-014, SCR-009) > AC-014-02 REQ-F-008 AC4 con 1 reserva cancelada se muestra \"1 reserva cancelada por la baja\" y \"Tienda: 0 unidades\"",
+                  "file": "tests/unit/ui-inventario-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-e88f3-serva-cancelada-por-la-baja-chromium/attachments/AC-014-02-85983174324e3607cbfdb08afb94c1522ec2a4f0.png",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-e88f3-serva-cancelada-por-la-baja-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-014-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-e88f3-serva-cancelada-por-la-baja-chromium/attachments/AC-014-02-85983174324e3607cbfdb08afb94c1522ec2a4f0.png": "sha256:016892b951fac3a2b941b5bd2cc6ac8b7e833ef2a7e738d8e2b92872856355e7",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-e88f3-serva-cancelada-por-la-baja-chromium/test-finished-1.png": "sha256:016892b951fac3a2b941b5bd2cc6ac8b7e833ef2a7e738d8e2b92872856355e7",
+                "evidencias/FASE-4/AC-014-02.png": "sha256:016892b951fac3a2b941b5bd2cc6ac8b7e833ef2a7e738d8e2b92872856355e7"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{n} reserva cancelada por la baja",
+                    "template": true
+                  }
+                ],
+                "where": "Inventario",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-e88f3-serva-cancelada-por-la-baja-chromium/attachments/AC-014-02-85983174324e3607cbfdb08afb94c1522ec2a4f0.png",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-e88f3-serva-cancelada-por-la-baja-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-014-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-e88f3-serva-cancelada-por-la-baja-chromium/attachments/FASE-4-FASE-4-AC-014-02-REQ-F-008-AC4-marta-da--c919528017bd32212cd58102b6c2705ec4880d08.webm",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-e88f3-serva-cancelada-por-la-baja-chromium/video.webm",
+                "evidencias/FASE-4/FASE-4-FASE-4-AC-014-02-REQ-F-008-AC4-marta-da-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 5,
+              "text": "GIVEN a unit already \"De baja\" WHEN the same removal is sent again THEN the count stays the same",
+              "scenarios": [
+                "AC-014-07"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-014-07 REQ-F-008 AC5 con Casco 3 ya De baja, repetir la baja deja Inventario en Casco: 3 unidades",
+                  "file": "fase-4-bajas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-014-07 REQ-F-008 AC5 con Casco 3 ya De baja, repetir la baja deja Inventario en Casco: 3 unidades",
+                  "file": "fase-4-bajas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "UC-014 darDeBajaUnidad (API-004-03) > AC-014-07 REQ-F-008 AC5 con \"Casco 3\" ya \"De baja\", repetir la baja deja \"Casco: 3 unidades\"",
+                  "file": "tests/unit/inventario-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "UC-014 darDeBajaUnidad (API-004-03) > AC-014-07 REQ-F-008 AC5 con \"Casco 3\" ya \"De baja\", repetir la baja deja \"Casco: 3 unidades\"",
+                  "file": "tests/unit/inventario-bajas.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-1a77e-entario-en-Casco-3-unidades-chromium/attachments/AC-014-07-126ffa3eda455968ee188bc4cd347e7f044d4730.png",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-1a77e-entario-en-Casco-3-unidades-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-014-07.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-1a77e-entario-en-Casco-3-unidades-chromium/attachments/AC-014-07-126ffa3eda455968ee188bc4cd347e7f044d4730.png": "sha256:bddf5660fcf96e597083f3d6ec098fa62bd19fdebd5938895995106c672250ed",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-1a77e-entario-en-Casco-3-unidades-chromium/test-finished-1.png": "sha256:bddf5660fcf96e597083f3d6ec098fa62bd19fdebd5938895995106c672250ed",
+                "evidencias/FASE-4/AC-014-07.png": "sha256:bddf5660fcf96e597083f3d6ec098fa62bd19fdebd5938895995106c672250ed"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{tipo}: {n} unidades",
+                    "template": true
+                  }
+                ],
+                "where": "Inventario",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-1a77e-entario-en-Casco-3-unidades-chromium/attachments/AC-014-07-126ffa3eda455968ee188bc4cd347e7f044d4730.png",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-1a77e-entario-en-Casco-3-unidades-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-014-07.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-1a77e-entario-en-Casco-3-unidades-chromium/attachments/FASE-4-FASE-4-AC-014-07-REQ-F-008-AC5-con-Casco-077d8ab00f3384f73a7f71e93712f60bb42fbb9e.webm",
+                "evidencias/FASE-4/.playwright/fase-4-bajas-FASE-4-Restab-1a77e-entario-en-Casco-3-unidades-chromium/video.webm",
+                "evidencias/FASE-4/FASE-4-FASE-4-AC-014-07-REQ-F-008-AC5-con-Casco.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 6,
+              "text": "GIVEN an amount of 0 units WHEN the encargado adds material THEN the user sees \"La cantidad debe ser al menos 1\"",
+              "scenarios": [
+                "AC-013-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 Inventario (encargado) › FASE-1 AC-013-03 marta añade 0 unidades de Casco y ve La cantidad debe ser al menos 1",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-013-03 REQ-F-008 AC6 marta añade 0 unidades de Casco y ve La cantidad debe ser al menos 1",
+                  "file": "fase-4-cuentas-inventario.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-013-03 REQ-F-008 AC6 marta añade 0 unidades de Casco y ve La cantidad debe ser al menos 1",
+                  "file": "fase-4-cuentas-inventario.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 Inventario (encargado) › FASE-1 AC-013-03 marta añade 0 unidades de Casco y ve La cantidad debe ser al menos 1",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "UC-013 anadirMaterial / listarInventario > AC-013-03 cantidad 0: E_CANTIDAD_INVALIDA con \"La cantidad debe ser al menos 1\" y el recuento de Casco no cambia",
+                  "file": "tests/unit/inventario.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Inventario (UC-013) > AC-013-03 cantidad 0: el error \"La cantidad debe ser al menos 1\" sale junto al campo y el recuento no cambia",
+                  "file": "tests/unit/ui-inventario.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Inv-b34e8-antidad-debe-ser-al-menos-1-chromium/attachments/AC-013-03-70abf3b96ec578de9ed60b4fed89688c15677d12.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Inv-b34e8-antidad-debe-ser-al-menos-1-chromium/test-finished-1.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--1e006-antidad-debe-ser-al-menos-1-chromium/attachments/AC-013-03-5d5490750d6976ef96c376bf8cd1913a5fddae0e.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--1e006-antidad-debe-ser-al-menos-1-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Inv-b34e8-antidad-debe-ser-al-menos-1-chromium/attachments/AC-013-03-16ebfd3783ebdd0d8ddffa70a3edf11400ef164b.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Inv-b34e8-antidad-debe-ser-al-menos-1-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-013-03.png",
+                "evidencias/FASE-4/AC-013-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Inv-b34e8-antidad-debe-ser-al-menos-1-chromium/attachments/AC-013-03-70abf3b96ec578de9ed60b4fed89688c15677d12.png": "sha256:e14de88b775cbacf481fad613d99fc00d4718f569256e415d984cc91ee544ec0",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Inv-b34e8-antidad-debe-ser-al-menos-1-chromium/test-finished-1.png": "sha256:e14de88b775cbacf481fad613d99fc00d4718f569256e415d984cc91ee544ec0",
+                "evidencias/FASE-1/AC-013-03.png": "sha256:e14de88b775cbacf481fad613d99fc00d4718f569256e415d984cc91ee544ec0",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--1e006-antidad-debe-ser-al-menos-1-chromium/attachments/AC-013-03-5d5490750d6976ef96c376bf8cd1913a5fddae0e.png": "sha256:e14de88b775cbacf481fad613d99fc00d4718f569256e415d984cc91ee544ec0",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--1e006-antidad-debe-ser-al-menos-1-chromium/test-finished-1.png": "sha256:e14de88b775cbacf481fad613d99fc00d4718f569256e415d984cc91ee544ec0",
+                "evidencias/FASE-4/AC-013-03.png": "sha256:e14de88b775cbacf481fad613d99fc00d4718f569256e415d984cc91ee544ec0",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Inv-b34e8-antidad-debe-ser-al-menos-1-chromium/attachments/AC-013-03-16ebfd3783ebdd0d8ddffa70a3edf11400ef164b.png": "sha256:e14de88b775cbacf481fad613d99fc00d4718f569256e415d984cc91ee544ec0",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Inv-b34e8-antidad-debe-ser-al-menos-1-chromium/test-finished-1.png": "sha256:e14de88b775cbacf481fad613d99fc00d4718f569256e415d984cc91ee544ec0"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "La cantidad debe ser al menos 1",
+                    "template": false
+                  }
+                ],
+                "where": "Inventario",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--1e006-antidad-debe-ser-al-menos-1-chromium/attachments/AC-013-03-5d5490750d6976ef96c376bf8cd1913a5fddae0e.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--1e006-antidad-debe-ser-al-menos-1-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-013-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--1e006-antidad-debe-ser-al-menos-1-chromium/attachments/FASE-4-FASE-4-AC-013-03-REQ-F-008-AC6-marta-a-a-e9551df72eea456e4750c5e2071584f70c9890a4.webm",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--1e006-antidad-debe-ser-al-menos-1-chromium/video.webm",
+                "evidencias/FASE-4/FASE-4-FASE-4-AC-013-03-REQ-F-008-AC6-marta-a-a.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 7,
+              "text": "GIVEN a socio session WHEN the socio opens the address of \"Inventario\" THEN the user sees \"Acceso no permitido\"",
+              "scenarios": [
+                "AC-013-06"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-013-06 REQ-F-008 AC7 lucia, socia, abre la dirección de Inventario y ve Acceso no permitido",
+                  "file": "fase-4-cuentas-inventario.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-013-06 REQ-F-008 AC7 lucia, socia, abre la dirección de Inventario y ve Acceso no permitido",
+                  "file": "fase-4-cuentas-inventario.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "UC-013 anadirMaterial / listarInventario > AC-013-06 socio y junta: E_ACCESO_NO_PERMITIDO con \"Acceso no permitido\" al listar y al añadir",
+                  "file": "tests/unit/inventario.test.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "pantalla Inventario (UC-013) > AC-013-06 un socio ve \"Acceso no permitido\" y ni formulario ni lista",
+                  "file": "tests/unit/ui-inventario.test.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--cbaa9-io-y-ve-Acceso-no-permitido-chromium/attachments/AC-013-06-59843ae848b6276aa4b306da0c1d96132419a2de.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--cbaa9-io-y-ve-Acceso-no-permitido-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-013-06.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--cbaa9-io-y-ve-Acceso-no-permitido-chromium/attachments/AC-013-06-59843ae848b6276aa4b306da0c1d96132419a2de.png": "sha256:22344c1d409c6b5d75d0fee21673e0fcd32afb417cad2a60aefa0aca4027d7a7",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--cbaa9-io-y-ve-Acceso-no-permitido-chromium/test-finished-1.png": "sha256:22344c1d409c6b5d75d0fee21673e0fcd32afb417cad2a60aefa0aca4027d7a7",
+                "evidencias/FASE-4/AC-013-06.png": "sha256:22344c1d409c6b5d75d0fee21673e0fcd32afb417cad2a60aefa0aca4027d7a7"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Acceso no permitido",
+                    "template": false
+                  }
+                ],
+                "where": "Inventario",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--cbaa9-io-y-ve-Acceso-no-permitido-chromium/attachments/AC-013-06-59843ae848b6276aa4b306da0c1d96132419a2de.png",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--cbaa9-io-y-ve-Acceso-no-permitido-chromium/test-finished-1.png",
+                "evidencias/FASE-4/AC-013-06.png"
+              ],
+              "videos": [
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--cbaa9-io-y-ve-Acceso-no-permitido-chromium/attachments/FASE-4-FASE-4-AC-013-06-REQ-F-008-AC7-lucia-so-c56a458017c22ef065367e30f4164affa71eb8ac.webm",
+                "evidencias/FASE-4/.playwright/fase-4-cuentas-inventario--cbaa9-io-y-ve-Acceso-no-permitido-chromium/video.webm",
+                "evidencias/FASE-4/FASE-4-FASE-4-AC-013-06-REQ-F-008-AC7-lucia-so.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            }
+          ],
+          "candidate_files": [
+            "src/domain/errores.js",
+            "src/domain/inventario.js",
+            "src/server/plugin.js",
+            "src/ui/api.js",
+            "src/ui/pantallas/inventario.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        }
+      ],
+      "unknown_requirements": [],
+      "tasks": [
+        "TASK-F4-001",
+        "TASK-F4-002",
+        "TASK-F4-003",
+        "TASK-F4-004",
+        "TASK-F4-005",
+        "TASK-F4-006"
+      ],
+      "candidate_files": [
+        "src/domain/cuentas.js",
+        "src/domain/errores.js",
+        "src/domain/inventario.js",
+        "src/domain/permisos.js",
+        "src/server/plugin.js",
+        "src/ui/api.js",
+        "src/ui/pantallas/inventario.js",
+        "src/ui/pantallas/socios.js",
+        "src/ui/textos.js"
+      ],
+      "incremental": {
+        "criteria": 14,
+        "recheck": 0
+      }
+    }
+  ],
+  "uncovered": [
+    {
+      "id": "REQ-C-001",
+      "title": "Stack",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-002",
+      "title": "Textos en español",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-003",
+      "title": "Datos compartidos entre dispositivos",
+      "priority": "Must"
+    }
+  ],
+  "fases_without_header": [],
+  "criteria_without_test": [],
+  "coverage_gaps": 3
+}

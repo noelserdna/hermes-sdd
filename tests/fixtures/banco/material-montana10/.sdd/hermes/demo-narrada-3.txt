@@ -1,0 +1,8 @@
+FASE-3-E2E-ADM-01-FASE-3-Demo-el-encargado-da-.webm → FASE-3-E2E-ADM-01-FASE-3-Demo-el-encargado-da-.mp4 (7 frase(s), voz espeak-ng:es)
+FASE-3-REQ-F-002-AC1-AC-002-01-el-encargado-d.webm → FASE-3-REQ-F-002-AC1-AC-002-01-el-encargado-d.mp4 (2 frase(s), voz espeak-ng:es)
+FASE-3-REQ-F-002-AC2-AC-002-02-con-marta-clu.webm → FASE-3-REQ-F-002-AC2-AC-002-02-con-marta-clu.mp4 (2 frase(s), voz espeak-ng:es)
+FASE-3-REQ-F-002-AC3-AC-002-03-el-encargado-d.webm → FASE-3-REQ-F-002-AC3-AC-002-03-el-encargado-d.mp4 (2 frase(s), voz espeak-ng:es)
+FASE-3-REQ-F-002-AC4-AC-002-04-el-encargado-d.webm → FASE-3-REQ-F-002-AC4-AC-002-04-el-encargado-d.mp4 (2 frase(s), voz espeak-ng:es)
+FASE-3-REQ-F-002-AC5-AC-002-05-el-encargado-i.webm → FASE-3-REQ-F-002-AC5-AC-002-05-el-encargado-i.mp4 (2 frase(s), voz espeak-ng:es)
+FASE-3-REQ-F-002-AC6-AC-002-06-el-encargado-f.webm → FASE-3-REQ-F-002-AC6-AC-002-06-el-encargado-f.mp4 (2 frase(s), voz espeak-ng:es)
+FASE-3-REQ-F-002-AC7-AC-002-07-Luc-a-abre-Soc.webm → FASE-3-REQ-F-002-AC7-AC-002-07-Luc-a-abre-Soc.mp4 (2 frase(s), voz espeak-ng:es)

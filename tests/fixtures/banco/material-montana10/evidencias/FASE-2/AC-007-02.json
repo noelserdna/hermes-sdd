@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-007-02",
+ "test": "REQ-F-007 AC2 · AC-007-02 Lucía, con multas de 2 € y 4 €, tras pagar la de 2 € sigue viendo «Multa pendiente: 4 €» y no puede reservar",
+ "titulo": "REQ-F-007 AC2 · AC-007-02 Lucía, con multas de 2 € y 4 €, tras pagar la de 2 € sigue viendo «Multa pendiente: 4 €» y no puede reservar",
+ "ve": [
+  "Multa pendiente: 4 €"
+ ],
+ "narrado": "Marcar la multa como pagada. En Mis reservas se ve «Multa pendiente: 4 €», y Lucía no puede reservar.",
+ "url": "http://127.0.0.1:5173/#/mis-reservas",
+ "imagen": "AC-007-02.png",
+ "sha256": "sha256:4f88f4ca5590a9eab2f72cb451548d36f3b345489b91413614bed121dbab25f9",
+ "at": "2026-11-21T13:46:50.060Z"
+}

@@ -1,0 +1,16 @@
+{
+ "video": "FASE-2-FASE-2-AC-008-04-REQ-F-005-AC6-lucia-so.webm",
+ "test": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-04 REQ-F-005 AC6 lucia, socia, abre la dirección de Préstamos y ve Acceso no permitido",
+ "titulo": "FASE-2 AC-008-04 REQ-F-005 AC6 lucia, socia, abre la dirección de Préstamos y ve Acceso no permitido",
+ "narraciones": [
+  {
+   "t": 2.013,
+   "texto": "Lucía, que es socia, entra y escribe en el navegador la dirección de Préstamos"
+  },
+  {
+   "t": 2.555,
+   "texto": "Entregar y marcar la devolución. En Préstamos se ve «Acceso no permitido», sin ninguna lista de préstamos.",
+   "criterio": "AC-008-04"
+  }
+ ]
+}

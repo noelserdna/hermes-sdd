@@ -1,0 +1,171 @@
+{
+ "repo": "/home/andre/proyectos-sdd/material-montana11",
+ "fase": "1",
+ "sha": "87d197d",
+ "congelados": [],
+ "capturas": [],
+ "coherencia": [],
+ "vinculos": [],
+ "lint_capturas": [],
+ "mutantes_cache": {
+  "de_cache": 0,
+  "ejecutados": 0
+ },
+ "mutantes": [
+  {
+   "req": "REQ-F-003",
+   "ac": 2,
+   "texto": "No hay unidades libres esas fechas",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 4,
+   "texto": "No se puede reservar en fechas pasadas",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 5,
+   "texto": "La fecha de fin no puede ser anterior a la de inicio",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 6,
+   "texto": "La reserva no puede superar 14 días",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 7,
+   "texto": "Tienes una multa pendiente: no puedes reservar hasta pagarla",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 9,
+   "texto": "Piolet",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 1,
+   "texto": "Piolet",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 2,
+   "texto": "Reserva cancelada",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 3,
+   "texto": "Solo se puede cancelar hasta el día antes",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 4,
+   "texto": "No tienes reservas",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 5,
+   "texto": "Cancelada",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ]
+  }
+ ],
+ "graves": 0
+}

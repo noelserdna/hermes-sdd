@@ -1,0 +1,87 @@
+{
+  "id": "g1795292478d8b8",
+  "tipo": "ruta",
+  "fase": "",
+  "tablero": "material-montana11",
+  "tarjeta": "t_d2335b78",
+  "adopcion": false,
+  "sha": "6c5bab527a03aa67e732e09775f3cc24d118a3bc",
+  "creada": "2026-11-21T20:21:18Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana11",
+  "titulo": "Ruta del proyecto",
+  "texto": "🧭 Cómo hacer «material-montana11»: elige una ruta.\n\nSiempre se hacen los requisitos, el plan por fases, la programación y la comprobación final con demo. Lo que cambia entre rutas son los pasos extra (especificaciones, diseño, auditorías…).\n\n❓ Para la ruta adaptativa no tengo claro si se va a mantener y ampliar durante mucho tiempo. Por prudencia lo cuento como que sí.\n\n⭐ Adaptativa (recomendada): El método elige las etapas según cómo es el proyecto (tamaño, datos sensibles, pantallas, integraciones…). → pasos extra: especificaciones, auditoría de especificaciones, plan de pruebas, revisión de seguridad, diseño visual y de uso, diseño técnico, repaso de que el código hace todo lo especificado; fases: según el tamaño del proyecto.\n🧭 Ligera: Solo lo esencial: requisitos, plan, programación y aceptación. Para prototipos y proyectos pequeños. → sin pasos extra; fases: una fase y pocas tareas.\n🧭 Con diseño: Lo esencial más el diseño visual y de uso y el diseño técnico. Para apps con pantallas cuidadas. → pasos extra: diseño técnico, diseño visual y de uso; fases: una fase por recorrido.\n🧭 Completa: Todas las etapas del método: especificaciones, auditoría, plan de pruebas, seguridad, diseño y repaso del código frente a la especificación. Más lenta y más cara; para proyectos serios o de un cliente externo. → pasos extra: especificaciones, auditoría de especificaciones, plan de pruebas, revisión de seguridad, diseño técnico, diseño visual y de uso, repaso de que el código hace todo lo especificado; fases: una fase por recorrido.\n\n👉 Pulsa la ruta que quieras · ❌ Rechazar si ninguna te vale (y cuéntame por qué).",
+  "opciones": [
+    {
+      "verbo": "ruta-adaptativa",
+      "etiqueta": "⭐ Adaptativa",
+      "etapas": [
+        "specifications-engineer",
+        "spec-auditor",
+        "test-planner",
+        "security-auditor",
+        "ux-designer",
+        "tech-designer",
+        "gap-detector"
+      ],
+      "auto": true,
+      "granularidad": "auto",
+      "criterio": "Use the route «Adaptativa» (El método elige las etapas según cómo es el proyecto (tamaño, datos sensibles, pantallas, integraciones…).). Extra stages it runs besides the core (requirements, plan, tasks, implementation, acceptance): specifications-engineer, spec-auditor, test-planner, security-auditor, ux-designer, tech-designer, gap-detector. Plan granularity: compact when the project is small, normal otherwise. This is the recommended route.",
+      "fijada": false
+    },
+    {
+      "verbo": "ruta-ligera",
+      "etiqueta": "🧭 Ligera",
+      "etapas": [],
+      "auto": false,
+      "granularidad": "compacta",
+      "criterio": "Use the route «Ligera» (Solo lo esencial: requisitos, plan, programación y aceptación. Para prototipos y proyectos pequeños.). Extra stages it runs besides the core (requirements, plan, tasks, implementation, acceptance): none. Plan granularity: compact (one FASE, few coarse tasks).",
+      "fijada": false
+    },
+    {
+      "verbo": "ruta-con-diseno",
+      "etiqueta": "🧭 Con diseño",
+      "etapas": [
+        "tech-designer",
+        "ux-designer"
+      ],
+      "auto": false,
+      "granularidad": "normal",
+      "criterio": "Use the route «Con diseño» (Lo esencial más el diseño visual y de uso y el diseño técnico. Para apps con pantallas cuidadas.). Extra stages it runs besides the core (requirements, plan, tasks, implementation, acceptance): tech-designer, ux-designer. Plan granularity: normal (one FASE per user journey).",
+      "fijada": false
+    },
+    {
+      "verbo": "ruta-completa",
+      "etiqueta": "🧭 Completa",
+      "etapas": [
+        "specifications-engineer",
+        "spec-auditor",
+        "test-planner",
+        "security-auditor",
+        "tech-designer",
+        "ux-designer",
+        "gap-detector"
+      ],
+      "auto": false,
+      "granularidad": "normal",
+      "criterio": "Use the route «Completa» (Todas las etapas del método: especificaciones, auditoría, plan de pruebas, seguridad, diseño y repaso del código frente a la especificación. Más lenta y más cara; para proyectos serios o de un cliente externo.). Extra stages it runs besides the core (requirements, plan, tasks, implementation, acceptance): specifications-engineer, spec-auditor, test-planner, security-auditor, tech-designer, ux-designer, gap-detector. Plan granularity: normal (one FASE per user journey).",
+      "fijada": false
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true
+    }
+  ],
+  "demo": "",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [],
+    "graves": 0
+  }
+}

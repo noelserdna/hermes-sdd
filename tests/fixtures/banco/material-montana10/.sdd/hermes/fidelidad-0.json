@@ -1,0 +1,159 @@
+{
+ "repo": "/home/andre/proyectos-sdd/material-montana10",
+ "fase": "0",
+ "sha": "72eee1a",
+ "congelados": [],
+ "capturas": [],
+ "coherencia": [
+  {
+   "tipo": "referencia",
+   "donde": "plan/PLAN.md",
+   "detalle": "cita lo que ya no existe: AC-002-13",
+   "grave": false
+  }
+ ],
+ "vinculos": [],
+ "lint_capturas": [],
+ "mutantes_cache": {
+  "de_cache": 0,
+  "ejecutados": 0
+ },
+ "mutantes": [
+  {
+   "req": "REQ-F-001",
+   "ac": 3,
+   "texto": "Correo o contraseña incorrectos",
+   "e2e": [
+    "tests/e2e/fase-0-skeleton.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-skeleton.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 4,
+   "texto": "Cuenta bloqueada. Inténtalo de nuevo en 15 minutos",
+   "e2e": [
+    "tests/e2e/fase-0-skeleton.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "lo compone el código y lo comprueba un e2e",
+   "grave": false,
+   "plantilla": "Cuenta bloqueada. Inténtalo de nuevo en"
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 6,
+   "texto": "Tu sesión ha caducado",
+   "e2e": [
+    "tests/e2e/fase-0-skeleton.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-skeleton.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 7,
+   "texto": "Entrar",
+   "e2e": [
+    "tests/e2e/fase-0-skeleton.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-skeleton.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 8,
+   "texto": "Entrar",
+   "e2e": [
+    "tests/e2e/fase-0-skeleton.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-skeleton.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 5,
+   "texto": "Las fechas no pueden estar en el pasado",
+   "e2e": [
+    "tests/e2e/fase-0-skeleton.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-skeleton.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 6,
+   "texto": "La fecha final no puede ser anterior a la inicial",
+   "e2e": [
+    "tests/e2e/fase-0-skeleton.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-skeleton.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 7,
+   "texto": "Máximo 14 días por reserva",
+   "e2e": [
+    "tests/e2e/fase-0-skeleton.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 4,
+   "texto": "No se puede dar de baja: está prestada",
+   "e2e": [
+    "tests/e2e/fase-0-skeleton.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-skeleton.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 6,
+   "texto": "No tienes permiso para ver esta pantalla",
+   "e2e": [
+    "tests/e2e/fase-0-skeleton.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-skeleton.spec.js"
+   ]
+  }
+ ],
+ "graves": 0
+}

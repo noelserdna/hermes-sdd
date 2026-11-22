@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-004-06",
+ "test": "REQ-F-004 AC6 · AC-004-06 Lucía debe una multa de 4 € y en Mis reservas ve «Multa pendiente: 4 €»",
+ "titulo": "REQ-F-004 AC6 · AC-004-06 Lucía debe una multa de 4 € y en Mis reservas ve «Multa pendiente: 4 €»",
+ "ve": [
+  "Multa pendiente: 4 €"
+ ],
+ "narrado": "Ver y cancelar mis reservas. En Mis reservas se ve «Multa pendiente: 4 €».",
+ "url": "http://127.0.0.1:5173/#/mis-reservas",
+ "imagen": "AC-004-06.png",
+ "sha256": "sha256:4cb43ab2df3ca5011d53d38f8739da688264a305d402e0486f563709d5c5e74b",
+ "at": "2026-11-21T12:34:28.707Z"
+}

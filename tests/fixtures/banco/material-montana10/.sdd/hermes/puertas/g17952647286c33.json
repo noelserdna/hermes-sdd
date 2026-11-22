@@ -1,0 +1,104 @@
+{
+  "id": "g17952647286c33",
+  "tipo": "preguntas",
+  "fase": "3",
+  "tablero": "material-montana10",
+  "tarjeta": "t_9e659ea1",
+  "adopcion": false,
+  "sha": "74d4ae6ad26df1bedf82ae4dd19e9836a8c215a9",
+  "creada": "2026-11-21T12:38:49Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana10",
+  "titulo": "Preguntas de la FASE-3",
+  "texto": "⏸ La FASE-3 de «material-montana10» se ha parado: para seguir necesita que decidas esto.\n\nAl responder, la FASE-3 sigue con tus respuestas. Si alguna pide cambiar los requisitos ya aprobados, no se reabren a mitad de camino: queda anotada para la siguiente entrega.\n\n👉 Elige en los botones Q (la recomendada ya está marcada) y pulsa ✅ Responder.\n\n❓ Antes, 3 preguntas (la recomendada ya está marcada en los botones Q):\n\n1. Con un día de retraso la multa dice «1 días de retraso»; para dejarlo en «1 día» hay que cambiar una prueba que ya aceptaste en la entrega 2, ¿autorizas ese cambio?\n   🔧 Detalle técnico: Con 1 día de retraso el aviso de la multa dice «Multa de 2 € a Lucía (1 días de retraso)». Corregirlo a «(1 día de retraso)» obliga a editar tests/e2e/fase-2-d…\n   A) Sí, se cambia la prueba y el aviso dice «1 día»  ⭐ recomendada  (✏️ autoriza editar tests/e2e/fase-2-devolucion.spec.js)\n   B) No, se queda como está\n\n2. En Historial una reserva sin entregar sale como «Sin unidad»; para que diga el material (p. ej. «Piolet») hay que cambiar una prueba ya aceptada en la entrega 2, ¿autorizas ese cambio?\n   🔧 Detalle técnico: En Historial una reserva aún sin entregar sale como «Sin unidad»; para mostrar el material («Piolet») la API debe devolver `material` en cada préstamo, y tests…\n   A) Sí, se cambia la prueba y Historial muestra el material  ⭐ recomendada  (✏️ autoriza editar tests/unit/domain/prestamos-historial.test.js)\n   B) No, se queda «Sin unidad»\n\n3. Es un detalle interno de cómo se llama una dirección de la web y no cambia nada de lo que ve el encargado, ¿te parece bien dejarlo como está?\n   🔧 Detalle técnico: OPERATION-MAPPING fija `/api/socios/contrasena` para restablecerContrasena, pero tests/unit/server/cuentas.test.js (ya aceptado) prohíbe cualquier ruta cuyo te…\n   A) Sí, déjalo como está  ⭐ recomendada\n   B) No, que se cambie la prueba y se use el nombre del mapa  (✏️ autoriza editar tests/unit/server/cuentas.test.js)\n\n👉 Si firmas sin tocar los botones Q, esto lanzará: ✏️ autoriza editar tests que ya existían: tests/e2e/fase-2-devolucion.spec.js (Q1), tests/unit/domain/prestamos-historial.test.js (Q2) · sin más efecto: Q3.",
+  "opciones": [
+    {
+      "verbo": "respondo",
+      "etiqueta": "✅ Responder"
+    }
+  ],
+  "demo": "",
+  "preguntas": [
+    {
+      "n": 1,
+      "id": "Q-task-implementer-002",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "editar-test",
+          "ficheros": [
+            "tests/e2e/fase-2-devolucion.spec.js"
+          ],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "Con un día de retraso la multa dice «1 días de retraso»; para dejarlo en «1 día» hay que cambiar una prueba que ya aceptaste en la entrega 2, ¿autorizas ese cambio?"
+    },
+    {
+      "n": 2,
+      "id": "Q-task-implementer-003",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "editar-test",
+          "ficheros": [
+            "tests/unit/domain/prestamos-historial.test.js"
+          ],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "En Historial una reserva sin entregar sale como «Sin unidad»; para que diga el material (p. ej. «Piolet») hay que cambiar una prueba ya aceptada en la entrega 2, ¿autorizas ese cambio?"
+    },
+    {
+      "n": 3,
+      "id": "Q-task-implementer-004",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "editar-test",
+          "ficheros": [
+            "tests/unit/server/cuentas.test.js"
+          ],
+          "declarado": true
+        }
+      },
+      "cliente": "Es un detalle interno de cómo se llama una dirección de la web y no cambia nada de lo que ve el encargado, ¿te parece bien dejarlo como está?"
+    }
+  ],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [],
+    "graves": 0
+  }
+}

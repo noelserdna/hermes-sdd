@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-015-04",
+ "test": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-04 REQ-F-009 AC4 sin préstamos abiertos Prestado muestra No hay material prestado",
+ "titulo": "FASE-5 AC-015-04 REQ-F-009 AC4 sin préstamos abiertos Prestado muestra No hay material prestado",
+ "ve": [
+  "No hay material prestado"
+ ],
+ "narrado": "Ver lo prestado y lo que vuelve cada día. En Prestado se ve «No hay material prestado», y la lista queda sin ninguna fila.",
+ "url": "http://127.0.0.1:33373/#/prestado",
+ "imagen": "AC-015-04.png",
+ "sha256": "sha256:dd130661846bd84022f85e8c760469f4c3524e09e982bbf34b287f8fefcdbde3",
+ "at": "2026-11-22T01:04:11.670Z"
+}

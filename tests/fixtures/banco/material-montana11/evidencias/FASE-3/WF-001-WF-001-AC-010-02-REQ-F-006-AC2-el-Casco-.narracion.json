@@ -1,0 +1,16 @@
+{
+ "video": "WF-001-WF-001-AC-010-02-REQ-F-006-AC2-el-Casco-.webm",
+ "test": "WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-010-02 REQ-F-006 AC2 el Casco de Pablo con fin 2026-12-07 devuelto el 2026-12-07 deja Multas en Sin multas",
+ "titulo": "WF-001 AC-010-02 REQ-F-006 AC2 el Casco de Pablo con fin 2026-12-07 devuelto el 2026-12-07 deja Multas en Sin multas",
+ "narraciones": [
+  {
+   "t": 3.228,
+   "texto": "Es el 7 de diciembre. Pablo devolvió su Casco justo el día de su fin. Marta entra y abre Multas"
+  },
+  {
+   "t": 4.16,
+   "texto": "Multa por devolución tardía y bloqueo. En Multas se ve «Sin multas»: no se creó ninguna multa por el Casco de Pablo.",
+   "criterio": "AC-010-02"
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+{
+  "verbo": "acepto",
+  "texto": "",
+  "actor": {
+    "persona": "jev",
+    "canal": "jev",
+    "id": "regla"
+  },
+  "prueba": {
+    "modelo": "regla",
+    "p": "1.000",
+    "modo": "auto",
+    "regla": "sin bloqueo, sin tests tocados, sin inspecciones ni avisos graves",
+    "demo": "no vista"
+  },
+  "at": "2026-11-21T21:49:58Z"
+}

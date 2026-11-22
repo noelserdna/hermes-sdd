@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-003-08",
+ "test": "REQ-F-003 AC8 · AC-003-08 Lucía con una multa pendiente de 4 € no puede reservar «Casco»",
+ "titulo": "REQ-F-003 AC8 · AC-003-08 Lucía con una multa pendiente de 4 € no puede reservar «Casco»",
+ "ve": [
+  "Tienes una multa pendiente de 4 €. Págala al encargado para poder reservar"
+ ],
+ "narrado": "Reservar material para unas fechas. En Reservar se ve «Tienes una multa pendiente de 4 €. Págala al encargado para poder reservar» y no se crea ninguna reserva.",
+ "url": "http://127.0.0.1:5173/#/reservar",
+ "imagen": "AC-003-08.png",
+ "sha256": "sha256:18ee1cfb33ff9d6f2c06c6447c9c835c8ec1ce89433ba0c9e8f3181942bbc95f",
+ "at": "2026-11-21T13:46:01.972Z"
+}

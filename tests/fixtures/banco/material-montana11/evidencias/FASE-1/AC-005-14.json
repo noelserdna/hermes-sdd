@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-005-14",
+ "test": "FASE-1 Reservar material (socio) › FASE-1 AC-005-14 lucia envía dos veces Piolet del 2026-12-05 al 2026-12-07 y Mis reservas muestra un solo Piolet",
+ "titulo": "FASE-1 AC-005-14 lucia envía dos veces Piolet del 2026-12-05 al 2026-12-07 y Mis reservas muestra un solo Piolet",
+ "ve": [
+  "Piolet"
+ ],
+ "narrado": "Reservar material para unas fechas. En Mis reservas se ve «Piolet», una sola vez para el 2026-12-05 al 2026-12-07, sin repetirse.",
+ "url": "http://127.0.0.1:39537/#/reservas",
+ "imagen": "AC-005-14.png",
+ "sha256": "sha256:cb6862afb21a20812893cabf548112df9bcf48ad89a5e75e0d10d1c6197f437b",
+ "at": "2026-11-22T01:01:34.207Z"
+}

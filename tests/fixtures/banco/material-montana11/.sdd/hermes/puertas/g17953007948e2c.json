@@ -1,0 +1,66 @@
+{
+  "id": "g17953007948e2c",
+  "tipo": "fase",
+  "fase": "2",
+  "tablero": "material-montana11",
+  "tarjeta": "t_e153f332",
+  "adopcion": false,
+  "sha": "4be7bf38cbecc55741ed6b67013a0209e616e9db",
+  "creada": "2026-11-21T22:39:54Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana11",
+  "titulo": "Aceptar FASE-2",
+  "texto": "🧭 Encargado: 2 avisos\n• La FASE-2 añadió 683 líneas de tests para 222 de código (3.1×): revisa si los tests prueban lo que piden los criterios\n• 1 aviso(s) de las capturas, p. ej. la captura AC-009-03-229b8ec04bb1fafabaab2e535f65b412fc59e575.png no cuenta para REQ-F-005 AC5: la tomó un test que no cita ese criterio (el criterio ya se ve en su propia captura)\n\n🧪 La FASE-2 de «material-montana11» está lista para revisar.\n\n✅ Todo en orden: el requisito de esta fase funciona y está comprobado.\n\n✅ Entregar y marcar la devolución: funciona y está comprobado (6 de 6 criterios)\n\n🛡 No se ha tocado ningún test que ya existía (ni sus ayudas ni su configuración).\n\n🎬 Demo: vídeo y 8 capturas.\n\n🤖 Jev ha leído el texto en off de 7 vídeos: cada uno cuenta lo que pide su criterio.\n\n👉 Pulsa ▶ Ver demo; después podrás aceptarla, aceptarla con observaciones o rechazarla.",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Aceptar",
+      "paso": 2
+    },
+    {
+      "verbo": "observaciones",
+      "etiqueta": "📝 Con observaciones",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-2/FASE-2-FASE-2-AC-008-01-REQ-F-005-AC1-con-hoy-2.mp4",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": false,
+        "codigo": "tests-de-mas",
+        "texto": "La FASE-2 añadió 683 líneas de tests para 222 de código (3.1×): revisa si los tests prueban lo que piden los criterios"
+      },
+      {
+        "grave": false,
+        "codigo": "capturas-avisos",
+        "texto": "1 aviso(s) de las capturas, p. ej. la captura AC-009-03-229b8ec04bb1fafabaab2e535f65b412fc59e575.png no cuenta para REQ-F-005 AC5: la tomó un test que no cita ese criterio (el criterio ya se ve en su propia captura)"
+      }
+    ],
+    "graves": 0
+  },
+  "narracion": {
+    "revisados": 7,
+    "modelo": "jev-1.14.0",
+    "contradicen": [],
+    "incompletos": []
+  }
+}

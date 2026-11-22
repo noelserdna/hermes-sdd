@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-03",
+ "test": "REQ-F-001 AC3 · AC-001-03 WF-002 con la contraseña «mala» sigue en Entrar con el error",
+ "titulo": "REQ-F-001 AC3 · AC-001-03 WF-002 con la contraseña «mala» sigue en Entrar con el error",
+ "ve": [
+  "Correo o contraseña incorrectos"
+ ],
+ "narrado": "Entrar, salir y proteger la sesión. En Entrar se ve «Correo o contraseña incorrectos» y se queda en Entrar.",
+ "url": "http://127.0.0.1:5173/#/entrar",
+ "imagen": "AC-001-03.png",
+ "sha256": "sha256:f46a781e5b531dc02b4cc449c25d87ef14a31c1d073f52946e0c2c1a3eeb4fe5",
+ "at": "2026-11-21T13:45:39.067Z"
+}

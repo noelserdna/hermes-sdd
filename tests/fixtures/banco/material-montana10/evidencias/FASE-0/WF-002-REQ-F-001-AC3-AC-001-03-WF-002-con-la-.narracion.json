@@ -1,0 +1,16 @@
+{
+ "video": "WF-002-REQ-F-001-AC3-AC-001-03-WF-002-con-la-.webm",
+ "test": "REQ-F-001 AC3 · AC-001-03 WF-002 con la contraseña «mala» sigue en Entrar con el error",
+ "titulo": "REQ-F-001 AC3 · AC-001-03 WF-002 con la contraseña «mala» sigue en Entrar con el error",
+ "narraciones": [
+  {
+   "t": 0.007,
+   "texto": "Lucía abre Entrar y envía su correo con una contraseña equivocada"
+  },
+  {
+   "t": 0.397,
+   "texto": "Entrar, salir y proteger la sesión. En Entrar se ve «Correo o contraseña incorrectos» y se queda en Entrar.",
+   "criterio": "AC-001-03"
+  }
+ ]
+}

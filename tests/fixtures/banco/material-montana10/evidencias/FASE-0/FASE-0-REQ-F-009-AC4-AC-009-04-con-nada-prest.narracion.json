@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-REQ-F-009-AC4-AC-009-04-con-nada-prest.webm",
+ "test": "REQ-F-009 AC4 · AC-009-04 con nada prestado el encargado ve «No hay material prestado»",
+ "titulo": "REQ-F-009 AC4 · AC-009-04 con nada prestado el encargado ve «No hay material prestado»",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "El encargado entra y abre Entregas y devoluciones; no hay nada prestado"
+  },
+  {
+   "t": 0.545,
+   "texto": "Ver lo prestado y lo que vuelve cada día. En Entregas y devoluciones se ve «No hay material prestado».",
+   "criterio": "AC-009-04"
+  }
+ ]
+}

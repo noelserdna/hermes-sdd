@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-REQ-F-003-AC8-AC-003-08-Luc-a-con-una-.webm",
+ "test": "REQ-F-003 AC8 · AC-003-08 Lucía con una multa pendiente de 4 € no puede reservar «Casco»",
+ "titulo": "REQ-F-003 AC8 · AC-003-08 Lucía con una multa pendiente de 4 € no puede reservar «Casco»",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "Lucía, que debe una multa de 4 euros, entra y reserva un casco"
+  },
+  {
+   "t": 0.599,
+   "texto": "Reservar material para unas fechas. En Reservar se ve «Tienes una multa pendiente de 4 €. Págala al encargado para poder reservar» y no se crea ninguna reserva.",
+   "criterio": "AC-003-08"
+  }
+ ]
+}

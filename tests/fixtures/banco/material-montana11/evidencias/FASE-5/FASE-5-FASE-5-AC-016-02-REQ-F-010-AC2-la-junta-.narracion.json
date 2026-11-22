@@ -1,0 +1,16 @@
+{
+ "video": "FASE-5-FASE-5-AC-016-02-REQ-F-010-AC2-la-junta-.webm",
+ "test": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-02 REQ-F-010 AC2 la junta elige a Lucía Gil y ve el Piolet 1 con Devuelto",
+ "titulo": "FASE-5 AC-016-02 REQ-F-010 AC2 la junta elige a Lucía Gil y ve el Piolet 1 con Devuelto",
+ "narraciones": [
+  {
+   "t": 4.541,
+   "texto": "Lucía devolvió su Piolet el 7 de diciembre. La junta entra, abre Historial y elige a Lucía Gil"
+  },
+  {
+   "t": 5.407,
+   "texto": "La junta consulta el historial de un socio. En Historial del socio se ve el «Piolet 1» de Lucía Gil con el estado «Devuelto».",
+   "criterio": "AC-016-02"
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+{
+ "video": "WF-002-REQ-F-001-AC1-AC-001-01-WF-002-Luc-a-e.webm",
+ "test": "REQ-F-001 AC1 · AC-001-01 WF-002 Lucía entra y ve «Hola, Lucía» en Mis reservas",
+ "titulo": "REQ-F-001 AC1 · AC-001-01 WF-002 Lucía entra y ve «Hola, Lucía» en Mis reservas",
+ "narraciones": [
+  {
+   "t": 0.015,
+   "texto": "Lucía abre la web, ve Entrar y envía su correo y su contraseña"
+  },
+  {
+   "t": 0.532,
+   "texto": "Entrar, salir y proteger la sesión. En Mis reservas se ve «Hola, Lucía».",
+   "criterio": "AC-001-01"
+  }
+ ]
+}

@@ -1,0 +1,47 @@
+{
+  "id": "g1795268869b3c0",
+  "tipo": "entrega",
+  "fase": "",
+  "tablero": "material-montana10",
+  "tarjeta": "t_a3036e4c",
+  "adopcion": false,
+  "sha": "ee8820f7e099076cd024a87b7f44db7824d36273",
+  "creada": "2026-11-21T13:47:49Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana10",
+  "titulo": "Entrega final",
+  "texto": "🧭 Encargado: 1 aviso (1 grave: Jev no puede aprobar esta puerta solo)\n‼️ No se pudo comprobar si los tests y las capturas prueban lo pedido (hsdd_fidelidad falló: no hay comprobación de fidelidad)\n\n🎁 «material-montana10» está terminado y listo para entregar.\n\n✅ Lo imprescindible está comprobado. De 1 requisito que no es imprescindible la revisión independiente duda de que sus pruebas lo comprueben (⚠️ en la lista): míralo en la demo.\n\n⚠️ Contraseñas y datos personales: pasa sus pruebas, pero la revisión independiente duda de que lo comprueben (CH-005) (2 de 2 criterios)\n✅ 13 requisitos funcionan y están comprobados: Entrar, salir y proteger la sesión; Dar de alta, dar de baja y restablecer contraseña de socios; Reservar material para unas fechas; Ver y cancelar mis reservas; Entregar lo reservado; Marcar la devolución y poner la multa; Marcar la multa como pagada; Gestionar el inventario; Ver lo prestado y lo…\n\nFases aceptadas: 4.\n\n👉 Puedes aceptar la entrega (✅), aceptarla con observaciones o rechazarla.",
+  "opciones": [
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Acepto la entrega"
+    },
+    {
+      "verbo": "observaciones",
+      "etiqueta": "📝 Con observaciones",
+      "texto": true
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true
+    }
+  ],
+  "demo": "",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": true,
+        "codigo": "fidelidad-sin-comprobar",
+        "texto": "No se pudo comprobar si los tests y las capturas prueban lo pedido (hsdd_fidelidad falló: no hay comprobación de fidelidad)"
+      }
+    ],
+    "graves": 1
+  }
+}

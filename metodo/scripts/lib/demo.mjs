@@ -72,6 +72,53 @@ export function fraseCriterio(req, sees) {
   return { frase: `${req.title}. ${sees.where ? `En ${sees.where} se` : "Se"} ve ${lista}.`, visible: true };
 }
 
+// ------------------------------------------------------------------ the criterion, presented before it is shown
+const PASO = { given: "Dado", dado: "Dado", dada: "Dado", when: "Cuando", cuando: "Cuando", then: "Entonces", entonces: "Entonces",
+  and: "Y", y: "Y", e: "Y", but: "Pero", pero: "Pero" };
+/** The steps of each BDD scenario of spec/tests, in Spanish keywords: id → [{ k: Dado|Cuando|Entonces|Y|Pero, texto }]. */
+export function scenarioSteps(root) {
+  const dir = path.join(root, "spec", "tests");
+  const out = new Map();
+  if (!existsSync(dir)) return out;
+  for (const f of readdirSync(dir).filter((x) => /^BDD-.*\.md$/i.test(x)).sort()) {
+    let ids = null;
+    for (const l of read(path.join(dir, f)).split(/\r?\n/)) {
+      if (/^\s*(?:#{1,6}\s*)?(?:\*\*)?(?:Scenario(?: Outline)?|Escenario|Esquema del escenario)\b/i.test(l)) {
+        ids = [...new Set(l.match(/AC-\d{3}-\d{2}/g) || [])];
+        for (const id of ids) if (!out.has(id)) out.set(id, []);
+        continue;
+      }
+      const m = l.match(/^\s*(?:[-*]\s+)?(?:\*\*)?(Given|When|Then|And|But|Dado|Dada|Cuando|Entonces|Y|E|Pero)(?:\*\*)?\s+(.+?)\s*$/i);
+      if (m && ids) for (const id of ids) out.get(id).push({ k: PASO[m[1].toLowerCase()], texto: m[2] });
+      else if (/^\s*(?:#{1,6}\s|Feature:|Background:|Antecedentes:|Característica:)/i.test(l)) ids = null;
+    }
+  }
+  return out;
+}
+const hablado = (t) => String(t).replace(/["«»“”`]/g, "").replace(/\s+/g, " ").trim().replace(/[.;]+$/, "");
+const tipoReq = (id) => (/^REQ-NF-/.test(id) ? "no funcional" : /^REQ-F-/.test(id) ? "funcional" : "");
+/**
+ * How a criterion's video opens (Andrés, material-montana11: «que diga: este es el requisito tal, que pide esto, sus
+ * criterios de aceptación son estos, y a partir de ahí lo demuestre»): what is written on screen (requisito, titulo,
+ * para_el_cliente, criterios [{ n, titulo, actual }], pasos of this criterion) and what the voice says (voz). Built by
+ * the method from the requirements and the BDD scenarios; the test helper shows it, no agent writes it.
+ */
+export function presentacion(req, n, { titulos = [], pasos = [], frase = null } = {}) {
+  const total = req.criteria.length;
+  const criterios = req.criteria.map((_, i) => ({ n: i + 1, titulo: titulos[i] || `Criterio ${i + 1}`, actual: i + 1 === n }));
+  const num = Number((req.id.match(/(\d+)$/) || [])[1]);
+  const voz = [`Requisito ${tipoReq(req.id)} ${num || req.id}: ${hablado(req.title)}.`.replace(/\s+/g, " ")];
+  if (req.plain) voz.push(`${hablado(req.plain)}.`);
+  voz.push(total > 1 ? `Tiene ${total} criterios de aceptación. Este vídeo demuestra el criterio ${n}${titulos[n - 1] ? `: ${hablado(titulos[n - 1])}` : ""}.`
+    : `Tiene un criterio de aceptación${titulos[0] ? `: ${hablado(titulos[0])}` : ""}, y este vídeo lo demuestra.`);
+  if (pasos.length) {
+    const une = { Dado: "Dado que", Cuando: "cuando", Entonces: "entonces", Y: "y", Pero: "pero" };
+    voz.push(pasos.map((p, i) => `${i && p.k !== "Y" && p.k !== "Pero" ? ", " : i ? " " : ""}${i ? une[p.k].toLowerCase() : une[p.k]} ${hablado(p.texto)}`).join("") + ".");
+  } else if (frase) voz.push(hablado(frase) + ".");
+  voz.push("Ahora, la demostración.");
+  return { requisito: req.id, titulo: req.title, para_el_cliente: req.plain || null, n, total, criterios, pasos, voz: voz.join(" ") };
+}
+
 /** The script of FASE N (see the header). */
 export function demoScript(root, fase) {
   const fs = faseScope(root, fase);
@@ -81,6 +128,8 @@ export function demoScript(root, fase) {
   const escenarios = new Set(headerIds(planText, "Escenarios|Scenarios", /AC-\d{3}-\d{2}/g));
   const { byCriterion } = scenarioIndex(loadScenarios(root));
   const ucs = useCases(root);
+  const escenas = loadScenarios(root), pasosDe = scenarioSteps(root);
+  const tituloDe = (rid, k) => { const ids = [...(byCriterion.get(`${rid}#${k}`) || [])].sort(); return escenas.find((e) => ids.includes(e.id) && e.title)?.title || null; };
   const criterios = [];
   for (const r of reqs) {
     if (r.type !== "F" || r.deprecated || !scope.has(r.id)) continue;
@@ -95,7 +144,8 @@ export function demoScript(root, fase) {
       // left, it is still there after a reload); Jev compares the voice-over with the criterion (gastos-cena2)
       const then = (String(c).match(/\bTHEN\s+([\s\S]*)$/) || [])[1]?.trim() || null;
       criterios.push({ id, req: r.id, ac: n, uc: uc && ucs.has(uc) ? uc : null, frase: fr.frase, visible: fr.visible, then,
-        ve: (r.sees?.[i]?.texts || []).map((x) => x.text), pantalla: r.sees?.[i]?.where || null });
+        ve: (r.sees?.[i]?.texts || []).map((x) => x.text), pantalla: r.sees?.[i]?.where || null,
+        presentacion: presentacion(r, n, { titulos: r.criteria.map((_, k) => tituloDe(r.id, k + 1)), pasos: pasosDe.get(id) || [], frase: fr.frase }) });
     });
   }
   const usados = new Set(criterios.map((c) => c.uc).filter(Boolean));
@@ -185,9 +235,13 @@ export function filmTimeline(items, duration = null, pad = 0.4) {
   items.forEach((x, j) => {
     const next = j + 1 < items.length ? items[j + 1].t : duration;
     const gap = next === null ? 0 : Math.max(0, next - x.t);
-    const freeze = Math.max(0, Math.round((x.d + pad - gap) * 100) / 100);
     offsets.push(x.t + added);
-    pieces.push({ from: x.t, to: j + 1 < items.length ? next : null, freeze });
+    // `hold` (seconds): the frame to freeze is the item's own, `hold` after it starts, not the last one before the
+    // next sentence — the card that presents the criterion is gone by then (the test has already opened the app)
+    const hold = x.hold > 0 && (next === null || x.t + x.hold < next) ? x.hold : 0;
+    const freeze = Math.max(0, Math.round((x.d + pad - (hold || gap)) * 100) / 100);
+    if (hold) pieces.push({ from: x.t, to: x.t + hold, freeze }, { from: x.t + hold, to: j + 1 < items.length ? next : null, freeze: 0 });
+    else pieces.push({ from: x.t, to: j + 1 < items.length ? next : null, freeze });
     added += freeze;
   });
   return { pieces, offsets };
@@ -209,7 +263,8 @@ export function narrate(root, fase, { tts: pref, voice } = {}) {
     const mp4 = video.replace(/\.webm$/, ".mp4");
     const tmp = mkdtempSync(path.join(os.tmpdir(), "sdd-voz-"));
     // Each sentence: its start in the test video and the time it needs (its voice, or the time to read its caption)
-    const items = (n.narraciones || []).map((x) => ({ t: Math.max(0, Number(x.t) || 0), texto: x.texto }))
+    // `voz`: what is said when it is more than the caption (the presentation of the criterion that opens the video)
+    const items = (n.narraciones || []).map((x) => ({ t: Math.max(0, Number(x.t) || 0), texto: x.voz || x.texto, hold: x.presentacion ? 0.3 : 0 }))
       .sort((a, b) => a.t - b.t)
       .map((x, i) => {
         const wav = path.join(tmp, `s${i}.wav`);

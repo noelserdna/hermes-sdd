@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-014-01",
+ "test": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-014-01 REQ-F-008 AC2 marta da de baja Casco 3 de 4 y Inventario muestra Casco: 3 unidades y Casco 3 De baja",
+ "titulo": "FASE-4 AC-014-01 REQ-F-008 AC2 marta da de baja Casco 3 de 4 y Inventario muestra Casco: 3 unidades y Casco 3 De baja",
+ "ve": [
+  "Casco: 3 unidades",
+  "De baja"
+ ],
+ "narrado": "Gestionar el inventario. En Inventario se ve «Casco: 3 unidades» y Casco 3 aparece como «De baja».",
+ "url": "http://127.0.0.1:36567/#/inventario",
+ "imagen": "AC-014-01.png",
+ "sha256": "sha256:51c8fa961ec1c7ce1da7571a78b5da35bbd3d0f0722782c7d22d0e2f10de701d",
+ "at": "2026-11-22T06:16:21.742Z"
+}

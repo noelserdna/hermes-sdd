@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-016-03",
+ "test": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-03 REQ-F-010 AC3 la junta elige a Ana Mir, sin préstamos ni multas, y ve Sin préstamos ni multas",
+ "titulo": "FASE-5 AC-016-03 REQ-F-010 AC3 la junta elige a Ana Mir, sin préstamos ni multas, y ve Sin préstamos ni multas",
+ "ve": [
+  "Sin préstamos ni multas"
+ ],
+ "narrado": "La junta consulta el historial de un socio. En Historial del socio se ve «Sin préstamos ni multas» para Ana Mir.",
+ "url": "http://127.0.0.1:38531/#/historial",
+ "imagen": "AC-016-03.png",
+ "sha256": "sha256:12d6aee15e7b71f5ecb9007a922a9896afb1b2a7a36a62041f9317ddb65194ca",
+ "at": "2026-11-22T06:17:17.080Z"
+}

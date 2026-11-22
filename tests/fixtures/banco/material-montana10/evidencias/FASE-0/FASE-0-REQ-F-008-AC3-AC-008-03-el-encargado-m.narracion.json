@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-REQ-F-008-AC3-AC-008-03-el-encargado-m.webm",
+ "test": "REQ-F-008 AC3 · AC-008-03 el encargado marca «Casco 3» como rota: «Casco 3 · De baja» y «Casco · 2 unidades»",
+ "titulo": "REQ-F-008 AC3 · AC-008-03 el encargado marca «Casco 3» como rota: «Casco 3 · De baja» y «Casco · 2 unidades»",
+ "narraciones": [
+  {
+   "t": 0.011,
+   "texto": "El encargado entra, abre Inventario y marca «Casco 3» como rota"
+  },
+  {
+   "t": 0.641,
+   "texto": "Gestionar el inventario. En Inventario se ve «Casco 3 · De baja» y «Casco · 2 unidades», y no se puede reservar.",
+   "criterio": "AC-008-03"
+  }
+ ]
+}

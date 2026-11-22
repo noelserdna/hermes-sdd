@@ -1,0 +1,50 @@
+{
+  "id": "g17952973405eaa",
+  "tipo": "fase",
+  "fase": "0",
+  "tablero": "material-montana11",
+  "tarjeta": "t_c7098de4",
+  "adopcion": false,
+  "sha": "a3765741ff197923b771f66ecd07cc10f4c68248",
+  "creada": "2026-11-21T21:42:20Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana11",
+  "titulo": "Aceptar FASE-0",
+  "texto": "🧪 La FASE-0 de «material-montana11» está lista para revisar.\n\n⛔ Los requisitos pasan sus tests, pero la revisión independiente ha encontrado algo que no prueban.\n\n⚠️ Entrar con correo y contraseña: pasa sus pruebas, pero la revisión independiente duda de que lo comprueben (CH-002) (9 de 9 criterios)\n\n🔧 Siguen abiertas tras los arreglos automáticos (técnicas: el test comprueba menos de lo que pide el criterio: CH-002). ❌ Rechazar lo vuelve a intentar.\n\n🛡 No se ha tocado ningún test que ya existía (ni sus ayudas ni su configuración).\n\n🎬 Demo: vídeo y 13 capturas.\n\n🤖 Jev ha leído el texto en off de 13 vídeos: cada uno cuenta lo que pide su criterio.\n\n👉 Pulsa ▶ Ver demo; después ❌ Rechazar para que se arregle, o 🗑 Descartar las que no sean un fallo (escribe su número, p. ej. CH-005, y por qué; la puerta vuelve sin ellas).",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "descarto",
+      "etiqueta": "🗑 Descartar una impugnación",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-0/WF-002-WF-002-AC-001-01-lucia-entra-con-su-corr.mp4",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": true,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [],
+    "graves": 0
+  },
+  "narracion": {
+    "revisados": 13,
+    "modelo": "jev-1.14.0",
+    "contradicen": [],
+    "incompletos": []
+  }
+}

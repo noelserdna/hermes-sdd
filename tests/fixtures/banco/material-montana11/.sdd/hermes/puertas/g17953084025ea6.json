@@ -1,0 +1,61 @@
+{
+  "id": "g17953084025ea6",
+  "tipo": "fase",
+  "fase": "5",
+  "tablero": "material-montana11",
+  "tarjeta": "t_550a79ef",
+  "adopcion": false,
+  "sha": "3b540f2932cc6b0b1834ffcc3bd4a27e38ab0a35",
+  "creada": "2026-11-22T00:46:42Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana11",
+  "titulo": "Aceptar FASE-5",
+  "texto": "🧭 Encargado: 1 aviso\n• 1 aviso(s) de las capturas, p. ej. la captura AC-015-02-5807c236135ad8504699e75223ddfb3b2babd7da.png no cuenta para REQ-F-009 AC2: la tomó un test que no cita ese criterio (el criterio ya se ve en su propia captura)\n(1 aviso que ya viste en una puerta firmada, sin cambios, no se repite)\n\n🧪 La FASE-5 de «material-montana11» está lista para revisar.\n\n✅ Todo en orden: los 3 requisitos de esta fase funcionan y están comprobados.\n\n❌ Rechazaste la versión anterior:\n«Q1: A. CH-006 es grave y hay que cerrarlo: sin entrar, ninguna forma de pedir el fichero de datos (también con ?import u otros parámetros) puede devolver su contenido; añadid la prueba de esa forma. CH-007: el Casco 2 sigue prestado y debe verse en «Prestado ahora»; el criterio significa que no aparece en «Vuelven hoy» ese día: basta con que la prueba lo diga así.»\nLo hecho desde entonces:\n• fix(seguridad): el rechazo del fichero de datos cubre /@id/, // y ?import\n• test(consultas): REQ-F-009 AC2 dice que el Casco 2 sigue en Prestado ahora y no en Vuelven hoy\n• docs(feedback): FASE-5 SPEC-DEVIATION de listarSocios aceptada por el cliente\n\n✅ Ver lo prestado y lo que vuelve cada día: funciona y está comprobado (4 de 4 criterios)\n✅ La junta consulta el historial de un socio: funciona y está comprobado (4 de 4 criterios)\n✅ Datos personales solo para su dueño, el encargado y la junta: funciona y está comprobado (4 de 4 criterios)\n\n🛡 No se ha tocado ningún test que ya existía (ni sus ayudas ni su configuración).\n\n🎬 Demo: vídeo y 8 capturas.\n\n🤖 Jev ha leído el texto en off de 8 vídeos: cada uno cuenta lo que pide su criterio.\n\n👉 Pulsa ▶ Ver demo; después podrás aceptarla, aceptarla con observaciones o rechazarla.",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Aceptar",
+      "paso": 2
+    },
+    {
+      "verbo": "observaciones",
+      "etiqueta": "📝 Con observaciones",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-5/FASE-5-FASE-5-AC-015-01-REQ-F-009-AC1-con-el-Pi.mp4",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": false,
+        "codigo": "capturas-avisos",
+        "texto": "1 aviso(s) de las capturas, p. ej. la captura AC-015-02-5807c236135ad8504699e75223ddfb3b2babd7da.png no cuenta para REQ-F-009 AC2: la tomó un test que no cita ese criterio (el criterio ya se ve en su propia captura)"
+      }
+    ],
+    "graves": 0
+  },
+  "narracion": {
+    "revisados": 8,
+    "modelo": "jev-1.14.0",
+    "contradicen": [],
+    "incompletos": []
+  }
+}

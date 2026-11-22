@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-REQ-F-002-AC3-AC-002-03-el-encargado-d.webm",
+ "test": "REQ-F-002 AC3 · AC-002-03 el encargado da de alta a un socio con la contraseña «corta» (5 caracteres) y ve «La contraseña debe tener al menos 8 caracteres»",
+ "titulo": "REQ-F-002 AC3 · AC-002-03 el encargado da de alta a un socio con la contraseña «corta» (5 caracteres) y ve «La contraseña debe tener al menos 8 caracteres»",
+ "narraciones": [
+  {
+   "t": 0.007,
+   "texto": "El encargado entra, abre Socios y envía los datos de Marta Ruiz con una contraseña inicial de solo 5 caracteres, «corta»"
+  },
+  {
+   "t": 0.607,
+   "texto": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «La contraseña debe tener al menos 8 caracteres», y no se crea ninguna cuenta.",
+   "criterio": "AC-002-03"
+  }
+ ]
+}

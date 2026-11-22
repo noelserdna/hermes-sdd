@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-008-06",
+ "test": "REQ-F-008 AC6 · AC-008-06 Pablo abre Inventario por su dirección: «No tienes permiso para ver esta pantalla»",
+ "titulo": "REQ-F-008 AC6 · AC-008-06 Pablo abre Inventario por su dirección: «No tienes permiso para ver esta pantalla»",
+ "ve": [
+  "No tienes permiso para ver esta pantalla"
+ ],
+ "narrado": "Gestionar el inventario. En Inventario se ve «No tienes permiso para ver esta pantalla».",
+ "url": "http://127.0.0.1:5173/#/inventario",
+ "imagen": "AC-008-06.png",
+ "sha256": "sha256:661180ef08b73aea053ee40dfe9cdb080b9b71938d4fc55e261a7a27d021bd8d",
+ "at": "2026-11-21T13:45:52.978Z"
+}

@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-014-03",
+ "test": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-014-03 REQ-F-008 AC3 marta intenta dar de baja Casco 2, prestada ahora, y ve No se puede dar de baja: está prestada",
+ "titulo": "FASE-4 AC-014-03 REQ-F-008 AC3 marta intenta dar de baja Casco 2, prestada ahora, y ve No se puede dar de baja: está prestada",
+ "ve": [
+  "No se puede dar de baja: está prestada"
+ ],
+ "narrado": "Gestionar el inventario. En Inventario se ve «No se puede dar de baja: está prestada» y la unidad Casco 2 se queda.",
+ "url": "http://127.0.0.1:40697/#/inventario",
+ "imagen": "AC-014-03.png",
+ "sha256": "sha256:974a4fee8568eab44f43a4be36711538fdb8562a74e3d6259584c0d44fc16658",
+ "at": "2026-11-22T06:16:24.876Z"
+}

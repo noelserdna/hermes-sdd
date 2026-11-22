@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-005-04",
+ "test": "FASE-1 Reservar material (socio) › FASE-1 AC-005-04 pablo pide Tienda del 2026-12-07 al 2026-12-09 con la única Tienda reservada del 2026-12-06 al 2026-12-08 y ve No hay unidades libres esas fechas",
+ "titulo": "FASE-1 AC-005-04 pablo pide Tienda del 2026-12-07 al 2026-12-09 con la única Tienda reservada del 2026-12-06 al 2026-12-08 y ve No hay unidades libres esas fechas",
+ "ve": [
+  "No hay unidades libres esas fechas"
+ ],
+ "narrado": "Reservar material para unas fechas. En Reservar se ve «No hay unidades libres esas fechas», y no se crea ninguna reserva para Pablo.",
+ "url": "http://127.0.0.1:41849/#/inicio",
+ "imagen": "AC-005-04.png",
+ "sha256": "sha256:ae5f8b9b50296fe879c673a6ef1767e77cecceb276a2362fca833109a30ca62b",
+ "at": "2026-11-22T01:01:22.544Z"
+}

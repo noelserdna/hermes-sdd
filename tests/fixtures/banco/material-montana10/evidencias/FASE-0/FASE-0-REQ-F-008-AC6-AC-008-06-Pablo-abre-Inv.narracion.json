@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-REQ-F-008-AC6-AC-008-06-Pablo-abre-Inv.webm",
+ "test": "REQ-F-008 AC6 · AC-008-06 Pablo abre Inventario por su dirección: «No tienes permiso para ver esta pantalla»",
+ "titulo": "REQ-F-008 AC6 · AC-008-06 Pablo abre Inventario por su dirección: «No tienes permiso para ver esta pantalla»",
+ "narraciones": [
+  {
+   "t": 0.007,
+   "texto": "Pablo entra como socio y escribe la dirección de Inventario"
+  },
+  {
+   "t": 0.504,
+   "texto": "Gestionar el inventario. En Inventario se ve «No tienes permiso para ver esta pantalla».",
+   "criterio": "AC-008-06"
+  }
+ ]
+}

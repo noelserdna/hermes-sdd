@@ -1,0 +1,14 @@
+{
+  "verbo": "rechazo",
+  "texto": "CH-002 es cierto: tras salir y volver atrás, la prueba tiene que esperar a que la app termine de comprobar la sesión y entonces ver el formulario Entrar; tal como está pasaría aunque volver atrás enseñara Mis reservas.",
+  "actor": {
+    "persona": "yo",
+    "canal": "local",
+    "id": "andre"
+  },
+  "prueba": {
+    "host": "DESKTOP-7HT2139",
+    "demo": "no vista"
+  },
+  "at": "2026-11-21T21:44:17Z"
+}

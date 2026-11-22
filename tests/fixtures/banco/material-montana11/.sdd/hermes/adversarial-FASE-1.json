@@ -1,0 +1,883 @@
+{
+  "$schema": "sdd-adversarial-plan-v1",
+  "evaluated_sha": "c32313d96d93aeced80184c483c746d425e73e9a",
+  "dirty": false,
+  "generatedAt": "2026-11-21T22:13:49.773Z",
+  "scope": {
+    "fase": 1
+  },
+  "code_paths": [
+    "src"
+  ],
+  "adversarial_gate": "enforce",
+  "fases": [
+    {
+      "fase": 1,
+      "file": "plan/fases/FASE-1-RESERVAS.md",
+      "header": true,
+      "requirements": [
+        {
+          "id": "REQ-F-003",
+          "title": "Reservar material para unas fechas",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN a socio without pending fine requests a material item for a start and an end date and a unit is free on every day of that range THE system SHALL create the reservation and show it in the socio's reservations",
+          "reqHash": "sha256:aa2306b8f727c39200c4ecb4435092f5483544f1f463360358f7425287bc2877",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN there are 3 \"Piolet\" units, all free, and today is 2026-11-21 WHEN \"lucia\" reserves \"Piolet\" from 2026-12-05 to 2026-12-07 THEN the user sees \"Reserva creada: Piolet, 2026-12-05 a 2026-12-07\" and \"Piolet\" shows \"2 libres\" for those dates",
+              "scenarios": [
+                "AC-005-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 Reservar material (socio) › FASE-1 AC-005-01 lucia reserva Piolet del 2026-12-05 al 2026-12-07 con 3 libres y ve la reserva creada y 2 libres",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 Reservar material (socio) › FASE-1 AC-005-01 lucia reserva Piolet del 2026-12-05 al 2026-12-07 con 3 libres y ve la reserva creada y 2 libres",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-f69ca-a-reserva-creada-y-2-libres-chromium/attachments/AC-005-01-2c47b08ecc33da29317a10f479b3638aa1d636d3.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-f69ca-a-reserva-creada-y-2-libres-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-f69ca-a-reserva-creada-y-2-libres-chromium/attachments/AC-005-01-18815acd2d9eecec5b0086c081d41364d011333e.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-f69ca-a-reserva-creada-y-2-libres-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-f69ca-a-reserva-creada-y-2-libres-chromium/attachments/AC-005-01-2c47b08ecc33da29317a10f479b3638aa1d636d3.png": "sha256:d860c41ddafc6a013052626158dd7142e158d4261bde9537fc29f0220595cfd1",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-f69ca-a-reserva-creada-y-2-libres-chromium/test-finished-1.png": "sha256:d860c41ddafc6a013052626158dd7142e158d4261bde9537fc29f0220595cfd1",
+                "evidencias/FASE-1/AC-005-01.png": "sha256:d860c41ddafc6a013052626158dd7142e158d4261bde9537fc29f0220595cfd1",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-f69ca-a-reserva-creada-y-2-libres-chromium/attachments/AC-005-01-18815acd2d9eecec5b0086c081d41364d011333e.png": "sha256:d860c41ddafc6a013052626158dd7142e158d4261bde9537fc29f0220595cfd1",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-f69ca-a-reserva-creada-y-2-libres-chromium/test-finished-1.png": "sha256:d860c41ddafc6a013052626158dd7142e158d4261bde9537fc29f0220595cfd1"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Reserva creada: {material}, {inicio} a {fin}",
+                    "template": true
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-f69ca-a-reserva-creada-y-2-libres-chromium/attachments/AC-005-01-2c47b08ecc33da29317a10f479b3638aa1d636d3.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-f69ca-a-reserva-creada-y-2-libres-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-f69ca-a-reserva-creada-y-2-libres-chromium/attachments/FASE-1-FASE-1-AC-005-01-lucia-reserva-Piolet-de-96e0c302eb184accb5bf97626ae2502b0d551687.webm",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-f69ca-a-reserva-creada-y-2-libres-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-FASE-1-AC-005-01-lucia-reserva-Piolet-de.webm"
+              ]
+            },
+            {
+              "n": 2,
+              "text": "GIVEN \"Tienda\" has 1 unit already reserved 2026-12-06 to 2026-12-08 WHEN \"pablo\" reserves \"Tienda\" from 2026-12-07 to 2026-12-09 THEN the user sees \"No hay unidades libres esas fechas\" and no reservation is created",
+              "scenarios": [
+                "AC-005-04"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 Reservar material (socio) › FASE-1 AC-005-04 pablo pide Tienda del 2026-12-07 al 2026-12-09 con la única Tienda reservada del 2026-12-06 al 2026-12-08 y ve No hay unidades libres esas fechas",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 Reservar material (socio) › FASE-1 AC-005-04 pablo pide Tienda del 2026-12-07 al 2026-12-09 con la única Tienda reservada del 2026-12-06 al 2026-12-08 y ve No hay unidades libres esas fechas",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-69861-unidades-libres-esas-fechas-chromium/attachments/AC-005-04-4e9100b786473b855611a4a2db7ec88fd4e07261.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-69861-unidades-libres-esas-fechas-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-69861-unidades-libres-esas-fechas-chromium/attachments/AC-005-04-5f3e3efc7860a2c753e96d8665430993bd5b1b93.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-69861-unidades-libres-esas-fechas-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-69861-unidades-libres-esas-fechas-chromium/attachments/AC-005-04-4e9100b786473b855611a4a2db7ec88fd4e07261.png": "sha256:23467529e9d0eea16075771bc3f39e1d8435e498f58b552e948cfb3415ea817f",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-69861-unidades-libres-esas-fechas-chromium/test-finished-1.png": "sha256:03897e2bb905cc6e275af0d6f7b03b21a6f444c49580d8bdd10e30fdc47142db",
+                "evidencias/FASE-1/AC-005-04.png": "sha256:23467529e9d0eea16075771bc3f39e1d8435e498f58b552e948cfb3415ea817f",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-69861-unidades-libres-esas-fechas-chromium/attachments/AC-005-04-5f3e3efc7860a2c753e96d8665430993bd5b1b93.png": "sha256:23467529e9d0eea16075771bc3f39e1d8435e498f58b552e948cfb3415ea817f",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-69861-unidades-libres-esas-fechas-chromium/test-finished-1.png": "sha256:03897e2bb905cc6e275af0d6f7b03b21a6f444c49580d8bdd10e30fdc47142db"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No hay unidades libres esas fechas",
+                    "template": false
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-69861-unidades-libres-esas-fechas-chromium/attachments/AC-005-04-4e9100b786473b855611a4a2db7ec88fd4e07261.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-69861-unidades-libres-esas-fechas-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-69861-unidades-libres-esas-fechas-chromium/attachments/FASE-1-FASE-1-AC-005-04-pablo-pide-Tienda-del-2-d26c538ee361c48a9b2d86f2e0ee62d140a4ecb5.webm",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-69861-unidades-libres-esas-fechas-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-FASE-1-AC-005-04-pablo-pide-Tienda-del-2.webm"
+              ]
+            },
+            {
+              "n": 3,
+              "text": "GIVEN the same \"Tienda\" reservation ends 2026-12-08 WHEN \"pablo\" reserves it from 2026-12-09 to 2026-12-10 THEN the reservation is created (the days do not overlap)",
+              "scenarios": [
+                "AC-005-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 Reservar material (socio) › FASE-1 AC-005-02 pablo reserva Tienda del 2026-12-09 al 2026-12-10 tras una reserva hasta el 2026-12-08 y se crea",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 Reservar material (socio) › FASE-1 AC-005-02 pablo reserva Tienda del 2026-12-09 al 2026-12-10 tras una reserva hasta el 2026-12-08 y se crea",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-d3552-sta-el-2026-12-08-y-se-crea-chromium/attachments/AC-005-02-7fecad0d4b469604056e427ce2f6f0284033bff1.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-d3552-sta-el-2026-12-08-y-se-crea-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-d3552-sta-el-2026-12-08-y-se-crea-chromium/attachments/AC-005-02-932ba8b5f8478841d71b3b52d32d5cccb5a28efd.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-d3552-sta-el-2026-12-08-y-se-crea-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-d3552-sta-el-2026-12-08-y-se-crea-chromium/attachments/AC-005-02-7fecad0d4b469604056e427ce2f6f0284033bff1.png": "sha256:2484feb09a0320dd966a734c65f47095e166f83cfefad5b980e556ce8c28aff1",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-d3552-sta-el-2026-12-08-y-se-crea-chromium/test-finished-1.png": "sha256:2484feb09a0320dd966a734c65f47095e166f83cfefad5b980e556ce8c28aff1",
+                "evidencias/FASE-1/AC-005-02.png": "sha256:2484feb09a0320dd966a734c65f47095e166f83cfefad5b980e556ce8c28aff1",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-d3552-sta-el-2026-12-08-y-se-crea-chromium/attachments/AC-005-02-932ba8b5f8478841d71b3b52d32d5cccb5a28efd.png": "sha256:2484feb09a0320dd966a734c65f47095e166f83cfefad5b980e556ce8c28aff1",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-d3552-sta-el-2026-12-08-y-se-crea-chromium/test-finished-1.png": "sha256:2484feb09a0320dd966a734c65f47095e166f83cfefad5b980e556ce8c28aff1"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Reserva creada: {material}, {inicio} a {fin}",
+                    "template": true
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-d3552-sta-el-2026-12-08-y-se-crea-chromium/attachments/AC-005-02-7fecad0d4b469604056e427ce2f6f0284033bff1.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-d3552-sta-el-2026-12-08-y-se-crea-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-d3552-sta-el-2026-12-08-y-se-crea-chromium/attachments/FASE-1-FASE-1-AC-005-02-pablo-reserva-Tienda-de-2b2db2e7db2b79d93aaf8748f6795f86684bf94d.webm",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-d3552-sta-el-2026-12-08-y-se-crea-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-FASE-1-AC-005-02-pablo-reserva-Tienda-de.webm"
+              ]
+            },
+            {
+              "n": 4,
+              "text": "GIVEN today is 2026-11-21 WHEN \"lucia\" reserves \"Casco\" from 2026-11-20 to 2026-11-22 THEN the user sees \"No se puede reservar en fechas pasadas\"",
+              "scenarios": [
+                "AC-005-05"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 Reservar material (socio) › FASE-1 AC-005-05 lucia pide Casco del 2026-11-20 al 2026-11-22 con hoy 2026-11-21 y ve No se puede reservar en fechas pasadas",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 Reservar material (socio) › FASE-1 AC-005-05 lucia pide Casco del 2026-11-20 al 2026-11-22 con hoy 2026-11-21 y ve No se puede reservar en fechas pasadas",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-6dd2e--reservar-en-fechas-pasadas-chromium/attachments/AC-005-05-d09ec5bfde1cb07281cd0fb379f9097d5575fc5d.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-6dd2e--reservar-en-fechas-pasadas-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-6dd2e--reservar-en-fechas-pasadas-chromium/attachments/AC-005-05-a2d343b0947b3488de922ce8069febec19733a4a.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-6dd2e--reservar-en-fechas-pasadas-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-05.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-6dd2e--reservar-en-fechas-pasadas-chromium/attachments/AC-005-05-d09ec5bfde1cb07281cd0fb379f9097d5575fc5d.png": "sha256:7abd224274c20a713f37ef79851efb1328867ff7e8e6006a9fdb409ae7dc8223",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-6dd2e--reservar-en-fechas-pasadas-chromium/test-finished-1.png": "sha256:7abd224274c20a713f37ef79851efb1328867ff7e8e6006a9fdb409ae7dc8223",
+                "evidencias/FASE-1/AC-005-05.png": "sha256:7abd224274c20a713f37ef79851efb1328867ff7e8e6006a9fdb409ae7dc8223",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-6dd2e--reservar-en-fechas-pasadas-chromium/attachments/AC-005-05-a2d343b0947b3488de922ce8069febec19733a4a.png": "sha256:7abd224274c20a713f37ef79851efb1328867ff7e8e6006a9fdb409ae7dc8223",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-6dd2e--reservar-en-fechas-pasadas-chromium/test-finished-1.png": "sha256:7abd224274c20a713f37ef79851efb1328867ff7e8e6006a9fdb409ae7dc8223"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No se puede reservar en fechas pasadas",
+                    "template": false
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-6dd2e--reservar-en-fechas-pasadas-chromium/attachments/AC-005-05-d09ec5bfde1cb07281cd0fb379f9097d5575fc5d.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-6dd2e--reservar-en-fechas-pasadas-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-05.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-6dd2e--reservar-en-fechas-pasadas-chromium/attachments/FASE-1-FASE-1-AC-005-05-lucia-pide-Casco-del-20-bfa622b1fe8e6835816ed01a742d1550a867eb69.webm",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-6dd2e--reservar-en-fechas-pasadas-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-FASE-1-AC-005-05-lucia-pide-Casco-del-20.webm"
+              ]
+            },
+            {
+              "n": 5,
+              "text": "GIVEN an end date before the start date, 2026-12-10 and 2026-12-08, WHEN \"lucia\" submits THEN the user sees \"La fecha de fin no puede ser anterior a la de inicio\"",
+              "scenarios": [
+                "AC-005-06"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 Reservar material (socio) › FASE-1 AC-005-06 lucia pone inicio 2026-12-10 y fin 2026-12-08 y ve La fecha de fin no puede ser anterior a la de inicio",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 Reservar material (socio) › FASE-1 AC-005-06 lucia pone inicio 2026-12-10 y fin 2026-12-08 y ve La fecha de fin no puede ser anterior a la de inicio",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-01aab-ser-anterior-a-la-de-inicio-chromium/attachments/AC-005-06-9bf81acbcc975134f624436922ec1c8297e31eda.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-01aab-ser-anterior-a-la-de-inicio-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-01aab-ser-anterior-a-la-de-inicio-chromium/attachments/AC-005-06-519e4d3ee48277e62cd8a0c806a75f6554d3e308.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-01aab-ser-anterior-a-la-de-inicio-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-06.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-01aab-ser-anterior-a-la-de-inicio-chromium/attachments/AC-005-06-9bf81acbcc975134f624436922ec1c8297e31eda.png": "sha256:f8bd5b21b54f8c9a389e0b917779e3fc0ff9a03d1962d1832fed4694c27ba1fb",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-01aab-ser-anterior-a-la-de-inicio-chromium/test-finished-1.png": "sha256:f8bd5b21b54f8c9a389e0b917779e3fc0ff9a03d1962d1832fed4694c27ba1fb",
+                "evidencias/FASE-1/AC-005-06.png": "sha256:f8bd5b21b54f8c9a389e0b917779e3fc0ff9a03d1962d1832fed4694c27ba1fb",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-01aab-ser-anterior-a-la-de-inicio-chromium/attachments/AC-005-06-519e4d3ee48277e62cd8a0c806a75f6554d3e308.png": "sha256:f8bd5b21b54f8c9a389e0b917779e3fc0ff9a03d1962d1832fed4694c27ba1fb",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-01aab-ser-anterior-a-la-de-inicio-chromium/test-finished-1.png": "sha256:f8bd5b21b54f8c9a389e0b917779e3fc0ff9a03d1962d1832fed4694c27ba1fb"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "La fecha de fin no puede ser anterior a la de inicio",
+                    "template": false
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-01aab-ser-anterior-a-la-de-inicio-chromium/attachments/AC-005-06-9bf81acbcc975134f624436922ec1c8297e31eda.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-01aab-ser-anterior-a-la-de-inicio-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-06.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-01aab-ser-anterior-a-la-de-inicio-chromium/attachments/FASE-1-FASE-1-AC-005-06-lucia-pone-inicio-2026--8eb39395ace9075ae7b3a67c2caa7e95da9197cb.webm",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-01aab-ser-anterior-a-la-de-inicio-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-FASE-1-AC-005-06-lucia-pone-inicio-2026-.webm"
+              ]
+            },
+            {
+              "n": 6,
+              "text": "GIVEN a range of 15 days WHEN \"lucia\" reserves \"Cuerda\" from 2026-12-01 to 2026-12-15 THEN the user sees \"La reserva no puede superar 14 días\"",
+              "scenarios": [
+                "AC-005-07"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 Reservar material (socio) › FASE-1 AC-005-07 lucia pide Cuerda del 2026-12-01 al 2026-12-15 (15 días) y ve La reserva no puede superar 14 días",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 Reservar material (socio) › FASE-1 AC-005-07 lucia pide Cuerda del 2026-12-01 al 2026-12-15 (15 días) y ve La reserva no puede superar 14 días",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-f50d5-va-no-puede-superar-14-días-chromium/attachments/AC-005-07-03f6fbb30c49d74ee30f13778780c7d493e02f75.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-f50d5-va-no-puede-superar-14-días-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-f50d5-va-no-puede-superar-14-días-chromium/attachments/AC-005-07-aaa27003ab02dec8c2d49db762b99b1d8ab6ba84.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-f50d5-va-no-puede-superar-14-días-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-07.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-f50d5-va-no-puede-superar-14-días-chromium/attachments/AC-005-07-03f6fbb30c49d74ee30f13778780c7d493e02f75.png": "sha256:2445a723ae0eaf93b4d073e64d885078ae4bf96537b472e05df341fd13d6cb4a",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-f50d5-va-no-puede-superar-14-días-chromium/test-finished-1.png": "sha256:2445a723ae0eaf93b4d073e64d885078ae4bf96537b472e05df341fd13d6cb4a",
+                "evidencias/FASE-1/AC-005-07.png": "sha256:2445a723ae0eaf93b4d073e64d885078ae4bf96537b472e05df341fd13d6cb4a",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-f50d5-va-no-puede-superar-14-días-chromium/attachments/AC-005-07-aaa27003ab02dec8c2d49db762b99b1d8ab6ba84.png": "sha256:2445a723ae0eaf93b4d073e64d885078ae4bf96537b472e05df341fd13d6cb4a",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-f50d5-va-no-puede-superar-14-días-chromium/test-finished-1.png": "sha256:2445a723ae0eaf93b4d073e64d885078ae4bf96537b472e05df341fd13d6cb4a"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "La reserva no puede superar 14 días",
+                    "template": false
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-f50d5-va-no-puede-superar-14-días-chromium/attachments/AC-005-07-03f6fbb30c49d74ee30f13778780c7d493e02f75.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-f50d5-va-no-puede-superar-14-días-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-07.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-f50d5-va-no-puede-superar-14-días-chromium/attachments/FASE-1-FASE-1-AC-005-07-lucia-pide-Cuerda-del-2-9282ff50a0de9b5b929a225fff1b73549ae696d7.webm",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-f50d5-va-no-puede-superar-14-días-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-FASE-1-AC-005-07-lucia-pide-Cuerda-del-2.webm"
+              ]
+            },
+            {
+              "n": 7,
+              "text": "GIVEN \"pablo\" has an unpaid fine of 4 € WHEN he reserves \"Casco\" for 2026-12-05 to 2026-12-06 THEN the user sees \"Tienes una multa pendiente: no puedes reservar hasta pagarla\" and no reservation is created",
+              "scenarios": [
+                "AC-005-08"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 Reservar material (socio) › FASE-1 AC-005-08 pablo con una multa pendiente de 4 € pide Casco del 2026-12-05 al 2026-12-06 y ve Tienes una multa pendiente",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 Reservar material (socio) › FASE-1 AC-005-08 pablo con una multa pendiente de 4 € pide Casco del 2026-12-05 al 2026-12-06 y ve Tienes una multa pendiente",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-660ef--Tienes-una-multa-pendiente-chromium/attachments/AC-005-08-b5e048214aac12eed07466c07261f7eac6ecae8a.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-660ef--Tienes-una-multa-pendiente-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-660ef--Tienes-una-multa-pendiente-chromium/attachments/AC-005-08-026dc77b9cc60ebb7e6e46d7bd5f3795cc506559.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-660ef--Tienes-una-multa-pendiente-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-08.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-660ef--Tienes-una-multa-pendiente-chromium/attachments/AC-005-08-b5e048214aac12eed07466c07261f7eac6ecae8a.png": "sha256:510d5d254a5d4792c7412584bad4b8ab7e5796e898b5a15caeb78337e2c0f1f8",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-660ef--Tienes-una-multa-pendiente-chromium/test-finished-1.png": "sha256:4a3e7338b4c0bcadb54a55458f3fbfb6e18a1e9a0a0b4e755c2108a5b8d857c2",
+                "evidencias/FASE-1/AC-005-08.png": "sha256:510d5d254a5d4792c7412584bad4b8ab7e5796e898b5a15caeb78337e2c0f1f8",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-660ef--Tienes-una-multa-pendiente-chromium/attachments/AC-005-08-026dc77b9cc60ebb7e6e46d7bd5f3795cc506559.png": "sha256:510d5d254a5d4792c7412584bad4b8ab7e5796e898b5a15caeb78337e2c0f1f8",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-660ef--Tienes-una-multa-pendiente-chromium/test-finished-1.png": "sha256:4a3e7338b4c0bcadb54a55458f3fbfb6e18a1e9a0a0b4e755c2108a5b8d857c2"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Tienes una multa pendiente: no puedes reservar hasta pagarla",
+                    "template": false
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-660ef--Tienes-una-multa-pendiente-chromium/attachments/AC-005-08-b5e048214aac12eed07466c07261f7eac6ecae8a.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-660ef--Tienes-una-multa-pendiente-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-08.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-660ef--Tienes-una-multa-pendiente-chromium/attachments/FASE-1-FASE-1-AC-005-08-pablo-con-una-multa-pen-86cb3a267862cbcc11c101af0c94312cd72e43ec.webm",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-660ef--Tienes-una-multa-pendiente-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-FASE-1-AC-005-08-pablo-con-una-multa-pen.webm"
+              ]
+            },
+            {
+              "n": 8,
+              "text": "GIVEN \"lucia\" without fines WHEN she reserves \"Casco\" for 2026-12-05 to 2026-12-06 THEN the reservation is created (a socio without fines is not blocked)",
+              "scenarios": [
+                "AC-005-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 Reservar material (socio) › FASE-1 AC-005-03 lucia sin multas reserva Casco del 2026-12-05 al 2026-12-06 y se crea",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 Reservar material (socio) › FASE-1 AC-005-03 lucia sin multas reserva Casco del 2026-12-05 al 2026-12-06 y se crea",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-19a1f--05-al-2026-12-06-y-se-crea-chromium/attachments/AC-005-03-d577f23e52d4e8e1933eab2a845bc10b16b7a356.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-19a1f--05-al-2026-12-06-y-se-crea-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-19a1f--05-al-2026-12-06-y-se-crea-chromium/attachments/AC-005-03-fe9707670264d28cee45991096d888535c7f0297.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-19a1f--05-al-2026-12-06-y-se-crea-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-19a1f--05-al-2026-12-06-y-se-crea-chromium/attachments/AC-005-03-d577f23e52d4e8e1933eab2a845bc10b16b7a356.png": "sha256:69aa0a1f3af98cbe7e8c699b6fad7279ff511405fc7bbe9d234cebf4a6f278b0",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-19a1f--05-al-2026-12-06-y-se-crea-chromium/test-finished-1.png": "sha256:69aa0a1f3af98cbe7e8c699b6fad7279ff511405fc7bbe9d234cebf4a6f278b0",
+                "evidencias/FASE-1/AC-005-03.png": "sha256:69aa0a1f3af98cbe7e8c699b6fad7279ff511405fc7bbe9d234cebf4a6f278b0",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-19a1f--05-al-2026-12-06-y-se-crea-chromium/attachments/AC-005-03-fe9707670264d28cee45991096d888535c7f0297.png": "sha256:69aa0a1f3af98cbe7e8c699b6fad7279ff511405fc7bbe9d234cebf4a6f278b0",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-19a1f--05-al-2026-12-06-y-se-crea-chromium/test-finished-1.png": "sha256:69aa0a1f3af98cbe7e8c699b6fad7279ff511405fc7bbe9d234cebf4a6f278b0"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Reserva creada: {material}, {inicio} a {fin}",
+                    "template": true
+                  }
+                ],
+                "where": "Reservar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-19a1f--05-al-2026-12-06-y-se-crea-chromium/attachments/AC-005-03-d577f23e52d4e8e1933eab2a845bc10b16b7a356.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-19a1f--05-al-2026-12-06-y-se-crea-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-19a1f--05-al-2026-12-06-y-se-crea-chromium/attachments/FASE-1-FASE-1-AC-005-03-lucia-sin-multas-reserv-ee551c5a110e2a2100c9c46e40d8c0f7a7304fc4.webm",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-19a1f--05-al-2026-12-06-y-se-crea-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-FASE-1-AC-005-03-lucia-sin-multas-reserv.webm"
+              ]
+            },
+            {
+              "n": 9,
+              "text": "GIVEN \"lucia\" just reserved \"Piolet\" from 2026-12-05 to 2026-12-07 WHEN the same form is submitted again THEN \"Mis reservas\" still shows a single \"Piolet\" for those dates or the message \"No hay unidades libres esas fechas\" when no unit is left, and never two reservations of one unit for the same days",
+              "scenarios": [
+                "AC-005-14"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 Reservar material (socio) › FASE-1 AC-005-14 lucia envía dos veces Piolet del 2026-12-05 al 2026-12-07 y Mis reservas muestra un solo Piolet",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 Reservar material (socio) › FASE-1 AC-005-14 lucia envía dos veces Piolet del 2026-12-05 al 2026-12-07 y Mis reservas muestra un solo Piolet",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-839d9-rvas-muestra-un-solo-Piolet-chromium/attachments/AC-005-14-20634a4f95f328f649846cc6963d3c5873cef148.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-839d9-rvas-muestra-un-solo-Piolet-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-839d9-rvas-muestra-un-solo-Piolet-chromium/attachments/AC-005-14-47a062861300c99811a601aef224f44de109066b.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-839d9-rvas-muestra-un-solo-Piolet-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-14.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-839d9-rvas-muestra-un-solo-Piolet-chromium/attachments/AC-005-14-20634a4f95f328f649846cc6963d3c5873cef148.png": "sha256:56e0b73a642fbbac49e431783a126044e3668a6356a9d86f7fe2bf97b0a4ae28",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-839d9-rvas-muestra-un-solo-Piolet-chromium/test-finished-1.png": "sha256:56e0b73a642fbbac49e431783a126044e3668a6356a9d86f7fe2bf97b0a4ae28",
+                "evidencias/FASE-1/AC-005-14.png": "sha256:56e0b73a642fbbac49e431783a126044e3668a6356a9d86f7fe2bf97b0a4ae28",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-839d9-rvas-muestra-un-solo-Piolet-chromium/attachments/AC-005-14-47a062861300c99811a601aef224f44de109066b.png": "sha256:56e0b73a642fbbac49e431783a126044e3668a6356a9d86f7fe2bf97b0a4ae28",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Res-839d9-rvas-muestra-un-solo-Piolet-chromium/test-finished-1.png": "sha256:56e0b73a642fbbac49e431783a126044e3668a6356a9d86f7fe2bf97b0a4ae28"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Piolet",
+                    "template": false
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-839d9-rvas-muestra-un-solo-Piolet-chromium/attachments/AC-005-14-20634a4f95f328f649846cc6963d3c5873cef148.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-839d9-rvas-muestra-un-solo-Piolet-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-14.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-839d9-rvas-muestra-un-solo-Piolet-chromium/attachments/FASE-1-FASE-1-AC-005-14-lucia-env-a-dos-veces-P-66523caa7dfaf7d1c1303c45eb64809b16cf81b3.webm",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Res-839d9-rvas-muestra-un-solo-Piolet-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-FASE-1-AC-005-14-lucia-env-a-dos-veces-P.webm"
+              ]
+            }
+          ],
+          "candidate_files": [
+            "src/domain/permisos.js",
+            "src/domain/reservas.js",
+            "src/domain/validacion.js",
+            "src/server/plugin.js",
+            "src/ui/api.js",
+            "src/ui/main.js",
+            "src/ui/pantallas/inicio.js",
+            "src/ui/pantallas/reservar.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        },
+        {
+          "id": "REQ-F-004",
+          "title": "Ver y cancelar mis reservas",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN a socio opens their reservations THE system SHALL list only their own reservations, and WHEN the socio cancels one whose start date is after today THE system SHALL cancel it and free the unit",
+          "reqHash": "sha256:d60b1e240901f82508dad2799ee735ce1c929dab4c69b00838c37975af88e324",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN \"lucia\" has \"Piolet\" 2026-12-05 to 2026-12-07 and \"pablo\" has \"Casco\" 2026-12-06 to 2026-12-07 WHEN \"lucia\" opens \"Mis reservas\" THEN the user sees \"Piolet\" and does not see \"Casco\"",
+              "scenarios": [
+                "AC-006-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 Mis reservas (socio) › FASE-1 AC-006-01 lucia con Piolet y pablo con Casco: lucia abre Mis reservas y ve Piolet sin Casco",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 Mis reservas (socio) › FASE-1 AC-006-01 lucia con Piolet y pablo con Casco: lucia abre Mis reservas y ve Piolet sin Casco",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Mis-d08ad-ervas-y-ve-Piolet-sin-Casco-chromium/attachments/AC-006-01-76ad653589f19ba6f0ada9455e5b53539c1d79d6.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Mis-d08ad-ervas-y-ve-Piolet-sin-Casco-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Mis-d08ad-ervas-y-ve-Piolet-sin-Casco-chromium/attachments/AC-006-01-d16d843c767eaa9f6b0430670ed5b49359ffad63.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Mis-d08ad-ervas-y-ve-Piolet-sin-Casco-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-006-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Mis-d08ad-ervas-y-ve-Piolet-sin-Casco-chromium/attachments/AC-006-01-76ad653589f19ba6f0ada9455e5b53539c1d79d6.png": "sha256:448f025af722df9fb85dba69520f11ac0ec3010a1fa0811621062823d6aa4b7b",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Mis-d08ad-ervas-y-ve-Piolet-sin-Casco-chromium/test-finished-1.png": "sha256:448f025af722df9fb85dba69520f11ac0ec3010a1fa0811621062823d6aa4b7b",
+                "evidencias/FASE-1/AC-006-01.png": "sha256:448f025af722df9fb85dba69520f11ac0ec3010a1fa0811621062823d6aa4b7b",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Mis-d08ad-ervas-y-ve-Piolet-sin-Casco-chromium/attachments/AC-006-01-d16d843c767eaa9f6b0430670ed5b49359ffad63.png": "sha256:448f025af722df9fb85dba69520f11ac0ec3010a1fa0811621062823d6aa4b7b",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Mis-d08ad-ervas-y-ve-Piolet-sin-Casco-chromium/test-finished-1.png": "sha256:448f025af722df9fb85dba69520f11ac0ec3010a1fa0811621062823d6aa4b7b"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Piolet",
+                    "template": false
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Mis-d08ad-ervas-y-ve-Piolet-sin-Casco-chromium/attachments/AC-006-01-76ad653589f19ba6f0ada9455e5b53539c1d79d6.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Mis-d08ad-ervas-y-ve-Piolet-sin-Casco-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-006-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Mis-d08ad-ervas-y-ve-Piolet-sin-Casco-chromium/attachments/FASE-1-FASE-1-AC-006-01-lucia-con-Piolet-y-pabl-0ab599d3da38c07a202a554d6883ea842d5e4030.webm",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Mis-d08ad-ervas-y-ve-Piolet-sin-Casco-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-FASE-1-AC-006-01-lucia-con-Piolet-y-pabl.webm"
+              ]
+            },
+            {
+              "n": 2,
+              "text": "GIVEN today is 2026-12-04 and \"lucia\" has \"Piolet\" starting 2026-12-05 WHEN she cancels it THEN the user sees \"Reserva cancelada\" and the reservation shows state \"Cancelada\"",
+              "scenarios": [
+                "AC-007-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 Cancelar reserva (hoy 2026-12-04) › FASE-1 AC-007-01 hoy 2026-12-04 lucia cancela su Piolet que empieza el 2026-12-05 y ve Reserva cancelada y Cancelada",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 Cancelar reserva (hoy 2026-12-04) › FASE-1 AC-007-01 hoy 2026-12-04 lucia cancela su Piolet que empieza el 2026-12-05 y ve Reserva cancelada y Cancelada",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-7e9f1-serva-cancelada-y-Cancelada-chromium/attachments/AC-007-01-4306d94acfe20531d269123cf13d2b3d78a46c89.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-7e9f1-serva-cancelada-y-Cancelada-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Can-7e9f1-serva-cancelada-y-Cancelada-chromium/attachments/AC-007-01-ec1b1a91a467ee8477a175e37093c69871bbdedc.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Can-7e9f1-serva-cancelada-y-Cancelada-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-7e9f1-serva-cancelada-y-Cancelada-chromium/attachments/AC-007-01-4306d94acfe20531d269123cf13d2b3d78a46c89.png": "sha256:3f829b725b7865d1471dbee6989bd34a4839eadfbd61ca2ea1a3609b0be8a858",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-7e9f1-serva-cancelada-y-Cancelada-chromium/test-finished-1.png": "sha256:466581d1859448b7b5665e600d03b5c865fec5e777c6f1d9ef699a664820f39c",
+                "evidencias/FASE-1/AC-007-01.png": "sha256:3f829b725b7865d1471dbee6989bd34a4839eadfbd61ca2ea1a3609b0be8a858",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Can-7e9f1-serva-cancelada-y-Cancelada-chromium/attachments/AC-007-01-ec1b1a91a467ee8477a175e37093c69871bbdedc.png": "sha256:3f829b725b7865d1471dbee6989bd34a4839eadfbd61ca2ea1a3609b0be8a858",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Can-7e9f1-serva-cancelada-y-Cancelada-chromium/test-finished-1.png": "sha256:466581d1859448b7b5665e600d03b5c865fec5e777c6f1d9ef699a664820f39c"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Reserva cancelada",
+                    "template": false
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-7e9f1-serva-cancelada-y-Cancelada-chromium/attachments/AC-007-01-4306d94acfe20531d269123cf13d2b3d78a46c89.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-7e9f1-serva-cancelada-y-Cancelada-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-7e9f1-serva-cancelada-y-Cancelada-chromium/attachments/FASE-1-FASE-1-AC-007-01-hoy-2026-12-04-lucia-ca-332d2cc48503c7cc0144b4dc6fcefa973d2e40ad.webm",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-7e9f1-serva-cancelada-y-Cancelada-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-FASE-1-AC-007-01-hoy-2026-12-04-lucia-ca.webm"
+              ]
+            },
+            {
+              "n": 3,
+              "text": "GIVEN today is 2026-12-05 and \"lucia\" has \"Piolet\" starting 2026-12-05 WHEN she tries to cancel it THEN the user sees \"Solo se puede cancelar hasta el día antes\" and the reservation stays",
+              "scenarios": [
+                "AC-007-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 Cancelar reserva (hoy 2026-12-05) › FASE-1 AC-007-02 hoy 2026-12-05 lucia intenta cancelar su Piolet que empieza hoy y ve Solo se puede cancelar hasta el día antes",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 Cancelar reserva (hoy 2026-12-05) › FASE-1 AC-007-02 hoy 2026-12-05 lucia intenta cancelar su Piolet que empieza hoy y ve Solo se puede cancelar hasta el día antes",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-49879-cancelar-hasta-el-día-antes-chromium/attachments/AC-007-02-901bf09742151b35cdc33bccde1e3e6c1c114fd5.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-49879-cancelar-hasta-el-día-antes-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Can-49879-cancelar-hasta-el-día-antes-chromium/attachments/AC-007-02-1cd0c0f7dbb214d8a56c172b7b580f66aa67514d.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Can-49879-cancelar-hasta-el-día-antes-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-49879-cancelar-hasta-el-día-antes-chromium/attachments/AC-007-02-901bf09742151b35cdc33bccde1e3e6c1c114fd5.png": "sha256:f9addd25768a26522c30090a223d4a8e863c1324a823e4a3d098b75e9e0fde66",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-49879-cancelar-hasta-el-día-antes-chromium/test-finished-1.png": "sha256:f9addd25768a26522c30090a223d4a8e863c1324a823e4a3d098b75e9e0fde66",
+                "evidencias/FASE-1/AC-007-02.png": "sha256:f9addd25768a26522c30090a223d4a8e863c1324a823e4a3d098b75e9e0fde66",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Can-49879-cancelar-hasta-el-día-antes-chromium/attachments/AC-007-02-1cd0c0f7dbb214d8a56c172b7b580f66aa67514d.png": "sha256:f9addd25768a26522c30090a223d4a8e863c1324a823e4a3d098b75e9e0fde66",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Can-49879-cancelar-hasta-el-día-antes-chromium/test-finished-1.png": "sha256:f9addd25768a26522c30090a223d4a8e863c1324a823e4a3d098b75e9e0fde66"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Solo se puede cancelar hasta el día antes",
+                    "template": false
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-49879-cancelar-hasta-el-día-antes-chromium/attachments/AC-007-02-901bf09742151b35cdc33bccde1e3e6c1c114fd5.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-49879-cancelar-hasta-el-día-antes-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-49879-cancelar-hasta-el-día-antes-chromium/attachments/FASE-1-FASE-1-AC-007-02-hoy-2026-12-05-lucia-in-318bdbf5b8045d58e40fe26023f96a35bb709bba.webm",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-49879-cancelar-hasta-el-día-antes-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-FASE-1-AC-007-02-hoy-2026-12-05-lucia-in.webm"
+              ]
+            },
+            {
+              "n": 4,
+              "text": "GIVEN \"lucia\" has no reservations WHEN she opens \"Mis reservas\" THEN the user sees \"No tienes reservas\"",
+              "scenarios": [
+                "AC-006-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 Mis reservas (socio) › FASE-1 AC-006-02 lucia sin reservas abre Mis reservas y ve No tienes reservas",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 Mis reservas (socio) › FASE-1 AC-006-02 lucia sin reservas abre Mis reservas y ve No tienes reservas",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Mis-c43da-vas-y-ve-No-tienes-reservas-chromium/attachments/AC-006-02-98a624f9579336e88fe80f2cc93252fd4276b665.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Mis-c43da-vas-y-ve-No-tienes-reservas-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Mis-c43da-vas-y-ve-No-tienes-reservas-chromium/attachments/AC-006-02-9cabb1b10aab75acf4465bffe9af6e848f9ea00a.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Mis-c43da-vas-y-ve-No-tienes-reservas-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-006-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Mis-c43da-vas-y-ve-No-tienes-reservas-chromium/attachments/AC-006-02-98a624f9579336e88fe80f2cc93252fd4276b665.png": "sha256:f447e2beeadc73087fafaa8c5fe1b68c83dd93e42955d368b45362a6a4d61c67",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Mis-c43da-vas-y-ve-No-tienes-reservas-chromium/test-finished-1.png": "sha256:f447e2beeadc73087fafaa8c5fe1b68c83dd93e42955d368b45362a6a4d61c67",
+                "evidencias/FASE-1/AC-006-02.png": "sha256:f447e2beeadc73087fafaa8c5fe1b68c83dd93e42955d368b45362a6a4d61c67",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Mis-c43da-vas-y-ve-No-tienes-reservas-chromium/attachments/AC-006-02-9cabb1b10aab75acf4465bffe9af6e848f9ea00a.png": "sha256:f447e2beeadc73087fafaa8c5fe1b68c83dd93e42955d368b45362a6a4d61c67",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Mis-c43da-vas-y-ve-No-tienes-reservas-chromium/test-finished-1.png": "sha256:f447e2beeadc73087fafaa8c5fe1b68c83dd93e42955d368b45362a6a4d61c67"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No tienes reservas",
+                    "template": false
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Mis-c43da-vas-y-ve-No-tienes-reservas-chromium/attachments/AC-006-02-98a624f9579336e88fe80f2cc93252fd4276b665.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Mis-c43da-vas-y-ve-No-tienes-reservas-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-006-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Mis-c43da-vas-y-ve-No-tienes-reservas-chromium/attachments/FASE-1-FASE-1-AC-006-02-lucia-sin-reservas-abre-4294288c908be365f9ecc8027a112c18c62fa285.webm",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Mis-c43da-vas-y-ve-No-tienes-reservas-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-FASE-1-AC-006-02-lucia-sin-reservas-abre.webm"
+              ]
+            },
+            {
+              "n": 5,
+              "text": "GIVEN \"lucia\" already cancelled a reservation WHEN the same cancel is sent again THEN the reservation stays \"Cancelada\" and nothing else changes",
+              "scenarios": [
+                "AC-007-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-1 Cancelar reserva (hoy 2026-12-04) › FASE-1 AC-007-03 lucia repite la cancelación de su Piolet ya cancelado y la reserva sigue Cancelada",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-1 Cancelar reserva (hoy 2026-12-04) › FASE-1 AC-007-03 lucia repite la cancelación de su Piolet ya cancelado y la reserva sigue Cancelada",
+                  "file": "fase-1-reservas.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-58de5--la-reserva-sigue-Cancelada-chromium/attachments/AC-007-03-b6f4ad49bc6429bcc8bc7a3250e7557193bdfe4a.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-58de5--la-reserva-sigue-Cancelada-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Can-58de5--la-reserva-sigue-Cancelada-chromium/attachments/AC-007-03-acbf5b69b4d9b702f9231a2de0b1c6b69e92217f.png",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Can-58de5--la-reserva-sigue-Cancelada-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-58de5--la-reserva-sigue-Cancelada-chromium/attachments/AC-007-03-b6f4ad49bc6429bcc8bc7a3250e7557193bdfe4a.png": "sha256:ead010ddcfe148d187f9b53b8be8edd0e7ae6ddca8c1e500a609ab4e36787a98",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-58de5--la-reserva-sigue-Cancelada-chromium/test-finished-1.png": "sha256:ead010ddcfe148d187f9b53b8be8edd0e7ae6ddca8c1e500a609ab4e36787a98",
+                "evidencias/FASE-1/AC-007-03.png": "sha256:ead010ddcfe148d187f9b53b8be8edd0e7ae6ddca8c1e500a609ab4e36787a98",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Can-58de5--la-reserva-sigue-Cancelada-chromium/attachments/AC-007-03-acbf5b69b4d9b702f9231a2de0b1c6b69e92217f.png": "sha256:ead010ddcfe148d187f9b53b8be8edd0e7ae6ddca8c1e500a609ab4e36787a98",
+                "evidencias/sin-fase/.playwright/fase-1-reservas-FASE-1-Can-58de5--la-reserva-sigue-Cancelada-chromium/test-finished-1.png": "sha256:ead010ddcfe148d187f9b53b8be8edd0e7ae6ddca8c1e500a609ab4e36787a98"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Cancelada",
+                    "template": false
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-58de5--la-reserva-sigue-Cancelada-chromium/attachments/AC-007-03-b6f4ad49bc6429bcc8bc7a3250e7557193bdfe4a.png",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-58de5--la-reserva-sigue-Cancelada-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-007-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-58de5--la-reserva-sigue-Cancelada-chromium/attachments/FASE-1-FASE-1-AC-007-03-lucia-repite-la-cancela-754ad814dce8f7685e7a667fcb86e4a3e43e8fbf.webm",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-58de5--la-reserva-sigue-Cancelada-chromium/video-1.webm",
+                "evidencias/FASE-1/.playwright/fase-1-reservas-FASE-1-Can-58de5--la-reserva-sigue-Cancelada-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-FASE-1-AC-007-03-lucia-repite-la-cancela.webm"
+              ]
+            }
+          ],
+          "candidate_files": [
+            "src/domain/permisos.js",
+            "src/domain/prestamos.js",
+            "src/domain/reservas.js",
+            "src/server/plugin.js",
+            "src/ui/api.js",
+            "src/ui/componentes/confirmar.js",
+            "src/ui/pantallas/mis-reservas.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        }
+      ],
+      "unknown_requirements": [],
+      "tasks": [
+        "TASK-F1-001",
+        "TASK-F1-002",
+        "TASK-F1-003",
+        "TASK-F1-004",
+        "TASK-F1-005",
+        "TASK-F1-006"
+      ],
+      "candidate_files": [
+        "src/domain/inventario.js",
+        "src/domain/permisos.js",
+        "src/domain/prestamos.js",
+        "src/domain/reservas.js",
+        "src/domain/validacion.js",
+        "src/server/plugin.js",
+        "src/ui/api.js",
+        "src/ui/componentes/confirmar.js",
+        "src/ui/main.js",
+        "src/ui/pantallas/inicio.js",
+        "src/ui/pantallas/inventario.js",
+        "src/ui/pantallas/mis-reservas.js",
+        "src/ui/pantallas/reservar.js",
+        "src/ui/textos.js"
+      ]
+    }
+  ],
+  "uncovered": [
+    {
+      "id": "REQ-C-001",
+      "title": "Stack",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-002",
+      "title": "Textos en español",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-003",
+      "title": "Datos compartidos entre dispositivos",
+      "priority": "Must"
+    }
+  ],
+  "fases_without_header": [],
+  "criteria_without_test": [],
+  "coverage_gaps": 3
+}

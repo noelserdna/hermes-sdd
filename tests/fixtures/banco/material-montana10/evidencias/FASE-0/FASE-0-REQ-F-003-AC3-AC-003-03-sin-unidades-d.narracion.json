@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-REQ-F-003-AC3-AC-003-03-sin-unidades-d.webm",
+ "test": "REQ-F-003 AC3 · AC-003-03 sin unidades de «Tienda» el 2026-12-06 Pablo ve el rechazo y no se crea la reserva",
+ "titulo": "REQ-F-003 AC3 · AC-003-03 sin unidades de «Tienda» el 2026-12-06 Pablo ve el rechazo y no se crea la reserva",
+ "narraciones": [
+  {
+   "t": 0.007,
+   "texto": "Pablo entra y reserva una tienda para el 6 de diciembre, cuando las dos están reservadas"
+  },
+  {
+   "t": 0.602,
+   "texto": "Reservar material para unas fechas. En Reservar se ve «No quedan unidades libres de Tienda esas fechas» y no se crea ninguna reserva.",
+   "criterio": "AC-003-03"
+  }
+ ]
+}

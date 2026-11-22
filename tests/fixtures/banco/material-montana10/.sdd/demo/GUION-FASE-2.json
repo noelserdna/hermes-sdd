@@ -1,0 +1,350 @@
+{
+ "fase": "2",
+ "plan": "plan/fases/FASE-2-DEVOLUCION.md",
+ "workflows": [
+  {
+   "id": "WF-001",
+   "titulo": "Ciclo de un préstamo",
+   "fichero": "spec/workflows/WF-001-ciclo-de-un-prestamo.md",
+   "pasos": [
+    {
+     "n": 1,
+     "nombre": "reservar (UC-003)",
+     "uc": "UC-003"
+    },
+    {
+     "n": 2,
+     "nombre": "cancelar (UC-004)",
+     "uc": "UC-004"
+    },
+    {
+     "n": 3,
+     "nombre": "entregar (UC-005)",
+     "uc": "UC-005"
+    },
+    {
+     "n": 4,
+     "nombre": "marcar No recogida (UC-005)",
+     "uc": "UC-005"
+    },
+    {
+     "n": 5,
+     "nombre": "devolver (UC-006)",
+     "uc": "UC-006"
+    },
+    {
+     "n": 6,
+     "nombre": "poner multa (UC-006)",
+     "uc": "UC-006"
+    },
+    {
+     "n": 7,
+     "nombre": "pagar multa (UC-007)",
+     "uc": "UC-007"
+    }
+   ],
+   "navegacion": [
+    {
+     "n": 1,
+     "celdas": [
+      "Reservar",
+      "Socio",
+      "menú Reservar",
+      "elige tipo y fechas"
+     ]
+    },
+    {
+     "n": 2,
+     "celdas": [
+      "Mis reservas",
+      "Socio",
+      "menú Mis reservas",
+      "cancela una reserva"
+     ]
+    },
+    {
+     "n": 3,
+     "celdas": [
+      "Entregas y devoluciones",
+      "Encargado",
+      "menú Entregas y devoluciones",
+      "marca entregada con su unidad"
+     ]
+    },
+    {
+     "n": 5,
+     "celdas": [
+      "Entregas y devoluciones",
+      "Encargado",
+      "menú Entregas y devoluciones",
+      "marca devuelta"
+     ]
+    },
+    {
+     "n": 7,
+     "celdas": [
+      "Multas",
+      "Encargado",
+      "menú Multas",
+      "marca pagada"
+     ]
+    }
+   ]
+  }
+ ],
+ "casos_de_uso": [
+  {
+   "id": "UC-006",
+   "titulo": "Devolver y multar",
+   "fichero": "spec/use-cases/UC-006-devolver-y-multar.md",
+   "flujo": [
+    "Encargado: marca la devolución de una reserva.",
+    "System: comprueba que existe y está Prestada (INV-LOA-003).",
+    "System: cuenta los días naturales de retraso desde `hasta` (RN-009).",
+    "System: pasa la reserva a Devuelta y fija `devueltaEl` (API-003-02).",
+    "System: si días > 0, crea una multa Pendiente en la misma operación indivisible (INV-LOA-004).",
+    "System: muestra \"{unidad} · {socio} · Devuelta\" y, si hay multa, su aviso; el Socio la ve después en Mis reservas."
+   ],
+   "extensiones": [
+    {
+     "texto": "3a. Devuelta el día `hasta` o antes → no se crea multa (RN-009).",
+     "criterios": [
+      "AC-006-01"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-006-01",
+    "AC-006-02",
+    "AC-006-03",
+    "AC-006-04",
+    "AC-006-05"
+   ]
+  },
+  {
+   "id": "UC-007",
+   "titulo": "Pagar multa",
+   "fichero": "spec/use-cases/UC-007-pagar-multa.md",
+   "flujo": [
+    "Encargado: abre la pantalla Multas (API-003-04).",
+    "System: lista todas las multas.",
+    "Encargado: marca una multa como pagada.",
+    "System: comprueba que la multa existe.",
+    "System: pasa a Pagada y fija `pagadaEl` (API-003-03, SM-002).",
+    "System: muestra \"Multa de {importe} € · {socio} · Pagada\"; el bloqueo del Socio depende solo de sus otras multas Pendientes (INV-RES-005)."
+   ],
+   "extensiones": [
+    {
+     "texto": "6a. El Socio tiene otra multa Pendiente → sigue sin poder reservar y ve \"Multa pendiente: {importe} €\" en Mis reservas.",
+     "criterios": [
+      "AC-007-02"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-007-01",
+    "AC-007-02",
+    "AC-007-03",
+    "AC-007-04"
+   ]
+  },
+  {
+   "id": "UC-010",
+   "titulo": "Consultar historial",
+   "fichero": "spec/use-cases/UC-010-consultar-historial.md",
+   "flujo": [
+    "Junta: abre Historial y elige un socio.",
+    "System: comprueba sesión y rol (INV-ACC-008).",
+    "System: comprueba que el socio existe.",
+    "System: devuelve sus reservas con estado y sus multas (RN-012).",
+    "System: muestra el resultado sin acciones (INV-LOA-402)."
+   ],
+   "extensiones": [
+    {
+     "texto": "1a. Rol encargado → mismo resultado.",
+     "criterios": [
+      "AC-010-05"
+     ]
+    },
+    {
+     "texto": "4a. Socio sin préstamos ni multas → mensaje de vacío.",
+     "criterios": [
+      "AC-010-02"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-010-01",
+    "AC-010-02",
+    "AC-010-03",
+    "AC-010-04"
+   ]
+  }
+ ],
+ "criterios": [
+  {
+   "id": "AC-006-01",
+   "req": "REQ-F-006",
+   "ac": 1,
+   "uc": "UC-006",
+   "frase": "Marcar la devolución y poner la multa. En Entregas y devoluciones se ve «{unidad} · {socio} · Devuelta».",
+   "visible": true,
+   "then": "the user sees \"Piolet 2 · Lucía · Devuelta\" and no multa exists",
+   "ve": [
+    "{unidad} · {socio} · Devuelta"
+   ],
+   "pantalla": "Entregas y devoluciones"
+  },
+  {
+   "id": "AC-006-02",
+   "req": "REQ-F-006",
+   "ac": 2,
+   "uc": "UC-006",
+   "frase": "Marcar la devolución y poner la multa. En Entregas y devoluciones se ve «Multa de {importe} € a {socio} ({n} días de retraso)».",
+   "visible": true,
+   "then": "the user sees \"Multa de 6 € a Pablo (3 días de retraso)\"",
+   "ve": [
+    "Multa de {importe} € a {socio} ({n} días de retraso)"
+   ],
+   "pantalla": "Entregas y devoluciones"
+  },
+  {
+   "id": "AC-006-03",
+   "req": "REQ-F-006",
+   "ac": 3,
+   "uc": "UC-006",
+   "frase": "Marcar la devolución y poner la multa. En Entregas y devoluciones se ve «Multa de {importe} € a {socio} ({n} días de retraso)».",
+   "visible": true,
+   "then": "the user sees \"Multa de 2 € a Lucía (1 días de retraso)\" and Lucía sees \"Multa pendiente: 2 €\" in Mis reservas",
+   "ve": [
+    "Multa de {importe} € a {socio} ({n} días de retraso)"
+   ],
+   "pantalla": "Entregas y devoluciones"
+  },
+  {
+   "id": "AC-006-04",
+   "req": "REQ-F-006",
+   "ac": 4,
+   "uc": "UC-006",
+   "frase": "Marcar la devolución y poner la multa. la lista de multas sigue con una sola de 6 €",
+   "visible": false,
+   "then": "there is still one multa of 6 € for Pablo",
+   "ve": [],
+   "pantalla": null
+  },
+  {
+   "id": "AC-006-05",
+   "req": "REQ-F-006",
+   "ac": 5,
+   "uc": "UC-006",
+   "frase": "Marcar la devolución y poner la multa. En Entregas y devoluciones se ve «Esa reserva no está prestada».",
+   "visible": true,
+   "then": "the user sees \"Esa reserva no está prestada\"",
+   "ve": [
+    "Esa reserva no está prestada"
+   ],
+   "pantalla": "Entregas y devoluciones"
+  },
+  {
+   "id": "AC-007-01",
+   "req": "REQ-F-007",
+   "ac": 1,
+   "uc": "UC-007",
+   "frase": "Marcar la multa como pagada. En Multas se ve «Multa de {importe} € · {socio} · Pagada».",
+   "visible": true,
+   "then": "the user sees \"Multa de 6 € · Pablo · Pagada\" in Multas and Pablo can reserve",
+   "ve": [
+    "Multa de {importe} € · {socio} · Pagada"
+   ],
+   "pantalla": "Multas"
+  },
+  {
+   "id": "AC-007-02",
+   "req": "REQ-F-007",
+   "ac": 2,
+   "uc": "UC-007",
+   "frase": "Marcar la multa como pagada. En Mis reservas se ve «Multa pendiente: {importe} €».",
+   "visible": true,
+   "then": "Lucía still sees \"Multa pendiente: 4 €\" and cannot reserve",
+   "ve": [
+    "Multa pendiente: {importe} €"
+   ],
+   "pantalla": "Mis reservas"
+  },
+  {
+   "id": "AC-007-03",
+   "req": "REQ-F-007",
+   "ac": 3,
+   "uc": "UC-007",
+   "frase": "Marcar la multa como pagada. la lista de multas no cambia",
+   "visible": false,
+   "then": "it stays \"Pagada\" once, with the same paid date",
+   "ve": [],
+   "pantalla": null
+  },
+  {
+   "id": "AC-007-04",
+   "req": "REQ-F-007",
+   "ac": 4,
+   "uc": "UC-007",
+   "frase": "Marcar la multa como pagada. En Multas se ve «No tienes permiso para ver esta pantalla».",
+   "visible": true,
+   "then": "the user sees \"No tienes permiso para ver esta pantalla\"",
+   "ve": [
+    "No tienes permiso para ver esta pantalla"
+   ],
+   "pantalla": "Multas"
+  },
+  {
+   "id": "AC-010-01",
+   "req": "REQ-F-010",
+   "ac": 1,
+   "uc": "UC-010",
+   "frase": "Consultar el historial de un socio (junta). En Historial se ve «{unidad} · {desde} a {hasta} · {estado}» y «Multa de {importe} € · {estado}».",
+   "visible": true,
+   "then": "the user sees \"Piolet 2 · 2026-12-05 a 2026-12-07 · Devuelta\" and \"Multa de 2 € · Pagada\"",
+   "ve": [
+    "{unidad} · {desde} a {hasta} · {estado}",
+    "Multa de {importe} € · {estado}"
+   ],
+   "pantalla": "Historial"
+  },
+  {
+   "id": "AC-010-02",
+   "req": "REQ-F-010",
+   "ac": 2,
+   "uc": "UC-010",
+   "frase": "Consultar el historial de un socio (junta). En Historial se ve «Sin préstamos ni multas».",
+   "visible": true,
+   "then": "the user sees \"Sin préstamos ni multas\"",
+   "ve": [
+    "Sin préstamos ni multas"
+   ],
+   "pantalla": "Historial"
+  },
+  {
+   "id": "AC-010-03",
+   "req": "REQ-F-010",
+   "ac": 3,
+   "uc": "UC-010",
+   "frase": "Consultar el historial de un socio (junta). ausencia de botones; lo comprueba el test sobre la pantalla",
+   "visible": false,
+   "then": "there is no button to edit, cancel or mark anything",
+   "ve": [],
+   "pantalla": null
+  },
+  {
+   "id": "AC-010-04",
+   "req": "REQ-F-010",
+   "ac": 4,
+   "uc": "UC-010",
+   "frase": "Consultar el historial de un socio (junta). En Historial se ve «No tienes permiso para ver esta pantalla».",
+   "visible": true,
+   "then": "the user sees \"No tienes permiso para ver esta pantalla\"",
+   "ve": [
+    "No tienes permiso para ver esta pantalla"
+   ],
+   "pantalla": "Historial"
+  }
+ ]
+}

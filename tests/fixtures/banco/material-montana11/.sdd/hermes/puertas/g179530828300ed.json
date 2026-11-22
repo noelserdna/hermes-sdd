@@ -1,0 +1,87 @@
+{
+  "id": "g179530828300ed",
+  "tipo": "fase",
+  "fase": "5",
+  "tablero": "material-montana11",
+  "tarjeta": "t_3c0d3a6a",
+  "adopcion": false,
+  "sha": "befd5305ff3393a72e9c7df7346b6b5ebf90adca",
+  "creada": "2026-11-22T00:44:43Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana11",
+  "titulo": "Aceptar FASE-5",
+  "texto": "🧭 Encargado: 1 aviso\n• 1 aviso(s) de las capturas, p. ej. la captura AC-015-02-5807c236135ad8504699e75223ddfb3b2babd7da.png no cuenta para REQ-F-009 AC2: la tomó un test que no cita ese criterio (el criterio ya se ve en su propia captura)\n(1 aviso que ya viste en una puerta firmada, sin cambios, no se repite)\n\n🧪 La FASE-5 de «material-montana11» está lista para revisar.\n\n⛔ Los requisitos pasan sus tests, pero la revisión independiente ha encontrado algo que no prueban.\n\n❌ Rechazaste la versión anterior:\n«Q1: A. CH-006 es grave y hay que cerrarlo: sin entrar, ninguna forma de pedir el fichero de datos (también con ?import u otros parámetros) puede devolver su contenido; añadid la prueba de esa forma. CH-007: el Casco 2 sigue prestado y debe verse en «Prestado ahora»; el criterio significa que no aparece en «Vuelven hoy» ese día: basta con que la prueba lo diga así.»\nLo hecho desde entonces:\n• fix(seguridad): el rechazo del fichero de datos cubre /@id/, // y ?import\n• test(consultas): REQ-F-009 AC2 dice que el Casco 2 sigue en Prestado ahora y no en Vuelven hoy\n• docs(feedback): FASE-5 SPEC-DEVIATION de listarSocios aceptada por el cliente\n\n⚠️ Ver lo prestado y lo que vuelve cada día: pasa sus pruebas, pero la revisión independiente duda de que lo comprueben (CH-008) (4 de 4 criterios)\n✅ La junta consulta el historial de un socio: funciona y está comprobado (4 de 4 criterios)\n✅ Datos personales solo para su dueño, el encargado y la junta: funciona y está comprobado (4 de 4 criterios)\n\n🤔 La revisión independiente tiene dudas sobre lo que pide el propio requisito; esto es tuyo:\n• CH-008 · Ver lo prestado y lo que vuelve cada día: «does not see \"Casco 2\"»\n  ❓ Al elegir el día 2026-12-07 el Casco 2 sigue viéndose en la pantalla, bajo «Prestado ahora»; no aparece bajo «Vuelven hoy». El requisito dice sin más que no se ve el Casco 2: falta que el cliente confirme si basta con que no esté en «Vuelv…\n\n✏️ Si una duda es del propio criterio (está mal escrito o contradice otro), pulsa ✏️ Corregir el requisito y di cómo tiene que quedar: se lanza un cambio de requisitos y la fase se rehace con el criterio bueno. Si no es un fallo, 🗑 Descártala con su número y por qué.\n\n🛡 No se ha tocado ningún test que ya existía (ni sus ayudas ni su configuración).\n\n🎬 Demo: vídeo y 8 capturas.\n\n🤖 Jev ha leído el texto en off de 8 vídeos: cada uno cuenta lo que pide su criterio.\n\n👉 Pulsa ▶ Ver demo; después ❌ Rechazar para que se arregle, o 🗑 Descartar las que no sean un fallo (escribe su número, p. ej. CH-005, y por qué; la puerta vuelve sin ellas).\n\n❓ Antes, una pregunta (la recomendada ya está marcada en los botones Q):\n\n1. Cuando el encargado elige el día 7 de diciembre, ¿el Casco 2 debe desaparecer de toda la pantalla, o basta con que no aparezca en «Vuelven hoy» mientras sigue en «Prestado ahora»?\n   🔧 Detalle técnico: REQ-F-009 AC2 dice que, con el día 2026-12-07 elegido, el usuario no ve el Casco 2; hoy aparece bajo «Prestado ahora» y no bajo «Vuelven hoy». Decidir si «no v…\n   A) Sí: ese día el Casco 2 no sale en la pantalla, ni en «Prestado ahora» ni en «Vuelven hoy»  ⭐ recomendada  (🛠 lanza trabajo)\n   B) No: el Casco 2 sigue saliendo en «Prestado ahora»; el requisito se cambia para decir solo eso  (📌 se anota para la siguiente entrega)\n\n👉 Si firmas sin tocar los botones Q, esto lanzará: 🛠 lanza trabajo: Q1.",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "corrijo",
+      "etiqueta": "✏️ Corregir el requisito",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "descarto",
+      "etiqueta": "🗑 Descartar una impugnación",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-5/FASE-5-FASE-5-AC-015-01-REQ-F-009-AC1-con-el-Pi.mp4",
+  "preguntas": [
+    {
+      "n": 1,
+      "id": "Q-acceptance-001",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "accion",
+          "ficheros": [
+            "src/ui/pantallas/prestado.js"
+          ],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "req-change",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "Cuando el encargado elige el día 7 de diciembre, ¿el Casco 2 debe desaparecer de toda la pantalla, o basta con que no aparezca en «Vuelven hoy» mientras sigue en «Prestado ahora»?"
+    }
+  ],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": true,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": false,
+        "codigo": "capturas-avisos",
+        "texto": "1 aviso(s) de las capturas, p. ej. la captura AC-015-02-5807c236135ad8504699e75223ddfb3b2babd7da.png no cuenta para REQ-F-009 AC2: la tomó un test que no cita ese criterio (el criterio ya se ve en su propia captura)"
+      }
+    ],
+    "graves": 0
+  },
+  "narracion": {
+    "revisados": 8,
+    "modelo": "jev-1.14.0",
+    "contradicen": [],
+    "incompletos": []
+  }
+}

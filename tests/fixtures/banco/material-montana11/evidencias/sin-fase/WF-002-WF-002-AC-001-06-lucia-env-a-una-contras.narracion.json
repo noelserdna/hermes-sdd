@@ -1,0 +1,16 @@
+{
+ "video": "WF-002-WF-002-AC-001-06-lucia-env-a-una-contras.webm",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-001-06 lucia envía una contraseña errónea y ve Correo o contraseña incorrectos",
+ "titulo": "WF-002 AC-001-06 lucia envía una contraseña errónea y ve Correo o contraseña incorrectos",
+ "narraciones": [
+  {
+   "t": 0.92,
+   "texto": "Lucía escribe su correo y una contraseña equivocada"
+  },
+  {
+   "t": 1.35,
+   "texto": "Entrar con correo y contraseña. En Entrar se ve «Correo o contraseña incorrectos».",
+   "criterio": "AC-001-06"
+  }
+ ]
+}

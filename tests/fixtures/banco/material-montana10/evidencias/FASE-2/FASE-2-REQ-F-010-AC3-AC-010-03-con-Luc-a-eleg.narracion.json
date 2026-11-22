@@ -1,0 +1,16 @@
+{
+ "video": "FASE-2-REQ-F-010-AC3-AC-010-03-con-Luc-a-eleg.webm",
+ "test": "REQ-F-010 AC3 · AC-010-03 con Lucía elegida en Historial la junta no ve botón para editar, cancelar ni marcar nada",
+ "titulo": "REQ-F-010 AC3 · AC-010-03 con Lucía elegida en Historial la junta no ve botón para editar, cancelar ni marcar nada",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "La junta entra, abre Historial y elige a Lucía, que tiene un préstamo devuelto y una multa pagada"
+  },
+  {
+   "t": 0.573,
+   "texto": "Consultar el historial de un socio. En Historial se ve «Piolet 2 · 2026-12-05 a 2026-12-07 · Devuelta» sin ningún botón para editar, cancelar ni marcar nada; solo el de Ver historial.",
+   "criterio": "AC-010-03"
+  }
+ ]
+}

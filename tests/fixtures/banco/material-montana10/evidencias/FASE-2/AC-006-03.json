@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-006-03",
+ "test": "REQ-F-006 AC3 · AC-006-03 «Cuerda 1» de Lucía vuelve con 1 día de retraso: «Multa de 2 € a Lucía (1 día de retraso)» y ella ve «Multa pendiente: 2 €»",
+ "titulo": "REQ-F-006 AC3 · AC-006-03 «Cuerda 1» de Lucía vuelve con 1 día de retraso: «Multa de 2 € a Lucía (1 día de retraso)» y ella ve «Multa pendiente: 2 €»",
+ "ve": [
+  "Multa de 2 € a Lucía (1 día de retraso)"
+ ],
+ "narrado": "Marcar la devolución y poner la multa. En Entregas y devoluciones se ve «Multa de 2 € a Lucía (1 día de retraso)», y Lucía ve «Multa pendiente: 2 €» en Mis reservas.",
+ "url": "http://127.0.0.1:5173/#/entregas",
+ "imagen": "AC-006-03.png",
+ "sha256": "sha256:880fd59684edafa7189903af8dd9bddd2e1fb5ac4d13757248b7cbc2c12032a3",
+ "at": "2026-11-21T13:46:42.334Z"
+}

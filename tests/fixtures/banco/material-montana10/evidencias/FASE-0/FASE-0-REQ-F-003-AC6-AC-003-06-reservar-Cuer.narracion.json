@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-REQ-F-003-AC6-AC-003-06-reservar-Cuer.webm",
+ "test": "REQ-F-003 AC6 · AC-003-06 reservar «Cuerda» del 2026-12-10 al 2026-12-09 se rechaza por fechas invertidas",
+ "titulo": "REQ-F-003 AC6 · AC-003-06 reservar «Cuerda» del 2026-12-10 al 2026-12-09 se rechaza por fechas invertidas",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "Lucía entra y reserva una cuerda desde el 10 hasta el 9 de diciembre"
+  },
+  {
+   "t": 0.569,
+   "texto": "Reservar material para unas fechas. En Reservar se ve «La fecha final no puede ser anterior a la inicial».",
+   "criterio": "AC-003-06"
+  }
+ ]
+}

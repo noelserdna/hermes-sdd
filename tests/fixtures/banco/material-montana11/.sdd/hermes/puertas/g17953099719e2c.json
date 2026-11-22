@@ -1,0 +1,47 @@
+{
+  "id": "g17953099719e2c",
+  "tipo": "entrega",
+  "fase": "",
+  "tablero": "material-montana11",
+  "tarjeta": "t_d9e74e36",
+  "adopcion": false,
+  "sha": "2622302a4f28e18afda0eec8e751e15e12508d3b",
+  "creada": "2026-11-22T01:12:51Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana11",
+  "titulo": "Entrega final",
+  "texto": "🧭 Encargado: 1 aviso\n• 2 texto(s) que los criterios dicen que se ven no están tal cual en el código de la app («Pablo Ruiz», «Nieve2026»): o la app los compone (y nadie comprueba la plantilla) o no los enseña\n\n🎁 «material-montana11» está terminado y listo para entregar.\n\n⚠️ Cumple, pero con exenciones: algo se aceptó sin comprobar.\n\n🟡 Gestionar el inventario: aceptado sin comprobar (exención) (6 de 7 criterios)\n✅ 13 requisitos funcionan y están comprobados: Entrar con correo y contraseña; Gestionar las cuentas de socios; Reservar material para unas fechas; Ver y cancelar mis reservas; Entregar y marcar la devolución; Multa por devolución tardía y bloqueo; Marcar la multa como pagada; Ver lo prestado y lo que vuelve cada día; La junta consulta el histo…\n\nFases aceptadas: 6.\n\n👉 Puedes aceptar la entrega (✅), aceptarla con observaciones o rechazarla.",
+  "opciones": [
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Acepto la entrega"
+    },
+    {
+      "verbo": "observaciones",
+      "etiqueta": "📝 Con observaciones",
+      "texto": true
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true
+    }
+  ],
+  "demo": "",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": false,
+        "codigo": "texto-fuera-del-codigo",
+        "texto": "2 texto(s) que los criterios dicen que se ven no están tal cual en el código de la app («Pablo Ruiz», «Nieve2026»): o la app los compone (y nadie comprueba la plantilla) o no los enseña"
+      }
+    ],
+    "graves": 0
+  }
+}

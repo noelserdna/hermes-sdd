@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-002-02",
+ "test": "REQ-F-002 AC2 · AC-002-02 con «marta@club.es» ya dada de alta, otra alta con ese correo muestra «Ya existe un socio con ese correo» y la lista sigue con una sola «Marta Ruiz»",
+ "titulo": "REQ-F-002 AC2 · AC-002-02 con «marta@club.es» ya dada de alta, otra alta con ese correo muestra «Ya existe un socio con ese correo» y la lista sigue con una sola «Marta Ruiz»",
+ "ve": [
+  "Ya existe un socio con ese correo"
+ ],
+ "narrado": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «Ya existe un socio con ese correo», y la lista sigue con una sola «Marta Ruiz».",
+ "url": "http://127.0.0.1:5173/#/socios",
+ "imagen": "AC-002-02.png",
+ "sha256": "sha256:df719a3a5a9d40f00e63662162924789473c36959d292781e6a02f66d033ec43",
+ "at": "2026-11-21T12:35:13.675Z"
+}

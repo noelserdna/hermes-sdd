@@ -1,0 +1,16 @@
+{
+ "video": "WF-002-REQ-F-001-AC9-AC-001-09-WF-002-el-mism.webm",
+ "test": "REQ-F-001 AC9 · AC-001-09 WF-002 el mismo formulario correcto llega dos veces y queda una sola sesión",
+ "titulo": "REQ-F-001 AC9 · AC-001-09 WF-002 el mismo formulario correcto llega dos veces y queda una sola sesión",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "Lucía rellena Entrar y el formulario se envía dos veces a la vez: las dos peticiones llegan al servidor"
+  },
+  {
+   "t": 0.587,
+   "texto": "Entrar, salir y proteger la sesión. En Mis reservas se ve «Hola, Lucía» y hay una sola sesión.",
+   "criterio": "AC-001-09"
+  }
+ ]
+}

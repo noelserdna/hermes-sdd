@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-008-03",
+ "test": "REQ-F-008 AC3 · AC-008-03 el encargado marca «Casco 3» como rota: «Casco 3 · De baja» y «Casco · 2 unidades»",
+ "titulo": "REQ-F-008 AC3 · AC-008-03 el encargado marca «Casco 3» como rota: «Casco 3 · De baja» y «Casco · 2 unidades»",
+ "ve": [
+  "Casco 3 · De baja",
+  "Casco · 2 unidades"
+ ],
+ "narrado": "Gestionar el inventario. En Inventario se ve «Casco 3 · De baja» y «Casco · 2 unidades», y no se puede reservar.",
+ "url": "http://127.0.0.1:5173/#/inventario",
+ "imagen": "AC-008-03.png",
+ "sha256": "sha256:597045df3b3a7b7f6ef00b517533576a0d081878a9d42fd1ae3e7e72bf495fcf",
+ "at": "2026-11-21T13:45:49.888Z"
+}

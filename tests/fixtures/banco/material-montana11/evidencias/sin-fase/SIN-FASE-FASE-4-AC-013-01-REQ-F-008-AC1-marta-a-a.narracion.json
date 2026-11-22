@@ -1,0 +1,20 @@
+{
+ "video": "SIN-FASE-FASE-4-AC-013-01-REQ-F-008-AC1-marta-a-a.webm",
+ "test": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-013-01 REQ-F-008 AC1 marta añade 2 Crampones en Inventario y ve Crampones: 2 unidades",
+ "titulo": "FASE-4 AC-013-01 REQ-F-008 AC1 marta añade 2 Crampones en Inventario y ve Crampones: 2 unidades",
+ "narraciones": [
+  {
+   "t": 0.87,
+   "texto": "Marta, la encargada, entra y abre Inventario"
+  },
+  {
+   "t": 1.473,
+   "texto": "Elige Crampones, escribe la cantidad 2 y pulsa Añadir"
+  },
+  {
+   "t": 1.733,
+   "texto": "Gestionar el inventario. En Inventario se ve «Crampones: 2 unidades», con las unidades Crampones 1 y Crampones 2.",
+   "criterio": "AC-013-01"
+  }
+ ]
+}

@@ -1,0 +1,14 @@
+{
+  "verbo": "rechazo",
+  "texto": "Q1: B. Retocad la comprobación de tests/unit/multas.test.js para que cite el texto «Sin multas» del criterio REQ-F-006 AC2; lo demás de la FASE-3 está bien.",
+  "actor": {
+    "persona": "yo",
+    "canal": "local",
+    "id": "andre"
+  },
+  "prueba": {
+    "host": "DESKTOP-7HT2139",
+    "demo": "no vista"
+  },
+  "at": "2026-11-21T23:01:58Z"
+}

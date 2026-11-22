@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-008-01",
+ "test": "REQ-F-008 AC1 · AC-008-01 el encargado añade 2 «Piolet» a 3 y ve «Piolet · 5 unidades»",
+ "titulo": "REQ-F-008 AC1 · AC-008-01 el encargado añade 2 «Piolet» a 3 y ve «Piolet · 5 unidades»",
+ "ve": [
+  "Piolet · 5 unidades"
+ ],
+ "narrado": "Gestionar el inventario. En Inventario se ve «Piolet · 5 unidades».",
+ "url": "http://127.0.0.1:5173/#/inventario",
+ "imagen": "AC-008-01.png",
+ "sha256": "sha256:7981274ab1b317a855f9b911d19a5c43d9c0a9ed46fff36f9fb3864ca728fd94",
+ "at": "2026-11-21T13:45:47.387Z"
+}

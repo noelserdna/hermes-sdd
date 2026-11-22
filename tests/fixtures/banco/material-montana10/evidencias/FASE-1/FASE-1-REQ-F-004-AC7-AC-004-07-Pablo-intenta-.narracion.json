@@ -1,0 +1,16 @@
+{
+ "video": "FASE-1-REQ-F-004-AC7-AC-004-07-Pablo-intenta-.webm",
+ "test": "REQ-F-004 AC7 · AC-004-07 Pablo intenta cancelar la reserva de Lucía y ve «No tienes permiso para cancelar esta reserva»",
+ "titulo": "REQ-F-004 AC7 · AC-004-07 Pablo intenta cancelar la reserva de Lucía y ve «No tienes permiso para cancelar esta reserva»",
+ "narraciones": [
+  {
+   "t": 0.012,
+   "texto": "Pablo entra, abre Mis reservas y cancela su reserva, pero su petición lleva la reserva de Lucía"
+  },
+  {
+   "t": 0.513,
+   "texto": "Ver y cancelar mis reservas. En Mis reservas se ve «No tienes permiso para cancelar esta reserva», y la reserva de Lucía sigue Reservada.",
+   "criterio": "AC-004-07"
+  }
+ ]
+}

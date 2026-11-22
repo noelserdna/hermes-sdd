@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-08",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-001-08 pablo dado de baja envía su contraseña correcta y ve Correo o contraseña incorrectos",
+ "titulo": "WF-002 AC-001-08 pablo dado de baja envía su contraseña correcta y ve Correo o contraseña incorrectos",
+ "ve": [
+  "Correo o contraseña incorrectos"
+ ],
+ "narrado": "Entrar con correo y contraseña. En Entrar se ve «Correo o contraseña incorrectos».",
+ "url": "http://127.0.0.1:42343/#/entrar",
+ "imagen": "AC-001-08.png",
+ "sha256": "sha256:255f4a6218fa55b549784194668b287daa82f8949b7f65e778444e81d82cb689",
+ "at": "2026-11-22T06:14:15.021Z"
+}

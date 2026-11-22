@@ -1,0 +1,20 @@
+{
+ "video": "SIN-FASE-FASE-4-AC-004-01-REQ-F-002-AC4-marta-fij.webm",
+ "test": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-004-01 REQ-F-002 AC4 marta fija \"Hielo2026x\" a Lucía Gil: Socios muestra Contraseña restablecida, Lucía entra con ella y no con Cumbre2026",
+ "titulo": "FASE-4 AC-004-01 REQ-F-002 AC4 marta fija \"Hielo2026x\" a Lucía Gil: Socios muestra Contraseña restablecida, Lucía entra con ella y no con Cumbre2026",
+ "narraciones": [
+  {
+   "t": 0.955,
+   "texto": "Lucía Gil olvidó su contraseña. Marta, la encargada, entra y abre Socios"
+  },
+  {
+   "t": 1.522,
+   "texto": "Marta pulsa Restablecer contraseña en la fila de Lucía, escribe la nueva contraseña Hielo2026x y la guarda"
+  },
+  {
+   "t": 2.016,
+   "texto": "Gestionar las cuentas de socios. En Socios se ve «Contraseña restablecida»: Lucía entra con «Hielo2026x» y con su contraseña antigua «Cumbre2026» ya no puede entrar.",
+   "criterio": "AC-004-01"
+  }
+ ]
+}

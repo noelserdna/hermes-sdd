@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-02",
+ "test": "REQ-F-001 AC2 · AC-001-02 WF-002 Pablo entra y ve «Hola, Pablo» en Mis reservas",
+ "titulo": "REQ-F-001 AC2 · AC-001-02 WF-002 Pablo entra y ve «Hola, Pablo» en Mis reservas",
+ "ve": [
+  "Hola, Pablo"
+ ],
+ "narrado": "Entrar, salir y proteger la sesión. En Mis reservas se ve «Hola, Pablo».",
+ "url": "http://127.0.0.1:5173/#/mis-reservas",
+ "imagen": "AC-001-02.png",
+ "sha256": "sha256:74d2ee807ae7d2c3a36e0b1466c891c3b93fba92a777f412c714ed41b31c1945",
+ "at": "2026-11-21T13:45:38.146Z"
+}

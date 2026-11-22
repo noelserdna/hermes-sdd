@@ -1,0 +1,889 @@
+{
+ "repo": "/home/andre/proyectos-sdd/material-montana11",
+ "fase": null,
+ "sha": "3f659f4",
+ "congelados": [
+  {
+   "commit": "868868d",
+   "asunto": "fix(tests): subir el límite de tiempo por test; PROP-005 hace cientos de hashes scrypt",
+   "fichero": "vitest.config.js",
+   "clase": "config",
+   "congelado_en": "fase-0-accepted",
+   "lineas_cambiadas": 1,
+   "debilitamiento": [],
+   "aserciones_quitadas": [],
+   "aserciones_puestas": [],
+   "autorizado": false,
+   "autorizacion": "ninguna autorización firmada por una persona nombra este fichero",
+   "grave": true
+  }
+ ],
+ "capturas": [],
+ "coherencia": [],
+ "vinculos": [
+  {
+   "req": "REQ-F-006",
+   "ac": 4,
+   "prioridad": "Must",
+   "test": "API-003-08 marcarMultaPagada (UC-012) > AC-010-04 REQ-F-006 AC4 con multa Pendiente de 6 € y una reserva existente, rese",
+   "fichero": "tests/unit/multas-pago.test.js",
+   "via": "AC-010-04",
+   "faltan_then": [
+    "Tienes una multa pendiente: no puedes reservar hasta pagarla"
+   ],
+   "faltan_datos": [],
+   "grave": true
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 4,
+   "prioridad": "Must",
+   "test": "API-003-08 marcarMultaPagada (UC-012) > AC-010-04 REQ-F-006 AC4 con multa Pendiente de 6 € y una reserva existente, rese",
+   "fichero": "tests/unit/multas-pago.test.js",
+   "via": "REQ-F-006 AC4",
+   "faltan_then": [
+    "Tienes una multa pendiente: no puedes reservar hasta pagarla"
+   ],
+   "faltan_datos": [],
+   "grave": true
+  }
+ ],
+ "lint_capturas": [],
+ "mutantes_cache": {
+  "de_cache": 0,
+  "ejecutados": 0
+ },
+ "mutantes": [
+  {
+   "req": "REQ-F-001",
+   "ac": 1,
+   "texto": "Material disponible",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 2,
+   "texto": "Panel del encargado",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 3,
+   "texto": "Correo o contraseña incorrectos",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 4,
+   "texto": "Cuenta bloqueada durante 15 minutos",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 5,
+   "texto": "Material disponible",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 6,
+   "texto": "Sesión caducada, vuelve a entrar",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 7,
+   "texto": "Entrar",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/cuentas.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js",
+    "tests/unit/cuentas.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 8,
+   "texto": "Entrar",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-001",
+   "ac": 9,
+   "texto": "Correo o contraseña incorrectos",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 1,
+   "texto": "Pablo Ruiz",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js",
+    "tests/e2e/fase-4-cuentas-inventario.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 2,
+   "texto": "La contraseña debe tener al menos 8 caracteres",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js",
+    "tests/e2e/fase-4-cuentas-inventario.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js",
+    "tests/e2e/fase-4-cuentas-inventario.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 3,
+   "texto": "Ya existe un socio con ese correo",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js",
+    "tests/e2e/fase-4-cuentas-inventario.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js",
+    "tests/e2e/fase-4-cuentas-inventario.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 4,
+   "texto": "Contraseña restablecida",
+   "e2e": [
+    "tests/e2e/fase-4-bajas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/cuentas-bajas.test.js",
+    "tests/unit/ui-socios-bajas.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-4-bajas.spec.js",
+    "tests/unit/cuentas-bajas.test.js",
+    "tests/unit/ui-socios-bajas.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 5,
+   "texto": "Baja",
+   "e2e": [
+    "tests/e2e/fase-4-bajas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/cuentas-bajas.test.js",
+    "tests/unit/ui-socios-bajas.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-4-bajas.spec.js",
+    "tests/unit/cuentas-bajas.test.js",
+    "tests/unit/ui-socios-bajas.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 6,
+   "texto": "No se puede dar de baja: tiene material sin devolver",
+   "e2e": [
+    "tests/e2e/fase-4-bajas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/cuentas-bajas.test.js",
+    "tests/unit/ui-socios-bajas.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-4-bajas.spec.js",
+    "tests/unit/cuentas-bajas.test.js",
+    "tests/unit/ui-socios-bajas.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 7,
+   "texto": "Acceso no permitido",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js",
+    "tests/e2e/fase-4-cuentas-inventario.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js",
+    "tests/e2e/fase-4-cuentas-inventario.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 2,
+   "texto": "No hay unidades libres esas fechas",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/reservas.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js",
+    "tests/unit/reservas.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 4,
+   "texto": "No se puede reservar en fechas pasadas",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/reservas.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js",
+    "tests/unit/reservas.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 5,
+   "texto": "La fecha de fin no puede ser anterior a la de inicio",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/reservas.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js",
+    "tests/unit/reservas.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 6,
+   "texto": "La reserva no puede superar 14 días",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/reservas.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js",
+    "tests/unit/reservas.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 7,
+   "texto": "Tienes una multa pendiente: no puedes reservar hasta pagarla",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/reservas.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js",
+    "tests/unit/reservas.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-003",
+   "ac": 9,
+   "texto": "Piolet",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 1,
+   "texto": "Piolet",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/reservas.test.js",
+    "tests/unit/ui-mis-reservas-lista.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js",
+    "tests/unit/reservas.test.js",
+    "tests/unit/ui-mis-reservas-lista.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 2,
+   "texto": "Reserva cancelada",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/ui-mis-reservas-lista.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js",
+    "tests/unit/ui-mis-reservas-lista.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 3,
+   "texto": "Solo se puede cancelar hasta el día antes",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/reservas.test.js",
+    "tests/unit/ui-mis-reservas-lista.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js",
+    "tests/unit/reservas.test.js",
+    "tests/unit/ui-mis-reservas-lista.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 4,
+   "texto": "No tienes reservas",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/ui-mis-reservas-lista.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js",
+    "tests/unit/ui-mis-reservas-lista.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-004",
+   "ac": 5,
+   "texto": "Cancelada",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/reservas.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js",
+    "tests/unit/reservas.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 1,
+   "texto": "Entregado",
+   "e2e": [
+    "tests/e2e/fase-2-prestamo.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/prestamos-entrega.test.js",
+    "tests/unit/ui-prestamos.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-2-prestamo.spec.js",
+    "tests/unit/prestamos-entrega.test.js",
+    "tests/unit/ui-prestamos.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 2,
+   "texto": "Devuelto",
+   "e2e": [
+    "tests/e2e/fase-2-prestamo.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/prestamos-devolucion.test.js",
+    "tests/unit/ui-prestamos.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-2-prestamo.spec.js",
+    "tests/unit/prestamos-devolucion.test.js",
+    "tests/unit/ui-prestamos.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 3,
+   "texto": "No se puede entregar antes de la fecha de inicio",
+   "e2e": [
+    "tests/e2e/fase-2-prestamo.spec.js"
+   ],
+   "unitarios": [
+    "tests/api/prestamos.api.test.js",
+    "tests/unit/prestamos-entrega.test.js",
+    "tests/unit/ui-prestamos.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-2-prestamo.spec.js",
+    "tests/api/prestamos.api.test.js",
+    "tests/unit/prestamos-entrega.test.js",
+    "tests/unit/ui-prestamos.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 4,
+   "texto": "No recogida",
+   "e2e": [
+    "tests/e2e/fase-2-prestamo.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/prestamos-entrega.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-2-prestamo.spec.js",
+    "tests/unit/prestamos-entrega.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 5,
+   "texto": "Devuelto",
+   "e2e": [
+    "tests/e2e/fase-2-prestamo.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/prestamos-devolucion.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-2-prestamo.spec.js",
+    "tests/unit/prestamos-devolucion.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-005",
+   "ac": 6,
+   "texto": "Acceso no permitido",
+   "e2e": [
+    "tests/e2e/fase-2-prestamo.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/ui-prestamos.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-2-prestamo.spec.js",
+    "tests/unit/ui-prestamos.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 2,
+   "texto": "Sin multas",
+   "e2e": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/multas.test.js",
+    "tests/unit/ui-mis-multas.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js",
+    "tests/unit/multas.test.js",
+    "tests/unit/ui-mis-multas.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 4,
+   "texto": "Tienes una multa pendiente: no puedes reservar hasta pagarla",
+   "e2e": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/multas-pago.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js",
+    "tests/unit/multas-pago.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 5,
+   "texto": "Tienes una multa pendiente: no puedes reservar hasta pagarla",
+   "e2e": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/multas-pago.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js",
+    "tests/unit/multas-pago.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-007",
+   "ac": 1,
+   "texto": "Pagada",
+   "e2e": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/multas-pago.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js",
+    "tests/unit/multas-pago.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-007",
+   "ac": 2,
+   "texto": "Pagada",
+   "e2e": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/multas-pago.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js",
+    "tests/unit/multas-pago.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-007",
+   "ac": 3,
+   "texto": "Acceso no permitido",
+   "e2e": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/multas-pago.test.js",
+    "tests/unit/ui-multas.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-3-ciclo-multas.spec.js",
+    "tests/unit/multas-pago.test.js",
+    "tests/unit/ui-multas.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 3,
+   "texto": "No se puede dar de baja: está prestada",
+   "e2e": [
+    "tests/e2e/fase-4-bajas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/inventario-bajas.test.js",
+    "tests/unit/ui-inventario-bajas.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-4-bajas.spec.js",
+    "tests/unit/inventario-bajas.test.js",
+    "tests/unit/ui-inventario-bajas.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 6,
+   "texto": "La cantidad debe ser al menos 1",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js",
+    "tests/e2e/fase-4-cuentas-inventario.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/inventario.test.js",
+    "tests/unit/ui-inventario.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js",
+    "tests/e2e/fase-4-cuentas-inventario.spec.js",
+    "tests/unit/inventario.test.js",
+    "tests/unit/ui-inventario.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 7,
+   "texto": "Acceso no permitido",
+   "e2e": [
+    "tests/e2e/fase-4-cuentas-inventario.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/inventario.test.js",
+    "tests/unit/ui-inventario.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-4-cuentas-inventario.spec.js",
+    "tests/unit/inventario.test.js",
+    "tests/unit/ui-inventario.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-009",
+   "ac": 2,
+   "texto": "Vuelven hoy",
+   "e2e": [
+    "tests/e2e/fase-5-consultas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/prestamos-prestado.test.js",
+    "tests/unit/ui-prestado.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-5-consultas.spec.js",
+    "tests/unit/prestamos-prestado.test.js",
+    "tests/unit/ui-prestado.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-009",
+   "ac": 4,
+   "texto": "No hay material prestado",
+   "e2e": [
+    "tests/e2e/fase-5-consultas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/prestamos-prestado.test.js",
+    "tests/unit/ui-prestado.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-5-consultas.spec.js",
+    "tests/unit/prestamos-prestado.test.js",
+    "tests/unit/ui-prestado.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-010",
+   "ac": 2,
+   "texto": "Devuelto",
+   "e2e": [
+    "tests/e2e/fase-5-consultas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/prestamos-historial.test.js",
+    "tests/unit/ui-historial.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-5-consultas.spec.js",
+    "tests/unit/prestamos-historial.test.js",
+    "tests/unit/ui-historial.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-010",
+   "ac": 3,
+   "texto": "Sin préstamos ni multas",
+   "e2e": [
+    "tests/e2e/fase-5-consultas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/prestamos-historial.test.js",
+    "tests/unit/ui-historial.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-5-consultas.spec.js",
+    "tests/unit/prestamos-historial.test.js",
+    "tests/unit/ui-historial.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-010",
+   "ac": 4,
+   "texto": "Acceso no permitido",
+   "e2e": [
+    "tests/e2e/fase-5-consultas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/ui-historial.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-5-consultas.spec.js",
+    "tests/unit/ui-historial.test.js"
+   ]
+  },
+  {
+   "req": "REQ-NF-001",
+   "ac": 3,
+   "texto": "Nieve2026",
+   "e2e": [
+    "tests/e2e/fase-5-consultas.spec.js"
+   ],
+   "unitarios": [
+    "tests/api/seguridad.test.js",
+    "tests/unit/socios.test.js"
+   ],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-NF-001",
+   "ac": 4,
+   "texto": "Acceso no permitido",
+   "e2e": [],
+   "unitarios": [
+    "tests/api/seguridad.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/api/seguridad.test.js"
+   ]
+  }
+ ],
+ "graves": 3
+}

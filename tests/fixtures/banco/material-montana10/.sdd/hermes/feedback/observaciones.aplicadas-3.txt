@@ -1,0 +1,1 @@
+- FASE-2 (Andres Leon, 2026-11-21): Con un día de retraso la multa dice «1 días de retraso»: debería decir «1 día». En Historial, una reserva aún sin entregar sale como «Sin unidad»: mejor que diga el material (p. ej. «Piolet»).

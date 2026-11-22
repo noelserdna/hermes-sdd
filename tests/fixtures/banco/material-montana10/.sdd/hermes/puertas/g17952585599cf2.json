@@ -1,0 +1,83 @@
+{
+  "id": "g17952585599cf2",
+  "tipo": "fase",
+  "fase": "0",
+  "tablero": "material-montana10",
+  "tarjeta": "t_ee49b67d",
+  "adopcion": false,
+  "sha": "72eee1aa6404a8b8ad3fae8ec0e408b138e69b74",
+  "creada": "2026-11-21T10:55:59Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana10",
+  "titulo": "Aceptar FASE-0",
+  "texto": "🧭 Encargado: 1 aviso\n• 1 texto(s) que los criterios dicen que se ven no están tal cual en el código de la app («Máximo 14 días por reserva»): o la app los compone (y nadie comprueba la plantilla) o no los enseña\n\n🧪 La FASE-0 de «material-montana10» está lista para revisar.\n\n✅ Todo en orden: los 3 requisitos de esta fase funcionan y están comprobados.\n\n✅ Entrar, salir y proteger la sesión: funciona y está comprobado (9 de 9 criterios)\n✅ Reservar material para unas fechas: funciona y está comprobado (10 de 10 criterios)\n✅ Gestionar el inventario: funciona y está comprobado (6 de 6 criterios)\n\n🛡 No se ha tocado ningún test que ya existía (ni sus ayudas ni su configuración).\n\n🎬 Demo: vídeo y 23 capturas.\n\n👉 Pulsa ▶ Ver demo; después podrás aceptarla, aceptarla con observaciones o rechazarla.\n\n❓ Antes, una pregunta (la recomendada ya está marcada en los botones Q):\n\n1. En la demo, Pablo pedía 2 piolets de golpe, pero la web hoy reserva siempre una unidad por reserva. ¿Se puede pedir más de una unidad en la misma reserva?\n   🔧 Detalle técnico: La Demo (paso 5) y TASK-F0-009 dicen que Pablo «pide 2 piolets del 4 al 4» y que se rechaza porque el día 4 solo queda 1. UC-003 y API-002-01 reservan UNA unid…\n   A) No: cada reserva es de una unidad; si hacen falta dos, se hacen dos reservas  ⭐ recomendada\n   B) Sí: al reservar se indica cuántas unidades, y solo se reserva si hay todas libres  (📌 se anota para la siguiente entrega)\n\n👉 Si firmas sin tocar los botones Q, esto lanzará: sin más efecto: Q1.",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Aceptar",
+      "paso": 2
+    },
+    {
+      "verbo": "observaciones",
+      "etiqueta": "📝 Con observaciones",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-0/FASE-0-REQ-F-003-AC1-AC-003-01-Luc-a-reserva-.mp4",
+  "preguntas": [
+    {
+      "n": 1,
+      "id": "Q-task-implementer-001",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "req-change",
+          "ficheros": [],
+          "declarado": true
+        }
+      },
+      "cliente": "En la demo, Pablo pedía 2 piolets de golpe, pero la web hoy reserva siempre una unidad por reserva. ¿Se puede pedir más de una unidad en la misma reserva?"
+    }
+  ],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": false,
+        "codigo": "texto-fuera-del-codigo",
+        "texto": "1 texto(s) que los criterios dicen que se ven no están tal cual en el código de la app («Máximo 14 días por reserva»): o la app los compone (y nadie comprueba la plantilla) o no los enseña"
+      }
+    ],
+    "graves": 0
+  },
+  "narracion": {
+    "revisados": 0,
+    "contradicen": [],
+    "incompletos": []
+  }
+}

@@ -1,0 +1,97 @@
+<testsuites id="" name="" tests="7" failures="0" skipped="0" errors="0" time="29.891737000000003">
+<testsuite name="fase-2-prestamo.spec.js" timestamp="2026-11-22T01:01:50.070Z" hostname="chromium" tests="7" failures="0" skipped="0" time="27.848" errors="0">
+<testcase name="FASE-2 Entregar material (UC-008) › FASE-2 AC-008-03 REQ-F-005 AC3 con hoy 2026-12-04 marta intenta entregar el Piolet de Lucía y ve No se puede entregar antes de la fecha de inicio" classname="fase-2-prestamo.spec.js" time="3.426">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-dd433-antes-de-la-fecha-de-inicio-chromium/attachments/AC-008-03-c551463ded5393aec50e149c1080d30c4728ca78.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-dd433-antes-de-la-fecha-de-inicio-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-dd433-antes-de-la-fecha-de-inicio-chromium/attachments/FASE-2-FASE-2-AC-008-03-REQ-F-005-AC3-con-hoy-2-5a98eb765cba1325e58c0416c445e4a63813bdf4.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-dd433-antes-de-la-fecha-de-inicio-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-2 Entregar material (UC-008) › FASE-2 AC-008-01 REQ-F-005 AC1 con hoy 2026-12-05 marta entrega el Piolet de Lucía y ve Entregado" classname="fase-2-prestamo.spec.js" time="3.666">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-c63ca-let-de-Lucía-y-ve-Entregado-chromium/attachments/AC-008-01-13070856626e90cdf1c6eceeb8a938740042a0d4.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-c63ca-let-de-Lucía-y-ve-Entregado-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-c63ca-let-de-Lucía-y-ve-Entregado-chromium/attachments/FASE-2-FASE-2-AC-008-01-REQ-F-005-AC1-con-hoy-2-12430c61c2ea65b09bc08b2d9a61a40bc1c00f62.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-c63ca-let-de-Lucía-y-ve-Entregado-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-2 Entregar material (UC-008) › FASE-2 AC-008-02 REQ-F-005 AC4 con hoy 2026-12-06 el Piolet de Lucía sin entregar sale No recogida y su unidad queda libre" classname="fase-2-prestamo.spec.js" time="3.465">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-a5a5f-ida-y-su-unidad-queda-libre-chromium/attachments/AC-008-02-86b5f713858d14df690162449be237a21f9b1b79.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-a5a5f-ida-y-su-unidad-queda-libre-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-a5a5f-ida-y-su-unidad-queda-libre-chromium/attachments/FASE-2-FASE-2-AC-008-02-REQ-F-005-AC4-con-hoy-2-5551de908cf2ed665aeb64874796e9d424e38b55.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-a5a5f-ida-y-su-unidad-queda-libre-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-2 Entregar material (UC-008) › FASE-2 AC-008-04 REQ-F-005 AC6 lucia, socia, abre la dirección de Préstamos y ve Acceso no permitido" classname="fase-2-prestamo.spec.js" time="3.281">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-e4b30-os-y-ve-Acceso-no-permitido-chromium/attachments/AC-008-04-895cf22793c11d4f235c0ea3bb72164d32ffb465.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-e4b30-os-y-ve-Acceso-no-permitido-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-e4b30-os-y-ve-Acceso-no-permitido-chromium/attachments/FASE-2-FASE-2-AC-008-04-REQ-F-005-AC6-lucia-so-dcf4a8ad076701533bf7e54b908689e9d4dc1fc8.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-e4b30-os-y-ve-Acceso-no-permitido-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-01 REQ-F-005 AC2 el Piolet entregado con fin 2026-12-07 se devuelve el 2026-12-07 y marta ve Devuelto" classname="fase-2-prestamo.spec.js" time="4.586">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-6de81-6-12-07-y-marta-ve-Devuelto-chromium/attachments/AC-009-01-e68d0b849faeb77a901dff81b29bb9d0b18db555.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-6de81-6-12-07-y-marta-ve-Devuelto-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-6de81-6-12-07-y-marta-ve-Devuelto-chromium/attachments/FASE-2-FASE-2-AC-009-01-REQ-F-005-AC2-el-Piolet-1cf8df4b8ead6b11eebab315f1368e27aab89a3a.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-6de81-6-12-07-y-marta-ve-Devuelto-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-03 REQ-F-005 AC5 repetir la devolución del Casco el 2026-12-11 deja Devuelto con la fecha 2026-12-10 y una sola multa de 6,00 € Pendiente" classname="fase-2-prestamo.spec.js" time="4.799">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-f7ccc-a-multa-de-6-00-€-Pendiente-chromium/attachments/AC-009-03-229b8ec04bb1fafabaab2e535f65b412fc59e575.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-f7ccc-a-multa-de-6-00-€-Pendiente-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-f7ccc-a-multa-de-6-00-€-Pendiente-chromium/attachments/FASE-2-FASE-2-AC-009-03-REQ-F-005-AC5-repetir-l-d408bb29846560e5b48986e692ba1e679702a2d1.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-f7ccc-a-multa-de-6-00-€-Pendiente-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-02 AC-010-01 REQ-F-006 AC1 el Casco de Pablo con fin 2026-12-07 se devuelve el 2026-12-10 y marta ve Devuelto con la multa 6,00 € Pendiente" classname="fase-2-prestamo.spec.js" time="4.625">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-11c56-n-la-multa-6-00-€-Pendiente-chromium/attachments/AC-009-02-6788450699101df9e4000e33669b7622a3bb7c3b.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-11c56-n-la-multa-6-00-€-Pendiente-chromium/attachments/AC-010-01-2ace181fa5b3542b5bb6c73a3f24ca358873175f.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-11c56-n-la-multa-6-00-€-Pendiente-chromium/test-finished-1.png]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-11c56-n-la-multa-6-00-€-Pendiente-chromium/attachments/FASE-2-FASE-2-AC-009-02-AC-010-01-REQ-F-006-AC1-c2afc143622e6d8ac6981c8468f85f0ea3e2cf4e.webm]]
+
+[[ATTACHMENT|../../evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-11c56-n-la-multa-6-00-€-Pendiente-chromium/video.webm]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

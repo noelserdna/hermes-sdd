@@ -1,0 +1,14 @@
+{
+  "verbo": "observaciones",
+  "texto": "Con un día de retraso la multa dice «1 días de retraso»: debería decir «1 día». En Historial, una reserva aún sin entregar sale como «Sin unidad»: mejor que diga el material (p. ej. «Piolet»).",
+  "actor": {
+    "persona": "yo",
+    "canal": "local",
+    "id": "andre"
+  },
+  "prueba": {
+    "host": "DESKTOP-7HT2139",
+    "demo": "no vista"
+  },
+  "at": "2026-11-21T12:21:46Z"
+}

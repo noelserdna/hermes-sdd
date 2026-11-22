@@ -1,0 +1,16 @@
+{
+ "video": "FASE-3-REQ-F-002-AC2-AC-002-02-con-marta-clu.webm",
+ "test": "REQ-F-002 AC2 · AC-002-02 con «marta@club.es» ya dada de alta, otra alta con ese correo muestra «Ya existe un socio con ese correo» y la lista sigue con una sola «Marta Ruiz»",
+ "titulo": "REQ-F-002 AC2 · AC-002-02 con «marta@club.es» ya dada de alta, otra alta con ese correo muestra «Ya existe un socio con ese correo» y la lista sigue con una sola «Marta Ruiz»",
+ "narraciones": [
+  {
+   "t": 0.01,
+   "texto": "El encargado entra, abre Socios y da de alta a Marta Ruiz con marta@club.es; después intenta dar de alta otra vez ese mismo correo"
+  },
+  {
+   "t": 0.906,
+   "texto": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «Ya existe un socio con ese correo», y la lista sigue con una sola «Marta Ruiz».",
+   "criterio": "AC-002-02"
+  }
+ ]
+}

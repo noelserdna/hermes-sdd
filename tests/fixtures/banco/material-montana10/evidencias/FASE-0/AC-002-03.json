@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-002-03",
+ "test": "REQ-F-002 AC3 · AC-002-03 el encargado da de alta a un socio con la contraseña «corta» (5 caracteres) y ve «La contraseña debe tener al menos 8 caracteres»",
+ "titulo": "REQ-F-002 AC3 · AC-002-03 el encargado da de alta a un socio con la contraseña «corta» (5 caracteres) y ve «La contraseña debe tener al menos 8 caracteres»",
+ "ve": [
+  "La contraseña debe tener al menos 8 caracteres"
+ ],
+ "narrado": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «La contraseña debe tener al menos 8 caracteres», y no se crea ninguna cuenta.",
+ "url": "http://127.0.0.1:5173/#/socios",
+ "imagen": "AC-002-03.png",
+ "sha256": "sha256:82e0da1a67e710e99e6dcd54c7cd5b59e00b544974426511d93972b7ebc9e731",
+ "at": "2026-11-21T12:35:14.863Z"
+}

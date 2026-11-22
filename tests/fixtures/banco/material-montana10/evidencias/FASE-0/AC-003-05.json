@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-003-05",
+ "test": "REQ-F-003 AC5 · AC-003-05 hoy es 2026-12-01: reservar «Casco» desde 2026-11-30 se rechaza por pasado",
+ "titulo": "REQ-F-003 AC5 · AC-003-05 hoy es 2026-12-01: reservar «Casco» desde 2026-11-30 se rechaza por pasado",
+ "ve": [
+  "Las fechas no pueden estar en el pasado"
+ ],
+ "narrado": "Reservar material para unas fechas. En Reservar se ve «Las fechas no pueden estar en el pasado» y no se crea ninguna reserva.",
+ "url": "http://127.0.0.1:5173/#/reservar",
+ "imagen": "AC-003-05.png",
+ "sha256": "sha256:f4ec5ad126f490a4f36af4589b58fdaa4f8b59c6ed5da9172d9080def8234503",
+ "at": "2026-11-21T13:45:58.683Z"
+}

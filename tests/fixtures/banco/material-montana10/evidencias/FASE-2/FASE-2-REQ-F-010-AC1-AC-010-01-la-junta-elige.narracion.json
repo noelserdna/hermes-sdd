@@ -1,0 +1,16 @@
+{
+ "video": "FASE-2-REQ-F-010-AC1-AC-010-01-la-junta-elige.webm",
+ "test": "REQ-F-010 AC1 · AC-010-01 la junta elige a Lucía en Historial y ve «Piolet 2 · 2026-12-05 a 2026-12-07 · Devuelta» y «Multa de 2 € · Pagada»",
+ "titulo": "REQ-F-010 AC1 · AC-010-01 la junta elige a Lucía en Historial y ve «Piolet 2 · 2026-12-05 a 2026-12-07 · Devuelta» y «Multa de 2 € · Pagada»",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "La junta entra, abre Historial y elige a Lucía, que tomó el Piolet 2 del 5 al 7 de diciembre y tiene una multa de 2 euros pagada"
+  },
+  {
+   "t": 0.597,
+   "texto": "Consultar el historial de un socio. En Historial se ve «Piolet 2 · 2026-12-05 a 2026-12-07 · Devuelta» y «Multa de 2 € · Pagada».",
+   "criterio": "AC-010-01"
+  }
+ ]
+}

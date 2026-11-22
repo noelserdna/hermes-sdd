@@ -1,0 +1,158 @@
+{
+ "fase": "3",
+ "plan": "plan/fases/FASE-3-SOCIOS.md",
+ "workflows": [],
+ "casos_de_uso": [
+  {
+   "id": "UC-002",
+   "titulo": "Gestionar socios",
+   "fichero": "spec/use-cases/UC-002-gestionar-socios.md",
+   "flujo": [
+    "Encargado: abre Socios.",
+    "System: lista nombre, correo y estado de los socios (API-001-06).",
+    "Encargado: envía nombre, correo y contraseña inicial.",
+    "System: normaliza el correo (RN-014); valida contraseña (INV-ACC-002) y correo único (INV-ACC-001).",
+    "System: crea la cuenta Activa con rol socio y solo su hash (INV-ACC-003); aparece en la lista. (AC-002-01)"
+   ],
+   "extensiones": [
+    {
+     "texto": "3a. Encargado pide la baja → System comprueba INV-ACC-007 (RN-010), deja la cuenta en Baja (INV-ACC-006) y la lista muestra \"Baja\".",
+     "criterios": [
+      "AC-002-04"
+     ]
+    },
+    {
+     "texto": "3b. Encargado envía nueva contraseña → System la valida y sustituye la anterior (INV-ACC-103); muestra \"Contraseña restablecida\".",
+     "criterios": [
+      "AC-002-06"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-002-01",
+    "AC-002-02",
+    "AC-002-03",
+    "AC-002-04",
+    "AC-002-05",
+    "AC-002-06",
+    "AC-002-07"
+   ]
+  },
+  {
+   "id": "UC-006",
+   "titulo": "Devolver y multar",
+   "fichero": "spec/use-cases/UC-006-devolver-y-multar.md",
+   "flujo": [
+    "Encargado: marca la devolución de una reserva.",
+    "System: comprueba que existe y está Prestada (INV-LOA-003).",
+    "System: cuenta los días naturales de retraso desde `hasta` (RN-009).",
+    "System: pasa la reserva a Devuelta y fija `devueltaEl` (API-003-02).",
+    "System: si días > 0, crea una multa Pendiente en la misma operación indivisible (INV-LOA-004).",
+    "System: muestra \"{unidad} · {socio} · Devuelta\" y, si hay multa, su aviso; el Socio la ve después en Mis reservas."
+   ],
+   "extensiones": [
+    {
+     "texto": "3a. Devuelta el día `hasta` o antes → no se crea multa (RN-009).",
+     "criterios": [
+      "AC-006-01"
+     ]
+    }
+   ],
+   "criterios": []
+  }
+ ],
+ "criterios": [
+  {
+   "id": "AC-002-01",
+   "req": "REQ-F-002",
+   "ac": 1,
+   "uc": "UC-002",
+   "frase": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «Marta Ruiz».",
+   "visible": true,
+   "then": "the user sees \"Marta Ruiz\" in the list of Socios and Marta can enter",
+   "ve": [
+    "Marta Ruiz"
+   ],
+   "pantalla": "Socios"
+  },
+  {
+   "id": "AC-002-02",
+   "req": "REQ-F-002",
+   "ac": 2,
+   "uc": "UC-002",
+   "frase": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «Ya existe un socio con ese correo».",
+   "visible": true,
+   "then": "the user sees \"Ya existe un socio con ese correo\" and the list keeps one \"Marta Ruiz\"",
+   "ve": [
+    "Ya existe un socio con ese correo"
+   ],
+   "pantalla": "Socios"
+  },
+  {
+   "id": "AC-002-03",
+   "req": "REQ-F-002",
+   "ac": 3,
+   "uc": "UC-002",
+   "frase": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «La contraseña debe tener al menos 8 caracteres».",
+   "visible": true,
+   "then": "the user sees \"La contraseña debe tener al menos 8 caracteres\" and no account is created",
+   "ve": [
+    "La contraseña debe tener al menos 8 caracteres"
+   ],
+   "pantalla": "Socios"
+  },
+  {
+   "id": "AC-002-04",
+   "req": "REQ-F-002",
+   "ac": 4,
+   "uc": "UC-002",
+   "frase": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «{nombre}» y «Baja».",
+   "visible": true,
+   "then": "the user sees \"Pablo\" with \"Baja\" in Socios and Pablo cannot enter",
+   "ve": [
+    "{nombre}",
+    "Baja"
+   ],
+   "pantalla": "Socios"
+  },
+  {
+   "id": "AC-002-05",
+   "req": "REQ-F-002",
+   "ac": 5,
+   "uc": "UC-002",
+   "frase": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «No se puede dar de baja: tiene material prestado o multas pendientes».",
+   "visible": true,
+   "then": "the user sees \"No se puede dar de baja: tiene material prestado o multas pendientes\" and her account stays active",
+   "ve": [
+    "No se puede dar de baja: tiene material prestado o multas pendientes"
+   ],
+   "pantalla": "Socios"
+  },
+  {
+   "id": "AC-002-06",
+   "req": "REQ-F-002",
+   "ac": 6,
+   "uc": "UC-002",
+   "frase": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «Contraseña restablecida».",
+   "visible": true,
+   "then": "Marta enters with it and the old one no longer works",
+   "ve": [
+    "Contraseña restablecida"
+   ],
+   "pantalla": "Socios"
+  },
+  {
+   "id": "AC-002-07",
+   "req": "REQ-F-002",
+   "ac": 7,
+   "uc": "UC-002",
+   "frase": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «No tienes permiso para ver esta pantalla».",
+   "visible": true,
+   "then": "the user sees \"No tienes permiso para ver esta pantalla\"",
+   "ve": [
+    "No tienes permiso para ver esta pantalla"
+   ],
+   "pantalla": "Socios"
+  }
+ ]
+}

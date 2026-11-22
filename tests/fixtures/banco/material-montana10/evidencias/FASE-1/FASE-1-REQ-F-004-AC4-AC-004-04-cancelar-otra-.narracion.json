@@ -1,0 +1,20 @@
+{
+ "video": "FASE-1-REQ-F-004-AC4-AC-004-04-cancelar-otra-.webm",
+ "test": "REQ-F-004 AC4 · AC-004-04 cancelar otra vez una reserva ya Cancelada deja una sola fila «Cancelada»",
+ "titulo": "REQ-F-004 AC4 · AC-004-04 cancelar otra vez una reserva ya Cancelada deja una sola fila «Cancelada»",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "Lucía abre Mis reservas en dos pestañas y cancela su reserva en la primera"
+  },
+  {
+   "t": 0.684,
+   "texto": "En la segunda pestaña, que aún enseña la reserva como Reservada, Lucía pulsa Cancelar otra vez"
+  },
+  {
+   "t": 0.927,
+   "texto": "Ver y cancelar mis reservas. La lista sigue mostrando una sola fila cancelada, «Piolet · 2026-12-05 a 2026-12-07 · Cancelada», y no cambia nada más.",
+   "criterio": "AC-004-04"
+  }
+ ]
+}

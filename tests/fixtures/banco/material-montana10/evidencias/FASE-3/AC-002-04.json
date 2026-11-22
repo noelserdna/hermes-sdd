@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-002-04",
+ "test": "REQ-F-002 AC4 · AC-002-04 el encargado da de baja a «Pablo» (sin reserva en curso ni multa pendiente) y lo ve con «Baja» en Socios; Pablo ya no puede entrar",
+ "titulo": "REQ-F-002 AC4 · AC-002-04 el encargado da de baja a «Pablo» (sin reserva en curso ni multa pendiente) y lo ve con «Baja» en Socios; Pablo ya no puede entrar",
+ "ve": [
+  "Pablo",
+  "Baja"
+ ],
+ "narrado": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «Pablo» y «Baja», y Pablo ya no puede entrar.",
+ "url": "http://127.0.0.1:5173/#/socios",
+ "imagen": "AC-002-04.png",
+ "sha256": "sha256:4dabc851f7949ed60f4e93d821cafc444ef10a5bc8bb5796bfd40d2fc15b36ff",
+ "at": "2026-11-21T13:47:13.307Z"
+}

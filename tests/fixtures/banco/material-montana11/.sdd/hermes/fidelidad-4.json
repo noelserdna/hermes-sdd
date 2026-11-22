@@ -1,0 +1,230 @@
+{
+ "repo": "/home/andre/proyectos-sdd/material-montana11",
+ "fase": "4",
+ "sha": "a986aed",
+ "congelados": [],
+ "capturas": [],
+ "coherencia": [],
+ "vinculos": [
+  {
+   "req": "REQ-F-006",
+   "ac": 4,
+   "prioridad": "Must",
+   "test": "API-003-08 marcarMultaPagada (UC-012) > AC-010-04 REQ-F-006 AC4 con multa Pendiente de 6 € y una reserva existente, rese",
+   "fichero": "tests/unit/multas-pago.test.js",
+   "via": "AC-010-04",
+   "faltan_then": [
+    "Tienes una multa pendiente: no puedes reservar hasta pagarla"
+   ],
+   "faltan_datos": [],
+   "grave": true
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 4,
+   "prioridad": "Must",
+   "test": "API-003-08 marcarMultaPagada (UC-012) > AC-010-04 REQ-F-006 AC4 con multa Pendiente de 6 € y una reserva existente, rese",
+   "fichero": "tests/unit/multas-pago.test.js",
+   "via": "REQ-F-006 AC4",
+   "faltan_then": [
+    "Tienes una multa pendiente: no puedes reservar hasta pagarla"
+   ],
+   "faltan_datos": [],
+   "grave": true
+  }
+ ],
+ "lint_capturas": [
+  {
+   "codigo": "C-03",
+   "fichero": "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-aa94a-gar-y-reiniciar-el-servidor-chromium/attachments/AC-003-01-317ffceaf57a9801d2e7aa6ffd6c42bd941e20a0.png",
+   "linea": 0,
+   "req": "REQ-F-002",
+   "ac": 1,
+   "mensaje": "not counted for REQ-F-002 AC1: taken by the test \"WF-002 Sesión de acceso › WF-002 AC-003-01 el encargado crea a Pablo Ruiz y lo …\", which does not pass (the criterion is already shown by its own capture)",
+   "grave": false
+  }
+ ],
+ "mutantes_cache": {
+  "de_cache": 0,
+  "ejecutados": 0
+ },
+ "mutantes": [
+  {
+   "req": "REQ-F-002",
+   "ac": 1,
+   "texto": "Pablo Ruiz",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js",
+    "tests/e2e/fase-4-cuentas-inventario.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 2,
+   "texto": "La contraseña debe tener al menos 8 caracteres",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js",
+    "tests/e2e/fase-4-cuentas-inventario.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js",
+    "tests/e2e/fase-4-cuentas-inventario.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 3,
+   "texto": "Ya existe un socio con ese correo",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js",
+    "tests/e2e/fase-4-cuentas-inventario.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js",
+    "tests/e2e/fase-4-cuentas-inventario.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 4,
+   "texto": "Contraseña restablecida",
+   "e2e": [
+    "tests/e2e/fase-4-bajas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/cuentas-bajas.test.js",
+    "tests/unit/ui-socios-bajas.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-4-bajas.spec.js",
+    "tests/unit/cuentas-bajas.test.js",
+    "tests/unit/ui-socios-bajas.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 5,
+   "texto": "Baja",
+   "e2e": [
+    "tests/e2e/fase-4-bajas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/cuentas-bajas.test.js",
+    "tests/unit/ui-socios-bajas.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-4-bajas.spec.js",
+    "tests/unit/cuentas-bajas.test.js",
+    "tests/unit/ui-socios-bajas.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 6,
+   "texto": "No se puede dar de baja: tiene material sin devolver",
+   "e2e": [
+    "tests/e2e/fase-4-bajas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/cuentas-bajas.test.js",
+    "tests/unit/ui-socios-bajas.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-4-bajas.spec.js",
+    "tests/unit/cuentas-bajas.test.js",
+    "tests/unit/ui-socios-bajas.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-002",
+   "ac": 7,
+   "texto": "Acceso no permitido",
+   "e2e": [
+    "tests/e2e/fase-0-wf-002.spec.js",
+    "tests/e2e/fase-4-cuentas-inventario.spec.js"
+   ],
+   "unitarios": [],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-0-wf-002.spec.js",
+    "tests/e2e/fase-4-cuentas-inventario.spec.js"
+   ]
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 3,
+   "texto": "No se puede dar de baja: está prestada",
+   "e2e": [
+    "tests/e2e/fase-4-bajas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/inventario-bajas.test.js",
+    "tests/unit/ui-inventario-bajas.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-4-bajas.spec.js",
+    "tests/unit/inventario-bajas.test.js",
+    "tests/unit/ui-inventario-bajas.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 6,
+   "texto": "La cantidad debe ser al menos 1",
+   "e2e": [
+    "tests/e2e/fase-1-reservas.spec.js",
+    "tests/e2e/fase-4-cuentas-inventario.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/inventario.test.js",
+    "tests/unit/ui-inventario.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-1-reservas.spec.js",
+    "tests/e2e/fase-4-cuentas-inventario.spec.js",
+    "tests/unit/inventario.test.js",
+    "tests/unit/ui-inventario.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-008",
+   "ac": 7,
+   "texto": "Acceso no permitido",
+   "e2e": [
+    "tests/e2e/fase-4-cuentas-inventario.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/inventario.test.js",
+    "tests/unit/ui-inventario.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-4-cuentas-inventario.spec.js",
+    "tests/unit/inventario.test.js",
+    "tests/unit/ui-inventario.test.js"
+   ]
+  }
+ ],
+ "graves": 2
+}

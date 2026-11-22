@@ -1,0 +1,60 @@
+{
+  "id": "g17952602112b7a",
+  "tipo": "fase",
+  "fase": "1",
+  "tablero": "material-montana10",
+  "tarjeta": "t_22229096",
+  "adopcion": false,
+  "sha": "27f1f77085272c82701ecd66e1c08468612e4ab2",
+  "creada": "2026-11-21T11:23:31Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana10",
+  "titulo": "Aceptar FASE-1",
+  "texto": "🧭 Encargado: 1 aviso\n• La FASE-1 añadió 925 líneas de tests para 290 de código (3.2×): revisa si los tests prueban lo que piden los criterios\n\n🧪 La FASE-1 de «material-montana10» está lista para revisar.\n\n✅ Todo en orden: los 3 requisitos de esta fase funcionan y están comprobados.\n\n✅ Ver y cancelar mis reservas: funciona y está comprobado (7 de 7 criterios)\n✅ Entregar lo reservado: funciona y está comprobado (4 de 4 criterios)\n✅ Ver lo prestado y lo que vuelve cada día: funciona y está comprobado (5 de 5 criterios)\n\n🛡 No se ha tocado ningún test que ya existía (ni sus ayudas ni su configuración).\n\n🎬 Demo: vídeo y 16 capturas.\n\n👉 Pulsa ▶ Ver demo; después podrás aceptarla, aceptarla con observaciones o rechazarla.",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Aceptar",
+      "paso": 2
+    },
+    {
+      "verbo": "observaciones",
+      "etiqueta": "📝 Con observaciones",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-1/FASE-1-FASE-1-Demo-Pablo-cancela-Luc-a-no-pue.mp4",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": false,
+        "codigo": "tests-de-mas",
+        "texto": "La FASE-1 añadió 925 líneas de tests para 290 de código (3.2×): revisa si los tests prueban lo que piden los criterios"
+      }
+    ],
+    "graves": 0
+  },
+  "narracion": {
+    "revisados": 0,
+    "contradicen": [],
+    "incompletos": []
+  }
+}

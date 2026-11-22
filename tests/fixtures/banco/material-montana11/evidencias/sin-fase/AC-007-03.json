@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-007-03",
+ "test": "FASE-1 Cancelar reserva (hoy 2026-12-04) › FASE-1 AC-007-03 lucia repite la cancelación de su Piolet ya cancelado y la reserva sigue Cancelada",
+ "titulo": "FASE-1 AC-007-03 lucia repite la cancelación de su Piolet ya cancelado y la reserva sigue Cancelada",
+ "ve": [
+  "Cancelada"
+ ],
+ "narrado": "Ver y cancelar mis reservas. En Mis reservas se ve «Cancelada»: la reserva sigue Cancelada y no cambia nada más, sigue habiendo una sola reserva.",
+ "url": "http://127.0.0.1:33843/#/reservas",
+ "imagen": "AC-007-03.png",
+ "sha256": "sha256:750a0fecc67ce04646be40ba89b6d4acd971a71427eab3cb1d2cf82b053bdd0e",
+ "at": "2026-11-22T06:14:58.921Z"
+}

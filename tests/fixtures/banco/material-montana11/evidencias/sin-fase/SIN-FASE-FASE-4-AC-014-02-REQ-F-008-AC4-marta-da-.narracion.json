@@ -1,0 +1,16 @@
+{
+ "video": "SIN-FASE-FASE-4-AC-014-02-REQ-F-008-AC4-marta-da-.webm",
+ "test": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-014-02 REQ-F-008 AC4 marta da de baja la única Tienda con una reserva desde 2026-12-20 y ve 1 reserva cancelada por la baja",
+ "titulo": "FASE-4 AC-014-02 REQ-F-008 AC4 marta da de baja la única Tienda con una reserva desde 2026-12-20 y ve 1 reserva cancelada por la baja",
+ "narraciones": [
+  {
+   "t": 1.11,
+   "texto": "La única Tienda del club tiene una reserva de Lucía desde el 20 de diciembre. Marta entra, abre Inventario y le da de baja"
+  },
+  {
+   "t": 1.829,
+   "texto": "Gestionar el inventario. En Inventario se ve «1 reserva cancelada por la baja»: la reserva de Lucía desde el 20 de diciembre queda cancelada.",
+   "criterio": "AC-014-02"
+  }
+ ]
+}

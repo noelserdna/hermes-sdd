@@ -1,0 +1,20 @@
+{
+ "video": "WF-002-REQ-F-001-AC4-AC-001-04-WF-002-tras-5-.webm",
+ "test": "REQ-F-001 AC4 · AC-001-04 WF-002 tras 5 fallos seguidos la cuenta queda bloqueada",
+ "titulo": "REQ-F-001 AC4 · AC-001-04 WF-002 tras 5 fallos seguidos la cuenta queda bloqueada",
+ "narraciones": [
+  {
+   "t": 0.007,
+   "texto": "Lucía se equivoca de contraseña cinco veces seguidas"
+  },
+  {
+   "t": 0.853,
+   "texto": "Ahora envía la contraseña correcta, «Cumbre2026», dentro de los 15 minutos"
+  },
+  {
+   "t": 1.159,
+   "texto": "Entrar, salir y proteger la sesión. En Entrar se ve «Cuenta bloqueada. Inténtalo de nuevo en 15 minutos» y no se abre ninguna sesión.",
+   "criterio": "AC-001-04"
+  }
+ ]
+}

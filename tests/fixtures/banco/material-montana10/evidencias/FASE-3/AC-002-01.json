@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-002-01",
+ "test": "REQ-F-002 AC1 · AC-002-01 el encargado da de alta a «Marta Ruiz» («marta@club.es», «Glaciar2026») y la ve en Socios, y Marta puede entrar",
+ "titulo": "REQ-F-002 AC1 · AC-002-01 el encargado da de alta a «Marta Ruiz» («marta@club.es», «Glaciar2026») y la ve en Socios, y Marta puede entrar",
+ "ve": [
+  "Marta Ruiz"
+ ],
+ "narrado": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «Marta Ruiz», y Marta puede entrar con su contraseña.",
+ "url": "http://127.0.0.1:5173/#/socios",
+ "imagen": "AC-002-01.png",
+ "sha256": "sha256:ebfd614df5eeaa323ad504e6b16543add16919914a8c944dd7a65b9aa53e97e3",
+ "at": "2026-11-21T13:47:09.203Z"
+}

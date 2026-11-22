@@ -1,0 +1,5 @@
+{"generatedAt":"2026-11-21","mode":"semantic","judge":"llm","projectFramework":"vite-middleware",
+"endpoints":{"total_spec":20,"implemented":20,"missing":[],"mismatches":[{"api":"API-001-05","spec":"/api/socios/contrasena","code":"/api/socios/restablecer","confidence":"high","note":"nombre de ruta distinto; cliente decidió dejarlo (Q-task-implementer-004)"}],"orphans":[{"route":"GET /api/sesion","file":"src/server/sesiones.js:23"},{"route":"GET /api/salud","file":"src/server/http.js:22","note":"infraestructura, documentada en OPERATION-MAPPING"}]},
+"bdd":{"scenarios":85,"covered":85,"uncovered":[]},
+"semantic":{"targets":14,"covered":13,"partial":0,"likely_missing":0,"not_checkable":["REQ-C-001","REQ-C-002","REQ-C-003"],"note":"sin traceability-graph; juez = lectura directa"},
+"metrics":{"endpoint_coverage_pct":100,"bdd_coverage_pct":100}}

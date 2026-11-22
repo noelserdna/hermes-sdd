@@ -1,0 +1,16 @@
+{
+ "video": "WF-002-REQ-F-001-AC5-AC-001-05-WF-002-cumplid.webm",
+ "test": "REQ-F-001 AC5 · AC-001-05 WF-002 cumplido el bloqueo de 15 minutos, Lucía entra",
+ "titulo": "REQ-F-001 AC5 · AC-001-05 WF-002 cumplido el bloqueo de 15 minutos, Lucía entra",
+ "narraciones": [
+  {
+   "t": 0.009,
+   "texto": "Lucía se bloqueó hace 15 minutos y vuelve a Entrar con su contraseña correcta"
+  },
+  {
+   "t": 0.39,
+   "texto": "Entrar, salir y proteger la sesión. En Mis reservas se ve «Hola, Lucía», cumplido el bloqueo de 15 minutos.",
+   "criterio": "AC-001-05"
+  }
+ ]
+}

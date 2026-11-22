@@ -1,0 +1,85 @@
+{
+  "id": "g1795299386993f",
+  "tipo": "fase",
+  "fase": "1",
+  "tablero": "material-montana11",
+  "tarjeta": "t_db26455e",
+  "adopcion": false,
+  "sha": "87d197d35d5858babd510b4971d74141ae8c21c7",
+  "creada": "2026-11-21T22:16:26Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana11",
+  "titulo": "Aceptar FASE-1",
+  "texto": "🧪 La FASE-1 de «material-montana11» está lista para revisar.\n\n✅ Todo en orden: los 2 requisitos de esta fase funcionan y están comprobados.\n\n✅ Reservar material para unas fechas: funciona y está comprobado (9 de 9 criterios)\n✅ Ver y cancelar mis reservas: funciona y está comprobado (5 de 5 criterios)\n\n🛡 No se ha tocado ningún test que ya existía (ni sus ayudas ni su configuración).\n\n🎬 Demo: vídeo y 16 capturas.\n\n🤖 Jev ha leído el texto en off de 16 vídeos: en 1 no dice todo lo que pide el criterio (REQ-F-003 AC9).\n\n👉 Pulsa ▶ Ver demo; después podrás aceptarla, aceptarla con observaciones o rechazarla.\n\n❓ Antes, una pregunta (la recomendada ya está marcada en los botones Q):\n\n1. Una comprobación interna de la web impide añadir funciones nuevas de forma limpia. Es un detalle técnico que no cambia nada de lo que ves; solo hace falta permiso para retocar esa comprobación.\n   🔧 Detalle técnico: El test aceptado tests/unit/permisos.test.js fija el conjunto cerrado de operaciones de permisos.js. Para no editarlo, las operaciones de FASE-1 se registran e…\n   A) Se deja como está; las funciones nuevas se registran aparte  ⭐ recomendada\n   B) Se retoca la comprobación para que admita funciones nuevas  (✏️ autoriza editar tests/unit/permisos.test.js)\n\n👉 Si firmas sin tocar los botones Q, esto lanzará: sin más efecto: Q1.",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Aceptar",
+      "paso": 2
+    },
+    {
+      "verbo": "observaciones",
+      "etiqueta": "📝 Con observaciones",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-1/FASE-1-FASE-1-AC-005-01-lucia-reserva-Piolet-de.mp4",
+  "preguntas": [
+    {
+      "n": 1,
+      "id": "Q-task-implementer-001",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "editar-test",
+          "ficheros": [
+            "tests/unit/permisos.test.js"
+          ],
+          "declarado": true
+        }
+      },
+      "cliente": "Una comprobación interna de la web impide añadir funciones nuevas de forma limpia. Es un detalle técnico que no cambia nada de lo que ves; solo hace falta permiso para retocar esa comprobación."
+    }
+  ],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [],
+    "graves": 0
+  },
+  "narracion": {
+    "revisados": 16,
+    "modelo": "jev-1.14.0",
+    "contradicen": [],
+    "incompletos": [
+      {
+        "criterio": "REQ-F-003-AC9",
+        "puntos": 1.24
+      }
+    ]
+  }
+}

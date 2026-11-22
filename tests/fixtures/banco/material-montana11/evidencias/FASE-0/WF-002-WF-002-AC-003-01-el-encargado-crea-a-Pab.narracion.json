@@ -1,0 +1,24 @@
+{
+ "video": "WF-002-WF-002-AC-003-01-el-encargado-crea-a-Pab.webm",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-003-01 el encargado crea a Pablo Ruiz y lo ve en Socios, también tras recargar y reiniciar el servidor",
+ "titulo": "WF-002 AC-003-01 el encargado crea a Pablo Ruiz y lo ve en Socios, también tras recargar y reiniciar el servidor",
+ "narraciones": [
+  {
+   "t": 0.753,
+   "texto": "Marta entra y abre Socios desde el menú"
+  },
+  {
+   "t": 1.41,
+   "texto": "Marta escribe el nombre, el correo y la contraseña del nuevo socio y pulsa Crear socio"
+  },
+  {
+   "t": 1.693,
+   "texto": "Gestionar las cuentas de socios. En Socios se ve «Pablo Ruiz».",
+   "criterio": "AC-003-01"
+  },
+  {
+   "t": 1.964,
+   "texto": "Se recarga la página y se reinicia el servidor: Pablo Ruiz sigue en la lista"
+  }
+ ]
+}

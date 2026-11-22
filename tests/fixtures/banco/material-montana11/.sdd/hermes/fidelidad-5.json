@@ -1,0 +1,175 @@
+{
+ "repo": "/home/andre/proyectos-sdd/material-montana11",
+ "fase": "5",
+ "sha": "befd530",
+ "congelados": [],
+ "capturas": [],
+ "coherencia": [],
+ "vinculos": [
+  {
+   "req": "REQ-F-006",
+   "ac": 4,
+   "prioridad": "Must",
+   "test": "API-003-08 marcarMultaPagada (UC-012) > AC-010-04 REQ-F-006 AC4 con multa Pendiente de 6 € y una reserva existente, rese",
+   "fichero": "tests/unit/multas-pago.test.js",
+   "via": "AC-010-04",
+   "faltan_then": [
+    "Tienes una multa pendiente: no puedes reservar hasta pagarla"
+   ],
+   "faltan_datos": [],
+   "grave": true
+  },
+  {
+   "req": "REQ-F-006",
+   "ac": 4,
+   "prioridad": "Must",
+   "test": "API-003-08 marcarMultaPagada (UC-012) > AC-010-04 REQ-F-006 AC4 con multa Pendiente de 6 € y una reserva existente, rese",
+   "fichero": "tests/unit/multas-pago.test.js",
+   "via": "REQ-F-006 AC4",
+   "faltan_then": [
+    "Tienes una multa pendiente: no puedes reservar hasta pagarla"
+   ],
+   "faltan_datos": [],
+   "grave": true
+  }
+ ],
+ "lint_capturas": [
+  {
+   "codigo": "C-03",
+   "fichero": "evidencias/FASE-5/.playwright/fase-5-consultas-FASE-5-Lo-cffd6-Vuelven-hoy-y-el-Casco-2-no-chromium/attachments/AC-015-02-5807c236135ad8504699e75223ddfb3b2babd7da.png",
+   "linea": 0,
+   "req": "REQ-F-009",
+   "ac": 2,
+   "mensaje": "not counted for REQ-F-009 AC2: attached by the test \"FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-…\", which does not pass (the criterion is already shown by its own capture)",
+   "grave": false
+  }
+ ],
+ "mutantes_cache": {
+  "de_cache": 0,
+  "ejecutados": 0
+ },
+ "mutantes": [
+  {
+   "req": "REQ-F-009",
+   "ac": 2,
+   "texto": "Vuelven hoy",
+   "e2e": [
+    "tests/e2e/fase-5-consultas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/prestamos-prestado.test.js",
+    "tests/unit/ui-prestado.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-5-consultas.spec.js",
+    "tests/unit/prestamos-prestado.test.js",
+    "tests/unit/ui-prestado.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-009",
+   "ac": 4,
+   "texto": "No hay material prestado",
+   "e2e": [
+    "tests/e2e/fase-5-consultas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/prestamos-prestado.test.js",
+    "tests/unit/ui-prestado.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-5-consultas.spec.js",
+    "tests/unit/prestamos-prestado.test.js",
+    "tests/unit/ui-prestado.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-010",
+   "ac": 2,
+   "texto": "Devuelto",
+   "e2e": [
+    "tests/e2e/fase-5-consultas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/prestamos-historial.test.js",
+    "tests/unit/ui-historial.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-5-consultas.spec.js",
+    "tests/unit/prestamos-historial.test.js",
+    "tests/unit/ui-historial.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-010",
+   "ac": 3,
+   "texto": "Sin préstamos ni multas",
+   "e2e": [
+    "tests/e2e/fase-5-consultas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/prestamos-historial.test.js",
+    "tests/unit/ui-historial.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-5-consultas.spec.js",
+    "tests/unit/prestamos-historial.test.js",
+    "tests/unit/ui-historial.test.js"
+   ]
+  },
+  {
+   "req": "REQ-F-010",
+   "ac": 4,
+   "texto": "Acceso no permitido",
+   "e2e": [
+    "tests/e2e/fase-5-consultas.spec.js"
+   ],
+   "unitarios": [
+    "tests/unit/ui-historial.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/e2e/fase-5-consultas.spec.js",
+    "tests/unit/ui-historial.test.js"
+   ]
+  },
+  {
+   "req": "REQ-NF-001",
+   "ac": 3,
+   "texto": "Nieve2026",
+   "e2e": [
+    "tests/e2e/fase-5-consultas.spec.js"
+   ],
+   "unitarios": [
+    "tests/api/seguridad.test.js",
+    "tests/unit/socios.test.js"
+   ],
+   "resultado": "no está en el código",
+   "grave": false
+  },
+  {
+   "req": "REQ-NF-001",
+   "ac": 4,
+   "texto": "Acceso no permitido",
+   "e2e": [],
+   "unitarios": [
+    "tests/api/seguridad.test.js"
+   ],
+   "resultado": "sus tests pasaron en la etapa pero fallan en este ordenador: sin comprobar",
+   "grave": false,
+   "fallan_aqui": [
+    "tests/api/seguridad.test.js"
+   ]
+  }
+ ],
+ "graves": 2
+}

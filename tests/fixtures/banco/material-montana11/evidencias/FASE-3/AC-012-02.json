@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-012-02",
+ "test": "WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-012-02 REQ-F-006 AC5 pablo con 2 multas Pendiente de 6,00 €, solo una pagada, pide Casco del 2026-12-15 al 2026-12-16 y sigue bloqueado",
+ "titulo": "WF-001 AC-012-02 REQ-F-006 AC5 pablo con 2 multas Pendiente de 6,00 €, solo una pagada, pide Casco del 2026-12-15 al 2026-12-16 y sigue bloqueado",
+ "ve": [
+  "Tienes una multa pendiente: no puedes reservar hasta pagarla"
+ ],
+ "narrado": "Multa por devolución tardía y bloqueo. En Reservar se ve «Tienes una multa pendiente: no puedes reservar hasta pagarla»: Pablo sigue bloqueado porque solo se pagó una de sus dos multas.",
+ "url": "http://127.0.0.1:43343/#/inicio",
+ "imagen": "AC-012-02.png",
+ "sha256": "sha256:937b9edadef52ddf26ef45821e69d03551691d70406b72b55d824bb9791d2391",
+ "at": "2026-11-22T01:02:55.459Z"
+}

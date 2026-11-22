@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-005-03",
+ "test": "REQ-F-005 AC3 · AC-005-03 el 2026-12-04 entregar la reserva que empieza el 2026-12-05 muestra «Aún no es la fecha de entrega»",
+ "titulo": "REQ-F-005 AC3 · AC-005-03 el 2026-12-04 entregar la reserva que empieza el 2026-12-05 muestra «Aún no es la fecha de entrega»",
+ "ve": [
+  "Aún no es la fecha de entrega"
+ ],
+ "narrado": "Entregar lo reservado. En Entregas y devoluciones se ve «Aún no es la fecha de entrega», y la reserva sigue Reservada.",
+ "url": "http://127.0.0.1:5173/#/entregas",
+ "imagen": "AC-005-03.png",
+ "sha256": "sha256:4a20502d198ed1a8026140958c0facd2e1edba31a2c3353e8e7cf4248bb36426",
+ "at": "2026-11-21T13:46:24.425Z"
+}

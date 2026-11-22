@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-005-06",
+ "test": "FASE-1 Reservar material (socio) › FASE-1 AC-005-06 lucia pone inicio 2026-12-10 y fin 2026-12-08 y ve La fecha de fin no puede ser anterior a la de inicio",
+ "titulo": "FASE-1 AC-005-06 lucia pone inicio 2026-12-10 y fin 2026-12-08 y ve La fecha de fin no puede ser anterior a la de inicio",
+ "ve": [
+  "La fecha de fin no puede ser anterior a la de inicio"
+ ],
+ "narrado": "Reservar material para unas fechas. En Reservar se ve «La fecha de fin no puede ser anterior a la de inicio».",
+ "url": "http://127.0.0.1:33963/#/inicio",
+ "imagen": "AC-005-06.png",
+ "sha256": "sha256:af99f2a0ba74a40f5dd48a51b10907a678e6acbd7bab2d791b4d1453d7f127c0",
+ "at": "2026-11-22T01:01:27.209Z"
+}

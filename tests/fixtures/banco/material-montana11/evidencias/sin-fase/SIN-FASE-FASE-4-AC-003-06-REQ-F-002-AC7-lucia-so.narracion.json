@@ -1,0 +1,16 @@
+{
+ "video": "SIN-FASE-FASE-4-AC-003-06-REQ-F-002-AC7-lucia-so.webm",
+ "test": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-003-06 REQ-F-002 AC7 lucia, socia, abre la dirección de Socios y ve Acceso no permitido",
+ "titulo": "FASE-4 AC-003-06 REQ-F-002 AC7 lucia, socia, abre la dirección de Socios y ve Acceso no permitido",
+ "narraciones": [
+  {
+   "t": 0.896,
+   "texto": "Lucía, que es socia, entra y escribe a mano la dirección de Socios"
+  },
+  {
+   "t": 1.426,
+   "texto": "Gestionar las cuentas de socios. En Socios se ve «Acceso no permitido».",
+   "criterio": "AC-003-06"
+  }
+ ]
+}

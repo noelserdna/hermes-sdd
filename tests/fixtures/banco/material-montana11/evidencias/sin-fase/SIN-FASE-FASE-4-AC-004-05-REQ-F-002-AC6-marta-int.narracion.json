@@ -1,0 +1,16 @@
+{
+ "video": "SIN-FASE-FASE-4-AC-004-05-REQ-F-002-AC6-marta-int.webm",
+ "test": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-004-05 REQ-F-002 AC6 marta intenta dar de baja a Pablo Ruiz con un Casco sin devolver y ve No se puede dar de baja: tiene material sin devolver",
+ "titulo": "FASE-4 AC-004-05 REQ-F-002 AC6 marta intenta dar de baja a Pablo Ruiz con un Casco sin devolver y ve No se puede dar de baja: tiene material sin devolver",
+ "narraciones": [
+  {
+   "t": 1.848,
+   "texto": "Es el 5 de diciembre. Pablo Ruiz se llevó un Casco y todavía no lo ha devuelto. Marta entra, abre Socios y le da de baja"
+  },
+  {
+   "t": 2.512,
+   "texto": "Gestionar las cuentas de socios. En Socios se ve «No se puede dar de baja: tiene material sin devolver» y Pablo Ruiz sigue activo.",
+   "criterio": "AC-004-05"
+  }
+ ]
+}

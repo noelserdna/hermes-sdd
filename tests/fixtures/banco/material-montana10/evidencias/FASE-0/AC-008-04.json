@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-008-04",
+ "test": "REQ-F-008 AC4 · AC-008-04 «Casco 1» está prestada a Pablo: no se da de baja y sigue activa",
+ "titulo": "REQ-F-008 AC4 · AC-008-04 «Casco 1» está prestada a Pablo: no se da de baja y sigue activa",
+ "ve": [
+  "No se puede dar de baja: está prestada"
+ ],
+ "narrado": "Gestionar el inventario. En Inventario se ve «No se puede dar de baja: está prestada», y sigue activa.",
+ "url": "http://127.0.0.1:5173/#/inventario",
+ "imagen": "AC-008-04.png",
+ "sha256": "sha256:028dbe1ab57beda31a58bd10838037501f460bdf86386d1338b38daf38e0d69c",
+ "at": "2026-11-21T13:45:51.181Z"
+}

@@ -1,0 +1,16 @@
+{
+ "video": "WF-002-WF-002-AC-001-08-pablo-dado-de-baja-env-.webm",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-001-08 pablo dado de baja envía su contraseña correcta y ve Correo o contraseña incorrectos",
+ "titulo": "WF-002 AC-001-08 pablo dado de baja envía su contraseña correcta y ve Correo o contraseña incorrectos",
+ "narraciones": [
+  {
+   "t": 0.858,
+   "texto": "Pablo, que está dado de baja, escribe su correo y su contraseña correcta"
+  },
+  {
+   "t": 1.383,
+   "texto": "Entrar con correo y contraseña. En Entrar se ve «Correo o contraseña incorrectos».",
+   "criterio": "AC-001-08"
+  }
+ ]
+}

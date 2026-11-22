@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-002-06",
+ "test": "REQ-F-002 AC6 · AC-002-06 el encargado fija «Nieve2026» a «marta@club.es», que olvidó su contraseña, y ve «Contraseña restablecida»; Marta entra con ella y la antigua ya no vale",
+ "titulo": "REQ-F-002 AC6 · AC-002-06 el encargado fija «Nieve2026» a «marta@club.es», que olvidó su contraseña, y ve «Contraseña restablecida»; Marta entra con ella y la antigua ya no vale",
+ "ve": [
+  "Contraseña restablecida"
+ ],
+ "narrado": "Dar de alta, dar de baja y restablecer contraseña de socios. En Socios se ve «Contraseña restablecida»; Marta entra con la nueva y la antigua ya no le vale.",
+ "url": "http://127.0.0.1:5173/#/socios",
+ "imagen": "AC-002-06.png",
+ "sha256": "sha256:5c7ab6031221e983aab07910c7020a30bc00617e0c4541966719e9972e7ad976",
+ "at": "2026-11-21T12:35:19.578Z"
+}

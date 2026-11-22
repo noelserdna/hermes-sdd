@@ -1,0 +1,16 @@
+{
+ "video": "SIN-FASE-FASE-4-AC-013-03-REQ-F-008-AC6-marta-a-a.webm",
+ "test": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-013-03 REQ-F-008 AC6 marta añade 0 unidades de Casco y ve La cantidad debe ser al menos 1",
+ "titulo": "FASE-4 AC-013-03 REQ-F-008 AC6 marta añade 0 unidades de Casco y ve La cantidad debe ser al menos 1",
+ "narraciones": [
+  {
+   "t": 0.806,
+   "texto": "Marta entra, abre Inventario e intenta añadir 0 unidades de Casco"
+  },
+  {
+   "t": 1.396,
+   "texto": "Gestionar el inventario. En Inventario se ve «La cantidad debe ser al menos 1», y el recuento de Casco sigue en 0 unidades.",
+   "criterio": "AC-013-03"
+  }
+ ]
+}

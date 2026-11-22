@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-04",
+ "test": "REQ-F-001 AC4 · AC-001-04 WF-002 tras 5 fallos seguidos la cuenta queda bloqueada",
+ "titulo": "REQ-F-001 AC4 · AC-001-04 WF-002 tras 5 fallos seguidos la cuenta queda bloqueada",
+ "ve": [
+  "Cuenta bloqueada. Inténtalo de nuevo en 15 minutos"
+ ],
+ "narrado": "Entrar, salir y proteger la sesión. En Entrar se ve «Cuenta bloqueada. Inténtalo de nuevo en 15 minutos» y no se abre ninguna sesión.",
+ "url": "http://127.0.0.1:5173/#/entrar",
+ "imagen": "AC-001-04.png",
+ "sha256": "sha256:cfac42eb95c0f7daeb51bf084154c5176ae49f786375f0daac891c528c7e9a88",
+ "at": "2026-11-21T13:45:40.704Z"
+}

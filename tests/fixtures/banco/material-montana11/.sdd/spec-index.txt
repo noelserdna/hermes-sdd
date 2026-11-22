@@ -1,0 +1,259 @@
+spec/TRACEABILITY-MATRIX.md:1:# Traceability Matrix
+spec/VALUE-REGISTRY.md:1:# Registro de valores
+spec/CLARIFICATIONS.md:1:# Aclaraciones (reglas de negocio)
+spec/CLARIFICATIONS.md:5:## Decisiones de formato
+spec/CLARIFICATIONS.md:9:| D-001 | Formato de la especificación | árbol modular `spec/` con casos de uso, BD
+spec/CLARIFICATIONS.md:11:## Reglas de negocio
+spec/CLARIFICATIONS.md:15:| RN-001 | REQ-F-003 | ¿Qué se reserva: tipo o unidad? | Se pide un tipo; el siste
+spec/CLARIFICATIONS.md:16:| RN-002 | REQ-F-003 | ¿Qué es "hoy"? | Fecha del reloj del sistema, en días comp
+spec/CLARIFICATIONS.md:17:| RN-003 | REQ-F-005 | ¿Cuándo se puede entregar? | Solo el día de `inicio`; ante
+spec/CLARIFICATIONS.md:18:| RN-004 | REQ-F-005 | ¿Cuándo se marca No recogida? | Al pasar el día de `inicio
+spec/CLARIFICATIONS.md:19:| RN-005 | REQ-F-002 | Mensajes para errores no citados en los requisitos | Mensajes
+spec/CLARIFICATIONS.md:20:| RN-006 | REQ-F-001 | ¿Quién crea las cuentas de encargado y junta? | Se cargan a
+spec/CLARIFICATIONS.md:21:| RN-007 | REQ-F-002 | ¿Qué hace un socio dado de baja con su historial? | Se cons
+spec/CLARIFICATIONS.md:22:| RN-008 | REQ-F-001 | ¿Cuenta un intento con correo inexistente? | Mismo mensaje `
+spec/CLARIFICATIONS.md:23:| RN-009 | REQ-F-006 | ¿Cómo se cuentan los días de retraso? | Días naturales: `
+spec/CLARIFICATIONS.md:24:| RN-010 | REQ-NF-001 | ¿Se borran los datos a los 2 años? | Se fija `RETENTION_YE
+spec/CLARIFICATIONS.md:25:| RN-011 | REQ-F-003 | Repetir el mismo envío de reserva | El segundo envío no dup
+spec/CLARIFICATIONS.md:26:| RN-012 | REQ-F-001 | ¿Qué ve la junta al entrar? | Su inicio es la pantalla "His
+spec/CLARIFICATIONS.md:27:| RN-013 | REQ-F-002 | ¿Qué pasa con las sesiones abiertas de una cuenta dada de b
+spec/CLARIFICATIONS.md:28:| RN-014 | REQ-F-002 | ¿Se restablece la contraseña de una cuenta en Baja? | No: `
+spec/CLARIFICATIONS.md:29:| RN-015 | REQ-F-006 | Texto de Mis multas sin multas; quién la abre | "Sin multas"
+spec/CLARIFICATIONS.md:30:| RN-016 | REQ-F-008 | Añadir material dos veces; baja repetida; historial del enca
+spec/domain/03-VALUE-OBJECTS.md:1:# 03 — Objetos de valor
+spec/domain/03-VALUE-OBJECTS.md:15:## Catálogo de errores (VO-010)
+spec/domain/03-VALUE-OBJECTS.md:47:## Mensajes de éxito (literales)
+spec/domain/02-ENTITIES.md:1:# 02 — Entidades
+spec/README.md:1:# Especificaciones — material-montana11
+spec/tests/BDD-UC-011.md:1:# BDD-UC-011 — Ver mis multas
+spec/tests/BDD-UC-001.md:1:# BDD-UC-001 — Entrar con correo y contraseña
+spec/domain/04-STATES.md:1:# 04 — Máquinas de estados
+spec/domain/04-STATES.md:3:## SM-001: Reserva
+spec/domain/04-STATES.md:23:## SM-002: Multa
+spec/domain/04-STATES.md:36:## SM-003: Unidad
+spec/domain/04-STATES.md:47:## SM-004: Cuenta
+spec/tests/BDD-UC-007.md:1:# BDD-UC-007 — Cancelar reserva
+spec/domain/01-GLOSSARY.md:1:# 01 — Glosario
+spec/CLARIFICATIONS-PENDING.md:1:# Aclaraciones pendientes
+spec/DERIVED-SPECS.md:1:# Especificaciones derivadas
+spec/DERIVED-SPECS.md:11:## Derivado por el ingeniero de especificaciones
+spec/DERIVED-SPECS.md:15:| RN-006 cuentas de encargado y junta cargadas al desplegar | Regla | REQ-F-001, REQ-
+spec/DERIVED-SPECS.md:16:| RN-010 purga automática a `RETENTION_YEARS` | Regla | REQ-NF-001 | 1 | purga no pe
+spec/DERIVED-SPECS.md:23:| RN-012..RN-015 (inicio de la junta, sesiones tras baja o reinicio, Mis multas) | Re
+spec/DERIVED-SPECS.md:24:| ADR-001..ADR-005 | Decisiones | REQ-C-001..REQ-C-003, REQ-NF-001 | 2 | almacén, re
+spec/DERIVED-SPECS.md:26:## Derivado por auditoría
+spec/DERIVED-SPECS.md:29:## Registro de resolución
+spec/tests/BDD-UC-002.md:1:# BDD-UC-002 — Mantener y cerrar la sesión
+spec/tests/BDD-UC-014.md:1:# BDD-UC-014 — Dar de baja unidad
+spec/tests/BDD-UC-008.md:1:# BDD-UC-008 — Entregar material
+spec/tests/BDD-UC-004.md:1:# BDD-UC-004 — Restablecer contraseña y dar de baja socio
+spec/use-cases/UC-013-anadir-material.md:1:# UC-013 — Añadir material
+spec/use-cases/UC-013-anadir-material.md:13:## Input / Output
+spec/use-cases/UC-013-anadir-material.md:20:## Preconditions
+spec/use-cases/UC-013-anadir-material.md:23:## Postconditions
+spec/use-cases/UC-013-anadir-material.md:27:## Main flow
+spec/use-cases/UC-013-anadir-material.md:35:## Extensions
+spec/use-cases/UC-013-anadir-material.md:38:## Exceptions & errors
+spec/tests/BDD-UC-009.md:1:# BDD-UC-009 — Registrar devolución
+spec/tests/BDD-UC-003.md:1:# BDD-UC-003 — Crear socio y listar socios
+spec/tests/BDD-UC-013.md:1:# BDD-UC-013 — Añadir material
+spec/domain/05-INVARIANTS.md:1:# 05 — Invariantes
+spec/tests/BDD-UC-016.md:1:# BDD-UC-016 — Consultar historial de un socio
+spec/use-cases/UC-009-registrar-devolucion.md:1:# UC-009 — Registrar devolución
+spec/use-cases/UC-009-registrar-devolucion.md:13:## Input / Output
+spec/use-cases/UC-009-registrar-devolucion.md:20:## Preconditions
+spec/use-cases/UC-009-registrar-devolucion.md:24:## Postconditions
+spec/use-cases/UC-009-registrar-devolucion.md:29:## Main flow
+spec/use-cases/UC-009-registrar-devolucion.md:36:## Extensions
+spec/use-cases/UC-009-registrar-devolucion.md:39:## Exceptions & errors
+spec/tests/BDD-UC-015.md:1:# BDD-UC-015 — Ver lo prestado y lo que vuelve cada día
+spec/use-cases/UC-001-entrar-con-correo.md:1:# UC-001 — Entrar con correo y contraseña
+spec/use-cases/UC-001-entrar-con-correo.md:13:## Input / Output
+spec/use-cases/UC-001-entrar-con-correo.md:20:## Preconditions
+spec/use-cases/UC-001-entrar-con-correo.md:24:## Postconditions
+spec/use-cases/UC-001-entrar-con-correo.md:28:## Main flow
+spec/use-cases/UC-001-entrar-con-correo.md:36:## Extensions
+spec/use-cases/UC-001-entrar-con-correo.md:41:## Exceptions & errors
+spec/use-cases/UC-001-entrar-con-correo.md:52:## Open questions
+spec/nfr/SECURITY.md:1:# NFR — Seguridad
+spec/tests/BDD-UC-010.md:1:# BDD-UC-010 — Aplicar multa por retraso
+spec/tests/BDD-UC-005.md:1:# BDD-UC-005 — Reservar material
+spec/tests/BDD-UC-006.md:1:# BDD-UC-006 — Ver mis reservas
+spec/tests/BDD-UC-012.md:1:# BDD-UC-012 — Marcar multa pagada
+spec/use-cases/UC-014-dar-de-baja-unidad.md:1:# UC-014 — Dar de baja unidad
+spec/use-cases/UC-014-dar-de-baja-unidad.md:13:## Input / Output
+spec/use-cases/UC-014-dar-de-baja-unidad.md:20:## Preconditions
+spec/use-cases/UC-014-dar-de-baja-unidad.md:23:## Postconditions
+spec/use-cases/UC-014-dar-de-baja-unidad.md:27:## Main flow
+spec/use-cases/UC-014-dar-de-baja-unidad.md:33:## Extensions
+spec/use-cases/UC-014-dar-de-baja-unidad.md:36:## Exceptions & errors
+spec/use-cases/UC-011-ver-mis-multas.md:1:# UC-011 — Ver mis multas
+spec/use-cases/UC-011-ver-mis-multas.md:13:## Input / Output
+spec/use-cases/UC-011-ver-mis-multas.md:20:## Preconditions
+spec/use-cases/UC-011-ver-mis-multas.md:23:## Postconditions
+spec/use-cases/UC-011-ver-mis-multas.md:27:## Main flow
+spec/use-cases/UC-011-ver-mis-multas.md:32:## Extensions
+spec/use-cases/UC-011-ver-mis-multas.md:35:## Exceptions & errors
+spec/tests/PROPERTY-TESTS.md:1:# Pruebas de propiedades
+spec/tests/PROPERTY-TESTS.md:7:| PROP-001 | INV-RES-001 | para cualquier secuencia de reservas y cancelaciones
+spec/tests/PROPERTY-TESTS.md:8:| PROP-002 | INV-RES-004 | toda reserva aceptada cumple `fin − inicio + 1 ≤
+spec/tests/PROPERTY-TESTS.md:9:| PROP-003 | INV-RES-002, INV-RES-003 | toda reserva aceptada cumple `hoy ≤ i
+spec/tests/PROPERTY-TESTS.md:10:| PROP-004 | INV-FIN-001 | importe de la multa = `FINE_PER_DAY_EUR` × días d
+spec/tests/PROPERTY-TESTS.md:11:| PROP-005 | INV-FIN-002, INV-LOA-003 | repetir una devolución n veces deja u
+spec/tests/PROPERTY-TESTS.md:12:| PROP-006 | INV-RES-005 | con alguna multa Pendiente toda reserva nueva se re
+spec/tests/PROPERTY-TESTS.md:13:| PROP-007 | INV-ACC-004 | n fallos seguidos < `LOGIN_MAX_FAILURES` no bloquea
+spec/tests/PROPERTY-TESTS.md:14:| PROP-008 | INV-STK-003, INV-STK-004 | dar de baja una unidad n veces equival
+spec/tests/PROPERTY-TESTS.md:15:| PROP-009 | INV-SEC-001 | para cualquier par de socios, ninguna lectura de un
+spec/tests/PROPERTY-TESTS.md:16:| PROP-010 | INV-ACC-001 | no existen dos cuentas con el mismo correo ignorand
+spec/use-cases/UC-016-consultar-historial-socio.md:1:# UC-016 — Consultar historial de un socio
+spec/use-cases/UC-016-consultar-historial-socio.md:13:## Input / Output
+spec/use-cases/UC-016-consultar-historial-socio.md:23:## Preconditions
+spec/use-cases/UC-016-consultar-historial-socio.md:26:## Postconditions
+spec/use-cases/UC-016-consultar-historial-socio.md:30:## Main flow
+spec/use-cases/UC-016-consultar-historial-socio.md:37:## Extensions
+spec/use-cases/UC-016-consultar-historial-socio.md:40:## Exceptions & errors
+spec/use-cases/UC-004-restablecer-contrasena-y-baja.md:1:# UC-004 — Restablecer contraseña y dar de baja so
+spec/use-cases/UC-004-restablecer-contrasena-y-baja.md:13:## Input / Output
+spec/use-cases/UC-004-restablecer-contrasena-y-baja.md:21:## Preconditions
+spec/use-cases/UC-004-restablecer-contrasena-y-baja.md:25:## Postconditions
+spec/use-cases/UC-004-restablecer-contrasena-y-baja.md:29:## Main flow
+spec/use-cases/UC-004-restablecer-contrasena-y-baja.md:38:## Exceptions & errors
+spec/contracts/API-acceso.md:1:# API-acceso
+spec/contracts/API-acceso.md:12:## Operaciones
+spec/contracts/API-acceso.md:16:| API-001-01 | iniciarSesion | anónimo | correo: Correo (VO-002), contrasena 
+spec/contracts/API-acceso.md:17:| API-001-02 | cerrarSesion | cualquiera con sesión | — | sesión invalidad
+spec/contracts/API-acceso.md:18:| API-001-03 | comprobarSesion | cualquiera | — | si es válida renueva acti
+spec/contracts/API-acceso.md:19:| API-001-04 | crearSocio | encargado | nombre, correo: Correo (VO-002), contr
+spec/contracts/API-acceso.md:20:| API-001-05 | listarSocios | encargado | — | nombre, correo y estado de cad
+spec/contracts/API-acceso.md:21:| API-001-06 | restablecerContrasena | encargado | socioId, contrasena: Contra
+spec/contracts/API-acceso.md:22:| API-001-07 | darDeBajaSocio | encargado | socioId | cuenta en Baja y reserva
+spec/contracts/API-acceso.md:24:## Errores
+spec/use-cases/UC-005-reservar-material.md:1:# UC-005 — Reservar material
+spec/use-cases/UC-005-reservar-material.md:13:## Input / Output
+spec/use-cases/UC-005-reservar-material.md:21:## Preconditions
+spec/use-cases/UC-005-reservar-material.md:25:## Postconditions
+spec/use-cases/UC-005-reservar-material.md:29:## Main flow
+spec/use-cases/UC-005-reservar-material.md:38:## Extensions
+spec/use-cases/UC-005-reservar-material.md:42:## Exceptions & errors
+spec/use-cases/UC-010-aplicar-multa-por-retraso.md:1:# UC-010 — Aplicar multa por retraso
+spec/use-cases/UC-010-aplicar-multa-por-retraso.md:13:## Input / Output
+spec/use-cases/UC-010-aplicar-multa-por-retraso.md:20:## Preconditions
+spec/use-cases/UC-010-aplicar-multa-por-retraso.md:23:## Postconditions
+spec/use-cases/UC-010-aplicar-multa-por-retraso.md:28:## Main flow
+spec/use-cases/UC-010-aplicar-multa-por-retraso.md:34:## Extensions
+spec/use-cases/UC-010-aplicar-multa-por-retraso.md:39:## Exceptions & errors
+spec/use-cases/UC-003-crear-y-listar-socios.md:1:# UC-003 — Crear socio y listar socios
+spec/use-cases/UC-003-crear-y-listar-socios.md:13:## Input / Output
+spec/use-cases/UC-003-crear-y-listar-socios.md:21:## Preconditions
+spec/use-cases/UC-003-crear-y-listar-socios.md:24:## Postconditions
+spec/use-cases/UC-003-crear-y-listar-socios.md:28:## Main flow
+spec/use-cases/UC-003-crear-y-listar-socios.md:36:## Extensions
+spec/use-cases/UC-003-crear-y-listar-socios.md:39:## Exceptions & errors
+spec/nfr/LIMITS.md:1:# NFR — Límites
+spec/use-cases/UC-012-marcar-multa-pagada.md:1:# UC-012 — Marcar multa pagada
+spec/use-cases/UC-012-marcar-multa-pagada.md:13:## Input / Output
+spec/use-cases/UC-012-marcar-multa-pagada.md:20:## Preconditions
+spec/use-cases/UC-012-marcar-multa-pagada.md:24:## Postconditions
+spec/use-cases/UC-012-marcar-multa-pagada.md:29:## Main flow
+spec/use-cases/UC-012-marcar-multa-pagada.md:37:## Extensions
+spec/use-cases/UC-012-marcar-multa-pagada.md:40:## Exceptions & errors
+spec/contracts/PERMISSIONS-MATRIX.md:1:# Matriz de permisos
+spec/use-cases/UC-006-ver-mis-reservas.md:1:# UC-006 — Ver mis reservas
+spec/use-cases/UC-006-ver-mis-reservas.md:13:## Input / Output
+spec/use-cases/UC-006-ver-mis-reservas.md:20:## Preconditions
+spec/use-cases/UC-006-ver-mis-reservas.md:23:## Postconditions
+spec/use-cases/UC-006-ver-mis-reservas.md:27:## Main flow
+spec/use-cases/UC-006-ver-mis-reservas.md:33:## Extensions
+spec/use-cases/UC-006-ver-mis-reservas.md:36:## Exceptions & errors
+spec/use-cases/UC-007-cancelar-reserva.md:1:# UC-007 — Cancelar reserva
+spec/use-cases/UC-007-cancelar-reserva.md:13:## Input / Output
+spec/use-cases/UC-007-cancelar-reserva.md:20:## Preconditions
+spec/use-cases/UC-007-cancelar-reserva.md:24:## Postconditions
+spec/use-cases/UC-007-cancelar-reserva.md:28:## Main flow
+spec/use-cases/UC-007-cancelar-reserva.md:36:## Extensions
+spec/use-cases/UC-007-cancelar-reserva.md:39:## Exceptions & errors
+spec/use-cases/UC-015-ver-lo-prestado.md:1:# UC-015 — Ver lo prestado y lo que vuelve cada día
+spec/use-cases/UC-015-ver-lo-prestado.md:13:## Input / Output
+spec/use-cases/UC-015-ver-lo-prestado.md:23:## Preconditions
+spec/use-cases/UC-015-ver-lo-prestado.md:26:## Postconditions
+spec/use-cases/UC-015-ver-lo-prestado.md:30:## Main flow
+spec/use-cases/UC-015-ver-lo-prestado.md:37:## Extensions
+spec/use-cases/UC-015-ver-lo-prestado.md:42:## Exceptions & errors
+spec/workflows/WF-001-ciclo-del-prestamo.md:1:# WF-001 — Ciclo del préstamo
+spec/workflows/WF-001-ciclo-del-prestamo.md:9:## Pasos
+spec/workflows/WF-001-ciclo-del-prestamo.md:22:## Navegación
+spec/workflows/WF-001-ciclo-del-prestamo.md:35:## Escenarios de error
+spec/workflows/WF-001-ciclo-del-prestamo.md:42:## Eventos emitidos
+spec/workflows/WF-001-ciclo-del-prestamo.md:45:## Métricas
+spec/use-cases/UC-002-mantener-y-cerrar-sesion.md:1:# UC-002 — Mantener y cerrar la sesión
+spec/use-cases/UC-002-mantener-y-cerrar-sesion.md:13:## Input / Output
+spec/use-cases/UC-002-mantener-y-cerrar-sesion.md:21:## Preconditions
+spec/use-cases/UC-002-mantener-y-cerrar-sesion.md:24:## Postconditions
+spec/use-cases/UC-002-mantener-y-cerrar-sesion.md:28:## Main flow
+spec/use-cases/UC-002-mantener-y-cerrar-sesion.md:35:## Extensions
+spec/use-cases/UC-002-mantener-y-cerrar-sesion.md:39:## Exceptions & errors
+spec/workflows/WF-002-sesion-de-acceso.md:1:# WF-002 — Sesión de acceso
+spec/workflows/WF-002-sesion-de-acceso.md:9:## Pasos
+spec/workflows/WF-002-sesion-de-acceso.md:19:## Navegación
+spec/workflows/WF-002-sesion-de-acceso.md:28:## Escenarios de error
+spec/workflows/WF-002-sesion-de-acceso.md:34:## Eventos emitidos
+spec/workflows/WF-002-sesion-de-acceso.md:37:## Métricas
+spec/adr/ADR-003-contrasenas-con-hash.md:1:# ADR-003 — Las contraseñas se guardan solo como hash con sal
+spec/adr/ADR-003-contrasenas-con-hash.md:8:## Contexto
+spec/adr/ADR-003-contrasenas-con-hash.md:11:## Decisión
+spec/adr/ADR-003-contrasenas-con-hash.md:14:## Alternativas
+spec/adr/ADR-003-contrasenas-con-hash.md:20:## Consecuencias
+spec/use-cases/UC-008-entregar-material.md:1:# UC-008 — Entregar material
+spec/use-cases/UC-008-entregar-material.md:13:## Input / Output
+spec/use-cases/UC-008-entregar-material.md:20:## Preconditions
+spec/use-cases/UC-008-entregar-material.md:24:## Postconditions
+spec/use-cases/UC-008-entregar-material.md:29:## Main flow
+spec/use-cases/UC-008-entregar-material.md:37:## Extensions
+spec/use-cases/UC-008-entregar-material.md:40:## Exceptions & errors
+spec/contracts/API-prestamos.md:1:# API-prestamos
+spec/contracts/API-prestamos.md:12:## Operaciones
+spec/contracts/API-prestamos.md:16:| API-003-01 | entregarReserva | encargado | reservaId | Reservada → Entr
+spec/contracts/API-prestamos.md:17:| API-003-02 | registrarDevolucion | encargado | reservaId | Entregado → 
+spec/contracts/API-prestamos.md:18:| API-003-03 | marcarNoRecogidas | sistema | — | Reservada con `inicio` a
+spec/contracts/API-prestamos.md:19:| API-003-04 | listarPrestamosYReservas | encargado | — | aplica API-003-
+spec/contracts/API-prestamos.md:20:| API-003-05 | aplicarMultaPorRetraso | sistema | reservaId | si `devueltaE
+spec/contracts/API-prestamos.md:21:| API-003-06 | listarMisMultas | socio | — | multas propias con importe y
+spec/contracts/API-prestamos.md:22:| API-003-07 | listarMultas | encargado | — | todas las multas con socio,
+spec/contracts/API-prestamos.md:23:| API-003-08 | marcarMultaPagada | encargado | multaId | Pendiente → Paga
+spec/contracts/API-prestamos.md:24:| API-003-09 | consultarPrestado | encargado | dia?: Fecha (VO-001) | prés
+spec/contracts/API-prestamos.md:25:| API-003-10 | consultarHistorialSocio | junta | socioId | préstamos y mul
+spec/contracts/API-prestamos.md:27:## Errores
+spec/adr/ADR-001-almacen-unico-compartido.md:1:# ADR-001 — Un único almacén compartido por todos los dispo
+spec/adr/ADR-001-almacen-unico-compartido.md:8:## Contexto
+spec/adr/ADR-001-almacen-unico-compartido.md:11:## Decisión
+spec/adr/ADR-001-almacen-unico-compartido.md:14:## Alternativas
+spec/adr/ADR-001-almacen-unico-compartido.md:20:## Consecuencias
+spec/contracts/EVENTS-sistema.md:1:# EVENTS
+spec/contracts/API-inventario.md:1:# API-inventario
+spec/contracts/API-inventario.md:12:## Operaciones
+spec/contracts/API-inventario.md:16:| API-004-01 | listarInventario | encargado | — | recuento de unidades e
+spec/contracts/API-inventario.md:17:| API-004-02 | anadirMaterial | encargado | tipo: TipoMaterial (VO-004), c
+spec/contracts/API-inventario.md:18:| API-004-03 | darDeBajaUnidad | encargado | unidadId | unidad De baja; re
+spec/contracts/API-inventario.md:20:## Errores
+spec/contracts/API-reservas.md:1:# API-reservas
+spec/contracts/API-reservas.md:12:## Operaciones
+spec/contracts/API-reservas.md:16:| API-002-01 | consultarDisponibilidad | socio | material: TipoMaterial (VO-
+spec/contracts/API-reservas.md:17:| API-002-02 | reservarMaterial | socio | material, inicio, fin | reserva Re
+spec/contracts/API-reservas.md:18:| API-002-03 | listarMisReservas | socio | — | solo reservas propias; apli
+spec/contracts/API-reservas.md:19:| API-002-04 | cancelarReserva | socio | reservaId | Cancelada y unidad libr
+spec/contracts/API-reservas.md:21:## Errores
+spec/adr/ADR-002-reloj-y-dias-completos.md:1:# ADR-002 — "Hoy" sale del reloj del sistema y las fechas son d
+spec/adr/ADR-002-reloj-y-dias-completos.md:8:## Contexto
+spec/adr/ADR-002-reloj-y-dias-completos.md:11:## Decisión
+spec/adr/ADR-002-reloj-y-dias-completos.md:15:## Alternativas
+spec/adr/ADR-002-reloj-y-dias-completos.md:21:## Consecuencias
+spec/adr/ADR-005-escrituras-atomicas.md:1:# ADR-005 — Cada escritura es atómica y las concurrentes se seria
+spec/adr/ADR-005-escrituras-atomicas.md:8:## Contexto
+spec/adr/ADR-005-escrituras-atomicas.md:11:## Decisión
+spec/adr/ADR-005-escrituras-atomicas.md:15:## Alternativas
+spec/adr/ADR-005-escrituras-atomicas.md:20:## Consecuencias
+spec/adr/ADR-004-errores-de-dominio.md:1:# ADR-004 — Errores de dominio con código y mensaje literal en esp
+spec/adr/ADR-004-errores-de-dominio.md:8:## Contexto
+spec/adr/ADR-004-errores-de-dominio.md:11:## Decisión
+spec/adr/ADR-004-errores-de-dominio.md:14:## Alternativas
+spec/adr/ADR-004-errores-de-dominio.md:19:## Consecuencias

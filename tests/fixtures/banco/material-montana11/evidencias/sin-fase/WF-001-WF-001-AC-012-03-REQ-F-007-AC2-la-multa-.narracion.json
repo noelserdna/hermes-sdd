@@ -1,0 +1,16 @@
+{
+ "video": "WF-001-WF-001-AC-012-03-REQ-F-007-AC2-la-multa-.webm",
+ "test": "WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-012-03 REQ-F-007 AC2 la multa de 6,00 € pagada el 2026-12-11 se vuelve a marcar el 2026-12-12 y sigue Pagada con la fecha 2026-12-11",
+ "titulo": "WF-001 AC-012-03 REQ-F-007 AC2 la multa de 6,00 € pagada el 2026-12-11 se vuelve a marcar el 2026-12-12 y sigue Pagada con la fecha 2026-12-11",
+ "narraciones": [
+  {
+   "t": 3.799,
+   "texto": "La multa de Pablo se pagó ayer, 11 de diciembre. Hoy, 12, Marta entra y vuelve a enviar el pago"
+  },
+  {
+   "t": 4.48,
+   "texto": "Marcar la multa como pagada. En Multas se ve «Pagada»: sigue Pagada con la primera fecha de pago, 2026-12-11.",
+   "criterio": "AC-012-03"
+  }
+ ]
+}

@@ -1,0 +1,70 @@
+{
+ "necesidades": 11,
+ "dudosas": [],
+ "supuestos": [
+  {
+   "texto": "El encargado da de alta y de baja a los socios y restablece contraseñas: el encargo no dice quién, y la junta solo consulta.",
+   "puntos": 2.38
+  },
+  {
+   "texto": "Se guardan nombre, correo, préstamos y multas, y los préstamos y multas se borran a los 2 años de su cierre (guardar lo mínimo).",
+   "puntos": 2.24
+  },
+  {
+   "texto": "Lo reservado que no se recoge antes de acabar la reserva pasa a «No recogida» y libera las unidades, sin multa.",
+   "puntos": 1.86
+  },
+  {
+   "texto": "Una reserva dura como máximo 14 días, para que nadie acapare material.",
+   "puntos": 1.84
+  },
+  {
+   "texto": "No hay recuperación de contraseña por correo: la restablece el encargado (no se pidió envío de correos).",
+   "puntos": 1.78
+  },
+  {
+   "texto": "El encargado también ve el historial de cualquier socio, y la junta ve la pantalla de entregas y devoluciones solo para consultar.",
+   "puntos": 1.71
+  },
+  {
+   "texto": "Las multas de un socio se ven en «Mis reservas» y todas las multas en la pantalla «Multas» del encargado.",
+   "puntos": 1.57
+  },
+  {
+   "texto": "La sesión caduca tras 8 horas sin actividad y hay un botón «Salir».",
+   "puntos": 1.4
+  },
+  {
+   "texto": "Un socio con una multa pendiente no puede reservar; las reservas que ya tenía se mantienen.",
+   "puntos": 1.33
+  },
+  {
+   "texto": "No se da de baja a un socio con material prestado o multas pendientes, ni una unidad que está prestada.",
+   "puntos": 1.2
+  },
+  {
+   "texto": "El retraso se cuenta por días naturales después de la fecha «hasta»; la multa se calcula cuando el encargado marca la devolución (2 € × días).",
+   "puntos": 1.07
+  },
+  {
+   "texto": "Un socio solo ve sus propias reservas y multas; las pantallas de otros roles le muestran «No tienes permiso».",
+   "puntos": 1.02
+  },
+  {
+   "texto": "Contraseña mínima de 8 caracteres; tras 5 fallos seguidos la cuenta se bloquea 15 minutos (lo habitual en webs de socios).",
+   "puntos": 1.01
+  },
+  {
+   "texto": "«Hasta el día antes» significa que el mismo día de la fecha «desde» ya no se puede cancelar.",
+   "puntos": 0.97
+  },
+  {
+   "texto": "Se reserva por tipo de material (p. ej. «Piolet»); el encargado asigna la unidad concreta al entregar.",
+   "puntos": 0.55
+  },
+  {
+   "texto": "No se puede reservar en fechas pasadas ni con la fecha final anterior a la inicial.",
+   "puntos": 0.32
+  }
+ ]
+}

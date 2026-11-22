@@ -42,6 +42,7 @@ import path from "node:path";
 import { stackProfile } from "./git-log.mjs";
 import { testKeys, reqHash, acNumber, scenarioIndex } from "./acceptance.mjs";
 import { templateParts } from "../sdd-jev.mjs";
+import { says } from "./match.mjs";
 
 export const LITERAL_MODES = ["off", "warn", "enforce"];
 export const QUOTE_CODES = { missingQuote: "Q-01", staleQuote: "Q-02", missingLiteral: "Q-03", uncheckedClause: "Q-04", missingAlternative: "Q-05" };
@@ -437,7 +438,7 @@ export function lintQuotes({ root, reqs, scenarios = [], records = [], scope = n
           ...(ex ? { exception: { line: ex.line, by: ex.by, role: ex.role, reason: ex.reason } } : {}) });
       }
       for (const lit of requiredLiterals(text, (req.sees || [])[ac - 1])) {
-        if (lit.parts.every((p) => codeNorm.includes(normLiteral(p)))) continue;
+        if (lit.parts.every((p) => says(codeNorm, normLiteral(p)))) continue;
         const ex = exceptions.find((e) => e.req === req.id && acNumber(e.ac) === ac && normLiteral(e.literal) === normLiteral(lit.literal));
         const what = lit.kind === "template" ? `the form of the template "${lit.literal}" (${lit.parts.map((p) => `"${p}"`).join(", ")})` : `the literal "${lit.literal}"`;
         findings.push({ code: "Q-03", severity: ex ? "excepted" : "error", ...base, line: at, literal: lit.literal,

@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-015-02",
+ "test": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-02 REQ-F-009 AC2 el día 2026-12-07 el Piolet 1 aparece bajo Vuelven hoy y el Casco 2 no aparece bajo Vuelven hoy sino bajo Prestado ahora",
+ "titulo": "FASE-5 AC-015-02 REQ-F-009 AC2 el día 2026-12-07 el Piolet 1 aparece bajo Vuelven hoy y el Casco 2 no aparece bajo Vuelven hoy sino bajo Prestado ahora",
+ "ve": [
+  "Vuelven hoy",
+  "Piolet 1"
+ ],
+ "narrado": "Ver lo prestado y lo que vuelve cada día. En Prestado se ve «Vuelven hoy» con el «Piolet 1» de Lucía Gil, y el Casco 2 de Pablo Ruiz no está entre los que vuelven ese día: sigue prestado y se ve en «Prestado ahora».",
+ "url": "http://127.0.0.1:41337/#/prestado",
+ "imagen": "AC-015-02.png",
+ "sha256": "sha256:ff11cbb8cd30e64c2248fee21cc323e72ae9ae910d90e9ed999b4157d39c8868",
+ "at": "2026-11-22T01:03:57.269Z"
+}

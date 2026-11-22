@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-01",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-001-01 lucia entra con su correo y su contraseña y ve Material disponible",
+ "titulo": "WF-002 AC-001-01 lucia entra con su correo y su contraseña y ve Material disponible",
+ "ve": [
+  "Material disponible"
+ ],
+ "narrado": "Entrar con correo y contraseña. En Inicio del socio se ve «Material disponible».",
+ "url": "http://127.0.0.1:41117/#/inicio",
+ "imagen": "AC-001-01.png",
+ "sha256": "sha256:598335097d2b1a62c9bbaf459955f3a26273f9431e77c20ace74c6cde5aad3dd",
+ "at": "2026-11-22T01:00:37.767Z"
+}

@@ -1,0 +1,16 @@
+{
+ "video": "FASE-5-FASE-5-AC-016-01-REQ-F-010-AC1-la-junta-.webm",
+ "test": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-01 REQ-F-010 AC1 la junta elige a Pablo Ruiz y ve Multa 6,00 € Pendiente y nada de Lucía Gil",
+ "titulo": "FASE-5 AC-016-01 REQ-F-010 AC1 la junta elige a Pablo Ruiz y ve Multa 6,00 € Pendiente y nada de Lucía Gil",
+ "narraciones": [
+  {
+   "t": 4.567,
+   "texto": "Es el 11 de diciembre. Lucía devolvió su Piolet a tiempo y Pablo devolvió tarde su Casco. La junta entra y abre Historial"
+  },
+  {
+   "t": 5.519,
+   "texto": "La junta consulta el historial de un socio. En Historial del socio se ve «Multa 6,00 € Pendiente» de Pablo Ruiz, y no aparece nada de Lucía Gil.",
+   "criterio": "AC-016-01"
+  }
+ ]
+}

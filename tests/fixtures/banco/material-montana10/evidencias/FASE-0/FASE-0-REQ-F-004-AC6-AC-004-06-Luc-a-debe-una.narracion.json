@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-REQ-F-004-AC6-AC-004-06-Luc-a-debe-una.webm",
+ "test": "REQ-F-004 AC6 · AC-004-06 Lucía debe una multa de 4 € y en Mis reservas ve «Multa pendiente: 4 €»",
+ "titulo": "REQ-F-004 AC6 · AC-004-06 Lucía debe una multa de 4 € y en Mis reservas ve «Multa pendiente: 4 €»",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "Lucía, que debe una multa de 4 euros, entra y abre Mis reservas"
+  },
+  {
+   "t": 0.392,
+   "texto": "Ver y cancelar mis reservas. En Mis reservas se ve «Multa pendiente: 4 €».",
+   "criterio": "AC-004-06"
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+{
+ "video": "FASE-2-REQ-F-010-AC4-AC-010-04-Luc-a-abre-His.webm",
+ "test": "REQ-F-010 AC4 · AC-010-04 Lucía abre Historial por su dirección y ve «No tienes permiso para ver esta pantalla»",
+ "titulo": "REQ-F-010 AC4 · AC-010-04 Lucía abre Historial por su dirección y ve «No tienes permiso para ver esta pantalla»",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "Lucía entra con su correo y su contraseña y escribe la dirección de Historial en el navegador"
+  },
+  {
+   "t": 0.47,
+   "texto": "Consultar el historial de un socio. En Historial se ve «No tienes permiso para ver esta pantalla».",
+   "criterio": "AC-010-04"
+  }
+ ]
+}

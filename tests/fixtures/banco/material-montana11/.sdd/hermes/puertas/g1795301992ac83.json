@@ -1,0 +1,81 @@
+{
+  "id": "g1795301992ac83",
+  "tipo": "fase",
+  "fase": "3",
+  "tablero": "material-montana11",
+  "tarjeta": "t_9aa6fc65",
+  "adopcion": false,
+  "sha": "49c1ef9add8331adfda3a1d8fea49c650cb3c9bb",
+  "creada": "2026-11-21T22:59:52Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana11",
+  "titulo": "Aceptar FASE-3",
+  "texto": "🧭 Encargado: 1 aviso\n• 1 aviso(s) de las capturas, p. ej. la captura AC-010-01-2ace181fa5b3542b5bb6c73a3f24ca358873175f.png no cuenta para REQ-F-006 AC1: la tomó un test que no cita ese criterio (el criterio ya se ve en su propia captura)\n\n🧪 La FASE-3 de «material-montana11» está lista para revisar.\n\n⛔ No pasa la comprobación: hay requisitos que fallan o sin comprobar. No se puede aceptar tal cual: recházala para que se corrija o, si lo que falta puede esperar, acéptala sin ello.\n\n⚠️ Multa por devolución tardía y bloqueo: sin comprobar todavía (5 de 6 criterios)\n✅ Marcar la multa como pagada: funciona y está comprobado (3 de 3 criterios)\n\n🛡 No se ha tocado ningún test que ya existía (ni sus ayudas ni su configuración).\n\n🎬 Demo: vídeo y 9 capturas.\n\n🤖 Jev ha leído el texto en off de 9 vídeos: cada uno cuenta lo que pide su criterio.\n\n👉 Pulsa ▶ Ver demo; después ❌ Rechazar y di qué hay que corregir, o 🟡 Aceptar sin lo que falta si puede esperar (di por qué; queda apuntado como pendiente con su número de seguimiento).\n\n❓ Antes, una pregunta (la recomendada ya está marcada en los botones Q):\n\n1. Una comprobación interna de una entrega anterior no menciona el texto «Sin multas», que ya se comprueba y se enseña en la pantalla de Multas. ¿Se deja como está?\n   🔧 Detalle técnico: lint --quotes da Q-03 en tests/unit/multas.test.js:41: el test de REQ-F-006 AC2 (FASE-2, dominio) no contiene el literal \"Sin multas\", que es texto de pantalla…\n   A) Se deja como está; el texto ya se comprueba en pantalla  ⭐ recomendada\n   B) Se retoca esa comprobación interna para que mencione el texto  (✏️ autoriza editar tests/unit/multas.test.js)\n\n👉 Si firmas sin tocar los botones Q, esto lanzará: sin más efecto: Q1.",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "eximo",
+      "etiqueta": "🟡 Aceptar sin lo que falta",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-3/WF-001-WF-001-AC-010-01-REQ-F-006-AC1-el-Casco-.mp4",
+  "preguntas": [
+    {
+      "n": 1,
+      "id": "Q-task-implementer-002",
+      "opciones": [
+        "A",
+        "B"
+      ],
+      "recomendada": "A",
+      "efectos": {
+        "A": {
+          "efecto": "ninguno",
+          "ficheros": [],
+          "declarado": true
+        },
+        "B": {
+          "efecto": "editar-test",
+          "ficheros": [
+            "tests/unit/multas.test.js"
+          ],
+          "declarado": true
+        }
+      },
+      "cliente": "Una comprobación interna de una entrega anterior no menciona el texto «Sin multas», que ya se comprueba y se enseña en la pantalla de Multas. ¿Se deja como está?"
+    }
+  ],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": true,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": false,
+        "codigo": "capturas-avisos",
+        "texto": "1 aviso(s) de las capturas, p. ej. la captura AC-010-01-2ace181fa5b3542b5bb6c73a3f24ca358873175f.png no cuenta para REQ-F-006 AC1: la tomó un test que no cita ese criterio (el criterio ya se ve en su propia captura)"
+      }
+    ],
+    "graves": 0
+  },
+  "narracion": {
+    "revisados": 9,
+    "modelo": "jev-1.14.0",
+    "contradicen": [],
+    "incompletos": []
+  }
+}

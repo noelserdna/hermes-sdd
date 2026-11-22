@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-013-01",
+ "test": "FASE-1 Inventario (encargado) › FASE-1 AC-013-01 marta añade 2 Crampones en Inventario y ve Crampones: 2 unidades",
+ "titulo": "FASE-1 AC-013-01 marta añade 2 Crampones en Inventario y ve Crampones: 2 unidades",
+ "ve": [
+  "Crampones: 2 unidades"
+ ],
+ "narrado": "Gestionar el inventario. En Inventario se ve «Crampones: 2 unidades», con las unidades Crampones 1 y Crampones 2.",
+ "url": "http://127.0.0.1:35243/#/inventario",
+ "imagen": "AC-013-01.png",
+ "sha256": "sha256:28887ade38449761d98eed7146111fdc8b343c7a3f90d9d7133c7e2243b429a9",
+ "at": "2026-11-22T01:01:10.728Z"
+}

@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-006-02",
+ "test": "FASE-1 Mis reservas (socio) › FASE-1 AC-006-02 lucia sin reservas abre Mis reservas y ve No tienes reservas",
+ "titulo": "FASE-1 AC-006-02 lucia sin reservas abre Mis reservas y ve No tienes reservas",
+ "ve": [
+  "No tienes reservas"
+ ],
+ "narrado": "Ver y cancelar mis reservas. En Mis reservas se ve «No tienes reservas».",
+ "url": "http://127.0.0.1:38419/#/reservas",
+ "imagen": "AC-006-02.png",
+ "sha256": "sha256:67fdd40a997d7d453eedfdccd5fb34b8114945e7abd1af97637c84c46c2f4a9f",
+ "at": "2026-11-22T01:01:38.972Z"
+}

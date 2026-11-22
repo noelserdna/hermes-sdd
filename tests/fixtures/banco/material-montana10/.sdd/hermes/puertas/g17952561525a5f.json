@@ -1,0 +1,42 @@
+{
+  "id": "g17952561525a5f",
+  "tipo": "plan",
+  "fase": "",
+  "tablero": "material-montana10",
+  "tarjeta": "t_2b75e6e8",
+  "adopcion": false,
+  "sha": "9bb9a016d2b83a063235d0815d059b789e2c9b09",
+  "creada": "2026-11-21T10:15:52Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana10",
+  "titulo": "Plan por fases",
+  "texto": "🧭 Encargado: 1 aviso\n• plan/PLAN.md cita lo que ya no existe: AC-002-13\n\n🗺 Plan de «material-montana10»: 4 fases, en este orden:\n\n• FASE-0: Esqueleto — entrar, inventario y reservar (10 tareas)\n• FASE-1: Cuidar las reservas y entregar (7 tareas)\n• FASE-2: Devolver, multar y consultar el historial (6 tareas)\n• FASE-3: Socios y datos personales (6 tareas)\n\n📐 Antes del plan se hizo: especificaciones, auditoría de especificaciones, plan de pruebas, revisión de seguridad, diseño técnico, diseño visual y de uso. El plan parte de esos documentos.\n\nCada fase se programa, se prueba y te llega con una demo para que la aceptes antes de pasar a la siguiente.\n\n👉 Si el orden te parece bien, pulsa ✅ Conforme. Nada se programa hasta entonces.",
+  "opciones": [
+    {
+      "verbo": "conforme",
+      "etiqueta": "✅ Conforme"
+    },
+    {
+      "verbo": "cambios",
+      "etiqueta": "✏️ Cambiar",
+      "texto": true
+    }
+  ],
+  "demo": "",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": false,
+        "codigo": "referencia-caducada",
+        "texto": "plan/PLAN.md cita lo que ya no existe: AC-002-13"
+      }
+    ],
+    "graves": 0
+  }
+}

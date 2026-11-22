@@ -1,0 +1,7 @@
+FASE-2-FASE-2-AC-008-01-REQ-F-005-AC1-con-hoy-2.webm → FASE-2-FASE-2-AC-008-01-REQ-F-005-AC1-con-hoy-2.mp4 (3 frase(s), voz espeak-ng:es)
+FASE-2-FASE-2-AC-008-02-REQ-F-005-AC4-con-hoy-2.webm → FASE-2-FASE-2-AC-008-02-REQ-F-005-AC4-con-hoy-2.mp4 (2 frase(s), voz espeak-ng:es)
+FASE-2-FASE-2-AC-008-03-REQ-F-005-AC3-con-hoy-2.webm → FASE-2-FASE-2-AC-008-03-REQ-F-005-AC3-con-hoy-2.mp4 (2 frase(s), voz espeak-ng:es)
+FASE-2-FASE-2-AC-008-04-REQ-F-005-AC6-lucia-so.webm → FASE-2-FASE-2-AC-008-04-REQ-F-005-AC6-lucia-so.mp4 (2 frase(s), voz espeak-ng:es)
+FASE-2-FASE-2-AC-009-01-REQ-F-005-AC2-el-Piolet.webm → FASE-2-FASE-2-AC-009-01-REQ-F-005-AC2-el-Piolet.mp4 (3 frase(s), voz espeak-ng:es)
+FASE-2-FASE-2-AC-009-02-AC-010-01-REQ-F-006-AC1.webm → FASE-2-FASE-2-AC-009-02-AC-010-01-REQ-F-006-AC1.mp4 (4 frase(s), voz espeak-ng:es)
+FASE-2-FASE-2-AC-009-03-REQ-F-005-AC5-repetir-l.webm → FASE-2-FASE-2-AC-009-03-REQ-F-005-AC5-repetir-l.mp4 (2 frase(s), voz espeak-ng:es)

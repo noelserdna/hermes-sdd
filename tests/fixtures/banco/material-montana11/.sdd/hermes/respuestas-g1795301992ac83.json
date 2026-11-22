@@ -1,0 +1,18 @@
+{
+ "peticiones": [],
+ "por_aplicar": [
+  "Q-task-implementer-002: lint --quotes da Q-03 en tests/unit/multas.test.js:41: el test de REQ-F-006 AC2 (FASE-2, dominio) no contiene el literal \"Sin multas\", que es texto de pantalla y no de dominio. Ese texto ya lo comprueban tests/unit/ui-mis-multas.test.js y la captura AC-010-02 de FASE-3 (fase-3-ciclo-multas.spec.js). Editar un test aceptado exige un registro test-edit del notario.\nRespuesta elegida: B) Autorizar la edición de tests/unit/multas.test.js para que su test de REQ-F-006 AC2 lleve el literal\nPara el cliente: Una comprobación interna de una entrega anterior no menciona el texto «Sin multas», que ya se comprueba y se enseña en la pantalla de Multas. ¿Se deja como está? → B) Se retoca esa comprobación interna para que mencione el texto\nTests ya existentes que la persona autoriza editar (solo estos; firmado en acceptance/decisions.jsonl): tests/unit/multas.test.js"
+ ],
+ "autorizaciones": [
+  {
+   "pregunta": "Q-task-implementer-002",
+   "letra": "B",
+   "ficheros": [
+    "tests/unit/multas.test.js"
+   ],
+   "endurecer": false,
+   "motivo": "lint --quotes da Q-03 en tests/unit/multas.test.js:41: el test de REQ-F-006 AC2 (FASE-2, dominio) no contiene el literal \"Sin multas\", que es texto de pantalla y no de dominio. Ese texto ya lo comprueban tests/unit/ui-mis-multas.test.js y la captura AC-010-02 de FASE-3 (fase-3-ciclo-multas.spec.js). Editar un test aceptado exige un registro test-edit del notario. → B) Autorizar la edición de tests/unit/multas.test.js para que su test de REQ-F-006 AC2 lleve el literal"
+  }
+ ],
+ "abiertas": []
+}

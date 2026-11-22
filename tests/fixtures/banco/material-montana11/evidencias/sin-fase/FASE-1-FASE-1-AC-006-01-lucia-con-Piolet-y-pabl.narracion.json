@@ -1,0 +1,16 @@
+{
+ "video": "FASE-1-FASE-1-AC-006-01-lucia-con-Piolet-y-pabl.webm",
+ "test": "FASE-1 Mis reservas (socio) › FASE-1 AC-006-01 lucia con Piolet y pablo con Casco: lucia abre Mis reservas y ve Piolet sin Casco",
+ "titulo": "FASE-1 AC-006-01 lucia con Piolet y pablo con Casco: lucia abre Mis reservas y ve Piolet sin Casco",
+ "narraciones": [
+  {
+   "t": 1.177,
+   "texto": "Lucía tiene un Piolet y Pablo un Casco. Lucía entra y abre Mis reservas"
+  },
+  {
+   "t": 1.724,
+   "texto": "Ver y cancelar mis reservas. En Mis reservas se ve «Piolet», y el Casco de Pablo no aparece.",
+   "criterio": "AC-006-01"
+  }
+ ]
+}

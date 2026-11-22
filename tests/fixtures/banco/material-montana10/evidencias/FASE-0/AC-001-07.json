@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-07",
+ "test": "REQ-F-001 AC7 · AC-001-07 WF-002 Salir lleva a Entrar y volver atrás pide entrar",
+ "titulo": "REQ-F-001 AC7 · AC-001-07 WF-002 Salir lleva a Entrar y volver atrás pide entrar",
+ "ve": [
+  "Entrar"
+ ],
+ "narrado": "Entrar, salir y proteger la sesión. En Entrar se ve «Entrar», y al volver atrás a Mis reservas se vuelve a pedir entrar.",
+ "url": "http://127.0.0.1:5173/#/entrar",
+ "imagen": "AC-001-07.png",
+ "sha256": "sha256:59c2301c218b6886c34ee1d7c65dcd88b6b7a99879f6d03ec89f0288ffcf4f2b",
+ "at": "2026-11-21T13:45:44.213Z"
+}

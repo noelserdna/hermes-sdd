@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-010-05",
+ "test": "AC-010-05 el encargado elige a Lucía en Historial y ve su préstamo «Piolet 2 · 2026-12-05 a 2026-12-07 · Devuelta», sin cambios",
+ "titulo": "AC-010-05 el encargado elige a Lucía en Historial y ve su préstamo «Piolet 2 · 2026-12-05 a 2026-12-07 · Devuelta», sin cambios",
+ "ve": [
+  "Piolet 2 · 2026-12-05 a 2026-12-07 · Devuelta"
+ ],
+ "narrado": "Consultar el historial de un socio. En Historial se ve «Piolet 2 · 2026-12-05 a 2026-12-07 · Devuelta», y no cambia nada.",
+ "url": "http://127.0.0.1:5173/#/historial",
+ "imagen": "AC-010-05.png",
+ "sha256": "sha256:3fe7b693c89c6e51d2012828e92a865e10869c04e59267e50fe74baf9643d62c",
+ "at": "2026-11-21T12:40:22.366Z"
+}

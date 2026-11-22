@@ -1,0 +1,16 @@
+{
+ "video": "FASE-4-FASE-4-AC-014-07-REQ-F-008-AC5-con-Casco.webm",
+ "test": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-014-07 REQ-F-008 AC5 con Casco 3 ya De baja, repetir la baja deja Inventario en Casco: 3 unidades",
+ "titulo": "FASE-4 AC-014-07 REQ-F-008 AC5 con Casco 3 ya De baja, repetir la baja deja Inventario en Casco: 3 unidades",
+ "narraciones": [
+  {
+   "t": 1.39,
+   "texto": "Casco 3 ya está de baja. Marta entra y abre Inventario, donde Casco tiene 3 unidades"
+  },
+  {
+   "t": 2.058,
+   "texto": "Gestionar el inventario. En Inventario se ve «Casco: 3 unidades»: se envió otra vez la baja de Casco 3 y el recuento sigue en 3 unidades.",
+   "criterio": "AC-014-07"
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-REQ-F-003-AC9-AC-003-09-Pablo-con-una-.webm",
+ "test": "REQ-F-003 AC9 · AC-003-09 Pablo con una multa pendiente de 2 € no puede reservar «Casco»",
+ "titulo": "REQ-F-003 AC9 · AC-003-09 Pablo con una multa pendiente de 2 € no puede reservar «Casco»",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "Pablo, que debe una multa de 2 euros, entra y reserva un casco"
+  },
+  {
+   "t": 0.595,
+   "texto": "Reservar material para unas fechas. En Reservar se ve «Tienes una multa pendiente de 2 €. Págala al encargado para poder reservar».",
+   "criterio": "AC-003-09"
+  }
+ ]
+}

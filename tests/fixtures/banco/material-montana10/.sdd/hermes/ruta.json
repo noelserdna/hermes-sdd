@@ -1,0 +1,117 @@
+{
+  "factors": {
+    "external_customer": {
+      "p": 0.35,
+      "value": "no"
+    },
+    "sensitive_data": {
+      "p": 0.8,
+      "value": "yes"
+    },
+    "multi_actor": {
+      "p": 0.97,
+      "value": "yes"
+    },
+    "integrations": {
+      "p": 0.05,
+      "value": "no"
+    },
+    "ui_flows": {
+      "p": 0.92,
+      "value": "yes"
+    },
+    "long_lived": {
+      "p": 0.75,
+      "value": "yes"
+    },
+    "complex_state": {
+      "p": 0.85,
+      "value": "yes"
+    }
+  },
+  "facts": {
+    "req_f": 10,
+    "req_nf": 1,
+    "req_c": 3,
+    "must": 9,
+    "needs": 11,
+    "needs_out": 0,
+    "has_code": false,
+    "has_profile": true,
+    "stack_declared": true,
+    "req_nf_perf": 0
+  },
+  "stages": {
+    "requirements-engineer": {
+      "run": true,
+      "reason": "core"
+    },
+    "specifications-engineer": {
+      "run": true,
+      "reason": "run: 10 REQ-F (> 8), several user types, sensitive data, complex state"
+    },
+    "spec-auditor": {
+      "run": true,
+      "reason": "run: 10 REQ-F (> 5), sensitive data"
+    },
+    "test-planner": {
+      "run": true,
+      "reason": "run: UI screens, 10 REQ-F (> 8)"
+    },
+    "plan-architect": {
+      "run": true,
+      "reason": "core"
+    },
+    "task-generator": {
+      "run": true,
+      "reason": "core"
+    },
+    "task-implementer": {
+      "run": true,
+      "reason": "core"
+    },
+    "acceptance": {
+      "run": true,
+      "reason": "core"
+    },
+    "security-auditor": {
+      "run": true,
+      "reason": "run: sensitive data"
+    },
+    "ux-designer": {
+      "run": true,
+      "reason": "run: UI screens"
+    },
+    "tech-designer": {
+      "run": true,
+      "reason": "run: complex state"
+    },
+    "gap-detector": {
+      "run": true,
+      "reason": "run: formal specs run, gaps are checked against them"
+    }
+  },
+  "artifacts": {
+    "test-matrix": {
+      "make": true,
+      "reason": "make: 10 REQ-F (> 8)"
+    },
+    "perf-scenarios": {
+      "make": false,
+      "reason": "skip: no REQ-NF about speed or load"
+    },
+    "traceability-matrix": {
+      "make": "generated",
+      "reason": "generated with sdd trace matrix --out spec/TRACEABILITY-MATRIX.md, never written by hand"
+    }
+  },
+  "doubts": [],
+  "escalations": [],
+  "saved_minutes_estimate": 0,
+  "source": "answers",
+  "thresholds": {
+    "yes": 0.65,
+    "no": 0.35
+  },
+  "reqHash": "sha256:9a42b4b0d9885a6c3533a9fe6c09a38019b6c7aa2e01f39ddecc49f66d340aab"
+}

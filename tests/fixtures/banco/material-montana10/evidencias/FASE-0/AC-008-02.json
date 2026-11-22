@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-008-02",
+ "test": "REQ-F-008 AC2 · AC-008-02 enviar otra vez el mismo añadido suma: 7 unidades y «Añadidas 2 unidades de Piolet»",
+ "titulo": "REQ-F-008 AC2 · AC-008-02 enviar otra vez el mismo añadido suma: 7 unidades y «Añadidas 2 unidades de Piolet»",
+ "ve": [
+  "Añadidas 2 unidades de Piolet"
+ ],
+ "narrado": "Gestionar el inventario. En Inventario se ve «Añadidas 2 unidades de Piolet», y el encargado ve 7 unidades, porque cada envío añade unidades.",
+ "url": "http://127.0.0.1:5173/#/inventario",
+ "imagen": "AC-008-02.png",
+ "sha256": "sha256:06ffabe9aee003249de2430161cd7936bed69d162a0764ae97add7a1c8cfe681",
+ "at": "2026-11-21T13:45:48.710Z"
+}

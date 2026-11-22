@@ -1,0 +1,26 @@
+[
+  {
+    "clave": "tests:8bb6badb1b",
+    "titulo": "Los tests fallan en 3890680",
+    "detalle": "⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯\n⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯\nRangeError: options.minThreads and options.maxThreads must not conflict\n     Errors  1 error",
+    "propuesta": "Los tests del proyecto fallan en el commit 3890680. Encuentra la causa y arréglala sin debilitar ningún test existente."
+  },
+  {
+    "clave": "gate:1:292586fe37",
+    "titulo": "La puerta de calidad global ya no se cumple (código 1)",
+    "detalle": " REQ-F-003 Reservar material para unas fechas | MISSING (test does not carry the criterion's literal) \n REQ-F-006 Marcar la devolución y poner la multa | MISSING (test does not carry the criterion's literal) \n REQ-F-008 Gestionar el inventario | MISSING (test does not carry the criterion's literal) \n REQ-F-009 Ver lo prestado y lo que vuelve cada día | MISSING (test does not carry the criterion's literal) ",
+    "propuesta": "La puerta de calidad global ha dejado de cumplirse. Vuelve a verificar los requisitos afectados."
+  },
+  {
+    "clave": "seguridad:d0de80d215",
+    "titulo": "3 dependencia(s) con vulnerabilidades altas o críticas",
+    "detalle": "tinypool (critical), vite (high), vitest (critical)",
+    "propuesta": "Actualiza estas dependencias vulnerables sin cambiar el comportamiento: tinypool (critical), vite (high), vitest (critical)."
+  },
+  {
+    "clave": "versiones:5389958bd5",
+    "titulo": "4 dependencia(s) con una versión mayor nueva",
+    "detalle": "eslint 9.39.5→10.15.0\njsdom 25.0.1→31.0.1\nvite 6.4.6→8.3.8\nvitest 2.1.9→5.1.1",
+    "propuesta": "Valora subir de versión mayor: eslint 9.39.5→10.15.0;jsdom 25.0.1→31.0.1;vite 6.4.6→8.3.8;vitest 2.1.9→5.1.1;. Hazlo solo si los tests siguen en verde sin tocarlos."
+  }
+]

@@ -1,0 +1,533 @@
+{
+  "$schema": "sdd-adversarial-plan-v1",
+  "evaluated_sha": "fa566764162ab792ed39b1b20b644847d1d19e7d",
+  "dirty": false,
+  "generatedAt": "2026-11-21T22:38:15.429Z",
+  "scope": {
+    "fase": 2
+  },
+  "code_paths": [
+    "src"
+  ],
+  "adversarial_gate": "enforce",
+  "incremental": {
+    "since": "4d8e9a3d155e746a506f10f43389d7f14b652928",
+    "baseline": ".sdd/hermes/adversarial-FASE-2.json",
+    "changed_files": [
+      "tests/e2e/fase-2-prestamo.spec.js",
+      "tests/unit/prestamos-devolucion.test.js"
+    ],
+    "criteria": 6,
+    "recheck": 1,
+    "carried": 5
+  },
+  "fases": [
+    {
+      "fase": 2,
+      "file": "plan/fases/FASE-2-PRESTAMO.md",
+      "header": true,
+      "requirements": [
+        {
+          "id": "REQ-F-005",
+          "title": "Entregar y marcar la devolución",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN the encargado marks a reservation as delivered or as returned THE system SHALL record the state and the date, and show it in the list of loans",
+          "reqHash": "sha256:5f6f1665d14cc81ef3c69842fd6daa294ff4f93264f2f48b77ab022164afb740",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN today is 2026-12-05 and \"lucia\" has a \"Piolet\" reservation starting 2026-12-05 WHEN the encargado marks \"Entregar\" THEN the user sees the reservation \"Piolet\" with state \"Entregado\"",
+              "scenarios": [
+                "AC-008-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-01 REQ-F-005 AC1 con hoy 2026-12-05 marta entrega el Piolet de Lucía y ve Entregado",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-01 REQ-F-005 AC1 con hoy 2026-12-05 marta entrega el Piolet de Lucía y ve Entregado",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-01 REQ-F-005 AC1 con hoy 2026-12-05 marta entrega el Piolet de Lucía y ve Entregado",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-01 REQ-F-005 AC1 con hoy 2026-12-05 marta entrega el Piolet de Lucía y ve Entregado",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-c63ca-let-de-Lucía-y-ve-Entregado-chromium/attachments/AC-008-01-13070856626e90cdf1c6eceeb8a938740042a0d4.png",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-c63ca-let-de-Lucía-y-ve-Entregado-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Ent-c63ca-let-de-Lucía-y-ve-Entregado-chromium/attachments/AC-008-01-d6393607a7bc4874dc98b2e096b27900f09e50f9.png",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Ent-c63ca-let-de-Lucía-y-ve-Entregado-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-008-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-c63ca-let-de-Lucía-y-ve-Entregado-chromium/attachments/AC-008-01-13070856626e90cdf1c6eceeb8a938740042a0d4.png": "sha256:8b80155befbacc1623c17b427cd72e04fcc5d9b7e0c0abaccf56af283cb7679b",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-c63ca-let-de-Lucía-y-ve-Entregado-chromium/test-finished-1.png": "sha256:8b80155befbacc1623c17b427cd72e04fcc5d9b7e0c0abaccf56af283cb7679b",
+                "evidencias/FASE-2/AC-008-01.png": "sha256:8b80155befbacc1623c17b427cd72e04fcc5d9b7e0c0abaccf56af283cb7679b",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Ent-c63ca-let-de-Lucía-y-ve-Entregado-chromium/attachments/AC-008-01-d6393607a7bc4874dc98b2e096b27900f09e50f9.png": "sha256:8b80155befbacc1623c17b427cd72e04fcc5d9b7e0c0abaccf56af283cb7679b",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Ent-c63ca-let-de-Lucía-y-ve-Entregado-chromium/test-finished-1.png": "sha256:8b80155befbacc1623c17b427cd72e04fcc5d9b7e0c0abaccf56af283cb7679b"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Entregado",
+                    "template": false
+                  }
+                ],
+                "where": "Préstamos",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-c63ca-let-de-Lucía-y-ve-Entregado-chromium/attachments/AC-008-01-13070856626e90cdf1c6eceeb8a938740042a0d4.png",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-c63ca-let-de-Lucía-y-ve-Entregado-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-008-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-c63ca-let-de-Lucía-y-ve-Entregado-chromium/attachments/FASE-2-FASE-2-AC-008-01-REQ-F-005-AC1-con-hoy-2-12430c61c2ea65b09bc08b2d9a61a40bc1c00f62.webm",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-c63ca-let-de-Lucía-y-ve-Entregado-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-FASE-2-AC-008-01-REQ-F-005-AC1-con-hoy-2.mp4",
+                "evidencias/FASE-2/FASE-2-FASE-2-AC-008-01-REQ-F-005-AC1-con-hoy-2.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 2,
+              "text": "GIVEN a delivered \"Piolet\" due 2026-12-07 WHEN the encargado marks \"Devolver\" on 2026-12-07 THEN the user sees state \"Devuelto\" and the unit is free again",
+              "scenarios": [
+                "AC-009-01"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-01 REQ-F-005 AC2 el Piolet entregado con fin 2026-12-07 se devuelve el 2026-12-07 y marta ve Devuelto",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-01 REQ-F-005 AC2 el Piolet entregado con fin 2026-12-07 se devuelve el 2026-12-07 y marta ve Devuelto",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-01 REQ-F-005 AC2 el Piolet entregado con fin 2026-12-07 se devuelve el 2026-12-07 y marta ve Devuelto",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-01 REQ-F-005 AC2 el Piolet entregado con fin 2026-12-07 se devuelve el 2026-12-07 y marta ve Devuelto",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-6de81-6-12-07-y-marta-ve-Devuelto-chromium/attachments/AC-009-01-e68d0b849faeb77a901dff81b29bb9d0b18db555.png",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-6de81-6-12-07-y-marta-ve-Devuelto-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Dev-6de81-6-12-07-y-marta-ve-Devuelto-chromium/attachments/AC-009-01-aeabf9274d8fc319c984dea8dbf07a7a97a7b0fa.png",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Dev-6de81-6-12-07-y-marta-ve-Devuelto-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-009-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-6de81-6-12-07-y-marta-ve-Devuelto-chromium/attachments/AC-009-01-e68d0b849faeb77a901dff81b29bb9d0b18db555.png": "sha256:4340779419fdcab90bb964c2f89e43534886484ec1c27f09e7c2b437c256a475",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-6de81-6-12-07-y-marta-ve-Devuelto-chromium/test-finished-1.png": "sha256:4340779419fdcab90bb964c2f89e43534886484ec1c27f09e7c2b437c256a475",
+                "evidencias/FASE-2/AC-009-01.png": "sha256:4340779419fdcab90bb964c2f89e43534886484ec1c27f09e7c2b437c256a475",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Dev-6de81-6-12-07-y-marta-ve-Devuelto-chromium/attachments/AC-009-01-aeabf9274d8fc319c984dea8dbf07a7a97a7b0fa.png": "sha256:4340779419fdcab90bb964c2f89e43534886484ec1c27f09e7c2b437c256a475",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Dev-6de81-6-12-07-y-marta-ve-Devuelto-chromium/test-finished-1.png": "sha256:4340779419fdcab90bb964c2f89e43534886484ec1c27f09e7c2b437c256a475"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Devuelto",
+                    "template": false
+                  }
+                ],
+                "where": "Préstamos",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-6de81-6-12-07-y-marta-ve-Devuelto-chromium/attachments/AC-009-01-e68d0b849faeb77a901dff81b29bb9d0b18db555.png",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-6de81-6-12-07-y-marta-ve-Devuelto-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-009-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-6de81-6-12-07-y-marta-ve-Devuelto-chromium/attachments/FASE-2-FASE-2-AC-009-01-REQ-F-005-AC2-el-Piolet-1cf8df4b8ead6b11eebab315f1368e27aab89a3a.webm",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-6de81-6-12-07-y-marta-ve-Devuelto-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-FASE-2-AC-009-01-REQ-F-005-AC2-el-Piolet.mp4",
+                "evidencias/FASE-2/FASE-2-FASE-2-AC-009-01-REQ-F-005-AC2-el-Piolet.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 3,
+              "text": "GIVEN a reservation starting 2026-12-05 WHEN the encargado tries to deliver it on 2026-12-04 THEN the user sees \"No se puede entregar antes de la fecha de inicio\"",
+              "scenarios": [
+                "AC-008-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-03 REQ-F-005 AC3 con hoy 2026-12-04 marta intenta entregar el Piolet de Lucía y ve No se puede entregar antes de la fecha de inicio",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-03 REQ-F-005 AC3 con hoy 2026-12-04 marta intenta entregar el Piolet de Lucía y ve No se puede entregar antes de la fecha de inicio",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-03 REQ-F-005 AC3 con hoy 2026-12-04 marta intenta entregar el Piolet de Lucía y ve No se puede entregar antes de la fecha de inicio",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-03 REQ-F-005 AC3 con hoy 2026-12-04 marta intenta entregar el Piolet de Lucía y ve No se puede entregar antes de la fecha de inicio",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-dd433-antes-de-la-fecha-de-inicio-chromium/attachments/AC-008-03-c551463ded5393aec50e149c1080d30c4728ca78.png",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-dd433-antes-de-la-fecha-de-inicio-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Ent-dd433-antes-de-la-fecha-de-inicio-chromium/attachments/AC-008-03-f63eb10ab03ab7f42dea8a392454899b056d7459.png",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Ent-dd433-antes-de-la-fecha-de-inicio-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-008-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-dd433-antes-de-la-fecha-de-inicio-chromium/attachments/AC-008-03-c551463ded5393aec50e149c1080d30c4728ca78.png": "sha256:6805aeef6bd1ddf891b8923f8e5218dc77caef34a70f9e4efb8ab28fa5d0d13a",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-dd433-antes-de-la-fecha-de-inicio-chromium/test-finished-1.png": "sha256:6805aeef6bd1ddf891b8923f8e5218dc77caef34a70f9e4efb8ab28fa5d0d13a",
+                "evidencias/FASE-2/AC-008-03.png": "sha256:6805aeef6bd1ddf891b8923f8e5218dc77caef34a70f9e4efb8ab28fa5d0d13a",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Ent-dd433-antes-de-la-fecha-de-inicio-chromium/attachments/AC-008-03-f63eb10ab03ab7f42dea8a392454899b056d7459.png": "sha256:6805aeef6bd1ddf891b8923f8e5218dc77caef34a70f9e4efb8ab28fa5d0d13a",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Ent-dd433-antes-de-la-fecha-de-inicio-chromium/test-finished-1.png": "sha256:6805aeef6bd1ddf891b8923f8e5218dc77caef34a70f9e4efb8ab28fa5d0d13a"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No se puede entregar antes de la fecha de inicio",
+                    "template": false
+                  }
+                ],
+                "where": "Préstamos",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-dd433-antes-de-la-fecha-de-inicio-chromium/attachments/AC-008-03-c551463ded5393aec50e149c1080d30c4728ca78.png",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-dd433-antes-de-la-fecha-de-inicio-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-008-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-dd433-antes-de-la-fecha-de-inicio-chromium/attachments/FASE-2-FASE-2-AC-008-03-REQ-F-005-AC3-con-hoy-2-5a98eb765cba1325e58c0416c445e4a63813bdf4.webm",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-dd433-antes-de-la-fecha-de-inicio-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-FASE-2-AC-008-03-REQ-F-005-AC3-con-hoy-2.mp4",
+                "evidencias/FASE-2/FASE-2-FASE-2-AC-008-03-REQ-F-005-AC3-con-hoy-2.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 4,
+              "text": "GIVEN a reservation never delivered, start 2026-12-05 WHEN 2026-12-06 arrives THEN the user sees its state \"No recogida\" and the unit is free for new reservations",
+              "scenarios": [
+                "AC-008-02"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-02 REQ-F-005 AC4 con hoy 2026-12-06 el Piolet de Lucía sin entregar sale No recogida y su unidad queda libre",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-02 REQ-F-005 AC4 con hoy 2026-12-06 el Piolet de Lucía sin entregar sale No recogida y su unidad queda libre",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-02 REQ-F-005 AC4 con hoy 2026-12-06 el Piolet de Lucía sin entregar sale No recogida y su unidad queda libre",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-02 REQ-F-005 AC4 con hoy 2026-12-06 el Piolet de Lucía sin entregar sale No recogida y su unidad queda libre",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-a5a5f-ida-y-su-unidad-queda-libre-chromium/attachments/AC-008-02-86b5f713858d14df690162449be237a21f9b1b79.png",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-a5a5f-ida-y-su-unidad-queda-libre-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Ent-a5a5f-ida-y-su-unidad-queda-libre-chromium/attachments/AC-008-02-edd45af218fea03fca6892d6528e4c1ec7954c53.png",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Ent-a5a5f-ida-y-su-unidad-queda-libre-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-008-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-a5a5f-ida-y-su-unidad-queda-libre-chromium/attachments/AC-008-02-86b5f713858d14df690162449be237a21f9b1b79.png": "sha256:ba9b7c72b7e4330dae12fef477ce39074c03266e3a9e5d9a3fc7bb6027c2cf97",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-a5a5f-ida-y-su-unidad-queda-libre-chromium/test-finished-1.png": "sha256:ba9b7c72b7e4330dae12fef477ce39074c03266e3a9e5d9a3fc7bb6027c2cf97",
+                "evidencias/FASE-2/AC-008-02.png": "sha256:ba9b7c72b7e4330dae12fef477ce39074c03266e3a9e5d9a3fc7bb6027c2cf97",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Ent-a5a5f-ida-y-su-unidad-queda-libre-chromium/attachments/AC-008-02-edd45af218fea03fca6892d6528e4c1ec7954c53.png": "sha256:ba9b7c72b7e4330dae12fef477ce39074c03266e3a9e5d9a3fc7bb6027c2cf97",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Ent-a5a5f-ida-y-su-unidad-queda-libre-chromium/test-finished-1.png": "sha256:ba9b7c72b7e4330dae12fef477ce39074c03266e3a9e5d9a3fc7bb6027c2cf97"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No recogida",
+                    "template": false
+                  }
+                ],
+                "where": "Préstamos",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-a5a5f-ida-y-su-unidad-queda-libre-chromium/attachments/AC-008-02-86b5f713858d14df690162449be237a21f9b1b79.png",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-a5a5f-ida-y-su-unidad-queda-libre-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-008-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-a5a5f-ida-y-su-unidad-queda-libre-chromium/attachments/FASE-2-FASE-2-AC-008-02-REQ-F-005-AC4-con-hoy-2-5551de908cf2ed665aeb64874796e9d424e38b55.webm",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-a5a5f-ida-y-su-unidad-queda-libre-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-FASE-2-AC-008-02-REQ-F-005-AC4-con-hoy-2.mp4",
+                "evidencias/FASE-2/FASE-2-FASE-2-AC-008-02-REQ-F-005-AC4-con-hoy-2.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 5,
+              "text": "GIVEN a delivered unit already marked \"Devuelto\" WHEN \"Devolver\" is sent again THEN the state stays \"Devuelto\" with the first return date and no second fine is created",
+              "scenarios": [
+                "AC-009-03"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-03 REQ-F-005 AC5 repetir la devolución del Casco el 2026-12-11 deja Devuelto con la fecha 2026-12-10 y una sola multa de 6,00 € Pendiente",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-03 REQ-F-005 AC5 repetir la devolución del Casco el 2026-12-11 deja Devuelto con la fecha 2026-12-10 y una sola multa de 6,00 € Pendiente",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-03 REQ-F-005 AC5 repetir la devolución del Piolet el 2026-12-08 deja Devuelto con la fecha 2026-12-07 y sin multa",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-03 REQ-F-005 AC5 repetir la devolución del Piolet el 2026-12-08 deja Devuelto con la fecha 2026-12-07 y sin multa",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-f7ccc-a-multa-de-6-00-€-Pendiente-chromium/attachments/AC-009-03-229b8ec04bb1fafabaab2e535f65b412fc59e575.png",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-f7ccc-a-multa-de-6-00-€-Pendiente-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Dev-bc83f-echa-2026-12-07-y-sin-multa-chromium/attachments/AC-009-03-74d89b3087fd0129cc82517c6c635788a9b11e75.png",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Dev-bc83f-echa-2026-12-07-y-sin-multa-chromium/test-finished-1.png",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-bc83f-echa-2026-12-07-y-sin-multa-chromium/attachments/AC-009-03-229b8ec04bb1fafabaab2e535f65b412fc59e575.png",
+                "evidencias/FASE-2/AC-009-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-bc83f-echa-2026-12-07-y-sin-multa-chromium/attachments/AC-009-03-229b8ec04bb1fafabaab2e535f65b412fc59e575.png": "sha256:18cb6d7ff09ca42915f2fe196f9084c48cb4a60e5224c9acfdda8e17685e8876",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-f7ccc-a-multa-de-6-00-€-Pendiente-chromium/attachments/AC-009-03-229b8ec04bb1fafabaab2e535f65b412fc59e575.png": "sha256:86bd5fe47c86a4b81508f3c064179057ef0d6b6c31f7cf3c0adee440199ce68b",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-f7ccc-a-multa-de-6-00-€-Pendiente-chromium/test-finished-1.png": "sha256:86bd5fe47c86a4b81508f3c064179057ef0d6b6c31f7cf3c0adee440199ce68b",
+                "evidencias/FASE-2/AC-009-03.png": "sha256:86bd5fe47c86a4b81508f3c064179057ef0d6b6c31f7cf3c0adee440199ce68b",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Dev-bc83f-echa-2026-12-07-y-sin-multa-chromium/attachments/AC-009-03-74d89b3087fd0129cc82517c6c635788a9b11e75.png": "sha256:18cb6d7ff09ca42915f2fe196f9084c48cb4a60e5224c9acfdda8e17685e8876",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Dev-bc83f-echa-2026-12-07-y-sin-multa-chromium/test-finished-1.png": "sha256:18cb6d7ff09ca42915f2fe196f9084c48cb4a60e5224c9acfdda8e17685e8876"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Devuelto",
+                    "template": false
+                  }
+                ],
+                "where": "Préstamos",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-f7ccc-a-multa-de-6-00-€-Pendiente-chromium/attachments/AC-009-03-229b8ec04bb1fafabaab2e535f65b412fc59e575.png",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-f7ccc-a-multa-de-6-00-€-Pendiente-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-009-03.png"
+              ],
+              "unbound_captures": [
+                {
+                  "ref": "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-bc83f-echa-2026-12-07-y-sin-multa-chromium/attachments/AC-009-03-229b8ec04bb1fafabaab2e535f65b412fc59e575.png",
+                  "test": "FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-03 REQ-F-005 AC5 repetir la devolución del Piolet el 2026-12-08 deja Devuelto con la fecha 2026-12-07 y sin multa",
+                  "reason": "attached by the test \"FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-0…\", which does not pass"
+                }
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-f7ccc-a-multa-de-6-00-€-Pendiente-chromium/attachments/FASE-2-FASE-2-AC-009-03-REQ-F-005-AC5-repetir-l-d408bb29846560e5b48986e692ba1e679702a2d1.webm",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-f7ccc-a-multa-de-6-00-€-Pendiente-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-FASE-2-AC-009-03-REQ-F-005-AC5-repetir-l.mp4",
+                "evidencias/FASE-2/FASE-2-FASE-2-AC-009-03-REQ-F-005-AC5-repetir-l.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "challenge CH-003 stale",
+                "test changed: tests/e2e/fase-2-prestamo.spec.js",
+                "test changed: tests/unit/prestamos-devolucion.test.js",
+                "bound tests changed",
+                "capture changed: evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-f7ccc-a-multa-de-6-00-€-Pendiente-chromium/attachments/AC-009-03-229b8ec04bb1fafabaab2e535f65b412fc59e575.png, evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-f7ccc-a-multa-de-6-00-€-Pendiente-chromium/test-finished-1.png, evidencias/FASE-2/AC-009-03.png, evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Dev-bc83f-echa-2026-12-07-y-sin-multa-chromium/test-finished-1.png"
+              ]
+            },
+            {
+              "n": 6,
+              "text": "GIVEN a socio session WHEN the socio opens the address of \"Préstamos\" THEN the user sees \"Acceso no permitido\"",
+              "scenarios": [
+                "AC-008-04"
+              ],
+              "tests": [
+                {
+                  "name": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-04 REQ-F-005 AC6 lucia, socia, abre la dirección de Préstamos y ve Acceso no permitido",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-04 REQ-F-005 AC6 lucia, socia, abre la dirección de Préstamos y ve Acceso no permitido",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-04 REQ-F-005 AC6 lucia, socia, abre la dirección de Préstamos y ve Acceso no permitido",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-04 REQ-F-005 AC6 lucia, socia, abre la dirección de Préstamos y ve Acceso no permitido",
+                  "file": "fase-2-prestamo.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-e4b30-os-y-ve-Acceso-no-permitido-chromium/attachments/AC-008-04-895cf22793c11d4f235c0ea3bb72164d32ffb465.png",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-e4b30-os-y-ve-Acceso-no-permitido-chromium/test-finished-1.png",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Ent-e4b30-os-y-ve-Acceso-no-permitido-chromium/attachments/AC-008-04-9fc0286e696eda5831ba606195a762197e294a4d.png",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Ent-e4b30-os-y-ve-Acceso-no-permitido-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-008-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-e4b30-os-y-ve-Acceso-no-permitido-chromium/attachments/AC-008-04-895cf22793c11d4f235c0ea3bb72164d32ffb465.png": "sha256:5f3d7ff7140ee0871d59eb96e0d2014569783ea6e12ab175793c60bc070900b8",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-e4b30-os-y-ve-Acceso-no-permitido-chromium/test-finished-1.png": "sha256:5f3d7ff7140ee0871d59eb96e0d2014569783ea6e12ab175793c60bc070900b8",
+                "evidencias/FASE-2/AC-008-04.png": "sha256:5f3d7ff7140ee0871d59eb96e0d2014569783ea6e12ab175793c60bc070900b8",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Ent-e4b30-os-y-ve-Acceso-no-permitido-chromium/attachments/AC-008-04-9fc0286e696eda5831ba606195a762197e294a4d.png": "sha256:5f3d7ff7140ee0871d59eb96e0d2014569783ea6e12ab175793c60bc070900b8",
+                "evidencias/sin-fase/.playwright/fase-2-prestamo-FASE-2-Ent-e4b30-os-y-ve-Acceso-no-permitido-chromium/test-finished-1.png": "sha256:5f3d7ff7140ee0871d59eb96e0d2014569783ea6e12ab175793c60bc070900b8"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Acceso no permitido",
+                    "template": false
+                  }
+                ],
+                "where": "Préstamos",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-e4b30-os-y-ve-Acceso-no-permitido-chromium/attachments/AC-008-04-895cf22793c11d4f235c0ea3bb72164d32ffb465.png",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-e4b30-os-y-ve-Acceso-no-permitido-chromium/test-finished-1.png",
+                "evidencias/FASE-2/AC-008-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-e4b30-os-y-ve-Acceso-no-permitido-chromium/attachments/FASE-2-FASE-2-AC-008-04-REQ-F-005-AC6-lucia-so-dcf4a8ad076701533bf7e54b908689e9d4dc1fc8.webm",
+                "evidencias/FASE-2/.playwright/fase-2-prestamo-FASE-2-Ent-e4b30-os-y-ve-Acceso-no-permitido-chromium/video.webm",
+                "evidencias/FASE-2/FASE-2-FASE-2-AC-008-04-REQ-F-005-AC6-lucia-so.mp4",
+                "evidencias/FASE-2/FASE-2-FASE-2-AC-008-04-REQ-F-005-AC6-lucia-so.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            }
+          ],
+          "candidate_files": [
+            "src/domain/multas.js",
+            "src/domain/permisos.js",
+            "src/domain/prestamos.js",
+            "src/server/plugin.js",
+            "src/ui/api.js",
+            "src/ui/main.js",
+            "src/ui/pantallas/prestamos.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        }
+      ],
+      "unknown_requirements": [],
+      "tasks": [
+        "TASK-F2-001",
+        "TASK-F2-002",
+        "TASK-F2-003",
+        "TASK-F2-004",
+        "TASK-F2-005",
+        "TASK-F2-006"
+      ],
+      "candidate_files": [
+        "src/domain/multas.js",
+        "src/domain/permisos.js",
+        "src/domain/prestamos.js",
+        "src/server/plugin.js",
+        "src/ui/api.js",
+        "src/ui/main.js",
+        "src/ui/pantallas/prestamos.js",
+        "src/ui/textos.js"
+      ],
+      "incremental": {
+        "criteria": 6,
+        "recheck": 1
+      }
+    }
+  ],
+  "uncovered": [
+    {
+      "id": "REQ-C-001",
+      "title": "Stack",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-002",
+      "title": "Textos en español",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-003",
+      "title": "Datos compartidos entre dispositivos",
+      "priority": "Must"
+    }
+  ],
+  "fases_without_header": [],
+  "criteria_without_test": [],
+  "coverage_gaps": 3
+}

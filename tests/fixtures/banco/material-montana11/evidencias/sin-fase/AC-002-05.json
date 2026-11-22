@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-002-05",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-002-05 la sesión de lucia sin actividad durante 30 minutos caduca y ve Sesión caducada, vuelve a entrar",
+ "titulo": "WF-002 AC-002-05 la sesión de lucia sin actividad durante 30 minutos caduca y ve Sesión caducada, vuelve a entrar",
+ "ve": [
+  "Sesión caducada, vuelve a entrar"
+ ],
+ "narrado": "Entrar con correo y contraseña. En Entrar se ve «Sesión caducada, vuelve a entrar».",
+ "url": "http://127.0.0.1:37327/#/entrar",
+ "imagen": "AC-002-05.png",
+ "sha256": "sha256:a9c2aaceb4c0d1be3e483fc24d0510c841c2bfb9cffb4fd5dabf710485552ee7",
+ "at": "2026-11-22T06:14:10.636Z"
+}

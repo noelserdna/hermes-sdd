@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-010-03",
+ "test": "REQ-F-010 AC3 · AC-010-03 con Lucía elegida en Historial la junta no ve botón para editar, cancelar ni marcar nada",
+ "titulo": "REQ-F-010 AC3 · AC-010-03 con Lucía elegida en Historial la junta no ve botón para editar, cancelar ni marcar nada",
+ "ve": [
+  "Piolet 2 · 2026-12-05 a 2026-12-07 · Devuelta"
+ ],
+ "narrado": "Consultar el historial de un socio. En Historial se ve «Piolet 2 · 2026-12-05 a 2026-12-07 · Devuelta» sin ningún botón para editar, cancelar ni marcar nada; solo el de Ver historial.",
+ "url": "http://127.0.0.1:5173/#/historial",
+ "imagen": "AC-010-03.png",
+ "sha256": "sha256:3b1a0fa6182352661a64e7b7bd4fcd34814398f474adaec7a4073879f1a0fbee",
+ "at": "2026-11-21T12:40:20.231Z"
+}

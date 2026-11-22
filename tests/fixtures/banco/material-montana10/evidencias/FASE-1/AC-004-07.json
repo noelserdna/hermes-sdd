@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-004-07",
+ "test": "REQ-F-004 AC7 · AC-004-07 Pablo intenta cancelar la reserva de Lucía y ve «No tienes permiso para cancelar esta reserva»",
+ "titulo": "REQ-F-004 AC7 · AC-004-07 Pablo intenta cancelar la reserva de Lucía y ve «No tienes permiso para cancelar esta reserva»",
+ "ve": [
+  "No tienes permiso para cancelar esta reserva"
+ ],
+ "narrado": "Ver y cancelar mis reservas. En Mis reservas se ve «No tienes permiso para cancelar esta reserva», y la reserva de Lucía sigue Reservada.",
+ "url": "http://127.0.0.1:5173/#/mis-reservas",
+ "imagen": "AC-004-07.png",
+ "sha256": "sha256:def332f70785bd0d52e175ac2077b88af1d08f978cb7d7ed0c08607bda1a7851",
+ "at": "2026-11-21T13:46:20.179Z"
+}

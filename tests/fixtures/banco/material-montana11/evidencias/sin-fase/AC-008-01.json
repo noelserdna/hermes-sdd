@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-008-01",
+ "test": "FASE-2 Entregar material (UC-008) › FASE-2 AC-008-01 REQ-F-005 AC1 con hoy 2026-12-05 marta entrega el Piolet de Lucía y ve Entregado",
+ "titulo": "FASE-2 AC-008-01 REQ-F-005 AC1 con hoy 2026-12-05 marta entrega el Piolet de Lucía y ve Entregado",
+ "ve": [
+  "Entregado"
+ ],
+ "narrado": "Entregar y marcar la devolución. En Préstamos se ve «Entregado»: la reserva Piolet de Lucía queda con el estado Entregado.",
+ "url": "http://127.0.0.1:38033/#/prestamos",
+ "imagen": "AC-008-01.png",
+ "sha256": "sha256:3ef3db6389e6faff4159966f18a0b7325f639d35debe38ae71270df75bbd1f05",
+ "at": "2026-11-22T06:15:07.781Z"
+}

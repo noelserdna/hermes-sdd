@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-011-01",
+ "test": "WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-011-01 REQ-F-006 AC6 pablo con una multa Pendiente de 6,00 € abre Mis multas y ve 6,00 € y Pendiente",
+ "titulo": "WF-001 AC-011-01 REQ-F-006 AC6 pablo con una multa Pendiente de 6,00 € abre Mis multas y ve 6,00 € y Pendiente",
+ "ve": [
+  "6,00 €"
+ ],
+ "narrado": "Multa por devolución tardía y bloqueo. En Mis multas se ve «6,00 €» y el estado «Pendiente» de su Casco.",
+ "url": "http://127.0.0.1:36865/#/mis-multas",
+ "imagen": "AC-011-01.png",
+ "sha256": "sha256:fd4ac8dbff7b9fb82b3806a18a9575485200b7f93404a03595b6693b2d62f05f",
+ "at": "2026-11-22T06:15:45.285Z"
+}

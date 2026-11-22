@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-REQ-F-003-AC7-AC-003-07-reservar-Cuer.webm",
+ "test": "REQ-F-003 AC7 · AC-003-07 reservar «Cuerda» del 2026-12-10 al 2026-12-25 (16 días) se rechaza",
+ "titulo": "REQ-F-003 AC7 · AC-003-07 reservar «Cuerda» del 2026-12-10 al 2026-12-25 (16 días) se rechaza",
+ "narraciones": [
+  {
+   "t": 0.007,
+   "texto": "Lucía entra y reserva una cuerda del 10 al 25 de diciembre, 16 días"
+  },
+  {
+   "t": 0.649,
+   "texto": "Reservar material para unas fechas. En Reservar se ve «Máximo 14 días por reserva» y no se crea ninguna reserva.",
+   "criterio": "AC-003-07"
+  }
+ ]
+}

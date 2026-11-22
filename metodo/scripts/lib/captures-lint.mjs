@@ -23,6 +23,7 @@ import path from "node:path";
 import { testKeys, scenarioIndex, faseScope } from "./acceptance.mjs";
 import { splitComments, testFiles } from "./quotes.mjs";
 import { templateParts } from "../sdd-jev.mjs";
+import { says as saysPart } from "./match.mjs";
 
 const CAPTURE_CALL = /\b(captura|captureCriterion|capturar|captureEvidence)\s*\(|\.screenshot\s*\(/g;
 const API_CALL = /\brequest\s*\.\s*(get|post|put|patch|delete|fetch|head)\s*\(|\bfetch\s*\(/g;
@@ -90,16 +91,8 @@ function knownIds(root) {
   return ids;
 }
 
-/**
- * Does the narrated text say this fixed part of a «Se ve» text? «(s)» and «(es)» in the criterion mean singular or
- * plural, as the screen shows it: «1 día de retraso» says «día(s) de retraso» (material-montana4: the lint demanded the
- * literal «día(s)», the narration copied it, and the capture verifier saw caption and screen disagree).
- */
-export function saysPart(text, part) {
-  if (!/\((?:s|es)\)/i.test(part)) return text.includes(part);
-  const re = part.split(/(\((?:s|es)\))/i).map((x, i) => (i % 2 ? `(?:${x.slice(1, -1)})?` : x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))).join("");
-  return new RegExp(re).test(text);
-}
+/** The one comparator (lib/match.mjs), under the name this lint has always exported. */
+export { says as saysPart } from "./match.mjs";
 
 /**
  * Run the lint. opts: { root, reqs, scenarios, ledger (from `sdd accept`, optional), scope: Set | null, testPaths }.

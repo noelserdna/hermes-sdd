@@ -1,0 +1,333 @@
+{
+ "fase": "3",
+ "plan": "plan/fases/FASE-3-MULTAS.md",
+ "workflows": [
+  {
+   "id": "WF-001",
+   "titulo": "Ciclo del préstamo",
+   "fichero": "spec/workflows/WF-001-ciclo-del-prestamo.md",
+   "pasos": [
+    {
+     "n": 1,
+     "nombre": "Entrar (UC-001)",
+     "uc": "UC-001"
+    },
+    {
+     "n": 2,
+     "nombre": "Reservar (UC-005)",
+     "uc": "UC-005"
+    },
+    {
+     "n": 3,
+     "nombre": "Ver o cancelar (UC-006, UC-007)",
+     "uc": "UC-006"
+    },
+    {
+     "n": 4,
+     "nombre": "Entregar o No recogida (UC-008)",
+     "uc": "UC-008"
+    },
+    {
+     "n": 5,
+     "nombre": "Devolver (UC-009)",
+     "uc": "UC-009"
+    },
+    {
+     "n": 6,
+     "nombre": "Multa por retraso (UC-010)",
+     "uc": "UC-010"
+    },
+    {
+     "n": 7,
+     "nombre": "Pagar multa (UC-012)",
+     "uc": "UC-012"
+    },
+    {
+     "n": 8,
+     "nombre": "Volver a reservar (UC-005)",
+     "uc": "UC-005"
+    }
+   ],
+   "navegacion": [
+    {
+     "n": 1,
+     "celdas": [
+      "Entrar",
+      "cualquiera",
+      "dirección de la web",
+      "escribe correo y contraseña"
+     ]
+    },
+    {
+     "n": 2,
+     "celdas": [
+      "Reservar",
+      "socio",
+      "menú del Inicio del socio",
+      "elige material y fechas"
+     ]
+    },
+    {
+     "n": 3,
+     "celdas": [
+      "Mis reservas",
+      "socio",
+      "menú del Inicio del socio",
+      "consulta y cancela"
+     ]
+    },
+    {
+     "n": 4,
+     "celdas": [
+      "Préstamos",
+      "encargado",
+      "menú del Panel del encargado",
+      "marca Entregar"
+     ]
+    },
+    {
+     "n": 5,
+     "celdas": [
+      "Préstamos",
+      "encargado",
+      "menú del Panel del encargado",
+      "marca Devolver"
+     ]
+    },
+    {
+     "n": 6,
+     "celdas": [
+      "Multas",
+      "encargado",
+      "menú del Panel del encargado",
+      "ve la multa creada"
+     ]
+    },
+    {
+     "n": 7,
+     "celdas": [
+      "Multas",
+      "encargado",
+      "menú del Panel del encargado",
+      "marca Pagada"
+     ]
+    },
+    {
+     "n": 8,
+     "celdas": [
+      "Mis multas",
+      "socio",
+      "menú del Inicio del socio",
+      "consulta sus multas"
+     ]
+    }
+   ]
+  }
+ ],
+ "casos_de_uso": [
+  {
+   "id": "UC-010",
+   "titulo": "Aplicar multa por retraso",
+   "fichero": "spec/use-cases/UC-010-aplicar-multa-por-retraso.md",
+   "flujo": [
+    "System: calcula días = `devueltaEl` − `fin`, naturales (RN-009, INV-FIN-001).",
+    "System: si días > 0, crea la multa Pendiente con importe `FINE_PER_DAY_EUR` × días (INV-FIN-001).",
+    "System: comprueba que la reserva no tiene ya multa (INV-FIN-002).",
+    "System: el socio queda bloqueado para reservar mientras exista una multa Pendiente (INV-RES-005, INV-FIN-004); el rechazo se especifica en UC-005."
+   ],
+   "extensiones": [
+    {
+     "texto": "1a. `devueltaEl` ≤ `fin` → no se crea multa.",
+     "criterios": [
+      "AC-010-02"
+     ]
+    },
+    {
+     "texto": "1b. Un solo día de retraso → importe de 1 × `FINE_PER_DAY_EUR`.",
+     "criterios": [
+      "AC-010-03"
+     ]
+    },
+    {
+     "texto": "4a. El socio intenta reservar → `E_MULTA_PENDIENTE` y sus reservas existentes se conservan.",
+     "criterios": [
+      "AC-010-04"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-010-01",
+    "AC-010-02",
+    "AC-010-03",
+    "AC-010-04"
+   ]
+  },
+  {
+   "id": "UC-011",
+   "titulo": "Ver mis multas",
+   "fichero": "spec/use-cases/UC-011-ver-mis-multas.md",
+   "flujo": [
+    "Socio: abre Mis multas.",
+    "System: obtiene las multas cuyo dueño es el socio de la sesión (INV-SEC-001).",
+    "System: muestra cada importe con su estado."
+   ],
+   "extensiones": [
+    {
+     "texto": "2a. Otros socios tienen multas → no aparecen.",
+     "criterios": [
+      "AC-011-02"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-011-01"
+   ]
+  },
+  {
+   "id": "UC-012",
+   "titulo": "Marcar multa pagada",
+   "fichero": "spec/use-cases/UC-012-marcar-multa-pagada.md",
+   "flujo": [
+    "Encargado: abre Multas.",
+    "System: lista todas las multas con socio, importe y estado (API-003-07).",
+    "Encargado: marca \"Pagada\" sobre una multa Pendiente.",
+    "System: comprueba rol y existencia (INV-ACC-007).",
+    "System: pasa la multa a Pagada y anota `pagadaEl` en una escritura atómica (INV-SEC-003, ADR-005).",
+    "System: Multas muestra \"Pagada\"; el socio sin otra multa Pendiente ya puede reservar (UC-005)."
+   ],
+   "extensiones": [
+    {
+     "texto": "5a. El socio tiene otra multa Pendiente → sigue bloqueado para reservar (INV-RES-005).",
+     "criterios": [
+      "AC-012-02"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-012-02",
+    "AC-012-01",
+    "AC-012-03",
+    "AC-012-04"
+   ]
+  }
+ ],
+ "criterios": [
+  {
+   "id": "AC-010-01",
+   "req": "REQ-F-006",
+   "ac": 1,
+   "uc": "UC-010",
+   "frase": "Multa por devolución tardía y bloqueo. En Multas se ve «{importe} €».",
+   "visible": true,
+   "then": "the user sees the fine \"6,00 €\" for \"Pablo Ruiz\" with state \"Pendiente\"",
+   "ve": [
+    "{importe} €"
+   ],
+   "pantalla": "Multas"
+  },
+  {
+   "id": "AC-010-02",
+   "req": "REQ-F-006",
+   "ac": 2,
+   "uc": "UC-010",
+   "frase": "Multa por devolución tardía y bloqueo. En Multas se ve «Sin multas».",
+   "visible": true,
+   "then": "no fine is created",
+   "ve": [
+    "Sin multas"
+   ],
+   "pantalla": "Multas"
+  },
+  {
+   "id": "AC-010-03",
+   "req": "REQ-F-006",
+   "ac": 3,
+   "uc": "UC-010",
+   "frase": "Multa por devolución tardía y bloqueo. En Multas se ve «{importe} €».",
+   "visible": true,
+   "then": "the fine is \"2,00 €\"",
+   "ve": [
+    "{importe} €"
+   ],
+   "pantalla": "Multas"
+  },
+  {
+   "id": "AC-010-04",
+   "req": "REQ-F-006",
+   "ac": 4,
+   "uc": "UC-010",
+   "frase": "Multa por devolución tardía y bloqueo. En Reservar se ve «Tienes una multa pendiente: no puedes reservar hasta pagarla».",
+   "visible": true,
+   "then": "the reservation is rejected (see REQ-F-003) and his other existing reservations stay",
+   "ve": [
+    "Tienes una multa pendiente: no puedes reservar hasta pagarla"
+   ],
+   "pantalla": "Reservar"
+  },
+  {
+   "id": "AC-012-02",
+   "req": "REQ-F-006",
+   "ac": 5,
+   "uc": "UC-012",
+   "frase": "Multa por devolución tardía y bloqueo. En Reservar se ve «Tienes una multa pendiente: no puedes reservar hasta pagarla».",
+   "visible": true,
+   "then": "he is still blocked",
+   "ve": [
+    "Tienes una multa pendiente: no puedes reservar hasta pagarla"
+   ],
+   "pantalla": "Reservar"
+  },
+  {
+   "id": "AC-011-01",
+   "req": "REQ-F-006",
+   "ac": 6,
+   "uc": "UC-011",
+   "frase": "Multa por devolución tardía y bloqueo. En Mis multas se ve «{importe} €».",
+   "visible": true,
+   "then": "the user sees \"6,00 €\" and \"Pendiente\"",
+   "ve": [
+    "{importe} €"
+   ],
+   "pantalla": "Mis multas"
+  },
+  {
+   "id": "AC-012-01",
+   "req": "REQ-F-007",
+   "ac": 1,
+   "uc": "UC-012",
+   "frase": "Marcar la multa como pagada. En Multas se ve «Pagada».",
+   "visible": true,
+   "then": "the user sees the fine with state \"Pagada\" and \"pablo\" can reserve \"Casco\"",
+   "ve": [
+    "Pagada"
+   ],
+   "pantalla": "Multas"
+  },
+  {
+   "id": "AC-012-03",
+   "req": "REQ-F-007",
+   "ac": 2,
+   "uc": "UC-012",
+   "frase": "Marcar la multa como pagada. En Multas se ve «Pagada».",
+   "visible": true,
+   "then": "it stays \"Pagada\" with the first payment date",
+   "ve": [
+    "Pagada"
+   ],
+   "pantalla": "Multas"
+  },
+  {
+   "id": "AC-012-04",
+   "req": "REQ-F-007",
+   "ac": 3,
+   "uc": "UC-012",
+   "frase": "Marcar la multa como pagada. En Multas se ve «Acceso no permitido».",
+   "visible": true,
+   "then": "the user sees \"Acceso no permitido\"",
+   "ve": [
+    "Acceso no permitido"
+   ],
+   "pantalla": "Multas"
+  }
+ ]
+}

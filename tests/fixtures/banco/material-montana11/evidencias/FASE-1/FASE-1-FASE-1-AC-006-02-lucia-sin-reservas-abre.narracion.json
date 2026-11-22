@@ -1,0 +1,16 @@
+{
+ "video": "FASE-1-FASE-1-AC-006-02-lucia-sin-reservas-abre.webm",
+ "test": "FASE-1 Mis reservas (socio) › FASE-1 AC-006-02 lucia sin reservas abre Mis reservas y ve No tienes reservas",
+ "titulo": "FASE-1 AC-006-02 lucia sin reservas abre Mis reservas y ve No tienes reservas",
+ "narraciones": [
+  {
+   "t": 1.206,
+   "texto": "Lucía no tiene ninguna reserva. Entra y abre Mis reservas"
+  },
+  {
+   "t": 1.749,
+   "texto": "Ver y cancelar mis reservas. En Mis reservas se ve «No tienes reservas».",
+   "criterio": "AC-006-02"
+  }
+ ]
+}

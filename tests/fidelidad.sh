@@ -366,8 +366,9 @@ out, st, n = corre(); assert n == 0, n
 # una línea base que falla (quizá intermitente) no se guarda: la siguiente vez se vuelve a probar
 F._ejecuta = lambda copia, cmd, minutos=10: (llamadas.append(cmd), False)[1]
 (C / "src" / "otro.js").write_text("export const x = 3\n")
-out, st, n = corre(); assert out[0]["resultado"] == "sus tests ya fallan sin mutar nada" and n == 1, (out, n)
-out, st, n = corre(); assert n == 1, n
+# rota se reintenta una vez (montana11: un fallo aislado dejaba «sin comprobar» el criterio), así que son 2 llamadas
+out, st, n = corre(); assert out[0]["resultado"] == "sus tests ya fallan sin mutar nada" and n == 2, (out, n)
+out, st, n = corre(); assert n == 2, n
 PY
 
 # 5. OCR de verdad (solo en macOS): una imagen con texto

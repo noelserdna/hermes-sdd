@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-004-04",
+ "test": "REQ-F-004 AC4 · AC-004-04 cancelar otra vez una reserva ya Cancelada deja una sola fila «Cancelada»",
+ "titulo": "REQ-F-004 AC4 · AC-004-04 cancelar otra vez una reserva ya Cancelada deja una sola fila «Cancelada»",
+ "ve": [
+  "Piolet · 2026-12-05 a 2026-12-07 · Cancelada"
+ ],
+ "narrado": "Ver y cancelar mis reservas. La lista sigue mostrando una sola fila cancelada, «Piolet · 2026-12-05 a 2026-12-07 · Cancelada», y no cambia nada más.",
+ "url": "http://127.0.0.1:5173/#/mis-reservas",
+ "imagen": "AC-004-04.png",
+ "sha256": "sha256:a978d2d01c322a15ec89a7980a876a9a6b8946afc22ba717fc586ba83b7e034e",
+ "at": "2026-11-21T12:34:26.640Z"
+}

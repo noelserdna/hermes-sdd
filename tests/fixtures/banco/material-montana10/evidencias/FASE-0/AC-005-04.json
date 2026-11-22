@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-005-04",
+ "test": "REQ-F-005 AC4 · AC-005-04 la reserva del 2026-12-05 al 2026-12-07 sin recoger se ve «No recogida» el 2026-12-08",
+ "titulo": "REQ-F-005 AC4 · AC-005-04 la reserva del 2026-12-05 al 2026-12-07 sin recoger se ve «No recogida» el 2026-12-08",
+ "ve": [
+  "Piolet · Lucía · No recogida"
+ ],
+ "narrado": "Entregar lo reservado. En Entregas y devoluciones se ve «Piolet · Lucía · No recogida», sus unidades quedan libres y ya no figura en Entregar hoy.",
+ "url": "http://127.0.0.1:5173/#/entregas",
+ "imagen": "AC-005-04.png",
+ "sha256": "sha256:408be665cb5cbba085ae076131dedd7874ad302509c3733d3862d43c795edce6",
+ "at": "2026-11-21T12:34:35.587Z"
+}

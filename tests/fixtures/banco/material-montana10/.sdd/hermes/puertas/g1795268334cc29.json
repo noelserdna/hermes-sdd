@@ -1,0 +1,60 @@
+{
+  "id": "g1795268334cc29",
+  "tipo": "fase",
+  "fase": "3",
+  "tablero": "material-montana10",
+  "tarjeta": "t_363ee24a",
+  "adopcion": false,
+  "sha": "0f6cf45be4d287c4dfb6a7ced0a000359df7710b",
+  "creada": "2026-11-21T13:38:54Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana10",
+  "titulo": "Aceptar FASE-3",
+  "texto": "🧭 Encargado: 1 aviso\n• La FASE-3 añadió 19 líneas de tests para 3 de código (6.3×): revisa si los tests prueban lo que piden los criterios\n\n🧪 La FASE-3 de «material-montana10» está lista para revisar.\n\n✅ Lo imprescindible de esta fase está comprobado. De 1 requisito que no es imprescindible la revisión independiente duda de que sus pruebas lo comprueben (⚠️ en la lista): míralo en la demo.\n\n⚠️ Contraseñas y datos personales: pasa sus pruebas, pero la revisión independiente duda de que lo comprueben (CH-005) (2 de 2 criterios)\n✅ Dar de alta, dar de baja y restablecer contraseña de socios: funciona y está comprobado (7 de 7 criterios)\n\n✏️ Se han cambiado 2 tests que ya existían, con la autorización que firmaste:\n• tests/unit/domain/prestamos-historial.test.js: autorizado (Q-task-implementer-003)\n• tests/e2e/fase-2-devolucion.spec.js: autorizado (Q-task-implementer-002)\n   quita: await expect(contenido(page).getByText('Multa de 2 € a Lucía (1 días de retraso)')).toBeVisible(); · await expect(contenido(page).getByText('Multa de 2 € a Luc…\n   pone: await expect(contenido(page).getByText('Multa de 2 € a Lucía (1 día de retraso)')).toBeVisible(); · await expect(contenido(page).getByText('Multa de 2 € a Lucí…\n\n🎬 Demo: vídeo y 7 capturas.\n\n👉 Pulsa ▶ Ver demo; después podrás aceptarla, aceptarla con observaciones o rechazarla.",
+  "opciones": [
+    {
+      "verbo": "ver",
+      "etiqueta": "▶ Ver demo",
+      "paso": 1
+    },
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Aceptar",
+      "paso": 2
+    },
+    {
+      "verbo": "observaciones",
+      "etiqueta": "📝 Con observaciones",
+      "texto": true,
+      "paso": 2
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true,
+      "paso": 2
+    }
+  ],
+  "demo": "evidencias/FASE-3/FASE-3-E2E-ADM-01-FASE-3-Demo-el-encargado-da-.mp4",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": false,
+        "codigo": "tests-de-mas",
+        "texto": "La FASE-3 añadió 19 líneas de tests para 3 de código (6.3×): revisa si los tests prueban lo que piden los criterios"
+      }
+    ],
+    "graves": 0
+  },
+  "narracion": {
+    "revisados": 0,
+    "contradicen": [],
+    "incompletos": []
+  }
+}

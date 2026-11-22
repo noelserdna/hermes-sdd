@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-003-03",
+ "test": "REQ-F-003 AC3 · AC-003-03 sin unidades de «Tienda» el 2026-12-06 Pablo ve el rechazo y no se crea la reserva",
+ "titulo": "REQ-F-003 AC3 · AC-003-03 sin unidades de «Tienda» el 2026-12-06 Pablo ve el rechazo y no se crea la reserva",
+ "ve": [
+  "No quedan unidades libres de Tienda esas fechas"
+ ],
+ "narrado": "Reservar material para unas fechas. En Reservar se ve «No quedan unidades libres de Tienda esas fechas» y no se crea ninguna reserva.",
+ "url": "http://127.0.0.1:5173/#/reservar",
+ "imagen": "AC-003-03.png",
+ "sha256": "sha256:d4d54ff6be27c8bbb73c00ee376745dbcf699027b2db9c8a54a2d142061f697e",
+ "at": "2026-11-21T13:45:56.204Z"
+}

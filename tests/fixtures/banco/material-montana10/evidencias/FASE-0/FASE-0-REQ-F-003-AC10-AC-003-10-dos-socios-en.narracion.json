@@ -1,0 +1,20 @@
+{
+ "video": "FASE-0-REQ-F-003-AC10-AC-003-10-dos-socios-en.webm",
+ "test": "REQ-F-003 AC10 · AC-003-10 dos socios envían a la vez por el último «Crampones»: solo se crea una reserva",
+ "titulo": "REQ-F-003 AC10 · AC-003-10 dos socios envían a la vez por el último «Crampones»: solo se crea una reserva",
+ "narraciones": [
+  {
+   "t": 0.051,
+   "texto": "Lucía y Pablo entran a la vez y preparan la misma reserva del último par de crampones"
+  },
+  {
+   "t": 0.893,
+   "texto": "Los dos pulsan Reservar al mismo tiempo"
+  },
+  {
+   "t": 1.249,
+   "texto": "Reservar material para unas fechas. En Reservar se ve «No quedan unidades libres de Crampones esas fechas» y solo se crea una reserva.",
+   "criterio": "AC-003-10"
+  }
+ ]
+}

@@ -1,0 +1,35 @@
+{
+ "video": "WF-001-WF-001-FASE-2-Demo-el-encargado-devuelv.webm",
+ "test": "WF-001 FASE-2 Demo: el encargado devuelve el piolet de Lucía con 3 días de retraso, ella no reserva hasta pagar y la junta lo ve en el historial",
+ "titulo": "WF-001 FASE-2 Demo: el encargado devuelve el piolet de Lucía con 3 días de retraso, ella no reserva hasta pagar y la junta lo ve en el historial",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "Paso 1: hoy es 8 de diciembre; el encargado abre Entregas y devoluciones y marca devuelto el piolet de Lucía, que debía volver el 5"
+  },
+  {
+   "t": 0.776,
+   "texto": "Paso 2: el encargado repite la devolución desde la otra pestaña y no se crea una segunda multa"
+  },
+  {
+   "t": 1.231,
+   "texto": "Paso 3: Lucía intenta reservar un piolet y la web se lo rechaza por la multa pendiente"
+  },
+  {
+   "t": 1.914,
+   "texto": "Paso 4: el encargado abre Multas y marca la multa de Lucía como pagada"
+  },
+  {
+   "t": 2.581,
+   "texto": "Paso 5: Lucía vuelve a reservar un piolet y esta vez se crea"
+  },
+  {
+   "t": 3.317,
+   "texto": "Paso 6: la junta abre Historial, elige a Lucía y ve su préstamo y su multa, sin botones de acción"
+  },
+  {
+   "t": 3.967,
+   "texto": "Paso 7: un socio abre Historial por su dirección y la web le dice que no tiene permiso"
+  }
+ ]
+}

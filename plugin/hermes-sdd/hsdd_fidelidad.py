@@ -335,7 +335,9 @@ def congelados(repo: Path, desde: str | None = None) -> list[dict]:
 # ── 2. vínculos test ↔ criterio ─────────────────────────────────────────────────────────────────────────────────────
 def _cuerpo_test(repo: Path, fichero: str, nombre: str) -> str:
     cands = [p for p in repo.rglob(Path(fichero).name) if "node_modules" not in p.parts]
-    titulo = nombre.split(" > ")[-1].strip()
+    # el título del test, sin sus describe: vitest los separa con « > » y Playwright con « › » (material-montana11: no se
+    # encontraba el cuerpo de ningún e2e dentro de un describe y REQ-F-006 AC4 salía como grave teniendo su texto)
+    titulo = re.split(r" [>›] ", nombre)[-1].strip()
     for p in cands:
         lineas = p.read_text(encoding="utf-8", errors="replace").splitlines()
         for i, l in enumerate(lineas):
@@ -620,6 +622,11 @@ def _ejecuta(copia: Path, cmd: list[str], minutos: int = 10) -> bool:
         return False
 
 
+def _dos_intentos(copia: Path, cmd: list[str], minutos: int = 10) -> bool:
+    """La línea base: True si la suite pasa a la primera o a la segunda."""
+    return _ejecuta(copia, cmd, minutos) or _ejecuta(copia, cmd, minutos)
+
+
 # Caché de mutantes en .sdd/hermes/mutantes-cache.json: el resultado de un mutante depende del texto que se cambia, de
 # los ficheros de la app que lo contienen y de los tests que se ejecutan (más los helpers y la configuración de los
 # tests): con la clave por hash de todo eso, un mutante ya ejecutado no se repite (re-aceptaciones, el cierre con los
@@ -728,6 +735,7 @@ def mutantes(repo: Path, copia: Path, acc: dict, solo_must: bool = True, stats: 
             sv = se_ve(c)
             # con «Se ve», sus textos exactos (una plantilla cambia con el dato: no se muta); sin él, los adivinados
             vis = ([] if sv[1] else [x for x, plantilla in sv[0] if not plantilla]) if sv else _visibles(c.get("text") or "")
+            datos = set(literales(partes(c.get("text") or "")[0]))
             for lit in vis:
                 # solo en código, no en comentarios (sala: «5ºC» solo estaba en un comentario de account-rules.js)
                 con = [p for p in fuentes if any(lit in l for l in _codigo(p))]
@@ -736,6 +744,12 @@ def mutantes(repo: Path, copia: Path, acc: dict, solo_must: bool = True, stats: 
                                  if "node_modules" not in x.parts and str(x.relative_to(copia)) not in e2e
                                  and norm(lit) in norm(x.read_text(encoding="utf-8", errors="replace")))
                 base = {"req": r["id"], "ac": c.get("n"), "texto": lit, "e2e": e2e, "unitarios": uni}
+                if not con and lit in datos:
+                    # Lo teclea el usuario en el GIVEN/WHEN («crea el socio "Pablo Ruiz"… ve "Pablo Ruiz"»): es un dato
+                    # del ejemplo, no un texto de la app; no puede estar en src/ ni hay nada que mutar (material-montana11,
+                    # F-5: la entrega avisaba de «Pablo Ruiz» y de la contraseña «Nieve2026»)
+                    out.append({**base, "resultado": "dato del ejemplo: lo teclea el usuario, no es texto de la app", "grave": False})
+                    continue
                 if not con:
                     # La app lo compone (plantilla con el dato: «Reserva creada: » + material + fechas) y un e2e
                     # comprueba el texto entero: no es un aviso (material-montana2, FASE-1: 3 avisos así)
@@ -756,8 +770,10 @@ def mutantes(repo: Path, copia: Path, acc: dict, solo_must: bool = True, stats: 
                 if bkey not in cache and pbkey in persistente["r"]:
                     cache[bkey] = tuple(persistente["r"][pbkey]["r"])
                 if bkey not in cache:
-                    cache[bkey] = ((not e2e or _ejecuta(copia, ["npx", "playwright", "test", *e2e])),
-                                   (not uni or _ejecuta(copia, ["npx", "vitest", "run", *uni], 5)))
+                    # un fallo aislado se repite una vez (PcWindows: el primer e2e en frío agotó sus 30 s y dejó «sin
+                    # comprobar» todos los textos del criterio)
+                    cache[bkey] = ((not e2e or _dos_intentos(copia, ["npx", "playwright", "test", *e2e])),
+                                   (not uni or _dos_intentos(copia, ["npx", "vitest", "run", *uni], 5)))
                     if all(cache[bkey]):   # un fallo (quizá intermitente) no se guarda: se vuelve a probar
                         persistente["r"][pbkey] = {"r": list(cache[bkey]), "t": time.time()}
                 base_e2e, base_uni = cache[bkey]

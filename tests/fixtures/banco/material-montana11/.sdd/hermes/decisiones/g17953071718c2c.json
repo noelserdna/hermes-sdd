@@ -1,0 +1,14 @@
+{
+  "verbo": "rechazo",
+  "texto": "Q1: A. CH-006 es grave y hay que cerrarlo: sin entrar, ninguna forma de pedir el fichero de datos (también con ?import u otros parámetros) puede devolver su contenido; añadid la prueba de esa forma. CH-007: el Casco 2 sigue prestado y debe verse en «Prestado ahora»; el criterio significa que no aparece en «Vuelven hoy» ese día: basta con que la prueba lo diga así.",
+  "actor": {
+    "persona": "yo",
+    "canal": "local",
+    "id": "andre"
+  },
+  "prueba": {
+    "host": "DESKTOP-7HT2139",
+    "demo": "no vista"
+  },
+  "at": "2026-11-22T00:28:08Z"
+}

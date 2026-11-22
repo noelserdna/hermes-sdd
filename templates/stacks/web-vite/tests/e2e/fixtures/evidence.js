@@ -11,7 +11,7 @@
 //   });
 import { test as base, expect } from '@playwright/test';
 import { createHash } from 'node:crypto';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { evidenceDir } from '../../../playwright.config.js';
 
@@ -33,6 +33,57 @@ async function rotulo(page, texto) {
     el.textContent = tx;
     el.style.display = tx ? 'block' : 'none';
   }, [ROTULO, texto]);
+}
+
+/** El criterio que demuestra un test, en el guion de la demo (.sdd/demo/GUION-FASE-N.json, que escribe el arnés): por su
+ *  id de escenario (AC-NNN-NN) o por «REQ-… ACn» en el título; primero el guion de la FASE en curso. */
+function criterioDelGuion(titulo) {
+  const ac = titulo.match(/AC-\d{3}-\d{2}/)?.[0];
+  const ra = titulo.match(/(REQ-[A-Z]+-\d+)[\s-]+AC(\d+)/);
+  if (!ac && !ra) return null;
+  let ficheros = [];
+  try { ficheros = readdirSync(path.join('.sdd', 'demo')).filter((f) => /^GUION-FASE-.+\.json$/.test(f)); } catch { return null; }
+  const actual = `GUION-FASE-${process.env.SDD_FASE}.json`;
+  for (const f of ficheros.sort((a, b) => (b === actual) - (a === actual))) {
+    try {
+      const c = JSON.parse(readFileSync(path.join('.sdd', 'demo', f), 'utf8')).criterios
+        ?.find((x) => x.presentacion && ((ac && x.id === ac) || (ra && x.req === ra[1] && String(x.ac) === ra[2])));
+      if (c) return c;
+    } catch { /* guion ilegible: sin presentación */ }
+  }
+  return null;
+}
+
+const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+/**
+ * Cómo abre el vídeo de un criterio: una cartela a pantalla completa con el requisito, lo que pide, sus criterios de
+ * aceptación (marcado el que se demuestra) y ese criterio en Dado / Cuando / Entonces; la voz lo lee y después viene la
+ * demostración en vivo. Lo pone el arnés antes de que empiece el test, con el texto del guion: el test no lo escribe.
+ */
+async function presentar(page, testInfo) {
+  const c = criterioDelGuion(testInfo.title);
+  if (!c) return;
+  const p = c.presentacion;
+  await page.setContent(`<!doctype html><html lang="es"><head><meta charset="utf-8"><style>
+    body{margin:0;min-height:100vh;box-sizing:border-box;padding:28px 44px;background:#0f172a;color:#f8fafc;font:400 17px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+    .id{font:600 14px/1 ui-monospace,Menlo,monospace;letter-spacing:.1em;color:#fbbf24}
+    h1{font-size:28px;line-height:1.15;margin:8px 0 6px} .pide{color:#cbd5e1;margin:0 0 14px;max-width:70ch}
+    h2{font:600 13px/1 ui-monospace,Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;color:#94a3b8;margin:14px 0 8px}
+    ol{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 24px}
+    li{color:#94a3b8;font-size:15px} li.actual{color:#fff;font-weight:700} li.actual::after{content:"  ◀ este vídeo";color:#fbbf24;font-weight:600}
+    dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;background:#1e293b;border-left:4px solid #fbbf24;border-radius:6px;padding:12px 16px}
+    dt{font-weight:700;color:#fbbf24} dd{margin:0}
+  </style></head><body data-sdd-presentacion="${esc(c.id)}">
+    <div class="id">REQUISITO ${esc(p.requisito)}</div><h1>${esc(p.titulo)}</h1>
+    ${p.para_el_cliente ? `<p class="pide">${esc(p.para_el_cliente)}</p>` : ''}
+    <h2>Criterios de aceptación (${p.total})</h2>
+    <ol>${p.criterios.map((x) => `<li class="${x.actual ? 'actual' : ''}">${x.n}. ${esc(x.titulo)}</li>`).join('')}</ol>
+    <h2>Criterio ${p.n} de ${p.total} · ${esc(c.id)}</h2>
+    <dl>${p.pasos.length ? p.pasos.map((x) => `<dt>${esc(x.k)}</dt><dd>${esc(x.texto)}</dd>`).join('') : `<dt>Se demuestra</dt><dd>${esc(c.frase)}</dd>`}</dl>
+  </body></html>`);
+  const s = de(testInfo);
+  s.narraciones.push({ t: (Date.now() - s.t0) / 1000, texto: `Requisito ${p.requisito}: ${p.titulo}. Criterio ${p.n} de ${p.total}.`, voz: p.voz, presentacion: c.id });
+  await page.waitForTimeout(400);
 }
 
 /**
@@ -76,6 +127,7 @@ export const test = base.extend({
   videoId: [undefined, { option: true }],
   page: async ({ page, videoId }, use, testInfo) => {
     de(testInfo).t0 = Date.now();
+    await presentar(page, testInfo);
     await use(page);
     const video = page.video();
     const s = estado.get(testInfo.testId);

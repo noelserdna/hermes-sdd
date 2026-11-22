@@ -1,0 +1,20 @@
+{
+ "video": "FASE-0-REQ-F-005-AC1-AC-005-01-el-2026-12-05-.webm",
+ "test": "REQ-F-005 AC1 · AC-005-01 el 2026-12-05 el encargado entrega a Lucía con «Piolet 2» y ve «Piolet 2 · Lucía · Prestada»",
+ "titulo": "REQ-F-005 AC1 · AC-005-01 el 2026-12-05 el encargado entrega a Lucía con «Piolet 2» y ve «Piolet 2 · Lucía · Prestada»",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "El encargado entra y abre Entregas y devoluciones; hoy es 5 de diciembre y Lucía tiene una reserva de Piolet desde hoy"
+  },
+  {
+   "t": 0.583,
+   "texto": "El encargado elige la unidad «Piolet 2» y pulsa Entregar"
+  },
+  {
+   "t": 0.854,
+   "texto": "Entregar lo reservado. En Entregas y devoluciones se ve «Piolet 2 · Lucía · Prestada».",
+   "criterio": "AC-005-01"
+  }
+ ]
+}

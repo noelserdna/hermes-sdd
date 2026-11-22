@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-004-05",
+ "test": "REQ-F-004 AC5 · AC-004-05 el 2026-12-05 Lucía no puede cancelar la que empieza ese día: «Solo se puede cancelar hasta el día antes»",
+ "titulo": "REQ-F-004 AC5 · AC-004-05 el 2026-12-05 Lucía no puede cancelar la que empieza ese día: «Solo se puede cancelar hasta el día antes»",
+ "ve": [
+  "Solo se puede cancelar hasta el día antes"
+ ],
+ "narrado": "Ver y cancelar mis reservas. En Mis reservas se ve «Solo se puede cancelar hasta el día antes», y la reserva sigue Reservada.",
+ "url": "http://127.0.0.1:5173/#/mis-reservas",
+ "imagen": "AC-004-05.png",
+ "sha256": "sha256:b38d6b74d9850fa653bc9c56c90c848d65c75eab8ad03226cf2ead695272e31c",
+ "at": "2026-11-21T12:34:27.822Z"
+}

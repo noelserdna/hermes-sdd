@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-016-02",
+ "test": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-016-02 REQ-F-010 AC2 la junta elige a Lucía Gil y ve el Piolet 1 con Devuelto",
+ "titulo": "FASE-5 AC-016-02 REQ-F-010 AC2 la junta elige a Lucía Gil y ve el Piolet 1 con Devuelto",
+ "ve": [
+  "Piolet 1",
+  "Devuelto"
+ ],
+ "narrado": "La junta consulta el historial de un socio. En Historial del socio se ve el «Piolet 1» de Lucía Gil con el estado «Devuelto».",
+ "url": "http://127.0.0.1:39989/#/historial",
+ "imagen": "AC-016-02.png",
+ "sha256": "sha256:efe68a602993d07aa59f8cb059db51aee1851b897f69649ef71b914c296fbd56",
+ "at": "2026-11-22T01:04:17.601Z"
+}

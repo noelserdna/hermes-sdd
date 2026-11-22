@@ -1,0 +1,16 @@
+{
+ "video": "FASE-1-FASE-1-AC-013-03-marta-a-ade-0-unidades-.webm",
+ "test": "FASE-1 Inventario (encargado) › FASE-1 AC-013-03 marta añade 0 unidades de Casco y ve La cantidad debe ser al menos 1",
+ "titulo": "FASE-1 AC-013-03 marta añade 0 unidades de Casco y ve La cantidad debe ser al menos 1",
+ "narraciones": [
+  {
+   "t": 0.944,
+   "texto": "Marta entra, abre Inventario e intenta añadir 0 unidades de Casco"
+  },
+  {
+   "t": 1.595,
+   "texto": "Gestionar el inventario. En Inventario se ve «La cantidad debe ser al menos 1», y el recuento de Casco sigue en 0 unidades.",
+   "criterio": "AC-013-03"
+  }
+ ]
+}

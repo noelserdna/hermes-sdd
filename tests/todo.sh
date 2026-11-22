@@ -4,11 +4,11 @@
 cd "$(dirname "$0")/.."
 export SDD_JEV=off   # sin red: ningún test manda datos a Jev (la ayuda de la puerta de requisitos se prueba con su resultado simulado)
 fail=0
-for t in tests/perfil-agents.sh tests/notario.sh tests/efectos.sh tests/requisitos.sh tests/guard.sh tests/registros.sh tests/supervisor.sh tests/plugin_telegram.sh tests/plugin_bucle.sh tests/plugin_dashboard.sh tests/jev.sh tests/nuevo.sh tests/huecos.sh tests/limpiar.sh tests/rutas.sh tests/cambio.sh tests/encargado.sh tests/preparar.sh tests/supervisar.sh tests/encargado-destino.sh tests/revision.sh tests/lecciones.sh tests/locale.sh tests/textos.sh tests/ui.sh tests/mantenimiento.sh tests/operacion.sh tests/instalar.sh tests/replay-e2e.sh tests/simulador.sh tests/fidelidad.sh tests/aceptar-incremental.sh tests/encadenado.sh tests/topes.sh tests/desplegable.sh tests/caja-github.sh tests/caja-local.sh tests/caja-token.sh tests/transcripcion.sh tests/wiki.sh tests/hermes-interno.sh tests/metricas.sh tests/transiciones.sh tests/preguntas-json.sh tests/entrega-parcial.sh tests/duras.sh tests/evals.sh; do
+for t in tests/perfil-agents.sh tests/notario.sh tests/efectos.sh tests/requisitos.sh tests/guard.sh tests/registros.sh tests/supervisor.sh tests/plugin_telegram.sh tests/plugin_bucle.sh tests/plugin_dashboard.sh tests/jev.sh tests/nuevo.sh tests/huecos.sh tests/limpiar.sh tests/rutas.sh tests/cambio.sh tests/encargado.sh tests/preparar.sh tests/supervisar.sh tests/encargado-destino.sh tests/revision.sh tests/lecciones.sh tests/locale.sh tests/textos.sh tests/ui.sh tests/mantenimiento.sh tests/operacion.sh tests/instalar.sh tests/replay-e2e.sh tests/simulador.sh tests/fidelidad.sh tests/aceptar-incremental.sh tests/encadenado.sh tests/topes.sh tests/desplegable.sh tests/caja-github.sh tests/caja-local.sh tests/caja-token.sh tests/transcripcion.sh tests/wiki.sh tests/hermes-interno.sh tests/metricas.sh tests/transiciones.sh tests/preguntas-json.sh tests/entrega-parcial.sh tests/duras.sh tests/evals.sh tests/cadena.sh; do
   printf '%-28s ' "$t"
   if out=$(bash "$t" 2>&1); then n=$(echo "$out" | grep -c '^ok'); if [ "$n" = 0 ] && echo "$out" | grep -q '^SKIP'; then echo "SALTA: $(echo "$out" | grep -m1 '^SKIP' | cut -c6-)"; else echo "ok ($n casos)"; fi; else echo FALLA; echo "$out" | grep -E 'FAIL|Error' | head -5; fail=1; fi
 done
-for s in git acceptance plan tasks route quotes floor captures stale arch demo; do
+for s in git acceptance plan tasks route quotes match floor captures stale arch demo; do
   printf '%-28s ' "metodo/tests/$s"
   bash "metodo/tests/$s/run.sh" >/dev/null 2>&1 && echo ok || { echo FALLA; fail=1; }
 done

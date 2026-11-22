@@ -1,0 +1,1242 @@
+{
+  "$schema": "sdd-adversarial-plan-v1",
+  "evaluated_sha": "7b88b66c0f659e1adc8826ec69abea3e1db5f611",
+  "dirty": false,
+  "generatedAt": "2026-11-21T11:19:29.564Z",
+  "scope": {
+    "fase": 1
+  },
+  "code_paths": [
+    "src"
+  ],
+  "adversarial_gate": "enforce",
+  "fases": [
+    {
+      "fase": 1,
+      "file": "plan/fases/FASE-1-ENTREGA.md",
+      "header": true,
+      "requirements": [
+        {
+          "id": "REQ-F-004",
+          "title": "Ver y cancelar mis reservas",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN a socio opens Mis reservas THE system SHALL list their reservas and multas, and WHEN he cancels a reserva before its fecha desde THE system SHALL cancel it and free its units",
+          "reqHash": "sha256:2f9918c633248b087401426e51fac7bb976767c4980afbbb38cec08fd9150f1d",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN \"lucia@club.es\" has a reserva of \"Piolet\" 2026-12-05..2026-12-07 WHEN she opens Mis reservas THEN the user sees \"Piolet · 2026-12-05 a 2026-12-07 · Reservada\"",
+              "scenarios": [
+                "AC-004-01"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-004 AC1 · AC-004-01 Lucía abre Mis reservas y ve «Piolet · 2026-12-05 a 2026-12-07 · Reservada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-004 AC1 · AC-004-01 Lucía abre Mis reservas y ve «Piolet · 2026-12-05 a 2026-12-07 · Reservada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-004 AC1 · AC-004-01 Lucía abre Mis reservas y ve «Piolet · 2026-12-05 a 2026-12-07 · Reservada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-004 AC1 · AC-004-01 Lucía abre Mis reservas y ve «Piolet · 2026-12-05 a 2026-12-07 · Reservada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-a3fe0-5-a-2026-12-07-·-Reservada»-chromium/attachments/AC-004-01-21685e743b483e5b02491389195ca08ead73fc8d.png",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-a3fe0-5-a-2026-12-07-·-Reservada»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a3fe0-5-a-2026-12-07-·-Reservada»-chromium/attachments/AC-004-01-16be168fb51c2e36341c9d96596cb527a55e7b53.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a3fe0-5-a-2026-12-07-·-Reservada»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-004-01.png",
+                "evidencias/FASE-1/AC-004-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-a3fe0-5-a-2026-12-07-·-Reservada»-chromium/attachments/AC-004-01-21685e743b483e5b02491389195ca08ead73fc8d.png": "sha256:4a771ead5cc9f9cc615a42cf49d9dd4c1c3a6873f6ea21973f24e7d357b76ce0",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-a3fe0-5-a-2026-12-07-·-Reservada»-chromium/test-finished-1.png": "sha256:4a771ead5cc9f9cc615a42cf49d9dd4c1c3a6873f6ea21973f24e7d357b76ce0",
+                "evidencias/FASE-0/AC-004-01.png": "sha256:4a771ead5cc9f9cc615a42cf49d9dd4c1c3a6873f6ea21973f24e7d357b76ce0",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a3fe0-5-a-2026-12-07-·-Reservada»-chromium/attachments/AC-004-01-16be168fb51c2e36341c9d96596cb527a55e7b53.png": "sha256:4a771ead5cc9f9cc615a42cf49d9dd4c1c3a6873f6ea21973f24e7d357b76ce0",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a3fe0-5-a-2026-12-07-·-Reservada»-chromium/test-finished-1.png": "sha256:4a771ead5cc9f9cc615a42cf49d9dd4c1c3a6873f6ea21973f24e7d357b76ce0",
+                "evidencias/FASE-1/AC-004-01.png": "sha256:4a771ead5cc9f9cc615a42cf49d9dd4c1c3a6873f6ea21973f24e7d357b76ce0"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{material} · {desde} a {hasta} · {estado}",
+                    "template": true
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a3fe0-5-a-2026-12-07-·-Reservada»-chromium/attachments/AC-004-01-16be168fb51c2e36341c9d96596cb527a55e7b53.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a3fe0-5-a-2026-12-07-·-Reservada»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-004-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a3fe0-5-a-2026-12-07-·-Reservada»-chromium/attachments/FASE-1-REQ-F-004-AC1-AC-004-01-Luc-a-abre-Mis-60ef20742a20d4b28c282053f52ab5dcfcd0b345.webm",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a3fe0-5-a-2026-12-07-·-Reservada»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-REQ-F-004-AC1-AC-004-01-Luc-a-abre-Mis.webm"
+              ]
+            },
+            {
+              "n": 2,
+              "text": "GIVEN \"pablo@club.es\" has no reservas WHEN he opens Mis reservas THEN the user sees \"No tienes reservas\" and none of Lucía's",
+              "scenarios": [
+                "AC-004-02"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-004 AC2 · AC-004-02 Pablo, sin reservas, abre Mis reservas y ve «No tienes reservas» y ninguna de Lucía",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-004 AC2 · AC-004-02 Pablo, sin reservas, abre Mis reservas y ve «No tienes reservas» y ninguna de Lucía",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-004 AC2 · AC-004-02 Pablo, sin reservas, abre Mis reservas y ve «No tienes reservas» y ninguna de Lucía",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-004 AC2 · AC-004-02 Pablo, sin reservas, abre Mis reservas y ve «No tienes reservas» y ninguna de Lucía",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-f3c5d-eservas»-y-ninguna-de-Lucía-chromium/attachments/AC-004-02-946fba8c04ea7d1e44ff28521ca69cc0d1460d9a.png",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-f3c5d-eservas»-y-ninguna-de-Lucía-chromium/test-finished-1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-f3c5d-eservas»-y-ninguna-de-Lucía-chromium/attachments/AC-004-02-800f0dbaa3c04052f6081ad512a4964e06bdbb52.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-f3c5d-eservas»-y-ninguna-de-Lucía-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-004-02.png",
+                "evidencias/FASE-1/AC-004-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-f3c5d-eservas»-y-ninguna-de-Lucía-chromium/attachments/AC-004-02-946fba8c04ea7d1e44ff28521ca69cc0d1460d9a.png": "sha256:58ed67833c28ee86f15ea5676c2953bc0d50e34c9086899795f0a627338d184d",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-f3c5d-eservas»-y-ninguna-de-Lucía-chromium/test-finished-1.png": "sha256:58ed67833c28ee86f15ea5676c2953bc0d50e34c9086899795f0a627338d184d",
+                "evidencias/FASE-0/AC-004-02.png": "sha256:58ed67833c28ee86f15ea5676c2953bc0d50e34c9086899795f0a627338d184d",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-f3c5d-eservas»-y-ninguna-de-Lucía-chromium/attachments/AC-004-02-800f0dbaa3c04052f6081ad512a4964e06bdbb52.png": "sha256:58ed67833c28ee86f15ea5676c2953bc0d50e34c9086899795f0a627338d184d",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-f3c5d-eservas»-y-ninguna-de-Lucía-chromium/test-finished-1.png": "sha256:58ed67833c28ee86f15ea5676c2953bc0d50e34c9086899795f0a627338d184d",
+                "evidencias/FASE-1/AC-004-02.png": "sha256:58ed67833c28ee86f15ea5676c2953bc0d50e34c9086899795f0a627338d184d"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No tienes reservas",
+                    "template": false
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-f3c5d-eservas»-y-ninguna-de-Lucía-chromium/attachments/AC-004-02-800f0dbaa3c04052f6081ad512a4964e06bdbb52.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-f3c5d-eservas»-y-ninguna-de-Lucía-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-004-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-f3c5d-eservas»-y-ninguna-de-Lucía-chromium/attachments/FASE-1-REQ-F-004-AC2-AC-004-02-Pablo-sin-res-e500607528763187eec71a2f8ecfd28c034181bb.webm",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-f3c5d-eservas»-y-ninguna-de-Lucía-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-REQ-F-004-AC2-AC-004-02-Pablo-sin-res.webm"
+              ]
+            },
+            {
+              "n": 3,
+              "text": "GIVEN today is 2026-12-04 and the reserva starts 2026-12-05 WHEN Lucía cancels it THEN the user sees \"Piolet · 2026-12-05 a 2026-12-07 · Cancelada\" and the unit is free again",
+              "scenarios": [
+                "AC-004-03"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-004 AC3 · AC-004-03 el 2026-12-04 Lucía cancela su reserva y ve «Piolet · 2026-12-05 a 2026-12-07 · Cancelada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-004 AC3 · AC-004-03 el 2026-12-04 Lucía cancela su reserva y ve «Piolet · 2026-12-05 a 2026-12-07 · Cancelada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-004 AC3 · AC-004-03 el 2026-12-04 Lucía cancela su reserva y ve «Piolet · 2026-12-05 a 2026-12-07 · Cancelada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-004 AC3 · AC-004-03 el 2026-12-04 Lucía cancela su reserva y ve «Piolet · 2026-12-05 a 2026-12-07 · Cancelada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-1fb2d-5-a-2026-12-07-·-Cancelada»-chromium/attachments/AC-004-03-eae9d380e94a64d0aadbc6c4840ce9e01072447f.png",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-1fb2d-5-a-2026-12-07-·-Cancelada»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-1fb2d-5-a-2026-12-07-·-Cancelada»-chromium/attachments/AC-004-03-648903e90aa4ee2f9f25477b71ef4d8a4ca6a313.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-1fb2d-5-a-2026-12-07-·-Cancelada»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-004-03.png",
+                "evidencias/FASE-1/AC-004-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-1fb2d-5-a-2026-12-07-·-Cancelada»-chromium/attachments/AC-004-03-eae9d380e94a64d0aadbc6c4840ce9e01072447f.png": "sha256:5859e2e3757b10c1397208bfca1673b17411d31977dca2c36c044c6dbde7fcff",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-1fb2d-5-a-2026-12-07-·-Cancelada»-chromium/test-finished-1.png": "sha256:5859e2e3757b10c1397208bfca1673b17411d31977dca2c36c044c6dbde7fcff",
+                "evidencias/FASE-0/AC-004-03.png": "sha256:5859e2e3757b10c1397208bfca1673b17411d31977dca2c36c044c6dbde7fcff",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-1fb2d-5-a-2026-12-07-·-Cancelada»-chromium/attachments/AC-004-03-648903e90aa4ee2f9f25477b71ef4d8a4ca6a313.png": "sha256:5859e2e3757b10c1397208bfca1673b17411d31977dca2c36c044c6dbde7fcff",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-1fb2d-5-a-2026-12-07-·-Cancelada»-chromium/test-finished-1.png": "sha256:5859e2e3757b10c1397208bfca1673b17411d31977dca2c36c044c6dbde7fcff",
+                "evidencias/FASE-1/AC-004-03.png": "sha256:5859e2e3757b10c1397208bfca1673b17411d31977dca2c36c044c6dbde7fcff"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{material} · {desde} a {hasta} · Cancelada",
+                    "template": true
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-1fb2d-5-a-2026-12-07-·-Cancelada»-chromium/attachments/AC-004-03-648903e90aa4ee2f9f25477b71ef4d8a4ca6a313.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-1fb2d-5-a-2026-12-07-·-Cancelada»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-004-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-1fb2d-5-a-2026-12-07-·-Cancelada»-chromium/attachments/FASE-1-REQ-F-004-AC3-AC-004-03-el-2026-12-04--3aa29ef0e7544599ac51698e53897d0b4b334acd.webm",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-1fb2d-5-a-2026-12-07-·-Cancelada»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-REQ-F-004-AC3-AC-004-03-el-2026-12-04-.webm"
+              ]
+            },
+            {
+              "n": 4,
+              "text": "GIVEN the reserva is already cancelled WHEN the cancel is sent again THEN it stays \"Cancelada\" once, with no other change",
+              "scenarios": [
+                "AC-004-04"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-004 AC4 · AC-004-04 cancelar otra vez una reserva ya Cancelada deja una sola fila «Cancelada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-004 AC4 · AC-004-04 cancelar otra vez una reserva ya Cancelada deja una sola fila «Cancelada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-004 AC4 · AC-004-04 cancelar otra vez una reserva ya Cancelada deja una sola fila «Cancelada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-004 AC4 · AC-004-04 cancelar otra vez una reserva ya Cancelada deja una sola fila «Cancelada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-a54a5-a-una-sola-fila-«Cancelada»-chromium/attachments/AC-004-04-dce0d4d452611d23e7b6002df90dfe6adf874314.png",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-a54a5-a-una-sola-fila-«Cancelada»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-a54a5-a-una-sola-fila-«Cancelada»-chromium/test-finished-2.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a54a5-a-una-sola-fila-«Cancelada»-chromium/attachments/AC-004-04-e5bc0c71e2843332d49b3fffb32d659ec28f9cc5.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a54a5-a-una-sola-fila-«Cancelada»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a54a5-a-una-sola-fila-«Cancelada»-chromium/test-finished-2.png",
+                "evidencias/FASE-0/AC-004-04.png",
+                "evidencias/FASE-1/AC-004-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-a54a5-a-una-sola-fila-«Cancelada»-chromium/attachments/AC-004-04-dce0d4d452611d23e7b6002df90dfe6adf874314.png": "sha256:a978d2d01c322a15ec89a7980a876a9a6b8946afc22ba717fc586ba83b7e034e",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-a54a5-a-una-sola-fila-«Cancelada»-chromium/test-finished-1.png": "sha256:d0e54da3a9151961830b3a1299c65224d31ba206728cd116bea1c066e37c5f8e",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-a54a5-a-una-sola-fila-«Cancelada»-chromium/test-finished-2.png": "sha256:a978d2d01c322a15ec89a7980a876a9a6b8946afc22ba717fc586ba83b7e034e",
+                "evidencias/FASE-0/AC-004-04.png": "sha256:a978d2d01c322a15ec89a7980a876a9a6b8946afc22ba717fc586ba83b7e034e",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a54a5-a-una-sola-fila-«Cancelada»-chromium/attachments/AC-004-04-e5bc0c71e2843332d49b3fffb32d659ec28f9cc5.png": "sha256:a978d2d01c322a15ec89a7980a876a9a6b8946afc22ba717fc586ba83b7e034e",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a54a5-a-una-sola-fila-«Cancelada»-chromium/test-finished-1.png": "sha256:d0e54da3a9151961830b3a1299c65224d31ba206728cd116bea1c066e37c5f8e",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a54a5-a-una-sola-fila-«Cancelada»-chromium/test-finished-2.png": "sha256:a978d2d01c322a15ec89a7980a876a9a6b8946afc22ba717fc586ba83b7e034e",
+                "evidencias/FASE-1/AC-004-04.png": "sha256:a978d2d01c322a15ec89a7980a876a9a6b8946afc22ba717fc586ba83b7e034e"
+              },
+              "sees": {
+                "texts": [],
+                "where": null,
+                "none": "la lista sigue mostrando una sola fila cancelada"
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a54a5-a-una-sola-fila-«Cancelada»-chromium/attachments/AC-004-04-e5bc0c71e2843332d49b3fffb32d659ec28f9cc5.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a54a5-a-una-sola-fila-«Cancelada»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a54a5-a-una-sola-fila-«Cancelada»-chromium/test-finished-2.png",
+                "evidencias/FASE-1/AC-004-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a54a5-a-una-sola-fila-«Cancelada»-chromium/attachments/FASE-1-REQ-F-004-AC4-AC-004-04-cancelar-otra--423ee970659e3663d6a6eb72cd6e9d6244e9a744.webm",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a54a5-a-una-sola-fila-«Cancelada»-chromium/video-1.webm",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-a54a5-a-una-sola-fila-«Cancelada»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-REQ-F-004-AC4-AC-004-04-cancelar-otra-.webm"
+              ]
+            },
+            {
+              "n": 5,
+              "text": "GIVEN today is 2026-12-05 and the reserva starts 2026-12-05 WHEN Lucía cancels it THEN the user sees \"Solo se puede cancelar hasta el día antes\" and the reserva stays \"Reservada\"",
+              "scenarios": [
+                "AC-004-05"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-004 AC5 · AC-004-05 el 2026-12-05 Lucía no puede cancelar la que empieza ese día: «Solo se puede cancelar hasta el día antes»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-004 AC5 · AC-004-05 el 2026-12-05 Lucía no puede cancelar la que empieza ese día: «Solo se puede cancelar hasta el día antes»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-004 AC5 · AC-004-05 el 2026-12-05 Lucía no puede cancelar la que empieza ese día: «Solo se puede cancelar hasta el día antes»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-004 AC5 · AC-004-05 el 2026-12-05 Lucía no puede cancelar la que empieza ese día: «Solo se puede cancelar hasta el día antes»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-32791-ancelar-hasta-el-día-antes»-chromium/attachments/AC-004-05-2636006bb5b6cdd7c21b17c8ff5ac74b927fafaa.png",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-32791-ancelar-hasta-el-día-antes»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-32791-ancelar-hasta-el-día-antes»-chromium/attachments/AC-004-05-21b843e679016833e355f7216b3427df6fe512c9.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-32791-ancelar-hasta-el-día-antes»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-004-05.png",
+                "evidencias/FASE-1/AC-004-05.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-32791-ancelar-hasta-el-día-antes»-chromium/attachments/AC-004-05-2636006bb5b6cdd7c21b17c8ff5ac74b927fafaa.png": "sha256:b38d6b74d9850fa653bc9c56c90c848d65c75eab8ad03226cf2ead695272e31c",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-32791-ancelar-hasta-el-día-antes»-chromium/test-finished-1.png": "sha256:b38d6b74d9850fa653bc9c56c90c848d65c75eab8ad03226cf2ead695272e31c",
+                "evidencias/FASE-0/AC-004-05.png": "sha256:b38d6b74d9850fa653bc9c56c90c848d65c75eab8ad03226cf2ead695272e31c",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-32791-ancelar-hasta-el-día-antes»-chromium/attachments/AC-004-05-21b843e679016833e355f7216b3427df6fe512c9.png": "sha256:b38d6b74d9850fa653bc9c56c90c848d65c75eab8ad03226cf2ead695272e31c",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-32791-ancelar-hasta-el-día-antes»-chromium/test-finished-1.png": "sha256:b38d6b74d9850fa653bc9c56c90c848d65c75eab8ad03226cf2ead695272e31c",
+                "evidencias/FASE-1/AC-004-05.png": "sha256:b38d6b74d9850fa653bc9c56c90c848d65c75eab8ad03226cf2ead695272e31c"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Solo se puede cancelar hasta el día antes",
+                    "template": false
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-32791-ancelar-hasta-el-día-antes»-chromium/attachments/AC-004-05-21b843e679016833e355f7216b3427df6fe512c9.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-32791-ancelar-hasta-el-día-antes»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-004-05.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-32791-ancelar-hasta-el-día-antes»-chromium/attachments/FASE-1-REQ-F-004-AC5-AC-004-05-el-2026-12-05--ba2c3deb86612ab92218b5ae137fb39efaad17e6.webm",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-32791-ancelar-hasta-el-día-antes»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-REQ-F-004-AC5-AC-004-05-el-2026-12-05-.webm"
+              ]
+            },
+            {
+              "n": 6,
+              "text": "GIVEN \"lucia@club.es\" owes a multa of 4 € WHEN she opens Mis reservas THEN the user sees \"Multa pendiente: 4 €\"",
+              "scenarios": [
+                "AC-004-06"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-004 AC6 · AC-004-06 Lucía debe una multa de 4 € y en Mis reservas ve «Multa pendiente: 4 €»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-004 AC6 · AC-004-06 Lucía debe una multa de 4 € y en Mis reservas ve «Multa pendiente: 4 €»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-004 AC6 · AC-004-06 Lucía debe una multa de 4 € y en Mis reservas ve «Multa pendiente: 4 €»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-004 AC6 · AC-004-06 Lucía debe una multa de 4 € y en Mis reservas ve «Multa pendiente: 4 €»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-08f78-as-ve-«Multa-pendiente-4-€»-chromium/attachments/AC-004-06-d0eeb395696a5dd2a985c7101c11b20b22d1c4c9.png",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-08f78-as-ve-«Multa-pendiente-4-€»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-08f78-as-ve-«Multa-pendiente-4-€»-chromium/attachments/AC-004-06-8e5a8363d82f1fc33309413e884a22a0d6650b16.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-08f78-as-ve-«Multa-pendiente-4-€»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-004-06.png",
+                "evidencias/FASE-1/AC-004-06.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-08f78-as-ve-«Multa-pendiente-4-€»-chromium/attachments/AC-004-06-d0eeb395696a5dd2a985c7101c11b20b22d1c4c9.png": "sha256:4cb43ab2df3ca5011d53d38f8739da688264a305d402e0486f563709d5c5e74b",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-08f78-as-ve-«Multa-pendiente-4-€»-chromium/test-finished-1.png": "sha256:4cb43ab2df3ca5011d53d38f8739da688264a305d402e0486f563709d5c5e74b",
+                "evidencias/FASE-0/AC-004-06.png": "sha256:4cb43ab2df3ca5011d53d38f8739da688264a305d402e0486f563709d5c5e74b",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-08f78-as-ve-«Multa-pendiente-4-€»-chromium/attachments/AC-004-06-8e5a8363d82f1fc33309413e884a22a0d6650b16.png": "sha256:4cb43ab2df3ca5011d53d38f8739da688264a305d402e0486f563709d5c5e74b",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-08f78-as-ve-«Multa-pendiente-4-€»-chromium/test-finished-1.png": "sha256:4cb43ab2df3ca5011d53d38f8739da688264a305d402e0486f563709d5c5e74b",
+                "evidencias/FASE-1/AC-004-06.png": "sha256:4cb43ab2df3ca5011d53d38f8739da688264a305d402e0486f563709d5c5e74b"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Multa pendiente: {importe} €",
+                    "template": true
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-08f78-as-ve-«Multa-pendiente-4-€»-chromium/attachments/AC-004-06-8e5a8363d82f1fc33309413e884a22a0d6650b16.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-08f78-as-ve-«Multa-pendiente-4-€»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-004-06.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-08f78-as-ve-«Multa-pendiente-4-€»-chromium/attachments/FASE-1-REQ-F-004-AC6-AC-004-06-Luc-a-debe-una-2f6df024088b61234ebe95777ba52a4d5e1b21e4.webm",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-08f78-as-ve-«Multa-pendiente-4-€»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-REQ-F-004-AC6-AC-004-06-Luc-a-debe-una.webm"
+              ]
+            },
+            {
+              "n": 7,
+              "text": "GIVEN a reserva of Lucía WHEN \"pablo@club.es\" tries to cancel it THEN the user sees \"No tienes permiso para cancelar esta reserva\" and it stays \"Reservada\"",
+              "scenarios": [
+                "AC-004-07"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-004 AC7 · AC-004-07 Pablo intenta cancelar la reserva de Lucía y ve «No tienes permiso para cancelar esta reserva»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-004 AC7 · AC-004-07 Pablo intenta cancelar la reserva de Lucía y ve «No tienes permiso para cancelar esta reserva»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-004 AC7 · AC-004-07 Pablo intenta cancelar la reserva de Lucía y ve «No tienes permiso para cancelar esta reserva»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-004 AC7 · AC-004-07 Pablo intenta cancelar la reserva de Lucía y ve «No tienes permiso para cancelar esta reserva»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-af361-para-cancelar-esta-reserva»-chromium/attachments/AC-004-07-1b22283488d18960067cf4c61b3a72de1035de95.png",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-af361-para-cancelar-esta-reserva»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-af361-para-cancelar-esta-reserva»-chromium/attachments/AC-004-07-4ae4988c397e573eef7ad10ceb494cd8ce785c1a.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-af361-para-cancelar-esta-reserva»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-004-07.png",
+                "evidencias/FASE-1/AC-004-07.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-af361-para-cancelar-esta-reserva»-chromium/attachments/AC-004-07-1b22283488d18960067cf4c61b3a72de1035de95.png": "sha256:def332f70785bd0d52e175ac2077b88af1d08f978cb7d7ed0c08607bda1a7851",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-004-A-af361-para-cancelar-esta-reserva»-chromium/test-finished-1.png": "sha256:def332f70785bd0d52e175ac2077b88af1d08f978cb7d7ed0c08607bda1a7851",
+                "evidencias/FASE-0/AC-004-07.png": "sha256:def332f70785bd0d52e175ac2077b88af1d08f978cb7d7ed0c08607bda1a7851",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-af361-para-cancelar-esta-reserva»-chromium/attachments/AC-004-07-4ae4988c397e573eef7ad10ceb494cd8ce785c1a.png": "sha256:def332f70785bd0d52e175ac2077b88af1d08f978cb7d7ed0c08607bda1a7851",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-af361-para-cancelar-esta-reserva»-chromium/test-finished-1.png": "sha256:def332f70785bd0d52e175ac2077b88af1d08f978cb7d7ed0c08607bda1a7851",
+                "evidencias/FASE-1/AC-004-07.png": "sha256:def332f70785bd0d52e175ac2077b88af1d08f978cb7d7ed0c08607bda1a7851"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No tienes permiso para cancelar esta reserva",
+                    "template": false
+                  }
+                ],
+                "where": "Mis reservas",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-af361-para-cancelar-esta-reserva»-chromium/attachments/AC-004-07-4ae4988c397e573eef7ad10ceb494cd8ce785c1a.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-af361-para-cancelar-esta-reserva»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-004-07.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-af361-para-cancelar-esta-reserva»-chromium/attachments/FASE-1-REQ-F-004-AC7-AC-004-07-Pablo-intenta--81b49a4905fe3fcf0301020053b97ae627b66020.webm",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-004-A-af361-para-cancelar-esta-reserva»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-REQ-F-004-AC7-AC-004-07-Pablo-intenta-.webm"
+              ]
+            }
+          ],
+          "candidate_files": [
+            "src/domain/reservas.js",
+            "src/server/http.js",
+            "src/ui/api.js",
+            "src/ui/estilos.css",
+            "src/ui/pantallas/mis-reservas.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        },
+        {
+          "id": "REQ-F-005",
+          "title": "Entregar lo reservado",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN the encargado marks a reserva as delivered on or after its fecha desde THE system SHALL change its estado to \"Prestada\" and assign a unit",
+          "reqHash": "sha256:6ba037772f0d6dc409148047ba1e39ebdee60e6c06953403f6e5e4e4af041c34",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN today is 2026-12-05 and Lucía has a reserva of \"Piolet\" from 2026-12-05 WHEN the encargado marks it delivered with unit \"Piolet 2\" THEN the user sees \"Piolet 2 · Lucía · Prestada\" in Entregas y devoluciones",
+              "scenarios": [
+                "AC-005-01"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-005 AC1 · AC-005-01 el 2026-12-05 el encargado entrega a Lucía con «Piolet 2» y ve «Piolet 2 · Lucía · Prestada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-005 AC1 · AC-005-01 el 2026-12-05 el encargado entrega a Lucía con «Piolet 2» y ve «Piolet 2 · Lucía · Prestada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-005 AC1 · AC-005-01 el 2026-12-05 el encargado entrega a Lucía con «Piolet 2» y ve «Piolet 2 · Lucía · Prestada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-005 AC1 · AC-005-01 el 2026-12-05 el encargado entrega a Lucía con «Piolet 2» y ve «Piolet 2 · Lucía · Prestada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-005-A-e8f68-iolet-2-·-Lucía-·-Prestada»-chromium/attachments/AC-005-01-a8c2399b53e3493990ad864b0b44c4eb9ccf7793.png",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-005-A-e8f68-iolet-2-·-Lucía-·-Prestada»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-e8f68-iolet-2-·-Lucía-·-Prestada»-chromium/attachments/AC-005-01-2c47b08ecc33da29317a10f479b3638aa1d636d3.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-e8f68-iolet-2-·-Lucía-·-Prestada»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-005-01.png",
+                "evidencias/FASE-1/AC-005-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-005-A-e8f68-iolet-2-·-Lucía-·-Prestada»-chromium/attachments/AC-005-01-a8c2399b53e3493990ad864b0b44c4eb9ccf7793.png": "sha256:9bdf9b3c39a73536f0aac6b5c1371a520550af13616ecd1e747617f7d6dfe933",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-005-A-e8f68-iolet-2-·-Lucía-·-Prestada»-chromium/test-finished-1.png": "sha256:9bdf9b3c39a73536f0aac6b5c1371a520550af13616ecd1e747617f7d6dfe933",
+                "evidencias/FASE-0/AC-005-01.png": "sha256:9bdf9b3c39a73536f0aac6b5c1371a520550af13616ecd1e747617f7d6dfe933",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-e8f68-iolet-2-·-Lucía-·-Prestada»-chromium/attachments/AC-005-01-2c47b08ecc33da29317a10f479b3638aa1d636d3.png": "sha256:9bdf9b3c39a73536f0aac6b5c1371a520550af13616ecd1e747617f7d6dfe933",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-e8f68-iolet-2-·-Lucía-·-Prestada»-chromium/test-finished-1.png": "sha256:9bdf9b3c39a73536f0aac6b5c1371a520550af13616ecd1e747617f7d6dfe933",
+                "evidencias/FASE-1/AC-005-01.png": "sha256:9bdf9b3c39a73536f0aac6b5c1371a520550af13616ecd1e747617f7d6dfe933"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{unidad} · {socio} · Prestada",
+                    "template": true
+                  }
+                ],
+                "where": "Entregas y devoluciones",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-e8f68-iolet-2-·-Lucía-·-Prestada»-chromium/attachments/AC-005-01-2c47b08ecc33da29317a10f479b3638aa1d636d3.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-e8f68-iolet-2-·-Lucía-·-Prestada»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-e8f68-iolet-2-·-Lucía-·-Prestada»-chromium/attachments/FASE-1-REQ-F-005-AC1-AC-005-01-el-2026-12-05--96459139716503726e9b2aad0c8eee3308b30ee8.webm",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-e8f68-iolet-2-·-Lucía-·-Prestada»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-REQ-F-005-AC1-AC-005-01-el-2026-12-05-.webm"
+              ]
+            },
+            {
+              "n": 2,
+              "text": "GIVEN the same reserva is already \"Prestada\" WHEN delivered again THEN there is still one \"Piolet 2 · Lucía · Prestada\" and no second unit is assigned",
+              "scenarios": [
+                "AC-005-02"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-005 AC2 · AC-005-02 entregar otra vez la reserva ya Prestada deja una sola «Piolet 2 · Lucía · Prestada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-005 AC2 · AC-005-02 entregar otra vez la reserva ya Prestada deja una sola «Piolet 2 · Lucía · Prestada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-005 AC2 · AC-005-02 entregar otra vez la reserva ya Prestada deja una sola «Piolet 2 · Lucía · Prestada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-005 AC2 · AC-005-02 entregar otra vez la reserva ya Prestada deja una sola «Piolet 2 · Lucía · Prestada»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-005-A-8bc1d-iolet-2-·-Lucía-·-Prestada»-chromium/attachments/AC-005-02-7e327ae64aeb2c90e1d985afeb0ffdb8fc92e812.png",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-005-A-8bc1d-iolet-2-·-Lucía-·-Prestada»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-005-A-8bc1d-iolet-2-·-Lucía-·-Prestada»-chromium/test-finished-2.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-8bc1d-iolet-2-·-Lucía-·-Prestada»-chromium/attachments/AC-005-02-7fecad0d4b469604056e427ce2f6f0284033bff1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-8bc1d-iolet-2-·-Lucía-·-Prestada»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-8bc1d-iolet-2-·-Lucía-·-Prestada»-chromium/test-finished-2.png",
+                "evidencias/FASE-0/AC-005-02.png",
+                "evidencias/FASE-1/AC-005-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-005-A-8bc1d-iolet-2-·-Lucía-·-Prestada»-chromium/attachments/AC-005-02-7e327ae64aeb2c90e1d985afeb0ffdb8fc92e812.png": "sha256:d09f8908836bbf13876ef704b75d1ccef116e66bb10af4eebcae81f2fc62d36f",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-005-A-8bc1d-iolet-2-·-Lucía-·-Prestada»-chromium/test-finished-1.png": "sha256:44df4f779b5706ce07bc116f3f56f01cb8362d9b7e1a9a30965113635c4dabd5",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-005-A-8bc1d-iolet-2-·-Lucía-·-Prestada»-chromium/test-finished-2.png": "sha256:d09f8908836bbf13876ef704b75d1ccef116e66bb10af4eebcae81f2fc62d36f",
+                "evidencias/FASE-0/AC-005-02.png": "sha256:d09f8908836bbf13876ef704b75d1ccef116e66bb10af4eebcae81f2fc62d36f",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-8bc1d-iolet-2-·-Lucía-·-Prestada»-chromium/attachments/AC-005-02-7fecad0d4b469604056e427ce2f6f0284033bff1.png": "sha256:d09f8908836bbf13876ef704b75d1ccef116e66bb10af4eebcae81f2fc62d36f",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-8bc1d-iolet-2-·-Lucía-·-Prestada»-chromium/test-finished-1.png": "sha256:44df4f779b5706ce07bc116f3f56f01cb8362d9b7e1a9a30965113635c4dabd5",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-8bc1d-iolet-2-·-Lucía-·-Prestada»-chromium/test-finished-2.png": "sha256:d09f8908836bbf13876ef704b75d1ccef116e66bb10af4eebcae81f2fc62d36f",
+                "evidencias/FASE-1/AC-005-02.png": "sha256:d09f8908836bbf13876ef704b75d1ccef116e66bb10af4eebcae81f2fc62d36f"
+              },
+              "sees": {
+                "texts": [],
+                "where": null,
+                "none": "la lista sigue con una sola fila prestada"
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-8bc1d-iolet-2-·-Lucía-·-Prestada»-chromium/attachments/AC-005-02-7fecad0d4b469604056e427ce2f6f0284033bff1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-8bc1d-iolet-2-·-Lucía-·-Prestada»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-8bc1d-iolet-2-·-Lucía-·-Prestada»-chromium/test-finished-2.png",
+                "evidencias/FASE-1/AC-005-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-8bc1d-iolet-2-·-Lucía-·-Prestada»-chromium/attachments/FASE-1-REQ-F-005-AC2-AC-005-02-entregar-otra--db236c04e696f97b82af3c7969e27d21f90ffb72.webm",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-8bc1d-iolet-2-·-Lucía-·-Prestada»-chromium/video.webm",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-8bc1d-iolet-2-·-Lucía-·-Prestada»-chromium/video-1.webm",
+                "evidencias/FASE-1/FASE-1-REQ-F-005-AC2-AC-005-02-entregar-otra-.webm"
+              ]
+            },
+            {
+              "n": 3,
+              "text": "GIVEN today is 2026-12-04 and the reserva starts 2026-12-05 WHEN the encargado marks it delivered THEN the user sees \"Aún no es la fecha de entrega\" and it stays \"Reservada\"",
+              "scenarios": [
+                "AC-005-03"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-005 AC3 · AC-005-03 el 2026-12-04 entregar la reserva que empieza el 2026-12-05 muestra «Aún no es la fecha de entrega»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-005 AC3 · AC-005-03 el 2026-12-04 entregar la reserva que empieza el 2026-12-05 muestra «Aún no es la fecha de entrega»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-005 AC3 · AC-005-03 el 2026-12-04 entregar la reserva que empieza el 2026-12-05 muestra «Aún no es la fecha de entrega»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-005 AC3 · AC-005-03 el 2026-12-04 entregar la reserva que empieza el 2026-12-05 muestra «Aún no es la fecha de entrega»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-005-A-a7657--no-es-la-fecha-de-entrega»-chromium/attachments/AC-005-03-1c61df605bc7d9fd7a23e7e8856353fd34274f21.png",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-005-A-a7657--no-es-la-fecha-de-entrega»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-a7657--no-es-la-fecha-de-entrega»-chromium/attachments/AC-005-03-d577f23e52d4e8e1933eab2a845bc10b16b7a356.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-a7657--no-es-la-fecha-de-entrega»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-005-03.png",
+                "evidencias/FASE-1/AC-005-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-005-A-a7657--no-es-la-fecha-de-entrega»-chromium/attachments/AC-005-03-1c61df605bc7d9fd7a23e7e8856353fd34274f21.png": "sha256:f1e3609d9e945a8f373d9e1fd2b050232101539bfe7ffdb046042cd2a89cc63b",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-005-A-a7657--no-es-la-fecha-de-entrega»-chromium/test-finished-1.png": "sha256:f1e3609d9e945a8f373d9e1fd2b050232101539bfe7ffdb046042cd2a89cc63b",
+                "evidencias/FASE-0/AC-005-03.png": "sha256:f1e3609d9e945a8f373d9e1fd2b050232101539bfe7ffdb046042cd2a89cc63b",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-a7657--no-es-la-fecha-de-entrega»-chromium/attachments/AC-005-03-d577f23e52d4e8e1933eab2a845bc10b16b7a356.png": "sha256:f1e3609d9e945a8f373d9e1fd2b050232101539bfe7ffdb046042cd2a89cc63b",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-a7657--no-es-la-fecha-de-entrega»-chromium/test-finished-1.png": "sha256:f1e3609d9e945a8f373d9e1fd2b050232101539bfe7ffdb046042cd2a89cc63b",
+                "evidencias/FASE-1/AC-005-03.png": "sha256:f1e3609d9e945a8f373d9e1fd2b050232101539bfe7ffdb046042cd2a89cc63b"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Aún no es la fecha de entrega",
+                    "template": false
+                  }
+                ],
+                "where": "Entregas y devoluciones",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-a7657--no-es-la-fecha-de-entrega»-chromium/attachments/AC-005-03-d577f23e52d4e8e1933eab2a845bc10b16b7a356.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-a7657--no-es-la-fecha-de-entrega»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-a7657--no-es-la-fecha-de-entrega»-chromium/attachments/FASE-1-REQ-F-005-AC3-AC-005-03-el-2026-12-04--3a71f25d14fd5dc84f4d0fb1799fb9c1bbe9faec.webm",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-a7657--no-es-la-fecha-de-entrega»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-REQ-F-005-AC3-AC-005-03-el-2026-12-04-.webm"
+              ]
+            },
+            {
+              "n": 4,
+              "text": "GIVEN a reserva 2026-12-05..2026-12-07 never delivered WHEN the date becomes 2026-12-08 THEN the user sees \"No recogida\" for it in Entregas y devoluciones and its units are free",
+              "scenarios": [
+                "AC-005-04"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-005 AC4 · AC-005-04 la reserva del 2026-12-05 al 2026-12-07 sin recoger se ve «No recogida» el 2026-12-08",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-005 AC4 · AC-005-04 la reserva del 2026-12-05 al 2026-12-07 sin recoger se ve «No recogida» el 2026-12-08",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-005 AC4 · AC-005-04 la reserva del 2026-12-05 al 2026-12-07 sin recoger se ve «No recogida» el 2026-12-08",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-005 AC4 · AC-005-04 la reserva del 2026-12-05 al 2026-12-07 sin recoger se ve «No recogida» el 2026-12-08",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-005-A-6da84-«No-recogida»-el-2026-12-08-chromium/attachments/AC-005-04-abfb86f94a46cf78de7d5bc91192df2e7524c18b.png",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-005-A-6da84-«No-recogida»-el-2026-12-08-chromium/test-finished-1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-6da84-«No-recogida»-el-2026-12-08-chromium/attachments/AC-005-04-4e9100b786473b855611a4a2db7ec88fd4e07261.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-6da84-«No-recogida»-el-2026-12-08-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-005-04.png",
+                "evidencias/FASE-1/AC-005-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-005-A-6da84-«No-recogida»-el-2026-12-08-chromium/attachments/AC-005-04-abfb86f94a46cf78de7d5bc91192df2e7524c18b.png": "sha256:7d4eedceb30189abbeeda52c0e3e2ac9bb8e6552aca779b94f574c66ea7ee93d",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-005-A-6da84-«No-recogida»-el-2026-12-08-chromium/test-finished-1.png": "sha256:7d4eedceb30189abbeeda52c0e3e2ac9bb8e6552aca779b94f574c66ea7ee93d",
+                "evidencias/FASE-0/AC-005-04.png": "sha256:7d4eedceb30189abbeeda52c0e3e2ac9bb8e6552aca779b94f574c66ea7ee93d",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-6da84-«No-recogida»-el-2026-12-08-chromium/attachments/AC-005-04-4e9100b786473b855611a4a2db7ec88fd4e07261.png": "sha256:7d4eedceb30189abbeeda52c0e3e2ac9bb8e6552aca779b94f574c66ea7ee93d",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-6da84-«No-recogida»-el-2026-12-08-chromium/test-finished-1.png": "sha256:7d4eedceb30189abbeeda52c0e3e2ac9bb8e6552aca779b94f574c66ea7ee93d",
+                "evidencias/FASE-1/AC-005-04.png": "sha256:7d4eedceb30189abbeeda52c0e3e2ac9bb8e6552aca779b94f574c66ea7ee93d"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "{material} · {socio} · No recogida",
+                    "template": true
+                  }
+                ],
+                "where": "Entregas y devoluciones",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-6da84-«No-recogida»-el-2026-12-08-chromium/attachments/AC-005-04-4e9100b786473b855611a4a2db7ec88fd4e07261.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-6da84-«No-recogida»-el-2026-12-08-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-005-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-6da84-«No-recogida»-el-2026-12-08-chromium/attachments/FASE-1-REQ-F-005-AC4-AC-005-04-la-reserva-del-41f9c76ac5aea87817cd8bd5cf84c035e192f634.webm",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-005-A-6da84-«No-recogida»-el-2026-12-08-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-REQ-F-005-AC4-AC-005-04-la-reserva-del.webm"
+              ]
+            }
+          ],
+          "candidate_files": [
+            "src/domain/prestamos.js",
+            "src/domain/reservas.js",
+            "src/domain/tareas.js",
+            "src/server/http.js",
+            "src/server/tareas-diarias.js",
+            "src/server/vite-plugin.js",
+            "src/ui/api.js",
+            "src/ui/pantallas/entregas.js",
+            "src/ui/router.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        },
+        {
+          "id": "REQ-F-009",
+          "title": "Ver lo prestado y lo que vuelve cada día",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN the encargado opens Entregas y devoluciones THE system SHALL list the units lent out, the returns expected today and the late ones",
+          "reqHash": "sha256:fefbc25b0c42df8da8412ca43624becc57ff25b06f56e745d60f7ab1e71a4a7f",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN today is 2026-12-07, \"Piolet 2\" lent to Lucía until 2026-12-07 and \"Casco 1\" lent to Pablo until 2026-12-09 WHEN the encargado opens Entregas y devoluciones THEN the user sees \"Vuelve hoy: Piolet 2 · Lucía\" and \"Prestado: Casco 1 · Pablo · hasta 2026-12-09\"",
+              "scenarios": [
+                "AC-009-01"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-009 AC1 · AC-009-01 el 2026-12-07 el encargado ve «Vuelve hoy: Piolet 2 · Lucía» y «Prestado: Casco 1 · Pablo · hasta 2026-12-09»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-009 AC1 · AC-009-01 el 2026-12-07 el encargado ve «Vuelve hoy: Piolet 2 · Lucía» y «Prestado: Casco 1 · Pablo · hasta 2026-12-09»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-009 AC1 · AC-009-01 el 2026-12-07 el encargado ve «Vuelve hoy: Piolet 2 · Lucía» y «Prestado: Casco 1 · Pablo · hasta 2026-12-09»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-009 AC1 · AC-009-01 el 2026-12-07 el encargado ve «Vuelve hoy: Piolet 2 · Lucía» y «Prestado: Casco 1 · Pablo · hasta 2026-12-09»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-4d831-·-Pablo-·-hasta-2026-12-09»-chromium/attachments/AC-009-01-538956dd0efb862fe6739bef755fe2d0022f8697.png",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-4d831-·-Pablo-·-hasta-2026-12-09»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-4d831-·-Pablo-·-hasta-2026-12-09»-chromium/attachments/AC-009-01-bd2c4d76657fc3b6a6fab3afa235697f888af829.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-4d831-·-Pablo-·-hasta-2026-12-09»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-009-01.png",
+                "evidencias/FASE-1/AC-009-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-4d831-·-Pablo-·-hasta-2026-12-09»-chromium/attachments/AC-009-01-538956dd0efb862fe6739bef755fe2d0022f8697.png": "sha256:cb87ed995f9e7719cb2f2956dbc15eff25eb9856d561478cab1c62e6619c84d2",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-4d831-·-Pablo-·-hasta-2026-12-09»-chromium/test-finished-1.png": "sha256:cb87ed995f9e7719cb2f2956dbc15eff25eb9856d561478cab1c62e6619c84d2",
+                "evidencias/FASE-0/AC-009-01.png": "sha256:cb87ed995f9e7719cb2f2956dbc15eff25eb9856d561478cab1c62e6619c84d2",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-4d831-·-Pablo-·-hasta-2026-12-09»-chromium/attachments/AC-009-01-bd2c4d76657fc3b6a6fab3afa235697f888af829.png": "sha256:cb87ed995f9e7719cb2f2956dbc15eff25eb9856d561478cab1c62e6619c84d2",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-4d831-·-Pablo-·-hasta-2026-12-09»-chromium/test-finished-1.png": "sha256:cb87ed995f9e7719cb2f2956dbc15eff25eb9856d561478cab1c62e6619c84d2",
+                "evidencias/FASE-1/AC-009-01.png": "sha256:cb87ed995f9e7719cb2f2956dbc15eff25eb9856d561478cab1c62e6619c84d2"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Vuelve hoy: {unidad} · {socio}",
+                    "template": true
+                  },
+                  {
+                    "text": "Prestado: {unidad} · {socio} · hasta {hasta}",
+                    "template": true
+                  }
+                ],
+                "where": "Entregas y devoluciones",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-4d831-·-Pablo-·-hasta-2026-12-09»-chromium/attachments/AC-009-01-bd2c4d76657fc3b6a6fab3afa235697f888af829.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-4d831-·-Pablo-·-hasta-2026-12-09»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-009-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-4d831-·-Pablo-·-hasta-2026-12-09»-chromium/attachments/FASE-1-REQ-F-009-AC1-AC-009-01-el-2026-12-07--6102d14ba8fc6c75ad073bbf9b1ca82e52612dcd.webm",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-4d831-·-Pablo-·-hasta-2026-12-09»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-REQ-F-009-AC1-AC-009-01-el-2026-12-07-.webm"
+              ]
+            },
+            {
+              "n": 2,
+              "text": "GIVEN \"Cuerda 1\" lent to Marta until 2026-12-05 and today is 2026-12-07 THEN the user sees \"Con retraso: Cuerda 1 · Marta · 2 días\"",
+              "scenarios": [
+                "AC-009-02"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-009 AC2 · AC-009-02 «Cuerda 1» prestada a Marta hasta el 2026-12-05 se ve «Con retraso: Cuerda 1 · Marta · 2 días» el 2026-12-07",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-009 AC2 · AC-009-02 «Cuerda 1» prestada a Marta hasta el 2026-12-05 se ve «Con retraso: Cuerda 1 · Marta · 2 días» el 2026-12-07",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-009 AC2 · AC-009-02 «Cuerda 1» prestada a Marta hasta el 2026-12-05 se ve «Con retraso: Cuerda 1 · Marta · 2 días» el 2026-12-07",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-009 AC2 · AC-009-02 «Cuerda 1» prestada a Marta hasta el 2026-12-05 se ve «Con retraso: Cuerda 1 · Marta · 2 días» el 2026-12-07",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-92285-rta-·-2-días»-el-2026-12-07-chromium/attachments/AC-009-02-04e97d8e169735c436397c2f5db8862b3b8b17fd.png",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-92285-rta-·-2-días»-el-2026-12-07-chromium/test-finished-1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-92285-rta-·-2-días»-el-2026-12-07-chromium/attachments/AC-009-02-ef6d48c25d77f731f0fd4e6564775e6e8819c95a.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-92285-rta-·-2-días»-el-2026-12-07-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-009-02.png",
+                "evidencias/FASE-1/AC-009-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-92285-rta-·-2-días»-el-2026-12-07-chromium/attachments/AC-009-02-04e97d8e169735c436397c2f5db8862b3b8b17fd.png": "sha256:404aa02d2d05ce7cdae3ddc1c0e483a1e93e7b5efc59fb77ea4818349b86f182",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-92285-rta-·-2-días»-el-2026-12-07-chromium/test-finished-1.png": "sha256:404aa02d2d05ce7cdae3ddc1c0e483a1e93e7b5efc59fb77ea4818349b86f182",
+                "evidencias/FASE-0/AC-009-02.png": "sha256:404aa02d2d05ce7cdae3ddc1c0e483a1e93e7b5efc59fb77ea4818349b86f182",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-92285-rta-·-2-días»-el-2026-12-07-chromium/attachments/AC-009-02-ef6d48c25d77f731f0fd4e6564775e6e8819c95a.png": "sha256:404aa02d2d05ce7cdae3ddc1c0e483a1e93e7b5efc59fb77ea4818349b86f182",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-92285-rta-·-2-días»-el-2026-12-07-chromium/test-finished-1.png": "sha256:404aa02d2d05ce7cdae3ddc1c0e483a1e93e7b5efc59fb77ea4818349b86f182",
+                "evidencias/FASE-1/AC-009-02.png": "sha256:404aa02d2d05ce7cdae3ddc1c0e483a1e93e7b5efc59fb77ea4818349b86f182"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Con retraso: {unidad} · {socio} · {n} días",
+                    "template": true
+                  }
+                ],
+                "where": "Entregas y devoluciones",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-92285-rta-·-2-días»-el-2026-12-07-chromium/attachments/AC-009-02-ef6d48c25d77f731f0fd4e6564775e6e8819c95a.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-92285-rta-·-2-días»-el-2026-12-07-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-009-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-92285-rta-·-2-días»-el-2026-12-07-chromium/attachments/FASE-1-REQ-F-009-AC2-AC-009-02-Cuerda-1-pre-ac268725d3588acf3ca1a13e7b66ea7ea132e89e.webm",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-92285-rta-·-2-días»-el-2026-12-07-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-REQ-F-009-AC2-AC-009-02-Cuerda-1-pre.webm"
+              ]
+            },
+            {
+              "n": 3,
+              "text": "GIVEN a reserva of Lucía starts today WHEN the encargado opens the screen THEN the user sees \"Entregar hoy: Piolet · Lucía\"",
+              "scenarios": [
+                "AC-009-03"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-009 AC3 · AC-009-03 Lucía tiene una reserva de Piolet que empieza hoy y el encargado ve «Entregar hoy: Piolet · Lucía»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-009 AC3 · AC-009-03 Lucía tiene una reserva de Piolet que empieza hoy y el encargado ve «Entregar hoy: Piolet · Lucía»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-009 AC3 · AC-009-03 Lucía tiene una reserva de Piolet que empieza hoy y el encargado ve «Entregar hoy: Piolet · Lucía»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-009 AC3 · AC-009-03 Lucía tiene una reserva de Piolet que empieza hoy y el encargado ve «Entregar hoy: Piolet · Lucía»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-2dddf-ntregar-hoy-Piolet-·-Lucía»-chromium/attachments/AC-009-03-f190211f95d77727b3f4bb4a1f4f484244d85d8a.png",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-2dddf-ntregar-hoy-Piolet-·-Lucía»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-2dddf-ntregar-hoy-Piolet-·-Lucía»-chromium/attachments/AC-009-03-1627d6e4a3f09f373dd1c5d022c41b550d250278.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-2dddf-ntregar-hoy-Piolet-·-Lucía»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-009-03.png",
+                "evidencias/FASE-1/AC-009-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-2dddf-ntregar-hoy-Piolet-·-Lucía»-chromium/attachments/AC-009-03-f190211f95d77727b3f4bb4a1f4f484244d85d8a.png": "sha256:14896d1bc7a0792879b25ced0c5f4b31d30e5f043e5a931407c1a517777c561a",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-2dddf-ntregar-hoy-Piolet-·-Lucía»-chromium/test-finished-1.png": "sha256:14896d1bc7a0792879b25ced0c5f4b31d30e5f043e5a931407c1a517777c561a",
+                "evidencias/FASE-0/AC-009-03.png": "sha256:14896d1bc7a0792879b25ced0c5f4b31d30e5f043e5a931407c1a517777c561a",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-2dddf-ntregar-hoy-Piolet-·-Lucía»-chromium/attachments/AC-009-03-1627d6e4a3f09f373dd1c5d022c41b550d250278.png": "sha256:14896d1bc7a0792879b25ced0c5f4b31d30e5f043e5a931407c1a517777c561a",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-2dddf-ntregar-hoy-Piolet-·-Lucía»-chromium/test-finished-1.png": "sha256:14896d1bc7a0792879b25ced0c5f4b31d30e5f043e5a931407c1a517777c561a",
+                "evidencias/FASE-1/AC-009-03.png": "sha256:14896d1bc7a0792879b25ced0c5f4b31d30e5f043e5a931407c1a517777c561a"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Entregar hoy: {material} · {socio}",
+                    "template": true
+                  }
+                ],
+                "where": "Entregas y devoluciones",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-2dddf-ntregar-hoy-Piolet-·-Lucía»-chromium/attachments/AC-009-03-1627d6e4a3f09f373dd1c5d022c41b550d250278.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-2dddf-ntregar-hoy-Piolet-·-Lucía»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-009-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-2dddf-ntregar-hoy-Piolet-·-Lucía»-chromium/attachments/FASE-1-REQ-F-009-AC3-AC-009-03-Luc-a-tiene-un-32a9f5a7ac3165d578c0ca0cafb05af74a440627.webm",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-2dddf-ntregar-hoy-Piolet-·-Lucía»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-REQ-F-009-AC3-AC-009-03-Luc-a-tiene-un.webm"
+              ]
+            },
+            {
+              "n": 4,
+              "text": "GIVEN nothing is lent WHEN the encargado opens the screen THEN the user sees \"No hay material prestado\"",
+              "scenarios": [
+                "AC-009-04"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-009 AC4 · AC-009-04 con nada prestado el encargado ve «No hay material prestado»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-009 AC4 · AC-009-04 con nada prestado el encargado ve «No hay material prestado»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-009 AC4 · AC-009-04 con nada prestado el encargado ve «No hay material prestado»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-009 AC4 · AC-009-04 con nada prestado el encargado ve «No hay material prestado»",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-028ac--«No-hay-material-prestado»-chromium/attachments/AC-009-04-806686e66e699831574203bbd6ecfda193138795.png",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-028ac--«No-hay-material-prestado»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-028ac--«No-hay-material-prestado»-chromium/attachments/AC-009-04-8ab93b87cd88e57e462bf36c382ca457d29ff116.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-028ac--«No-hay-material-prestado»-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-009-04.png",
+                "evidencias/FASE-1/AC-009-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-028ac--«No-hay-material-prestado»-chromium/attachments/AC-009-04-806686e66e699831574203bbd6ecfda193138795.png": "sha256:eddabc6411d8d22d282a1b937548012f443034ded850434fcee924365fb98e89",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-028ac--«No-hay-material-prestado»-chromium/test-finished-1.png": "sha256:eddabc6411d8d22d282a1b937548012f443034ded850434fcee924365fb98e89",
+                "evidencias/FASE-0/AC-009-04.png": "sha256:eddabc6411d8d22d282a1b937548012f443034ded850434fcee924365fb98e89",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-028ac--«No-hay-material-prestado»-chromium/attachments/AC-009-04-8ab93b87cd88e57e462bf36c382ca457d29ff116.png": "sha256:eddabc6411d8d22d282a1b937548012f443034ded850434fcee924365fb98e89",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-028ac--«No-hay-material-prestado»-chromium/test-finished-1.png": "sha256:eddabc6411d8d22d282a1b937548012f443034ded850434fcee924365fb98e89",
+                "evidencias/FASE-1/AC-009-04.png": "sha256:eddabc6411d8d22d282a1b937548012f443034ded850434fcee924365fb98e89"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "No hay material prestado",
+                    "template": false
+                  }
+                ],
+                "where": "Entregas y devoluciones",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-028ac--«No-hay-material-prestado»-chromium/attachments/AC-009-04-8ab93b87cd88e57e462bf36c382ca457d29ff116.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-028ac--«No-hay-material-prestado»-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-009-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-028ac--«No-hay-material-prestado»-chromium/attachments/FASE-1-REQ-F-009-AC4-AC-009-04-con-nada-prest-c7a4c4feeb6c29dac50bb9eeeab48e916588b94c.webm",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-028ac--«No-hay-material-prestado»-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-REQ-F-009-AC4-AC-009-04-con-nada-prest.webm"
+              ]
+            },
+            {
+              "n": 5,
+              "text": "GIVEN the junta member \"ana@club.es\" WHEN she opens Entregas y devoluciones THEN the user sees the list without delivery or return buttons",
+              "scenarios": [
+                "AC-009-05"
+              ],
+              "tests": [
+                {
+                  "name": "REQ-F-009 AC5 · AC-009-05 la junta abre Entregas y devoluciones y ve «Prestado: Casco 1 · Pablo · hasta 2026-12-09» sin botones",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-009 AC5 · AC-009-05 la junta abre Entregas y devoluciones y ve «Prestado: Casco 1 · Pablo · hasta 2026-12-09» sin botones",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": false
+                },
+                {
+                  "name": "REQ-F-009 AC5 · AC-009-05 la junta abre Entregas y devoluciones y ve «Prestado: Casco 1 · Pablo · hasta 2026-12-09» sin botones",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                },
+                {
+                  "name": "REQ-F-009 AC5 · AC-009-05 la junta abre Entregas y devoluciones y ve «Prestado: Casco 1 · Pablo · hasta 2026-12-09» sin botones",
+                  "file": "fase-1-entrega.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-1325e-sta-2026-12-09»-sin-botones-chromium/attachments/AC-009-05-2de4640dd58c5dd599cf745cc199b9d35553dc53.png",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-1325e-sta-2026-12-09»-sin-botones-chromium/test-finished-1.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-1325e-sta-2026-12-09»-sin-botones-chromium/attachments/AC-009-05-f4fc0c378dd2ffec9ebb4defd2c8b352c35ebf63.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-1325e-sta-2026-12-09»-sin-botones-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-009-05.png",
+                "evidencias/FASE-1/AC-009-05.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-1325e-sta-2026-12-09»-sin-botones-chromium/attachments/AC-009-05-2de4640dd58c5dd599cf745cc199b9d35553dc53.png": "sha256:861ee8c144db8ef5907dae65b9a2d93c457021175d204420b0fce4b7bf38209f",
+                "evidencias/FASE-0/.playwright/fase-1-entrega-REQ-F-009-A-1325e-sta-2026-12-09»-sin-botones-chromium/test-finished-1.png": "sha256:861ee8c144db8ef5907dae65b9a2d93c457021175d204420b0fce4b7bf38209f",
+                "evidencias/FASE-0/AC-009-05.png": "sha256:861ee8c144db8ef5907dae65b9a2d93c457021175d204420b0fce4b7bf38209f",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-1325e-sta-2026-12-09»-sin-botones-chromium/attachments/AC-009-05-f4fc0c378dd2ffec9ebb4defd2c8b352c35ebf63.png": "sha256:861ee8c144db8ef5907dae65b9a2d93c457021175d204420b0fce4b7bf38209f",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-1325e-sta-2026-12-09»-sin-botones-chromium/test-finished-1.png": "sha256:861ee8c144db8ef5907dae65b9a2d93c457021175d204420b0fce4b7bf38209f",
+                "evidencias/FASE-1/AC-009-05.png": "sha256:861ee8c144db8ef5907dae65b9a2d93c457021175d204420b0fce4b7bf38209f"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Prestado: {unidad} · {socio} · hasta {hasta}",
+                    "template": true
+                  }
+                ],
+                "where": "Entregas y devoluciones",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-1325e-sta-2026-12-09»-sin-botones-chromium/attachments/AC-009-05-f4fc0c378dd2ffec9ebb4defd2c8b352c35ebf63.png",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-1325e-sta-2026-12-09»-sin-botones-chromium/test-finished-1.png",
+                "evidencias/FASE-1/AC-009-05.png"
+              ],
+              "videos": [
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-1325e-sta-2026-12-09»-sin-botones-chromium/attachments/FASE-1-REQ-F-009-AC5-AC-009-05-la-junta-abre--9c52fd424f4ef19d70cd0d142f77f739754b2d9a.webm",
+                "evidencias/FASE-1/.playwright/fase-1-entrega-REQ-F-009-A-1325e-sta-2026-12-09»-sin-botones-chromium/video.webm",
+                "evidencias/FASE-1/FASE-1-REQ-F-009-AC5-AC-009-05-la-junta-abre-.webm"
+              ]
+            }
+          ],
+          "candidate_files": [
+            "src/domain/config.js",
+            "src/domain/prestamos.js",
+            "src/server/http.js",
+            "src/ui/api.js",
+            "src/ui/pantallas/entregas.js",
+            "src/ui/router.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        }
+      ],
+      "unknown_requirements": [],
+      "tasks": [
+        "TASK-F1-001",
+        "TASK-F1-002",
+        "TASK-F1-003",
+        "TASK-F1-004",
+        "TASK-F1-005",
+        "TASK-F1-006",
+        "TASK-F1-007"
+      ],
+      "candidate_files": [
+        "src/domain/config.js",
+        "src/domain/prestamos.js",
+        "src/domain/reservas.js",
+        "src/domain/tareas.js",
+        "src/server/http.js",
+        "src/server/tareas-diarias.js",
+        "src/server/vite-plugin.js",
+        "src/ui/api.js",
+        "src/ui/estilos.css",
+        "src/ui/pantallas/entregas.js",
+        "src/ui/pantallas/mis-reservas.js",
+        "src/ui/router.js",
+        "src/ui/textos.js"
+      ]
+    }
+  ],
+  "uncovered": [
+    {
+      "id": "REQ-C-001",
+      "title": "Textos en español",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-002",
+      "title": "Stack",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-003",
+      "title": "Datos compartidos",
+      "priority": "Must"
+    }
+  ],
+  "fases_without_header": [],
+  "criteria_without_test": [],
+  "coverage_gaps": 3
+}

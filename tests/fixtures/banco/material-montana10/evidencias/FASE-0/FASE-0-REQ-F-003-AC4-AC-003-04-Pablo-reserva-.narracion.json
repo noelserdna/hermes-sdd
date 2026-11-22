@@ -1,0 +1,16 @@
+{
+ "video": "FASE-0-REQ-F-003-AC4-AC-003-04-Pablo-reserva-.webm",
+ "test": "REQ-F-003 AC4 · AC-003-04 Pablo reserva «Tienda» del 2026-12-07 al 2026-12-08, días con unidades libres",
+ "titulo": "REQ-F-003 AC4 · AC-003-04 Pablo reserva «Tienda» del 2026-12-07 al 2026-12-08, días con unidades libres",
+ "narraciones": [
+  {
+   "t": 0.007,
+   "texto": "Pablo entra y reserva una tienda del 7 al 8 de diciembre; la otra tienda solo está ocupada el 5 y el 6"
+  },
+  {
+   "t": 0.832,
+   "texto": "Reservar material para unas fechas. En Mis reservas se ve «Reserva creada: Tienda del 2026-12-07 al 2026-12-08», porque las unidades están libres esos días.",
+   "criterio": "AC-003-04"
+  }
+ ]
+}

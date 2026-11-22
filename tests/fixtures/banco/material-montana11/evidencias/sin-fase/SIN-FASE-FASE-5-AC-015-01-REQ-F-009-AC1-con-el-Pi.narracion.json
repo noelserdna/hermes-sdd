@@ -1,0 +1,16 @@
+{
+ "video": "SIN-FASE-FASE-5-AC-015-01-REQ-F-009-AC1-con-el-Pi.webm",
+ "test": "FASE-5 Lo prestado, el historial y datos cerrados (UC-015, UC-016) › FASE-5 AC-015-01 REQ-F-009 AC1 con el Piolet 1 de Lucía Gil hasta 2026-12-07 y el Casco 2 de Pablo Ruiz hasta 2026-12-08 Prestado los lista",
+ "titulo": "FASE-5 AC-015-01 REQ-F-009 AC1 con el Piolet 1 de Lucía Gil hasta 2026-12-07 y el Casco 2 de Pablo Ruiz hasta 2026-12-08 Prestado los lista",
+ "narraciones": [
+  {
+   "t": 3.304,
+   "texto": "Es el 6 de diciembre. Lucía tiene un Piolet y Pablo un Casco fuera del almacén. Marta, la encargada, entra y abre Prestado"
+  },
+  {
+   "t": 3.909,
+   "texto": "Ver lo prestado y lo que vuelve cada día. En Prestado se ve «Piolet 1 — Lucía Gil — hasta 2026-12-07» y «Casco 2 — Pablo Ruiz — hasta 2026-12-08».",
+   "criterio": "AC-015-01"
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+{
+ "video": "FASE-0-REQ-F-005-AC4-AC-005-04-la-reserva-del.webm",
+ "test": "REQ-F-005 AC4 · AC-005-04 la reserva del 2026-12-05 al 2026-12-07 sin recoger se ve «No recogida» el 2026-12-08",
+ "titulo": "REQ-F-005 AC4 · AC-005-04 la reserva del 2026-12-05 al 2026-12-07 sin recoger se ve «No recogida» el 2026-12-08",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "El encargado abre Entregas y devoluciones el 7 de diciembre: la reserva de Lucía, hasta hoy, sigue sin entregar"
+  },
+  {
+   "t": 0.544,
+   "texto": "Pasa un día: es 8 de diciembre, su sesión ha caducado, y el encargado entra de nuevo y abre Entregas y devoluciones"
+  },
+  {
+   "t": 1.083,
+   "texto": "Entregar lo reservado. En Entregas y devoluciones se ve «Piolet · Lucía · No recogida», sus unidades quedan libres y ya no figura en Entregar hoy.",
+   "criterio": "AC-005-04"
+  }
+ ]
+}

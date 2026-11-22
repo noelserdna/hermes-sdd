@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-002-03",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-002-03 un visitante anónimo abre la dirección de Mis reservas y ve Entrar",
+ "titulo": "WF-002 AC-002-03 un visitante anónimo abre la dirección de Mis reservas y ve Entrar",
+ "ve": [
+  "Entrar"
+ ],
+ "narrado": "Entrar con correo y contraseña. En Entrar se ve «Entrar».",
+ "url": "http://127.0.0.1:37505/#/entrar",
+ "imagen": "AC-002-03.png",
+ "sha256": "sha256:7974a5a9c834652c83b8bf3eeaa60a7f145d54bdd3ab65d2c53a22f1633e2d3b",
+ "at": "2026-11-22T01:00:35.789Z"
+}

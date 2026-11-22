@@ -1,0 +1,20 @@
+{
+ "video": "FASE-0-REQ-F-007-AC1-AC-007-01-el-encargado-m.webm",
+ "test": "REQ-F-007 AC1 · AC-007-01 el encargado marca pagada la multa de 6 € de Pablo y ve «Multa de 6 € · Pablo · Pagada»; Pablo ya puede reservar",
+ "titulo": "REQ-F-007 AC1 · AC-007-01 el encargado marca pagada la multa de 6 € de Pablo y ve «Multa de 6 € · Pablo · Pagada»; Pablo ya puede reservar",
+ "narraciones": [
+  {
+   "t": 0.01,
+   "texto": "El encargado entra, abre Multas y marca como pagada la multa de 6 euros de Pablo"
+  },
+  {
+   "t": 0.615,
+   "texto": "Después Pablo entra en otra sesión y reserva un piolet para el 12 de diciembre"
+  },
+  {
+   "t": 1.246,
+   "texto": "Marcar la multa como pagada. En Multas se ve «Multa de 6 € · Pablo · Pagada», con su fecha, y Pablo puede reservar de nuevo.",
+   "criterio": "AC-007-01"
+  }
+ ]
+}

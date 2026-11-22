@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-007-04",
+ "test": "REQ-F-007 AC4 · AC-007-04 Lucía abre Multas por su dirección y ve «No tienes permiso para ver esta pantalla»",
+ "titulo": "REQ-F-007 AC4 · AC-007-04 Lucía abre Multas por su dirección y ve «No tienes permiso para ver esta pantalla»",
+ "ve": [
+  "No tienes permiso para ver esta pantalla"
+ ],
+ "narrado": "Marcar la multa como pagada. En Multas se ve «No tienes permiso para ver esta pantalla», y ninguna multa de Pablo.",
+ "url": "http://127.0.0.1:5173/#/multas",
+ "imagen": "AC-007-04.png",
+ "sha256": "sha256:2f93e36676b6d3a15c925fa3e4c0589d7eaa1c92dbb8b0d8f4f11d6beae644b9",
+ "at": "2026-11-21T13:46:52.402Z"
+}

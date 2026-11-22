@@ -1,0 +1,16 @@
+{
+ "video": "FASE-2-REQ-F-006-AC1-AC-006-01-el-encargado-m.webm",
+ "test": "REQ-F-006 AC1 · AC-006-01 el encargado marca devuelto «Piolet 2» de Lucía el día hasta y ve «Piolet 2 · Lucía · Devuelta» sin multa",
+ "titulo": "REQ-F-006 AC1 · AC-006-01 el encargado marca devuelto «Piolet 2» de Lucía el día hasta y ve «Piolet 2 · Lucía · Devuelta» sin multa",
+ "narraciones": [
+  {
+   "t": 0.014,
+   "texto": "El encargado entra, abre Entregas y devoluciones y marca devuelto el Piolet 2 de Lucía, que volvía hoy, 7 de diciembre"
+  },
+  {
+   "t": 0.803,
+   "texto": "Marcar la devolución y poner la multa. En Entregas y devoluciones se ve «Piolet 2 · Lucía · Devuelta», y no se crea ninguna multa.",
+   "criterio": "AC-006-01"
+  }
+ ]
+}

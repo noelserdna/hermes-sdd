@@ -1,0 +1,546 @@
+{
+  "$schema": "sdd-adversarial-plan-v1",
+  "evaluated_sha": "262a323e89efa7d925e2699136d1029aec099d80",
+  "dirty": false,
+  "generatedAt": "2026-11-21T21:48:18.947Z",
+  "scope": {
+    "fase": 0
+  },
+  "code_paths": [
+    "src"
+  ],
+  "adversarial_gate": "enforce",
+  "incremental": {
+    "since": "a3765741ff197923b771f66ecd07cc10f4c68248",
+    "baseline": ".sdd/hermes/adversarial-FASE-0.json",
+    "changed_files": [
+      "tests/e2e/fase-0-wf-002.spec.js"
+    ],
+    "criteria": 9,
+    "recheck": 1,
+    "carried": 8
+  },
+  "fases": [
+    {
+      "fase": 0,
+      "file": "plan/fases/FASE-0-SKELETON.md",
+      "header": true,
+      "requirements": [
+        {
+          "id": "REQ-F-001",
+          "title": "Entrar con correo y contraseña",
+          "priority": "Must",
+          "verification": "test",
+          "verdict": "VERIFIED",
+          "statement": "WHEN a member submits a registered email and its password THE system SHALL open a session and show the home screen of their role (socio, encargado or junta)",
+          "reqHash": "sha256:e6290823daf94b955ecd246a94e73a8d4b105218e6ddea3c94b35d08e125ff9f",
+          "criteria": [
+            {
+              "n": 1,
+              "text": "GIVEN the socio \"lucia@club.test\" with password \"Cumbre2026\" WHEN she submits them on the login form THEN the user sees the heading \"Material disponible\"",
+              "scenarios": [
+                "AC-001-01"
+              ],
+              "tests": [
+                {
+                  "name": "WF-002 Sesión de acceso › WF-002 AC-001-01 lucia entra con su correo y su contraseña y ve Material disponible",
+                  "file": "fase-0-wf-002.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-fd776-ña-y-ve-Material-disponible-chromium/attachments/AC-001-01-f8854534b8787af653888ea32daf02bc862c1931.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-fd776-ña-y-ve-Material-disponible-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-fd776-ña-y-ve-Material-disponible-chromium/attachments/AC-001-01-f8854534b8787af653888ea32daf02bc862c1931.png": "sha256:03c250765c75760a2dc2c3064a0eba6c7f8719649e1ca768a3cd89d0d4c15876",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-fd776-ña-y-ve-Material-disponible-chromium/test-finished-1.png": "sha256:03c250765c75760a2dc2c3064a0eba6c7f8719649e1ca768a3cd89d0d4c15876",
+                "evidencias/FASE-0/AC-001-01.png": "sha256:03c250765c75760a2dc2c3064a0eba6c7f8719649e1ca768a3cd89d0d4c15876"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Material disponible",
+                    "template": false
+                  }
+                ],
+                "where": "Inicio del socio",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-fd776-ña-y-ve-Material-disponible-chromium/attachments/AC-001-01-f8854534b8787af653888ea32daf02bc862c1931.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-fd776-ña-y-ve-Material-disponible-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-fd776-ña-y-ve-Material-disponible-chromium/attachments/WF-002-WF-002-AC-001-01-lucia-entra-con-su-corr-5cb5e6ade25210cffbf3ebb7e8f5ca8a6aa27422.webm",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-fd776-ña-y-ve-Material-disponible-chromium/video.webm",
+                "evidencias/FASE-0/WF-002-WF-002-AC-001-01-lucia-entra-con-su-corr.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 2,
+              "text": "GIVEN the encargado \"marta@club.test\" WHEN she submits her correct credentials THEN the user sees the heading \"Panel del encargado\"",
+              "scenarios": [
+                "AC-001-02"
+              ],
+              "tests": [
+                {
+                  "name": "WF-002 Sesión de acceso › WF-002 AC-001-02 marta entra como encargada y ve Panel del encargado",
+                  "file": "fase-0-wf-002.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-7c109-da-y-ve-Panel-del-encargado-chromium/attachments/AC-001-02-d10c7bdc28905362b1eaef4f8ce5d14eede11b3f.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-7c109-da-y-ve-Panel-del-encargado-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-02.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-7c109-da-y-ve-Panel-del-encargado-chromium/attachments/AC-001-02-d10c7bdc28905362b1eaef4f8ce5d14eede11b3f.png": "sha256:d982955ff82cb0309b1ffdebbd83637856f257ba574bb9a06d0c5faf9cf6a00c",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-7c109-da-y-ve-Panel-del-encargado-chromium/test-finished-1.png": "sha256:d982955ff82cb0309b1ffdebbd83637856f257ba574bb9a06d0c5faf9cf6a00c",
+                "evidencias/FASE-0/AC-001-02.png": "sha256:d982955ff82cb0309b1ffdebbd83637856f257ba574bb9a06d0c5faf9cf6a00c"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Panel del encargado",
+                    "template": false
+                  }
+                ],
+                "where": "Inicio del encargado",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-7c109-da-y-ve-Panel-del-encargado-chromium/attachments/AC-001-02-d10c7bdc28905362b1eaef4f8ce5d14eede11b3f.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-7c109-da-y-ve-Panel-del-encargado-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-02.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-7c109-da-y-ve-Panel-del-encargado-chromium/attachments/WF-002-WF-002-AC-001-02-marta-entra-como-encarg-b5826b12b2fc3a7b321a281ff1550303cb4c9df0.webm",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-7c109-da-y-ve-Panel-del-encargado-chromium/video.webm",
+                "evidencias/FASE-0/WF-002-WF-002-AC-001-02-marta-entra-como-encarg.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 3,
+              "text": "GIVEN \"lucia@club.test\" WHEN she submits the wrong password \"x\" THEN the user sees \"Correo o contraseña incorrectos\"",
+              "scenarios": [
+                "AC-001-06"
+              ],
+              "tests": [
+                {
+                  "name": "WF-002 Sesión de acceso › WF-002 AC-001-06 lucia envía una contraseña errónea y ve Correo o contraseña incorrectos",
+                  "file": "fase-0-wf-002.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-c3d3a-eo-o-contraseña-incorrectos-chromium/attachments/AC-001-06-83cac8632a7c002ac1a676f82cc83c189bb5cdc5.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-c3d3a-eo-o-contraseña-incorrectos-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-06.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-c3d3a-eo-o-contraseña-incorrectos-chromium/attachments/AC-001-06-83cac8632a7c002ac1a676f82cc83c189bb5cdc5.png": "sha256:ee3d36b188a17a8df2adbac840f1635e3ef13df3f9c39f6b34c8b342556d538a",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-c3d3a-eo-o-contraseña-incorrectos-chromium/test-finished-1.png": "sha256:ee3d36b188a17a8df2adbac840f1635e3ef13df3f9c39f6b34c8b342556d538a",
+                "evidencias/FASE-0/AC-001-06.png": "sha256:ee3d36b188a17a8df2adbac840f1635e3ef13df3f9c39f6b34c8b342556d538a"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Correo o contraseña incorrectos",
+                    "template": false
+                  }
+                ],
+                "where": "Entrar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-c3d3a-eo-o-contraseña-incorrectos-chromium/attachments/AC-001-06-83cac8632a7c002ac1a676f82cc83c189bb5cdc5.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-c3d3a-eo-o-contraseña-incorrectos-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-06.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-c3d3a-eo-o-contraseña-incorrectos-chromium/attachments/WF-002-WF-002-AC-001-06-lucia-env-a-una-contras-c432f2865c7a795f2c08c7a9fd14a57c6e620c51.webm",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-c3d3a-eo-o-contraseña-incorrectos-chromium/video.webm",
+                "evidencias/FASE-0/WF-002-WF-002-AC-001-06-lucia-env-a-una-contras.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 4,
+              "text": "GIVEN \"lucia@club.test\" with 4 failed attempts in a row WHEN she fails a 5th time THEN the user sees \"Cuenta bloqueada durante 15 minutos\" and a 6th attempt with the correct password 10 minutes later is also rejected",
+              "scenarios": [
+                "AC-001-07"
+              ],
+              "tests": [
+                {
+                  "name": "WF-002 Sesión de acceso › WF-002 AC-001-07 el quinto fallo de lucia bloquea la cuenta y 10 minutos después la clave buena también se rechaza",
+                  "file": "fase-0-wf-002.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-4d9d6-ve-buena-también-se-rechaza-chromium/attachments/AC-001-07-3b2a742aea99c01802e55cb58bf29baf329f8229.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-4d9d6-ve-buena-también-se-rechaza-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-07.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-4d9d6-ve-buena-también-se-rechaza-chromium/attachments/AC-001-07-3b2a742aea99c01802e55cb58bf29baf329f8229.png": "sha256:ac5bb1204d44cbba470ed66d3a929e7efd18406a00540752beae5e995bc93024",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-4d9d6-ve-buena-también-se-rechaza-chromium/test-finished-1.png": "sha256:ac5bb1204d44cbba470ed66d3a929e7efd18406a00540752beae5e995bc93024",
+                "evidencias/FASE-0/AC-001-07.png": "sha256:ac5bb1204d44cbba470ed66d3a929e7efd18406a00540752beae5e995bc93024"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Cuenta bloqueada durante 15 minutos",
+                    "template": false
+                  }
+                ],
+                "where": "Entrar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-4d9d6-ve-buena-también-se-rechaza-chromium/attachments/AC-001-07-3b2a742aea99c01802e55cb58bf29baf329f8229.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-4d9d6-ve-buena-también-se-rechaza-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-07.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-4d9d6-ve-buena-también-se-rechaza-chromium/attachments/WF-002-WF-002-AC-001-07-el-quinto-fallo-de-luci-8902feb6d42022098a054f97a9fc50e7cb94d253.webm",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-4d9d6-ve-buena-también-se-rechaza-chromium/video.webm",
+                "evidencias/FASE-0/WF-002-WF-002-AC-001-07-el-quinto-fallo-de-luci.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 5,
+              "text": "GIVEN \"lucia@club.test\" was blocked 15 minutes ago WHEN she submits the correct password THEN the user sees the heading \"Material disponible\"",
+              "scenarios": [
+                "AC-001-04"
+              ],
+              "tests": [
+                {
+                  "name": "WF-002 Sesión de acceso › WF-002 AC-001-04 lucia bloqueada hace 15 minutos entra con la contraseña correcta y ve Material disponible",
+                  "file": "fase-0-wf-002.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-ef592-ta-y-ve-Material-disponible-chromium/attachments/AC-001-04-bcc464f5e5e65d2e9480d470f6d7dbc525b5071a.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-ef592-ta-y-ve-Material-disponible-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-04.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-ef592-ta-y-ve-Material-disponible-chromium/attachments/AC-001-04-bcc464f5e5e65d2e9480d470f6d7dbc525b5071a.png": "sha256:7831a738f5ccb619df516b00d3786854231df0d01bb95e18b16c94037c6869fe",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-ef592-ta-y-ve-Material-disponible-chromium/test-finished-1.png": "sha256:7831a738f5ccb619df516b00d3786854231df0d01bb95e18b16c94037c6869fe",
+                "evidencias/FASE-0/AC-001-04.png": "sha256:7831a738f5ccb619df516b00d3786854231df0d01bb95e18b16c94037c6869fe"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Material disponible",
+                    "template": false
+                  }
+                ],
+                "where": "Inicio del socio",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-ef592-ta-y-ve-Material-disponible-chromium/attachments/AC-001-04-bcc464f5e5e65d2e9480d470f6d7dbc525b5071a.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-ef592-ta-y-ve-Material-disponible-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-04.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-ef592-ta-y-ve-Material-disponible-chromium/attachments/WF-002-WF-002-AC-001-04-lucia-bloqueada-hace-15-0b71e4c5bc6a3b6615dfbd5ab8bd5e807a05642d.webm",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-ef592-ta-y-ve-Material-disponible-chromium/video.webm",
+                "evidencias/FASE-0/WF-002-WF-002-AC-001-04-lucia-bloqueada-hace-15.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 6,
+              "text": "GIVEN a session with no activity for 30 minutes WHEN the member opens any screen THEN the user sees the login form with \"Sesión caducada, vuelve a entrar\"",
+              "scenarios": [
+                "AC-002-05"
+              ],
+              "tests": [
+                {
+                  "name": "WF-002 Sesión de acceso › WF-002 AC-002-05 la sesión de lucia sin actividad durante 30 minutos caduca y ve Sesión caducada, vuelve a entrar",
+                  "file": "fase-0-wf-002.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-258d3-ón-caducada-vuelve-a-entrar-chromium/attachments/AC-002-05-0e20b550a916aeff240c2566d0cba0aa02f1c2b2.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-258d3-ón-caducada-vuelve-a-entrar-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-002-05.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-258d3-ón-caducada-vuelve-a-entrar-chromium/attachments/AC-002-05-0e20b550a916aeff240c2566d0cba0aa02f1c2b2.png": "sha256:a9c2aaceb4c0d1be3e483fc24d0510c841c2bfb9cffb4fd5dabf710485552ee7",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-258d3-ón-caducada-vuelve-a-entrar-chromium/test-finished-1.png": "sha256:a9c2aaceb4c0d1be3e483fc24d0510c841c2bfb9cffb4fd5dabf710485552ee7",
+                "evidencias/FASE-0/AC-002-05.png": "sha256:a9c2aaceb4c0d1be3e483fc24d0510c841c2bfb9cffb4fd5dabf710485552ee7"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Sesión caducada, vuelve a entrar",
+                    "template": false
+                  }
+                ],
+                "where": "Entrar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-258d3-ón-caducada-vuelve-a-entrar-chromium/attachments/AC-002-05-0e20b550a916aeff240c2566d0cba0aa02f1c2b2.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-258d3-ón-caducada-vuelve-a-entrar-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-002-05.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-258d3-ón-caducada-vuelve-a-entrar-chromium/attachments/WF-002-WF-002-AC-002-05-la-sesi-n-de-lucia-sin--340ab18e47e1e38072b91b0ed99b63d56c2a8c87.webm",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-258d3-ón-caducada-vuelve-a-entrar-chromium/video.webm",
+                "evidencias/FASE-0/WF-002-WF-002-AC-002-05-la-sesi-n-de-lucia-sin-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 7,
+              "text": "GIVEN a signed-in member WHEN she presses \"Salir\" THEN the user sees the login form and going back to a member screen shows the login form again",
+              "scenarios": [
+                "AC-002-01",
+                "AC-002-02"
+              ],
+              "tests": [
+                {
+                  "name": "WF-002 Sesión de acceso › WF-002 AC-002-01 lucia pulsa Salir y ve Entrar; al volver a una pantalla de socio vuelve a ver Entrar",
+                  "file": "fase-0-wf-002.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-1c8f5-e-socio-vuelve-a-ver-Entrar-chromium/attachments/AC-002-01-728983540eea26f5300eb30f44207333cb8f9608.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-1c8f5-e-socio-vuelve-a-ver-Entrar-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-002-01.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-1c8f5-e-socio-vuelve-a-ver-Entrar-chromium/attachments/AC-002-01-728983540eea26f5300eb30f44207333cb8f9608.png": "sha256:d887acd8559678360f1b1dcb689ac0a14af79773ee8538a69894fb321dc14ea0",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-1c8f5-e-socio-vuelve-a-ver-Entrar-chromium/test-finished-1.png": "sha256:d887acd8559678360f1b1dcb689ac0a14af79773ee8538a69894fb321dc14ea0",
+                "evidencias/FASE-0/AC-002-01.png": "sha256:d887acd8559678360f1b1dcb689ac0a14af79773ee8538a69894fb321dc14ea0"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Entrar",
+                    "template": false
+                  }
+                ],
+                "where": "Entrar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-1c8f5-e-socio-vuelve-a-ver-Entrar-chromium/attachments/AC-002-01-728983540eea26f5300eb30f44207333cb8f9608.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-1c8f5-e-socio-vuelve-a-ver-Entrar-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-002-01.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-1c8f5-e-socio-vuelve-a-ver-Entrar-chromium/attachments/WF-002-WF-002-AC-002-01-lucia-pulsa-Salir-y-ve--203db92d0b0c30a36f83496fcf7b88f4cf050fba.webm",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-1c8f5-e-socio-vuelve-a-ver-Entrar-chromium/video.webm",
+                "evidencias/FASE-0/WF-002-WF-002-AC-002-01-lucia-pulsa-Salir-y-ve-.webm"
+              ],
+              "recheck": true,
+              "recheck_reasons": [
+                "challenge CH-002 stale",
+                "test changed: tests/e2e/fase-0-wf-002.spec.js"
+              ]
+            },
+            {
+              "n": 8,
+              "text": "GIVEN an anonymous visitor WHEN they open the address of \"Mis reservas\" THEN the user sees the login form",
+              "scenarios": [
+                "AC-002-03"
+              ],
+              "tests": [
+                {
+                  "name": "WF-002 Sesión de acceso › WF-002 AC-002-03 un visitante anónimo abre la dirección de Mis reservas y ve Entrar",
+                  "file": "fase-0-wf-002.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-b6570-de-Mis-reservas-y-ve-Entrar-chromium/attachments/AC-002-03-29a1cbc6e1a8c0d1df77d1afe04d37deefd92bf7.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-b6570-de-Mis-reservas-y-ve-Entrar-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-002-03.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-b6570-de-Mis-reservas-y-ve-Entrar-chromium/attachments/AC-002-03-29a1cbc6e1a8c0d1df77d1afe04d37deefd92bf7.png": "sha256:7974a5a9c834652c83b8bf3eeaa60a7f145d54bdd3ab65d2c53a22f1633e2d3b",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-b6570-de-Mis-reservas-y-ve-Entrar-chromium/test-finished-1.png": "sha256:7974a5a9c834652c83b8bf3eeaa60a7f145d54bdd3ab65d2c53a22f1633e2d3b",
+                "evidencias/FASE-0/AC-002-03.png": "sha256:7974a5a9c834652c83b8bf3eeaa60a7f145d54bdd3ab65d2c53a22f1633e2d3b"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Entrar",
+                    "template": false
+                  }
+                ],
+                "where": "Entrar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-b6570-de-Mis-reservas-y-ve-Entrar-chromium/attachments/AC-002-03-29a1cbc6e1a8c0d1df77d1afe04d37deefd92bf7.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-b6570-de-Mis-reservas-y-ve-Entrar-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-002-03.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-b6570-de-Mis-reservas-y-ve-Entrar-chromium/attachments/WF-002-WF-002-AC-002-03-un-visitante-an-nimo-ab-65ed5f525e4dd7790e9663e482aa9586c71b6208.webm",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-b6570-de-Mis-reservas-y-ve-Entrar-chromium/video.webm",
+                "evidencias/FASE-0/WF-002-WF-002-AC-002-03-un-visitante-an-nimo-ab.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            },
+            {
+              "n": 9,
+              "text": "GIVEN a deactivated member \"pablo@club.test\" WHEN he submits his correct password THEN the user sees \"Correo o contraseña incorrectos\"",
+              "scenarios": [
+                "AC-001-08"
+              ],
+              "tests": [
+                {
+                  "name": "WF-002 Sesión de acceso › WF-002 AC-001-08 pablo dado de baja envía su contraseña correcta y ve Correo o contraseña incorrectos",
+                  "file": "fase-0-wf-002.spec.js",
+                  "status": "pass",
+                  "fresh": true
+                }
+              ],
+              "captures": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-896e0-eo-o-contraseña-incorrectos-chromium/attachments/AC-001-08-d7608ab5aa7b487730c42664f99a6b7fc7fa175b.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-896e0-eo-o-contraseña-incorrectos-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-08.png"
+              ],
+              "capture_sha256": {
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-896e0-eo-o-contraseña-incorrectos-chromium/attachments/AC-001-08-d7608ab5aa7b487730c42664f99a6b7fc7fa175b.png": "sha256:255f4a6218fa55b549784194668b287daa82f8949b7f65e778444e81d82cb689",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-896e0-eo-o-contraseña-incorrectos-chromium/test-finished-1.png": "sha256:255f4a6218fa55b549784194668b287daa82f8949b7f65e778444e81d82cb689",
+                "evidencias/FASE-0/AC-001-08.png": "sha256:255f4a6218fa55b549784194668b287daa82f8949b7f65e778444e81d82cb689"
+              },
+              "sees": {
+                "texts": [
+                  {
+                    "text": "Correo o contraseña incorrectos",
+                    "template": false
+                  }
+                ],
+                "where": "Entrar",
+                "none": null
+              },
+              "shown_by": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-896e0-eo-o-contraseña-incorrectos-chromium/attachments/AC-001-08-d7608ab5aa7b487730c42664f99a6b7fc7fa175b.png",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-896e0-eo-o-contraseña-incorrectos-chromium/test-finished-1.png",
+                "evidencias/FASE-0/AC-001-08.png"
+              ],
+              "videos": [
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-896e0-eo-o-contraseña-incorrectos-chromium/attachments/WF-002-WF-002-AC-001-08-pablo-dado-de-baja-env--96a6e50cee2fda36a3a397120caf2098e011d7a9.webm",
+                "evidencias/FASE-0/.playwright/fase-0-wf-002-WF-002-Sesió-896e0-eo-o-contraseña-incorrectos-chromium/video.webm",
+                "evidencias/FASE-0/WF-002-WF-002-AC-001-08-pablo-dado-de-baja-env-.webm"
+              ],
+              "recheck": false,
+              "recheck_reasons": []
+            }
+          ],
+          "candidate_files": [
+            "src/domain/cuentas.js",
+            "src/domain/permisos.js",
+            "src/server/hash.js",
+            "src/server/plugin.js",
+            "src/server/sesiones.js",
+            "src/ui/main.js",
+            "src/ui/pantallas/entrar.js",
+            "src/ui/pantallas/inicio.js",
+            "src/ui/pantallas/mis-reservas.js",
+            "src/ui/router.js",
+            "src/ui/textos.js"
+          ],
+          "challenges_open": []
+        }
+      ],
+      "unknown_requirements": [],
+      "tasks": [
+        "TASK-F0-001",
+        "TASK-F0-002",
+        "TASK-F0-003",
+        "TASK-F0-004",
+        "TASK-F0-005",
+        "TASK-F0-006",
+        "TASK-F0-007",
+        "TASK-F0-008",
+        "TASK-F0-009",
+        "TASK-F0-010",
+        "TASK-F0-011"
+      ],
+      "candidate_files": [
+        "src/domain/constantes.js",
+        "src/domain/cuentas.js",
+        "src/domain/errores.js",
+        "src/domain/permisos.js",
+        "src/domain/reloj.js",
+        "src/domain/validacion.js",
+        "src/server/hash.js",
+        "src/server/plugin.js",
+        "src/server/sesiones.js",
+        "src/server/store.js",
+        "src/ui/api.js",
+        "src/ui/componentes/aviso.js",
+        "src/ui/componentes/cabecera.js",
+        "src/ui/errores.js",
+        "src/ui/main.js",
+        "src/ui/pantallas/entrar.js",
+        "src/ui/pantallas/inicio.js",
+        "src/ui/pantallas/mis-reservas.js",
+        "src/ui/pantallas/prohibido.js",
+        "src/ui/pantallas/socios.js",
+        "src/ui/router.js",
+        "src/ui/textos.js"
+      ],
+      "incremental": {
+        "criteria": 9,
+        "recheck": 1
+      }
+    }
+  ],
+  "uncovered": [
+    {
+      "id": "REQ-C-001",
+      "title": "Stack",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-002",
+      "title": "Textos en español",
+      "priority": "Must"
+    },
+    {
+      "id": "REQ-C-003",
+      "title": "Datos compartidos entre dispositivos",
+      "priority": "Must"
+    }
+  ],
+  "fases_without_header": [],
+  "criteria_without_test": [],
+  "coverage_gaps": 3
+}

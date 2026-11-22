@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-003-04",
+ "test": "REQ-F-003 AC4 · AC-003-04 Pablo reserva «Tienda» del 2026-12-07 al 2026-12-08, días con unidades libres",
+ "titulo": "REQ-F-003 AC4 · AC-003-04 Pablo reserva «Tienda» del 2026-12-07 al 2026-12-08, días con unidades libres",
+ "ve": [
+  "Reserva creada: Tienda del 2026-12-07 al 2026-12-08"
+ ],
+ "narrado": "Reservar material para unas fechas. En Mis reservas se ve «Reserva creada: Tienda del 2026-12-07 al 2026-12-08», porque las unidades están libres esos días.",
+ "url": "http://127.0.0.1:5173/#/mis-reservas",
+ "imagen": "AC-003-04.png",
+ "sha256": "sha256:b8a5f3a48a242b84c051c7064621e5768e8b2e89094df416c6451fefa7b9df6b",
+ "at": "2026-11-21T13:45:57.551Z"
+}

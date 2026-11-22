@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-003-04",
+ "test": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-003-04 REQ-F-002 AC2 marta crea un socio con la contraseña corta1 y ve el aviso de 8 caracteres",
+ "titulo": "FASE-4 AC-003-04 REQ-F-002 AC2 marta crea un socio con la contraseña corta1 y ve el aviso de 8 caracteres",
+ "ve": [
+  "La contraseña debe tener al menos 8 caracteres"
+ ],
+ "narrado": "Gestionar las cuentas de socios. En Socios se ve «La contraseña debe tener al menos 8 caracteres». Y no se crea ningún socio.",
+ "url": "http://127.0.0.1:36381/#/socios",
+ "imagen": "AC-003-04.png",
+ "sha256": "sha256:4e73c89af8aab79bd170910fe3101c2b3c256661c0bbb048ff6bd8c319525e24",
+ "at": "2026-11-22T06:16:34.101Z"
+}

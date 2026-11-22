@@ -1,0 +1,20 @@
+{
+ "video": "FASE-1-FASE-1-AC-007-01-hoy-2026-12-04-lucia-ca.webm",
+ "test": "FASE-1 Cancelar reserva (hoy 2026-12-04) › FASE-1 AC-007-01 hoy 2026-12-04 lucia cancela su Piolet que empieza el 2026-12-05 y ve Reserva cancelada y Cancelada",
+ "titulo": "FASE-1 AC-007-01 hoy 2026-12-04 lucia cancela su Piolet que empieza el 2026-12-05 y ve Reserva cancelada y Cancelada",
+ "narraciones": [
+  {
+   "t": 1.378,
+   "texto": "Hoy es 4 de diciembre. Lucía abre Mis reservas y pulsa Cancelar reserva en su Piolet, que empieza mañana"
+  },
+  {
+   "t": 1.992,
+   "texto": "Confirma con Sí, cancelar"
+  },
+  {
+   "t": 2.215,
+   "texto": "Ver y cancelar mis reservas. En Mis reservas se ve «Reserva cancelada», y la reserva del Piolet pasa a estado Cancelada.",
+   "criterio": "AC-007-01"
+  }
+ ]
+}

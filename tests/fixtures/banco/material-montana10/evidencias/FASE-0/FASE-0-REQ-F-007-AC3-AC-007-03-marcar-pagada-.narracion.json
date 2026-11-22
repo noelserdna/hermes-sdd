@@ -1,0 +1,20 @@
+{
+ "video": "FASE-0-REQ-F-007-AC3-AC-007-03-marcar-pagada-.webm",
+ "test": "REQ-F-007 AC3 · AC-007-03 marcar pagada otra vez la multa de 6 € de Pablo deja una sola «Pagada» con la misma fecha de pago",
+ "titulo": "REQ-F-007 AC3 · AC-007-03 marcar pagada otra vez la multa de 6 € de Pablo deja una sola «Pagada» con la misma fecha de pago",
+ "narraciones": [
+  {
+   "t": 0.009,
+   "texto": "El encargado abre Multas, donde la multa de 6 euros de Pablo figura Pendiente; entretanto ya quedó pagada el 1 de diciembre"
+  },
+  {
+   "t": 0.567,
+   "texto": "El 9 de diciembre el encargado pulsa Marcar como pagada sobre esa multa, que su pantalla aún enseñaba como Pendiente"
+  },
+  {
+   "t": 0.846,
+   "texto": "Marcar la multa como pagada. La lista de multas no cambia: sigue una sola, «Multa de 6 € · Pablo · Pagada», con la misma fecha de pago, el 1 de diciembre.",
+   "criterio": "AC-007-03"
+  }
+ ]
+}

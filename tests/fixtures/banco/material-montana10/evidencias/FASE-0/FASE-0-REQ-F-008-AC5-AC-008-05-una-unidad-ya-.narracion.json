@@ -1,0 +1,11 @@
+{
+ "video": "FASE-0-REQ-F-008-AC5-AC-008-05-una-unidad-ya-.webm",
+ "test": "REQ-F-008 AC5 · AC-008-05 una unidad ya «De baja» marcada otra vez sigue «De baja» una sola vez",
+ "titulo": "REQ-F-008 AC5 · AC-008-05 una unidad ya «De baja» marcada otra vez sigue «De baja» una sola vez",
+ "narraciones": [
+  {
+   "t": 0.007,
+   "texto": "El encargado entra; «Casco 3» ya está de baja, y se vuelve a marcar como rota"
+  }
+ ]
+}

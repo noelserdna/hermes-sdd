@@ -1,0 +1,171 @@
+{
+ "fase": "2",
+ "plan": "plan/fases/FASE-2-PRESTAMO.md",
+ "workflows": [],
+ "casos_de_uso": [
+  {
+   "id": "UC-008",
+   "titulo": "Entregar material",
+   "fichero": "spec/use-cases/UC-008-entregar-material.md",
+   "flujo": [
+    "Encargado: abre Préstamos.",
+    "System: aplica No recogida a las Reservada con `inicio` < hoy (RN-004, API-003-03) y lista reservas y préstamos (API-003-04).",
+    "Encargado: marca \"Entregar\" sobre una reserva Reservada.",
+    "System: comprueba que existe, que está Reservada y que hoy = `inicio` (RN-003, INV-LOA-001).",
+    "System: pasa la reserva a Entregado y anota `entregadaEl` en una escritura atómica (INV-SEC-003, ADR-005).",
+    "System: Préstamos muestra el nuevo estado."
+   ],
+   "extensiones": [
+    {
+     "texto": "2a. Hay reservas con `inicio` < hoy sin entregar → se muestran como No recogida y la unidad queda libre para reservar.",
+     "criterios": [
+      "AC-008-02"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-008-01",
+    "AC-008-03",
+    "AC-008-02",
+    "AC-008-04"
+   ]
+  },
+  {
+   "id": "UC-009",
+   "titulo": "Registrar devolución",
+   "fichero": "spec/use-cases/UC-009-registrar-devolucion.md",
+   "flujo": [
+    "Encargado: marca \"Devolver\" sobre un préstamo en Préstamos.",
+    "System: comprueba rol, existencia y estado Entregado (INV-LOA-003).",
+    "System: anota `devueltaEl` = hoy y pasa a Devuelto.",
+    "System: si `devueltaEl` > `fin`, invoca UC-010 en la misma escritura atómica (INV-FIN-001, ADR-005).",
+    "System: Préstamos muestra \"Devuelto\"."
+   ],
+   "extensiones": [
+    {
+     "texto": "4a. Hay retraso → se crea la multa Pendiente (UC-010, AC-010-01).",
+     "criterios": [
+      "AC-010-01",
+      "AC-009-02"
+     ]
+    }
+   ],
+   "criterios": [
+    "AC-009-01",
+    "AC-009-03"
+   ]
+  },
+  {
+   "id": "UC-010",
+   "titulo": "Aplicar multa por retraso",
+   "fichero": "spec/use-cases/UC-010-aplicar-multa-por-retraso.md",
+   "flujo": [
+    "System: calcula días = `devueltaEl` − `fin`, naturales (RN-009, INV-FIN-001).",
+    "System: si días > 0, crea la multa Pendiente con importe `FINE_PER_DAY_EUR` × días (INV-FIN-001).",
+    "System: comprueba que la reserva no tiene ya multa (INV-FIN-002).",
+    "System: el socio queda bloqueado para reservar mientras exista una multa Pendiente (INV-RES-005, INV-FIN-004); el rechazo se especifica en UC-005."
+   ],
+   "extensiones": [
+    {
+     "texto": "1a. `devueltaEl` ≤ `fin` → no se crea multa.",
+     "criterios": [
+      "AC-010-02"
+     ]
+    },
+    {
+     "texto": "1b. Un solo día de retraso → importe de 1 × `FINE_PER_DAY_EUR`.",
+     "criterios": [
+      "AC-010-03"
+     ]
+    },
+    {
+     "texto": "4a. El socio intenta reservar → `E_MULTA_PENDIENTE` y sus reservas existentes se conservan.",
+     "criterios": [
+      "AC-010-04"
+     ]
+    }
+   ],
+   "criterios": []
+  }
+ ],
+ "criterios": [
+  {
+   "id": "AC-008-01",
+   "req": "REQ-F-005",
+   "ac": 1,
+   "uc": "UC-008",
+   "frase": "Entregar y marcar la devolución. En Préstamos se ve «Entregado».",
+   "visible": true,
+   "then": "the user sees the reservation \"Piolet\" with state \"Entregado\"",
+   "ve": [
+    "Entregado"
+   ],
+   "pantalla": "Préstamos"
+  },
+  {
+   "id": "AC-009-01",
+   "req": "REQ-F-005",
+   "ac": 2,
+   "uc": "UC-009",
+   "frase": "Entregar y marcar la devolución. En Préstamos se ve «Devuelto».",
+   "visible": true,
+   "then": "the user sees state \"Devuelto\" and the unit is free again",
+   "ve": [
+    "Devuelto"
+   ],
+   "pantalla": "Préstamos"
+  },
+  {
+   "id": "AC-008-03",
+   "req": "REQ-F-005",
+   "ac": 3,
+   "uc": "UC-008",
+   "frase": "Entregar y marcar la devolución. En Préstamos se ve «No se puede entregar antes de la fecha de inicio».",
+   "visible": true,
+   "then": "the user sees \"No se puede entregar antes de la fecha de inicio\"",
+   "ve": [
+    "No se puede entregar antes de la fecha de inicio"
+   ],
+   "pantalla": "Préstamos"
+  },
+  {
+   "id": "AC-008-02",
+   "req": "REQ-F-005",
+   "ac": 4,
+   "uc": "UC-008",
+   "frase": "Entregar y marcar la devolución. En Préstamos se ve «No recogida».",
+   "visible": true,
+   "then": "the user sees its state \"No recogida\" and the unit is free for new reservations",
+   "ve": [
+    "No recogida"
+   ],
+   "pantalla": "Préstamos"
+  },
+  {
+   "id": "AC-009-03",
+   "req": "REQ-F-005",
+   "ac": 5,
+   "uc": "UC-009",
+   "frase": "Entregar y marcar la devolución. En Préstamos se ve «Devuelto».",
+   "visible": true,
+   "then": "the state stays \"Devuelto\" with the first return date and no second fine is created",
+   "ve": [
+    "Devuelto"
+   ],
+   "pantalla": "Préstamos"
+  },
+  {
+   "id": "AC-008-04",
+   "req": "REQ-F-005",
+   "ac": 6,
+   "uc": "UC-008",
+   "frase": "Entregar y marcar la devolución. En Préstamos se ve «Acceso no permitido».",
+   "visible": true,
+   "then": "the user sees \"Acceso no permitido\"",
+   "ve": [
+    "Acceso no permitido"
+   ],
+   "pantalla": "Préstamos"
+  }
+ ]
+}

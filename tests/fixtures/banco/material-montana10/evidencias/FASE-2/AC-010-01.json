@@ -1,0 +1,14 @@
+{
+ "criterio": "AC-010-01",
+ "test": "REQ-F-010 AC1 · AC-010-01 la junta elige a Lucía en Historial y ve «Piolet 2 · 2026-12-05 a 2026-12-07 · Devuelta» y «Multa de 2 € · Pagada»",
+ "titulo": "REQ-F-010 AC1 · AC-010-01 la junta elige a Lucía en Historial y ve «Piolet 2 · 2026-12-05 a 2026-12-07 · Devuelta» y «Multa de 2 € · Pagada»",
+ "ve": [
+  "Piolet 2 · 2026-12-05 a 2026-12-07 · Devuelta",
+  "Multa de 2 € · Pagada"
+ ],
+ "narrado": "Consultar el historial de un socio. En Historial se ve «Piolet 2 · 2026-12-05 a 2026-12-07 · Devuelta» y «Multa de 2 € · Pagada».",
+ "url": "http://127.0.0.1:5173/#/historial",
+ "imagen": "AC-010-01.png",
+ "sha256": "sha256:00a1cbe688655bc5fb5e7a5f1cb09499c71d805a69bda6601bad4170bb0343f1",
+ "at": "2026-11-21T13:46:54.522Z"
+}

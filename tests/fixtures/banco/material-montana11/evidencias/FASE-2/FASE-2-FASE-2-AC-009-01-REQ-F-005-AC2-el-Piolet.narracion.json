@@ -1,0 +1,20 @@
+{
+ "video": "FASE-2-FASE-2-AC-009-01-REQ-F-005-AC2-el-Piolet.webm",
+ "test": "FASE-2 Devolver material y multa por retraso (UC-009, UC-010) › FASE-2 AC-009-01 REQ-F-005 AC2 el Piolet entregado con fin 2026-12-07 se devuelve el 2026-12-07 y marta ve Devuelto",
+ "titulo": "FASE-2 AC-009-01 REQ-F-005 AC2 el Piolet entregado con fin 2026-12-07 se devuelve el 2026-12-07 y marta ve Devuelto",
+ "narraciones": [
+  {
+   "t": 2.951,
+   "texto": "Es el 7 de diciembre. Marta entra, abre Préstamos y ve el Piolet de Lucía entregado"
+  },
+  {
+   "t": 3.748,
+   "texto": "Marta pulsa Registrar devolución sobre el Piolet"
+  },
+  {
+   "t": 4.022,
+   "texto": "Entregar y marcar la devolución. En Préstamos se ve «Devuelto», y la unidad del Piolet queda libre otra vez.",
+   "criterio": "AC-009-01"
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-06",
+ "test": "REQ-F-001 AC6 · AC-001-06 WF-002 con 8 horas sin actividad la sesión caduca",
+ "titulo": "REQ-F-001 AC6 · AC-001-06 WF-002 con 8 horas sin actividad la sesión caduca",
+ "ve": [
+  "Tu sesión ha caducado"
+ ],
+ "narrado": "Entrar, salir y proteger la sesión. En Entrar se ve «Tu sesión ha caducado».",
+ "url": "http://127.0.0.1:5173/#/entrar",
+ "imagen": "AC-001-06.png",
+ "sha256": "sha256:49173354776853fff9029d28c33e53479b62ff441d29678ed7a577eb0d2a1193",
+ "at": "2026-11-21T13:45:42.879Z"
+}

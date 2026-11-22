@@ -1,0 +1,24 @@
+{
+ "video": "WF-002-WF-002-AC-002-01-lucia-pulsa-Salir-y-ve-.webm",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-002-01 lucia pulsa Salir y ve Entrar; al volver a una pantalla de socio vuelve a ver Entrar",
+ "titulo": "WF-002 AC-002-01 lucia pulsa Salir y ve Entrar; al volver a una pantalla de socio vuelve a ver Entrar",
+ "narraciones": [
+  {
+   "t": 0.863,
+   "texto": "Lucía entra y abre Mis reservas"
+  },
+  {
+   "t": 1.422,
+   "texto": "Lucía pulsa Salir"
+  },
+  {
+   "t": 1.667,
+   "texto": "Lucía intenta volver atrás a Mis reservas"
+  },
+  {
+   "t": 1.905,
+   "texto": "Entrar con correo y contraseña. En Entrar se ve «Entrar». Y al volver a una pantalla de socio se vuelve a ver el formulario Entrar.",
+   "criterio": "AC-002-01"
+  }
+ ]
+}

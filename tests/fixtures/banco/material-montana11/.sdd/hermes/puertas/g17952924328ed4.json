@@ -1,0 +1,36 @@
+{
+  "id": "g17952924328ed4",
+  "tipo": "requisitos",
+  "fase": "",
+  "tablero": "material-montana11",
+  "tarjeta": "t_60bd2ef8",
+  "adopcion": false,
+  "sha": "44e591f9dff4ab58ead5ab522ca9d616c11cf35d",
+  "creada": "2026-11-21T20:20:32Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana11",
+  "titulo": "Requisitos",
+  "texto": "📝 Esto es lo que vamos a construir para «material-montana11» (versión 1.0).\n\n🗣 Lo que pediste:\n«Una web para el préstamo de material del club de montaña. Cada socio entra con su correo y una contraseña y puede reservar material (piolets, crampones, cascos, cuerdas, tiendas) para unas fechas concretas, siempre que haya unidades libres esas fechas; ve sus reservas y puede cancelarlas hasta el día antes. El encargado del material entrega lo reservado y marca la devolución; si alguien devuelve tarde, se le pone una multa de 2 euros por día de retraso y no puede reservar más hasta pagarla, y e…»\n\n✅ Sale de lo que pediste (10):\n• Cada socio entra con su correo y su contraseña. Tras 5 fallos seguidos la cuenta se bloquea 15 minutos, la sesión caduca sola tras 30 minutos sin actividad y se puede salir en cualquier momento.\n• El socio elige material y fechas y reserva si queda alguna unidad libre todos esos días. No se puede reservar con fechas pasadas, ni más de 14 días seguidos, ni con una multa sin pagar.\n• Cada socio ve sus reservas y puede cancelarlas hasta el día antes del inicio.\n• El encargado entrega lo reservado y, cuando vuelve, marca la devolución. Una reserva que no se recoge el día de inicio queda como «No recogida» y libera la unidad.\n• Si alguien devuelve tarde, se le pone una multa de 2 € por cada día de retraso y no puede reservar más hasta que se marque como pagada.\n• El encargado anota que la multa está pagada y el socio puede volver a reservar.\n• El encargado añade material y da de baja las unidades rotas. Una unidad prestada en este momento no se puede dar de baja hasta que se devuelva.\n• El encargado ve qué material está fuera, de quién es y qué vuelve cada día, con los retrasos marcados.\n• La junta solo consulta: elige a cualquier socio y ve sus préstamos y multas, sin poder cambiar nada.\n• Los datos de cada socio solo los ven él mismo, el encargado y la junta; las contraseñas nunca se guardan en claro.\n\n➕ Lo añade el método, no lo pediste (1):\n• El encargado da de alta a los socios, restablece la contraseña a quien la olvida y da de baja a quien deja el club. La contraseña tiene al menos 8 caracteres.\n\n🔧 Condiciones del proyecto (3):\n• Es una web que se usa desde el navegador, sin instalar nada.\n• Todo lo que se lee en la web está en español.\n• Lo que reserva un socio desde su móvil lo ve el encargado desde el ordenador del club.\n\n💬 Esto dirá la web (lo que leerá la gente, tal cual):\nEn Inicio del socio:\n• «Material disponible»\nEn Inicio del encargado:\n• «Panel del encargado»\nEn Entrar:\n• «Correo o contraseña incorrectos»\n• «Cuenta bloqueada durante 15 minutos»\n• «Sesión caducada, vuelve a entrar»\n• «Entrar»\nEn Socios:\n• «La contraseña debe tener al menos 8 caracteres»\n• «Ya existe un socio con ese correo»\n• «Contraseña restablecida»\n• «Baja»\n• «No se puede dar de baja: tiene material sin devolver»\n• «Acceso no permitido»; también en Préstamos y en Multas y en Inventario\n… y 26 más (en requirements/REQUIREMENTS.md, líneas «Se ve:»)\n\n🤖 Jev ha comprobado tus 11 necesidades contra los requisitos: todas tienen un requisito que las cubre.\n\n🧩 Lo que hemos supuesto porque no lo decías (13); si alguno no vale, dilo con ✏️:\n👀 Mira sobre todo estos (los que más pueden no ser como los quieres):\n• Los roles son socio, encargado y junta; el encargado da de alta, restablece contraseña y da de baja a los socios porque el encargo no dice quién lo hace.\n• Se registran nombre, correo, reservas, entregas, devoluciones y multas de cada socio; se conservan 2 años desde su última actividad y el historial de un socio dado de baja se mantiene para la junta durante ese plazo.\n• Una reserva dura como máximo 14 días seguidos para que una persona no acapare el material.\nEl resto:\n• La multa se calcula al marcar la devolución: 2 € × días naturales entre la fecha de fin y la de devolución. Las multas no caducan.\n• Una reserva no recogida el día de inicio pasa a «No recogida» al día siguiente y libera la unidad, para que el material no quede bloqueado.\n• Dar de baja una unidad prestada o a un socio con material sin devolver se rechaza; si solo tienen reservas futuras, esas reservas se cancelan.\n• La sesión caduca a los 30 minutos sin actividad y se puede salir con «Salir».\n• El pago de la multa lo anota el encargado a mano; la web no cobra.\n• Contraseña mínima de 8 caracteres; tras 5 fallos seguidos la cuenta se bloquea 15 minutos (lo habitual en webs de socios).\n• El encargado ve y puede operar sobre todos los socios; la junta ve todo lo de los socios pero no puede cambiar nada; el socio solo ve lo suyo.\n• Las fechas son días completos: la reserva ocupa la unidad desde el día de inicio hasta el día de fin, ambos incluidos; no se reserva en fechas pasadas.\n• «Hasta el día antes» significa que se cancela hasta el día anterior al de inicio; el mismo día de inicio ya no.\n• El catálogo de tipos es el pedido: piolets, crampones, cascos, cuerdas y tiendas; cada unidad se identifica con un número («Casco 2»).\n\n👉 Si es esto, pulsa ✅ Apruebo. Si falta o sobra algo, pulsa ✏️ y explícalo con tus palabras. Si algo de lo añadido te sobra, dilo ahí y se quita.\nAl aprobar, esta versión queda guardada como punto de partida, y confirmas que los ejemplos de cada criterio (nombres, fechas, horas, textos) son correctos: quedan firmados a tu nombre.",
+  "opciones": [
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Apruebo"
+    },
+    {
+      "verbo": "cambios",
+      "etiqueta": "✏️ Falta o sobra algo",
+      "texto": true
+    }
+  ],
+  "demo": "",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [],
+    "graves": 0
+  }
+}

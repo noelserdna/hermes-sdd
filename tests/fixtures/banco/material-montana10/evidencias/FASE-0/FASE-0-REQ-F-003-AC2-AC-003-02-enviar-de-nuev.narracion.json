@@ -1,0 +1,11 @@
+{
+ "video": "FASE-0-REQ-F-003-AC2-AC-003-02-enviar-de-nuev.webm",
+ "test": "REQ-F-003 AC2 · AC-003-02 enviar de nuevo la misma reserva de «Piolet» no la duplica",
+ "titulo": "REQ-F-003 AC2 · AC-003-02 enviar de nuevo la misma reserva de «Piolet» no la duplica",
+ "narraciones": [
+  {
+   "t": 0.008,
+   "texto": "Lucía reserva Piolet del 5 al 7 de diciembre y vuelve a enviar el mismo formulario"
+  }
+ ]
+}

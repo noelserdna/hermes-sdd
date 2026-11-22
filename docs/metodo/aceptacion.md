@@ -297,3 +297,20 @@ node .claude/sdd/sdd.mjs gate --mode warn
 ```
 
 Las plantillas de `templates/ci/{github,gitlab}/` (instaladas con `sdd-setup --tracker`) ejecutan estos pasos. Ver [git.md](git.md).
+
+## El vídeo presenta el criterio antes de demostrarlo
+
+Cada vídeo de un criterio abre con una cartela a pantalla completa que la voz lee: el requisito (su id y su título),
+lo que pide («Para el cliente»), la lista de sus criterios de aceptación con el de ese vídeo marcado, y ese criterio en
+Dado / Cuando / Entonces (del escenario BDD, en castellano). Después viene la demostración en vivo. La cartela la pone
+el arnés (`presentar` en `tests/e2e/fixtures/evidence.js`, con el texto de `.sdd/demo/GUION-FASE-N.json`, campo
+`presentacion` de cada criterio); el test no la escribe: basta con que su título cite el criterio. En el montaje
+(`sdd demo narrate`) la cartela se congela mientras dura su voz. Jev no cuenta esa frase como narración del criterio:
+enuncia el criterio entero y daría por dicha cualquier demostración.
+
+## El banco
+
+`tests/fixtures/banco/` guarda proyectos reales ya entregados (sin vídeos ni imágenes) y `tests/cadena.sh` pasa sobre
+ellos la cadena criterio → test → captura → narración → veredicto sin modelo. Cada fallo de una prueba larga se
+reproduce ahí en rojo antes de arreglarlo. El comparador de textos es uno solo, `metodo/scripts/lib/match.mjs`, con su
+tabla de casos en `metodo/tests/match/run.sh` (incluye los que NO deben coincidir).

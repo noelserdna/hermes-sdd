@@ -1,0 +1,16 @@
+{
+ "video": "FASE-1-FASE-1-AC-007-02-hoy-2026-12-05-lucia-in.webm",
+ "test": "FASE-1 Cancelar reserva (hoy 2026-12-05) › FASE-1 AC-007-02 hoy 2026-12-05 lucia intenta cancelar su Piolet que empieza hoy y ve Solo se puede cancelar hasta el día antes",
+ "titulo": "FASE-1 AC-007-02 hoy 2026-12-05 lucia intenta cancelar su Piolet que empieza hoy y ve Solo se puede cancelar hasta el día antes",
+ "narraciones": [
+  {
+   "t": 1.373,
+   "texto": "Hoy es 5 de diciembre. Lucía abre Mis reservas y intenta cancelar su Piolet, que empieza hoy"
+  },
+  {
+   "t": 2.011,
+   "texto": "Ver y cancelar mis reservas. En Mis reservas se ve «Solo se puede cancelar hasta el día antes», y la reserva se queda como estaba, Reservada.",
+   "criterio": "AC-007-02"
+  }
+ ]
+}

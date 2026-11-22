@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-012-04",
+ "test": "WF-001 FASE-3 Multas, bloqueo y pago (UC-011, UC-012) › WF-001 AC-012-04 REQ-F-007 AC3 pablo, socio, abre la dirección de Multas y ve Acceso no permitido",
+ "titulo": "WF-001 AC-012-04 REQ-F-007 AC3 pablo, socio, abre la dirección de Multas y ve Acceso no permitido",
+ "ve": [
+  "Acceso no permitido"
+ ],
+ "narrado": "Marcar la multa como pagada. En Multas se ve «Acceso no permitido», sin ninguna lista de multas.",
+ "url": "http://127.0.0.1:46741/#/multas",
+ "imagen": "AC-012-04.png",
+ "sha256": "sha256:8b87108ca4bb7793013906615deda533fde0115f2dacdeecf7693fbdf1b08a76",
+ "at": "2026-11-22T01:03:05.323Z"
+}

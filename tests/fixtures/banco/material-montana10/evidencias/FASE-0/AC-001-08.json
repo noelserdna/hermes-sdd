@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-001-08",
+ "test": "REQ-F-001 AC8 · AC-001-08 WF-002 sin haber entrado, abrir Mis reservas lleva a Entrar",
+ "titulo": "REQ-F-001 AC8 · AC-001-08 WF-002 sin haber entrado, abrir Mis reservas lleva a Entrar",
+ "ve": [
+  "Entrar"
+ ],
+ "narrado": "Entrar, salir y proteger la sesión. En Entrar se ve «Entrar».",
+ "url": "http://127.0.0.1:5173/#/entrar",
+ "imagen": "AC-001-08.png",
+ "sha256": "sha256:63ae65fefec11c6e9745e84d1ee997875f88ccf36ce13116706e77f7071ea8ba",
+ "at": "2026-11-21T13:45:45.038Z"
+}

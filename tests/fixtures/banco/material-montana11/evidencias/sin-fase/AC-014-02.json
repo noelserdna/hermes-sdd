@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-014-02",
+ "test": "FASE-4 Restablecer contraseñas y dar de baja (UC-004, UC-014) › FASE-4 AC-014-02 REQ-F-008 AC4 marta da de baja la única Tienda con una reserva desde 2026-12-20 y ve 1 reserva cancelada por la baja",
+ "titulo": "FASE-4 AC-014-02 REQ-F-008 AC4 marta da de baja la única Tienda con una reserva desde 2026-12-20 y ve 1 reserva cancelada por la baja",
+ "ve": [
+  "1 reserva cancelada por la baja"
+ ],
+ "narrado": "Gestionar el inventario. En Inventario se ve «1 reserva cancelada por la baja»: la reserva de Lucía desde el 20 de diciembre queda cancelada.",
+ "url": "http://127.0.0.1:43839/#/inventario",
+ "imagen": "AC-014-02.png",
+ "sha256": "sha256:787e2ce26b6149be814fc003cd1fb5ae40a30f730ee3ce7bd191f531d68371e6",
+ "at": "2026-11-22T06:16:27.291Z"
+}

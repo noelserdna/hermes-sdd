@@ -1,0 +1,20 @@
+{
+ "video": "SIN-FASE-FASE-4-AC-003-01-REQ-F-002-AC1-marta-cre.webm",
+ "test": "FASE-4 Socios e Inventario completos (UC-003, UC-013) › FASE-4 AC-003-01 REQ-F-002 AC1 marta crea a Pablo Ruiz en Socios y lo ve en la lista",
+ "titulo": "FASE-4 AC-003-01 REQ-F-002 AC1 marta crea a Pablo Ruiz en Socios y lo ve en la lista",
+ "narraciones": [
+  {
+   "t": 0.767,
+   "texto": "Marta entra y abre Socios desde el menú"
+  },
+  {
+   "t": 1.353,
+   "texto": "Marta escribe el nombre, el correo y la contraseña del nuevo socio y pulsa Crear socio"
+  },
+  {
+   "t": 1.687,
+   "texto": "Gestionar las cuentas de socios. En Socios se ve «Pablo Ruiz» en la lista de socios.",
+   "criterio": "AC-003-01"
+  }
+ ]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "g1795254244fedf",
+  "tipo": "requisitos",
+  "fase": "",
+  "tablero": "material-montana10",
+  "tarjeta": "t_aa301d9c",
+  "adopcion": false,
+  "sha": "348e57fee033422db465e46e06a098bd628990d6",
+  "creada": "2026-11-21T09:44:04Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana10",
+  "titulo": "Requisitos",
+  "texto": "📝 Esto es lo que vamos a construir para «material-montana10» (versión 1.0).\n\n🗣 Lo que pediste:\n«Una web para el préstamo de material del club de montaña. Cada socio entra con su correo y una contraseña y puede reservar material (piolets, crampones, cascos, cuerdas, tiendas) para unas fechas concretas, siempre que haya unidades libres esas fechas; ve sus reservas y puede cancelarlas hasta el día antes. El encargado del material entrega lo reservado y marca la devolución; si alguien devuelve tarde, se le pone una multa de 2 euros por día de retraso y no puede reservar más hasta pagarla, y e…»\n\n✅ Sale de lo que pediste (10):\n• Cada persona entra con su correo y su contraseña y ve lo que le toca según sea socio, encargado o junta. Tras 5 fallos seguidos la cuenta espera 15 minutos, y la sesión se cierra sola tras 8 horas sin uso.\n• Un socio reserva un tipo de material para unas fechas solo si queda alguna unidad libre todos esos días. No se reserva en el pasado, ni por más de 14 días, y quien debe una multa no puede reservar.\n• El socio ve sus reservas, su estado y sus multas, y puede cancelar una hasta el día antes de que empiece.\n• El encargado entrega el material reservado y lo marca como prestado. Lo que no se recoge el último día de la reserva pasa a «No recogida» y las unidades quedan libres.\n• El encargado marca lo devuelto. Si es tarde, el socio recibe una multa de 2 € por cada día de retraso y no puede reservar hasta pagarla.\n• El encargado anota que el socio ha pagado y el socio vuelve a poder reservar.\n• El encargado añade material nuevo y da de baja las unidades rotas. Una unidad prestada no se puede dar de baja hasta que vuelva.\n• El encargado ve de un vistazo qué material está fuera, qué vuelve hoy, qué se retrasa y qué hay que entregar hoy.\n• La junta busca a cualquier socio y ve todos sus préstamos y multas, sin poder cambiar nada.\n• Las contraseñas no se guardan ni se ven en claro; de cada socio solo se guarda nombre, correo, préstamos y multas, y se borran a los 2 años.\n\n➕ Lo añade el método, no lo pediste (1):\n• El encargado da de alta a los socios con su correo y una contraseña inicial (mínimo 8 caracteres), da de baja a quien deja el club y restablece la contraseña a quien la olvida.\n\n🔧 Condiciones del proyecto (3):\n• Toda la web está en español.\n• Es una web normal que se abre en el navegador, sin instalar nada.\n• Lo que hace el encargado desde su equipo lo ve cada socio desde su móvil.\n\n💬 Esto dirá la web (lo que leerá la gente, tal cual; lo que va entre llaves cambia en cada caso):\nEn Mis reservas:\n• «Hola, {nombre}» (p. ej. «Hola, Lucía»)\n• «Reserva creada: {material} del {desde} al {hasta}» (p. ej. «Reserva creada: Piolet del 2026-12-05 al 2026-12-07»)\n• «{material} · {desde} a {hasta} · {estado}» (p. ej. «Piolet · 2026-12-05 a 2026-12-07 · Reservada»)\n• «{material} · {desde} a {hasta} · Cancelada» (p. ej. «Piolet · 2026-12-05 a 2026-12-07 · Cancelada»)\n• «Multa pendiente: {importe} €» (p. ej. «Multa pendiente: 4 €»)\nEn Socios:\n• «{nombre}»\nEn Reservar:\n• «No quedan unidades libres de {material} esas fechas» (p. ej. «No quedan unidades libres de Tienda esas fechas»)\n• «Tienes una multa pendiente de {importe} €. Págala al encargado para poder reservar» (p. ej. «Tienes una multa pendiente de 4 €. Págala al encargado para poder reservar»)\nEn Entregas y devoluciones:\n• «{unidad} · {socio} · Prestada» (p. ej. «Piolet 2 · Lucía · Prestada»)\n• «{material} · {socio} · No recogida»\n• «{unidad} · {socio} · Devuelta» (p. ej. «Piolet 2 · Lucía · Devuelta»)\n• «Multa de {importe} € a {socio} ({n} días de retraso)» (p. ej. «Multa de 6 € a Pablo (3 días de retraso)»)\n… y 10 más (en requirements/REQUIREMENTS.md, líneas «Se ve:»)\n\n🤖 Jev ha comprobado tus 11 necesidades contra los requisitos: todas tienen un requisito que las cubre.\n\n🧩 Lo que hemos supuesto porque no lo decías (16); si alguno no vale, dilo con ✏️:\n👀 Mira sobre todo estos (los que más pueden no ser como los quieres):\n• El encargado da de alta y de baja a los socios y restablece contraseñas: el encargo no dice quién, y la junta solo consulta.\n• Se guardan nombre, correo, préstamos y multas, y los préstamos y multas se borran a los 2 años de su cierre (guardar lo mínimo).\n• Lo reservado que no se recoge antes de acabar la reserva pasa a «No recogida» y libera las unidades, sin multa.\nEl resto:\n• Una reserva dura como máximo 14 días, para que nadie acapare material.\n• No hay recuperación de contraseña por correo: la restablece el encargado (no se pidió envío de correos).\n• El encargado también ve el historial de cualquier socio, y la junta ve la pantalla de entregas y devoluciones solo para consultar.\n• Las multas de un socio se ven en «Mis reservas» y todas las multas en la pantalla «Multas» del encargado.\n• La sesión caduca tras 8 horas sin actividad y hay un botón «Salir».\n• Un socio con una multa pendiente no puede reservar; las reservas que ya tenía se mantienen.\n• No se da de baja a un socio con material prestado o multas pendientes, ni una unidad que está prestada.\n• El retraso se cuenta por días naturales después de la fecha «hasta»; la multa se calcula cuando el encargado marca la devolución (2 € × días).\n• Un socio solo ve sus propias reservas y multas; las pantallas de otros roles le muestran «No tienes permiso».\n• Contraseña mínima de 8 caracteres; tras 5 fallos seguidos la cuenta se bloquea 15 minutos (lo habitual en webs de socios).\n• «Hasta el día antes» significa que el mismo día de la fecha «desde» ya no se puede cancelar.\n• Se reserva por tipo de material (p. ej. «Piolet»); el encargado asigna la unidad concreta al entregar.\n• No se puede reservar en fechas pasadas ni con la fecha final anterior a la inicial.\n\n👉 Si es esto, pulsa ✅ Apruebo. Si falta o sobra algo, pulsa ✏️ y explícalo con tus palabras. Si algo de lo añadido te sobra, dilo ahí y se quita.\nAl aprobar, esta versión queda guardada como punto de partida, y confirmas que los ejemplos de cada criterio (nombres, fechas, horas, textos) son correctos: quedan firmados a tu nombre.",
+  "opciones": [
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Apruebo"
+    },
+    {
+      "verbo": "cambios",
+      "etiqueta": "✏️ Falta o sobra algo",
+      "texto": true
+    }
+  ],
+  "demo": "",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [],
+    "graves": 0
+  }
+}

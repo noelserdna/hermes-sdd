@@ -1,0 +1,47 @@
+{
+  "id": "g17953285240855",
+  "tipo": "entrega",
+  "fase": "",
+  "tablero": "material-montana11",
+  "tarjeta": "t_289b4918",
+  "adopcion": false,
+  "sha": "3f659f455fb2e068bd256ad7d23d821b3547cd12",
+  "creada": "2026-11-22T06:22:04Z",
+  "repo": "/home/andre/proyectos-sdd/material-montana11",
+  "titulo": "Entrega final",
+  "texto": "🧭 Encargado: 1 aviso (1 grave: Jev no puede aprobar esta puerta solo)\n‼️ Se cambió un test ya aceptado (vitest.config.js, 868868d) sin que una persona lo autorizara\n(1 aviso que ya viste en una puerta firmada, sin cambios, no se repite)\n\n🎁 «material-montana11» está terminado y listo para entregar.\n\n⚠️ Cumple, pero con exenciones: algo se aceptó sin comprobar.\n\n🟡 Gestionar el inventario: aceptado sin comprobar (exención) (6 de 7 criterios)\n✅ 13 requisitos funcionan y están comprobados: Entrar con correo y contraseña; Gestionar las cuentas de socios; Reservar material para unas fechas; Ver y cancelar mis reservas; Entregar y marcar la devolución; Multa por devolución tardía y bloqueo; Marcar la multa como pagada; Ver lo prestado y lo que vuelve cada día; La junta consulta el histo…\n\nFases aceptadas: 6.\n\n👉 Puedes aceptar la entrega (✅), aceptarla con observaciones o rechazarla.",
+  "opciones": [
+    {
+      "verbo": "acepto",
+      "etiqueta": "✅ Acepto la entrega"
+    },
+    {
+      "verbo": "observaciones",
+      "etiqueta": "📝 Con observaciones",
+      "texto": true
+    },
+    {
+      "verbo": "rechazo",
+      "etiqueta": "❌ Rechazar",
+      "texto": true
+    }
+  ],
+  "demo": "",
+  "preguntas": [],
+  "preguntas_error": false,
+  "hallazgos": null,
+  "tests_editados": 0,
+  "bloqueo": false,
+  "unica": false,
+  "revisar": [],
+  "encargado": {
+    "avisos": [
+      {
+        "grave": true,
+        "codigo": "test-congelado",
+        "texto": "Se cambió un test ya aceptado (vitest.config.js, 868868d) sin que una persona lo autorizara"
+      }
+    ],
+    "graves": 1
+  }
+}

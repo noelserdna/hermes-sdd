@@ -1,0 +1,16 @@
+{
+ "video": "WF-002-REQ-F-001-AC2-AC-001-02-WF-002-Pablo-e.webm",
+ "test": "REQ-F-001 AC2 · AC-001-02 WF-002 Pablo entra y ve «Hola, Pablo» en Mis reservas",
+ "titulo": "REQ-F-001 AC2 · AC-001-02 WF-002 Pablo entra y ve «Hola, Pablo» en Mis reservas",
+ "narraciones": [
+  {
+   "t": 0.01,
+   "texto": "Pablo abre la web, ve Entrar y envía su correo y su contraseña"
+  },
+  {
+   "t": 0.404,
+   "texto": "Entrar, salir y proteger la sesión. En Mis reservas se ve «Hola, Pablo».",
+   "criterio": "AC-001-02"
+  }
+ ]
+}

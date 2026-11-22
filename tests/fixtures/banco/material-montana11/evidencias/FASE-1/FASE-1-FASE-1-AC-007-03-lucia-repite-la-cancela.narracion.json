@@ -1,0 +1,20 @@
+{
+ "video": "FASE-1-FASE-1-AC-007-03-lucia-repite-la-cancela.webm",
+ "test": "FASE-1 Cancelar reserva (hoy 2026-12-04) › FASE-1 AC-007-03 lucia repite la cancelación de su Piolet ya cancelado y la reserva sigue Cancelada",
+ "titulo": "FASE-1 AC-007-03 lucia repite la cancelación de su Piolet ya cancelado y la reserva sigue Cancelada",
+ "narraciones": [
+  {
+   "t": 1.333,
+   "texto": "Lucía tiene Mis reservas abierta y, en otra pestaña, cancela su Piolet"
+  },
+  {
+   "t": 2.286,
+   "texto": "En la primera pestaña, que aún enseña el botón, Lucía envía la misma cancelación otra vez"
+  },
+  {
+   "t": 2.546,
+   "texto": "Ver y cancelar mis reservas. En Mis reservas se ve «Cancelada»: la reserva sigue Cancelada y no cambia nada más, sigue habiendo una sola reserva.",
+   "criterio": "AC-007-03"
+  }
+ ]
+}

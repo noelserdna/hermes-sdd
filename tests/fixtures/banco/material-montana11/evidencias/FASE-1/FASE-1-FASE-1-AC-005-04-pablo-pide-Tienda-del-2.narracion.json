@@ -1,0 +1,16 @@
+{
+ "video": "FASE-1-FASE-1-AC-005-04-pablo-pide-Tienda-del-2.webm",
+ "test": "FASE-1 Reservar material (socio) › FASE-1 AC-005-04 pablo pide Tienda del 2026-12-07 al 2026-12-09 con la única Tienda reservada del 2026-12-06 al 2026-12-08 y ve No hay unidades libres esas fechas",
+ "titulo": "FASE-1 AC-005-04 pablo pide Tienda del 2026-12-07 al 2026-12-09 con la única Tienda reservada del 2026-12-06 al 2026-12-08 y ve No hay unidades libres esas fechas",
+ "narraciones": [
+  {
+   "t": 1.245,
+   "texto": "La única Tienda está reservada del 6 al 8 de diciembre. Pablo entra y pide la Tienda del 7 al 9"
+  },
+  {
+   "t": 1.882,
+   "texto": "Reservar material para unas fechas. En Reservar se ve «No hay unidades libres esas fechas», y no se crea ninguna reserva para Pablo.",
+   "criterio": "AC-005-04"
+  }
+ ]
+}

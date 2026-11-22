@@ -1,0 +1,16 @@
+{
+ "video": "WF-002-WF-002-AC-003-06-un-socio-abre-la-direcc.webm",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-003-06 un socio abre la dirección de Socios y ve Acceso no permitido",
+ "titulo": "WF-002 AC-003-06 un socio abre la dirección de Socios y ve Acceso no permitido",
+ "narraciones": [
+  {
+   "t": 0.853,
+   "texto": "Lucía, que es socia, entra y escribe a mano la dirección de Socios"
+  },
+  {
+   "t": 1.41,
+   "texto": "Gestionar las cuentas de socios. En Socios se ve «Acceso no permitido».",
+   "criterio": "AC-003-06"
+  }
+ ]
+}

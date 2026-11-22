@@ -1,0 +1,13 @@
+{
+ "criterio": "AC-003-01",
+ "test": "WF-002 Sesión de acceso › WF-002 AC-003-01 el encargado crea a Pablo Ruiz y lo ve en Socios, también tras recargar y reiniciar el servidor",
+ "titulo": "WF-002 AC-003-01 el encargado crea a Pablo Ruiz y lo ve en Socios, también tras recargar y reiniciar el servidor",
+ "ve": [
+  "Pablo Ruiz"
+ ],
+ "narrado": "Gestionar las cuentas de socios. En Socios se ve «Pablo Ruiz».",
+ "url": "http://127.0.0.1:44761/#/socios",
+ "imagen": "AC-003-01.png",
+ "sha256": "sha256:afff3b8bee3615e5d62b8de0ff9247d6f78d275b897d7a86c2286127a767b7fb",
+ "at": "2026-11-22T01:00:57.807Z"
+}

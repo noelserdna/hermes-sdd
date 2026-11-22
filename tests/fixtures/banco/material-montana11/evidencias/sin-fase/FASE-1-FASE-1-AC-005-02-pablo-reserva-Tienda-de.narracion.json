@@ -1,0 +1,16 @@
+{
+ "video": "FASE-1-FASE-1-AC-005-02-pablo-reserva-Tienda-de.webm",
+ "test": "FASE-1 Reservar material (socio) › FASE-1 AC-005-02 pablo reserva Tienda del 2026-12-09 al 2026-12-10 tras una reserva hasta el 2026-12-08 y se crea",
+ "titulo": "FASE-1 AC-005-02 pablo reserva Tienda del 2026-12-09 al 2026-12-10 tras una reserva hasta el 2026-12-08 y se crea",
+ "narraciones": [
+  {
+   "t": 1.066,
+   "texto": "La única Tienda está reservada hasta el 8 de diciembre. Pablo entra y pide la Tienda del 9 al 10 de diciembre"
+  },
+  {
+   "t": 1.662,
+   "texto": "Reservar material para unas fechas. En Reservar se ve «Reserva creada: Tienda, 2026-12-09 a 2026-12-10»: los días no se solapan y la reserva se crea.",
+   "criterio": "AC-005-02"
+  }
+ ]
+}
