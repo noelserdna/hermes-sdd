@@ -452,8 +452,11 @@ $errs"
 # se ve (material-montana11: 27 criterios prometían más). Una pasada que solo AÑADE esas líneas; lo que quede, la
 # puerta de requisitos lo enseña como aviso (hsdd_textos)
 requisitos_visibles() {  # requisitos_visibles <clave-de-estado> <skill>
-  local w
-  w=$(node "$SDD" lint --needs --json 2>/dev/null | jq -r '[.warnings[]? | select(.code == "then-not-seen") | .msg] | .[:40] | join("\n")' 2>/dev/null) || true
+  local w j
+  # con huella: en material-montana12 la pasada no llamó al ejecutor teniendo 22 casos y no quedó rastro de por qué
+  j=$(node "$SDD" lint --needs --json 2>.sdd/hermes/requisitos-visibles.err) || true
+  w=$(printf '%s' "$j" | jq -r '[.warnings[]? | select(.code == "then-not-seen") | .msg] | .[:40] | join("\n")' 2>>.sdd/hermes/requisitos-visibles.err) || true
+  printf '%s node=%s bytes=%s casos=%s\n' "$(date -u +%FT%TZ)" "$(command -v node || echo NO)" "${#j}" "$(printf '%s' "$w" | grep -c . || true)" >> .sdd/hermes/requisitos-visibles.log
   [ -z "$w" ] && return 0
   claude_etapa "$1" "/$2 — $ARNES Some criteria promise in their THEN more than their «Se ve» line checks. For each one below, ONLY ADD lines under the criterion — never change the criterion, its THEN or its examples: a «- Se ve: \"<text>\" en <pantalla>» line with the text that shows that clause on screen when the app can show it, or a «- No visible: <that clause, in plain Spanish>: <how a test checks it>» line when nothing on screen shows it (references/requirements-template.md, «Every clause of the THEN»). Commit as «docs(requirements): what each criterion shows».
 $w"
