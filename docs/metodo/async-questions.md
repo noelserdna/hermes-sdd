@@ -47,7 +47,7 @@ Question: <the exact decision needed, one or two lines; technical detail goes he
 Para el cliente: <the same decision for the customer, in plain words: no ids, no code, no article numbers>
 Options:
   A) <option> (recommended)
-     efecto: <ninguno | accion | req-change | editar-test FILE... | endurecer-test FILE...>
+     efecto: <ninguno | accion | req-change | editar-test FILE... | endurecer-test FILE... | despues (with «fase»: the FASE that does the work)>
      cliente: <optional: the option in plain words>
   B) <option>
      efecto: <...>

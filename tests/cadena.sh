@@ -316,4 +316,16 @@ q["opciones"][0].update(efecto="despues", fase="4")
 assert not any("otra FASE" in e for e in T.errores_pregunta(q)), T.errores_pregunta(q)
 PY
 
+
+# G-3: montana12 tenía la copia del CLI (.claude/sdd, versionada) de un arnés anterior. En la caja, install-git-hooks la
+# puso al día: los ficheros cambiados volvieron en el parche, pero lib/match.mjs, NUEVO, no (git diff HEAD no lleva lo
+# no seguido) y el hook de commit falló con ERR_MODULE_NOT_FOUND. Lo nuevo sin commit también vuelve de la caja
+g3="$tmp/g3"; rm -rf "$g3"; cp -R "$m12" "$g3"; mkdir -p "$tmp/g3-sal" "$tmp/g3-home" "$tmp/g3-bin"
+(cd "$g3" && git init -q -b main && bash "$AQUI/metodo/scripts/install-git-hooks.sh" -C . --quiet && rm .claude/sdd/lib/match.mjs \
+  && mkdir -p .sdd/hermes/caja && printf '{"nombre":"t","email":"t@t"}' > .sdd/hermes/caja/identidad.json && echo x > .sdd/hermes/caja/prompt.txt \
+  && mv package.json package.json.no && git add -A && SDD_SKIP_VERIFY=1 git -c user.email=t@t -c user.name=t commit -qm banco)
+printf '#!/bin/sh\necho "{\\"type\\":\\"result\\",\\"result\\":\\"ok\\"}"\n' > "$tmp/g3-bin/claude"; chmod +x "$tmp/g3-bin/claude"
+HOME="$tmp/g3-home" PATH="$tmp/g3-bin:$PATH" CAJA_PROYECTO="$g3" CAJA_SALIDA="$tmp/g3-sal" CAJA_ARNES="$AQUI" bash "$AQUI/templates/caja/etapa.sh" >/dev/null 2>&1
+grep -q '^+++ b/.claude/sdd/lib/match.mjs' "$tmp/g3-sal/pendiente.patch" && ok "montana12 G-3: el fichero nuevo de la copia del CLI vuelve de la caja" || mal "montana12 G-3: match.mjs no vuelve de la caja"
+
 exit $fallo

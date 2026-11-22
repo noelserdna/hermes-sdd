@@ -82,6 +82,7 @@ jobs:
           S="$RUNNER_TEMP/salida"; mkdir -p "$S"; BASE=$(cat "$RUNNER_TEMP/base")
           echo "$BASE" > "$S/base"
           [ "$(git rev-parse HEAD)" = "$BASE" ] || git bundle create "$S/commits.bundle" "$BASE..HEAD"
+          git add -A -N 2>/dev/null || true   # lo nuevo sin commit también (montana12 G-3)
           git diff HEAD --binary > "$S/pendiente.patch"
           L=(); for f in pipeline-state.json .sdd evidencias; do [ -e "$f" ] && L+=("$f"); done
           [ ${#L[@]} -eq 0 ] || tar czf "$S/ignorados.tgz" --exclude=.sdd/hermes/caja --exclude=.sdd/entregas \
