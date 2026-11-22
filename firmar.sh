@@ -533,6 +533,8 @@ Kanban-Task: $BOARD/$TASK"
     # Lo que recibe la implementación: el texto de la persona, sus respuestas a las preguntas de la puerta (con el
     # texto de la opción, no solo la letra) y los criterios de la FASE que no pasan. Un «A» suelto no es trabajo.
     feedback_implementar "$FASE"
+    # Lo que aclara de cada impugnación («CH-007: …») queda como su respuesta: la ronda siguiente no la reabre (F-4)
+    if ! hecho aclaraciones; then python3 "$TEXTOS" aclaraciones "$REPO" "$FASE" "$TEXTO" "$NOMBRE ($ROL)" >/dev/null 2>&1 || true; marcar aclaraciones; fi
     if ! hecho registrado; then
       registrada ||
         node "$SDD" accept record fase-acceptance --fase "$FASE" --result rejected \

@@ -137,4 +137,42 @@ l = T.linea_expediente(Path(sys.argv[2]), "1")
 assert l.startswith("🧾 Demostrados: 7 de 14 criterios") and "REQ-F-003 AC9" in l and "Jev" in l, l
 PY
 
+# F-4: lo que la persona aclara de una impugnación al rechazar queda registrado como su respuesta, llega a la ronda
+# adversarial siguiente y la puerta lo recuerda (montana11: CH-007 aclarado en el rechazo, reabierto como CH-008 «no
+# hay respuesta registrada» y con la recomendación contraria)
+python3 - "$AQUI/plugin/hermes-sdd" "$m11" <<'PY' && ok "montana11 F-4: la aclaración de CH-007 en el rechazo queda registrada y llega a la ronda y a la puerta" || mal "montana11 F-4: la aclaración del rechazo se pierde"
+import sys, json
+from pathlib import Path
+sys.path.insert(0, sys.argv[1])
+import hsdd_textos as T
+R = Path(sys.argv[2])
+texto = [json.loads(l) for l in (R / ".sdd/hermes/puertas.jsonl").read_text().splitlines() if '"rechazo"' in l and '"fase":"5"' in l][0]["texto"]
+xs = T.registrar_aclaraciones(R, "5", texto, "Andres Leon")
+por = {x["challenge"]: x for x in xs}
+assert set(por) == {"CH-006", "CH-007"}, xs
+assert por["CH-007"]["req"] == "REQ-F-009" and por["CH-007"]["ac"] == 2 and por["CH-007"]["texto"].startswith("el Casco 2 sigue prestado"), por["CH-007"]
+assert "CH-007" not in por["CH-006"]["texto"], por["CH-006"]
+b = T.bloque_aclaraciones(R, "5")
+assert "REQ-F-009 AC2" in b and "Casco 2 sigue prestado" in b and "do not reopen" in b, b
+# la puerta: una duda nueva sobre ese criterio (CH-008) enseña lo que ya se respondió
+assert "Ya respondiste" in T.ya_respondido(R, "REQ-F-009", 2), T.ya_respondido(R, "REQ-F-009", 2)
+assert T.ya_respondido(R, "REQ-F-001", 1) == ""
+PY
+
+# F-2 (raíz): Q-03 por criterio, no por fichero. montana11 FASE-3: el unitario de REQ-F-006 AC2 lo citaba sin el texto
+# «Sin multas» y el e2e del mismo criterio sí lo comprobaba en pantalla; Q-03 daba error, el criterio no pasaba y la
+# pregunta recomendaba «A) se deja como está», que no lo arreglaba (costó un rechazo y editar un test ya aceptado)
+f2="$tmp/f2"; rm -rf "$f2"; cp -R "$m11" "$f2"
+python3 - "$f2/tests/unit/multas.test.js" <<'PY'
+import sys; p = sys.argv[1]; s = open(p).read()
+for l in ["    // Se ve: \"Sin multas\" en Multas: sin multa, Pablo no tiene nada que listar y el texto de la pantalla es \"Sin multas\"\n",
+          "    expect(listarMisMultas(e.ctx(sesionDe(e, 'pablo@club.test', 'Nieve2026')))).toEqual([]);\n",
+          "    expect(TEXTOS.sinMultas).toBe('Sin multas');\n"]:
+    assert l in s, l; s = s.replace(l, "")
+open(p, "w").write(s)
+PY
+q="$(cd "$f2" && node "$SDD" lint --quotes --json 2>/dev/null || true)"
+sev() { printf '%s' "$q" | node -e 'let s="";process.stdin.on("data",(d)=>{s+=d}).on("end",()=>{const j=JSON.parse(s);const x=j.findings.filter((f)=>f.code==="Q-03"&&f.req==="REQ-F-006"&&f.ac===2);process.stdout.write(x.map((f)=>f.file.split("/").pop()+":"+f.severity).join())})'; }
+[ "$(sev)" = "multas.test.js:warn" ] && ok "montana11 F-2: un unitario sin el literal, con el e2e del criterio que lo comprueba, es aviso y no error" || mal "montana11 F-2: Q-03 por fichero ($(sev))"
+
 exit $fallo

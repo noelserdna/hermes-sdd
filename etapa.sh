@@ -308,7 +308,7 @@ fidelidad() {  # ronda adversarial del método + hsdd_fidelidad de la FASE (deja
     n=$(jq '[.fases[].requirements[].criteria[]] | length' "$plan" 2>/dev/null || echo null); v=$n
   else rm -f "$plan"; fi
   if [ "$tipo" != incremental ] || [ "$v" != 0 ]; then
-    claude_etapa acceptance "/sdd-acceptance --adversarial --fase $FASE — $ARNES Independent verifiers read each criterion of FASE-$FASE against production code, tests and captures: the GIVEN situation with its own data and actor, the WHEN, the whole THEN with its exact text, and whether each capture shows it (its «Se ve:» line says what must be on screen). One verifier is dedicated to captures and looks at EVERY capture of the FASE with the full table (criterion, «Se ve», image, test that took it), so that a wrong pattern is reported for all the captures it affects at once. Record confirmed or inconclusive findings with accept challenge add. Do not fix anything and do not sign off. Run the verifier and counter-verification agents in the foreground and wait for their answers in this same session: never schedule reminders, wake-ups, monitors or background waits (nobody will come back to this session), and close the acceptance stage state before you finish. The verifiers read code, tests, captures and the junit reports; they do not run the e2e suite.$(no_repitas "$FASE")$inc"
+    claude_etapa acceptance "/sdd-acceptance --adversarial --fase $FASE — $ARNES Independent verifiers read each criterion of FASE-$FASE against production code, tests and captures: the GIVEN situation with its own data and actor, the WHEN, the whole THEN with its exact text, and whether each capture shows it (its «Se ve:» line says what must be on screen). One verifier is dedicated to captures and looks at EVERY capture of the FASE with the full table (criterion, «Se ve», image, test that took it), so that a wrong pattern is reported for all the captures it affects at once. Record confirmed or inconclusive findings with accept challenge add. Do not fix anything and do not sign off. Run the verifier and counter-verification agents in the foreground and wait for their answers in this same session: never schedule reminders, wake-ups, monitors or background waits (nobody will come back to this session), and close the acceptance stage state before you finish. The verifiers read code, tests, captures and the junit reports; they do not run the e2e suite.$(no_repitas "$FASE")$inc$(python3 "$ROOT/plugin/hermes-sdd/hsdd_textos.py" bloque-aclaraciones "$REPO" "$FASE" 2>/dev/null)"
     coste=$(echo "$RES" | jq '.cost_usd // 0' 2>/dev/null || echo 0)
   fi
   # La ronda terminó (claude_etapa sale de la etapa si falla): su plan es la base de la siguiente
@@ -544,7 +544,18 @@ case "$ETAPA" in
       node "$SDD" questions render >/dev/null 2>&1 || true
       # La consolidación solo fusiona preguntas: si tocó algo fuera de .sdd/, la etapa para (antes era prosa del prompt)
       FUERA=$( { git diff --name-only "$HEAD0" HEAD; git status --porcelain | cut -c4-; } 2>/dev/null | grep -vE '^(\.sdd|status/questions)/' | sort -u | head -3 | tr '\n' ' ')
-      [ -z "$FUERA" ] || falla "la consolidación de dudas cambió ficheros fuera de .sdd/: $FUERA"
+      # … y lo deshace: lo de fuera no se queda en la historia (material-montana11, F-1: el commit 2126c6b con el plan
+      # entero, hecho por esta etapa, se quedó en la historia del proyecto aunque luego el plan se hiciera de nuevo)
+      if [ -n "$FUERA" ]; then
+        TODOS=$( { git diff --name-only "$HEAD0" HEAD; git status --porcelain | cut -c4-; } 2>/dev/null | grep -vE '^(\.sdd|status/questions)/' | sort -u)
+        git reset -q --soft "$HEAD0"
+        while IFS= read -r f; do
+          [ -n "$f" ] || continue
+          if git cat-file -e "$HEAD0:$f" 2>/dev/null; then git checkout -q "$HEAD0" -- "$f"; else git rm -q --cached -f "$f" 2>/dev/null; rm -rf "$f"; fi
+        done <<< "$TODOS"
+        git diff --cached --quiet || git commit -qm "chore(questions): consolidate the open questions"
+        falla "la consolidación de dudas cambió ficheros fuera de .sdd/: $FUERA(deshecho: vuelven a como estaban)"
+      fi
     fi
     mkdir -p .sdd/hermes
     if [ "$(abiertas)" -gt 0 ]; then

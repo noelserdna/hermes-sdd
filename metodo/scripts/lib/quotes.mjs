@@ -447,6 +447,19 @@ export function lintQuotes({ root, reqs, scenarios = [], records = [], scope = n
       }
     }
   }
+  // Q-03 per criterion, not per file: when another test of the same criterion carries the literal, the one that cites
+  // the criterion without it is a warning (material-montana11, FASE-3: a unit test of REQ-F-006 AC2 lacked «Sin
+  // multas», which its e2e checks on screen; the error kept the criterion from passing and the gate's recommended
+  // answer «leave it as is» could not fix it)
+  const q3 = findings.filter((x) => x.code === "Q-03" && x.severity === "error");
+  for (const x of q3) {
+    const sin = new Set(q3.filter((y) => y.req === x.req && y.ac === x.ac && y.literal === x.literal).map((y) => y.file));
+    const con = [...new Set(pairs.filter((p) => p.req === x.req && p.ac === x.ac && !sin.has(p.file)).map((p) => p.file))];
+    if (con.length) {
+      x.severity = "warn";
+      x.message += ` — another test of this criterion carries it (${con.slice(0, 2).join(", ")}): a warning, not an error`;
+    }
+  }
   const order = { "Q-01": 1, "Q-02": 2, "Q-03": 3, "Q-04": 4, "Q-05": 5 };
   findings.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line || order[a.code] - order[b.code]);
   const count = (s) => findings.filter((x) => x.severity === s).length;

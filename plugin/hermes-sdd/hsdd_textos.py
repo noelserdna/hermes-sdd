@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import os
+import datetime as dt
 import re
 import subprocess
 import sys
@@ -591,6 +592,75 @@ def jev_narracion(repo: Path, fase: str) -> dict:
     return out
 
 
+# ── Lo que la persona aclara de una impugnación al rechazar (F-4) ────────────────────────────────────────────────
+# material-montana11: el rechazo de la FASE-5 decía «CH-007: el Casco 2 sigue prestado y debe verse en Prestado ahora…»,
+# pero solo llegaba al implementador como texto; la ronda adversarial siguiente reabrió la duda como CH-008 («no hay
+# respuesta registrada») y su pregunta recomendaba lo contrario. Ahora cada trozo «CH-NNN: …» queda como respuesta de
+# la persona ligada a su criterio (.sdd/hermes/aclaraciones.jsonl), la ronda la recibe y la puerta la recuerda.
+ACLARACIONES = "aclaraciones.jsonl"
+
+
+def _impugnaciones(repo: Path) -> dict:
+    out = {}
+    f = Path(repo) / "acceptance" / "challenges.jsonl"
+    for l in _leer(f).splitlines():
+        try:
+            d = json.loads(l)
+        except ValueError:
+            continue
+        if d.get("id"):
+            out[d["id"]] = d
+    return out
+
+
+def registrar_aclaraciones(repo: Path, fase: str, texto: str, por: str) -> list[dict]:
+    """Los trozos «CH-NNN: …» de un rechazo (hasta el siguiente CH-NNN o Qn:), guardados como respuesta de la persona."""
+    imp = _impugnaciones(repo)
+    out = []
+    marcas = list(re.finditer(r"\b(CH-\d{3,})\b\s*(?:es\b|:|—|-)?\s*", texto or ""))
+    for i, m in enumerate(marcas):
+        fin = marcas[i + 1].start() if i + 1 < len(marcas) else len(texto)
+        sig = re.search(r"\bQ\d+\s*:", texto[m.end():fin])
+        trozo = texto[m.end():m.end() + sig.start() if sig else fin].strip(" .;")
+        c = imp.get(m.group(1))
+        if not trozo or not c:
+            continue
+        out.append({"fase": str(fase), "challenge": m.group(1), "req": c.get("req"), "ac": c.get("ac"), "quote": c.get("quote"),
+                    "texto": trozo, "por": por, "ts": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")})
+    if out:
+        f = Path(repo) / ".sdd" / "hermes" / ACLARACIONES
+        f.parent.mkdir(parents=True, exist_ok=True)
+        with f.open("a", encoding="utf-8") as h:
+            for x in out:
+                h.write(json.dumps(x, ensure_ascii=False) + "\n")
+    return out
+
+
+def aclaraciones(repo: Path) -> list[dict]:
+    out = []
+    for l in _leer(Path(repo) / ".sdd" / "hermes" / ACLARACIONES).splitlines():
+        try:
+            out.append(json.loads(l))
+        except ValueError:
+            pass
+    return out
+
+
+def bloque_aclaraciones(repo: Path, fase: str) -> str:
+    """Para la ronda adversarial: lo que la persona ya respondió de los criterios (de esta FASE o de cualquiera)."""
+    xs = aclaraciones(repo)
+    if not xs:
+        return ""
+    return (" CUSTOMER'S ANSWERS, already decided by the person who accepts (do not reopen them: no SPEC-QUESTION nor any"
+            " other challenge on the same criterion that asks the same thing again; judge the evidence against these"
+            " answers): " + " ".join(f"[{x['req']} AC{x['ac']}, about {x['challenge']} «{x.get('quote') or ''}»] «{x['texto']}»." for x in xs))
+
+
+def ya_respondido(repo: Path, req: str, ac) -> str:
+    xs = [x for x in aclaraciones(repo) if x.get("req") == req and str(x.get("ac")) == str(ac)]
+    return f"↩️ Ya respondiste sobre {req} AC{ac}: «{xs[-1]['texto']}»" if xs else ""
+
+
 def linea_expediente(repo: Path, fase: str, maximo: int = 8) -> str:
     """La línea de la puerta con el expediente de la FASE (hsdd_expediente: prueba, captura, vídeo, voz, revisión y
     visible por criterio): cuántos llegan demostrados y qué les falta a los demás; "" si no se calculó."""
@@ -1147,7 +1217,9 @@ def _bloque_impugnaciones(repo: Path, imp: list | None) -> list[str]:
     if tuyas:
         partes.append("🤔 La revisión independiente tiene dudas sobre lo que pide el propio requisito; esto es tuyo:\n" + "\n".join(
             f"• {c['id']} · {nombres.get(c.get('req'), c.get('req'))}: «{_corta(c.get('quote') or '', 140)}»"
-            + (f"\n  ❓ {_corta(c['why'], 240)}" if c.get("why") else "") for c in tuyas))
+            + (f"\n  ❓ {_corta(c['why'], 240)}" if c.get("why") else "")
+            # F-4: si ya se respondió en un rechazo, se recuerda (material-montana11: CH-008 reabría lo respondido)
+            + (f"\n  {_corta(ya, 300)}" if (ya := ya_respondido(repo, c.get("req"), c.get("ac"))) else "") for c in tuyas))
     if tecnicas:
         grupos: dict[str, list[str]] = {}
         for c in tecnicas:
@@ -2066,6 +2138,10 @@ if __name__ == "__main__":
         sys.exit(_cli_respuestas(sys.argv[2:]))
     if sys.argv[1:2] == ["jev-requisitos"]:   # jev-requisitos <repo>  (puerta.sh, antes del texto de la puerta de requisitos)
         print(json.dumps(jev_requisitos(Path(sys.argv[2])), ensure_ascii=False)); sys.exit(0)
+    if sys.argv[1:2] == ["aclaraciones"]:     # aclaraciones <repo> <fase> <texto> <por>  (firmar.sh, al rechazar una FASE)
+        print(len(registrar_aclaraciones(Path(sys.argv[2]), sys.argv[3], sys.argv[4], sys.argv[5]))); sys.exit(0)
+    if sys.argv[1:2] == ["bloque-aclaraciones"]:   # bloque-aclaraciones <repo> <fase>  (etapa.sh, la ronda adversarial)
+        print(bloque_aclaraciones(Path(sys.argv[2]), sys.argv[3])); sys.exit(0)
     if sys.argv[1:2] == ["jev-narracion"]:    # jev-narracion <repo> <fase>  (puerta.sh, puerta de FASE con vídeo)
         print(json.dumps(jev_narracion(Path(sys.argv[2]), sys.argv[3]), ensure_ascii=False)); sys.exit(0)
     if sys.argv[1:2] == ["preguntas-json"]:   # preguntas-json <ficheros questions-*.md|json…>  (puerta.sh: los botones Q)

@@ -106,8 +106,13 @@ bash "$ROOT/lanzar.sh" siguiente "$R" "$G" respondo >/dev/null
 for t in uno dos; do printf '{"skill":"s","tema":"duda-%s","pregunta":"q","para_cliente":"¿Vale así?","opciones":[{"letra":"A","texto":"a","efecto":"ninguno","recomendada":true},{"letra":"B","texto":"b","efecto":"accion"}]}' "$t" \
   | node "$ROOT/metodo/scripts/sdd.mjs" questions add --role dudas-x >/dev/null 2>&1; done
 cp .sdd/hermes/hermes-sdd.json "$T/hs.bak" 2>/dev/null; echo '{"ejecutor":"claude","ejecutores":{"dudas":"../tests/ejecutor-falso"}}' > .sdd/hermes/hermes-sdd.json
+h0=$(git rev-parse HEAD)
 o=$(FALSO_MODO=toca HERMES_SDD_SIN_KANBAN=1 bash "$ROOT/etapa.sh" "$R" dudas | tail -1)
 echo "$o" | jq -e '.outcome == "failed" and (.reason | test("fuera de .sdd/: fuera-de-sdd.txt"))' >/dev/null && ok "dudas: si la consolidación toca algo fuera de .sdd/, la etapa para" || bad "dudas toca: $o"
+# … y lo deshace: lo de fuera no se queda en la historia ni en el árbol (material-montana11, F-1: el commit 2126c6b con
+# el plan entero hecho por la etapa de dudas se quedó en la historia del proyecto)
+[ "$(git rev-parse HEAD)" = "$h0" ] && [ ! -e fuera-de-sdd.txt ] && echo "$o" | jq -e '.reason | test("deshecho")' >/dev/null \
+  && ok "dudas: lo que la consolidación tocó fuera de .sdd/ se deshace" || bad "dudas no deshace: $(git log --oneline -2 | tr '\n' ' ') $(ls fuera-de-sdd.txt 2>&1)"
 rm -f fuera-de-sdd.txt .sdd/questions-dudas-x.* .sdd/hermes/dudas-diseno; if [ -f "$T/hs.bak" ]; then mv "$T/hs.bak" .sdd/hermes/hermes-sdd.json; else rm -f .sdd/hermes/hermes-sdd.json; fi
 rm -f .sdd/questions-spec-auditor.*; mv "$T/qsa.json" .sdd/questions-spec-auditor.json 2>/dev/null; node "$ROOT/metodo/scripts/sdd.mjs" questions render >/dev/null 2>&1
 rm -f "$T/cartas"
