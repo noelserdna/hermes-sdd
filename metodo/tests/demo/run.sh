@@ -154,6 +154,21 @@ if command -v ffmpeg >/dev/null 2>&1 && ffmpeg -hide_banner -encoders 2>/dev/nul
   [ -n "$l1" ] && [ "$l1" -lt 60 ] && [ -n "$l8" ] && [ "$l8" -gt 200 ] \
     && pass "narrate (montana12 G-8): la cartela sale con su voz aunque el vídeo no la grabara" || bad "narrate G-8: luz en 1 s=$l1 (cartela oscura), al final=$l8"
 fi
+# G-21 (montana12): el cierre volvió a grabar los webm de todas las FASEs (21:33-21:35) pero los mp4 narrados y los
+# montajes seguían siendo los de cada aceptación (16:13 la FASE-0): la entrega enseñó pantallas ya corregidas. El
+# montaje de la entrega vuelve a narrar y montar cada FASE cuyos vídeos son más nuevos que su montaje
+if command -v ffmpeg >/dev/null 2>&1 && ffmpeg -hide_banner -encoders 2>/dev/null | grep -q libx264; then
+  e="$tmp/g21"; mkdir -p "$e/evidencias/FASE-1" "$e/.sdd/demo"; (cd "$e" && git init -q)
+  printf '{"criterios":[{"id":"AC-002-01","req":"REQ-F-002","ac":1}]}' > "$e/.sdd/demo/GUION-FASE-1.json"
+  ffmpeg -loglevel error -f lavfi -i color=c=blue:s=320x240:d=1 -c:v libvpx -b:v 100k "$e/evidencias/FASE-1/v.webm"
+  printf '{"video":"v.webm","narraciones":[{"t":0.1,"texto":"x","criterio":"AC-002-01"}]}' > "$e/evidencias/FASE-1/v.narracion.json"
+  (cd "$e" && node "$SDD" demo narrate --fase 1 --tts none >/dev/null && node "$SDD" demo montaje --fase 1 >/dev/null)
+  touch -t 202601010000 "$e/evidencias/FASE-1/"*.mp4
+  ffmpeg -y -loglevel error -f lavfi -i color=c=red:s=320x240:d=1 -c:v libvpx -b:v 100k "$e/evidencias/FASE-1/v.webm"
+  (cd "$e" && node "$SDD" demo montaje --entrega >/dev/null 2>&1)
+  rojo=$(ffmpeg -v error -ss 0.5 -i "$e/evidencias/ENTREGA/MONTAJE-ENTREGA.mp4" -frames:v 1 -vf scale=1:1 -f rawvideo -pix_fmt rgb24 - 2>/dev/null | od -An -tu1 | awk '{print $1}')
+  [ -n "$rojo" ] && [ "$rojo" -gt 150 ] && pass "montaje (montana12 G-21): la entrega vuelve a narrar y montar la FASE con vídeos nuevos" || bad "montaje G-21: la entrega usa el montaje viejo (R=$rojo)"
+fi
 [ $fail = 0 ] && echo "metodo/tests/demo: all passed"
 
 exit $fail

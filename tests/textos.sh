@@ -875,5 +875,23 @@ assert "montaje de todas las fases" in t and "(✅)" not in t, t
 assert N.video_demo({"repo": str(r), "tipo": "entrega", "demo": "evidencias/ENTREGA/MONTAJE-ENTREGA.mp4"}).name == "MONTAJE-ENTREGA.mp4"
 assert N.video_demo({"repo": str(r), "tipo": "fase", "fase": "1"}).name == "MONTAJE-FASE-1.mp4"
 PY
+# G-20 (montana12): el montaje de la entrega pesaba 59.963.211 bytes y Telegram solo admite 49 MB: no llegaba. Se
+# envían los montajes de cada FASE (los que caben) y, si alguno no cabe, se dice dónde verlo
+python3 - "$ROOT/plugin/hermes-sdd" "$T" <<'PY' && ok "G-20: la entrega demasiado grande para Telegram va FASE a FASE" || bad "G-20: montaje de la entrega para Telegram"
+import sys, os; sys.path.insert(0, sys.argv[1]); import hsdd_nucleo as N
+from pathlib import Path
+r = Path(sys.argv[2]) / "g20"
+for d in ["ENTREGA", "FASE-0", "FASE-1", "FASE-10"]: (r / "evidencias" / d).mkdir(parents=True)
+def tam(f, n):
+    with open(f, "wb") as h: h.truncate(n)
+tam(r / "evidencias" / "ENTREGA" / "MONTAJE-ENTREGA.mp4", 59_963_211)
+tam(r / "evidencias" / "FASE-0" / "MONTAJE-FASE-0.mp4", 9_000_000); tam(r / "evidencias" / "FASE-10" / "MONTAJE-FASE-10.mp4", 60_000_000)
+tam(r / "evidencias" / "FASE-1" / "MONTAJE-FASE-1.mp4", 12_000_000)
+v, fuera = N.videos_para_telegram({"repo": str(r), "tipo": "entrega", "demo": "evidencias/ENTREGA/MONTAJE-ENTREGA.mp4"})
+assert [x.name for x in v] == ["MONTAJE-FASE-0.mp4", "MONTAJE-FASE-1.mp4"], v
+assert [x.name for x in fuera] == ["MONTAJE-FASE-10.mp4"], fuera
+v, fuera = N.videos_para_telegram({"repo": str(r), "tipo": "fase", "fase": "0"})
+assert [x.name for x in v] == ["MONTAJE-FASE-0.mp4"] and not fuera, (v, fuera)
+PY
 kill $SRVN; wait $SRVN 2>/dev/null
 exit $fail

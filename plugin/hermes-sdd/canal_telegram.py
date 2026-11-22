@@ -365,14 +365,20 @@ async def _enviar_demo(bot, chat_id: int, puerta: dict) -> None:
     if carpeta is None:
         await bot.send_message(chat_id=chat_id, text="Esta fase no trae demo (ni vídeo ni capturas). Decide con el resumen de la puerta.")
         return
-    v = P.N.video_demo(puerta)   # el montaje de todos los criterios, si lo hay
-    videos = [v] if v else []
-    if videos and videos[0].stat().st_size < 49_000_000:
-        with videos[0].open("rb") as f:   # Telegram reproduce mp4; el resto llega como documento
-            if videos[0].suffix == ".mp4":
-                await bot.send_video(chat_id=chat_id, video=f, caption=(f"Demo FASE-{P.N.fase_demo(puerta)}" if P.N.fase_demo(puerta) else "Demo de la entrega"))
+    # el montaje de todos los criterios, si lo hay; la entrega que no cabe en Telegram, FASE a FASE (G-20)
+    videos, fuera = P.N.videos_para_telegram(puerta)
+    for v in videos:
+        tit = (f"Demo FASE-{P.N.fase_demo(puerta)}" if P.N.fase_demo(puerta) else "Demo de la entrega")
+        if v.name.startswith("MONTAJE-FASE-") and not P.N.fase_demo(puerta):
+            tit = f"Demo de la entrega: {v.stem.removeprefix('MONTAJE-')}"
+        with v.open("rb") as f:   # Telegram reproduce mp4; el resto llega como documento
+            if v.suffix == ".mp4":
+                await bot.send_video(chat_id=chat_id, video=f, caption=tit)
             else:
-                await bot.send_document(chat_id=chat_id, document=f, caption=(f"Demo FASE-{P.N.fase_demo(puerta)}" if P.N.fase_demo(puerta) else "Demo de la entrega") + f" ({videos[0].name})")
+                await bot.send_document(chat_id=chat_id, document=f, caption=f"{tit} ({v.name})")
+    if fuera:
+        await bot.send_message(chat_id=chat_id, text="No caben en Telegram (más de 49 MB): " + ", ".join(v.name for v in fuera)
+                               + ". Míralos en el panel (Puertas → ▶ Ver demo) o en evidencias/ del proyecto.")
     fotos = sorted(carpeta.glob("*.png"))[:10]
     if len(fotos) >= 2:
         abiertos = [p.open("rb") for p in fotos]

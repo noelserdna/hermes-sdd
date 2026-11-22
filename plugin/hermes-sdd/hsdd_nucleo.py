@@ -794,6 +794,25 @@ def video_demo(puerta: dict) -> Path | None:
     return vs[0] if vs else None
 
 
+LIMITE_TELEGRAM = 49_000_000   # bytes que un bot puede mandar como vídeo
+
+
+def videos_para_telegram(puerta: dict, limite: int = LIMITE_TELEGRAM) -> tuple:
+    """(los vídeos que se mandan, los que no caben). La demo de la puerta si cabe; si es el montaje de la entrega y no
+    cabe, el montaje de cada FASE (material-montana12 G-20: 60 MB de entrega y Telegram admite 49)."""
+    v = video_demo(puerta)
+    if v is None:
+        return [], []
+    if v.stat().st_size < limite:
+        return [v], []
+    if v.name != "MONTAJE-ENTREGA.mp4":
+        return [], [v]
+    ev = v.parent.parent
+    fases = sorted((d for d in ev.glob("FASE-*") if (d / f"MONTAJE-{d.name}.mp4").is_file()), key=lambda d: int(d.name[5:]) if d.name[5:].isdigit() else 1e9)
+    ms = [d / f"MONTAJE-{d.name}.mp4" for d in fases]
+    return [m for m in ms if m.stat().st_size < limite], [m for m in ms if m.stat().st_size >= limite]
+
+
 def evidencias(puerta: dict) -> list:
     """Ficheros de la demo de una FASE (nombres; el canal decide cómo enseñarlos)."""
     carpeta = carpeta_demo(puerta)

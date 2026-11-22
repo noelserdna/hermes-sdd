@@ -13,7 +13,7 @@
 //                                            mp4 has the captions and no voice (said in the output). The tests do not
 //                                            wait for a sentence: where its voice (or the time to read its caption)
 //                                            does not fit before the next one, the film freezes that frame
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync, rmSync, mkdtempSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync, rmSync, mkdtempSync, statSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import os from "node:os";
 import path from "node:path";
@@ -362,13 +362,20 @@ function concatMp4(clips, out) {
  * (material-montana11: the gate showed 1 video of 7 to 16). With `entrega`, evidencias/ENTREGA/MONTAJE-ENTREGA.mp4
  * joins the montages of every FASE. Returns { out, clips } or { error }.
  */
-export function montage(root, { fase = null, entrega = false } = {}) {
+export function montage(root, { fase = null, entrega = false, tts = undefined } = {}) {
   if (!has("ffmpeg")) return { error: "ffmpeg is not installed: no montage" };
   const prof = stackProfile(root);
   const ev = path.join(root, prof.evidence_dir || "evidencias");
   let clips = [], out;
   if (entrega) {
     const fases = existsSync(ev) ? readdirSync(ev).filter((d) => /^FASE-\d+$/.test(d)).sort((a, b) => Number(a.slice(5)) - Number(b.slice(5))) : [];
+    // A FASE whose videos are newer than its montage (the closing run records them again) is narrated and montaged
+    // again: the delivery shows the final code (material-montana12 G-21: it showed screens fixed hours before)
+    const mtime = (f) => { try { return statSync(f).mtimeMs; } catch { return 0; } };
+    for (const d of fases) {
+      const webm = Math.max(0, ...readdirSync(path.join(ev, d)).filter((x) => x.endsWith(".webm")).map((x) => mtime(path.join(ev, d, x))));
+      if (webm && webm > mtime(path.join(ev, d, `MONTAJE-${d}.mp4`))) { narrate(root, d.slice(5), { tts }); montage(root, { fase: d.slice(5) }); }
+    }
     clips = fases.map((d) => path.join(ev, d, `MONTAJE-${d}.mp4`)).filter((f) => existsSync(f));
     mkdirSync(path.join(ev, "ENTREGA"), { recursive: true });
     out = path.join(ev, "ENTREGA", "MONTAJE-ENTREGA.mp4");
