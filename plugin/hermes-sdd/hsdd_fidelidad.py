@@ -150,7 +150,9 @@ DEBIL = [  # (patrón en lo añadido, qué indica)
     (re.compile(r"\btestIgnore\b|\btestPathIgnorePatterns\b|\bgrepInvert\b|\bgrep\s*:|\bexclude\s*:|forbidOnly\s*:\s*false|passWithNoTests|modulePathIgnorePatterns"),
      "excluye tests de la ejecución"),
     (re.compile(r"\bretries\s*:|\.retry\s*\(|jest\.retryTimes"), "reintentos (ocultan la inestabilidad)"),
-    (re.compile(r"\btimeout\s*:\s*\d{5,}|setTimeout\(\s*\d{5,}|\btest\.setTimeout\s*\(|\btest\.slow\s*\(|jest\.setTimeout\s*\(|\btimeout\s*:\s*0\b"),
+    # un plazo dentro de los 30 s que ya tiene un test de Playwright no alarga nada: esperar a que cargue no debilita
+    # (material-montana12 G-18: «toPass({ timeout: 15000 })» autorizado para endurecer salía grave)
+    (re.compile(r"\btimeout\s*:\s*(?:[4-9]\d{4}|3(?!0000\b)\d{4}|[1-9]\d{5,})\b|setTimeout\(\s*\d{5,}|\btest\.setTimeout\s*\(|\btest\.slow\s*\(|jest\.setTimeout\s*\(|\btimeout\s*:\s*0\b"),
      "plazo muy alargado"),
     (re.compile(r"page\.route\(|\.setContent\(|route\.fulfill\(|vi\.mock\(|jest\.mock\("), "el test simula la respuesta en vez de usar la app real"),
     (re.compile(r"toBeTruthy\(\)|toBeDefined\(\)|toContain\(|toMatch\(\s*/\.\*|expect\.anything\(\)|expect\.any\("), "aserción laxa"),
@@ -232,7 +234,11 @@ def _autorizada(repo: Path, sha: str, fichero: str, auts: list[dict] | None = No
         entre = set(git(repo, "rev-list", f"{r['head']}..{sha}").split())
         for tag in git(repo, "tag", "-l", "fase-*-accepted", "entrega-*").split():
             c = git(repo, "rev-list", "-n1", tag).strip()
-            if c in entre and f"Gate-Id: {r.get('gate')}" not in git(repo, "log", "-1", "--format=%B", c):
+            # caduca si el test ya se editó y esa edición se aceptó; una autorización aún sin usar sigue valiendo
+            # (material-montana12 G-14: firmada en la FASE-1 para editar en la FASE-2, la aceptación de la FASE-1 la
+            # daba por caducada y se volvió a preguntar)
+            if c in entre and f"Gate-Id: {r.get('gate')}" not in git(repo, "log", "-1", "--format=%B", c) \
+                    and git(repo, "log", "--format=%H", f"{r['head']}..{c}", "--", fichero).strip():
                 caducada = True
                 motivo = f"{r.get('question')} caducó al aceptar {tag}"
                 break
@@ -299,6 +305,9 @@ def congelados(repo: Path, desde: str | None = None) -> list[dict]:
     vistos = set()   # (commit, fichero): un commit que toca un test de la FASE-0 y otro de la FASE-1 informa de los dos
     for tag in tags:
         ficheros = congelables(repo, tag)
+        # un fichero que vuelve a estar como se aceptó no se ha cambiado: lo que un commit puso, otro lo quitó
+        # (material-montana12 G-11 = M5-10: una línea añadida y quitada en playwright.config.js daba dos graves)
+        ficheros = [f for f in ficheros if git(repo, "diff", "--name-only", tag, "HEAD", "--", f).strip()]
         if not ficheros:
             continue
         for linea in git(repo, "log", "--format=%H%x09%s", f"{tag}..HEAD", "--", *ficheros).splitlines():

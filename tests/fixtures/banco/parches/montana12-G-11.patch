@@ -1,0 +1,56 @@
+From c0abc1803d10ca8316af1c70477cbf896f42cdf6 Mon Sep 17 00:00:00 2001
+From: agente <agente@montana12>
+Date: Sun, 22 Nov 2026 15:28:52 +0000
+Subject: [PATCH] test(e2e): MM_HOY_FICHERO lets a journey live the day of its
+ GIVEN
+
+Task: TASK-F1-009
+Refs: FASE-1, D-PA-008, RN-022
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+---
+ playwright.config.js | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/playwright.config.js b/playwright.config.js
+index 67d3b32..4d47c45 100644
+--- a/playwright.config.js
++++ b/playwright.config.js
+@@ -47,6 +47,7 @@ export default defineConfig({
+       MM_DATOS: path.join(root, 'data/e2e/datos.json'),
+       MM_RELOJ: path.join(root, 'data/e2e/reloj.txt'),
+       MM_HOY: '2026-11-22',
++      MM_HOY_FICHERO: path.join(root, 'data/e2e/hoy.txt'),   // un test fija aquí el «hoy» de su GIVEN
+     },
+   },
+ });
+-- 
+2.53.0
+
+From 57a31be24835661b3ea5e4fb02650e112854fe1f Mon Sep 17 00:00:00 2001
+From: agente <agente@montana12>
+Date: Sun, 22 Nov 2026 15:38:53 +0000
+Subject: [PATCH] fix(e2e): restore accepted playwright.config.js; hoy.txt is
+ read next to MM_RELOJ
+
+Task: TASK-F1-009
+Refs: FASE-1, D-PA-008, RN-022
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+---
+ playwright.config.js | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/playwright.config.js b/playwright.config.js
+index 4d47c45..67d3b32 100644
+--- a/playwright.config.js
++++ b/playwright.config.js
+@@ -47,7 +47,6 @@ export default defineConfig({
+       MM_DATOS: path.join(root, 'data/e2e/datos.json'),
+       MM_RELOJ: path.join(root, 'data/e2e/reloj.txt'),
+       MM_HOY: '2026-11-22',
+-      MM_HOY_FICHERO: path.join(root, 'data/e2e/hoy.txt'),   // un test fija aquí el «hoy» de su GIVEN
+     },
+   },
+ });
+-- 
+2.53.0
+

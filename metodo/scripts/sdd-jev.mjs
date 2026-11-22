@@ -190,8 +190,12 @@ export function parseSees(label, rest) {
 function addSees(cur, m) {
   const i = cur.criteria.length - 1;
   const p = parseSees(m[1], m[2]);
-  const prev = cur.sees[i] || { texts: [], where: null, none: null };
-  cur.sees[i] = { texts: [...prev.texts, ...p.texts], where: prev.where || p.where, none: prev.none || p.none };
+  const prev = cur.sees[i] || { texts: [], where: null, none: null, lines: [] };
+  // `lines`: each «Se ve» line apart (its texts and the whole line, condition included), so each THEN clause can be
+  // paired with the line that shows it (material-montana12 G-12)
+  const lines = [...(prev.lines || []), ...(p.none === null ? [{ texts: p.texts.map((t) => t.text), raw: m[2] }] : [])];
+  const nones = (prev.nones || 0) + (p.none === null ? 0 : 1);
+  cur.sees[i] = { texts: [...prev.texts, ...p.texts], where: prev.where || p.where, none: prev.none || p.none, lines, nones };
 }
 /** The fixed parts of a template («Hola, {usuario}» → ["Hola,"]): what a test carries verbatim. */
 export function templateParts(t) {
@@ -329,6 +333,47 @@ export function clauseCovered(clause, sees) {
   return false;
 }
 
+/**
+ * The THEN clauses of a criterion that neither its «Se ve» lines nor its «No visible» cover. Each line covers one
+ * clause: a clause with screen text (quoted) takes the line that carries it; a clause whose quotes are data typed in a
+ * line's condition («cuando Marta entra con "Otra12345"») takes that line; a clause without quotes («Lucía still has
+ * one reservation of 2») takes a line no other clause uses (material-montana12 G-12: «una sola fila "2 × Linterna…"»
+ * shows it with other words, and the gate said «4 of 9 shown» with the 9 in the video).
+ */
+export function uncoveredClauses(criterion, sees) {
+  const clauses = thenClauses(criterion);
+  if (!sees) return clauses;
+  const lines = sees.lines?.length ? sees.lines : [{ texts: (sees.texts || []).map((t) => t.text), raw: "" }];
+  const used = new Set(), left = [], later = [];
+  const fits = (q, t) => {
+    if (!/\{[^{}]+\}/.test(t)) return norm1(t) === q || q.includes(norm1(t)) || norm1(t).includes(q);
+    return new RegExp(`^${norm1(t).split(/\{[^{}]+\}/).map((x) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join(".+")}$`, "u").test(q);
+  };
+  const take = (ok) => { const k = lines.findIndex((l, j) => !used.has(j) && ok(l)); if (k < 0) return false; used.add(k); return true; };
+  for (const c of clauses) {
+    const quoted = [...c.matchAll(SEE_QUOTES)].map((m) => norm1(m[1] ?? m[2] ?? m[3]));
+    if (quoted.length && take((l) => quoted.some((q) => l.texts.some((t) => fits(q, t))))) continue;
+    if (quoted.length && take((l) => quoted.every((q) => norm1(l.raw).includes(q)))) continue;
+    if (quoted.length && quoted.some((q) => lines.some((l) => l.texts.some((t) => fits(q, t))))) continue;   // a text two clauses share
+    later.push(c);
+  }
+  // a line that says more than «"text" en <screen>»: a description before its quotes («una sola fila "…"») or a
+  // condition after them («… cuando Marta entra con…», «al volver atrás», «(no aparece una segunda)»)
+  const describes = (l) => {
+    const raw = String(l.raw || "");
+    const before = raw.split(/[«“"]/)[0];
+    return /[\p{L}]{3,}/u.test(before) || /\s(cuando|al|después|tras|sin|si|aunque|mientras|when|after|without|once|until)\s|\(/iu.test(raw.replace(SEE_QUOTES, " "));
+  };
+  let nones = sees.nones ?? (sees.none ? 1 : 0);
+  for (const c of later) {
+    if (clauseCovered(c, { texts: [], none: sees.none })) continue;   // its «No visible» names it
+    if (take(describes)) continue;
+    if (nones > 0) { nones--; continue; }   // a «No visible» line in other words (in Spanish for an English THEN)
+    left.push(c);
+  }
+  return left;
+}
+
 export function checkSees(active) {
   const w = [];
   // Every clause of a criterion's THEN is seen or declared not visible (material-montana11: 28 criteria promised in
@@ -337,7 +382,7 @@ export function checkSees(active) {
     r.criteria.forEach((c, i) => {
       const sv = (r.sees || [])[i];
       if (!sv) return;
-      const left = thenClauses(c).filter((cl) => !clauseCovered(cl, sv));
+      const left = uncoveredClauses(c, sv);
       if (left.length)
         w.push({ code: "then-not-seen", id: r.id, msg: `${r.id} AC${i + 1}: ${left.map((x) => `«${x}»`).join(", ")} is in the THEN but neither in its «Se ve» nor in a «No visible» line: add the text that shows it on screen to «Se ve», or write «- No visible: <that clause>: <how a test checks it>» — the video and its voice-over can only promise what is seen` });
     });

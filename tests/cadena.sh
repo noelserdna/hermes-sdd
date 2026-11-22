@@ -223,4 +223,79 @@ echo "// el agente la toca" >> "$g6/tests/e2e/fixtures/evidence.js"; git -C "$g6
 d="$(cd "$g6" && ROOT="$AQUI" SDD="$SDD" FASE=0 bash -c '. "$ROOT/lib/comun.sh"; plantilla_al_dia >/dev/null 2>&1; duras_implementar' 2>&1 | grep 'evidence.js' || true)"
 [ -n "$d" ] && ok "montana12 G-6: la plantilla tocada por el agente sigue siendo una regla rota" || mal "montana12 G-6: la tocada se dio por buena"
 
+
+# G-12: «Lucía still has one reservation of 2» no lleva comillas y su «Se ve» lo enseña con otras palabras en una línea
+# propia («una sola fila "2 × Linterna…"»); el expediente daba esos criterios por incompletos (FASE-3: «4 de 9» con los
+# 9 demostrados en vídeo). Cada cláusula sin texto de pantalla la cubre una línea «Se ve» que no use otra cláusula;
+# las comillas de un dato tecleado («"Otra12345"») cuentan si esa línea «Se ve» las nombra
+tns() { (cd "$1" && node "$SDD" lint --needs --json 2>/dev/null | node -e 'let s="";process.stdin.on("data",(d)=>{s+=d}).on("end",()=>{const j=JSON.parse(s);console.log([...(j.findings||[]),...(j.warnings||[])].filter((f)=>f.code==="then-not-seen").map((f)=>f.msg.split(":")[0]).join(";"))})'); }
+t="$(tns "$m12")"
+[ -z "$t" ] && ok "montana12 G-12: ningún then-not-seen en los requisitos finales (cada cláusula tiene su línea «Se ve»)" || mal "montana12 G-12: then-not-seen falsos: $t"
+g12="$tmp/g12"; rm -rf "$g12"; cp -R "$m12" "$g12"
+python3 - "$g12/requirements/REQUIREMENTS.md" <<'PY'
+import sys; p = sys.argv[1]; L = open(p).read().split("\n")
+i = next(k for k, l in enumerate(L) if "una sola fila \"2 × Linterna" in l); del L[i]; open(p, "w").write("\n".join(L))
+PY
+t="$(tns "$g12")"
+[ "$t" = "REQ-F-003 AC3" ] && ok "montana12 G-12: sin la línea «una sola fila…», «Lucía still has one reservation of 2» vuelve a faltar" || mal "montana12 G-12: sin su línea, then-not-seen = «$t»"
+
+
+# G-11 (= M5-10): c0abc18 añadió una línea a playwright.config.js y 57a31be la quitó (los dos commits reales, en
+# tests/fixtures/banco/parches): la config acaba igual que la aceptada y fidelidad daba dos graves «test ya aceptado
+# cambiado». Un fichero que vuelve a ser el aceptado no se ha cambiado
+g11="$tmp/g11"; rm -rf "$g11"; cp -R "$m12" "$g11"
+(cd "$g11" && git init -q -b main && git add -A && git -c user.email=t@t -c user.name=t commit -qm banco && git tag fase-0-accepted \
+  && git -c user.email=t@t -c user.name=t am -q "$AQUI/tests/fixtures/banco/parches/montana12-G-11.patch")
+python3 - "$AQUI/plugin/hermes-sdd" "$g11" <<'PY' && ok "montana12 G-11: añadir y quitar la misma línea de la config no es «test aceptado cambiado»" || mal "montana12 G-11: grave falso por un cambio que se deshizo"
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_fidelidad as F
+from pathlib import Path
+R = Path(sys.argv[2])
+assert len(F.git(R, "log", "--format=%h", "fase-0-accepted..HEAD").split()) == 2
+x = [c for c in F.congelados(R) if c["fichero"] == "playwright.config.js"]
+assert not x, x
+PY
+
+
+# G-14: Q-task-implementer-001 (registro real) se firmó en la puerta g1795363352189a durante la FASE-1 para editar
+# tests/e2e/fase-0.spec.js en la FASE-2; fase-1-accepted (otra puerta) quedó en medio y la edición, fa15b53, salió
+# «sin autorización» (grave) y se volvió a preguntar. Una aceptación caduca la autorización si el test ya se editó
+# antes de ella; una autorización sin usar sigue valiendo
+g14="$tmp/g14"; rm -rf "$g14"; cp -R "$m12" "$g14"
+python3 - "$AQUI/plugin/hermes-sdd" "$g14" <<'PY' && ok "montana12 G-14: la autorización firmada en la FASE-1 vale para la edición de la FASE-2" || mal "montana12 G-14: autorización sin usar caducada"
+import sys, json, os, subprocess
+from pathlib import Path
+R = Path(sys.argv[2]); os.environ["HERMES_SDD_HOME"] = str(R / ".home")
+sys.path.insert(0, sys.argv[1]); import hsdd_fidelidad as F
+F.HOME = R / ".home"
+g = lambda *a: subprocess.run(["git", "-C", str(R), "-c", "user.email=t@t", "-c", "user.name=t", *a], check=True, capture_output=True, text=True).stdout.strip()
+reg = next(json.loads(l) for l in (R / "acceptance/decisions.jsonl").read_text().splitlines() if "Q-task-implementer-001" in l and '"test-edit"' in l)
+(R / "acceptance/decisions.jsonl").write_text("")
+g("init", "-q", "-b", "main"); g("add", "-A"); g("commit", "-qm", "FASE-1 en su puerta"); reg["head"] = g("rev-parse", "HEAD")
+(R / "acceptance/decisions.jsonl").write_text(json.dumps(reg) + "\n"); g("commit", "-qam", "decision: Q-task-implementer-001")
+g("commit", "-q", "--allow-empty", "-m", "accept FASE-1", "-m", "Gate-Id: g1795363504c778"); g("tag", "fase-1-accepted")
+p = R / "tests/e2e/fase-0.spec.js"; p.write_text(p.read_text() + "\n// AC-007-10 sin la comprobación obsoleta\n")
+g("commit", "-qam", "test(e2e): drop the obsolete check of AC-007-10", "-m", "Autoriza: Q-task-implementer-001")
+ok, por = F._autorizada(R, g("rev-parse", "HEAD"), "tests/e2e/fase-0.spec.js")
+assert ok, por
+# y la que ya se usó antes de aceptar sí caduca: otra edición tras la aceptación de la FASE-2 necesita autorización nueva
+g("commit", "-q", "--allow-empty", "-m", "accept FASE-2", "-m", "Gate-Id: gX"); g("tag", "fase-2-accepted")
+p.write_text(p.read_text() + "// otra\n"); g("commit", "-qam", "otra edición")
+ok, por = F._autorizada(R, g("rev-parse", "HEAD"), "tests/e2e/fase-0.spec.js")
+assert not ok and "caducó" in por, por
+PY
+
+
+# G-18: 4dfb50f (autorizado «solo para endurecerlo», Q-task-implementer-007) cambió un `page.goto` por un reintento
+# hasta 15 s; «timeout: 15000» contaba como «plazo muy alargado» y salía grave. Un plazo dentro de lo que ya tiene un test
+# (30 s en Playwright) no alarga nada; uno mayor, 0 (sin plazo), test.setTimeout o test.slow, sí
+python3 - "$AQUI/plugin/hermes-sdd" <<'PY' && ok "montana12 G-18: esperar a que cargue (15 s) no es debilitar; un plazo de 60 s sí" || mal "montana12 G-18: plazo"
+import sys; sys.path.insert(0, sys.argv[1]); import hsdd_fidelidad as F
+q = ["await page.goto(`${BASE}/material`);"]
+p = ["// El servidor recién reiniciado puede abortar una primera navegación: se reintenta hasta que carga.",
+     "await expect(async () => { await page.goto(`${BASE}/material`); }).toPass({ timeout: 15000 });"]
+assert "plazo muy alargado" not in F.debilitamiento(q, p, set()), F.debilitamiento(q, p, set())
+for x in ["await expect(fila).toBeVisible({ timeout: 60000 });", "test.setTimeout(120000);", "test.slow();", "use: { timeout: 0 },"]:
+    assert "plazo muy alargado" in F.debilitamiento([], [x], set()), x
+PY
+
 exit $fallo
