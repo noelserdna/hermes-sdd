@@ -43,15 +43,24 @@ proyectos() {  # los proyectos de una carpeta: ella misma si tiene .sdd/, o sus 
 
 # BLOCKER de un IMPL-FEEDBACK (por stdin) → «abiertos sin_estado». Un hallazgo empieza en un título o en una viñeta
 # «- **IF-…**»; su severidad está en la línea «Severity» o en la propia línea del hallazgo; su estado, en «Status».
-# Los cuatro formatos vistos: tabla (| **Severity** | BLOCKER |), lista (- **Severity:** …  /  - Severity: …),
-# título (## IF-0-004 — CODE-REVIEW BLOCKER) y viñeta de una línea (- **IF-0-004** BLOCKER CODE-REVIEW…)
+# Los formatos vistos en 17 proyectos: tabla (| **Severity** | BLOCKER |), lista (- **Severity:** …  /  - Severity: …,
+# con el estado en su línea o en la misma: «· Status: OPEN»), título (## IF-0-004 — CODE-REVIEW BLOCKER, con o sin
+# «[OPEN]») y viñeta de una línea (- **IF-0-004** BLOCKER CODE-REVIEW…)
 blocker_md() {
   awk '
     function sev_de(l) { return match(l, /BLOCKER|WARNING|INFO/) ? substr(l, RSTART, RLENGTH) : "" }
     function fin() { if (sev == "BLOCKER") { if (st == "") s++; else if (st == "OPEN") a++ } sev = ""; st = "" }
-    /^#+ / || /^- \*\*IF-/ { fin(); if ($0 ~ /IF-/) sev = sev_de($0); next }
-    /^[|> -]*\**Severity/ { if (sev == "") sev = sev_de($0); next }
-    /^[|> -]*\**Status/ { l = $0; sub(/^[|> -]*\**Status[*: |]*/, "", l); if (match(l, /^[A-Za-z_-]+/)) st = toupper(substr(l, RSTART, RLENGTH)) }
+    function st_de(l) {   # «Status: OPEN» o «| **Status** | OPEN |», al principio o dentro de la línea
+      if (!match(l, /Status[*: |]+[A-Za-z_-]+/)) return ""
+      l = substr(l, RSTART, RLENGTH); sub(/^Status[*: |]+/, "", l); return toupper(l)
+    }
+    /^#+ / || /^- \*\*IF-/ {
+      fin()
+      if ($0 ~ /IF-/) { sev = sev_de($0); if (match($0, /\[[A-Z_-]+\]/)) st = substr($0, RSTART + 1, RLENGTH - 2) }   # «## IF-7-001 [OPEN] — …»
+      next
+    }
+    /Severity/ && sev == "" { sev = sev_de($0) }
+    st == "" { st = st_de($0) }
     END { fin(); printf "%d %d\n", a, s }'
 }
 blocker_json() {  # blocker_json <repo>: [{tag, abiertos, sin_estado}] por cada entrega-*; null sin git

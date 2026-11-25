@@ -18,7 +18,7 @@ cat > .sdd/acceptance.json <<'J'
   {"id": "REQ-F-003", "priority": "Should", "verdict": "MISSING", "criteria_total": 3, "criteria": [{"n": 1}, {"n": 2}, {"n": 3}], "challenges": []},
   {"id": "REQ-F-004", "priority": "Must", "verdict": "DEPRECATED", "criteria_total": 5, "criteria": [], "challenges": []}]}
 J
-# los cuatro formatos de hallazgo que hay en los proyectos reales (tabla, lista, título y viñeta de una línea)
+# los formatos de hallazgo que hay en los proyectos reales (tabla, lista, título y viñeta de una línea)
 cat > feedback/IMPL-FEEDBACK-FASE-0.md <<'M'
 # Implementation Feedback — FASE-0
 
@@ -54,6 +54,14 @@ cat > feedback/IMPL-FEEDBACK-FASE-0.md <<'M'
 ## IF-0-006 — CODE-REVIEW BLOCKER · Task: n/a
 sin estado: nadie lo cerró
 
+## IF-0-009
+- Severity: BLOCKER · Category: CODE-REVIEW · Task: n/a · Status: OPEN
+
+## IF-0-010 [OPEN] — CODE-REVIEW, BLOCKER
+el estado, en el título
+
+## IF-0-011 [RESOLVED] — CODE-REVIEW, BLOCKER
+
 ## Revisión independiente
 - **IF-0-007** BLOCKER CODE-REVIEW, Task: n/a — `server.js:20`: de una línea, sin estado
 - **IF-0-008** WARNING CODE-REVIEW, Task: n/a — endurecimiento
@@ -62,7 +70,7 @@ M
 etiqueta() { git tag "$@"; }
 git add -A; git commit -qm "feat: algo"; etiqueta entrega-1
 # después de la entrega se cierra todo: el contador mira el commit del tag, no el disco
-sed -i.bak -e 's/| OPEN |/| RESOLVED |/' -e 's/Status:\(\**\) OPEN/Status:\1 RESOLVED/' feedback/IMPL-FEEDBACK-FASE-0.md && rm -f feedback/IMPL-FEEDBACK-FASE-0.md.bak
+sed -i.bak -e 's/| OPEN |/| RESOLVED |/' -e 's/Status:\(\**\) OPEN/Status:\1 RESOLVED/' -e 's/\[OPEN\]/[RESOLVED]/' feedback/IMPL-FEEDBACK-FASE-0.md && rm -f feedback/IMPL-FEEDBACK-FASE-0.md.bak
 git commit -qam "docs: hallazgos cerrados"
 etiqueta -a entrega-2 -m "Entrega 2
 -----BEGIN SSH SIGNATURE-----
@@ -98,7 +106,7 @@ J=$(bash "$C" --json --indice "$T/indice" "$T/proyectos" 2>&1); P=$(jq -c '.proy
 ver() { jq -e "$2" <<< "$P" >/dev/null 2>&1 && ok "$1" || bad "$1: $(jq -c "$3" <<< "$P" 2>/dev/null || echo "$J" | head -3)"; }
 ver "criterios totales y Must, sin los requisitos retirados" '.proyecto == "mini" and .criterios == {total: 6, must: 3}' .criterios
 ver "veredictos al entregar, y los de los Must" '.veredictos.VERIFIED == 1 and .veredictos.FAILING == 1 and .veredictos.MISSING == 1 and .veredictos.WAIVED == 0 and .veredictos.must == {VERIFIED: 1, FAILING: 1, MISSING: 0, WAIVED: 0}' .veredictos
-ver "BLOCKER abiertos en el commit de cada entrega, en los cuatro formatos" '.blocker.entregas == [{tag: "entrega-1", abiertos: 3, sin_estado: 2}, {tag: "entrega-2", abiertos: 0, sin_estado: 2}]' .blocker
+ver "BLOCKER abiertos en el commit de cada entrega, en todos los formatos vistos" '.blocker.entregas == [{tag: "entrega-1", abiertos: 5, sin_estado: 2}, {tag: "entrega-2", abiertos: 0, sin_estado: 2}]' .blocker
 ver "BLOCKER en disco (para los proyectos sin git)" '.blocker.en_disco == {abiertos: 0, sin_estado: 2}' .blocker
 ver "impugnaciones por estado final; stale = cerradas sin comprobación" '.impugnaciones == {total: 4, open: 1, stale: 2, resolved: 0, dismissed: 1}' .impugnaciones
 ver "FASEs firmadas, con «demo: no vista» y sin el dato" '.fases == {firmadas: 3, demo_no_vista: 1, demo_sin_dato: 1}' .fases
@@ -110,7 +118,7 @@ jq -e '.indice == {firmadas: 3, por_canal: {local: 2, telegram: 1}, fases_firmad
 [ "$antes" = "$(huella)" ] && ok "solo lee: el proyecto queda como estaba" || bad "el proyecto cambió"
 # la tabla: una fila por proyecto y la de totales
 t=$(bash "$C" --indice "$T/indice" "$T/proyectos" 2>&1)
-echo "$t" | grep -qE '^mini +6 +3 +1 +1 +1 +0 +5\+2 +4 +2 +3 +1 +3 +2 +4 +3 +5 +2 +1 +12 +4$' && echo "$t" | grep -q '^TOTAL (1)' \
+echo "$t" | grep -qE '^mini +6 +3 +1 +1 +1 +0 +7\+2 +4 +2 +3 +1 +3 +2 +4 +3 +5 +2 +1 +12 +4$' && echo "$t" | grep -q '^TOTAL (1)' \
   && ok "tabla: una fila por proyecto y los totales" || bad "tabla: $t"
 # sin fichero no hay cero: null (un proyecto sin acceptance.json ni git propio)
 mkdir -p "$T/vacio/p/.sdd"; V=$(bash "$C" --json --indice "$T/nada" "$T/vacio" 2>&1)
