@@ -25,4 +25,4 @@ case "${FALSO_MODO:-}" in
             esac ;;
   borra)    sed 's/"observed":0/"observed":1/' "$D" > "$D.tmp" && mv "$D.tmp" "$D" ;;  # reescribe un registro anterior
 esac
-jq -nc --arg r "${FALSO_RESUMEN:-}" --argjson c "${FALSO_COSTE:-0}" '{outcome:"done", reason:"ok", run:"falso", cost_usd:$c, resumen:$r}'  # FALSO_RESUMEN: lo que «dice» el ejecutor
+jq -nc --arg r "${FALSO_RESUMEN:-}" --argjson c "${FALSO_COSTE:-0}" --arg v "${FALSO_VERSIONES:-}" '{outcome:"done", reason:"ok", run:"falso", cost_usd:$c, resumen:$r} + (if $v == "" then {} else {versiones: ($v | fromjson)} end)'  # FALSO_RESUMEN: lo que «dice» el ejecutor

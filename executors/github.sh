@@ -30,7 +30,8 @@ cd "$REPO"
 
 salir() {  # salir <outcome> <reason> [extra-json]
   local x=${3:-}; [ -n "$x" ] || x='{}'
-  jq -nc --arg o "$1" --arg r "$2" --arg run "$RUN" --argjson x "$x" '{outcome:$o, reason:$r, run:$run} + $x'
+  local v=${VERSIONES:-}; jq -e 'type == "object"' <<< "$v" >/dev/null 2>&1 || v='{}'   # con qué se hizo (va a etapas.jsonl)
+  jq -nc --arg o "$1" --arg r "$2" --arg run "$RUN" --argjson x "$x" --argjson v "$v" '{outcome:$o, reason:$r, run:$run} + $x + (if $v == {} then {} else {versiones:$v} end)'
   exit 0
 }
 limpiar() {
@@ -125,6 +126,7 @@ done
 MIN=$(( ($(date +%s) - INICIO) / 60 ))
 CONCL=$(gh run view "$ID" -R "$GH" --json conclusion -q .conclusion 2>/dev/null)
 S="$TMP/salida"
+VERSIONES=$(jq -nc --arg m "$MODELO" '{modelo: (if $m == "" then null else $m end)}' 2>/dev/null || echo '{}')   # la caja añade lo suyo (caja_resultado)
 # La descarga puede fallar un rato sin culpa de nadie (taller3: «503 Egress is over the account limit» y, minutos
 # después, bajó bien): se reintenta con esperas crecientes antes de dar la etapa por fallida
 BAJADO=false

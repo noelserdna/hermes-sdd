@@ -31,7 +31,8 @@ cd "$REPO"
 
 salir() {  # salir <outcome> <reason> [extra-json]
   local x=${3:-}; [ -n "$x" ] || x='{}'
-  jq -nc --arg o "$1" --arg r "$2" --arg run "$RUN" --argjson x "$x" '{outcome:$o, reason:$r, run:$run} + $x'
+  local v=${VERSIONES:-}; jq -e 'type == "object"' <<< "$v" >/dev/null 2>&1 || v='{}'   # con qué se hizo (va a etapas.jsonl)
+  jq -nc --arg o "$1" --arg r "$2" --arg run "$RUN" --argjson x "$x" --argjson v "$v" '{outcome:$o, reason:$r, run:$run} + $x + (if $v == {} then {} else {versiones:$v} end)'
   exit 0
 }
 limpiar() {
@@ -67,6 +68,10 @@ if ! "$RT" image inspect "$IMG" >/dev/null 2>&1; then
   # el constructor de Apple container es otra máquina de 2 GB: con 8 GB en el Mac no puede quedarse encendido
   [ "$RT" = container ] && container builder stop >/dev/null 2>&1
 fi
+# Con qué se hace (a etapas.jsonl): la imagen con su id (la etiqueta es la huella del Containerfile, pero lo que este
+# instaló con «latest» depende del día en que se construyó en esta máquina) y el modelo pedido; la caja añade lo suyo
+IMG_ID=$("$RT" image inspect "$IMG" 2>/dev/null | jq -r '[.. | objects | (.Id? // .digest? // .Digest? // empty) | strings] | first // empty' 2>/dev/null | cut -c1-19 || true)
+VERSIONES=$(jq -nc --arg i "$IMG${IMG_ID:+@$IMG_ID}" --arg m "$MODELO" '{imagen:$i, modelo: (if $m == "" then null else $m end)}' 2>/dev/null || echo '{}')
 CACHE="${HERMES_SDD_CAJA_CACHE:-$HOME/.cache/hermes-sdd-caja}"; mkdir -p "$CACHE"
 
 # ── 1. La copia del proyecto ──────────────────────────────────────────────────────────────────────────────────────

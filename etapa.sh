@@ -72,6 +72,19 @@ presupuesto() {  # PRESUPUESTO = lo que puede gastar la ejecución siguiente (US
   fi
   PRESUPUESTO=$(jq -n "$q * 100 | floor / 100")
 }
+arnes_commit() {  # el commit del arnés que corre: el del repo o, instalado (sin .git), el nombre del directorio «<versión>-<commit>»
+  local r; r=$(cd -P "$ROOT" 2>/dev/null && pwd -P) || r=$ROOT
+  if [ -e "$r/.git" ]; then git -C "$r" rev-parse HEAD 2>/dev/null && return; fi
+  basename "$r"
+}
+tarjeta_id() {  # el id de la tarjeta del kanban que lanzó esta etapa. Hermes se lo da al worker (HERMES_KANBAN_TASK),
+  # pero a la orden de la estación no le llega (337 líneas con «tarjeta»: null): entonces es la tarjeta en marcha cuyo
+  # cuerpo termina en esta misma orden (como las busca lanzar.sh). Sin kanban o sin ninguna, vacío
+  [ -n "${HERMES_KANBAN_TASK:-}" ] && { echo "$HERMES_KANBAN_TASK"; return 0; }
+  [ -z "${HERMES_SDD_SIN_KANBAN:-}" ] && command -v hermes >/dev/null 2>&1 || return 0
+  hermes kanban --board "$(slug "$(basename "$REPO")")" list --json 2>/dev/null | jq -r --arg e "etapa.sh $REPO $ETAPA${FASE:+ $FASE}" \
+    '[.[]? | select(.status == "running" and ((.body // "") | endswith($e)))] | sort_by(.created_at) | last | .id // empty' 2>/dev/null || true
+}
 registrar_etapa() {  # una línea por etapa en .sdd/hermes/etapas.jsonl: la línea base del encargado (docs/encargado.md)
   local res=$1 head1 ratio='null'
   head1=$(git rev-parse HEAD 2>/dev/null || echo "")
@@ -89,15 +102,23 @@ registrar_etapa() {  # una línea por etapa en .sdd/hermes/etapas.jsonl: la lín
   jq -e . <<< "${carga:-x}" >/dev/null 2>&1 || carga=null
   jq -nc --argjson res "$(echo "$res" | jq -c . 2>/dev/null || echo '{}')" --argjson ej "$EJECUCIONES" --argjson r "$ratio" \
     --arg sub "$SUBPASO" --argjson seg "$seg" --argjson sllm "$S_LLM" --argjson carga "$carga" --argjson rondas "$RONDAS" \
-    --arg etapa "$ETAPA" --arg fase "$FASE" --arg t "${HERMES_KANBAN_TASK:-}" --arg h0 "$HEAD0" --arg h1 "$head1" \
-    --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" --argjson min "$(( ($(date +%s) - T0) / 60 ))" --arg resumen "${2:-}" --arg puerta "${3:-}" '
+    --arg etapa "$ETAPA" --arg fase "$FASE" --arg t "$(tarjeta_id)" --arg h0 "$HEAD0" --arg h1 "$head1" \
+    --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" --argjson min "$(( ($(date +%s) - T0) / 60 ))" --arg resumen "${2:-}" --arg puerta "${3:-}" \
+    --arg arnes "$(arnes_commit)" --arg node "$(node -v 2>/dev/null || true)" --arg ejec "${EJEC:-}" '
+    # con qué se hizo: un valor si todas las ejecuciones coinciden, la lista si no, null si ninguna lo dijo
+    def uno: map(select(. != null and . != "")) | unique | if length == 0 then null elif length == 1 then .[0] else . end;
     {ts: $ts, etapa: $etapa, fase: (if $fase == "" then null else $fase end), tarjeta: (if $t == "" then null else $t end),
      resultado: ($res.outcome // null), motivo: ($res.reason // null), resumen: (if $resumen == "" then null else $resumen end),
      puerta: (if $puerta == "" then null else $puerta end), minutos: $min,
      ejecuciones: [$ej[] | .run], coste_usd: ([$ej[] | .cost_usd // 0] | add // 0), turnos: ([$ej[] | .turns // 0] | add // 0),
      head_antes: $h0, head_despues: $h1, tests_codigo: $r,
      subpaso: (if $sub == "" then null else $sub end), segundos: $seg, segundos_sin_llm: ([$seg - $sllm, 0] | max),
-     carga: $carga} + (if ($rondas | length) > 0 then {rondas_adversariales: $rondas} else {} end)' >> .sdd/hermes/etapas.jsonl 2>/dev/null || true
+     carga: $carga,
+     arnes: (if $arnes == "" then null else $arnes end), ejecutor: (if $ejec == "" then null else $ejec end),
+     claude_code: ([$ej[] | .versiones.claude_code?] | uno),
+     modelo: ([$ej[] | (.versiones.modelos? // [] | .[]), (if (.versiones.modelos? // [] | length) == 0 then .versiones.modelo? else empty end)] | uno),
+     node: (([$ej[] | .versiones.node?] | uno) // (if $node == "" then null else $node end)),
+     imagen: ([$ej[] | .versiones.imagen?] | uno)} + (if ($rondas | length) > 0 then {rondas_adversariales: $rondas} else {} end)' >> .sdd/hermes/etapas.jsonl 2>/dev/null || true
 }
 huerfanos() {  # servidores de este proyecto que dejó una ejecución (vite, el de las pruebas): ocupan el puerto y la
   # siguiente etapa se pelea con ellos (club, FASE-3: 30 min de e2e colgados hasta matarlos). Solo los de su node_modules

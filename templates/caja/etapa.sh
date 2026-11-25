@@ -10,6 +10,8 @@ git config --global --add safe.directory "$P"
 S=${CAJA_SALIDA:-/salida}; BASE=$(git rev-parse HEAD); echo "$BASE" > "$S/base"
 git config user.name "$(jq -r .nombre .sdd/hermes/caja/identidad.json)"
 git config user.email "$(jq -r .email .sdd/hermes/caja/identidad.json)"
+# con qué corre la caja (va a etapas.jsonl): el Claude Code y el Node de DENTRO, que no son los del orquestador
+jq -nc --arg c "$(claude --version 2>/dev/null | head -1)" --arg n "$(node -v 2>/dev/null)" '{claude_code:$c, node:$n}' > "$S/versiones.json" 2>/dev/null || true
 bash "$A"/metodo/scripts/install-git-hooks.sh -C . --quiet || true
 if [ -f package.json ] && grep -q '"@playwright/test"' package.json; then
   (npm ci --no-audit --no-fund || npm install --no-audit --no-fund) >/dev/null 2>&1 || true

@@ -30,6 +30,12 @@ fi
 }
 
 caja_resultado() {
+# con qué se hizo: lo que declaró la caja ($S/versiones.json: Claude Code, Node y, en GitHub, la imagen del runner)
+# sobre lo que ya sabía el ejecutor (imagen local, modelo pedido), y el modelo usado de verdad (modelUsage)
+local vc='{}' mu='[]'
+jq -e 'type == "object"' "$S/versiones.json" >/dev/null 2>&1 && vc=$(jq -c . "$S/versiones.json")
+jq -e . "$OUT" >/dev/null 2>&1 && mu=$(jq -c '.modelUsage // {} | keys' "$OUT" 2>/dev/null || echo '[]')
+VERSIONES=$(jq -nc --arg v "${VERSIONES:-}" --argjson c "$vc" --argjson m "${mu:-[]}" '(($v | fromjson?) // {}) + $c + {modelos: $m}' 2>/dev/null || echo "${VERSIONES:-}")
 CUOTA='usage limit|rate limit|limit reached|weekly limit|daily limit|session limit'
 if ! jq -e . "$OUT" >/dev/null 2>&1; then
   grep -qiE "$CUOTA" "$ERR" 2>/dev/null && salir scheduled "cuota de Claude agotada" "{\"minutes\":$MIN}"

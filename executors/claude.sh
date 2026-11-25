@@ -25,15 +25,19 @@ salir() {  # salir <outcome> <reason> [extra-json]
     mkdir -p "${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}"
     jq -n --arg r "$r" --arg m "$(echo "$x" | jq -r '.motivo // "cuota"')" '{reset_at: ($r|tonumber), motivo: $m}' > "${HERMES_SDD_HOME:-$HOME/.hermes/hermes-sdd}/cuota.json"
   fi
-  jq -nc --arg o "$1" --arg r "$2" --arg run "$RUN" --argjson x "$x" '{outcome:$o, reason:$r, run:$run} + $x'
+  [ -s "${VF:-}" ] && VERSIONES=$(jq -c --arg c "$(head -1 "$VF")" '. + {claude_code: $c}' <<< "${VERSIONES:-}" 2>/dev/null || echo "${VERSIONES:-}")
+  local v=${VERSIONES:-}; jq -e 'type == "object"' <<< "$v" >/dev/null 2>&1 || v='{}'   # con qué se hizo (va a etapas.jsonl)
+  jq -nc --arg o "$1" --arg r "$2" --arg run "$RUN" --argjson x "$x" --argjson v "$v" '{outcome:$o, reason:$r, run:$run} + $x + (if $v == {} then {} else {versiones:$v} end)'
   exit 0
 }
 
 # ── Candado (lib/candado.sh): el de la etapa que nos lanzó o, a mano, uno propio ─────────────────────────────────────
 . "$ROOT/lib/candado.sh"
 candado_tomar "$REPO" ejecutor "$RUN" || salir busy "ya hay una ejecución viva en este repo ($CANDADO_OTRO)"
-CPID=""
+CPID=""; VPID=""; VF=""
 limpiar() {
+  [ -n "$VPID" ] && kill -TERM "$VPID" 2>/dev/null
+  [ -n "$VF" ] && rm -f "$VF" 2>/dev/null
   [ -n "$CPID" ] && kill -TERM -- "-$CPID" 2>/dev/null
   rm -f "$LOCK/claude" 2>/dev/null
   [ -s "$ERR" ] || rm -f "$ERR"   # un .err vacío no dice nada (el taller acumuló 37): solo queda si Claude escribió algo
@@ -64,6 +68,14 @@ if [ -n "$NODE1" ] && [ "$(mayor "$NODE1")" != "$QUIERO" ]; then
     PATH_LIMPIO="$LTS:$PATH_LIMPIO"; break
   done
 fi
+# Con qué corre: versión de Node (la de este PATH) y el modelo pedido; al acabar, el modelo usado. La versión de Claude
+# Code se pregunta aparte y sin esperarla (20 s como mucho; muere con el supervisor): si «claude --version» se cuelga,
+# la etapa no se queda parada ni deja un proceso suelto. salir() la recoge si llegó
+VERSIONES=$(jq -nc --arg n "$(PATH="$PATH_LIMPIO" node -v 2>/dev/null || true)" --arg m "$MODELO" \
+  '{claude_code: null, node: (if $n == "" then null else $n end), modelo: (if $m == "" then null else $m end)}' 2>/dev/null || echo '{}')
+VF="$DIR/runs/$RUN.version"
+perl -e 'alarm 20; exec @ARGV' "$BIN" --version > "$VF" 2>/dev/null &
+VPID=$!
 # Las decisiones, las puertas y el estado de Hermes no se escriben desde una etapa: una decisión «humana» fabricada la
 # firmaría el notario. Las herramientas de edición lo tienen denegado siempre. Las etapas sin navegador (SDD_SANDBOX=1,
 # lo decide etapa.sh) corren además con el sandbox de Claude Code: su Bash solo escribe en el repo (menos
@@ -138,6 +150,7 @@ if ! jq -e . "$OUT" >/dev/null 2>&1; then
   salir failed "Claude Code no devolvió JSON (rc=$RC): $(tail -c 300 "$ERR" | tr '\n' ' ')"
 fi
 TEXTO=$(jq -r '.result // ""' "$OUT")
+VERSIONES=$(jq -c --slurpfile o "$OUT" '. + {modelos: ($o[0].modelUsage // {} | keys)}' <<< "$VERSIONES" 2>/dev/null || echo "$VERSIONES")
 if jq -e '(.subtype // "") | test("budget")' "$OUT" >/dev/null 2>&1; then   # --max-budget-usd alcanzado
   salir failed "la ejecución llegó a su tope de gasto (${SDD_TOPE_USD:-?} \$): para seguir, sube topes.etapa_usd o topes.proyecto_usd" \
     "$(jq -c --argjson m "$MIN" '{session_id, cost_usd: .total_cost_usd, turns: .num_turns, minutes: $m, tope: "gasto"}' "$OUT")"

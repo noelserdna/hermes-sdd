@@ -148,7 +148,10 @@ Cierre propuesto, por capas:
 ## Datos (fase 0)
 - **`.sdd/hermes/etapas.jsonl`**, escrito por `fin()` de `etapa.sh`: etapa, FASE, tarjeta, resultado, motivo,
   ejecuciones, coste y turnos sumados (hoy se pierde el de la primera llamada cuando hay dos), minutos, HEAD antes y
-  después, y en `implementar` la proporción tests/código.
+  después, y en `implementar` la proporción tests/código. Y con qué se hizo: `arnes` (commit del arnés, o
+  `<versión>-<commit>` si está instalado), `ejecutor`, `claude_code`, `modelo` (el usado; si no consta, el pedido),
+  `node` e `imagen` (la de la caja, si la hubo): un valor si todas las ejecuciones de la etapa coinciden, la lista si
+  no, `null` si nadie lo dijo. `tarjeta` es `HERMES_KANBAN_TASK` o, si no llega, la tarjeta en marcha con esa orden.
 - **`puertas.jsonl`** por proyecto, al firmar: tiempo hasta decidir, quién, si se deshizo a Jev, texto de los cambios.
 - **`estado` (`hsdd_proyectos.py estado <repo> --json`)**: lo que hoy calcula `_resumen_proyecto` + candado + puertas
   + últimas etapas. Lo usan el encargado, `/estado` y el panel.

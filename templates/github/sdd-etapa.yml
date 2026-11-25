@@ -81,6 +81,9 @@ jobs:
         run: |
           S="$RUNNER_TEMP/salida"; mkdir -p "$S"; BASE=$(cat "$RUNNER_TEMP/base")
           echo "$BASE" > "$S/base"
+          # con qué corrió (va a etapas.jsonl): Claude Code, Node y la imagen del runner
+          jq -nc --arg c "$(claude --version 2>/dev/null | head -1)" --arg n "$(node -v 2>/dev/null)" --arg i "github:${ImageOS:-?}-${ImageVersion:-?}" \
+            '{claude_code:$c, node:$n, imagen:$i}' > "$S/versiones.json" 2>/dev/null || true
           [ "$(git rev-parse HEAD)" = "$BASE" ] || git bundle create "$S/commits.bundle" "$BASE..HEAD"
           git add -A -N 2>/dev/null || true   # lo nuevo sin commit también (montana12 G-3)
           git diff HEAD --binary > "$S/pendiente.patch"
