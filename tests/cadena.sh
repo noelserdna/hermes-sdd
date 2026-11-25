@@ -214,7 +214,9 @@ a="$(SDD_FASE=1 sm)"; b="$(env -u SDD_FASE bash -c "$(declare -f sm); pw=$pw; sm
 # daba por «tocada» y la FASE-0 falló dos veces. Una versión anterior de la plantilla se pone al día con su propio
 # commit; la que el agente tocó (no es ninguna versión del arnés) sigue siendo una regla rota
 g6="$tmp/g6"; rm -rf "$g6"; cp -R "$m12" "$g6"
-(cd "$g6" && git init -q -b main && git add -A && git -c user.email=t@t -c user.name=t commit -qm banco)
+# la identidad, en el repo: plantilla_al_dia hace su commit con ella, como toda etapa (Linux no tiene una global ni la
+# deduce: en el CI de Linux el commit fallaba con «Author identity unknown» y la plantilla quedaba copiada sin commit)
+(cd "$g6" && git init -q -b main && git config user.email t@t && git config user.name t && git add -A && git commit -qm banco)
 d="$(cd "$g6" && ROOT="$AQUI" SDD="$SDD" FASE=0 bash -c '. "$ROOT/lib/comun.sh"; plantilla_al_dia >/dev/null 2>&1; duras_implementar' 2>&1 | grep 'evidence.js' || true)"
 if [ -z "$d" ] && cmp -s "$g6/tests/e2e/fixtures/evidence.js" "$AQUI/templates/stacks/web-vite/tests/e2e/fixtures/evidence.js" \
    && git -C "$g6" log -1 --format=%s | grep -q 'plantilla'; then ok "montana12 G-6: la plantilla anterior se pone al día con su commit y no es una regla rota"
