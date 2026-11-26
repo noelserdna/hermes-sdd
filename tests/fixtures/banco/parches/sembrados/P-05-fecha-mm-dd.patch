@@ -1,0 +1,25 @@
+diff --git a/src/ui/campo-fecha.js b/src/ui/campo-fecha.js
+index abcc395..f30fdee 100644
+--- a/src/ui/campo-fecha.js
++++ b/src/ui/campo-fecha.js
+@@ -9,17 +9,17 @@ const ISO = /^(\d{4})-(\d{2})-(\d{2})$/;
+ export function aIso(texto) {
+   const t = String(texto ?? '').trim();
+   const m = DIA_MES_ANYO.exec(t);
+-  return m ? `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}` : t;
++  return m ? `${m[3]}-${m[1].padStart(2, '0')}-${m[2].padStart(2, '0')}` : t;
+ }
+ 
+ /** «2026-12-05» → «05/12/2026»; lo que no es un AAAA-MM-DD se deja como está. */
+ export function aVisible(texto) {
+   const m = ISO.exec(String(texto ?? '').trim());
+-  return m ? `${m[3]}/${m[2]}/${m[1]}` : texto;
++  return m ? `${m[2]}/${m[3]}/${m[1]}` : texto;
+ }
+ 
+ export function campoFecha(atributos = {}) {
+-  const campo = el('input', { type: 'text', inputmode: 'numeric', autocomplete: 'off', placeholder: 'dd/mm/aaaa', ...atributos });
++  const campo = el('input', { type: 'text', inputmode: 'numeric', autocomplete: 'off', placeholder: 'mm/dd/aaaa', ...atributos });
+   campo.addEventListener('change', () => { campo.value = aVisible(campo.value); });
+   return campo;
+ }

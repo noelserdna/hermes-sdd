@@ -1,0 +1,13 @@
+diff --git a/src/server/dominio/fechas.js b/src/server/dominio/fechas.js
+index 9d54e97..742996d 100644
+--- a/src/server/dominio/fechas.js
++++ b/src/server/dominio/fechas.js
+@@ -2,7 +2,7 @@
+ import { readFileSync } from 'node:fs';
+ import path from 'node:path';
+ 
+-const ZONA = 'Europe/Madrid';
++const ZONA = 'UTC';
+ const formato = new Intl.DateTimeFormat('sv-SE', { timeZone: ZONA, year: 'numeric', month: '2-digit', day: '2-digit' });
+ 
+ export const diaEnMadrid = (fecha) => formato.format(fecha);

@@ -1,0 +1,12 @@
+diff --git a/AGENTS.md b/AGENTS.md
+index e0b4e1e..1eddfb9 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -16,6 +16,7 @@ Stack elegido al crear el proyecto: Web con Vite (JavaScript) (JavaScript (ES mo
+ - lint: npm run lint
+ - acceptance: npx playwright test
+ - narration: required
++- acceptance_gate: off
+ 
+ ## Convenciones
+ - Código y textos de la interfaz en español (o el idioma del proyecto).

@@ -1,0 +1,16 @@
+diff --git a/src/ui/router.js b/src/ui/router.js
+index 9ea30e9..a58ef32 100644
+--- a/src/ui/router.js
++++ b/src/ui/router.js
+@@ -7,10 +7,9 @@ export function crearRouter({ raiz, api, T, paginas, entrar, sinPermiso, destino
+   let pintando = 0;
+   const avisos = crearAvisos(T);
+   let dueno = null;   // quién hizo los avisos que hay: nunca pasan a otra sesión
+-  const vaciarAvisos = () => { avisos.vaciar(); dueno = null; };
++  const vaciarAvisos = () => { dueno = null; };
+   const adoptar = (sesion) => {
+     const clave = `${sesion?.rol}|${sesion?.nombre}`;
+-    if (dueno !== null && dueno !== clave) avisos.vaciar();
+     dueno = clave;
+   };
+ 

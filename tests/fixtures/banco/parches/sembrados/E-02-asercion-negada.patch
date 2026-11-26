@@ -1,0 +1,26 @@
+diff --git a/src/server/mensajes.js b/src/server/mensajes.js
+index e5e93e8..5759a0a 100644
+--- a/src/server/mensajes.js
++++ b/src/server/mensajes.js
+@@ -51,7 +51,7 @@ export const EXITOS = {
+   sinMultasPropias: 'No tienes multas',
+   sinHistorial: 'Sin préstamos ni multas',
+   multaPagada: 'Multa pagada',
+-  socioCreado: 'Socio creado: {nombre}',
++  socioCreado: 'Socio registrado: {nombre}',
+   provisionalGuardada: 'Contraseña provisional guardada para {nombre}',
+   socioDeBaja: 'Socio dado de baja: {nombre}',
+ };
+diff --git a/tests/integration/socios.test.js b/tests/integration/socios.test.js
+index 9b9e5f2..81eed0a 100644
+--- a/tests/integration/socios.test.js
++++ b/tests/integration/socios.test.js
+@@ -30,7 +30,7 @@ describe('UC-003 · API-001-04 registerMember', () => {
+     const pablo = await sesionDe(PABLO);
+     const r = await alta(pablo, MARTA);
+     expect(r.estado).toBe(200);
+-    expect(r.cuerpo.mensaje).toBe('Socio creado: Marta Ruiz');
++    expect(r.cuerpo.mensaje).not.toBe('Socio creado: Marta Ruiz');
+     expect(JSON.stringify(r.cuerpo)).not.toMatch(/hash|scrypt|Provisional1/i);
+     const marta = (await cuentas()).find((c) => c.email === 'marta@club.test');
+     expect(marta).toMatchObject({ name: 'Marta Ruiz', role: 'socio', mustChangePassword: true, active: true });

@@ -1,0 +1,13 @@
+diff --git a/src/domain/permisos.js b/src/domain/permisos.js
+index 7a5bcf9..46bbf6f 100644
+--- a/src/domain/permisos.js
++++ b/src/domain/permisos.js
+@@ -79,7 +79,7 @@ export function autorizar(ctx, db, operacion) {
+   const cuenta = sesion && db.cuentas.find((c) => c.id === sesion.cuentaId);
+   if (!sesion || !cuenta) throw new ErrorDominio('E_NO_AUTENTICADO');
+   const ahora = ctx.reloj.ahora();
+-  if (ahora - Date.parse(sesion.ultimaActividad) > SESSION_IDLE_MINUTES * 60 * 1000) {
++  if (ahora - Date.parse(sesion.ultimaActividad) >= SESSION_IDLE_MINUTES * 60 * 1000) {
+     db.sesiones = db.sesiones.filter((s) => s.id !== sesion.id);
+     throw Object.assign(new ErrorDominio('E_SESION_CADUCADA'), { conservarCambios: true });
+   }

@@ -1,0 +1,298 @@
+{
+ "descripcion": "Defectos sembrados sobre los proyectos congelados del banco (M2a). Cada parche se aplica con `git apply` en la raíz de una copia del proyecto. «senal» es un texto que el fichero contiene solo con el defecto. «tests_del_proyecto» es lo que dio `npx vitest run` del propio proyecto con el parche aplicado (sin e2e); la base da 320/320 en montana12 y 246/246 en montana11.",
+ "base": {
+  "material-montana11": "246 pasan",
+  "material-montana12": "320 pasan"
+ },
+ "defectos": [
+  {
+   "id": "P-01-doble-envio",
+   "proyecto": "material-montana12",
+   "tipo": "producto",
+   "criterio": "REQ-F-003 (SCR-004, reservar)",
+   "descripcion": "El formulario «Reservar» deja enviar otra vez mientras la primera petición está en curso: un doble clic crea dos reservas iguales.",
+   "manifestacion": "Doble clic en «Reservar»: Mis reservas muestra la misma reserva dos veces y se ocupan el doble de unidades.",
+   "parche": "P-01-doble-envio.patch",
+   "senal": {
+    "fichero": "src/ui/paginas/reservar.js",
+    "texto": "      e.preventDefault();\n      try {"
+   },
+   "origen": "errores-montana7 M7-3 (CH-003, doble envío crea reserva duplicada)",
+   "tests_del_proyecto": {
+    "vitest": "319 pasan, 1 fallan, 0 saltados",
+    "rojos": [
+     "SCR-004 Reservar con formulario mientras se envía no admite un segundo envío del mismo formulario"
+    ],
+    "e2e": "sin ejecutar (no hay navegador en la caja de medición)"
+   }
+  },
+  {
+   "id": "P-02-avisos-de-otro-socio",
+   "proyecto": "material-montana12",
+   "tipo": "producto",
+   "criterio": "REQ-NF-001 (Statement: cada rol solo ve lo suyo; FASE-3)",
+   "descripcion": "Los avisos de la sesión no se vacían al salir ni al entrar otra persona: pasan de una sesión a otra.",
+   "manifestacion": "El encargado da de baja a Marta, sale y entra Lucía: en Mis reservas de Lucía se ve «Socio dado de baja: Marta Ruiz».",
+   "parche": "P-02-avisos-de-otro-socio.patch",
+   "senal": {
+    "fichero": "src/ui/router.js",
+    "texto": "const vaciarAvisos = () => { dueno = null; };"
+   },
+   "origen": "errores-montana12 MT12-8 (rechazo de la FASE-3 por fuga de avisos)",
+   "tests_del_proyecto": {
+    "vitest": "317 pasan, 3 fallan, 0 saltados",
+    "rojos": [
+     "Avisos de sesión: un socio no ve nada de otro el encargado da de baja a Marta, sale, entra Lucía y no ve «Socio dado de baja: Marta Ruiz» ni en Entrar ni en Mis reservas",
+     "Avisos de sesión: un socio no ve nada de otro si la sesión cambia sin pulsar «Salir» (caducó, otra pestaña), el aviso del encargado tampoco pasa a Lucía",
+     "Avisos de sesión: un socio no ve nada de otro si el servidor ya tiene a otra persona en la sesión, sus páginas no enseñan los avisos de la anterior"
+    ],
+    "e2e": "sin ejecutar (no hay navegador en la caja de medición)"
+   }
+  },
+  {
+   "id": "P-03-dia-en-utc",
+   "proyecto": "material-montana12",
+   "tipo": "producto",
+   "criterio": "RN-022 («hoy» es el día de Madrid); REQ-F-003, REQ-F-004, REQ-F-005",
+   "descripcion": "«Hoy» se calcula en UTC en vez de en Europe/Madrid.",
+   "manifestacion": "Entre las 00:00 y la 01:00 (02:00 en verano) de Madrid la app usa el día anterior: deja cancelar una reserva que empieza hoy, no deja reservar para hoy y las multas cuentan un día menos.",
+   "parche": "P-03-dia-en-utc.patch",
+   "senal": {
+    "fichero": "src/server/dominio/fechas.js",
+    "texto": "const ZONA = 'UTC';"
+   },
+   "origen": "producto-montana del análisis 11 (montana8 IF-2-003, entregado con el día en UTC) y la prueba «completa»",
+   "tests_del_proyecto": {
+    "vitest": "318 pasan, 2 fallan, 0 saltados",
+    "rojos": [
+     "RN-022 reloj hoy sale del reloj inyectado, en hora de Madrid",
+     "fechas ISO diaEnMadrid, sumarDias y diasEntre trabajan con AAAA-MM-DD"
+    ],
+    "e2e": "sin ejecutar (no hay navegador en la caja de medición)"
+   }
+  },
+  {
+   "id": "P-04-ch006-datos-sin-sesion",
+   "proyecto": "material-montana11",
+   "tipo": "producto",
+   "criterio": "REQ-NF-001 AC2 (datos solo para su dueño)",
+   "descripcion": "Se quita el arreglo de CH-006: la guarda del directorio de datos ya no mira la dirección sin el prefijo /@id/ ni junta las barras dobles.",
+   "manifestacion": "Sin sesión, GET /@id/<ruta>/data/almacen.json?import (o //data/almacen.json) devuelve el fichero de datos entero.",
+   "parche": "P-04-ch006-datos-sin-sesion.patch",
+   "senal": {
+    "fichero": "src/server/plugin.js",
+    "texto": "  for (const l of [limpia]) {"
+   },
+   "origen": "errores-montana11 MT11-8 y MT11-9 (CH-006 BYPASS-PATH, rechazo de la FASE-5)",
+   "tests_del_proyecto": {
+    "vitest": "245 pasan, 1 fallan, 0 saltados",
+    "rojos": [
+     "REQ-NF-001 AC2 direcciones del fichero de datos con el servidor de Vite real REQ-NF-001 AC2 SEC-T-002 sin sesión ninguna forma de pedir el fichero de datos (?import, /@id/, //, dirección absoluta) se rechaza con 401 y sin su contenido"
+    ],
+    "e2e": "sin ejecutar (no hay navegador en la caja de medición)"
+   }
+  },
+  {
+   "id": "P-05-fecha-mm-dd",
+   "proyecto": "material-montana12",
+   "tipo": "producto",
+   "criterio": "REQ-C-001 (textos en español; formato dd/mm/aaaa)",
+   "descripcion": "El campo de fecha pasa a mes/día/año: se enseña y se lee «12/05/2026» como 5 de diciembre.",
+   "manifestacion": "En Reservar y en el panel la fecha se ve como mm/dd/aaaa y lo tecleado en dd/mm/aaaa se manda con el día y el mes cambiados.",
+   "parche": "P-05-fecha-mm-dd.patch",
+   "senal": {
+    "fichero": "src/ui/campo-fecha.js",
+    "texto": "placeholder: 'mm/dd/aaaa'"
+   },
+   "origen": "errores-montana12 MT12-7 (observación de cliente: fechas mm/dd/yyyy en la FASE-2)",
+   "tests_del_proyecto": {
+    "vitest": "316 pasan, 4 fallan, 0 saltados",
+    "rojos": [
+     "REQ-C-001 campos de fecha en día/mes/año el campo enseña el formato «dd/mm/aaaa» y la ayuda dice «Formato DD/MM/AAAA»",
+     "REQ-C-001 campos de fecha en día/mes/año «05/12/2026» se envía como «2026-12-05»; con ceros que faltan, «5/1/2026» como «2026-01-05»",
+     "REQ-C-001 campos de fecha en día/mes/año un valor ya en AAAA-MM-DD se envía igual y al salir del campo se enseña como «05/12/2026»",
+     "REQ-C-001 campos de fecha en día/mes/año lo que no es una fecha se envía tal cual, para que el servidor conteste «Elige una fecha válida»"
+    ],
+    "e2e": "sin ejecutar (no hay navegador en la caja de medición)"
+   }
+  },
+  {
+   "id": "P-06-borde-30-minutos",
+   "proyecto": "material-montana11",
+   "tipo": "producto",
+   "criterio": "REQ-F-001 AC6 (caducidad de la sesión; spec: inactividad superior a SESSION_IDLE_MINUTES)",
+   "descripcion": "La sesión caduca con `>=` en vez de `>`: a los 30:00 justos ya se cierra.",
+   "manifestacion": "Con exactamente 30 minutos de inactividad la sesión ya ha caducado; los tests avanzan 31 minutos y no lo ven.",
+   "parche": "P-06-borde-30-minutos.patch",
+   "senal": {
+    "fichero": "src/domain/permisos.js",
+    "texto": ">= SESSION_IDLE_MINUTES * 60 * 1000"
+   },
+   "origen": "análisis 11, mejoras de evidencia (borde de los 30 minutos superviviente) y metodo-plan-impl",
+   "tests_del_proyecto": {
+    "vitest": "245 pasan, 1 fallan, 0 saltados",
+    "rojos": [
+     "UC-002 sesión AC-002-04 la actividad renueva: una operación válida a los 29 min mantiene viva la sesión (INV-ACC-005)"
+    ],
+    "e2e": "sin ejecutar (no hay navegador en la caja de medición)"
+   }
+  },
+  {
+   "id": "P-07-guarda-de-titular",
+   "proyecto": "material-montana12",
+   "tipo": "producto",
+   "criterio": "REQ-F-004 (cancelar mis reservas), REQ-NF-001, INV-RES-010",
+   "descripcion": "Cancelar una reserva ya no comprueba que sea de quien está en la sesión.",
+   "manifestacion": "Un socio que manda POST /api/reservas/<id de otro>/cancelar cancela la reserva ajena.",
+   "parche": "P-07-guarda-de-titular.patch",
+   "senal": {
+    "fichero": "src/server/servicios/prestamos.js",
+    "texto": "    const reserva = d.reservas.find((r) => r.id === id);\n    if (!reserva) throw error('E_ACCESO_DENEGADO');"
+   },
+   "origen": "producto-montana del análisis 11 (aislamiento entre usuarios) e INV-RES-010 de montana12",
+   "tests_del_proyecto": {
+    "vitest": "318 pasan, 2 fallan, 0 saltados",
+    "rojos": [
+     "SEC-T-001 un socio solo ve lo suyo REQ-NF-001 AC1 Lucía pide por id una reserva o una multa de Pablo y recibe «Acceso denegado» sin ningún dato de él",
+     "API-002-03 cancelReservation (UC-009) AC-009-05 INV-RES-010 la reserva de otro socio, una inexistente y un rol que no es socio se rechazan igual y sin cambios"
+    ],
+    "e2e": "sin ejecutar (no hay navegador en la caja de medición)"
+   }
+  },
+  {
+   "id": "E-01-expect-true",
+   "proyecto": "material-montana12",
+   "tipo": "evidencia",
+   "criterio": "REQ-NF-001 AC2",
+   "descripcion": "El test del criterio conserva el título con el id y los literales, pero su cuerpo es `expect(true).toBe(true)`.",
+   "manifestacion": "El test pasa aunque la junta pudiera entregar, devolver o marcar pagada; el literal «Acceso denegado» solo está en el título.",
+   "parche": "E-01-expect-true.patch",
+   "senal": {
+    "fichero": "tests/integration/aislamiento.test.js",
+    "texto": "    expect(true).toBe(true);"
+   },
+   "origen": "cli-metodo del análisis 11 (experimento: `expect(true)` con el literal en el título da 0 errores en lint --quotes)",
+   "tests_del_proyecto": {
+    "vitest": "320 pasan, 0 fallan, 0 saltados",
+    "rojos": [],
+    "e2e": "sin ejecutar (no hay navegador en la caja de medición)"
+   }
+  },
+  {
+   "id": "E-02-asercion-negada",
+   "proyecto": "material-montana12",
+   "tipo": "evidencia",
+   "criterio": "REQ-F-002 AC1 (API-001-04)",
+   "descripcion": "La aserción del literal se niega (`.not.toBe`) y el mensaje del servidor se cambia a «Socio registrado: {nombre}».",
+   "manifestacion": "El test de integración sigue en verde con el literal en su fichero, y la app dice «Socio registrado: Marta Ruiz» en vez de «Socio creado: Marta Ruiz».",
+   "parche": "E-02-asercion-negada.patch",
+   "senal": {
+    "fichero": "tests/integration/socios.test.js",
+    "texto": ".not.toBe('Socio creado: Marta Ruiz')"
+   },
+   "origen": "cli-metodo del análisis 11 (aserción negada con el literal pasa lint --quotes)",
+   "tests_del_proyecto": {
+    "vitest": "320 pasan, 0 fallan, 0 saltados",
+    "rojos": [],
+    "e2e": "sin ejecutar (no hay navegador en la caja de medición)"
+   }
+  },
+  {
+   "id": "E-03-skip",
+   "proyecto": "material-montana12",
+   "tipo": "evidencia",
+   "criterio": "REQ-NF-001 AC1",
+   "descripcion": "El test ligado al criterio se marca `it.skip`.",
+   "manifestacion": "La suite sale en verde con un test saltado: el criterio queda sin ejecutar.",
+   "parche": "E-03-skip.patch",
+   "senal": {
+    "fichero": "tests/integration/aislamiento.test.js",
+    "texto": "it.skip('REQ-NF-001 AC1 Lucía pide por id"
+   },
+   "origen": "plan nocturno M2a (evidencia: .skip en un test ligado a criterio)",
+   "tests_del_proyecto": {
+    "vitest": "319 pasan, 0 fallan, 1 saltados",
+    "rojos": [],
+    "e2e": "sin ejecutar (no hay navegador en la caja de medición)"
+   }
+  },
+  {
+   "id": "E-04-junit-a-mano",
+   "proyecto": "material-montana12",
+   "tipo": "evidencia",
+   "criterio": "REQ-F-003 AC1 (Reserva creada)",
+   "descripcion": "El mensaje de reserva creada pasa a «Reserva hecha: …» y el JUnit de la última FASE se reescribe a mano: mismos testcase en verde con fecha posterior.",
+   "manifestacion": "Ejecutar vitest da rojo en los tests del literal, pero .sdd/junit/fase-5.xml dice 320 en verde y más nuevo que el código.",
+   "parche": "E-04-junit-a-mano.patch",
+   "senal": {
+    "fichero": ".sdd/junit/fase-5.xml",
+    "texto": "timestamp=\"2026-11-23T09:00:00.000Z\""
+   },
+   "origen": "cli-metodo del análisis 11 (VERIFIED se apoya en un JUnit que escribe el propio ejecutor; el arnés no re-ejecuta)",
+   "tests_del_proyecto": {
+    "vitest": "319 pasan, 1 fallan, 0 saltados",
+    "rojos": [
+     "API-002-01 reserve (UC-007) crea una reserva Reservada de la cuenta de la sesión y responde con su texto"
+    ],
+    "e2e": "sin ejecutar (no hay navegador en la caja de medición)"
+   }
+  },
+  {
+   "id": "E-05-captura-de-otra-pantalla",
+   "proyecto": "material-montana12",
+   "tipo": "evidencia",
+   "criterio": "REQ-F-002 AC1 (AC-003-01)",
+   "descripcion": "El e2e del criterio va a Material antes de capturar y llama a la captura sin «ve»: la imagen del criterio es de otra pantalla.",
+   "manifestacion": "AC-003-01.png muestra Material, no Socios con «Socio creado: Marta Ruiz» y «Marta Ruiz — Activo»; su JSON lleva url /material y ve vacío.",
+   "parche": "E-05-captura-de-otra-pantalla.patch",
+   "senal": {
+    "fichero": "tests/e2e/fase-3-alta-primer-acceso.spec.js",
+    "texto": "    await page.goto('/material');\n    await capturarPantalla(page, testInfo, 'AC-003-01');"
+   },
+   "origen": "aceptacion del análisis 11 (la captura solo prueba que el texto estuvo visible en alguna pantalla)",
+   "tests_del_proyecto": {
+    "vitest": "320 pasan, 0 fallan, 0 saltados",
+    "rojos": [],
+    "e2e": "sin ejecutar (no hay navegador en la caja de medición)"
+   }
+  },
+  {
+   "id": "E-06-literal-cambiado-tras-firma",
+   "proyecto": "material-montana12",
+   "tipo": "evidencia",
+   "criterio": "REQ-F-002 AC1",
+   "descripcion": "El literal del criterio y su línea «Se ve» se cambian con sed en requirements/REQUIREMENTS.md después de aprobados («Socio dado de alta» por «Socio creado»).",
+   "manifestacion": "El requisito firmado (reqHash del registro de aprobación) ya no es el que hay en el árbol, y el criterio dice un texto que la app no muestra.",
+   "parche": "E-06-literal-cambiado-tras-firma.patch",
+   "senal": {
+    "fichero": "requirements/REQUIREMENTS.md",
+    "texto": "THEN the user sees \"Socio dado de alta: Marta Ruiz\""
+   },
+   "origen": "cli-metodo del análisis 11 (los requisitos firmados pueden cambiar después sin que nada mecánico lo vea)",
+   "tests_del_proyecto": {
+    "vitest": "320 pasan, 0 fallan, 0 saltados",
+    "rojos": [],
+    "e2e": "sin ejecutar (no hay navegador en la caja de medición)"
+   }
+  },
+  {
+   "id": "E-07-acceptance-gate-off",
+   "proyecto": "material-montana12",
+   "tipo": "evidencia",
+   "criterio": "todos (puerta de aceptación)",
+   "descripcion": "Se añade `- acceptance_gate: off` al SDD Stack Profile de AGENTS.md.",
+   "manifestacion": "sdd accept deja de bloquear: los criterios sin evidencia ya no paran la puerta (acceptance-cli.mjs lee el modo del perfil del árbol).",
+   "parche": "E-07-acceptance-gate-off.patch",
+   "senal": {
+    "fichero": "AGENTS.md",
+    "texto": "- acceptance_gate: off"
+   },
+   "origen": "cli-metodo del análisis 11 (los modos de las puertas viven en un fichero que el ejecutor puede editar; F-07 fuera del camino determinista)",
+   "tests_del_proyecto": {
+    "vitest": "320 pasan, 0 fallan, 0 saltados",
+    "rojos": [],
+    "e2e": "sin ejecutar (no hay navegador en la caja de medición)"
+   }
+  }
+ ]
+}

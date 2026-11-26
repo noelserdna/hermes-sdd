@@ -1,0 +1,14 @@
+diff --git a/src/ui/paginas/reservar.js b/src/ui/paginas/reservar.js
+index 048160b..ff5d4a3 100644
+--- a/src/ui/paginas/reservar.js
++++ b/src/ui/paginas/reservar.js
+@@ -40,9 +40,6 @@ export async function paginaReservarConFormulario(ctx) {
+     class: 'reservar', novalidate: true,
+     onsubmit: async (e) => {
+       e.preventDefault();
+-      if (enviando) return;
+-      enviando = true;
+-      boton.disabled = true;
+       try {
+         const res = await api.reservar({ materialId: material.value, cantidad: cantidad.value === '' ? null : Number(cantidad.value), inicio: aIso(inicio.value), fin: aIso(fin.value) });
+         if (res.estado === 200) {

@@ -1,0 +1,18 @@
+diff --git a/src/server/plugin.js b/src/server/plugin.js
+index ac27a71..b3aaaaf 100644
+--- a/src/server/plugin.js
++++ b/src/server/plugin.js
+@@ -91,11 +91,9 @@ function apuntaAlDirectorioDeDatos(pathname, archivoDatos, raiz) {
+     try { ruta = decodeURIComponent(ruta); } catch { return true; }   // dirección ilegible: no se sirve nada
+   }
+   if (ruta.includes('\0')) return true;
+-  const limpia = ruta.replaceAll('\\', '/').replace(/\/{2,}/g, '/');   // `//data/x` y `/data//x` son la misma dirección
+-  // `/@id/` (los módulos de Vite) sirve el fichero con `?import`: se mira también la dirección sin ese prefijo
+-  const sinPrefijo = limpia.replace(/^\/@id\//, '/').replace(/^\/__x00__/, '/');
++  const limpia = ruta.replaceAll('\\', '/');
+   const candidatas = [];
+-  for (const l of [limpia, sinPrefijo]) {
++  for (const l of [limpia]) {
+     candidatas.push(path.resolve(raiz, '.' + path.posix.normalize('/' + l)));
+     candidatas.push(path.resolve(l));   // `/@id/ruta/absoluta`
+     if (l.startsWith('/@fs/')) candidatas.push(path.resolve('/', '.' + path.posix.normalize(l.slice('/@fs'.length))));

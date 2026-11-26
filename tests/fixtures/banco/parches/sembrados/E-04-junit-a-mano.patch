@@ -1,0 +1,366 @@
+diff --git a/.sdd/junit/fase-5.xml b/.sdd/junit/fase-5.xml
+index 44c61f6..1d706d1 100644
+--- a/.sdd/junit/fase-5.xml
++++ b/.sdd/junit/fase-5.xml
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8" ?>
+ <testsuites name="vitest tests" tests="320" failures="0" errors="0" time="41.612">
+-    <testsuite name="tests/unit/almacen-json.test.js" timestamp="2026-11-22T20:33:05.673Z" hostname="dd95a7651098" tests="8" failures="0" errors="0" skipped="0" time="0.075153087">
++    <testsuite name="tests/unit/almacen-json.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="8" failures="0" errors="0" skipped="0" time="0.075153087">
+         <testcase classname="tests/unit/almacen-json.test.js" name="ADR-DRAFT-002 almacén JSON &gt; una transacción escribe en .tmp y renombra; al reabrir el fichero devuelve los mismos datos" time="0.008690268">
+         </testcase>
+         <testcase classname="tests/unit/almacen-json.test.js" name="ADR-DRAFT-002 almacén JSON &gt; dos transacciones simultáneas se serializan: no se pierde ninguna" time="0.047037867">
+@@ -18,7 +18,7 @@
+         <testcase classname="tests/unit/almacen-json.test.js" name="VO-010 catálogo de mensajes &gt; rellena los huecos {n}, {material} y {día}" time="0.001022608">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/autorizar-provisional.test.js" timestamp="2026-11-22T20:33:05.677Z" hostname="dd95a7651098" tests="3" failures="0" errors="0" skipped="0" time="0.008323565">
++    <testsuite name="tests/unit/autorizar-provisional.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="3" failures="0" errors="0" skipped="0" time="0.008323565">
+         <testcase classname="tests/unit/autorizar-provisional.test.js" name="INV-SOC-006 authorize con contraseña provisional &gt; AC-004-02 solo se permiten salir y cambiar la contraseña; cualquier otra operación pide cambiarla" time="0.005423243">
+         </testcase>
+         <testcase classname="tests/unit/autorizar-provisional.test.js" name="INV-SOC-006 authorize con contraseña provisional &gt; AC-004-02 de las páginas solo se abre /cambiar-contrasena; el resto lleva allí, también las que el rol no tiene" time="0.000986208">
+@@ -26,7 +26,7 @@
+         <testcase classname="tests/unit/autorizar-provisional.test.js" name="INV-SOC-006 authorize con contraseña provisional &gt; sin la marca el socio no queda atado: las operaciones de siempre siguen permitidas" time="0.000404803">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/autorizar.test.js" timestamp="2026-11-22T20:33:05.679Z" hostname="dd95a7651098" tests="9" failures="0" errors="0" skipped="0" time="0.010998086">
++    <testsuite name="tests/unit/autorizar.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="9" failures="0" errors="0" skipped="0" time="0.010998086">
+         <testcase classname="tests/unit/autorizar.test.js" name="API-001-08 authorize &gt; AC-001-08 un socio en /material recibe E_PAGINA_PROHIBIDA" time="0.00253512">
+         </testcase>
+         <testcase classname="tests/unit/autorizar.test.js" name="API-001-08 authorize &gt; AC-001-08 una operación fuera del rol recibe E_ACCESO_DENEGADO (socio y junta no gestionan material)" time="0.000597804">
+@@ -46,7 +46,7 @@
+         <testcase classname="tests/unit/autorizar.test.js" name="D-PA-008 crearApp &gt; construye almacén, reloj y sesiones con los límites del registro de valores" time="0.002082016">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/disponibilidad.test.js" timestamp="2026-11-22T20:33:05.682Z" hostname="dd95a7651098" tests="7" failures="0" errors="0" skipped="0" time="0.047761973">
++    <testsuite name="tests/unit/disponibilidad.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="7" failures="0" errors="0" skipped="0" time="0.047761973">
+         <testcase classname="tests/unit/disponibilidad.test.js" name="ADR-001 INV-RES-005 ocupadas por día, calculadas desde las reservas &gt; Reservada y Prestada ocupan sus días; Cancelada, Devuelta y No recogida no" time="0.001961816">
+         </testcase>
+         <testcase classname="tests/unit/disponibilidad.test.js" name="ADR-001 INV-RES-005 ocupadas por día, calculadas desde las reservas &gt; solo cuenta las reservas del tipo pedido" time="0.000640705">
+@@ -62,7 +62,7 @@
+         <testcase classname="tests/unit/disponibilidad.test.js" name="INV-MAT-002 retirar solo si cada día ≥ hoy total − n ≥ ocupadas &gt; PROP-022 con reservas aleatorias la baja se acepta si y solo si total − n ≥ ocupadas cada día" time="0.039855711">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/estados.test.js" timestamp="2026-11-22T20:33:05.685Z" hostname="dd95a7651098" tests="3" failures="0" errors="0" skipped="0" time="0.003371826">
++    <testsuite name="tests/unit/estados.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="3" failures="0" errors="0" skipped="0" time="0.003371826">
+         <testcase classname="tests/unit/estados.test.js" name="ADR-002 estado derivado de la reserva (INV-RES-008, SM-001) &gt; una Reservada cuyo fin no ha pasado sigue Reservada, también el último día" time="0.00137631">
+         </testcase>
+         <testcase classname="tests/unit/estados.test.js" name="ADR-002 estado derivado de la reserva (INV-RES-008, SM-001) &gt; una Reservada con fin anterior a hoy es «No recogida» sin que nada se guarde" time="0.000311403">
+@@ -70,7 +70,7 @@
+         <testcase classname="tests/unit/estados.test.js" name="ADR-002 estado derivado de la reserva (INV-RES-008, SM-001) &gt; Prestada, Devuelta y Cancelada se devuelven tal cual, pase o no su fin" time="0.000422303">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/fechas.test.js" timestamp="2026-11-22T20:33:05.687Z" hostname="dd95a7651098" tests="6" failures="0" errors="0" skipped="0" time="0.008595167">
++    <testsuite name="tests/unit/fechas.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="6" failures="0" errors="0" skipped="0" time="0.008595167">
+         <testcase classname="tests/unit/fechas.test.js" name="RN-022 reloj &gt; hoy sale del reloj inyectado, en hora de Madrid" time="0.002094916">
+         </testcase>
+         <testcase classname="tests/unit/fechas.test.js" name="RN-022 reloj &gt; MM_HOY fija el día fuera de producción" time="0.000682505">
+@@ -84,7 +84,7 @@
+         <testcase classname="tests/unit/fechas.test.js" name="fechas ISO &gt; diaEnMadrid, sumarDias y diasEntre trabajan con AAAA-MM-DD" time="0.001176409">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/hoy-fichero.test.js" timestamp="2026-11-22T20:33:05.690Z" hostname="dd95a7651098" tests="3" failures="0" errors="0" skipped="0" time="0.013060302">
++    <testsuite name="tests/unit/hoy-fichero.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="3" failures="0" errors="0" skipped="0" time="0.013060302">
+         <testcase classname="tests/unit/hoy-fichero.test.js" name="MM_HOY_FICHERO: el «hoy» de un e2e (solo desarrollo) &gt; mientras el fichero tenga un día, ese es hoy y manda sobre MM_HOY; sin fichero o con basura vale MM_HOY" time="0.007387457">
+         </testcase>
+         <testcase classname="tests/unit/hoy-fichero.test.js" name="MM_HOY_FICHERO: el «hoy» de un e2e (solo desarrollo) &gt; sin MM_HOY_FICHERO, el día se lee de hoy.txt junto al fichero de MM_RELOJ (la configuración de los e2e no cambia)" time="0.002210717">
+@@ -92,7 +92,7 @@
+         <testcase classname="tests/unit/hoy-fichero.test.js" name="MM_HOY_FICHERO: el «hoy» de un e2e (solo desarrollo) &gt; en producción se ignora" time="0.001874614">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/migraciones.test.js" timestamp="2026-11-22T20:33:05.692Z" hostname="dd95a7651098" tests="4" failures="0" errors="0" skipped="0" time="0.017011633">
++    <testsuite name="tests/unit/migraciones.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="4" failures="0" errors="0" skipped="0" time="0.017011633">
+         <testcase classname="tests/unit/migraciones.test.js" name="INV-SOC-009 migración 002_baja_en (ADR-003, D-PA-003) &gt; abrir un fichero de la versión 1 añade bajaEn: null a cada cuenta sin tocar el resto de los datos" time="0.006737752">
+         </testcase>
+         <testcase classname="tests/unit/migraciones.test.js" name="INV-SOC-009 migración 002_baja_en (ADR-003, D-PA-003) &gt; ejecutarla dos veces no cambia nada: respeta un bajaEn ya guardado" time="0.002076616">
+@@ -102,7 +102,7 @@
+         <testcase classname="tests/unit/migraciones.test.js" name="INV-SOC-009 migración 002_baja_en (ADR-003, D-PA-003) &gt; lo migrado se guarda en la siguiente transacción" time="0.004739737">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/multas-dominio.test.js" timestamp="2026-11-22T20:33:05.693Z" hostname="dd95a7651098" tests="4" failures="0" errors="0" skipped="0" time="0.004189933">
++    <testsuite name="tests/unit/multas-dominio.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="4" failures="0" errors="0" skipped="0" time="0.004189933">
+         <testcase classname="tests/unit/multas-dominio.test.js" name="INV-MUL-004 diasRetraso e importeMulta (ADR-004) &gt; un préstamo que acabó hace 3 días lleva 3 días de retraso y uno que acabó ayer, 1" time="0.002119116">
+         </testcase>
+         <testcase classname="tests/unit/multas-dominio.test.js" name="INV-MUL-004 diasRetraso e importeMulta (ADR-004) &gt; devuelto el último día o antes no hay retraso" time="0.000345703">
+@@ -112,15 +112,15 @@
+         <testcase classname="tests/unit/multas-dominio.test.js" name="INV-MUL-004 diasRetraso e importeMulta (ADR-004) &gt; el importe es FINE_PER_DAY_EUR por día y sin retraso no hay multa" time="0.000241701">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/restriccion-stack.test.js" timestamp="2026-11-22T20:33:05.695Z" hostname="dd95a7651098" tests="1" failures="0" errors="0" skipped="0" time="0.004095131">
++    <testsuite name="tests/unit/restriccion-stack.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="1" failures="0" errors="0" skipped="0" time="0.004095131">
+         <testcase classname="tests/unit/restriccion-stack.test.js" name="REQ-C-002 stack del proyecto &gt; REQ-C-002 AC1 package.json declara vite y vitest y &quot;type&quot;: &quot;module&quot;" time="0.002489919">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/restriccion-textos.test.js" timestamp="2026-11-22T20:33:05.696Z" hostname="dd95a7651098" tests="1" failures="0" errors="0" skipped="0" time="0.033823062">
++    <testsuite name="tests/unit/restriccion-textos.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="1" failures="0" errors="0" skipped="0" time="0.033823062">
+         <testcase classname="tests/unit/restriccion-textos.test.js" name="REQ-C-001 textos en español &gt; REQ-C-001 AC1 los textos de la interfaz no contienen frases en inglés de la lista de control" time="0.032178349">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/sesiones.test.js" timestamp="2026-11-22T20:33:05.697Z" hostname="dd95a7651098" tests="6" failures="0" errors="0" skipped="0" time="0.006941955">
++    <testsuite name="tests/unit/sesiones.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="6" failures="0" errors="0" skipped="0" time="0.006941955">
+         <testcase classname="tests/unit/sesiones.test.js" name="INV-SOC-005 caducidad por inactividad &gt; INV-SOC-005 D-PA-001 con exactamente 30 minutos sin actividad la sesión sigue abierta" time="0.002018516">
+         </testcase>
+         <testcase classname="tests/unit/sesiones.test.js" name="INV-SOC-005 caducidad por inactividad &gt; INV-SOC-005 D-PA-001 a los 30 minutos y 1 segundo la sesión está cerrada y no se recupera" time="0.000462503">
+@@ -134,7 +134,7 @@
+         <testcase classname="tests/unit/sesiones.test.js" name="INV-SOC-005 sesión opaca &gt; cerrarDeCuenta cierra todas las sesiones de esa cuenta y no las de otras" time="0.000664405">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/textos.test.js" timestamp="2026-11-22T20:33:05.699Z" hostname="dd95a7651098" tests="3" failures="0" errors="0" skipped="0" time="0.017498137">
++    <testsuite name="tests/unit/textos.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="3" failures="0" errors="0" skipped="0" time="0.017498137">
+         <testcase classname="tests/unit/textos.test.js" name="REQ-C-001 textos en español (MNT-T-001) &gt; textos.js exporta las entradas que usan las páginas, con el texto literal en español" time="0.001745314">
+         </testcase>
+         <testcase classname="tests/unit/textos.test.js" name="REQ-C-001 textos en español (MNT-T-001) &gt; todo texto exportado es una cadena (o una función que la devuelve) no vacía y sin palabras en inglés" time="0.010565282">
+@@ -142,7 +142,7 @@
+         <testcase classname="tests/unit/textos.test.js" name="REQ-C-001 textos en español (MNT-T-001) &gt; ninguna página lleva texto escrito a mano: solo lo toma de textos.js" time="0.003774729">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/ui/avisos-sesion.test.js" timestamp="2026-11-22T20:33:05.701Z" hostname="dd95a7651098" tests="4" failures="0" errors="0" skipped="0" time="0.136742161">
++    <testsuite name="tests/unit/ui/avisos-sesion.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="4" failures="0" errors="0" skipped="0" time="0.136742161">
+         <testcase classname="tests/unit/ui/avisos-sesion.test.js" name="Avisos de sesión: un socio no ve nada de otro &gt; el encargado da de baja a Marta, sale, entra Lucía y no ve «Socio dado de baja: Marta Ruiz» ni en Entrar ni en Mis reservas" time="0.083266046">
+         </testcase>
+         <testcase classname="tests/unit/ui/avisos-sesion.test.js" name="Avisos de sesión: un socio no ve nada de otro &gt; si la sesión cambia sin pulsar «Salir» (caducó, otra pestaña), el aviso del encargado tampoco pasa a Lucía" time="0.033107357">
+@@ -152,7 +152,7 @@
+         <testcase classname="tests/unit/ui/avisos-sesion.test.js" name="Avisos de sesión: un socio no ve nada de otro &gt; los avisos de quien sigue en la sesión se quedan al cambiar de página" time="0.008401165">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/ui/cambiar-contrasena.test.js" timestamp="2026-11-22T20:33:05.703Z" hostname="dd95a7651098" tests="5" failures="0" errors="0" skipped="0" time="0.067933027">
++    <testsuite name="tests/unit/ui/cambiar-contrasena.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="5" failures="0" errors="0" skipped="0" time="0.067933027">
+         <testcase classname="tests/unit/ui/cambiar-contrasena.test.js" name="SCR-002 Cambiar contraseña &gt; SCR-002 muestra «Elige una contraseña nueva», el campo «Contraseña nueva» con «Mostrar» y el botón «Guardar»" time="0.024987294">
+         </testcase>
+         <testcase classname="tests/unit/ui/cambiar-contrasena.test.js" name="SCR-002 Cambiar contraseña &gt; SCR-002 una contraseña corta enseña el error bajo el campo, lo marca inválido y no navega" time="0.00769156">
+@@ -164,7 +164,7 @@
+         <testcase classname="tests/unit/ui/cambiar-contrasena.test.js" name="INV-SOC-006 el router y Entrar con contraseña provisional &gt; AC-004-01 entrar con la provisional deja en los avisos «Elige una contraseña nueva para seguir usando la web» y navega a Cambiar contraseña" time="0.010553282">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/ui/campo-fecha.test.js" timestamp="2026-11-22T20:33:05.705Z" hostname="dd95a7651098" tests="4" failures="0" errors="0" skipped="0" time="0.014285211">
++    <testsuite name="tests/unit/ui/campo-fecha.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="4" failures="0" errors="0" skipped="0" time="0.014285211">
+         <testcase classname="tests/unit/ui/campo-fecha.test.js" name="REQ-C-001 campos de fecha en día/mes/año &gt; el campo enseña el formato «dd/mm/aaaa» y la ayuda dice «Formato DD/MM/AAAA»" time="0.006042447">
+         </testcase>
+         <testcase classname="tests/unit/ui/campo-fecha.test.js" name="REQ-C-001 campos de fecha en día/mes/año &gt; «05/12/2026» se envía como «2026-12-05»; con ceros que faltan, «5/1/2026» como «2026-01-05»" time="0.001168609">
+@@ -174,7 +174,7 @@
+         <testcase classname="tests/unit/ui/campo-fecha.test.js" name="REQ-C-001 campos de fecha en día/mes/año &gt; lo que no es una fecha se envía tal cual, para que el servidor conteste «Elige una fecha válida»" time="0.001775414">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/ui/entrar.test.js" timestamp="2026-11-22T20:33:05.706Z" hostname="dd95a7651098" tests="8" failures="0" errors="0" skipped="0" time="0.073005666">
++    <testsuite name="tests/unit/ui/entrar.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="8" failures="0" errors="0" skipped="0" time="0.073005666">
+         <testcase classname="tests/unit/ui/entrar.test.js" name="SCR-001 formulario Entrar &gt; tiene título, correo y contraseña con su etiqueta y un botón Entrar" time="0.02706151">
+         </testcase>
+         <testcase classname="tests/unit/ui/entrar.test.js" name="SCR-001 formulario Entrar &gt; envía el correo y la contraseña y, si entra, navega a la página de su rol" time="0.010920485">
+@@ -192,7 +192,7 @@
+         <testcase classname="tests/unit/ui/entrar.test.js" name="páginas de inicio por rol &gt; Mis reservas y Panel del encargado tienen su título" time="0.001735413">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/ui/estilos.test.js" timestamp="2026-11-22T20:33:05.709Z" hostname="dd95a7651098" tests="4" failures="0" errors="0" skipped="0" time="0.004681136">
++    <testsuite name="tests/unit/ui/estilos.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="4" failures="0" errors="0" skipped="0" time="0.004681136">
+         <testcase classname="tests/unit/ui/estilos.test.js" name="ux/ diseño visual (tokens) &gt; lleva los colores del tema claro y del oscuro de DESIGN-TOKENS.json" time="0.002250018">
+         </testcase>
+         <testcase classname="tests/unit/ui/estilos.test.js" name="ux/ diseño visual (tokens) &gt; usa la tipografía del sistema, objetivos de 44 px y el anillo de foco de 3 px" time="0.000476604">
+@@ -202,7 +202,7 @@
+         <testcase classname="tests/unit/ui/estilos.test.js" name="ux/ diseño visual (tokens) &gt; main.js carga la hoja de estilos" time="0.000267102">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/ui/historial.test.js" timestamp="2026-11-22T20:33:05.710Z" hostname="dd95a7651098" tests="9" failures="0" errors="0" skipped="0" time="0.074569078">
++    <testsuite name="tests/unit/ui/historial.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="9" failures="0" errors="0" skipped="0" time="0.074569078">
+         <testcase classname="tests/unit/ui/historial.test.js" name="SCR-010 Historial del socio &gt; título, nota de solo lectura y un buscador con su etiqueta, en un formulario de búsqueda" time="0.022285473">
+         </testcase>
+         <testcase classname="tests/unit/ui/historial.test.js" name="SCR-010 Historial del socio &gt; un resultado único muestra su nombre, su correo, sus préstamos y sus multas con el texto del contrato" time="0.015609921">
+@@ -222,7 +222,7 @@
+         <testcase classname="tests/unit/ui/historial.test.js" name="api.historial &gt; pide /api/historial con la búsqueda o con el id elegido, codificados" time="0.001775514">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/ui/material.test.js" timestamp="2026-11-22T20:33:05.713Z" hostname="dd95a7651098" tests="8" failures="0" errors="0" skipped="0" time="0.125126671">
++    <testsuite name="tests/unit/ui/material.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="8" failures="0" errors="0" skipped="0" time="0.125126671">
+         <testcase classname="tests/unit/ui/material.test.js" name="SCR-008 página Material &gt; lista cada tipo como «{material}: {total} unidades», también con 0, y cada cantidad se etiqueta con su material" time="0.065204306">
+         </testcase>
+         <testcase classname="tests/unit/ui/material.test.js" name="SCR-008 página Material &gt; añadir a un tipo envía el nombre y la cantidad, y muestra la línea actualizada en la zona de avisos y en la lista" time="0.012480997">
+@@ -240,7 +240,7 @@
+         <testcase classname="tests/unit/ui/material.test.js" name="SCR-008 página Material &gt; una cantidad vacía no pide confirmación: el servidor responde con su error" time="0.005388842">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/ui/mis-multas.test.js" timestamp="2026-11-22T20:33:05.716Z" hostname="dd95a7651098" tests="4" failures="0" errors="0" skipped="0" time="0.035709777">
++    <testsuite name="tests/unit/ui/mis-multas.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="4" failures="0" errors="0" skipped="0" time="0.035709777">
+         <testcase classname="tests/unit/ui/mis-multas.test.js" name="SCR-005 Mis multas &gt; título «Mis multas» y una fila por multa con su texto del contrato y, aparte, los días de retraso" time="0.024349689">
+         </testcase>
+         <testcase classname="tests/unit/ui/mis-multas.test.js" name="SCR-005 Mis multas &gt; una multa sin días guardados (semilla) no inventa el retraso" time="0.003274426">
+@@ -250,7 +250,7 @@
+         <testcase classname="tests/unit/ui/mis-multas.test.js" name="SCR-005 Mis multas &gt; un error del servidor sale como alerta y no pinta filas" time="0.004486335">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/ui/mis-reservas.test.js" timestamp="2026-11-22T20:33:05.717Z" hostname="dd95a7651098" tests="6" failures="0" errors="0" skipped="0" time="0.060167567">
++    <testsuite name="tests/unit/ui/mis-reservas.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="6" failures="0" errors="0" skipped="0" time="0.060167567">
+         <testcase classname="tests/unit/ui/mis-reservas.test.js" name="SCR-003 Mis reservas con lista &gt; cada fila dice «{cantidad} × {material} del {inicio} al {fin} — {estado}» y solo la cancelable lleva «Cancelar»" time="0.026166203">
+         </testcase>
+         <testcase classname="tests/unit/ui/mis-reservas.test.js" name="SCR-003 Mis reservas con lista &gt; una fila que no se puede cancelar enseña el motivo en la propia fila y ningún botón" time="0.006497451">
+@@ -264,7 +264,7 @@
+         <testcase classname="tests/unit/ui/mis-reservas.test.js" name="SCR-003 Mis reservas con lista &gt; un error al cancelar sale junto a la lista con foco y no deja aviso" time="0.004931738">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/ui/multas.test.js" timestamp="2026-11-22T20:33:05.719Z" hostname="dd95a7651098" tests="5" failures="0" errors="0" skipped="0" time="0.060703871">
++    <testsuite name="tests/unit/ui/multas.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="5" failures="0" errors="0" skipped="0" time="0.060703871">
+         <testcase classname="tests/unit/ui/multas.test.js" name="SCR-009 Multas &gt; título «Multas» y una fila por multa; «Marcar pagada» solo en las Pendientes" time="0.029907832">
+         </testcase>
+         <testcase classname="tests/unit/ui/multas.test.js" name="SCR-009 Multas &gt; sin multas muestra «No hay multas» (RN-031)" time="0.004646336">
+@@ -276,7 +276,7 @@
+         <testcase classname="tests/unit/ui/multas.test.js" name="SCR-009 Multas &gt; un error al pagar sale como alerta junto a la lista y no toca los avisos" time="0.008530166">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/ui/panel.test.js" timestamp="2026-11-22T20:33:05.721Z" hostname="dd95a7651098" tests="11" failures="0" errors="0" skipped="0" time="0.097053654">
++    <testsuite name="tests/unit/ui/panel.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="11" failures="0" errors="0" skipped="0" time="0.097053654">
+         <testcase classname="tests/unit/ui/panel.test.js" name="SCR-006 Panel del encargado &gt; RN-018 pinta un grupo con h2 por lista no vacía y las filas con los literales del contrato" time="0.035079772">
+         </testcase>
+         <testcase classname="tests/unit/ui/panel.test.js" name="SCR-006 Panel del encargado &gt; RN-029 «No recogida» es un grupo con su fila sin botón" time="0.004704837">
+@@ -300,7 +300,7 @@
+         <testcase classname="tests/unit/ui/panel.test.js" name="SCR-006 Panel del encargado &gt; RN-032 «Ver» pide el panel de la fecha elegida y una fecha no válida deja la lista como estaba con el mensaje del servidor" time="0.009090171">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/ui/reservar-formulario.test.js" timestamp="2026-11-22T20:33:05.725Z" hostname="dd95a7651098" tests="6" failures="0" errors="0" skipped="0" time="0.098649265">
++    <testsuite name="tests/unit/ui/reservar-formulario.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="6" failures="0" errors="0" skipped="0" time="0.098649265">
+         <testcase classname="tests/unit/ui/reservar-formulario.test.js" name="SCR-004 Reservar con formulario &gt; SCR-004 ofrece en el desplegable «Casco» y no «Cuerda» y deja los campos con su etiqueta, en el orden del wireframe" time="0.048739778">
+         </testcase>
+         <testcase classname="tests/unit/ui/reservar-formulario.test.js" name="SCR-004 Reservar con formulario &gt; envía material, cantidad como número y fechas tal cual; si va bien deja el aviso en la sesión y abre Mis reservas" time="0.012370096">
+@@ -314,7 +314,7 @@
+         <testcase classname="tests/unit/ui/reservar-formulario.test.js" name="SCR-004 Reservar con formulario &gt; los avisos de la sesión se acumulan, se muestran como estado y «Cerrar avisos» los quita" time="0.005290441">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/ui/reservar.test.js" timestamp="2026-11-22T20:33:05.728Z" hostname="dd95a7651098" tests="3" failures="0" errors="0" skipped="0" time="0.025245596">
++    <testsuite name="tests/unit/ui/reservar.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="3" failures="0" errors="0" skipped="0" time="0.025245596">
+         <testcase classname="tests/unit/ui/reservar.test.js" name="SCR-004 Reservar, versión mínima (solo lectura) &gt; ofrece en la lista solo los tipos reservables y nombra aparte los que no tienen unidades" time="0.01932475">
+         </testcase>
+         <testcase classname="tests/unit/ui/reservar.test.js" name="SCR-004 Reservar, versión mínima (solo lectura) &gt; no tiene formulario ni botón «Reservar»: eso llega en FASE-1" time="0.002119416">
+@@ -322,7 +322,7 @@
+         <testcase classname="tests/unit/ui/reservar.test.js" name="SCR-004 Reservar, versión mínima (solo lectura) &gt; sin ningún tipo reservable lo dice" time="0.002237917">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/ui/router.test.js" timestamp="2026-11-22T20:33:05.729Z" hostname="dd95a7651098" tests="6" failures="0" errors="0" skipped="0" time="0.073329769">
++    <testsuite name="tests/unit/ui/router.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="6" failures="0" errors="0" skipped="0" time="0.073329769">
+         <testcase classname="tests/unit/ui/router.test.js" name="API-001-08 guardia del router &gt; sin sesión, una página privada muestra el formulario Entrar y no su contenido" time="0.020357858">
+         </testcase>
+         <testcase classname="tests/unit/ui/router.test.js" name="API-001-08 guardia del router &gt; con sesión autorizada pinta la página pedida y deja la URL en ella" time="0.008303664">
+@@ -336,7 +336,7 @@
+         <testcase classname="tests/unit/ui/router.test.js" name="API-001-08 guardia del router &gt; si el servidor falla muestra su mensaje en una alerta, no una página en blanco" time="0.004392734">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/unit/ui/socios.test.js" timestamp="2026-11-22T20:33:05.732Z" hostname="dd95a7651098" tests="9" failures="0" errors="0" skipped="0" time="0.116207001">
++    <testsuite name="tests/unit/ui/socios.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="9" failures="0" errors="0" skipped="0" time="0.116207001">
+         <testcase classname="tests/unit/ui/socios.test.js" name="SCR-007 Socios &gt; SCR-007 el formulario pide nombre, correo y contraseña provisional, y cada fila dice «{nombre} — Activo» con «Restablecer» y «Dar de baja»" time="0.035193173">
+         </testcase>
+         <testcase classname="tests/unit/ui/socios.test.js" name="SCR-007 Socios &gt; SCR-007 un alta correcta pone «Socio creado: Álvaro» en los avisos, vacía el formulario y recarga la lista" time="0.016452727">
+@@ -356,7 +356,7 @@
+         <testcase classname="tests/unit/ui/socios.test.js" name="SCR-007 Socios &gt; SCR-007 un error de baja sale junto a la lista, con foco, y la fila sigue «Lucía Gil — Activo»" time="0.009053571">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/integration/aislamiento.test.js" timestamp="2026-11-22T20:33:05.735Z" hostname="dd95a7651098" tests="9" failures="0" errors="0" skipped="0" time="4.360463421">
++    <testsuite name="tests/integration/aislamiento.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="9" failures="0" errors="0" skipped="0" time="4.360463421">
+         <testcase classname="tests/integration/aislamiento.test.js" name="SEC-T-001 un socio solo ve lo suyo &gt; REQ-NF-001 AC1 Lucía pide por id una reserva o una multa de Pablo y recibe «Acceso denegado» sin ningún dato de él" time="0.378151751">
+         </testcase>
+         <testcase classname="tests/integration/aislamiento.test.js" name="SEC-T-001 un socio solo ve lo suyo &gt; REQ-NF-001 AC1 sus propias listas no llevan nada de Pablo: solo sus reservas y ninguna multa" time="0.358078493">
+@@ -376,7 +376,7 @@
+         <testcase classname="tests/integration/aislamiento.test.js" name="SEC-T-004 el almacén guarda solo lo mínimo y ninguna contraseña legible &gt; REQ-NF-001 AC4 REQ-NF-003 AC1 tras entrar, cambiar y restablecer contraseñas ninguna aparece en claro en lo guardado" time="0.888620634">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/integration/cuentas.test.js" timestamp="2026-11-22T20:33:05.738Z" hostname="dd95a7651098" tests="18" failures="0" errors="0" skipped="0" time="4.944182874">
++    <testsuite name="tests/integration/cuentas.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="18" failures="0" errors="0" skipped="0" time="4.944182874">
+         <testcase classname="tests/integration/cuentas.test.js" name="API-001-01 login &gt; socio y encargado entran y van a la página de su rol con su nombre" time="0.241398779">
+         </testcase>
+         <testcase classname="tests/integration/cuentas.test.js" name="API-001-01 login &gt; el correo no distingue mayúsculas ni espacios alrededor" time="0.183492028">
+@@ -414,7 +414,7 @@
+         <testcase classname="tests/integration/cuentas.test.js" name="D-PA-004 demo/sembrar.mjs &gt; siembra Lucía, Pablo, un miembro de la junta, 3 «Casco», 0 «Cuerda» y una reserva que ocupa 2 «Casco»" time="0.260787229">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/integration/depurar.test.js" timestamp="2026-11-22T20:33:05.754Z" hostname="dd95a7651098" tests="18" failures="0" errors="0" skipped="0" time="2.918518642">
++    <testsuite name="tests/integration/depurar.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="18" failures="0" errors="0" skipped="0" time="2.918518642">
+         <testcase classname="tests/integration/depurar.test.js" name="API-002-07 purgeOldRecords (UC-019) &gt; AC-019-01 REQ-NF-003 AC2 con hoy 2026-11-22 el préstamo terminado el 2023-11-01 desaparece y el terminado el 2025-01-10 se queda" time="0.106355828">
+         </testcase>
+         <testcase classname="tests/integration/depurar.test.js" name="API-002-07 purgeOldRecords (UC-019) &gt; AC-019-02 un préstamo que termina justo en hoy − 3 años (2023-11-22) se queda y el día anterior (2023-11-21) se borra" time="0.084283257">
+@@ -452,7 +452,7 @@
+         <testcase classname="tests/integration/depurar.test.js" name="REQ-NF-003 borrado de los datos personales a los 3 años de la baja (D-PA-003, INV-SOC-009, ADR-003) &gt; runPurge depura los registros y los datos personales con el mismo día y suma los recuentos" time="0.291587975">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/integration/entregas.test.js" timestamp="2026-11-22T20:33:05.762Z" hostname="dd95a7651098" tests="16" failures="0" errors="0" skipped="0" time="5.847102409">
++    <testsuite name="tests/integration/entregas.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="16" failures="0" errors="0" skipped="0" time="5.847102409">
+         <testcase classname="tests/integration/entregas.test.js" name="API-002-04 deliverReservation (UC-010) &gt; INV-RES-007 entregar una reserva de hoy la pasa a Prestada, guarda deliveredOn y responde con el texto de la entrega" time="0.275634651">
+         </testcase>
+         <testcase classname="tests/integration/entregas.test.js" name="API-002-04 deliverReservation (UC-010) &gt; INV-RES-009 repetir la entrega avisa «Ya estaba entregada» sin cambiar nada ni duplicar el préstamo" time="0.274367641">
+@@ -486,7 +486,7 @@
+         <testcase classname="tests/integration/entregas.test.js" name="API-002-05 returnLoan (UC-011) &gt; AC-011-07 un socio y la junta reciben E_ACCESO_DENEGADO y el préstamo sigue abierto" time="0.300046534">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/integration/historial.test.js" timestamp="2026-11-22T20:33:05.767Z" hostname="dd95a7651098" tests="10" failures="0" errors="0" skipped="0" time="4.607565774">
++    <testsuite name="tests/integration/historial.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="10" failures="0" errors="0" skipped="0" time="4.607565774">
+         <testcase classname="tests/integration/historial.test.js" name="API-001-07 getMemberHistory (UC-018) &gt; buscar «lucia» (sin tilde ni mayúscula) da un solo socio con sus préstamos y su multa pagada" time="0.406827569">
+         </testcase>
+         <testcase classname="tests/integration/historial.test.js" name="API-001-07 getMemberHistory (UC-018) &gt; RN-019 la búsqueda es parcial y vale por correo: «CLUB.TEST» encuentra a todos los socios, y solo a socios" time="0.393729375">
+@@ -508,7 +508,7 @@
+         <testcase classname="tests/integration/historial.test.js" name="semilla de la demo de FASE-5 &gt; Lucía tiene su préstamo devuelto y su multa pagada, Marta un préstamo de 2023 y otro de 2025, y hay una cuenta de junta" time="0.606816539">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/integration/material.test.js" timestamp="2026-11-22T20:33:05.770Z" hostname="dd95a7651098" tests="19" failures="0" errors="0" skipped="0" time="5.627121761">
++    <testsuite name="tests/integration/material.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="19" failures="0" errors="0" skipped="0" time="5.627121761">
+         <testcase classname="tests/integration/material.test.js" name="API-003-01 addUnits · INV-MAT-001..004 &gt; añadir a un tipo existente suma a su total y un tipo nuevo se crea con esa cantidad" time="0.31404135">
+         </testcase>
+         <testcase classname="tests/integration/material.test.js" name="API-003-01 addUnits · INV-MAT-001..004 &gt; INV-MAT-004 el nombre es único sin distinguir mayúsculas ni espacios alrededor" time="0.276493958">
+@@ -548,7 +548,7 @@
+         <testcase classname="tests/integration/material.test.js" name="API-003-03 listMaterial · INV-MAT-003 &gt; la junta no puede listar material (E_ACCESO_DENEGADO)" time="0.307602593">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/integration/multas.test.js" timestamp="2026-11-22T20:33:05.775Z" hostname="dd95a7651098" tests="14" failures="0" errors="0" skipped="0" time="9.247111517">
++    <testsuite name="tests/integration/multas.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="14" failures="0" errors="0" skipped="0" time="9.247111517">
+         <testcase classname="tests/integration/multas.test.js" name="API-004-01 listMyFines (UC-012) &gt; semilla de la demo: Lucía devuelve su préstamo vencido hace 3 días y su multa Pendiente lleva importe y días" time="0.690681475">
+         </testcase>
+         <testcase classname="tests/integration/multas.test.js" name="API-004-01 listMyFines (UC-012) &gt; una cuenta sin multas recibe la lista vacía y el mensaje «No tienes multas»" time="0.390096536">
+@@ -578,7 +578,7 @@
+         <testcase classname="tests/integration/multas.test.js" name="API-004-03 listFines (UC-014) &gt; AC-014-02 INV-SEC-003 un socio o la junta reciben E_PAGINA_PROHIBIDA y ninguna multa" time="0.797241626">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/integration/panel.test.js" timestamp="2026-11-22T20:33:05.780Z" hostname="dd95a7651098" tests="9" failures="0" errors="0" skipped="0" time="2.661958387">
++    <testsuite name="tests/integration/panel.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="9" failures="0" errors="0" skipped="0" time="2.661958387">
+         <testcase classname="tests/integration/panel.test.js" name="API-002-06 getPanel (UC-017) &gt; RN-018 reparte por entregar (Reservada con inicio ≤ hoy ≤ fin), vuelven hoy (Prestada con fin = hoy) y el resto de prestadas" time="0.303806072">
+         </testcase>
+         <testcase classname="tests/integration/panel.test.js" name="API-002-06 getPanel (UC-017) &gt; RN-018 con una fecha elegida «vuelven» se recalcula para ese día y el préstamo no sale repetido en «prestados»" time="0.285949833">
+@@ -598,7 +598,7 @@
+         <testcase classname="tests/integration/panel.test.js" name="API-002-06 getPanel (UC-017) &gt; INV-SEC-003 sin sesión el panel pide entrar" time="0.286701739">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/integration/prestamos.test.js" timestamp="2026-11-22T20:33:05.783Z" hostname="dd95a7651098" tests="23" failures="0" errors="0" skipped="0" time="9.371160926">
++    <testsuite name="tests/integration/prestamos.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="23" failures="0" errors="0" skipped="0" time="9.371160926">
+         <testcase classname="tests/integration/prestamos.test.js" name="API-002-01 reserve (UC-007) &gt; crea una reserva Reservada de la cuenta de la sesión y responde con su texto" time="0.313770549">
+         </testcase>
+         <testcase classname="tests/integration/prestamos.test.js" name="API-002-01 reserve (UC-007) &gt; INV-RES-004 las unidades se cuentan por día: un día intermedio lleno se cita aunque el primero esté libre" time="0.572681369">
+@@ -646,7 +646,7 @@
+         <testcase classname="tests/integration/prestamos.test.js" name="API-002-03 cancelReservation (UC-009) &gt; AC-009-05 INV-RES-010 la reserva de otro socio, una inexistente y un rol que no es socio se rechazan igual y sin cambios" time="0.566718922">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/integration/rendimiento.test.js" timestamp="2026-11-22T20:33:05.790Z" hostname="dd95a7651098" tests="3" failures="0" errors="0" skipped="0" time="0.924009116">
++    <testsuite name="tests/integration/rendimiento.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="3" failures="0" errors="0" skipped="0" time="0.924009116">
+         <testcase classname="tests/integration/rendimiento.test.js" name="REQ-NF-002 datos compartidos entre dispositivos y reinicios &gt; REQ-NF-002 AC1 la reserva que hace Lucía desde una sesión sale en el panel de Pablo, en otra, en menos de SYNC_VISIBILITY_SECONDS" time="0.265719575">
+         </testcase>
+         <testcase classname="tests/integration/rendimiento.test.js" name="REQ-NF-002 datos compartidos entre dispositivos y reinicios &gt; REQ-NF-002 AC2 tras cerrar y volver a abrir el almacén siguen las reservas y los préstamos" time="0.32649775">
+@@ -654,13 +654,13 @@
+         <testcase classname="tests/integration/rendimiento.test.js" name="demo/sembrar.mjs fase-2 &gt; siembra las reservas de Lucía Gil para hoy y un préstamo vencido hace 3 días" time="0.33043108">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/integration/restablecer-bloqueo.test.js" timestamp="2026-11-22T20:33:05.791Z" hostname="dd95a7651098" tests="2" failures="0" errors="0" skipped="0" time="1.159678856">
++    <testsuite name="tests/integration/restablecer-bloqueo.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="2" failures="0" errors="0" skipped="0" time="1.159678856">
+         <testcase classname="tests/integration/restablecer-bloqueo.test.js" name="UC-005 · INV-SOC-004 · restablecer la contraseña levanta el bloqueo (CH-010, Q-acceptance-002) &gt; AC-005-01 REQ-F-002 AC5 Marta, con la cuenta bloqueada por fallos, entra en el acto con «Otra12345» tras restablecerla Pablo, y ya no con la antigua" time="0.672924155">
+         </testcase>
+         <testcase classname="tests/integration/restablecer-bloqueo.test.js" name="UC-005 · INV-SOC-004 · restablecer la contraseña levanta el bloqueo (CH-010, Q-acceptance-002) &gt; restablecer borra también el contador de fallos de una cuenta que aún no estaba bloqueada" time="0.485590692">
+         </testcase>
+     </testsuite>
+-    <testsuite name="tests/integration/socios.test.js" timestamp="2026-11-22T20:33:05.792Z" hostname="dd95a7651098" tests="29" failures="0" errors="0" skipped="0" time="9.728175782">
++    <testsuite name="tests/integration/socios.test.js" timestamp="2026-11-23T09:00:00.000Z" hostname="dd95a7651098" tests="29" failures="0" errors="0" skipped="0" time="9.728175782">
+         <testcase classname="tests/integration/socios.test.js" name="UC-003 · API-001-04 registerMember &gt; API-001-04 Pablo da de alta a Marta Ruiz con «Provisional1»: «Socio creado: Marta Ruiz», cuenta provisional y sin hash en la respuesta" time="0.294341093">
+         </testcase>
+         <testcase classname="tests/integration/socios.test.js" name="UC-003 · API-001-04 registerMember &gt; INV-SOC-001 el correo repetido (también el de una cuenta de baja, sin importar mayúsculas) o el mismo envío dos veces da E_SOCIO_DUPLICADO sin duplicar" time="0.244734106">
+diff --git a/src/server/mensajes.js b/src/server/mensajes.js
+index e5e93e8..f8dbb51 100644
+--- a/src/server/mensajes.js
++++ b/src/server/mensajes.js
+@@ -40,7 +40,7 @@ export const MENSAJES = {
+ 
+ // Mensajes de éxito con huecos
+ export const EXITOS = {
+-  reservaCreada: 'Reserva creada: {cantidad} × {material} del {inicio} al {fin}',
++  reservaCreada: 'Reserva hecha: {cantidad} × {material} del {inicio} al {fin}',
+   reservaCancelada: 'Reserva cancelada',
+   devueltaATiempo: 'Devuelto a tiempo',
+   devueltaConRetraso: 'Devuelto con {retraso} de retraso: multa de {importe} €',

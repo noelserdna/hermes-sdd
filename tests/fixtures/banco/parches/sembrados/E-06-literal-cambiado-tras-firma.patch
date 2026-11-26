@@ -1,0 +1,15 @@
+diff --git a/requirements/REQUIREMENTS.md b/requirements/REQUIREMENTS.md
+index e12c74b..d7c5de3 100644
+--- a/requirements/REQUIREMENTS.md
++++ b/requirements/REQUIREMENTS.md
+@@ -52,8 +52,8 @@ Roles: **socio**, **encargado** (del material) y **junta** (solo consulta). Un 
+ - **Source:** intent/INT-001.md
+ - **Rationale:** Sin cuentas creadas nadie puede entrar; la petición no dice quién las da de alta.
+ - **Acceptance criteria:**
+-  - GIVEN the encargado in "Socios" WHEN he registers "Marta Ruiz", "marta@club.test", password "Provisional1" THEN the user sees "Socio creado: Marta Ruiz" and "Marta Ruiz" in the list
+-    - Se ve: "Socio creado: {nombre}" y "Marta Ruiz — Activo" en Socios
++  - GIVEN the encargado in "Socios" WHEN he registers "Marta Ruiz", "marta@club.test", password "Provisional1" THEN the user sees "Socio dado de alta: Marta Ruiz" and "Marta Ruiz" in the list
++    - Se ve: "Socio dado de alta: {nombre}" y "Marta Ruiz — Activo" en Socios
+   - GIVEN "Marta Ruiz" exists WHEN the encargado registers "marta@club.test" again THEN the user sees "Ya existe un socio con ese correo" and the list has one "Marta Ruiz"
+     - Se ve: "Ya existe un socio con ese correo" en Socios
+     - Se ve: una sola fila "Marta Ruiz — Activo" en la lista de Socios (no aparece repetida tras el segundo intento)

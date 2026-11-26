@@ -1,0 +1,14 @@
+diff --git a/tests/e2e/fase-3-alta-primer-acceso.spec.js b/tests/e2e/fase-3-alta-primer-acceso.spec.js
+index f6c3f2a..6f1877d 100644
+--- a/tests/e2e/fase-3-alta-primer-acceso.spec.js
++++ b/tests/e2e/fase-3-alta-primer-acceso.spec.js
+@@ -107,7 +107,8 @@ test.describe('FASE-3 · Alta, baja y contraseña de los socios (REQ-F-002)', ()
+     await expect(aviso(page, 'Socio creado: Marta Ruiz')).toBeVisible();
+     await expect(fila(page, 'Marta Ruiz — Activo')).toHaveCount(1);
+     await narrar(page, testInfo, 'Alta, baja y contraseña de los socios. En Socios se ve «Socio creado: Marta Ruiz» y «Marta Ruiz — Activo»: Marta ya está en la lista.', { criterio: 'AC-003-01' });
+-    await captura(page, testInfo, 'AC-003-01', { ve: ['Socio creado: Marta Ruiz', 'Marta Ruiz — Activo'] });
++    await page.goto('/material');
++    await capturarPantalla(page, testInfo, 'AC-003-01');
+   });
+ 
+   test('AC-003-02 REQ-F-002 AC2 «Marta Ruiz» ya existe y Pablo registra otra vez «marta@club.test»: ve «Ya existe un socio con ese correo» y una sola «Marta Ruiz — Activo»', async ({ page }, testInfo) => {

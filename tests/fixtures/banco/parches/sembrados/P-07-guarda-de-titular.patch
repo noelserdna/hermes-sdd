@@ -1,0 +1,13 @@
+diff --git a/src/server/servicios/prestamos.js b/src/server/servicios/prestamos.js
+index 857edc4..aeb49cb 100644
+--- a/src/server/servicios/prestamos.js
++++ b/src/server/servicios/prestamos.js
+@@ -65,7 +65,7 @@ export async function listMyReservations(ctx) {
+ export async function cancelReservation(ctx, { id }) {
+   const hoy = ctx.reloj.hoy();
+   return ctx.store.transaccion((d) => {
+-    const reserva = d.reservas.find((r) => r.id === id && r.accountId === ctx.sesion.cuentaId);
++    const reserva = d.reservas.find((r) => r.id === id);
+     if (!reserva) throw error('E_ACCESO_DENEGADO');
+     if (reserva.status === 'Cancelada') return { aviso: { codigo: 'E_YA_CANCELADA', mensaje: AVISOS.E_YA_CANCELADA } };
+     if (reserva.startDate === hoy) throw error('E_EMPIEZA_HOY');

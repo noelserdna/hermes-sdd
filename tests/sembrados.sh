@@ -36,19 +36,30 @@ tipos = {t: sum(d["tipo"] == t for d in I["defectos"]) for t in ("producto", "ev
 assert tipos["producto"] >= 7 and tipos["evidencia"] >= 7, tipos
 PY
 
-# Cada parche: aplica limpio sobre una copia, el defecto queda en su fichero y se deshace limpio
-python3 - "$S" > "$tmp/lista" <<'PY'
-import json, sys
+# Cada parche: aplica limpio sobre una copia, la señal (que el banco no tiene) queda en su fichero y se deshace limpio
+python3 - "$S" "$BANCO" "$tmp" <<'PY2' || fallo=1
+import json, shutil, subprocess, sys, filecmp
 from pathlib import Path
-for d in json.loads((Path(sys.argv[1]) / "indice.json").read_text())["defectos"]:
-    print("\t".join([d["id"], d["proyecto"], d["parche"], d["senal"]["fichero"], d["senal"]["texto"]]))
-PY
-while IFS=$'\t' read -r id proy parche fich senal; do
-  c="$tmp/$proy"; [ -d "$c" ] || cp -R "$BANCO/$proy" "$c"
-  if ! (cd "$c" && git apply --check "$S/$parche" 2>"$tmp/err"); then mal "$id: $parche no aplica limpio sobre $proy: $(head -2 "$tmp/err")"; continue; fi
-  (cd "$c" && git apply "$S/$parche")
-  if grep -qF -- "$senal" "$c/$fich"; then ok "$id: aplica limpio sobre $proy y el defecto queda en $fich"; else mal "$id: tras aplicarlo, $fich no contiene «$senal»"; fi
-  (cd "$c" && git apply -R "$S/$parche") || mal "$id: no se deshace limpio"
-  diff -rq "$BANCO/$proy" "$c" >/dev/null || mal "$id: la copia no vuelve a ser el banco tras deshacerlo"
-done < "$tmp/lista"
+S, BANCO, TMP = map(Path, sys.argv[1:])
+def iguales(a, b):
+    c = filecmp.dircmp(a, b)
+    return not (c.left_only or c.right_only or c.diff_files or c.funny_files) and all(iguales(a / d, b / d) for d in c.common_dirs)
+mal = 0
+for d in json.loads((S / "indice.json").read_text())["defectos"]:
+    i, proy, f, senal = d["id"], d["proyecto"], d["senal"]["fichero"], d["senal"]["texto"]
+    c = TMP / proy
+    if not c.exists(): shutil.copytree(BANCO / proy, c, symlinks=True)
+    def git(*a): return subprocess.run(["git", "apply", *a, str(S / d["parche"])], cwd=c, capture_output=True, text=True)
+    if senal in (BANCO / proy / f).read_text():
+        print(f"FAIL {i}: la señal ya está en el banco sin parche ({f})"); mal = 1; continue
+    r = git("--check")
+    if r.returncode:
+        print(f"FAIL {i}: {d['parche']} no aplica limpio sobre {proy}: {r.stderr.strip()[:200]}"); mal = 1; continue
+    git()
+    if senal in (c / f).read_text(): print(f"ok   {i}: aplica limpio sobre {proy} y el defecto queda en {f}")
+    else: print(f"FAIL {i}: tras aplicarlo, {f} no contiene la señal"); mal = 1
+    if git("-R").returncode or not iguales(BANCO / proy, c):
+        print(f"FAIL {i}: no se deshace limpio: la copia no vuelve a ser el banco"); mal = 1
+sys.exit(mal)
+PY2
 exit $fallo
