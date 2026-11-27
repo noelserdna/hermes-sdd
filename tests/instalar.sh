@@ -46,8 +46,13 @@ elif a[:2] == ["config", "set"]:
     n[ks[-1]] = v; guardar()
 elif a[:3] == ["kanban", "boards", "list"]:
     print(json.dumps(kb["boards"]))
-elif a[:1] == ["kanban"] and "list" in a:
-    print(json.dumps(kb["tareas"].get(a[2], [])))
+elif a[:1] == ["kanban"] and "list" in a:   # como el real: «list» no trae las madres
+    print(json.dumps([{k: v for k, v in t.items() if k != "parents"} for t in kb["tareas"].get(a[2], [])]))
+elif a[:1] == ["kanban"] and "show" in a:   # «show» sí: {"task": …, "parents": [ids]}
+    t = next((t for t in kb["tareas"].get(a[2], []) if t["id"] == a[a.index("show") + 1]), None)
+    if t is None:
+        sys.exit(1)
+    print(json.dumps({"task": {k: v for k, v in t.items() if k != "parents"}, "parents": t.get("parents", []), "children": []}))
 PY
 chmod +x "$T/bin/hermes"; export PATH="$T/bin:$PATH" FALSO="$T"
 H="$HOME/.hermes/hermes-sdd"
@@ -87,6 +92,32 @@ jq '.tareas.demo = [{"id":"t_1","title":"Implementar FASE-0","status":"running",
     && ok "con una tarjeta en marcha no instala ni toca nada (y dice cuál)" || bad "en marcha: $o"; }
 o=$(HERMES_SDD_ESPERA_MAX_S=1 HERMES_SDD_ESPERA_INTERVALO_S=1 bash "$ROOT/instalar.sh" --esperar 2>&1) && bad "--esperar instala" \
   || { echo "$o" | grep -q "tras esperar" && ok "--esperar espera y, si sigue ocupado, no instala" || bad "esperar: $o"; }
+# 3b. una tarjeta en «todo» cuya madre está «blocked» no es trabajo en marcha: no puede despacharse. Tablero real de
+#     material-montana12 (hermes-win, 25-nov): la de cierre espera a «Mantenimiento», bloqueada desde el 23-nov, y
+#     paró dos despliegues. Las «todo» con la madre viva, y las «running»/«ready», siguen parando.
+M12='[{"id":"t_d26917c7","title":"PUERTA Etapa parada: implementar FASE-0","status":"blocked","assignee":null},
+ {"id":"t_eb131875","title":"Mantenimiento","status":"blocked","assignee":"sdd-estacion"},
+ {"id":"t_639c0c16","title":"Cierre: puerta global y entrega (mantenimiento)","status":"todo","assignee":"sdd-estacion","parents":["t_eb131875"]},
+ {"id":"t_0a931b8c","title":"PUERTA Preguntas del mantenimiento","status":"blocked","assignee":null},
+ {"id":"t_ed1a12ca","title":"PUERTA Mantenimiento","status":"blocked","assignee":null}]'
+jq -n --argjson t "$M12" '{boards: [{slug: "material-montana12"}], tareas: {"material-montana12": $t}}' > "$T/kanban.json"
+o=$(bash "$ROOT/instalar.sh" 2>&1) && echo "$o" | grep -q "ignoro 1 tarjeta en espera de una bloqueada" \
+  && ok "montana12: la «todo» hija de una «blocked» no para la instalación, y lo dice" || bad "todo con madre bloqueada: $o"
+# en cadena: la nieta de una bloqueada tampoco puede despacharse
+jq --argjson t '{"id":"t_nieta","title":"Después del cierre","status":"todo","assignee":"sdd-estacion","parents":["t_639c0c16"]}' \
+  '.tareas["material-montana12"] += [$t]' "$T/kanban.json" > "$T/k" && mv "$T/k" "$T/kanban.json"
+o=$(bash "$ROOT/instalar.sh" 2>&1) && echo "$o" | grep -q "ignoro 2 tarjetas en espera de una bloqueada" \
+  && ok "la nieta de una bloqueada tampoco para" || bad "nieta: $o"
+# con la madre viva (en marcha) la «todo» sí para
+jq '(.tareas["material-montana12"][] | select(.id == "t_eb131875") | .status) = "running"' "$T/kanban.json" > "$T/k" && mv "$T/k" "$T/kanban.json"
+o=$(bash "$ROOT/instalar.sh" 2>&1) && bad "instala con la madre en marcha: $o" || {
+  echo "$o" | grep -q "t_639c0c16" && echo "$o" | grep -q "t_eb131875" && ok "con la madre en marcha, la madre y la hija paran" || bad "madre viva: $o"; }
+jq '(.tareas["material-montana12"][] | select(.id == "t_eb131875") | .status) = "ready"' "$T/kanban.json" > "$T/k" && mv "$T/k" "$T/kanban.json"
+o=$(bash "$ROOT/instalar.sh" 2>&1) && bad "instala con la madre lista: $o" || {
+  echo "$o" | grep -q "t_eb131875.*(ready)" && ok "una «ready» sigue parando" || bad "ready: $o"; }
+# sin madres y en «todo» (esperando hueco, no a una bloqueada): para, como siempre
+jq '.tareas = {"material-montana12": [{"id":"t_suelta","title":"Implementar FASE-1","status":"todo","assignee":"sdd-estacion"}]}' "$T/kanban.json" > "$T/k" && mv "$T/k" "$T/kanban.json"
+o=$(bash "$ROOT/instalar.sh" 2>&1) && bad "instala con una «todo» sin madre: $o" || { echo "$o" | grep -q "t_suelta" && ok "una «todo» sin madre sigue parando" || bad "todo suelta: $o"; }
 echo '{"boards": [], "tareas": {}}' > "$T/kanban.json"
 mkdir -p "$H/puertas"; echo '{"id":"g1","tipo":"plan","titulo":"Plan","estado":"decidida","repo":"/no/existe"}' > "$H/puertas/g1.json"
 o=$(bash "$ROOT/instalar.sh" 2>&1) && bad "instala con una puerta decidida: $o" || { echo "$o" | grep -q "puerta g1" && ok "con una puerta decidida sin firmar no instala" || bad "decidida: $o"; }
