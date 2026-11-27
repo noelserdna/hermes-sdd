@@ -2,8 +2,8 @@
 # En CI, un SALTA de tests/simulador.sh o de tests/cadena.sh no es un verde: son las dos únicas pruebas de cadena
 # (kanban real y banco de proyectos reales). El CI de f0290a7 llevaba el simulador saltado en los dos sistemas y nadie
 # lo veía (análisis 11). Fuera de CI (un portátil sin hermes) un SALTA sigue siendo solo un aviso.
-# La excepción se declara, no se calla: SDD_CI_SALTA_AVISO="tests/simulador.sh" deja ese SALTA como aviso visible
-# (::warning:: y resumen del job) mientras el runner no tenga hermes.
+# La excepción se declara, no se calla: SDD_CI_SALTA_AVISO="tests/<prueba>.sh" deja ese SALTA como aviso visible
+# (::warning:: y resumen del job). El simulador la tuvo hasta T1 (27-nov), cuando el CI pasó a instalar Hermes.
 set -uo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
@@ -31,6 +31,14 @@ P=simulador; out=$(todo CI=true GITHUB_STEP_SUMMARY="$T/resumen.md" SDD_CI_SALTA
   && ok "la excepción declarada no falla y deja el aviso en el resumen del CI" || bad "excepción: rc=$rc $out / $(cat "$T/resumen.md" 2>/dev/null)"
 P=cadena; out=$(todo CI=true GITHUB_STEP_SUMMARY="$T/resumen.md" SDD_CI_SALTA_AVISO="tests/simulador.sh"); rc=$?
 [ $rc != 0 ] && ok "la excepción vale solo para la prueba que nombra" || bad "excepción de más: rc=$rc $out"
-# y el CI la declara a la vista (pregunta abierta al dueño: instalar hermes en el job o un doble del kanban)
-grep -q 'SDD_CI_SALTA_AVISO' "$ROOT/.github/workflows/tests.yml" && ok "el workflow declara la excepción del simulador" || bad "tests.yml no declara SDD_CI_SALTA_AVISO"
+# y el CI instala Hermes de verdad (decidido el 25-nov: no un doble del kanban), en la versión que el arnés da por
+# probada, fijada a su commit; sin excepción para el simulador: desde entonces su SALTA en CI es un fallo
+W="$ROOT/.github/workflows/tests.yml"
+! grep -q 'SDD_CI_SALTA_AVISO:.*simulador' "$W" && ok "el workflow ya no exime al simulador" || bad "tests.yml sigue eximiendo al simulador (SDD_CI_SALTA_AVISO)"
+read -r v c < <(bash "$ROOT/lib/comprobar-hermes.sh" --probada 2>/dev/null)
+echo "${v:-}" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$' && echo "${c:-}" | grep -qE '^[0-9a-f]{40}$' \
+  && ok "lib/comprobar-hermes.sh --probada dice versión y commit ($v ${c:0:8})" || bad "comprobar-hermes.sh --probada: «${v:-} ${c:-}»"
+I="$ROOT/.github/scripts/instalar-hermes.sh"
+grep -q 'instalar-hermes.sh' "$W" && [ -f "$I" ] && grep -q 'comprobar-hermes.sh" --probada' "$I" && grep -q 'uv sync --frozen' "$I" \
+  && ok "el workflow instala Hermes fijado (versión de comprobar-hermes, dependencias de su uv.lock)" || bad "el workflow no instala Hermes fijado"
 exit $fail
