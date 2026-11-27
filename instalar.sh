@@ -50,13 +50,27 @@ fi
 
 # ── ¿Hay trabajo en marcha? Entonces no se toca nada (o se espera) ─────────────────────────────────────────────────────
 . "$SRC/lib/candado.sh"
-en_marcha() {  # imprime qué hay en marcha (una línea por cosa); nada si se puede instalar
-  local b l
+en_marcha() {  # imprime qué hay en marcha (una línea por cosa); nada si se puede instalar. Las tarjetas «todo» que
+  # esperan a una «blocked» (madre, abuela…) no pueden despacharse: salen como «espera …» y no paran la instalación
+  # (25-nov: la de cierre de material-montana12, hija de «Mantenimiento» bloqueada desde el 23-nov, paró dos despliegues)
+  local b l id p madres
   for b in $(hermes kanban boards list --json 2>/dev/null | jq -r '.[]?.slug' 2>/dev/null); do
     l=$(hermes kanban --board "$b" list --json 2>/dev/null) || continue
-    printf '%s' "$l" | jq -r --arg b "$b" '(if type == "array" then . else .tasks // [] end)[]
-      | select(.assignee == "sdd-estacion" and (.status | IN("running", "ready", "todo")))
-      | "tarjeta \($b)/\(.id) «\(.title)» (\(.status))"' 2>/dev/null || true
+    l=$(printf '%s' "$l" | jq -c 'if type == "array" then . else .tasks // [] end' 2>/dev/null) || continue
+    madres='{}'   # «list» no trae las madres; «show» sí (solo se pregunta por las «todo»)
+    for id in $(printf '%s' "$l" | jq -r '.[] | select(.status == "todo") | .id' 2>/dev/null); do
+      p=$(hermes kanban --board "$b" show "$id" --json 2>/dev/null | jq -c '.parents // [] | map(if type == "object" then .id else . end)' 2>/dev/null)
+      [ -n "$p" ] || p='[]'
+      madres=$(printf '%s' "$madres" | jq -c --arg i "$id" --argjson p "$p" '. + {($i): $p}')
+    done
+    printf '%s' "$l" | jq -r --arg b "$b" --argjson m "$madres" '
+      (map({(.id): .status}) | add // {}) as $st
+      | ($m | keys) as $todos
+      | (reduce $todos[] as $_ ([]; . as $e
+          | [$todos[] | select(. as $t | any($m[$t][]; . as $p | $st[$p] == "blocked" or any($e[]; . == $p)))])) as $espera
+      | .[] | select(.assignee == "sdd-estacion" and (.status | IN("running", "ready", "todo")))
+      | if (.id as $i | any($espera[]; . == $i)) then "espera tarjeta \($b)/\(.id) «\(.title)»"
+        else "tarjeta \($b)/\(.id) «\(.title)» (\(.status))" end' 2>/dev/null || true
   done
   for f in "$HOME_SDD"/puertas/*.json; do
     [ -f "$f" ] || continue
@@ -68,7 +82,7 @@ en_marcha() {  # imprime qué hay en marcha (una línea por cosa); nada si se pu
 }
 if ! $FORZAR; then
   hasta=$(( $(date +%s) + ${HERMES_SDD_ESPERA_MAX_S:-14400} ))
-  while ocupado=$(en_marcha) && [ -n "$ocupado" ]; do
+  while todo_en_marcha=$(en_marcha) && ocupado=$(printf '%s\n' "$todo_en_marcha" | grep -v '^espera ' | grep .) ; do
     if ! $ESPERAR; then
       echo "No instalo: hay trabajo en marcha (instalar reescanea los perfiles y el worker se perdería):" >&2
       printf '  %s\n' "$ocupado" | head -10 >&2
@@ -79,6 +93,12 @@ if ! $FORZAR; then
     echo "  … esperando: $(printf '%s' "$ocupado" | head -1)$( [ "$(printf '%s\n' "$ocupado" | wc -l)" -gt 1 ] && echo " (y más)")"
     sleep "${HERMES_SDD_ESPERA_INTERVALO_S:-30}"
   done
+  n=$(printf '%s\n' "$todo_en_marcha" | grep -c '^espera ' || true)
+  if [ "$n" -gt 0 ]; then
+    [ "$n" = 1 ] && echo "  ignoro 1 tarjeta en espera de una bloqueada (no puede despacharse):" \
+                 || echo "  ignoro $n tarjetas en espera de una bloqueada (no pueden despacharse):"
+    printf '%s\n' "$todo_en_marcha" | sed -n 's/^espera /    /p' | head -10
+  fi
 fi
 
 # ── Copia: un directorio nuevo por commit; el enlace «actual» se cambia de golpe ─────────────────────────────────────
