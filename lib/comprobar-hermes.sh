@@ -5,7 +5,13 @@
 # sabe»).
 #
 #   lib/comprobar-hermes.sh [--plugin <dir>]
+#   lib/comprobar-hermes.sh --probada      versión y commit de Hermes con los que se ha probado el arnés (el CI instala esa)
 set -uo pipefail
+# La versión probada: la que corre el arnés en el Mac desde el 10-nov y con la que pasó la batería. Al subirla, que sea
+# tras una batería en verde con la nueva (el CI la instala por este commit, no por el tag, que podría moverse).
+HERMES_PROBADA=v0.23.1
+HERMES_PROBADA_COMMIT=3b421578588243f920886e6fe79a6faa87ea026e
+[ "${1:-}" = --probada ] && { echo "$HERMES_PROBADA $HERMES_PROBADA_COMMIT"; exit 0; }
 PLUGIN="$(cd "$(dirname "$0")/.." && pwd)/plugin/hermes-sdd"
 [ "${1:-}" = --plugin ] && PLUGIN=$2
 command -v hermes >/dev/null || { echo "SIN HERMES: no se comprueba"; exit 0; }

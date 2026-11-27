@@ -23,12 +23,14 @@ jobs:
         run: |
           python -m pip install -q -r tests/requirements-plugin.txt
           echo "HERMES_PY=$(command -v python)" >> "$GITHUB_ENV"
-      # Un SALTA de tests/cadena.sh o tests/simulador.sh es un fallo en CI (tests/todo.sh). La excepción de abajo es
-      # provisional y se ve en el resumen del job: el runner no tiene hermes y el simulador usa el kanban real.
-      # Pendiente de decisión del dueño: instalar hermes en el job o un doble del kanban. Al resolverlo, quitar la línea.
+      # Hermes de verdad (decidido el 25-nov: no un doble del kanban), en la versión que lib/comprobar-hermes.sh da por
+      # probada y con las dependencias de su uv.lock; sin gateway, Telegram ni claves. Lo usa tests/simulador.sh (la
+      # cadena etapa→puerta→notario→tramo con el kanban real) y tests/hermes-interno.sh.
+      - name: Hermes fijado (kanban real para el simulador)
+        timeout-minutes: 5
+        run: bash .github/scripts/instalar-hermes.sh
+      # Un SALTA de tests/cadena.sh o tests/simulador.sh es un fallo en CI (tests/todo.sh), sin excepciones.
       - run: bash tests/todo.sh
-        env:
-          SDD_CI_SALTA_AVISO: tests/simulador.sh
       - if: failure()
         run: |
           bash tests/replay-e2e.sh 2>&1 | tail -15 || true
