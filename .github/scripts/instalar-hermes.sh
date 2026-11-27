@@ -18,7 +18,11 @@ got=$(git -C "$SRC" rev-parse HEAD)
 [ "$got" = "$COMMIT" ] || { echo "ERROR: el tag $VERSION de Hermes apunta a $got, no a $COMMIT (el probado)" >&2; exit 1; }
 (cd "$SRC" && UV_PROJECT_ENVIRONMENT="$VENV" uv sync --frozen --no-dev -q --python 3.14)
 ln -sf "$VENV/bin/hermes" "$BIN/hermes"
+# Sin esto, la primera orden de un Hermes clonado completa la «actualización» (TUI, web, chromium, cua-driver…):
+# más de 2 min y descargas que el kanban no usa (hermes_cli/venv_sync.py, v0.23.1). El venv ya está al día.
+export HERMES_DISABLE_LAZY_INSTALLS=1
 [ -n "${GITHUB_PATH:-}" ] && echo "$BIN" >> "$GITHUB_PATH"
+[ -n "${GITHUB_ENV:-}" ] && echo "HERMES_DISABLE_LAZY_INSTALLS=1" >> "$GITHUB_ENV"
 "$BIN/hermes" --version | head -1
 # el kanban funciona sin gateway ni claves: un tablero de usar y tirar
 k=$(mktemp -d); HERMES_KANBAN_HOME="$k" "$BIN/hermes" kanban init >/dev/null
